@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rails', '3.2.11'
-gem 'rake'
+gem 'rake' 
  
 # use devise for user authenication
 gem 'devise'
@@ -59,6 +59,35 @@ gem "omniauth-openid"
 
 # facebook graph
 gem "fb_graph", '~> 1.8.4' #"~> 2.4.6"
+
+# add form validations 
+gem 'client_side_validations'  
+
+# datetime validations
+gem 'validates_timeliness', '~> 3.0'
+
+# add sass
+gem 'bootstrap-sass', '2.1'
+
+group :development, :test do
+  gem 'wdm', '~> 0.0.3'
+  gem 'rspec-rails', '2.11.0'
+  gem 'guard-rspec', '1.2.1'
+  gem 'guard-spork', '1.2.0'
+  gem 'spork', '0.9.2'
+end
+
+# test gems
+group :test do
+  gem 'factory_girl_rails'
+  gem 'capybara', '1.1.2'
+  gem 'rb-fchange', '0.0.5'
+  gem 'rb-notifu', '0.0.4'
+  gem 'win32console', '1.3.0'
+  gem 'email_spec'
+  gem 'launchy'
+  gem 'faker'
+end
 
 # production gems
 group :production do
