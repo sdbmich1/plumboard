@@ -1,0 +1,7 @@
+  <div>
+    <%= f.fields_for :pictures, @picture do |form| %>
+      <%= form.label :photo %>
+      <%= form.file_field :photo, :id=>'photo' %>
+    <% end %>
+  </div>
+

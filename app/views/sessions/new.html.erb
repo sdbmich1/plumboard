@@ -1,0 +1,26 @@
+<% provide(:title, 'Sign In') %>
+<%= content_for :content do %>
+  <div class="center">
+    <p><h1>Sign in</h1></p>
+  </div>
+
+  <div class="row">
+    <div class="span7 offset3">
+      <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
+    	<div><%= f.label :email %>
+    	<%= f.email_field :email, :autofocus => true %></div>
+
+    	<div><%= f.label :password %>
+    	<%= f.password_field :password %></div>
+
+    	<% if devise_mapping.rememberable? -%>
+      	  <div><span>Remember Me </span><%= f.check_box :remember_me %></div>
+    	<% end -%><br />
+
+    	<div><%= f.submit "Sign in", class: "btn btn-large btn-primary" %></div>
+      <% end %>
+
+      <%= render "devise/shared/links" %>
+    </div>
+  </div>
+<% end %>

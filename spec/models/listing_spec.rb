@@ -5,42 +5,25 @@ describe Listing do
     @listing = FactoryGirl.create(:listing) 
   end
 
-  it "should have an user method" do
-    @listing.should respond_to(:user)
-  end
+  subject { @listing }
 
-  it "should have an organization method" do
-    @listing.should respond_to(:organization) 
-  end
+  it { should respond_to(:user) }
+  it { should respond_to(:site) }
+  it { should respond_to(:posts) }
+  it { should respond_to(:site_listings) }
+  it { should respond_to(:transaction) }
+  it { should respond_to(:pictures) }
+  it { should respond_to(:listing_categories) }
+  it { should respond_to(:set_flds) }
 
-  it "should have a posts method" do
-    @listing.should respond_to(:posts) 
-  end
-
-  it "should have an org_listings method" do
-    @listing.should respond_to(:org_listings)
-  end
-
-  it "should have a transactions method" do
-    @listing.should respond_to(:transaction) 
-  end
-
-  it "should have a pictures method" do
-    @listing.should respond_to(:pictures) 
-  end
-
-  it "should have an listing_categories method" do
-    @listing.should respond_to(:listing_categories)
-  end
-
-  describe "when org_id is empty" do
-    before { @listing.org_id = "" }
+  describe "when site_id is empty" do
+    before { @listing.site_id = "" }
     it { should_not be_valid }
   end
 
-  describe "when org_id is entered" do
-    before { @listing.org_id = 1 }
-    it { @listing.org_id.should == 1 }
+  describe "when site_id is entered" do
+    before { @listing.site_id = 1 }
+    it { @listing.site_id.should == 1 }
   end
 
   describe "when seller_id is empty" do
@@ -53,11 +36,6 @@ describe Listing do
     it { @listing.seller_id.should == 1 }
   end
 
-  describe "when transaction_id is empty" do
-    before { @listing.transaction_id = "" }
-    it { should_not be_valid }
-  end
-
   describe "when transaction_id is entered" do
     before { @listing.transaction_id = 1 }
     it { @listing.transaction_id.should == 1 }
@@ -68,9 +46,9 @@ describe Listing do
     it { should_not be_valid }
   end
 
-  describe "when end_date is empty" do
-    before { @listing.end_date = "" }
-    it { should_not be_valid }
+  describe "when start_date is entered" do
+    before { @listing.start_date = Time.now }
+    it { should be_valid }
   end
 
   describe "when title is empty" do
@@ -78,7 +56,7 @@ describe Listing do
     it { should_not be_valid }
   end
 
-  describe "when title is entered" do
+  describe "when title is entered" do 
     before { @listing.title = "chair" }
     it { @listing.title.should == "chair" }
   end
@@ -93,6 +71,16 @@ describe Listing do
     it { should_not be_valid }
   end
 
+  describe "when category_id is entered" do 
+    before { @listing.category_id = 1 }
+    it { @listing.category_id.should == 1 }
+  end
+
+  describe "when category_id is empty" do
+    before { @listing.category_id = "" }
+    it { should_not be_valid }
+  end
+
   describe "should include active listings" do 
     it { Listing.active.should == [@listing] } 
   end
@@ -101,6 +89,38 @@ describe Listing do
     listing = Listing.create(:title=>'Item', :description=>'stuff', :status=>'inactive')
     it { Listing.active.should_not include (listing) }
   end
+
+  describe "should include active site listings" do 
+    it { Listing.get_by_site(1).should == [@listing] } 
+  end
+
+  describe "should not include invalid site listings" do 
+    it { Listing.get_by_site(0).should_not include @listing } 
+  end
+
+  describe "should include seller listings" do 
+    it { Listing.get_by_seller(1).should == [@listing] } 
+  end
+
+  describe "should not include incorrect seller listings" do 
+    it { Listing.get_by_seller(0).should_not include @listing } 
+  end
+
+  describe "set flds" do 
+    it "should call set flds" do 
+      listing = FactoryGirl.build :listing 
+      listing.status = nil
+      listing.save
+      listing.status.should == 'active'
+    end
+    
+    it "should not call set flds" do 
+      listing = FactoryGirl.build :listing 
+      listing.status = listing.title = nil
+      listing.save
+      listing.status.should_not == 'active'
+    end
+  end 
 
   describe 'pictures' do
     before(:each) do

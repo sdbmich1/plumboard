@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130204185203) do
+ActiveRecord::Schema.define(:version => 20130207040230) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -60,9 +60,13 @@ ActiveRecord::Schema.define(:version => 20130204185203) do
     t.string   "work_phone"
     t.string   "mobile_phone"
     t.string   "website"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
+    t.integer  "contactable_id"
+    t.string   "contactable_type"
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
   end
+
+  add_index "contacts", ["contactable_id"], :name => "index_contacts_on_contactable_id"
 
   create_table "interests", :force => true do |t|
     t.string   "name"
@@ -96,41 +100,14 @@ ActiveRecord::Schema.define(:version => 20130204185203) do
     t.datetime "updated_at",     :null => false
     t.string   "alias_name"
     t.datetime "start_date"
-    t.integer  "org_id"
+    t.integer  "site_id"
     t.datetime "end_date"
     t.integer  "transaction_id"
   end
 
   add_index "listings", ["end_date", "start_date"], :name => "index_listings_on_end_date_and_start_date"
-  add_index "listings", ["org_id", "seller_id", "start_date"], :name => "index_listings_on_org_id_and_seller_id_and_start_date"
+  add_index "listings", ["site_id", "seller_id", "start_date"], :name => "index_listings_on_org_id_and_seller_id_and_start_date"
   add_index "listings", ["transaction_id"], :name => "index_listings_on_transaction_id"
-
-  create_table "org_listings", :force => true do |t|
-    t.integer  "org_id"
-    t.integer  "listing_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
-
-  add_index "org_listings", ["org_id", "listing_id"], :name => "index_org_listings_on_org_id_and_listing_id", :unique => true
-
-  create_table "org_users", :force => true do |t|
-    t.integer  "org_id"
-    t.integer  "user_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
-
-  add_index "org_users", ["org_id", "user_id"], :name => "index_org_users_on_org_id_and_user_id", :unique => true
-
-  create_table "organizations", :force => true do |t|
-    t.string   "name"
-    t.string   "org_type"
-    t.string   "status"
-    t.string   "email"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
 
   create_table "pictures", :force => true do |t|
     t.string   "name"
@@ -154,6 +131,36 @@ ActiveRecord::Schema.define(:version => 20130204185203) do
 
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id_and_created_at", :unique => true
   add_index "posts", ["user_id", "listing_id"], :name => "index_posts_on_user_id_and_listing_id", :unique => true
+
+  create_table "site_listings", :force => true do |t|
+    t.integer  "site_id"
+    t.integer  "listing_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "site_listings", ["site_id", "listing_id"], :name => "index_org_listings_on_org_id_and_listing_id", :unique => true
+
+  create_table "site_users", :force => true do |t|
+    t.integer  "site_id"
+    t.integer  "user_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "site_users", ["site_id", "user_id"], :name => "index_org_users_on_org_id_and_user_id", :unique => true
+
+  create_table "sites", :force => true do |t|
+    t.string   "name"
+    t.string   "org_type"
+    t.string   "status"
+    t.string   "email"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+    t.integer  "institution_id"
+  end
+
+  add_index "sites", ["institution_id"], :name => "index_organizations_on_institution_id"
 
   create_table "transaction_details", :force => true do |t|
     t.integer  "transaction_id"

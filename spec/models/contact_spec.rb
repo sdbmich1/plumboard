@@ -5,10 +5,6 @@ describe Contact do
     @contact = FactoryGirl.build(:contact) 
   end
 
-  it "should have an users method" do
-    @contact.should respond_to(:user)
-  end
-
   describe "when address is empty" do
     before { @contact.address = "" }
     it { should_not be_valid }

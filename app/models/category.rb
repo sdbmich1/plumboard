@@ -3,6 +3,8 @@ class Category < ActiveRecord::Base
 
   has_many :listing_categories
 
+  default_scope :order => "name ASC"
+
   def self.active
     where(:status => 'active')
   end

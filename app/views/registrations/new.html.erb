@@ -1,0 +1,39 @@
+<% provide(:title, 'Sign Up') %>
+<%= content_for :content do %>
+  <div class="center">
+    <p><h1>Sign up</h1></p>
+  </div>
+
+  <div class="row">
+    <div class="span7 offset3">
+      <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
+    	<%= devise_error_messages! %>
+
+    	<div><%= f.label :first_name %>
+    	<%= f.text_field :first_name, :autofocus => true %></div>
+
+    	<div><%= f.label :last_name %>
+    	<%= f.text_field :last_name %></div>
+
+    	<div><%= f.label :email %>
+    	<%= f.email_field :email %></div>
+
+    	<div><%= f.label :gender %>
+	<%= f.select :gender, options_for_select( ['Male', 'Female'] ), :prompt => 'Select' %></div>
+
+    	<div><%= f.label :birth_date %>
+	<%= f.date_select :birth_date, :as => :date, :start_year => Date.today.year - 13,
+	                  :end_year => Date.today.year - 90, 
+			  :order => [:month, :day, :year], :required => true, :prompt => true %></div>
+
+    	<div><%= f.label :password %>
+    	<%= f.password_field :password %></div>
+
+    	<div><%= f.label :password_confirmation, 'Confirmation' %>
+    	<%= f.password_field :password_confirmation %></div><br />
+
+    	<div><%= f.submit "Register", class: "btn btn-large btn-primary" %></div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

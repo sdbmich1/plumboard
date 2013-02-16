@@ -1,0 +1,7 @@
+  <% if has_facebook_photo? && model.pictures.blank? %>
+	<%= image_tag chk_photo(controller_name, action_name, file_name), :alt => "none", :size => psize %>
+  <% elsif !(model.class.to_s =~ /Event/i).nil? && image_exists?(model) %>
+   	<%= image_tag model.imagelink.html_safe, :size => psize rescue nil %>  	
+  <% elsif !has_facebook_photo? && model.pictures.blank? %>
+    <%= image_tag file_name, :alt => "none", :size => psize %>
+  <% end %>

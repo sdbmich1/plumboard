@@ -1,0 +1,8 @@
+<% provide(:title, @listing.title) %>
+<%= content_for :content do %>
+  <div class="center"><br />
+    <h1><%= @listing.title %></h1>
+    Posted: <%= @listing.start_date %><br />
+    Description: <%= @listing.description %>
+  </div>
+<% end %>

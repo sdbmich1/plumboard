@@ -4,6 +4,8 @@ class Picture < ActiveRecord::Base
 
   attr_accessible :photo_file_name, :photo_content_type, :photo_file_size, :photo_updated_at, :photo
   attr_accessor :photo_file_name, :photo_content_type, :photo_file_size, :photo_updated_at
-  validates_attachment_presence :photo
-  validates_attachment_content_type :photo, :content_type => ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp']
+
+  validates_attachment_presence :photo 
+  validates_attachment_size :photo, :less_than => 1.megabytes
+  validates_attachment_content_type :photo, :content_type => ['image/jpeg', 'image/png', 'image/gif', 'image/bmp']
 end

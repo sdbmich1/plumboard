@@ -70,10 +70,11 @@ gem 'validates_timeliness', '~> 3.0'
 gem 'bootstrap-sass', '2.1'
 
 group :development, :test do
-  gem 'wdm', '~> 0.0.3'
+  # gem 'wdm', '~> 0.0.3'
+  gem 'wdm', :platforms => [:mswin, :mingw], :require => false
   gem 'rspec-rails', '2.11.0'
   gem 'guard-rspec', '1.2.1'
-  gem 'guard-spork', '1.2.0'
+  gem 'guard-spork', '1.4.2'
   gem 'spork', '0.9.2'
 end
 
@@ -87,6 +88,7 @@ group :test do
   gem 'email_spec'
   gem 'launchy'
   gem 'faker'
+  gem "database_cleaner"
 end
 
 # production gems

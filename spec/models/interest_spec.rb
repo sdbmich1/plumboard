@@ -5,22 +5,23 @@ describe Interest do
     @interest = FactoryGirl.build(:interest) 
   end
 
-  it "should have an users method" do
-    @interest.should respond_to(:users)
+  subject { @interest }
+
+  context "should have an users method" do
+    it { should respond_to(:users) }
   end
 
-  it "should have an user_interests method" do
-    @interest.should respond_to(:user_interests)
-  end
-
-  describe "when name is empty" do
-    before { @interest.name = "" }
-    it { should_not be_valid }
+  context "should have an user_interests method" do
+    it { should respond_to(:user_interests) }
   end
 
   describe "should include active interests" do
-    interest = Interest.create(:name=>'Item', :status=>'active')
-    it { Interest.active.should include (interest) } 
+    it { Interest.active.should_not be_nil }
+  end
+
+  describe "when name is empty" do 
+    before { @interest.name = "" }
+    it { should_not be_valid }
   end
 
   describe "when interest is inactive" do

@@ -1,8 +1,5 @@
 require 'rubygems'
 require 'spork'
-#uncomment the following line to use spork with the debugger
-#require 'spork/ext/ruby-debug'
-#include ActionDispatch::TestProcess
 
 Spork.prefork do
   # Loading more in this block will cause your tests to run faster. However,
@@ -13,6 +10,9 @@ Spork.prefork do
   require 'rspec/rails'
   require 'email_spec'
   require 'rspec/autorun'
+  require 'capybara/rspec'
+  require 'capybara/rails'
+  require 'database_cleaner'
 
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
@@ -23,13 +23,35 @@ Spork.prefork do
     config.include(EmailSpec::Matchers)
     config.mock_with :rspec
     config.fixture_path = "#{::Rails.root}/spec/fixtures"
-    config.use_transactional_fixtures = true
+  #  config.use_transactional_fixtures = false
+  #  config.include Capybara::DSL
+
+    # add devise settings
+    # config.include Devise::TestHelpers, :type => :controller
+    config.extend ControllerMacros, :type => :controller
+
     config.infer_base_class_for_anonymous_controllers = false
+    config.include Rails.application.routes.url_helpers
+    config.include(MailerMacros)  
+
+    config.before(:suite) do
+      DatabaseCleaner.strategy = :transaction
+      DatabaseCleaner.clean_with(:truncation)
+    end
+
+    config.before(:each) do
+      reset_email
+      DatabaseCleaner.start
+    end
+
+    config.after(:each) do
+      DatabaseCleaner.clean
+    end
   end
 end
 
 Spork.each_run do
   # This code will be run each time you run your specs.
-
+  FactoryGirl.reload
 end
 

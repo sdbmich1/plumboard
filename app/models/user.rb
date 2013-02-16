@@ -9,13 +9,13 @@ class User < ActiveRecord::Base
   attr_accessible :first_name, :last_name, :email, :password, :password_confirmation, :remember_me, :birth_date, :gender
 
   # define relationships
-  has_many :contacts
+  has_many :contacts, :as => :contactable, :dependent => :destroy
   has_many :listings
 
-  has_many :org_users
-  has_many :organizations, :through => :org_users
+  has_many :site_users, :dependent => :destroy
+  has_many :sites, :through => :site_users
 
-  has_many :user_interests
+  has_many :user_interests, :dependent => :destroy
   has_many :interests, :through => :user_interests
 
   has_many :posts
@@ -35,5 +35,7 @@ class User < ActiveRecord::Base
 
   validates :birth_date,  :presence => true  
   validates :gender,  :presence => true
+  validates :password, presence: true
+  validates :password_confirmation, presence: true
 
 end

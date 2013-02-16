@@ -1,0 +1,9 @@
+<%= content_for :content do %>
+  <div class="center hero-unit">
+    <h1><%= "Welcome to #{full_title('')}" %></h1>
+    <h2>
+        Plumboard is a innovative new marketplace that takes the hassle out of selling or trading your goods and services with your local community.
+    </h2>
+    <%= link_to "Sign up now!", new_user_registration_path, class: "btn btn-large btn-primary" %>
+  </div>
+<% end %>

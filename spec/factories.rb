@@ -3,13 +3,20 @@ FactoryGirl.define do
     first_name            "Joe"
     last_name             "Blow" 
     email                 "jblow@test.com"
-    password              "setup123"
-    gender          	 "Male"
-    birth_date           Time.parse("1967-04-23")
+    password              "setup#123"
+    password_confirmation "setup#123"
+    gender          	  "Male"
+    birth_date            Time.parse("1967-04-23")
+  end
+
+  factory :admin do
+    email                 "jblow@test.com"
+    password              "setup#123"
   end
 
   factory :category do
     name 		"Foo bar"
+    category_type	"Gigs"
     status 		"active"
   end
 
@@ -30,7 +37,7 @@ FactoryGirl.define do
     status		"active"
     price		5.00
     category_id		1
-    org_id		1
+    site_id		1
     transaction_id	1
   end
 
@@ -39,7 +46,7 @@ FactoryGirl.define do
     status		"active"
   end
 
-  factory :organization do
+  factory :site do
     name 		"SFSU"
     status		"active"
   end
@@ -55,15 +62,15 @@ FactoryGirl.define do
     category
   end
 
-  factory :org_listing do
-    organization
+  factory :site_listing do
+    site
     listing
   end
 
   factory :picture do
     photo { File.new Rails.root.join("spec", "fixtures", "photo.jpg") }
     listing
-    organization
+    site
   end
 
   factory :transaction do
