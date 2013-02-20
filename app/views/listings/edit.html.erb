@@ -1,0 +1,9 @@
+<% provide(:title, 'Edit Pixi') %>
+<%= content_for :content do %>
+  <div class="center">
+    <p><h1>Edit Pixi</h1></p>
+  </div>
+
+  <%= render partial: 'shared/listing_form', locals: { action_type: 'Save' } %>
+<% end %>
+

@@ -13,6 +13,7 @@ Spork.prefork do
   require 'capybara/rspec'
   require 'capybara/rails'
   require 'database_cleaner'
+  require "paperclip/matchers"
 
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
@@ -22,6 +23,7 @@ Spork.prefork do
     config.include(EmailSpec::Helpers)
     config.include(EmailSpec::Matchers)
     config.mock_with :rspec
+    config.include Paperclip::Shoulda::Matchers
     config.fixture_path = "#{::Rails.root}/spec/fixtures"
   #  config.use_transactional_fixtures = false
   #  config.include Capybara::DSL
@@ -46,6 +48,7 @@ Spork.prefork do
 
     config.after(:each) do
       DatabaseCleaner.clean
+      Warden.test_reset!
     end
   end
 end

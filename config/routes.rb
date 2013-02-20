@@ -1,4 +1,5 @@
 Plumboard::Application.routes.draw do
+
   devise_for :users, :controllers => { registrations: "registrations", sessions: "sessions" } 
   
   devise_scope :user do
@@ -8,7 +9,14 @@ Plumboard::Application.routes.draw do
   end
 
   # resource defs
-  resources :listings, :users
+  resources :listings do
+    get 'activate', on: :member
+    collection do
+      get 'seller', 'follower'
+    end
+  end
+
+  resources :users
 
   # match routes
   get "/about", to: "pages#about" 
@@ -16,6 +24,7 @@ Plumboard::Application.routes.draw do
   get "/help", to: "pages#help" 
   get "/contact", to: "pages#contact" 
   get "/welcome", to: "pages#welcome" 
+  get '/system/:class/:attachment/:id/:style/:filename', :to => 'pictures#asset'
 
   # specify routes for devise user after sign-in
   namespace :user do

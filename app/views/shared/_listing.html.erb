@@ -1,8 +1,7 @@
-<div class="span4">
-  <div class="pic-size">
-    <%= render :partial => 'shared/show_photo', :locals => {:model => listing, :file_name => "headshot2.jpg", :psize => '200x200' } %>
+<div class="span2 pic-frame">
+  <div class="center">
+    <%= render :partial => 'shared/show_photo', :locals => {:model => listing, :file_name => "star.jpg", :psize => '120x120' } %>
+    <%= link_to listing.title, listing_path(listing, :user_id=>@user) %><br />
   </div>
-		
-  <%= link_to listing.title, listing_path(listing) %>
-  <%= listing.description %>
+  <%= listing.brief_descr %>
  </div>

@@ -14,6 +14,11 @@ FactoryGirl.define do
     password              "setup#123"
   end
 
+  factory :site do
+    name 		"SFSU"
+    status		"active"
+  end
+
   factory :category do
     name 		"Foo bar"
     category_type	"Gigs"
@@ -39,6 +44,8 @@ FactoryGirl.define do
     category_id		1
     site_id		1
     transaction_id	1
+    site
+    category
   end
 
   factory :interest do
@@ -46,20 +53,10 @@ FactoryGirl.define do
     status		"active"
   end
 
-  factory :site do
-    name 		"SFSU"
-    status		"active"
-  end
-
   factory :post do
     content 		"SFSU"
     user
     listing
-  end
-
-  factory :listing_category do
-    listing
-    category
   end
 
   factory :site_listing do

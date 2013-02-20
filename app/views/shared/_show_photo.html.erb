@@ -1,10 +1,12 @@
 <% if model %>
   <% for pic in model.pictures %>
-  	<% if pic.photo_file_name.blank? %>
-		<%= image_tag file_name, :alt => "none", :size => psize %> 
-	<% else %>   
-		<%= image_tag pic.photo.url, :size => psize %>
-	<% end %>
+    <div class='pic-frame'>
+      <% if pic.photo.url.blank? %>
+	<%= image_tag file_name, :alt => "none", :size => psize %> 
+      <% else %>   
+	<%= image_tag pic.photo.url, :size => psize %>
+      <% end %>
+    </div>	
   <% end %>
   <%= render :partial => 'shared/photo_item', :locals => {:file_name=>file_name, :model=>model, :psize=>psize} %>
 <% end %>

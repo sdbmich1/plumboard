@@ -1,0 +1,25 @@
+  <div class="row">
+    <div class="span6 offset3">
+      <%= form_for @listing, :html => { :multipart => true } do |f| %>
+
+    	<div><%= f.label :title %>
+    	<%= f.text_field :title, :autofocus => true %></div>
+
+    	<div><%= f.label :description %>
+    	<%= f.text_area :description %></div>
+
+    	<div><%= f.label :site_id, 'Site' %>
+	<%= f.collection_select :site_id, Site.active, :id, :name, {:prompt => 'Select'} %></div>
+
+    	<div><%= f.label :category_id, 'Category' %>
+	<%= f.collection_select :category_id, Category.active, :id, :name, {:prompt => 'Select'} %></div>
+
+	<%= render :partial => 'shared/photo', :locals => { :f => f } %>
+
+   	<%= f.hidden_field :start_date, value: Time.now %>
+    	<%= f.hidden_field :seller_id, value: @user.id %>
+
+    	<div><%= f.submit "#{action_type} Pixi", class: "btn btn-large btn-primary" %></div>
+      <% end %>
+    </div>
+  </div>

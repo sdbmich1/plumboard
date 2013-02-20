@@ -9,7 +9,7 @@ describe Category do
 
   describe "listing categories" do
     context "should have a listing category attribute" do
-      it { should respond_to(:listing_categories) }
+      it { should respond_to(:listings) }
     end
   end
 

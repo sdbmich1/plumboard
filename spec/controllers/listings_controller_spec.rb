@@ -1,6 +1,7 @@
-require 'spec_helper'
+require 'login_user_spec'
 
 describe ListingsController do
+  include LoginTestUser
 
   def mock_listing(stubs={})
     (@mock_listing ||= mock_model(Listing, stubs).as_null_object).tap do |listing|
@@ -15,6 +16,7 @@ describe ListingsController do
   end
 
   before(:each) do
+    log_in_test_user
     @listing = stub_model(Listing, :id=>1, site_id: 1, seller_id: 1, title: "Guitar for Sale", description: "Guitar for Sale")
   end
 
@@ -40,9 +42,49 @@ describe ListingsController do
     end
   end
 
+  describe 'GET seller/:user_id' do
+    before :each do
+      @listings = mock("listings")
+      @user = stub_model(User)
+      User.stub!(:find).and_return(@user)
+      @user.stub!(:listings).and_return( @listings )
+    end
+
+    def do_get
+      get :seller, :user_id => '1'
+    end
+
+    it "renders the :seller view" do
+      do_get
+      response.should render_template :seller
+    end
+
+    it "should assign @user" do
+      do_get 
+      assigns(:user).should_not be_nil
+    end
+
+    it "should assign @listings" do
+      do_get 
+      assigns(:listings).should_not be_nil
+    end
+
+    it "should show the requested listings" do
+      do_get
+      response.should be_success
+    end
+
+    it "should load the requested user" do
+      User.should_receive(:find).with('1').and_return(@user)
+      do_get
+    end
+  end
+
   describe 'GET show/:id' do
     before :each do
+      @photo = stub_model(Picture)
       Listing.stub!(:find).and_return( @listing )
+      @listing.stub!(:pictures).and_return( @photo )
     end
 
     def do_get
@@ -62,6 +104,11 @@ describe ListingsController do
     it "should assign @listing" do
       do_get
       assigns(:listing).should_not be_nil
+    end
+
+    it "should assign @photo" do
+      do_get
+      assigns(:listing).pictures.should_not be_nil
     end
 
     it "show action should render show template" do
@@ -87,6 +134,11 @@ describe ListingsController do
     it "should assign @listing" do
       do_get
       assigns(:listing).should_not be_nil
+    end
+
+    it "should assign @user" do
+      do_get
+      assigns(:user).should_not be_nil
     end
 
     it "should assign @picture" do
@@ -275,6 +327,27 @@ describe ListingsController do
         delete :destroy, :id => "1"
         response.should be_redirect
       end
+    end
+  end
+
+  describe 'GET activate/:id' do
+    before :each do
+      Listing.stub!(:activate).and_return( @listing )
+    end
+
+    context "with valid params" do
+      before (:each) do
+        @listing.stub(:save).and_return(true)
+      end
+    end
+
+    def do_get
+      get :activate, :id => '1'
+    end
+
+    it "should load the requested listings" do
+      Listing.should_receive(:activate).with('1').and_return(@listing)
+      do_get
     end
   end
 end

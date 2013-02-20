@@ -13,7 +13,7 @@ describe Listing do
   it { should respond_to(:site_listings) }
   it { should respond_to(:transaction) }
   it { should respond_to(:pictures) }
-  it { should respond_to(:listing_categories) }
+  it { should respond_to(:category) }
   it { should respond_to(:set_flds) }
 
   describe "when site_id is empty" do
@@ -61,6 +61,11 @@ describe Listing do
     it { @listing.title.should == "chair" }
   end
 
+  describe "when title is too large" do
+    before { @listing.title = "a" * 81 }
+    it { should_not be_valid }
+  end
+
   describe "when description is entered" do 
     before { @listing.description = "chair" }
     it { @listing.description.should == "chair" }
@@ -81,21 +86,21 @@ describe Listing do
     it { should_not be_valid }
   end
 
+  describe "should not include inactive listings" do
+    listing = FactoryGirl.create :listing, :description=>'stuff', :status=>'inactive'
+    it { Listing.active.should_not include (listing) }
+  end
+
   describe "should include active listings" do 
     it { Listing.active.should == [@listing] } 
   end
 
-  describe "should not include inactive listings" do
-    listing = Listing.create(:title=>'Item', :description=>'stuff', :status=>'inactive')
-    it { Listing.active.should_not include (listing) }
+  describe "should not include invalid site listings" do 
+    it { Listing.get_by_site(0).should_not include @listing } 
   end
 
   describe "should include active site listings" do 
-    it { Listing.get_by_site(1).should == [@listing] } 
-  end
-
-  describe "should not include invalid site listings" do 
-    it { Listing.get_by_site(0).should_not include @listing } 
+    it { Listing.get_by_site(@listing.site.id).should_not be_empty }
   end
 
   describe "should include seller listings" do 
@@ -106,21 +111,74 @@ describe Listing do
     it { Listing.get_by_seller(0).should_not include @listing } 
   end
 
+  describe "should return correct site name" do 
+    listing = FactoryGirl.create :listing
+    it { listing.site_name.should_not be_empty } 
+  end
+
+  describe "should not find correct site name" do 
+    listing = FactoryGirl.create :listing, site_id: 100
+    it { listing.site_name.should be_nil } 
+  end
+
+  describe "should find correct category name" do 
+    it { @listing.category_name.should == 'Foo Bar' } 
+  end
+
+  describe "should not find correct category name" do 
+    listing = FactoryGirl.create :listing, category_id: 100
+    it { listing.category_name.should be_nil } 
+  end
+
+  describe "should have a transaction" do 
+    it { @listing.has_transaction?.should be_true }
+  end
+
+  describe "should not have a transaction" do 
+    listing = FactoryGirl.create :listing, transaction_id: nil
+    it { listing.has_transaction?.should_not be_true }
+  end
+
+  describe "should verify user is seller" do 
+    listing = FactoryGirl.create :listing, seller_id: 1
+    it { listing.seller?(1).should be_true }
+  end
+
+  describe "should not verify user is seller" do 
+    listing = FactoryGirl.create :listing, seller_id: 1
+    it { listing.seller?(2).should_not be_true }
+  end
+
+  describe "should return a short description" do 
+    listing = FactoryGirl.create :listing, description: "a" * 100
+    it { listing.brief_descr.length.should == 30 }
+  end
+
   describe "set flds" do 
     it "should call set flds" do 
       listing = FactoryGirl.build :listing 
       listing.status = nil
       listing.save
-      listing.status.should == 'active'
+      listing.status.should == 'pending'
     end
     
     it "should not call set flds" do 
       listing = FactoryGirl.build :listing 
       listing.status = listing.title = nil
       listing.save
-      listing.status.should_not == 'active'
+      listing.status.should_not == 'pending'
     end
   end 
+
+  describe "should activate" do 
+    listing = FactoryGirl.build :listing, start_date: Time.now, status: 'pending' 
+    it { listing.activate.status.should == 'active' } 
+  end
+
+  describe "should not activate" do 
+    listing = FactoryGirl.build :listing, start_date: Time.now, status: 'sold' 
+    it { listing.activate.status.should_not == 'active' } 
+  end
 
   describe 'pictures' do
     before(:each) do

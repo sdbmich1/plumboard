@@ -1,4 +1,5 @@
 class ListingsController < ApplicationController
+  before_filter :authenticate_user!, except: [:index]
   respond_to :html, :json
 
   def new
@@ -13,6 +14,7 @@ class ListingsController < ApplicationController
 
   def show
     @listing = Listing.find params[:id]
+    @photo = @listing.pictures
   end
 
   def edit
@@ -22,7 +24,7 @@ class ListingsController < ApplicationController
 
   def update
     @listing = Listing.find params[:id]
-    flash[:notice] = 'Successfully updated listing.' if @listing.update_attributes(params[:listing])
+    flash[:notice] = 'Successfully updated pixi.' if @listing.update_attributes(params[:listing])
     respond_with(@listing)
   end
 
@@ -34,12 +36,16 @@ class ListingsController < ApplicationController
       flash[:error] = @listing.errors
       render :action => 'new'
     end
-    #respond_with @listing
   end
 
   def destroy
     @listing = Listing.find params[:id]
-    @listing.destroy 
+    flash[:notice] = 'Successfully removed pixi.' if @listing.destroy 
     respond_with @listing
+  end
+
+  def seller
+    @user = User.find params[:user_id]
+    @listings = @user.listings
   end
 end

@@ -1,7 +1,7 @@
 class Category < ActiveRecord::Base
   attr_accessible :category_type, :name, :status
 
-  has_many :listing_categories
+  has_many :listings
 
   default_scope :order => "name ASC"
 
