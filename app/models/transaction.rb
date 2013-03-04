@@ -28,6 +28,8 @@ class Transaction < ActiveRecord::Base
                     :length   => { :maximum => 12 }
 
   validates :country, :presence => true
-  validates :amt, :presence => true  
+  validates :home_phone, :presence => true
+  validates :amt, :presence => true,
+  		  :numericality => true
 
 end

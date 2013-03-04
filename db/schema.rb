@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130218024638) do
+ActiveRecord::Schema.define(:version => 20130301223210) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -161,6 +161,25 @@ ActiveRecord::Schema.define(:version => 20130218024638) do
   end
 
   add_index "sites", ["institution_id"], :name => "index_organizations_on_institution_id"
+
+  create_table "temp_listings", :force => true do |t|
+    t.string   "title"
+    t.text     "description"
+    t.string   "status"
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.string   "alias_name"
+    t.integer  "category_id"
+    t.integer  "site_id"
+    t.integer  "seller_id"
+    t.integer  "transaction_id"
+    t.integer  "buyer_id"
+    t.float    "price"
+    t.string   "show_alias_flg"
+    t.string   "show_phone_flg"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+  end
 
   create_table "transaction_details", :force => true do |t|
     t.integer  "transaction_id"

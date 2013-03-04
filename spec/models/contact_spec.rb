@@ -5,6 +5,17 @@ describe Contact do
     @contact = FactoryGirl.build(:contact) 
   end
 
+  it { should respond_to(:address) }
+  it { should respond_to(:address2) }
+  it { should respond_to(:city) }
+  it { should respond_to(:state) }
+  it { should respond_to(:zip) }
+  it { should respond_to(:work_phone) }
+  it { should respond_to(:home_phone) }
+  it { should respond_to(:mobile_phone) }
+  it { should respond_to(:website) }
+  it { should respond_to(:address) }
+
   describe "when address is empty" do
     before { @contact.address = "" }
     it { should_not be_valid }

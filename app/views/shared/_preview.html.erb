@@ -1,0 +1,24 @@
+  <div class="row">
+    <div class="span6 offset3">
+    got here
+    <%= render :partial => 'shared/show_listing', locals: {:listing=>listing} %>
+
+  <%= form_for(@listing, :url=>new_listing_url(:user_id=>@listing.seller_id)) do |f| %>
+    <%= render partial: 'shared/error_messages', locals: { target: @listing } %>
+    <%= f.hidden_field :title, :value => @listing.title %>
+    <%= f.hidden_field :description, :value => @listing.description %>
+    <%= f.hidden_field :site_id, :value => @listing.site_id %>
+    <%= f.hidden_field :category_id, :value => @listing.category_id %>
+    <%= f.hidden_field :status, :value => @listing.status %>
+    <%= f.hidden_field :start_date, :value => @listing.start_date %>
+    <%= f.hidden_field :price, :value => @listing.price %>
+    <%= f.hidden_field :seller_id, :value => @listing.seller_id %>
+    <%= f.hidden_field :pictures, :value => @listing.pictures, id: 'pic-files' %>
+    <div>
+      <%= f.submit 'Change', :onclick => "this.form.action='new'", class: 'btn btn-large btn-primary stnd-btn' %>
+      <%= f.submit 'Create', class: 'btn btn-large btn-primary submit-btn' %>
+    </div>
+  <% end %>
+  </div>
+</div>
+

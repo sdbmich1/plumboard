@@ -44,8 +44,13 @@ FactoryGirl.define do
     category_id		1
     site_id		1
     transaction_id	1
+    show_alias_flg	"no"
+    show_phone_flg	"no"
     site
     category
+    before(:create) do |listing|
+      listing.pictures.build FactoryGirl.attributes_for(:picture)
+    end
   end
 
   factory :interest do
@@ -66,8 +71,6 @@ FactoryGirl.define do
 
   factory :picture do
     photo { File.new Rails.root.join("spec", "fixtures", "photo.jpg") }
-    listing
-    site
   end
 
   factory :transaction do

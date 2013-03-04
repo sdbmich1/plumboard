@@ -10,13 +10,13 @@ Plumboard::Application.routes.draw do
 
   # resource defs
   resources :listings do
-    get 'activate', on: :member
     collection do
       get 'seller', 'follower'
     end
   end
 
   resources :users
+  resources :temp_listings
 
   # match routes
   get "/about", to: "pages#about" 
@@ -25,6 +25,8 @@ Plumboard::Application.routes.draw do
   get "/contact", to: "pages#contact" 
   get "/welcome", to: "pages#welcome" 
   get '/system/:class/:attachment/:id/:style/:filename', :to => 'pictures#asset'
+  post "/listings/preview", to: "listings#preview", :via => :post, :as => :preview 
+  post "/listings/new", to: "listings#new", :via => :post, :as => :new_post_listing 
 
   # specify routes for devise user after sign-in
   namespace :user do

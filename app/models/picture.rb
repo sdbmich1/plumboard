@@ -1,10 +1,15 @@
 class Picture < ActiveRecord::Base
-  attr_accessible :photo_file_name, :photo_content_type, :photo_file_size, :photo_updated_at, :photo
+  attr_accessor :delete_photo
+  attr_accessible :photo_file_name, :photo_content_type, :photo_file_size, :photo_updated_at, :photo, :delete_photo
+  
   has_attached_file :photo,
 	  url: "/system/:class/:attachment/:id/:style/:filename",
-	  path: ":rails_root/public/system/:class/:attachment/:id_partition/:style/:filename"
+	  path: ":rails_root/public/system/:class/:attachment/:id_partition/:style/:filename",    
+	  default_url: lambda { |photo| photo.instance.set_default_url}
 
   belongs_to :imageable, :polymorphic => true
+
+  before_validation { photo.clear if delete_photo == '1' }
 
   validates_attachment :photo, :presence => true,
     :content_type => { :content_type => ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp'] },

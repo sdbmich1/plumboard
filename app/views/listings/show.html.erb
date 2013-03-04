@@ -1,20 +1,10 @@
 <% provide(:title, @listing.title) %>
 <%= content_for :content do %>
-  <div class="span2">
-    <%= render :partial => 'shared/show_photo', :locals => {:model => @listing, :psize => '150x150', :file_name=>'star.jpg' }%>
-  </div>
+  <%= render :partial => 'shared/show_listing', locals: {:listing=>@listing} %>
   <div class="span18">
-    <h4><%= @listing.title %></h4>
-    Posted: <%= @listing.start_date %><br />
-    Category: <%= @listing.category_name %><br />
-    Site: <%= @listing.site_name %><br />
-    Status: <%= @listing.status %><br />
     <% if @listing.seller? @user.id %>
-      <div>
-        <%= link_to 'Edit', edit_listing_path(@listing) %>
-        <%= link_to 'Delete', listing_path(@listing), method: :delete, confirm: 'Are you sure?' %>
-      </div>
+      <%= link_to 'Edit', edit_listing_path(@listing), class: 'btn btn-large btn-primary submit-btn' %>
+      <%= link_to 'Remove', listing_path(@listing), method: :delete, confirm: 'Are you sure?', class: 'btn btn-large btn-primary stnd-btn' %>
     <% end %>  
-    Description: <%= @listing.description %><br />
   </div>
 <% end %>

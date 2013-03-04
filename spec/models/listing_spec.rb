@@ -7,6 +7,21 @@ describe Listing do
 
   subject { @listing }
 
+  it { should respond_to(:title) }
+  it { should respond_to(:description) }
+  it { should respond_to(:site_id) }
+  it { should respond_to(:seller_id) }
+  it { should respond_to(:alias_name) }
+  it { should respond_to(:transaction_id) }
+  it { should respond_to(:show_alias_flg) }
+  it { should respond_to(:status) }
+  it { should respond_to(:price) }
+  it { should respond_to(:start_date) }
+  it { should respond_to(:end_date) }
+  it { should respond_to(:buyer_id) }
+  it { should respond_to(:show_phone_flg) }
+  it { should respond_to(:category_id) }
+
   it { should respond_to(:user) }
   it { should respond_to(:site) }
   it { should respond_to(:posts) }
@@ -26,6 +41,16 @@ describe Listing do
     it { @listing.site_id.should == 1 }
   end
 
+  describe "when price is not a number" do
+    before { @listing.price = "$500" }
+    it { should_not be_valid }
+  end
+  
+  describe "when price is a number" do
+    before { @listing.price = 50.00 }
+    it { should be_valid }
+  end
+  
   describe "when seller_id is empty" do
     before { @listing.seller_id = "" }
     it { should_not be_valid }
@@ -112,8 +137,7 @@ describe Listing do
   end
 
   describe "should return correct site name" do 
-    listing = FactoryGirl.create :listing
-    it { listing.site_name.should_not be_empty } 
+    it { @listing.site_name.should_not be_empty } 
   end
 
   describe "should not find correct site name" do 
@@ -130,6 +154,18 @@ describe Listing do
     it { listing.category_name.should be_nil } 
   end
 
+  describe "should find correct seller name" do 
+    let(:user) { FactoryGirl.create(:user) }
+    let(:listing) { FactoryGirl.create(:listing, seller_id: user.id) }
+
+    it { listing.seller_name.should == "Joe Blow" } 
+  end
+
+  describe "should not find correct seller name" do 
+    listing = FactoryGirl.create :listing, seller_id: 100
+    it { listing.seller_name.should be_nil } 
+  end
+
   describe "should have a transaction" do 
     it { @listing.has_transaction?.should be_true }
   end
@@ -137,6 +173,16 @@ describe Listing do
   describe "should not have a transaction" do 
     listing = FactoryGirl.create :listing, transaction_id: nil
     it { listing.has_transaction?.should_not be_true }
+  end
+
+  describe "should verify if seller name is an alias" do 
+    listing = FactoryGirl.create :listing, show_alias_flg: 'yes'
+    it { listing.alias?.should be_true }
+  end
+
+  describe "should not have an alias" do 
+    listing = FactoryGirl.create :listing, show_alias_flg: 'no'
+    it { listing.alias?.should_not be_true }
   end
 
   describe "should verify user is seller" do 
@@ -154,29 +200,43 @@ describe Listing do
     it { listing.brief_descr.length.should == 30 }
   end
 
+  describe "should not return a short description of 30 chars" do 
+    listing = FactoryGirl.create :listing, description: "a"
+    it { listing.brief_descr.length.should_not == 30 }
+  end
+
   describe "set flds" do 
+    let(:listing) { FactoryGirl.create :listing, status: "" }
+
     it "should call set flds" do 
-      listing = FactoryGirl.build :listing 
-      listing.status = nil
-      listing.save
-      listing.status.should == 'pending'
+      listing.status.should == "pending"
     end
+  end
+
+  describe "invalid set flds" do 
+    let(:listing) { FactoryGirl.build :listing, title: nil, status: "" }
     
     it "should not call set flds" do 
-      listing = FactoryGirl.build :listing 
-      listing.status = listing.title = nil
       listing.save
       listing.status.should_not == 'pending'
     end
   end 
 
+  describe "must have pictures" do 
+    let(:listing) { Listing.new title: 'listing', description: 'test', site_id: 1, seller_id: 1, category_id: 1, start_date: Time.now }
+    it "should not save w/o at least one picture" do 
+      listing.save
+      listing.should_not be_valid 
+    end
+  end 
+    
   describe "should activate" do 
-    listing = FactoryGirl.build :listing, start_date: Time.now, status: 'pending' 
+    let(:listing) { FactoryGirl.build :listing, start_date: Time.now, status: 'pending' }
     it { listing.activate.status.should == 'active' } 
   end
 
   describe "should not activate" do 
-    listing = FactoryGirl.build :listing, start_date: Time.now, status: 'sold' 
+    let(:listing) { FactoryGirl.build :listing, start_date: Time.now, status: 'sold' }
     it { listing.activate.status.should_not == 'active' } 
   end
 

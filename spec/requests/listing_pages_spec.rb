@@ -9,50 +9,25 @@ describe "Listings", :type => :feature do
     user.confirm!
   end
 
-  describe "Manage pixis" do
-    let(:submit) { "Create Pixi" }
-    let(:listing) { FactoryGirl.build :listing }
-
-    before do 
-      FactoryGirl.create :site
-      FactoryGirl.create :category
-      visit new_listing_path(user_id: user.id) 
-    end
-
-    describe "Create with invalid information" do
-      it "should not create a listing" do
-        expect { click_button submit }.not_to change(Listing, :count)
-      end
-    end
-
-    describe "Create with valid information" do
-      it "Adds a new listing and displays the results" do
-        expect{
-	        fill_in 'Title', with: "Guitar for Sale"
-	        fill_in 'Description', with: "Guitar for Sale"
-		select("SFSU", :from => "Site")
-		select('Foo bar', :from => 'Category')
-		attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
-	        click_button submit
-	      }.to change(Listing,:count).by(1)
-      
-        within 'h4' do
-          page.should have_content "Guitar for Sale" 
-        end
-
-        page.should have_content "Description: Guitar for Sale" 
-      end	      
-    end	      
-  end
-
   describe "Edit Pixi" do 
-    it "Changes a pixi" do
+    let(:submit) { "Preview" }
+    before do 
       listing = FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id )
+      visit edit_listing_path(listing)
+    end
+
+    it "should not change a listing" do
+      expect { 
+	      fill_in 'Title', with: nil
+	      click_button submit 
+	}.not_to change(Listing, :count)
+    end
+
+    it "Changes a pixi" do
       expect{
-      	      visit edit_listing_path(listing)
 	      fill_in 'Title', with: "Guitar for Sale"
 	      fill_in 'Description', with: "Acoustic bass"
-              click_button 'Save Pixi'
+              click_button submit
       }.to change(Listing,:count).by(0)
 
         within 'h4' do
@@ -68,10 +43,10 @@ describe "Listings", :type => :feature do
       listing = FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id )
       visit listing_path(listing)
       expect{
-              click_on 'Delete'
+              click_on 'Remove'
       }.to change(Listing,:count).by(-1)
 
-      page.should have_content "Listings" 
+      page.should have_content "Pixis" 
       page.should_not have_content "Guitar Lessons" 
     end
   end
@@ -99,4 +74,5 @@ describe "Listings", :type => :feature do
       page.should have_content("paint fence")
     end
   end
+
 end

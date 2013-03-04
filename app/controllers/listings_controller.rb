@@ -1,9 +1,8 @@
 class ListingsController < ApplicationController
-  before_filter :authenticate_user!, except: [:index]
-  respond_to :html, :json
+  before_filter :authenticate_user!
+  respond_to :html, :json, :js
 
   def new
-    @user = User.find params[:user_id]
     @listing = Listing.new
     @photo = @listing.pictures.build
   end
@@ -31,10 +30,10 @@ class ListingsController < ApplicationController
   def create
     @listing = Listing.new params[:listing]
     if @listing.save 
-      redirect_to @listing, :notice  => "Pixi created successfully."
+        redirect_to @listing, :notice  => "Pixi created successfully."
     else
-      flash[:error] = @listing.errors
-      render :action => 'new'
+        flash[:error] = @listing.errors
+        render :action => 'new'
     end
   end
 
@@ -47,5 +46,6 @@ class ListingsController < ApplicationController
   def seller
     @user = User.find params[:user_id]
     @listings = @user.listings
+    @temp_listings = @user.temp_listings
   end
 end

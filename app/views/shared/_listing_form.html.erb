@@ -1,8 +1,14 @@
+<% provide(:title, "#{action_name} Pixi") %>
+  <div class="center">
+    <p><h1><%= "#{action_name} Pixi" %></h1></p>
+  </div>
+
   <div class="row">
     <div class="span6 offset3">
-      <%= form_for @listing, :html => { :multipart => true } do |f| %>
-
-    	<div><%= f.label :title %>
+      <%= form_for(@listing, :html => { :multipart => true }) do |f| %>
+        <%= render partial: 'shared/error_messages', :locals => { :target => @listing } %>
+    	
+	<div><%= f.label :title %>
     	<%= f.text_field :title, :autofocus => true %></div>
 
     	<div><%= f.label :description %>
@@ -14,12 +20,19 @@
     	<div><%= f.label :category_id, 'Category' %>
 	<%= f.collection_select :category_id, Category.active, :id, :name, {:prompt => 'Select'} %></div>
 
+    	<div><%= f.label :price %>
+    	<%= f.text_field :price, class: 'price-fld' %></div>
+
 	<%= render :partial => 'shared/photo', :locals => { :f => f } %>
 
    	<%= f.hidden_field :start_date, value: Time.now %>
     	<%= f.hidden_field :seller_id, value: @user.id %>
+    	<%= f.hidden_field :status, value: 'pending' %>
 
-    	<div><%= f.submit "#{action_type} Pixi", class: "btn btn-large btn-primary" %></div>
+        <%= f.submit "Preview", class: "btn btn-large btn-primary submit-btn" %>
       <% end %>
+      <div>
+        <output id='list'></output>
+      </div>
     </div>
   </div>

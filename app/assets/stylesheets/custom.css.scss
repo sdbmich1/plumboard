@@ -58,7 +58,6 @@ p {
   margin-right: 10px;
   font-size: 1.7em;
   color: #fff;
-  text-transform: uppercase;
   letter-spacing: -1px;
   padding-top: 9px;
   font-weight: bold;
@@ -154,4 +153,37 @@ input, select, .uneditable-input {
 .success {background:#e6efc2;color:#264409;border-color:#c6d880;}
 .error, .alert, .notice, .success {border: 2px solid;}
 
+/* primary listing(pixi) image */
 .pic-frame { border: 1px solid #AAAAAA;  box-shadow: 1px 1px 1px 1px #ccc; padding: 4px; }
+
+/* submit button */
+.submit-btn { color: white!important; font-weight: bold; background:orange!important; border:orange!important}
+.stnd-btn { color: black!important; background:#CCCCCC!important; border:1px gray!important}
+
+/* listing image thumbnails */
+.thumb {
+  height: 75px;
+  border: 1px solid #000;
+  margin: 10px 5px 10px 0;
+}
+
+#spinner {
+  margin-top: 300px;
+  margin-left: 400px;
+  position:fixed;
+  height: 10%;
+  z-index:9999;
+  width:10%;
+  clear:none;
+  opacity: .4;
+  background:#000000 url("../images/ajax-loader.gif") no-repeat center center;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+  font-weight:bold; 
+}
+
+/*IE 'adjustment'*/
+* html #spinner {
+  position: absolute;
+  height: expression(document.body.scrollHeight &gt; document.body.offsetHeight ? document.body.scrollHeight : document.body.offsetHeight + 'px');
+}

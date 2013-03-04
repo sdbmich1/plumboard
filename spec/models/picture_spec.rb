@@ -11,6 +11,14 @@ describe Picture do
 
   subject { @picture } 
 
+  it { should respond_to(:photo) }
+  it { should respond_to(:photo_file_name) }
+  it { should respond_to(:photo_content_type) }
+  it { should respond_to(:photo_file_size) }
+  it { should respond_to(:photo_updated_at) }
+  it { should respond_to(:delete_photo) }
+  it { should respond_to(:set_default_url) }
+
   it { should respond_to(:imageable) }
   it { should have_attached_file(:photo) }
   it { should validate_attachment_presence(:photo) }
@@ -18,6 +26,23 @@ describe Picture do
                       allowing('image/png', 'image/gif', 'image/jpg', 'image/jpeg', 'image/bmp').
                       rejecting('text/plain', 'text/xml') }
   it { should validate_attachment_size(:photo).less_than(1.megabytes) }
+
+  describe "delete photo" do
+    let(:listing) { FactoryGirl.build :listing }
+    let(:picture) { listing.pictures.build FactoryGirl.attributes_for(:picture) }
+
+    it "should remove photo when validated" do
+      picture.delete_photo = '1'
+      picture.valid?
+      picture.photo.should_not == "/spec/fixtures/photo.jpg"	
+    end
+
+    it "should not remove photo when validated" do
+      picture.delete_photo = '0'
+      picture.valid?
+      picture.photo.should_not be_nil
+    end
+  end
 
   describe "listing photo validations" do
     it "should be valid" do

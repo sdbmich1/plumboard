@@ -13,12 +13,17 @@ describe User do
     it { should respond_to(:email) }
     it { should respond_to(:password) }
     it { should respond_to(:password_confirmation) }
+    it { should respond_to(:birth_date) }
+    it { should respond_to(:remember_me) }
+    it { should respond_to(:gender) }
     it { should respond_to(:interests) }
     it { should respond_to(:contacts) }
     it { should respond_to(:user_interests) }
     it { should respond_to(:transactions) }
     it { should respond_to(:site_users) }
     it { should respond_to(:sites) } 
+    it { should respond_to(:listings) } 
+    it { should respond_to(:temp_listings) } 
   end
 
   describe "when first_name is empty" do
@@ -79,6 +84,16 @@ describe User do
   describe "when password confirmation is nil" do
     before { @user.password_confirmation = nil }
     it { should_not be_valid } 
+  end
+
+  it "returns a user's full name as a string" do
+    user = FactoryGirl.build(:user, first_name: "John", last_name: "Doe", email: "jdoe@test.com")
+    user.name.should == "John Doe"
+  end
+
+  it "does not return a user's invalid full name as a string" do
+    user = FactoryGirl.build(:user, first_name: "John", last_name: "Wilson", email: "jwilson@test.com")
+    user.name.should_not == "John Smith"
   end
 
   describe 'contacts' do

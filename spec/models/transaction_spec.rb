@@ -6,13 +6,29 @@ describe Transaction do
     @transaction = FactoryGirl.build(:transaction, :user_id=>@user.id)
   end
 
-  it "should have a user method" do
-    @transaction.should respond_to(:user)
-  end
+  subject { @transaction }
 
-  it "should have a listings method" do
-    @transaction.should respond_to(:listings)
-  end
+  it { should respond_to(:first_name) }
+  it { should respond_to(:last_name) }
+  it { should respond_to(:address) }
+  it { should respond_to(:address2) }
+  it { should respond_to(:email) }
+  it { should respond_to(:home_phone) }
+  it { should respond_to(:work_phone) }
+  it { should respond_to(:city) }
+  it { should respond_to(:state) }
+  it { should respond_to(:zip) }
+  it { should respond_to(:payment_type) }
+  it { should respond_to(:country) }
+  it { should respond_to(:credit_card_no) }
+  it { should respond_to(:description) }
+  it { should respond_to(:amt) }
+  it { should respond_to(:code) }
+  it { should respond_to(:promo_code) }
+  it { should respond_to(:user_id) }
+
+  it { should respond_to(:user) }
+  it { should respond_to(:listings) }
 
   describe "when address is empty" do
     before { @transaction.address = "" }
@@ -63,4 +79,15 @@ describe Transaction do
     before { @transaction.amt = "" }
     it { should_not be_valid }
   end
+
+  describe "when amt is not a number" do
+    before { @transaction.amt = "$500" }
+    it { should_not be_valid }
+  end
+  
+  describe "when amt is a number" do
+    before { @transaction.amt = 50.00 }
+    it { should be_valid }
+  end
+  
 end

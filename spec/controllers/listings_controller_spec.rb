@@ -9,6 +9,12 @@ describe ListingsController do
     end
   end
 
+  def mock_temp_listing(stubs={})
+    (@mock_temp_listing ||= mock_model(TempListing, stubs).as_null_object).tap do |temp_listing|
+      temp_listing.stub(stubs) unless stubs.empty?
+    end
+  end
+
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
       user.stub(stubs) unless stubs.empty?
@@ -45,9 +51,11 @@ describe ListingsController do
   describe 'GET seller/:user_id' do
     before :each do
       @listings = mock("listings")
+      @temp_listings = mock("temp_listings")
       @user = stub_model(User)
       User.stub!(:find).and_return(@user)
       @user.stub!(:listings).and_return( @listings )
+      @user.stub!(:temp_listings).and_return( @temp_listings )
     end
 
     def do_get
@@ -67,6 +75,11 @@ describe ListingsController do
     it "should assign @listings" do
       do_get 
       assigns(:listings).should_not be_nil
+    end
+
+    it "should assign @temp_listings" do
+      do_get 
+      assigns(:temp_listings).should_not be_nil
     end
 
     it "should show the requested listings" do
@@ -330,24 +343,4 @@ describe ListingsController do
     end
   end
 
-  describe 'GET activate/:id' do
-    before :each do
-      Listing.stub!(:activate).and_return( @listing )
-    end
-
-    context "with valid params" do
-      before (:each) do
-        @listing.stub(:save).and_return(true)
-      end
-    end
-
-    def do_get
-      get :activate, :id => '1'
-    end
-
-    it "should load the requested listings" do
-      Listing.should_receive(:activate).with('1').and_return(@listing)
-      do_get
-    end
-  end
 end

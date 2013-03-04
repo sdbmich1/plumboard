@@ -7,17 +7,17 @@ describe Site do
    
   subject { @site } 
 
-  context "should have an user method" do
-    it { should respond_to(:users) }
-  end
+  it { should respond_to(:name) }
+  it { should respond_to(:email) }
+  it { should respond_to(:org_type) }
+  it { should respond_to(:status) }
+  it { should respond_to(:institution_id) }
 
-  context "should have an site_users method" do
-    it { should respond_to(:site_users) }
-  end
-
-  context "should have an site_listings method" do
-    it { should respond_to(:site_listings) }
-  end
+  it { should respond_to(:users) }
+  it { should respond_to(:site_users) }
+  it { should respond_to(:site_listings) }
+  it { should respond_to(:listings) }
+  it { should respond_to(:temp_listings) }
 
   describe "should include active sites" do
     it { Site.active.should_not be_nil }

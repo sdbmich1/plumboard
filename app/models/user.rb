@@ -11,6 +11,7 @@ class User < ActiveRecord::Base
   # define relationships
   has_many :contacts, :as => :contactable, :dependent => :destroy
   has_many :listings, foreign_key: :seller_id
+  has_many :temp_listings, foreign_key: :seller_id
 
   has_many :site_users, :dependent => :destroy
   has_many :sites, :through => :site_users
@@ -38,4 +39,7 @@ class User < ActiveRecord::Base
   validates :password, presence: true
   validates :password_confirmation, presence: true
 
+  def name
+    [first_name, last_name].join " "
+  end
 end

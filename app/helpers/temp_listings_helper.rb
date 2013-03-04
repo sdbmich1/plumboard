@@ -1,0 +1,2 @@
+module TempListingsHelper
+end

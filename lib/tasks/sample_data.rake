@@ -5,7 +5,7 @@ namespace :db do
     password_confirmation: 'test#123')
     Site.create(name: 'College', status: 'active')
     Category.create(name: 'Sale', category_type: 'Sale', status: 'active')
-    listing = Listing.create(title: 'Test Listing', description: 'Test', site_id: 1, seller_id: 1, category_id: 1, start_date: Time.now)
+    listing = Listing.new(title: 'Test Listing', description: 'Test', site_id: 1, seller_id: 1, category_id: 1, start_date: Time.now)
     picture = listing.pictures.build
     picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
     listing.save!

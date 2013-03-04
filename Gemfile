@@ -1,6 +1,6 @@
-source 'https://rubygems.org'
+source 'http://rubygems.org'
 
-gem 'rails', '3.2.11'
+gem 'rails', '3.2.12'
 gem 'rake' 
  
 # use devise for user authenication
@@ -11,6 +11,9 @@ gem "mysql2", "~> 0.3.11"
 
 # add paperclip for photos
 gem 'paperclip'
+
+# add for ajax uploads
+gem 'remotipart', '~> 1.0'
 
 # add thinking sphinx
 gem 'thinking-sphinx', '2.0.10'
@@ -27,7 +30,7 @@ group :assets do
   gem 'uglifier', '1.2.3'
 end
 
-gem 'jquery-rails', '2.0.2'
+gem 'jquery-rails', '~> 2.1'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
@@ -70,9 +73,9 @@ gem 'validates_timeliness', '~> 3.0'
 gem 'bootstrap-sass', '2.1'
 
 group :development, :test do
-  # gem 'wdm', '~> 0.0.3'
-  gem 'wdm', :platforms => [:mswin, :mingw], :require => false
-  gem 'rspec-rails', '2.11.0'
+  gem 'wdm', '~> 0.1.0'
+  # gem 'wdm', :platforms => [:mswin, :mingw], :require => false
+  gem 'rspec-rails', '2.12.0'
   gem 'guard-rspec', '1.2.1'
   gem 'guard-spork', '1.4.2'
   gem 'spork', '0.9.2'
