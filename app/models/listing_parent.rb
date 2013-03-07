@@ -3,9 +3,12 @@ class ListingParent < ActiveRecord::Base
 
   before_create :set_flds
 
-  LENGTH = 12
+  # load pixi config keys
+  ALIAS_LENGTH = PIXI_KEYS['pixi']['alias_length']
+  KEY_LENGTH = PIXI_KEYS['pixi']['key_length']
+
   attr_accessible :buyer_id, :category_id, :description, :title, :seller_id, :status, :price, :show_alias_flg, :show_phone_flg, :alias_name,
-  	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes
+  	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id
 
   belongs_to :user, :foreign_key => :seller_id
   belongs_to :site
@@ -33,6 +36,11 @@ class ListingParent < ActiveRecord::Base
     where(:status=>'active')
   end
 
+  # find listings by status
+  def self.get_by_status val
+    where(:status => val)
+  end
+
   # find listings by site id
   def self.get_by_site val
     where(:site_id => val)
@@ -43,10 +51,11 @@ class ListingParent < ActiveRecord::Base
     where(:seller_id => val)
   end
 
-  # set status fields upon listing creation
+  # set fields upon creation
   def set_flds
-    self.status = 'pending' if self.status.blank?
-    self.alias_name = rand(36**LENGTH).to_s(36) if alias?
+    generate_token
+    self.status = 'new' if self.status.blank?
+    self.alias_name = rand(36**ALIAS_LENGTH).to_s(36) if alias?
     set_end_date
   end
 
@@ -94,13 +103,13 @@ class ListingParent < ActiveRecord::Base
     alias? ? alias_name : user.name rescue nil
   end
 
-  # set end date to x days after start to denote when listing is no longer displayed on network
-  def set_end_date
-    self.end_date = self.start_date + 7.days
-  end
-
   # short description
   def brief_descr
     description[0..29] rescue nil
+  end
+
+  # set end date to x days after start to denote when listing is no longer displayed on network
+  def set_end_date
+    self.end_date = self.start_date + 7.days
   end
 end

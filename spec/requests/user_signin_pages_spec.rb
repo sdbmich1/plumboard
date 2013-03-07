@@ -28,7 +28,6 @@ describe "UserSignins", :type => :feature do
       user.confirm!
     end
 
-    it { should have_link('Sign out', href: destroy_user_session_path) }
     it { should_not have_link('Sign in', href: new_user_session_path) }
   end
 end

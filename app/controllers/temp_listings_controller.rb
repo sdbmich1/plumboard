@@ -39,4 +39,9 @@ class TempListingsController < ApplicationController
     respond_with @listing
   end
 
+  def submit_order
+    @listing = TempListing.submit_order params[:id]
+    @listing.save
+    respond_with @listing
+  end
 end

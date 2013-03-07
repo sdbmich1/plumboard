@@ -21,6 +21,8 @@ describe Listing do
   it { should respond_to(:buyer_id) }
   it { should respond_to(:show_phone_flg) }
   it { should respond_to(:category_id) }
+  it { should respond_to(:pixi_id) }
+  it { should respond_to(:parent_pixi_id) }
 
   it { should respond_to(:user) }
   it { should respond_to(:site) }
@@ -30,6 +32,7 @@ describe Listing do
   it { should respond_to(:pictures) }
   it { should respond_to(:category) }
   it { should respond_to(:set_flds) }
+  it { should respond_to(:generate_token) }
 
   describe "when site_id is empty" do
     before { @listing.site_id = "" }
@@ -118,6 +121,15 @@ describe Listing do
 
   describe "should include active listings" do 
     it { Listing.active.should == [@listing] } 
+  end
+
+  describe "get_by_status should not include inactive listings" do
+    listing = FactoryGirl.create :listing, :description=>'stuff', :status=>'inactive'
+    it { Listing.get_by_status('active').should_not include (listing) }
+  end
+
+  describe "get_by_status should include active listings" do 
+    it { Listing.get_by_status('active').should == [@listing] } 
   end
 
   describe "should not include invalid site listings" do 
@@ -209,7 +221,7 @@ describe Listing do
     let(:listing) { FactoryGirl.create :listing, status: "" }
 
     it "should call set flds" do 
-      listing.status.should == "pending"
+      listing.status.should == "new"
     end
   end
 
@@ -218,12 +230,12 @@ describe Listing do
     
     it "should not call set flds" do 
       listing.save
-      listing.status.should_not == 'pending'
+      listing.status.should_not == 'new'
     end
   end 
 
   describe "must have pictures" do 
-    let(:listing) { Listing.new title: 'listing', description: 'test', site_id: 1, seller_id: 1, category_id: 1, start_date: Time.now }
+    let(:listing) { FactoryGirl.build :invalid_listing }
     it "should not save w/o at least one picture" do 
       listing.save
       listing.should_not be_valid 

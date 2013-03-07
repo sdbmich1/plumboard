@@ -31,5 +31,9 @@ describe TempListingsController do
       delete("/temp_listings/1").should route_to("temp_listings#destroy", :id => "1")
     end
 
+    it "routes to #submit_order" do
+      put("/temp_listings/submit_order/1").should route_to("temp_listings#submit_order", :id => "1")
+    end
+
   end
 end

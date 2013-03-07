@@ -2,11 +2,17 @@ FactoryGirl.define do
   factory :user do
     first_name            "Joe"
     last_name             "Blow" 
-    email                 "jblow@test.com"
+    sequence(:email) {|n| "person#{n}@example.com" }
     password              "setup#123"
     password_confirmation "setup#123"
     gender          	  "Male"
     birth_date            Time.parse("1967-04-23")
+  end
+
+  factory :pixi_user, :class => "User", :parent => :user do
+    before(:create) do |user|
+      user.pictures.build FactoryGirl.attributes_for(:picture)
+    end
   end
 
   factory :admin do
@@ -32,7 +38,7 @@ FactoryGirl.define do
     zip             "90201"
   end
 
-  factory :listing do
+  factory :listing_parent do
     title		"Acoustic guitar - $100 Barely Used"
     description		"check it out"
     alias_name		"jkjfj34kjkj"
@@ -46,11 +52,28 @@ FactoryGirl.define do
     transaction_id	1
     show_alias_flg	"no"
     show_phone_flg	"no"
+    pixi_id		{ rand(36**8).to_s(36) }
+    parent_pixi_id	"1"
     site
     category
+  end
+
+  factory :listing, :class => "Listing", :parent => :listing_parent do
     before(:create) do |listing|
       listing.pictures.build FactoryGirl.attributes_for(:picture)
     end
+  end
+
+  factory :invalid_listing, :class => "Listing", :parent => :listing_parent do
+  end
+
+  factory :temp_listing, :class => "TempListing", :parent => :listing_parent do
+    before(:create) do |listing|
+      listing.pictures.build FactoryGirl.attributes_for(:picture)
+    end
+  end
+
+  factory :invalid_temp_listing, :class => "Listing", :parent => :listing_parent do
   end
 
   factory :interest do

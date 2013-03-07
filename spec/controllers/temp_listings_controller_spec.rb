@@ -265,6 +265,10 @@ describe TempListingsController do
       TempListing.stub!(:find).and_return(@listing)
     end
 
+    def do_delete
+      delete :destroy, :id => "37"
+    end
+
     context 'success' do
 
       it "should load the requested listing" do
@@ -274,13 +278,64 @@ describe TempListingsController do
       it "destroys the requested listing" do
         TempListing.stub(:find).with("37") { mock_listing }
         mock_listing.should_receive(:destroy)
-        delete :destroy, :id => "37"
+        do_delete
       end
 
       it "redirects to the listings list" do
         TempListing.stub(:find) { mock_listing }
-        delete :destroy, :id => "1"
+        do_delete
         response.should be_redirect
+      end
+
+      it "should decrement the TempListing count" do
+        lambda do
+          do_delete
+          should change(TempListing, :count).by(-1)
+        end
+      end
+    end
+  end
+
+  describe "PUT /submit_order/:id" do
+    before (:each) do
+      TempListing.stub!(:submit_order).and_return( @listing )
+    end
+
+    def do_submit
+      xhr :put, :submit_order, :id => "1"
+    end
+
+    context "success" do
+      before :each do
+        TempListing.stub!(:save).and_return(true)
+      end
+
+      it "should load the requested listing" do
+        TempListing.stub(:submit_order) { @listing }
+        do_submit
+      end
+
+      it "should update the requested listing" do
+        TempListing.stub(:submit_order).with("1") { mock_listing }
+	mock_listing.should_receive(:save).and_return(:success)
+        do_submit
+      end
+
+      it "should assign @listing" do
+        TempListing.stub(:submit_order) { mock_listing(:save => true) }
+        do_submit
+        assigns(:listing).should_not be_nil 
+      end
+    end
+
+    context 'failure' do
+      before :each do
+        TempListing.stub!(:save).and_return(false) 
+      end
+
+      it "should assign listing" do
+        do_submit
+        assigns(:listing).should_not be_nil 
       end
     end
   end

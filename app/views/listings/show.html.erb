@@ -4,7 +4,7 @@
   <div class="span18">
     <% if @listing.seller? @user.id %>
       <%= link_to 'Edit', edit_listing_path(@listing), class: 'btn btn-large btn-primary submit-btn' %>
-      <%= link_to 'Remove', listing_path(@listing), method: :delete, confirm: 'Are you sure?', class: 'btn btn-large btn-primary stnd-btn' %>
+      <%= link_to 'Remove', @listing, method: :delete, confirm: 'Are you sure?', class: 'btn btn-large btn-primary stnd-btn' %>
     <% end %>  
   </div>
 <% end %>

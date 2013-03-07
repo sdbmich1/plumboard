@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe TempListing do
   before(:each) do
-    @temp_listing = FactoryGirl.create(:listing) 
+    @temp_listing = FactoryGirl.create(:temp_listing) 
   end
 
   subject { @temp_listing }
@@ -21,6 +21,8 @@ describe TempListing do
   it { should respond_to(:buyer_id) }
   it { should respond_to(:show_phone_flg) }
   it { should respond_to(:category_id) }
+  it { should respond_to(:pixi_id) }
+  it { should respond_to(:parent_pixi_id) }
 
   it { should respond_to(:user) }
   it { should respond_to(:site) }
@@ -28,6 +30,7 @@ describe TempListing do
   it { should respond_to(:pictures) }
   it { should respond_to(:category) }
   it { should respond_to(:set_flds) }
+  it { should respond_to(:generate_token) }
 
   describe "when price is not a number" do
     before { @temp_listing.price = "$500" }
@@ -110,7 +113,7 @@ describe TempListing do
   end
 
   describe "should not include inactive listings" do
-    temp_listing = FactoryGirl.create :listing, :description=>'stuff', :status=>'inactive'
+    temp_listing = FactoryGirl.create :temp_listing, :description=>'stuff', :status=>'inactive'
     it { TempListing.active.should_not include (temp_listing) }
   end
 
@@ -118,29 +121,29 @@ describe TempListing do
     it { TempListing.get_by_site(0).should_not include @temp_listing } 
   end
 
-  describe "should include active site & seller listings" do 
-    let(:temp_listing) { TempListing.new title: 'listing', description: 'test', site_id: 1, seller_id: 1, category_id: 1, start_date: Time.now }
-    before(:each) do
-      picture = temp_listing.pictures.build
-      picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
-      temp_listing.save!
-    end
+  describe "should include active site listings" do
+    it { TempListing.get_by_site(@temp_listing.site.id).should_not be_empty }
+  end
 
-    it { TempListing.get_by_site(1).should_not be_empty }
-    it { TempListing.get_by_seller(1).should_not be_empty }
+  describe "should include seller listings" do
+    it { TempListing.get_by_seller(1).should == [@temp_listing] }
   end
 
   describe "should not include incorrect seller listings" do 
     it { TempListing.get_by_seller(0).should_not include @temp_listing } 
   end
 
+  describe "get_by_status should not include inactive listings" do
+    temp_listing = FactoryGirl.create :listing, :description=>'stuff', :status=>'inactive'
+    it { TempListing.get_by_status('active').should_not include (temp_listing) }
+  end
+
   describe "should return correct site name" do 
-    temp_listing = FactoryGirl.create :listing
-    it { temp_listing.site_name.should_not be_empty } 
+    it { @temp_listing.site_name.should_not be_empty } 
   end
 
   describe "should not find correct site name" do 
-    temp_listing = FactoryGirl.create :listing, site_id: 100
+    temp_listing = FactoryGirl.create :temp_listing, site_id: 100
     it { temp_listing.site_name.should be_nil } 
   end
 
@@ -149,19 +152,19 @@ describe TempListing do
   end
 
   describe "should not find correct category name" do 
-    temp_listing = FactoryGirl.create :listing, category_id: 100
+    temp_listing = FactoryGirl.create :temp_listing, category_id: 100
     it { temp_listing.category_name.should be_nil } 
   end
 
   describe "should find correct seller name" do 
     let(:user) { FactoryGirl.create(:user) }
-    let(:temp_listing) { FactoryGirl.create(:listing, seller_id: user.id) }
+    let(:temp_listing) { FactoryGirl.create(:temp_listing, seller_id: user.id) }
 
     it { temp_listing.seller_name.should == "Joe Blow" } 
   end
 
   describe "should not find correct seller name" do 
-    temp_listing = FactoryGirl.create :listing, seller_id: 100
+    temp_listing = FactoryGirl.create :temp_listing, seller_id: 100
     it { temp_listing.seller_name.should be_nil } 
   end
 
@@ -170,64 +173,96 @@ describe TempListing do
   end
 
   describe "should not have a transaction" do 
-    temp_listing = FactoryGirl.create :listing, transaction_id: nil
+    temp_listing = FactoryGirl.create :temp_listing, transaction_id: nil
     it { temp_listing.has_transaction?.should_not be_true }
   end
 
   describe "should verify if seller name is an alias" do 
-    temp_listing = FactoryGirl.create :listing, show_alias_flg: 'yes'
+    temp_listing = FactoryGirl.create :temp_listing, show_alias_flg: 'yes'
     it { temp_listing.alias?.should be_true }
   end
 
   describe "should not have an alias" do 
-    temp_listing = FactoryGirl.create :listing, show_alias_flg: 'no'
+    temp_listing = FactoryGirl.create :temp_listing, show_alias_flg: 'no'
     it { temp_listing.alias?.should_not be_true }
   end
 
-  describe "should verify user is seller" do 
-    temp_listing = FactoryGirl.create :listing, seller_id: 1
-    it { temp_listing.seller?(1).should be_true }
-  end
+  describe "seller" do 
+    let(:temp_listing) { FactoryGirl.create :temp_listing, seller_id: 1 }
 
-  describe "should not verify user is seller" do 
-    temp_listing = FactoryGirl.create :listing, seller_id: 1
-    it { temp_listing.seller?(2).should_not be_true }
+    it "should verify user is seller" do 
+      temp_listing.seller?(1).should be_true 
+    end
+
+    it "should not verify user is seller" do 
+      temp_listing.seller?(2).should_not be_true 
+    end
   end
 
   describe "should return a short description" do 
-    temp_listing = FactoryGirl.create :listing, description: "a" * 100
+    temp_listing = FactoryGirl.create :temp_listing, description: "a" * 100
     it { temp_listing.brief_descr.length.should == 30 }
   end
 
   describe "set flds" do 
-    let(:temp_listing) { FactoryGirl.create :listing, status: "" }
+    let(:temp_listing) { FactoryGirl.create :temp_listing, status: "" }
 
     it "should call set flds" do 
-      temp_listing.status.should == "pending"
+      temp_listing.status.should == "new"
     end
   end
 
   describe "invalid set flds" do 
-    let(:temp_listing) { FactoryGirl.build :listing, title: nil, status: "" }
+    let(:temp_listing) { FactoryGirl.build :temp_listing, title: nil, status: "" }
     
     it "should not call set flds" do 
       temp_listing.save
-      temp_listing.status.should_not == 'pending'
+      temp_listing.status.should_not == 'new'
     end
   end 
 
   describe "should activate" do 
-    temp_listing = FactoryGirl.build :listing, start_date: Time.now, status: 'pending' 
+    temp_listing = FactoryGirl.build :temp_listing, start_date: Time.now, status: 'pending' 
     it { temp_listing.activate.status.should == 'active' } 
   end
 
   describe "should not activate" do 
-    let(:temp_listing) { FactoryGirl.build :listing, start_date: Time.now, status: 'sold' } 
+    let(:temp_listing) { FactoryGirl.build :temp_listing, start_date: Time.now, status: 'sold' } 
     it { temp_listing.activate.status.should_not == 'active' } 
   end
 
+  describe "should return temp listing" do
+    context "get_by_status should include new listings" do
+      it { TempListing.get_by_status('active').should == [@temp_listing] } 
+    end
+
+    it "submit order should return submitted listings" do 
+      @temp_listing.parent_pixi_id = nil
+      @temp_listing.save
+      TempListing.submit_order(@temp_listing.id).status.should == "submitted"
+    end
+
+    it "submit order should return pending listings" do 
+      @temp_listing.parent_pixi_id = "EtOzC6uO869GIE4Dc"
+      @temp_listing.save
+      TempListing.submit_order(@temp_listing.id).status.should == "pending"  
+    end
+  end
+
+  describe "submit order should not return temp listing" do
+    it { TempListing.submit_order(100).should_not == [@temp_listing] } 
+  end
+
   describe "must have pictures" do
-    let(:temp_listing) { TempListing.new title: 'listing', description: 'test', site_id: 1, seller_id: 1, category_id: 1, start_date: Time.now }
+    let(:temp_listing) { FactoryGirl.build :invalid_temp_listing }
+
+    it "should save with at least one picture" do
+      picture = temp_listing.pictures.build
+      picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
+      temp_listing.save
+      temp_listing.should be_valid
+    end
+
     it "should not save w/o at least one picture" do
       temp_listing.save
       temp_listing.should_not be_valid

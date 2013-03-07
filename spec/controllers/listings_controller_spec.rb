@@ -323,6 +323,10 @@ describe ListingsController do
       Listing.stub!(:find).and_return(@listing)
     end
 
+    def do_delete
+      delete :destroy, :id => "37"
+    end
+
     context 'success' do
 
       it "should load the requested listing" do
@@ -332,13 +336,20 @@ describe ListingsController do
       it "destroys the requested listing" do
         Listing.stub(:find).with("37") { mock_listing }
         mock_listing.should_receive(:destroy)
-        delete :destroy, :id => "37"
+        do_delete
       end
 
       it "redirects to the listings list" do
         Listing.stub(:find) { mock_listing }
-        delete :destroy, :id => "1"
+        do_delete
         response.should be_redirect
+      end
+
+      it "should decrement the Listing count" do
+        lambda do
+          do_delete
+          should change(Listing, :count).by(-1)
+        end
       end
     end
   end

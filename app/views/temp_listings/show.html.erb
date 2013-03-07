@@ -1,10 +1,13 @@
 <% provide(:title, @listing.title) %>
 <%= content_for :content do %>
-  <%= render :partial => 'shared/show_listing', locals: {:listing=>@listing} %>
-  <div class="span18">
-    <% if @listing.seller? @user.id %>
-      <%= link_to 'Edit', edit_temp_listing_path(@listing), class: 'btn btn-large btn-primary submit-btn' %>
-      <%= link_to 'Remove', temp_listing_path(@listing), method: :delete, confirm: 'Are you sure?', class: 'btn btn-large btn-primary stnd-btn' %>
-    <% end %>  
+  <div id='show_pixi'>
+    <%= render :partial => 'shared/show_listing', locals: {:listing=>@listing} %>
+    <div class="span18">
+      <% if @listing.seller? @user.id %>
+        <%= link_to 'Edit', edit_temp_listing_path(@listing), class: 'btn btn-large btn-primary stnd-btn' %>
+        <%= link_to 'Remove', temp_listing_path(@listing), method: :delete, confirm: 'Are you sure?', class: 'btn btn-large btn-primary stnd-btn' %>
+        <%= link_to 'Submit', submit_order_path(@listing), class: 'btn btn-large btn-primary submit-btn' %>
+      <% end %>  
+    </div>
   </div>
 <% end %>

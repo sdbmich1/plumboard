@@ -38,10 +38,11 @@ describe "Listings", :type => :feature do
     end
   end
 
-  describe "Remove Pixi" do 
+  describe "Review Pixis" do 
+    let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id ) }
+    before { visit listing_path(listing) }
+
     it "Deletes a pixi" do
-      listing = FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id )
-      visit listing_path(listing)
       expect{
               click_on 'Remove'
       }.to change(Listing,:count).by(-1)
@@ -49,14 +50,11 @@ describe "Listings", :type => :feature do
       page.should have_content "Pixis" 
       page.should_not have_content "Guitar Lessons" 
     end
-  end
 
-  describe "listing page" do
-    let(:listing) { FactoryGirl.create(:listing) }
-    before { visit listing_path(listing) }
-
-    it { should have_selector('h4',    text: listing.title) }
-    it { should have_selector('title', text: listing.title) }
+    it "Views a pixi" do
+      page.should have_selector('h4',    text: listing.title) 
+      page.should have_selector('title', text: listing.title) 
+    end
   end
 
   describe "GET /listings" do  

@@ -11,7 +11,7 @@ feature "TempListings" do
 
   describe "Manage Temp Pixis" do
     let(:submit) { "Preview" }
-    let(:temp_listing) { TempListing.new title: 'listing', description: 'test', site_id: 1, seller_id: user.id, category_id: 1, start_date: Time.now }
+    let(:temp_listing) { FactoryGirl.build(:temp_listing) }
 
     before(:each) do
       @user = user
@@ -52,14 +52,8 @@ feature "TempListings" do
 
   describe "Edit Temp Pixi" do 
     let(:submit) { "Preview" }
-    let(:temp_listing) { TempListing.new title: 'listing', description: 'test', site_id: 1, seller_id: 1, category_id: 1, start_date: Time.now }
-
-    before(:each) do
-      picture = temp_listing.pictures.build
-      picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
-      temp_listing.save!
-      visit edit_temp_listing_path(temp_listing)
-    end
+    let(:temp_listing) { FactoryGirl.create(:temp_listing) }
+    before { visit edit_temp_listing_path(temp_listing) }
 
     it "should not change a listing" do
       expect { 
@@ -85,16 +79,9 @@ feature "TempListings" do
     end
   end
 
-  describe 'Removes a Pixi' do
-    let(:temp_listing) { TempListing.new title: 'listing', description: 'test', site_id: 1, seller_id: user.id, category_id: 1, start_date: Time.now }
-
-    before(:each) do
-      @user = user
-      picture = temp_listing.pictures.build
-      picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
-      temp_listing.save!
-      visit temp_listing_path(temp_listing)
-    end
+  describe 'Reviews a Pixi' do
+    let(:temp_listing) { FactoryGirl.create(:temp_listing, seller_id: user.id) }
+    before { visit temp_listing_path(temp_listing) }
 
     it "Deletes a pixi" do
       expect{
@@ -104,5 +91,20 @@ feature "TempListings" do
       page.should have_content "Pixis" 
       page.should_not have_content "Guitar for Sale" 
     end
+
+    it "Views a pixi" do
+      page.should have_selector('h4',    text: temp_listing.title) 
+      page.should have_selector('title', text: temp_listing.title) 
+    end
+
+    it "Submits a pixi" do
+      expect { 
+	      click_on 'Submit' 
+	}.not_to change(TempListing, :count)
+
+      page.should_not have_content "Pixis" 
+      page.should have_content "Order Summary" 
+    end
   end
+
 end

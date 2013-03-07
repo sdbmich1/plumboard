@@ -1,12 +1,27 @@
 require 'spec_helper'
 
-describe "Users" do
+feature "Users" do
+  subject { page }
+  let(:user) { FactoryGirl.create(:user) }
+
+  before(:each) do
+    login_as(user, :scope => :user, :run_callbacks => false)
+    user.confirm!
+  end
+
   describe "GET /users" do
-    it "works! (now write some real specs)" do
-      # Run the generator again with the --webrat flag if you want to use webrat methods/matchers
-      get users_path
-      response.status.should be(200)
+    it "should display listings" do 
+      user = FactoryGirl.create(:user)
+      visit users_path  
+      page.should have_content("Joe Blow")
     end
   end
   
+  describe "Review Users" do 
+    before { visit user_path(user) }
+
+    it "Views a user" do
+      page.should have_selector('h2',    text: user.name) 
+    end
+  end
 end

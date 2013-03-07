@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130301223210) do
+ActiveRecord::Schema.define(:version => 20130305081237) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -103,10 +103,13 @@ ActiveRecord::Schema.define(:version => 20130301223210) do
     t.integer  "site_id"
     t.datetime "end_date"
     t.integer  "transaction_id"
+    t.string   "pixi_id"
   end
 
   add_index "listings", ["end_date", "start_date"], :name => "index_listings_on_end_date_and_start_date"
+  add_index "listings", ["pixi_id"], :name => "index_listings_on_pixi_id", :unique => true
   add_index "listings", ["site_id", "seller_id", "start_date"], :name => "index_listings_on_org_id_and_seller_id_and_start_date"
+  add_index "listings", ["status"], :name => "index_listings_on_status"
   add_index "listings", ["transaction_id"], :name => "index_listings_on_transaction_id"
 
   create_table "pictures", :force => true do |t|
@@ -179,7 +182,13 @@ ActiveRecord::Schema.define(:version => 20130301223210) do
     t.string   "show_phone_flg"
     t.datetime "created_at",     :null => false
     t.datetime "updated_at",     :null => false
+    t.string   "pixi_id"
+    t.string   "parent_pixi_id"
   end
+
+  add_index "temp_listings", ["parent_pixi_id"], :name => "index_temp_listings_on_parent_pixi_id"
+  add_index "temp_listings", ["pixi_id"], :name => "index_temp_listings_on_pixi_id", :unique => true
+  add_index "temp_listings", ["status"], :name => "index_temp_listings_on_status"
 
   create_table "transaction_details", :force => true do |t|
     t.integer  "transaction_id"

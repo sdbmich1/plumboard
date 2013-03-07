@@ -4,15 +4,16 @@ describe PicturesController do
 
   describe 'GET /system' do
     before :each do
-      File.stub!(:new).with(Rails.root + '/spec/fixtures/photo.jpg').and_return(@file_name)
       @picture = mock_model Picture
       Picture.stub!(:find).and_return( @picture )
-      @picture.stub_chain(:photo, :path).with(@file_name).and_return( @picture )
+      @picture.stub_chain(:photo, :path, :intern).and_return( @picture )
+      controller.stub_chain(:send_file, :style).with(@picture).and_return(:success)
+      controller.stub!(:style).and_return('original')
     end
 
     def do_get
-      get :asset, use_route: "/system/pictures/photos/1/original/Guitar_1.jpg", :style => 'original',
-      		class: 'pictures', id: 1, filename: 'Guitar_1.jpg', attachment: 'photos'
+      get :asset, use_route: "/system/pictures/photos/1/original/Guitar_1.jpg", :params => {id: '1', 
+      		 "style" => 'original', "filename" => 'Guitar_1.jpg' }
     end
 
     it "should load picture asset" do
@@ -29,9 +30,13 @@ describe PicturesController do
       assigns(:picture).should_not be_nil
     end
 
+    it "should receive send file" do
+      controller.should_receive(:send_file).and_return(:success) 
+      do_get
+    end
+
     it "asset action should render nothing" do
       do_get
-      controller.should_receive(:send_file).with(@picture)
       controller.stub!(:render)
     end
   end

@@ -1,0 +1,6 @@
+<% provide(:title, 'Members') %>
+<%= content_for :content do %>
+  <h2><%= 'Members' %>
+  <%= render partial: 'shared/user', collection: @users %>
+<% end %>
+

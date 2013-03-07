@@ -6,7 +6,8 @@ class User < ActiveRecord::Base
   	 :lockable, :timeoutable and :omniauthable
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :first_name, :last_name, :email, :password, :password_confirmation, :remember_me, :birth_date, :gender
+  attr_accessible :first_name, :last_name, :email, :password, :password_confirmation, :remember_me, :birth_date, :gender,
+  	:pictures_attributes
 
   # define relationships
   has_many :contacts, :as => :contactable, :dependent => :destroy
@@ -21,6 +22,9 @@ class User < ActiveRecord::Base
 
   has_many :posts
   has_many :transactions
+
+  has_many :pictures, :as => :imageable, :dependent => :destroy
+  accepts_nested_attributes_for :pictures, :allow_destroy => true
 
   # name format validators
   name_regex = 	/^[A-Z]'?['-., a-zA-Z]+$/i
