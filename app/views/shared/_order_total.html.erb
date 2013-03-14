@@ -1,0 +1,18 @@
+<%= render :partial => 'shared/show_discount' %> 
+
+<% if processing_fee? %>
+  <tr><td>Processing Fee</td><td></td>
+  	<td class="price"><%= number_to_currency(get_processing_fee) %></td>
+  </tr>
+<% end %>
+<% if convenience_fee? %>
+  <tr>
+  	<td>Convenience Fee</td><td></td>
+  	<td class="price"><%= number_to_currency(get_convenience_fee)%></td>
+  </tr>
+<% end %>
+<tr class='pixi-bkgnd'>
+  	<td class='order-total'><%= show_title(paid) %></td>
+  	<td></td>
+  	<td class='order-total price'><%= number_to_currency(grand_total) %></td>
+</tr>

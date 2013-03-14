@@ -39,4 +39,10 @@ module ApplicationHelper
   def showphoto(gender)       
     @photo = gender == "Male" ? "headshot_male.jpg" : "headshot_female.jpg"
   end
+
+  # used to toggle breadcrumb images based on current registration step
+  def bc_image(bcrumb, val, file1, file2)
+    bcrumb >= val ? file1 : file2     
+  end
+
 end

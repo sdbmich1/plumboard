@@ -107,7 +107,7 @@ $grayMediumLight: #eaeaea;
 input, textarea, select, .uneditable-input {
   border: 1px solid #bbb;
   width: 100%;
-  padding: 10px;
+  padding: 4px;
   margin-bottom: 15px;
   @include box_sizing;
   }
@@ -176,10 +176,11 @@ input, select, .uneditable-input {
   width:10%;
   clear:none;
   opacity: .4;
-  background:#000000 url("../images/ajax-loader.gif") no-repeat center center;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
+  background:#000000 url("ajax-loader.gif") no-repeat center center;
   font-weight:bold; 
+  -moz-border-radius:    10px;
+  -webkit-border-radius: 10px;
+  border-radius:         10px;  
 }
 
 /*IE 'adjustment'*/
@@ -187,3 +188,61 @@ input, select, .uneditable-input {
   position: absolute;
   height: expression(document.body.scrollHeight &gt; document.body.offsetHeight ? document.body.scrollHeight : document.body.offsetHeight + 'px');
 }
+
+.center-wrapper {
+  text-align: center!important;
+}
+
+.center-wrapper * {
+  margin: 0 auto;
+}
+
+/* field widths */
+.width30 {width: 30px!important}
+.width80 {width: 80px!important}
+.width120 {width: 120px!important}
+.width180 {width: 180px!important}
+.width240 {width: 240px!important}
+.width360 {width: 360px!important}
+.height240 {height: 240px!important}
+.height360 {height: 360px!important}
+
+.clear-all { clear:both }
+.clear-right { clear:right }
+.price { text-align: right }
+.order-total { font-weight: bolder; font-size: medium }
+
+.top-hdr { color: white; font-weight: bolder; font-size: medium }
+.item-hdr { color: black; font-weight: bolder; font-size: medium }
+.pixi-hdr { color: orange; font-weight: bolder; font-size: medium }
+.grp-hdr { color: #0C6FCB; font-weight: bolder; font-size: medium }
+.tbl-hdr { text-align:left!important; font-weight: normal!important }
+
+.pixi-bkgnd { background-color: orange }
+.pixi-lt-bkgnd { background-color: #fde9d9 }
+.div-border {  
+  border: 1px solid #eaeaea; padding: 15px; margin-bottom: 15px; }
+.mtop {margin-top: 20px;}
+.sm-top { margin-top: 5px!important }  
+.cb-label { display:inline; vertical-align:middle }
+
+.cc-logo {
+  width: 282px!important; height: 52px!important; vertical-align: middle;
+}
+
+.cvv-logo {
+  width: 48px; height: 32px; vertical-align: middle;
+}
+
+#printable p, p + p {
+  text-indent: 0!important
+}
+
+/* Round corners */
+.round {
+  -moz-border-radius:    10px;
+  -webkit-border-radius: 10px;
+  border-radius:         10px;  
+}
+
+

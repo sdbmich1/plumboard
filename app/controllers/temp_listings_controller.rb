@@ -23,13 +23,13 @@ class TempListingsController < ApplicationController
 
   def update
     @listing = TempListing.find params[:id]
-    flash[:notice] = 'Successfully updated pixi.' if @listing.update_attributes(params[:temp_listing])
+    @listing.update_attributes(params[:temp_listing])
     respond_with(@listing)
   end
 
   def create
     @listing = TempListing.new params[:temp_listing]
-    flash[:notice] = "Pixi created successfully." if @listing.save 
+    @listing.save 
     respond_with(@listing)
   end
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130305081237) do
+ActiveRecord::Schema.define(:version => 20130308033101) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -64,6 +64,7 @@ ActiveRecord::Schema.define(:version => 20130305081237) do
     t.string   "contactable_type"
     t.datetime "created_at",       :null => false
     t.datetime "updated_at",       :null => false
+    t.string   "country"
   end
 
   add_index "contacts", ["contactable_id"], :name => "index_contacts_on_contactable_id"
@@ -134,6 +135,29 @@ ActiveRecord::Schema.define(:version => 20130305081237) do
 
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id_and_created_at", :unique => true
   add_index "posts", ["user_id", "listing_id"], :name => "index_posts_on_user_id_and_listing_id", :unique => true
+
+  create_table "promo_codes", :force => true do |t|
+    t.string   "code"
+    t.string   "promo_name"
+    t.string   "description"
+    t.date     "start_date"
+    t.date     "end_date"
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.string   "status"
+    t.integer  "max_redemptions"
+    t.integer  "amountOff"
+    t.integer  "percentOff"
+    t.string   "currency"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+    t.string   "promo_type"
+    t.integer  "site_id"
+  end
+
+  add_index "promo_codes", ["code", "status"], :name => "index_promo_codes_on_code_and_status"
+  add_index "promo_codes", ["end_date", "start_date"], :name => "index_promo_codes_on_end_date_and_start_date"
+  add_index "promo_codes", ["site_id"], :name => "index_promo_codes_on_site_id"
 
   create_table "site_listings", :force => true do |t|
     t.integer  "site_id"
@@ -219,12 +243,15 @@ ActiveRecord::Schema.define(:version => 20130305081237) do
     t.string   "code"
     t.string   "description"
     t.float    "amt"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
     t.integer  "user_id"
+    t.string   "token"
+    t.string   "confirmation_no"
   end
 
   add_index "transactions", ["code"], :name => "index_transactions_on_code"
+  add_index "transactions", ["confirmation_no"], :name => "index_transactions_on_confirmation_no"
   add_index "transactions", ["user_id"], :name => "index_transactions_on_user_id"
 
   create_table "user_interests", :force => true do |t|

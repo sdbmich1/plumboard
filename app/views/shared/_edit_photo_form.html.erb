@@ -1,0 +1,9 @@
+<% if model %>
+  <% for pic in model.pictures %>
+    <%= fields_for "temp_listing[pictures_attributes][]", pic, index: nil do |form| %>
+	<%= image_tag pic.photo.url, :size => psize %>
+        <%= form.check_box :delete_photo, id: "delete_photo" %>
+        <%= form.label :delete_photo, 'Clear Image(s)', :class => "cb-label" %>
+    <% end %>
+  <% end %>
+<% end %>

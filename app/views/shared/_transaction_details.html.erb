@@ -1,0 +1,24 @@
+<p>
+  	<span class="span3">Confirmation #: </span><span class="span9 last"><%= transaction.confirmation_no %></span><br />
+  	<% if transaction.amt > 0.0 %>
+  	  <span class="span3">Payment Type: </span><span class="span9 last"><%= transaction.payment_type %></span><br />
+  	  <span class="span3">Card #: </span><span class="span9 last">************<%= transaction.credit_card_no %></span><br />
+  	<% end %>
+  	<span class="span3">Date & Time: </span><span class="span9 last"><%= get_local_time(transaction.created_at) %></span><br />  	
+  	<span class="span3">First Name: </span><span class="span9 last"><%= transaction.first_name %></span><br />
+	<span class="span3">Last Name: </span><span class="span9 last"><%= transaction.last_name %></span><br />
+	<span class="span3">Address 1: </span><span class="span9 last">	<%= transaction.address %></span><br />
+	<% unless transaction.address2.blank? %>
+	  <span class="span3">Address 2: </span><span class="span9 last"><%= transaction.address2 %></span><br />
+	<% end %>
+	<span class="span3">City: </span><span class="span9 last"><%= transaction.city %></span><br />
+	<span class="span3">State/Province:</span><span class="span9 last"> <%= transaction.state %></span><br />
+	<span class="span3">Zip: </span><span class="span9 last"><%= transaction.zip %></span><br />
+	<span class="span3">Country: </span><span class="span9 last"><%= transaction.country %></span><br />	  
+	<span class="span3">Home Phone: </span><span class="span9 last"><%= transaction.home_phone %></span><br />
+	<span class="span3">Email: </span><span class="span9 last"><%= transaction.email %></span><br />
+	<span class="span3">Description: </span><span class="span9 last"><%= transaction.description %></span><br />	
+	<% if showAmt %>
+  	  <span class="span3">Amount: </span><span class="span9 last"><%= number_to_currency transaction.amt %></span><br />	
+	<% end %>		
+</p>

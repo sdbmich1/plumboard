@@ -1,0 +1,9 @@
+<ul id="breadcrumb">
+  <li class="current"><%= image_tag("blue_1.1.png", :alt => "Build", :class => "textmiddle", :size => "24x24") %> Build</li>
+  <li class="<%= breadcrumb >= 2 ? 'current' : 'none' %>">
+	<%= image_tag("#{bc_image(breadcrumb, 2, 'blue_2.1.png','2.png')}", :alt => "Review", :class => "textmiddle", :size => "24x24") %> Review</li>
+    <li class="<%= breadcrumb >= 3 ? 'current' : 'none' %>">
+	<%= image_tag("#{bc_image(breadcrumb, 3, 'blue_3.1.png','3.png')}", :alt => "Submit", :class => "textmiddle", :size => "24x24") %> Submit</li>
+    <li class="<%= breadcrumb >= 4 ? 'current' : 'none' %>">
+	<%= image_tag("#{bc_image(breadcrumb, 4, 'blue_4.1.png','4.png')}", :alt => "Done", :class => "textmiddle", :size => "24x24") %> Done!</li>
+ </ul>

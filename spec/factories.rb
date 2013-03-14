@@ -15,6 +15,17 @@ FactoryGirl.define do
     end
   end
 
+  factory :contact_user, :class => "User", :parent => :user do
+    before(:create) do |user|
+      user.contacts.build FactoryGirl.attributes_for(:contact)
+    end
+  end
+
+  factory :state do
+    code		"CA"
+    state_name		"California"
+  end
+
   factory :admin do
     email                 "jblow@test.com"
     password              "setup#123"
@@ -29,6 +40,23 @@ FactoryGirl.define do
     name 		"Foo bar"
     category_type	"Gigs"
     status 		"active"
+  end
+
+  factory :promo_code do
+    code		"2013LAUNCH"
+    promo_name 		"2013LAUNCH"
+    description		"2013LAUNCH"
+    promo_type		"Launch"
+    status 		"active"
+    amountOff		nil
+    percentOff		100
+    site_id		1
+    max_redemptions	100
+    start_date		nil
+    end_date		nil
+    start_time		nil
+    end_time		nil
+    currency		"US"
   end
 
   factory :contact do
@@ -62,6 +90,17 @@ FactoryGirl.define do
     before(:create) do |listing|
       listing.pictures.build FactoryGirl.attributes_for(:picture)
     end
+
+    ignore do
+      sites_count 3
+    end
+
+    factory :listing_with_sites do
+      after(:create) do |listing, x|
+        FactoryGirl.create_list(:site_listing, x.sites_count, :listing => listing)
+	x.reload
+      end
+    end
   end
 
   factory :invalid_listing, :class => "Listing", :parent => :listing_parent do
@@ -73,7 +112,7 @@ FactoryGirl.define do
     end
   end
 
-  factory :invalid_temp_listing, :class => "Listing", :parent => :listing_parent do
+  factory :invalid_temp_listing, :class => "TempListing", :parent => :listing_parent do
   end
 
   factory :interest do

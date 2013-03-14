@@ -3,14 +3,16 @@
 <head>
   <link href="/assets/favicon.ico" rel="shortcut icon" />
   <title><%= full_title(yield(:title)) %></title>
-  <%= stylesheet_link_tag    "application", :media => "all" %>
-  <%= javascript_include_tag "application" %>
+  <%= stylesheet_link_tag    "application", "breadcrumb", :media => "all" %>
+  <%= javascript_include_tag "application", "https://js.stripe.com/v1/", 'transaction.js' %>
+  <%= tag :meta, :name => "stripe-key", :content => STRIPE_PUBLIC_KEY %>
   <%= csrf_meta_tags %>
   <%= render 'layouts/shim' %>
 </head>
 <body>
   <%= render 'layouts/header' %>
   <div class="container">
+    <div id="spinner" class="round" style="display:none"></div>
     <% unless notice.nil? %>
       <p class="notice"><%= notice %></p>
     <% end %>
@@ -18,6 +20,7 @@
       <p class="alert"><%= alert %></p>
     <% end %>
 
+    <%= yield :subhead %>
     <%= yield :content %>
     <div id="push"></div>
   </div>

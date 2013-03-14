@@ -1,0 +1,23 @@
+var formError = getFormID('#buyFormError');
+var discForm = getFormID('#discForm');
+
+<% if @discount.blank? %>
+    formError.text("Discount code not found or expired. Please re-enter.");
+	formError.show(300);
+	$('#dCode').hide(300);
+<% else %>
+	formError.hide(300);
+	$('#dCode').show(300).text("<%= get_descr %>");
+<% end %>
+
+// toggle spinner
+<% if mobile_device? %>
+	uiLoading(false);
+<% else %>
+	$("#spinner").hide(300);
+<% end %>
+
+$(".alert").hide(300);
+
+// scroll to top of page
+$('html, body').animate({scrollTop:0}, 100);

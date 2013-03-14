@@ -130,41 +130,6 @@ describe ListingsController do
     end
   end
 
-  describe "GET 'new'" do
-
-    before :each do
-      @user = stub_model(User)
-      User.stub!(:find).and_return(@user)
-      Listing.stub!(:new).and_return( @listing )
-      @picture = stub_model(Picture)
-      @listing.stub_chain(:pictures, :build).and_return(@picture)
-    end
-
-    def do_get
-      get :new, :user_id => '3' #, :site_id => 50 
-    end
-
-    it "should assign @listing" do
-      do_get
-      assigns(:listing).should_not be_nil
-    end
-
-    it "should assign @user" do
-      do_get
-      assigns(:user).should_not be_nil
-    end
-
-    it "should assign @picture" do
-      do_get
-      assigns(:listing).pictures.should_not be_nil
-    end
-
-    it "new action should render new template" do
-      do_get
-      response.should render_template(:new)
-    end
-  end
-
   describe "POST create" do
     
     context 'failure' do

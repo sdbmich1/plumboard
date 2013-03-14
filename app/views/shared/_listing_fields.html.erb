@@ -1,0 +1,29 @@
+      <table>
+	<tr>
+	  <td><div><output id='list'></output></div></td>
+	</tr>
+	<tr>
+	  <td><%= render partial: 'shared/edit_photo_form', locals: {model: @listing, psize: '75x75', file_name: 'star.jpg', form: f } if action_name == 'edit' %>
+	  </td>
+	</tr>
+	<tr>
+	  <%= render partial: 'shared/photo', locals: { f: f } %>
+	</tr>
+	<tr>
+	  <td><%= f.label :title %><%= f.text_field :title, :autofocus => true %></td>
+	  <td class='width30'></td>
+    	  <td><%= f.label :price %>
+	    <%= f.text_field :price, :size => 10, :value => number_with_precision(f.object.send("price"), :precision=>2), class: 'width120' %></td>
+	</tr>
+	<tr>
+    	  <td><%= f.label :site_id, 'Site' %>
+	    <%= f.collection_select :site_id, Site.active, :id, :name, {:prompt => 'Select'} %></td>
+	  <td class='width30'></td>
+    	  <td><%= f.label :category_id, 'Category' %>
+	    <%= f.collection_select :category_id, Category.active, :id, :name, {:prompt => 'Select'} %></td>
+	</tr>
+	<tr>
+    	  <td><%= f.label :description %><%= f.text_area :description %></td>
+	</tr>
+      </table>
+

@@ -1,0 +1,30 @@
+<div class="div-border">
+  <h4 class="grp-hdr">3. Enter Payment Information</h4>
+  <table class="mtop">
+  <th class='tbl-hdr'>Credit Card #* </th>
+  <th></th>
+  <th class='tbl-hdr'>Code (CVV)*</th>
+  <th></th>
+  <th class='tbl-hdr'>Exp Month*</th>
+  <th></th>
+  <th class='tbl-hdr'>Exp Year*</th>
+  <tr>
+    <td class="width240"><%= text_field_tag :card_number, nil, name: nil, :size => 16 %></td>
+    <td class="width30"></td>
+    <td class="width120"><%= text_field_tag :card_code, nil, name: nil, :maxlength => 4, :size => 4 %> 
+    <td class="width30"></td>
+    <td class="width180">
+        <%= select_month nil, {add_month_numbers_true: true}, {name: nil, id: "card_month", class: "sm-top" } %>
+    </td>
+    <td class="width30"></td>
+    <td class="width120">
+        <%= select_year nil, {start_year: Date.today.year, end_year: Date.today.year+15}, {name: nil, id: "card_year", class: "sm-top"} %>
+    </td>
+  </tr>
+  <tr>
+    <td><%= image_tag('cc_logos.jpeg', :class=>'cc-logo') %></td>
+    <td></td>
+    <td><%= image_tag('cvv.png', :class=>'cvv-logo') %></td>
+  </tr>
+  </table>
+</div>

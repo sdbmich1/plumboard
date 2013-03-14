@@ -1,13 +1,16 @@
+<div class='div-border'>
   <div class="span2">
     <%= render :partial => 'shared/show_photo', :locals => {:model => listing, :psize => '150x150', :file_name=>'star.jpg' }%>
   </div>
-  <div class="span18">
-    <h4><%= listing.title %></h4>
-    Posted: <%= get_local_time listing.start_date %><br />
+  <div class="offset2">
+    <span class='item-hdr'><%= listing.nice_title %></span><br />
+    <% if listing.active? %>
+      Posted: <%= get_local_time listing.start_date %><br />
+    <% end %>
     Posted By: <%= listing.seller_name %><br />
     Category: <%= listing.category_name %><br />
     Site: <%= listing.site_name %><br />
-    Status: <%= listing.status %><br />
     Price: <%= number_to_currency listing.price if listing.price %><br />
-    Description: <%= listing.description %><br />
+    Description: <span class='height240'><%= listing.description %></span><br />
   </div>
+</div>

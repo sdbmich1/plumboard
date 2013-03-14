@@ -31,8 +31,6 @@ describe Listing do
   it { should respond_to(:transaction) }
   it { should respond_to(:pictures) }
   it { should respond_to(:category) }
-  it { should respond_to(:set_flds) }
-  it { should respond_to(:generate_token) }
 
   describe "when site_id is empty" do
     before { @listing.site_id = "" }
@@ -217,23 +215,6 @@ describe Listing do
     it { listing.brief_descr.length.should_not == 30 }
   end
 
-  describe "set flds" do 
-    let(:listing) { FactoryGirl.create :listing, status: "" }
-
-    it "should call set flds" do 
-      listing.status.should == "new"
-    end
-  end
-
-  describe "invalid set flds" do 
-    let(:listing) { FactoryGirl.build :listing, title: nil, status: "" }
-    
-    it "should not call set flds" do 
-      listing.save
-      listing.status.should_not == 'new'
-    end
-  end 
-
   describe "must have pictures" do 
     let(:listing) { FactoryGirl.build :invalid_listing }
     it "should not save w/o at least one picture" do 
@@ -252,6 +233,15 @@ describe Listing do
     it { listing.activate.status.should_not == 'active' } 
   end
 
+  describe "should return site count > 0" do 
+    listing = FactoryGirl.create :listing, site_id: 100 
+    it { listing.get_site_count.should == 0 } 
+  end
+
+  describe "should not return site count > 0" do 
+    it { @listing.get_site_count.should_not == 0 } 
+  end
+
   describe 'pictures' do
     before(:each) do
       @sr = @listing.pictures.create FactoryGirl.attributes_for(:picture)
@@ -266,6 +256,22 @@ describe Listing do
       [@sr].each do |s|
          Picture.find_by_id(s.id).should be_nil
        end
-     end  
-   end  
+    end  
+  end  
+
+  describe 'check for free order' do
+    it "should not allow free order" do 
+      (0..100).each do
+        listing = FactoryGirl.create(:listing, site_id: 100) 
+	listing.status = 'active'
+	listing.save!
+      end
+      Listing.free_order?(100).should_not be_true  
+    end
+
+    it "should allow free order" do 
+      FactoryGirl.create(:listing, site_id: 2)
+      Listing.free_order?(2).should be_true  
+    end
+  end  
 end

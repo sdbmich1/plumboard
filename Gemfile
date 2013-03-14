@@ -41,6 +41,9 @@ gem 'jquery-rails', '~> 2.1'
 # Use unicorn as the app server
 # gem 'unicorn'
 
+# Use thin as the development app server
+gem 'thin'
+
 # Deploy with Capistrano
 gem 'capistrano'
 
@@ -69,8 +72,17 @@ gem 'client_side_validations'
 # datetime validations
 gem 'validates_timeliness', '~> 3.0'
 
+# add country selection
+gem 'country_select'
+
 # add sass
 gem 'bootstrap-sass', '2.1'
+
+# development gems
+group :development do
+  gem 'better_errors'
+  gem 'binding_of_caller'
+end
 
 group :development, :test do
   gem 'wdm', '~> 0.1.0'
@@ -92,6 +104,8 @@ group :test do
   gem 'launchy'
   gem 'faker'
   gem "database_cleaner"
+  gem 'connection_pool'
+  gem 'selenium-webdriver'
 end
 
 # production gems

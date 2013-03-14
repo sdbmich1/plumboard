@@ -15,6 +15,8 @@ Spork.prefork do
   require 'database_cleaner'
   require "paperclip/matchers"
 
+#  include Capybara::DSL
+
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
@@ -25,19 +27,16 @@ Spork.prefork do
     config.mock_with :rspec
     config.include Paperclip::Shoulda::Matchers
     config.fixture_path = "#{::Rails.root}/spec/fixtures"
-  #  config.use_transactional_fixtures = false
-  #  config.include Capybara::DSL
+    config.use_transactional_fixtures = false
+    config.include Capybara::DSL
 
-    # add devise settings
-    # config.include Devise::TestHelpers, :type => :controller
     config.extend ControllerMacros, :type => :controller
-
     config.infer_base_class_for_anonymous_controllers = false
     config.include Rails.application.routes.url_helpers
     config.include(MailerMacros)  
 
     config.before(:suite) do
-      DatabaseCleaner.strategy = :transaction
+      DatabaseCleaner.strategy = :truncation
       DatabaseCleaner.clean_with(:truncation)
     end
 
@@ -56,5 +55,18 @@ end
 Spork.each_run do
   # This code will be run each time you run your specs.
   FactoryGirl.reload
+
+  # Forces all threads to share the same connection. This works on
+  # Capybara because it starts the web server in a thread.
+  # ActiveRecord::Base.shared_connection = ActiveRecord::Base.connection
 end
 
+#class ActiveRecord::Base
+#  mattr_accessor :shared_connection
+#  @@shared_connection = nil
+
+#  def self.connection
+#   @@shared_connection || retrieve_connection
+#    @@shared_connection || ConnectionPool::Wrapper.new(:size => 1) { retrieve_connection }
+#  end
+#end

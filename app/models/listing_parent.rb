@@ -1,11 +1,10 @@
 class ListingParent < ActiveRecord::Base
   self.abstract_class = true
 
-  before_create :set_flds
-
   # load pixi config keys
   ALIAS_LENGTH = PIXI_KEYS['pixi']['alias_length']
   KEY_LENGTH = PIXI_KEYS['pixi']['key_length']
+  SITE_FREE_AMT = PIXI_KEYS['pixi']['site_init_free']
 
   attr_accessible :buyer_id, :category_id, :description, :title, :seller_id, :status, :price, :show_alias_flg, :show_phone_flg, :alias_name,
   	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id
@@ -22,7 +21,7 @@ class ListingParent < ActiveRecord::Base
   validates :start_date, :presence => true
   validates :category_id, :presence => true
   validates :price, :numericality => true, :allow_blank => true
-  validate :must_have_pictures
+  validate :must_have_pictures, unless: :any_pix?
 
   default_scope :order => 'end_date DESC'
 
@@ -31,9 +30,15 @@ class ListingParent < ActiveRecord::Base
     errors.add(:base, 'Must have at least one picture') if pictures.all?(&:marked_for_destruction?)
   end
 
+  # check if pictures already exists
+  def any_pix?
+    pictures.where("imageable_id = ? AND imageable_type = ?", self.id, self.class.to_s)
+  end
+
   # select active listings
   def self.active
     where(:status=>'active')
+  #  where("status = 'active' AND end_date => curdate()")
   end
 
   # find listings by status
@@ -49,23 +54,6 @@ class ListingParent < ActiveRecord::Base
   # find listings by seller user id
   def self.get_by_seller val
     where(:seller_id => val)
-  end
-
-  # set fields upon creation
-  def set_flds
-    generate_token
-    self.status = 'new' if self.status.blank?
-    self.alias_name = rand(36**ALIAS_LENGTH).to_s(36) if alias?
-    set_end_date
-  end
-
-  # activate listing to display on network
-  def activate
-    if self.status != 'sold'
-      self.status, self.start_date = 'active', Time.now 
-      set_end_date
-    end
-    self
   end
 
   # verify if listing has been paid for
@@ -108,8 +96,18 @@ class ListingParent < ActiveRecord::Base
     description[0..29] rescue nil
   end
 
+  # titleize title
+  def nice_title
+    title.titleize rescue nil
+  end
+
   # set end date to x days after start to denote when listing is no longer displayed on network
   def set_end_date
-    self.end_date = self.start_date + 7.days
+    self.end_date = self.start_date + PIXI_DAYS.days
+  end
+
+  # get number of sites where pixi is posted
+  def get_site_count
+    site_name ? 1 : site_listings.size
   end
 end

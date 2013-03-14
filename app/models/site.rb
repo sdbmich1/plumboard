@@ -6,6 +6,7 @@ class Site < ActiveRecord::Base
 
   has_many :listings, :dependent => :destroy
   has_many :site_listings, :dependent => :destroy
+
   has_many :temp_listings, :dependent => :destroy
 
   has_many :pictures, :as => :imageable, :dependent => :destroy

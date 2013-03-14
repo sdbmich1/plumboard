@@ -9,14 +9,19 @@ Plumboard::Application.routes.draw do
   end
 
   # resource defs
-  resources :listings do
+  resources :listings, except: [:new] do
     collection do
       get 'seller', 'follower'
     end
   end
 
-  resources :users
-  resources :temp_listings
+  resources :users, except: [:new]
+  resources :temp_listings 
+  
+  resources :transactions do
+    get 'build', :on => :collection
+    get 'refund', :on => :collection
+  end
 
   # match routes
   get "/about", to: "pages#about" 

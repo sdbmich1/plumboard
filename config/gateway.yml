@@ -8,9 +8,6 @@ defaults: &defaults
   stripe:
     api_key: "sk_test_87BbvJVr6Gy2KEhNe9N3HlOF"
     public_key: "pk_test_ND2g6VoRttLN98bVM9rPsiyD"
-  pixi:
-    fee: "0.30"
-    percent: "2.9"
 
 development:    
   <<: *defaults

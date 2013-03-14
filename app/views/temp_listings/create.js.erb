@@ -1,0 +1,17 @@
+var formError = getFormID('#buyFormError');
+var formTxtForm = getFormID('#buyTxtForm');
+
+formTxtForm.attr("disabled", true);	
+
+<% if @listing.errors.any? %>
+  formError.html("<%= escape_javascript(error_messages_for(@listing))%>");
+  formError.show(300);
+  formTxtForm.attr("disabled", false);	
+<% else %>
+  formError.hide(300);
+  formTxtForm.html("<%= escape_javascript( render(partial: "shared/show_temp_listing", locals: {listing: @listing}) ).html_safe %>");
+<% end %>
+
+// scroll to top of page
+$('html, body').animate({scrollTop:0}, 100);
+$("#spinner").hide(300);

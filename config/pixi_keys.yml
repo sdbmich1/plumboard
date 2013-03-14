@@ -2,7 +2,14 @@ defaults: &defaults
   pixi:
     alias_length: 12
     key_length: 16
-    site_init_free: 100
+    site_init_free: 0
+    base_price: 5.00
+    gigs_price: 20.00
+    cars_price: 20.00
+    fee: 0.30
+    percent: 2.9
+    launch_promo_cd: "2013LAUNCH"
+    days: 7
 
 development:    
   <<: *defaults

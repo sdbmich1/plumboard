@@ -1,0 +1,21 @@
+<tr>
+  <td><span>Email* </span><%= form.text_field :email %></td>
+  <td></td>
+  <td><span>Home Phone* </span><%= form.text_field :home_phone %></td>
+</tr>
+<tr>
+  <td><span>Address 1* </span><%= form.text_field :address %></td>	
+  <td></td>
+  <td><span>Address 2 </span><%= form.text_field :address2 %></td>
+</tr>
+<tr>
+  <td><span>City* </span><%= form.text_field :city %></td>
+  <td></td>
+  <td><span>State/Province*</span>
+	<%= form.collection_select :state, State.all, :code, :state_name, {:prompt => 'Select State'} %></td>
+</tr>
+<tr>
+  <td><span>Zip* </span><%= form.text_field :zip, :size => 10 %></td>
+  <td></td>
+  <td><span>Country </span><%= country_select "transaction", "country", ["United States"], :class => 'country' %></td>	  
+</tr>

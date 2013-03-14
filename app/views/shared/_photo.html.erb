@@ -1,8 +1,10 @@
   <div>
     <%= fields_for "temp_listing[pictures_attributes][]", Picture.new, index: nil do |form| %>
-      <%= form.label :photo %>
-      <%= form.file_field :photo, { id: "photo", multiple: true } %>
-      <%= form.check_box :delete_photo, :label => 'Remove Image', id: "delete_photo"  %>
+      <td><%= form.label :photo, 'Select Image(s)' %>
+        <%= form.file_field :photo, { id: "photo", multiple: true } %></td>
+      <td class='width30'></td>
+      <td><%= form.check_box :delete_photo, id: "delete_photo" %>
+        <%= form.label :delete_photo, 'Clear Image(s)', :class => "cb-label" %></td>
     <% end %>
   </div>
 

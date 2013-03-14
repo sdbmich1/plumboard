@@ -31,6 +31,7 @@ describe TempListing do
   it { should respond_to(:category) }
   it { should respond_to(:set_flds) }
   it { should respond_to(:generate_token) }
+  it { should respond_to(:site_listings) }
 
   describe "when price is not a number" do
     before { @temp_listing.price = "$500" }
@@ -112,16 +113,11 @@ describe TempListing do
     it { should_not be_valid }
   end
 
-  describe "should not include inactive listings" do
-    temp_listing = FactoryGirl.create :temp_listing, :description=>'stuff', :status=>'inactive'
-    it { TempListing.active.should_not include (temp_listing) }
-  end
-
   describe "should not include invalid site listings" do 
     it { TempListing.get_by_site(0).should_not include @temp_listing } 
   end
 
-  describe "should include active site listings" do
+  describe "should include site listings" do
     it { TempListing.get_by_site(@temp_listing.site.id).should_not be_empty }
   end
 
@@ -204,6 +200,21 @@ describe TempListing do
     it { temp_listing.brief_descr.length.should == 30 }
   end
 
+  describe "should not return a short description" do 
+    temp_listing = FactoryGirl.create :temp_listing, description: 'qqq'
+    it { temp_listing.brief_descr.length.should_not == 30 }
+  end
+
+  describe "should return a nice title" do 
+    temp_listing = FactoryGirl.create :temp_listing, title: 'guitar for sale'
+    it { temp_listing.nice_title.should == 'Guitar For Sale' }
+  end
+
+  describe "should not return a nice title" do 
+    temp_listing = FactoryGirl.create :temp_listing, title: 'qqq'
+    it { temp_listing.nice_title.should_not == 'Guitar For Sale' }
+  end
+
   describe "set flds" do 
     let(:temp_listing) { FactoryGirl.create :temp_listing, status: "" }
 
@@ -221,14 +232,13 @@ describe TempListing do
     end
   end 
 
-  describe "should activate" do 
-    temp_listing = FactoryGirl.build :temp_listing, start_date: Time.now, status: 'pending' 
-    it { temp_listing.activate.status.should == 'active' } 
+  describe "should return site count > 0" do 
+    temp_listing = FactoryGirl.create :temp_listing, site_id: 100
+    it { temp_listing.get_site_count.should == 0 } 
   end
 
-  describe "should not activate" do 
-    let(:temp_listing) { FactoryGirl.build :temp_listing, start_date: Time.now, status: 'sold' } 
-    it { temp_listing.activate.status.should_not == 'active' } 
+  describe "should not return site count > 0" do 
+    it { @temp_listing.get_site_count.should_not == 0 } 
   end
 
   describe "should return temp listing" do
@@ -236,13 +246,13 @@ describe TempListing do
       it { TempListing.get_by_status('active').should == [@temp_listing] } 
     end
 
-    it "submit order should return submitted listings" do 
+    it "submit order should return submitted status" do 
       @temp_listing.parent_pixi_id = nil
       @temp_listing.save
       TempListing.submit_order(@temp_listing.id).status.should == "submitted"
     end
 
-    it "submit order should return pending listings" do 
+    it "submit order should return pending status if listing exists" do 
       @temp_listing.parent_pixi_id = "EtOzC6uO869GIE4Dc"
       @temp_listing.save
       TempListing.submit_order(@temp_listing.id).status.should == "pending"  
@@ -256,16 +266,16 @@ describe TempListing do
   describe "must have pictures" do
     let(:temp_listing) { FactoryGirl.build :invalid_temp_listing }
 
+    it "should not save w/o at least one picture" do
+      picture = temp_listing.pictures.build
+      temp_listing.should_not be_valid
+    end
+
     it "should save with at least one picture" do
       picture = temp_listing.pictures.build
       picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
       temp_listing.save
       temp_listing.should be_valid
-    end
-
-    it "should not save w/o at least one picture" do
-      temp_listing.save
-      temp_listing.should_not be_valid
     end
   end
 
@@ -283,6 +293,6 @@ describe TempListing do
       [@sr].each do |s|
          Picture.find_by_id(s.id).should be_nil
        end
-     end  
-   end  
+    end  
+  end  
 end

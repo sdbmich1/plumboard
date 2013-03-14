@@ -16,20 +16,40 @@
 //= require jquery.remotipart
 //= require_tree .
 
+$.ajaxSetup({  
+  'beforeSend': function (xhr) {
+  	var token = $("meta[name='csrf-token']").attr("content");
+	xhr.setRequestHeader("X-CSRF-Token", token);
+  	toggleLoading();
+    },
+  'complete': function(){ },
+  'success': function() { toggleLoading }
+}); 
 
-$(document).ready(function() {
-
-  // preview image on file upload
-  $("input[type=file]").change(function(evt){
+// preview image on file upload
+$(document).on("change", "input[type=file]", function(evt){
     // reset file list
     $('#list').empty();
 
     // render image
     handleFileSelect(evt);
     return false;
-  });
- 
 }); 
+
+// clear input file text on click
+$(document).on("click", "#delete_photo", function(evt){
+
+  // reset file list
+  $('#list').empty();
+
+  // reset file field
+  $('#photo').val(null);
+}); 
+
+// set page title
+function set_title(val) { 
+  document.title = "Pixi | " + val;
+} 
 
 function toggleLoading () { 
   $("#spinner").toggle(); 
@@ -63,4 +83,23 @@ function handleFileSelect(evt) {
     reader.readAsDataURL(f);
   }
 }
+
+// used to toggle spinner
+$(document).on("ajax:beforeSend", '#purchase_btn, .back-btn, #pixi-form', function () {
+  toggleLoading();
+});	
+
+$(document).on("ajax:complete", '#purchase_btn, .back-btn, #pixi-form', function () {
+  toggleLoading;
+});	
+
+$(document).on("ajax:success", '#purchase_btn, .back-btn, #pixi-form', function (event, data, status, xhr) {
+  $("#response").html(data);
+  toggleLoading;
+});	
+
+$(document).on("ajax:error", '#purchase_btn, .back-btn, #pixi-form', function (event, data, status, xhr) {
+  if (status == 401) // # thrownError is 'Unauthorized'
+      window.location.replace('/users/sign_in');
+});	
 

@@ -1,0 +1,14 @@
+var formError = getFormID('#buyFormError');
+var formTxtForm = getFormID('#buyTxtForm');
+
+formTxtForm.attr("disabled", true);	
+formError.hide(300);
+formTxtForm.html("<%= escape_javascript( render :partial => "shared/payment_form", locals: { action_name: 'Submit Order' } ).html_safe %>");
+formTxtForm.attr("disabled", false);	
+
+// set page title
+set_title('Submit Order');
+
+// scroll to top of page
+$('html, body').animate({scrollTop:0}, 100);
+$("#spinner").hide(300);

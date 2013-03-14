@@ -1,0 +1,7 @@
+  <div>
+    <%= fields_for :site_listings, SiteListing.new do |form| %>
+    	<%= form.label :site_id, 'Site' %>
+	<%= form.collection_select :site_id, Site.active, :id, :name, {:prompt => 'Select'} %>
+    <% end %>
+  </div>
+

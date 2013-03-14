@@ -14,7 +14,8 @@ describe Contact do
   it { should respond_to(:home_phone) }
   it { should respond_to(:mobile_phone) }
   it { should respond_to(:website) }
-  it { should respond_to(:address) }
+  it { should respond_to(:country) }
+  it { should respond_to(:contactable) }
 
   describe "when address is empty" do
     before { @contact.address = "" }

@@ -5,9 +5,13 @@ describe TransactionDetail do
     @transaction_detail = FactoryGirl.create(:transaction_detail) 
   end
 
-  it "should have a transactions method" do
-    @transaction_detail.should respond_to(:transaction) 
-  end
+  subject { @transaction_detail }
+
+  it { should respond_to(:transaction)  }
+  it { should respond_to(:transaction_id)  }
+  it { should respond_to(:item_name)  }
+  it { should respond_to(:quantity)  }
+  it { should respond_to(:price)  }
 
   describe "when transaction_id is empty" do
     before { @transaction_detail.transaction_id = "" }
@@ -34,6 +38,11 @@ describe TransactionDetail do
     it { should_not be_valid }
   end
 
+  describe "when quantity is invalid" do
+    before { @transaction_detail.quantity = "a" }
+    it { should_not be_valid }
+  end
+
   describe "when quantity is entered" do
     before { @transaction_detail.quantity = 1 }
     it { @transaction_detail.quantity.should == 1 }
@@ -41,6 +50,11 @@ describe TransactionDetail do
 
   describe "when price is empty" do
     before { @transaction_detail.price = "" }
+    it { should_not be_valid }
+  end
+
+  describe "when price is invalid" do
+    before { @transaction_detail.price = "a" }
     it { should_not be_valid }
   end
 

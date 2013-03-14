@@ -10,7 +10,7 @@ feature "TempListings" do
   end
 
   describe "Manage Temp Pixis" do
-    let(:submit) { "Preview" }
+    let(:submit) { "Next Step: Review >>" }
     let(:temp_listing) { FactoryGirl.build(:temp_listing) }
 
     before(:each) do
@@ -22,10 +22,15 @@ feature "TempListings" do
 
     def add_data
       fill_in 'Title', with: "Guitar for Sale"
-      fill_in 'Description', with: "Guitar for Sale"
+      fill_in 'Price', with: "150.00"
       select("SFSU", :from => "Site")
       select('Foo bar', :from => 'Category')
+      fill_in 'Description', with: "Guitar for Sale"
+    end
+
+    def add_data_w_photo
       attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
+      add_data
     end
 
     describe "Create with invalid information" do
@@ -34,15 +39,23 @@ feature "TempListings" do
       end
     end
 
+    describe "Create without photo" do
+      it "should not create a listing w/o photo" do
+        expect { 
+	  add_data
+	  click_button submit }.not_to change(TempListing, :count)
+      end
+    end
+
     describe "Create with valid information" do
       it "Adds a new listing and displays the results" do
         expect{
-		add_data
+		add_data_w_photo
 	        click_button submit
 	      }.to change(TempListing,:count).by(1)
       
-        within 'h4' do
-          page.should have_content "Guitar for Sale" 
+        within 'span' do
+          page.should have_content "Guitar For Sale" 
         end
 
         page.should have_content "Description: Guitar for Sale" 
@@ -51,7 +64,7 @@ feature "TempListings" do
   end
 
   describe "Edit Temp Pixi" do 
-    let(:submit) { "Preview" }
+    let(:submit) { "Next Step: Review >>" }
     let(:temp_listing) { FactoryGirl.create(:temp_listing) }
     before { visit edit_temp_listing_path(temp_listing) }
 
@@ -70,11 +83,8 @@ feature "TempListings" do
               click_button submit
       }.to change(TempListing,:count).by(0)
 
-      within 'h4' do
-        page.should have_content "Guitar for Sale" 
-      end
-
-      page.should have_content 'Successfully updated pixi.'
+      page.should have_content "Guitar For Sale" 
+      page.should have_content 'Review Your Pixi'
       page.should have_content "Description: Acoustic bass" 
     end
   end
@@ -83,27 +93,33 @@ feature "TempListings" do
     let(:temp_listing) { FactoryGirl.create(:temp_listing, seller_id: user.id) }
     before { visit temp_listing_path(temp_listing) }
 
+    it "Views a pixi" do
+      page.should have_content "Acoustic Guitar" 
+    end
+
     it "Deletes a pixi" do
       expect{
-              click_link 'Remove'
+              click_link 'Cancel'
       }.to change(TempListing,:count).by(-1)
 
       page.should have_content "Pixis" 
-      page.should_not have_content "Guitar for Sale" 
-    end
-
-    it "Views a pixi" do
-      page.should have_selector('h4',    text: temp_listing.title) 
-      page.should have_selector('title', text: temp_listing.title) 
+      page.should_not have_content "Guitar For Sale" 
     end
 
     it "Submits a pixi" do
       expect { 
-	      click_on 'Submit' 
+	      click_button 'Next Step: Submit >>'
 	}.not_to change(TempListing, :count)
 
-      page.should_not have_content "Pixis" 
-      page.should have_content "Order Summary" 
+      page.should have_content "Submit Order" 
+    end
+
+    it "Builds a pixi" do
+      expect { 
+	      click_link '<< Prev Step: Build'
+	}.not_to change(TempListing, :count)
+
+      page.should have_content "Build Pixi" 
     end
   end
 
