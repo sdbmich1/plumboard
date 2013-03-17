@@ -112,6 +112,13 @@ FactoryGirl.define do
     end
   end
 
+  factory :temp_listing_with_transaction, :class => "TempListing", :parent => :listing_parent do
+    before(:create) do |listing|
+      listing.pictures.build FactoryGirl.attributes_for(:picture)
+    end
+    transaction
+  end
+
   factory :invalid_temp_listing, :class => "TempListing", :parent => :listing_parent do
   end
 
@@ -146,6 +153,7 @@ FactoryGirl.define do
     country		"US"
     home_phone		"1234567890"
     amt			100.00
+    status		'pending'
     user
   end
 

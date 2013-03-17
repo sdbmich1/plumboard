@@ -38,7 +38,17 @@ describe TempListing do
     it { should_not be_valid }
   end
   
-  describe "when price is a number" do
+  describe "when price is less than 0" do
+    before { @temp_listing.price = -500.00 }
+    it { should_not be_valid }
+  end
+  
+  describe "when price is greater than 1M" do
+    before { @temp_listing.price = 5000000.00 }
+    it { should_not be_valid }
+  end
+  
+  describe "when price is greater than 0 but less than 1M" do
     before { @temp_listing.price = 500.00 }
     it { should be_valid }
   end
@@ -242,25 +252,47 @@ describe TempListing do
   end
 
   describe "should return temp listing" do
+    let(:transaction) { FactoryGirl.create :transaction }
     context "get_by_status should include new listings" do
       it { TempListing.get_by_status('active').should == [@temp_listing] } 
     end
 
-    it "submit order should return submitted status" do 
-      @temp_listing.parent_pixi_id = nil
-      @temp_listing.save
-      TempListing.submit_order(@temp_listing.id).status.should == "submitted"
+    it "submit order should not return pending status" do 
+      @temp_listing.submit_order(nil).should_not be_true
     end
 
     it "submit order should return pending status if listing exists" do 
-      @temp_listing.parent_pixi_id = "EtOzC6uO869GIE4Dc"
-      @temp_listing.save
-      TempListing.submit_order(@temp_listing.id).status.should == "pending"  
+      @temp_listing.submit_order(transaction.id).should be_true
     end
   end
 
-  describe "submit order should not return temp listing" do
-    it { TempListing.submit_order(100).should_not == [@temp_listing] } 
+  describe "approved order" do
+    let(:user) { FactoryGirl.create :user }
+    let(:temp_listing) { FactoryGirl.create :temp_listing_with_transaction, seller_id: user.id }
+
+    it "approve order should not return approved status" do 
+      @temp_listing.approve_order(nil)
+      @temp_listing.status.should_not == 'approved'
+    end
+
+    it "approve order should return approved status if listing exists" do 
+      temp_listing.approve_order(user)
+      temp_listing.status.should == 'approved'
+    end
+  end
+
+  describe "post to board" do
+    let(:user) { FactoryGirl.create :user }
+    let(:temp_listing) { FactoryGirl.create :temp_listing_with_transaction, seller_id: user.id }
+
+    it "post to board should not return new listing" do 
+      temp_listing.post_to_board.should_not be_true
+    end
+
+    it "post to board should return new listing" do 
+      temp_listing.status = 'approved'
+      temp_listing.post_to_board.should be_true
+    end
   end
 
   describe "must have pictures" do

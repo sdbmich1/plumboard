@@ -1,10 +1,11 @@
 class Transaction < ActiveRecord::Base
   attr_accessor :cvv
   attr_accessible :address, :address2, :amt, :city, :code, :country, :credit_card_no, :description, :email, :first_name, 
-  	:home_phone, :last_name, :payment_type, :promo_code, :state, :work_phone, :zip, :user_id, :confirmation_no, :token
+  	:home_phone, :last_name, :payment_type, :promo_code, :state, :work_phone, :zip, :user_id, :confirmation_no, :token, :status
 
   belongs_to :user
   has_many :listings
+  has_many :temp_listings
   has_many :transaction_details
 
   name_regex =  /^[A-Z]'?['-., a-zA-Z]+$/i
@@ -36,11 +37,12 @@ class Transaction < ActiveRecord::Base
   		  :numericality => true
 
   # pre-load new transaction for given user
-  def self.load_new(usr)
+  def self.load_new usr, listing
     if usr
-      new_transaction = usr.transactions.build
+      new_transaction = listing.build_transaction
 
       # load user info
+      new_transaction.user_id = usr.id
       new_transaction.first_name, new_transaction.last_name, new_transaction.email = usr.first_name, usr.last_name, usr.email
       
       # load user contact info
@@ -62,17 +64,16 @@ class Transaction < ActiveRecord::Base
     end
     item_detail
   end
-
+  
+  # check if transaction is refundable
+  def refundable? 
+    new_dt = created_at + 30.days rescue nil
+    new_dt ? new_dt > Date.today() : false
+  end
+  
   # process transaction
-  def save_transaction order
+  def process_transaction
     if valid?
-      # add transaction details      
-      (1..order[:cnt].to_i).each do |i| 
-        if order['quantity'+i.to_s].to_i > 0 
-          add_details order['item'+i.to_s], order['quantity'+i.to_s], order['price'+i.to_s].to_f * order['quantity'+i.to_s].to_i
-        end 
-      end 
-
       # charge the credit card using Stripe
       if amt > 0.0 then
         result = Stripe::Charge.create(:amount => (amt * 100).to_i, :currency => "usd", :card => token, :description => description)  
@@ -84,7 +85,12 @@ class Transaction < ActiveRecord::Base
       else
         self.confirmation_no = Time.now.to_i.to_s   
       end  
+
+      # set status
+      self.status = 'approved'
       save!  
+    else
+      false
     end
 
     # rescue errors
@@ -101,9 +107,27 @@ class Transaction < ActiveRecord::Base
       process_error e
     rescue => e
       process_error e
+  end
 
-    # return false
-    false
+  # save transaction
+  def save_transaction order, listing
+    if valid?
+      # add transaction details      
+      (1..order[:cnt].to_i).each do |i| 
+        if order['quantity'+i.to_s].to_i > 0 
+          add_details order['item'+i.to_s], order['quantity'+i.to_s], order['price'+i.to_s].to_f * order['quantity'+i.to_s].to_i
+        end 
+      end 
+
+      # set status
+      self.status = 'pending'
+      save!  
+
+      # submit order
+      listing.submit_order self.id
+    else
+      false
+    end
   end
 
   # process credit card messages

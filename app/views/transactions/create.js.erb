@@ -2,7 +2,7 @@ var formError = getFormID('#stripe_error');
 var pmtForm = getFormID('#pmtForm');
 
 <% if @transaction.errors.any? %>
-    formError.html("<%= escape_javascript(error_messages_for(@transaction))%>");
+    formError.html("<%= escape_javascript(@transaction.errors.full_messages.first)%>");
 	formError.show(300);
 	getFormID('#payForm').attr('disabled', false);
 <% else %>

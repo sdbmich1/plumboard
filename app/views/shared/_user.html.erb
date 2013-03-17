@@ -1,6 +1,5 @@
 <div class="span2 pic-frame">
   <div class="center">
-    <%= render :partial => 'shared/show_photo', :locals => {:model => user, :file_name => "star.jpg", :psize => '120x120' } %>
     <%= link_to user.name, user_path(user) %><br />
   </div>
   <%= user.email %>

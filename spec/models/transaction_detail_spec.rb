@@ -13,11 +13,6 @@ describe TransactionDetail do
   it { should respond_to(:quantity)  }
   it { should respond_to(:price)  }
 
-  describe "when transaction_id is empty" do
-    before { @transaction_detail.transaction_id = "" }
-    it { should_not be_valid }
-  end
-
   describe "when transaction_id is entered" do
     before { @transaction_detail.transaction_id = 1 }
     it { @transaction_detail.transaction_id.should == 1 }

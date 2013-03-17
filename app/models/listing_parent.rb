@@ -1,18 +1,22 @@
 class ListingParent < ActiveRecord::Base
   self.abstract_class = true
 
+  before_update :must_have_pictures
+
   # load pixi config keys
   ALIAS_LENGTH = PIXI_KEYS['pixi']['alias_length']
   KEY_LENGTH = PIXI_KEYS['pixi']['key_length']
   SITE_FREE_AMT = PIXI_KEYS['pixi']['site_init_free']
+  MAX_PIXI_AMT = PIXI_KEYS['pixi']['max_pixi_amt']
 
   attr_accessible :buyer_id, :category_id, :description, :title, :seller_id, :status, :price, :show_alias_flg, :show_phone_flg, :alias_name,
-  	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id
+  	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id, :id, :created_at, :updated_at,
+	:edited_by, :edited_dt
 
   belongs_to :user, :foreign_key => :seller_id
   belongs_to :site
   belongs_to :category
-  has_one :transaction
+  belongs_to :transaction
 
   validates :title, :presence => true, :length => { :maximum => 80 }
   validates :description, :presence => true
@@ -20,19 +24,21 @@ class ListingParent < ActiveRecord::Base
   validates :site_id, :presence => true
   validates :start_date, :presence => true
   validates :category_id, :presence => true
-  validates :price, :numericality => true, :allow_blank => true
-  validate :must_have_pictures, unless: :any_pix?
+  validates :price, :allow_blank => true, :numericality => { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_PIXI_AMT.to_f }
+  validate :must_have_pictures
 
   default_scope :order => 'end_date DESC'
 
   # validate existance of at least one picture
   def must_have_pictures
-    errors.add(:base, 'Must have at least one picture') if pictures.all?(&:marked_for_destruction?)
+    if !any_pix? || pictures.all? {|pic| pic.marked_for_destruction? }
+      errors.add(:base, 'Must have at least one picture')
+    end
   end
 
   # check if pictures already exists
   def any_pix?
-    pictures.where("imageable_id = ? AND imageable_type = ?", self.id, self.class.to_s)
+    pictures.detect { |x| !x.photo_file_name.nil? }
   end
 
   # select active listings

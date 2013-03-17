@@ -39,8 +39,8 @@ module TransactionsHelper
     (0..30).inject([]){|x,y| x << y}
   end
   
-  def get_fname event, fname, flg
-    flg ? fname : event.send(fname)
+  def get_fname txn, fname, flg
+    flg ? fname : txn.send(fname)
   end
   
   def get_promo_code
@@ -69,11 +69,6 @@ module TransactionsHelper
 
   def get_price
     PIXI_BASE_PRICE.to_f rescue nil
-  end
-  
-  def refundable? t
-    new_dt = t.created_at + 30.days rescue nil
-    new_dt ? new_dt > Date.today() : false
   end
   
   def show_title paid

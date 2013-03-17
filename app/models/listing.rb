@@ -15,7 +15,7 @@ class Listing < ListingParent
   # set active status
   def activate
     if self.status != 'sold'
-      self.status, self.start_date = 'active', Time.now 
+      self.id, self.status, self.start_date = nil, 'active', Time.now 
       set_end_date
     end
     self

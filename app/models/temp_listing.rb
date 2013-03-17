@@ -25,12 +25,43 @@ class TempListing < ListingParent
     set_end_date
   end
 
-  # submit order request
-  def self.submit_order val
-    tmp_listing = TempListing.find val rescue nil
+  # approve order
+  def approve_order usr
+    if usr
+      self.status = 'approved'
+      self.edited_by = usr.name
+      self.edited_dt = Time.now
+      save!
+    end
+  end
 
-    # check if parent exists (i.e. original pixi is already posted)
-    tmp_listing.status = !tmp_listing.parent_pixi_id.blank? ? 'pending' : 'submitted' if tmp_listing
-    tmp_listing
+  # submit order request for review
+  def submit_order val
+
+    # set transaction id
+    if val
+      self.transaction_id = val
+      self.status = 'pending' 
+      save!
+    else
+      false
+    end
+  end
+
+  # add listing to post if approved
+  def post_to_board
+    if self.status == 'approved'
+      listing = Listing.new self.attributes
+
+      # add photos
+      self.pictures.each do |pic|
+        listing.pictures.build(:photo => pic.photo)
+      end
+
+      # add to board
+      listing.save!
+    else
+      false
+    end
   end
 end

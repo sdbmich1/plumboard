@@ -1,9 +1,9 @@
-<div id="pmtForm" class="span24 last">
+<div id="pmtForm">
   <%= render partial: 'shared/listing_header', :locals => { step_no: 3, step_name: step_name } %>
-  <div id="stripe_error" style="display:none" class="error"></div>
-  <%= render 'shared/purchase_summary' %>
-  <%= form_for @transaction, :url => transactions_url(:order=>@order), :html => {:id => 'payment_form'}, :validate => true do |f| %>
+  <%= form_for @transaction, :url => transactions_url(:id=>@listing, :order=>@order), :html => {id: 'payment_form'}, validate: true do |f| %>
     <%= render :partial => 'shared/error_messages', :locals => { :target => @transaction } %>
+    <div id="stripe_error" style="display:none" class="error"></div>
+    <%= render 'shared/purchase_summary' %>
     <%= render :partial => 'shared/buyer_info', locals: { f: f } %>
     <%= render :partial => 'shared/credit_card_info' if @total > 0.0 %>
 	

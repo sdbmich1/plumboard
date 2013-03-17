@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130308033101) do
+ActiveRecord::Schema.define(:version => 20130317014156) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -105,6 +105,8 @@ ActiveRecord::Schema.define(:version => 20130308033101) do
     t.datetime "end_date"
     t.integer  "transaction_id"
     t.string   "pixi_id"
+    t.string   "edited_by"
+    t.datetime "edited_dt"
   end
 
   add_index "listings", ["end_date", "start_date"], :name => "index_listings_on_end_date_and_start_date"
@@ -189,6 +191,14 @@ ActiveRecord::Schema.define(:version => 20130308033101) do
 
   add_index "sites", ["institution_id"], :name => "index_organizations_on_institution_id"
 
+  create_table "states", :force => true do |t|
+    t.string "code"
+    t.string "state_name"
+    t.float  "sortkey"
+    t.string "hide"
+    t.string "status"
+  end
+
   create_table "temp_listings", :force => true do |t|
     t.string   "title"
     t.text     "description"
@@ -208,6 +218,8 @@ ActiveRecord::Schema.define(:version => 20130308033101) do
     t.datetime "updated_at",     :null => false
     t.string   "pixi_id"
     t.string   "parent_pixi_id"
+    t.string   "edited_by"
+    t.datetime "edited_dt"
   end
 
   add_index "temp_listings", ["parent_pixi_id"], :name => "index_temp_listings_on_parent_pixi_id"
@@ -248,6 +260,7 @@ ActiveRecord::Schema.define(:version => 20130308033101) do
     t.integer  "user_id"
     t.string   "token"
     t.string   "confirmation_no"
+    t.string   "status"
   end
 
   add_index "transactions", ["code"], :name => "index_transactions_on_code"

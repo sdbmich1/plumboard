@@ -27,6 +27,10 @@ describe TransactionsController do
       delete("/transactions/1").should route_to("transactions#destroy", :id => "1")
     end
 
+    it "routes to #new" do
+      get("/transactions/new").should route_to("transactions#new")
+    end
+
     it "routes to #build" do
       get("/transactions/build").should route_to("transactions#build")
     end

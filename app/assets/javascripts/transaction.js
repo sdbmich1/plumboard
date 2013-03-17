@@ -17,10 +17,13 @@ $(document).on('click', '#payForm', function () {
   if (getFormID('#card_number').length > 0) {	  
     Stripe.setPublishableKey($('meta[name="stripe-key"]').attr('content'));  // get stripe key		
     processCard(); // process card
-    false 
+    return false 
   }
   else {
-    true
+    var amt = parseFloat(getFormID('#amt').val());	
+    if (amt == 0.0)
+       	getFormID("#payment_form").trigger("submit.rails");
+    return true
       }
 });  
 
@@ -90,7 +93,7 @@ function stripeResponseHandler(status, response) {
     getFormID("#payment_form").trigger("submit.rails");    	  
  	}
   else {
-    stripeError.show(300).text(response.error.message)
+    stripeError.show(300).text(response.error.message);
     payForm.attr('disabled', false);
       
     $('html, body').animate({scrollTop:0}, 100); 

@@ -114,7 +114,7 @@ describe Listing do
 
   describe "should not include inactive listings" do
     listing = FactoryGirl.create :listing, :description=>'stuff', :status=>'inactive'
-    it { Listing.active.should_not include (listing) }
+    it { Listing.active.should_not == listing }
   end
 
   describe "should include active listings" do 

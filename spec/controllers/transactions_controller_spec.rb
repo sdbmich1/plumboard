@@ -47,38 +47,14 @@ describe TransactionsController do
     before :each do
       @user = stub_model(User)
       User.stub!(:find).and_return(@user)
-      Transaction.stub!(:load_new).with(@user).and_return( @transaction )
-      controller.stub!(:load_vars).and_return(:success)
-    end
-
-    def do_get
-      xhr :get, :new, user_id: '3' 
-    end
-
-    it "should assign @transaction" do
-      do_get
-      assigns(:transaction).should_not be_nil
-    end
-
-    it "new action should render new template" do
-      do_get
-      response.should render_template(:new)
-    end
-  end
-
-  describe "GET 'build'" do
-
-    before :each do
-      @user = stub_model(User)
-      User.stub!(:find).and_return(@user)
       @listing = stub_model(TempListing)
       TempListing.stub!(:find).and_return(@listing)
-      Transaction.stub!(:load_new).with(@user).and_return( @transaction )
+      Transaction.stub!(:load_new).with(@user, @listing).and_return( @transaction )
       controller.stub!(:load_vars).and_return(:success)
     end
 
     def do_get
-      xhr :get, :build, user_id: '3', id: '1' #, order: { "item_name" => 'New Pixi', "quantity" => 1, "price" => 5.00 }
+      get :new, user_id: '3', id: '1' 
     end
 
     it "should assign @transaction" do
@@ -91,14 +67,39 @@ describe TransactionsController do
       assigns(:listing).should_not be_nil
     end
 
-    it "should assign @user" do
+    it "new action should render new template" do
       do_get
-      assigns(:user).should_not be_nil
+      response.should render_template(:new)
+    end
+  end
+
+  describe 'GET show/:id' do
+    before :each do
+      Transaction.stub!(:find).and_return( @transaction )
     end
 
-    it "build action should render build template" do
+    def do_get
+      get :show, :id => @transaction
+    end
+
+    it "should show the requested transaction" do
       do_get
-      response.should render_template(:build)
+      response.should be_success
+    end
+
+    it "should load the requested transaction" do
+      Transaction.stub(:find).with(@transaction.id).and_return(@transaction)
+      do_get
+    end
+
+    it "should assign @transaction" do
+      do_get
+      assigns(:transaction).should_not be_nil
+    end
+
+    it "show action should render show template" do
+      do_get
+      response.should render_template(:show)
     end
   end
 
@@ -113,7 +114,7 @@ describe TransactionsController do
       end
 
       def do_create
-        xhr :post, :create, id: '1'
+        post :create, id: '1'
       end
 
       it "should assign @transaction" do
@@ -126,9 +127,9 @@ describe TransactionsController do
         assigns(:listing).should_not be_nil 
       end
 
-      it "create action should render nothing" do
+      it "create action should render new action" do
         do_create
-	controller.stub!(:render)
+        response.should render_template(:new)
       end
     end
 
@@ -141,7 +142,7 @@ describe TransactionsController do
       end
 
       def do_create
-        xhr :post, :create, id: '1', :transaction => { 'first_name'=>'test', 'description'=>'test' }, order: { "item_name" => 'New Pixi', "quantity" => 1, "price" => 5.00 }
+        post :create, id: '1', :transaction => { 'first_name'=>'test', 'description'=>'test' }, order: { "item_name" => 'New Pixi', "quantity" => 1, "price" => 5.00 }
       end
 
       it "should load the requested transaction" do
@@ -159,10 +160,10 @@ describe TransactionsController do
         assigns(:listing).should_not be_nil 
       end
 
-      it "should not redirect to the created transaction" do
+      it "should redirect to the created transaction" do
         Transaction.stub(:new).with({'first_name'=>'test', 'description'=>'test' }) { mock_transaction(:save_transaction => true) }
         do_create
-        response.should_not be_redirect
+        response.should be_redirect
       end
 
       it "should change transaction count" do

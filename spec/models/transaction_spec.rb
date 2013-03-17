@@ -134,16 +134,30 @@ describe Transaction do
   end
   
   describe "load transaction" do
+    temp_listing = FactoryGirl.create :temp_listing 
     it "should load new transaction" do
       contact_user = FactoryGirl.create :contact_user 
-      Transaction.load_new(contact_user).should_not be_nil
+      Transaction.load_new(contact_user, temp_listing).should_not be_nil
     end
 
     it "should not load new transaction" do
-      Transaction.load_new(nil).should be_nil
+      Transaction.load_new(nil, temp_listing).should be_nil
     end
   end
   
+  describe "refundable" do
+    let(:transaction) { FactoryGirl.create :transaction, created_at: Time.now }
+
+    it "should be refundable" do
+      transaction.refundable?.should be_true
+    end
+
+    it "should not be refundable" do
+      transaction.created_at = Time.now-2.months
+      transaction.refundable?.should_not be_true
+    end
+  end
+
   describe "load item detail" do
     let(:transaction) { FactoryGirl.build :transaction }
     it "should load new item detail" do
@@ -158,6 +172,8 @@ describe Transaction do
 
   describe "save transaction" do
     let(:order) { {"cnt"=> 1, "quantity1"=> 1, "item1"=> 'Pixi Post', "price1"=> 0.0 } }
+    let(:temp_listing) { FactoryGirl.create :temp_listing }
+
     it "should be valid" do
       transaction_detail = FactoryGirl.build :transaction_detail 
       transaction_detail.transaction.should be_valid
@@ -165,12 +181,12 @@ describe Transaction do
 
     it "should save" do
       transaction_detail = FactoryGirl.build :transaction_detail 
-      transaction_detail.transaction.save_transaction(order).should be_true
+      transaction_detail.transaction.save_transaction(order, temp_listing).should be_true
     end
 
     it "should not save" do
       transaction = FactoryGirl.build :transaction, first_name: nil
-      transaction.save_transaction(order).should_not be_true
+      transaction.save_transaction(order, temp_listing).should_not be_true
     end
   end
 end

@@ -1,0 +1,14 @@
+<div id="pmtForm" class="span24 last">
+  <%= render partial: 'shared/listing_header', :locals => { step_no: 3, step_name: step_name } %>
+  <div class="center-wrapper mtop grp-hdr">Your order <%= @transaction.description %> has been processed.</div>
+  <div class="mtop">
+    Subject to approval, your pixi will be posted within the next hour. 
+    <%= 'Your credit card will be charged upon approval.' if @transaction.amt > 0.0 %>
+  </div>
+  <div class="mtop">Thank you for your business.</div>
+  <div class="mtop">
+  <center>
+	<%= link_to "Done", listings_path, :class => "btn btn-large btn-primary submit-btn", :id => 'cancel-btn' %>
+  </center>
+  </div>
+</div>
