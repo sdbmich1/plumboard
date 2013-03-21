@@ -6,7 +6,14 @@
         <ul class="nav pull-right">
           <li><%= link_to "Help", help_path %></li>
 	  <% if signed_in? %>
-            <li><%= link_to "Manage", '#' %></li>
+            <li><%= link_to "Add+", new_temp_listing_path(:user_id=>@user), class: 'pixi-color' %></li>
+            <li id="fat-menu" class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Manage <b class="caret"></b></a>
+		<ul class="dropdown-menu">
+            	  <li><%= link_to "Pending Orders", pending_listings_path %></li>
+            	  <li><%= link_to "Users", users_path %></li>
+                </ul>
+            </li>
             <li id="fat-menu" class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Pixis <b class="caret"></b></a>
 		<ul class="dropdown-menu">

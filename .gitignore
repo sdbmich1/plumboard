@@ -16,6 +16,9 @@
 *.swp
 *~
 
-# ignore database.yml
-/config/database.yml
+# Ignore all picture files
+/public/system/pictures
+
+# ignore yml files
+/config/*.yml
 

@@ -3,7 +3,7 @@
     <%= fields_for "temp_listing[pictures_attributes][]", pic, index: nil do |form| %>
       <% unless pic.photo_file_name.blank? %>
 	<%= image_tag pic.photo.url, :size => psize %>
-        <%= form.check_box :delete_photo, { id: 'delete_photo' }, '0', '1' %>
+        <%= form.check_box :delete_photo, { checked: false, id: 'delete_photo' } %>
         <%= form.label :delete_photo, 'Clear Image(s)', :class => "cb-label" %>
       <% end %>
     <% end %>

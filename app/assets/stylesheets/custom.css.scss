@@ -155,10 +155,47 @@ input, select, .uneditable-input {
 
 /* primary listing(pixi) image */
 .pic-frame { border: 1px solid #AAAAAA;  box-shadow: 1px 1px 1px 1px #ccc; padding: 4px; margin-bottom: 10px; }
+.pixi-frame { 
+  display: block; float:left; width: 150px; border: 1px solid #AAAAAA;  
+  box-shadow: 1px 1px 1px 1px #ccc; padding: 4px; margin: 0 10px 10px 0; 
+}
+
+.pboard { display: block; }
 
 /* submit button */
 .submit-btn { color: white!important; font-weight: bold; background:orange!important; border:orange!important}
 .stnd-btn { color: black!important; background:#CCCCCC!important; border:1px gray!important}
+
+/* pagination styling */
+.pagination {
+    padding: 3px;
+    margin: 3px;
+  a {
+    padding: 2px 5px 2px 5px;
+    margin: 2px;
+    border: 1px solid #aaaadd;
+    text-decoration: none;
+    color: #000099;
+  }
+  a:hover, .pagination a:active {
+    border: 1px solid #000099;
+    color: #000;
+  }
+  span.current {
+    padding: 2px 5px 2px 5px;
+    margin: 2px;
+    border: 1px solid #000099;
+    font-weight: bold;
+    background-color: #000099;
+    color: #FFF;
+  }
+  span.disabled {
+    padding: 2px 5px 2px 5px;
+    margin: 2px;
+    border: 1px solid #eee;
+    color: #ddd;
+  }
+}
 
 /* listing image thumbnails */
 .thumb {
@@ -218,6 +255,7 @@ input, select, .uneditable-input {
 .grp-hdr { color: #0C6FCB; font-weight: bolder; font-size: medium }
 .tbl-hdr { text-align:left!important; font-weight: normal!important }
 
+.pixi-color { color: orange }
 .pixi-bkgnd { background-color: orange }
 .pixi-lt-bkgnd { background-color: #fde9d9 }
 .div-border {  

@@ -2,10 +2,6 @@ class TempListingsController < ApplicationController
   before_filter :authenticate_user!
   respond_to :html, :json, :js
 
-  def index
-    @listings = Listing.active
-  end
-
   def new
     @listing = TempListing.new
     @photo = @listing.pictures.build
@@ -36,12 +32,6 @@ class TempListingsController < ApplicationController
   def destroy
     @listing = TempListing.find params[:id]
     flash[:notice] = 'Successfully removed pixi.' if @listing.destroy 
-    respond_with @listing
-  end
-
-  def submit_order
-    @listing = TempListing.submit_order params[:id]
-    @listing.save
-    respond_with @listing
+    redirect_to listings_path
   end
 end

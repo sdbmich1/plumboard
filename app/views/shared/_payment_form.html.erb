@@ -5,16 +5,21 @@
     <div id="stripe_error" style="display:none" class="error"></div>
     <%= render 'shared/purchase_summary' %>
     <%= render :partial => 'shared/buyer_info', locals: { f: f } %>
-    <%= render :partial => 'shared/credit_card_info' if @total > 0.0 %>
+    <% if @transaction.amt > 0.0 %>
+      <%= render :partial => 'shared/credit_card_info' %>
+    <% end %>
 	
     <%= f.hidden_field :token %>
     <%= f.hidden_field :promo_code, :value=>get_promo_code %>
     <%= f.hidden_field :user_id, :value=>@transaction.user_id %>
-    <%= f.hidden_field :amt, :value => @total, :id=>'amt' %>
+    <%= f.hidden_field :amt, :value => @transaction.amt, :id=>'amt' %>
+    <%= f.hidden_field :processing_fee, :value => @transaction.processing_fee, :id=>'processing_fee' %>
+    <%= f.hidden_field :convenience_fee, :value => @transaction.convenience_fee, :id=>'convenience_fee' %>
     <%= f.hidden_field :description, :value => @order[:title] %>
 
     <div class="nav pull-right">
       <%= link_to '<< Prev Step: Review', @listing, class: 'btn btn-large btn-primary stnd-btn back-btn' %>
+      <%= link_to 'Cancel', @listing, method: :delete, confirm: 'Are you sure? All your changes will be lost.', class: 'btn btn-large btn-primary stnd-btn' %>
       <%= f.submit "Done!", :confirm => confirm_msg, :id => 'payForm', class: "btn btn-large btn-primary submit-btn" %>
     </div>
   <% end %>

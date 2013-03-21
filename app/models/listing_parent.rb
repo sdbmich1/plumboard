@@ -27,8 +27,6 @@ class ListingParent < ActiveRecord::Base
   validates :price, :allow_blank => true, :numericality => { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_PIXI_AMT.to_f }
   validate :must_have_pictures
 
-  default_scope :order => 'end_date DESC'
-
   # validate existance of at least one picture
   def must_have_pictures
     if !any_pix? || pictures.all? {|pic| pic.marked_for_destruction? }
@@ -38,18 +36,18 @@ class ListingParent < ActiveRecord::Base
 
   # check if pictures already exists
   def any_pix?
-    pictures.detect { |x| !x.photo_file_name.nil? }
+    pictures.detect { |x| x && !x.photo_file_name.nil? }
   end
 
   # select active listings
   def self.active
-    where(:status=>'active')
+    where(:status=>'active').order('updated_at DESC')
   #  where("status = 'active' AND end_date => curdate()")
   end
 
   # find listings by status
   def self.get_by_status val
-    where(:status => val)
+    where(:status => val).order('updated_at ASC')
   end
 
   # find listings by site id
@@ -99,7 +97,7 @@ class ListingParent < ActiveRecord::Base
 
   # short description
   def brief_descr
-    description[0..29] rescue nil
+    description[0..26] + '...' rescue nil
   end
 
   # titleize title
@@ -115,5 +113,10 @@ class ListingParent < ActiveRecord::Base
   # get number of sites where pixi is posted
   def get_site_count
     site_name ? 1 : site_listings.size
+  end
+
+  # set nice time
+  def get_local_time(tm)
+    tm.utc.getlocal.strftime('%m/%d/%Y %I:%M%p') rescue nil
   end
 end

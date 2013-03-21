@@ -46,11 +46,13 @@ describe TransactionsController do
 
     before :each do
       @user = stub_model(User)
+      @order.stub!("order").and_return(:success)
       User.stub!(:find).and_return(@user)
       @listing = stub_model(TempListing)
       TempListing.stub!(:find).and_return(@listing)
-      Transaction.stub!(:load_new).with(@user, @listing).and_return( @transaction )
+      Transaction.stub!(:load_new).with(@user, @listing, @order).and_return( @transaction )
       controller.stub!(:load_vars).and_return(:success)
+      controller.stub!(:set_amt).and_return(:success)
     end
 
     def do_get

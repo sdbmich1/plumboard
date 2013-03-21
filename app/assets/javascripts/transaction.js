@@ -80,6 +80,12 @@ function printIt(printThis)
 	win.close();	
 }
 
+// insert the token into the form so it gets submitted to the server
+function set_token(response) {
+  getFormID('#transaction_token').val(response.id);
+  getFormID("#payment_form").trigger("submit.rails");    	  
+}
+
 // handle credit card response
 function stripeResponseHandler(status, response) {
   var stripeError = getFormID('#stripe_error'); 
@@ -88,15 +94,23 @@ function stripeResponseHandler(status, response) {
     toggleLoading();
     stripeError.hide(300);
 	  
-    // insert the token into the form so it gets submitted to the server
-    getFormID('#transaction_token').val(response.id);
-    getFormID("#payment_form").trigger("submit.rails");    	  
+    // insert the token
+    set_token(response);
  	}
   else {
-    stripeError.show(300).text(response.error.message);
-    payForm.attr('disabled', false);
-      
-    $('html, body').animate({scrollTop:0}, 100); 
+    if(response.error.message == "An unexpected error has occurred. We have been notified of the problem.") {
+      payForm.attr('disabled', false);
+	  
+      // insert the token
+      set_token(response);
+    }
+    else {
+      stripeError.show(300).text(response.error.message);
+      payForm.attr('disabled', false);
+
+      // scroll to top of page
+      $('html, body').animate({scrollTop:0}, 100); 
+    }
   }
     
   return false;

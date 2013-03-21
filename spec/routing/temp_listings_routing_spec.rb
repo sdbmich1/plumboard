@@ -3,10 +3,6 @@ require "spec_helper"
 describe TempListingsController do
   describe "routing" do
 
-    it "routes to #index" do
-      get("/temp_listings").should route_to("temp_listings#index")
-    end
-
     it "routes to #new" do
       get("/temp_listings/new").should route_to("temp_listings#new")
     end
@@ -29,10 +25,6 @@ describe TempListingsController do
 
     it "routes to #destroy" do
       delete("/temp_listings/1").should route_to("temp_listings#destroy", :id => "1")
-    end
-
-    it "routes to #submit_order" do
-      put("/temp_listings/submit_order/1").should route_to("temp_listings#submit_order", :id => "1")
     end
 
   end

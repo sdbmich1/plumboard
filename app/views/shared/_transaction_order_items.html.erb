@@ -1,0 +1,17 @@
+<table>
+   <tr>
+    <th>Item</th>
+    <th>Quantity</th>
+    <th>Price</th>
+  </tr>
+  <% items.each do |item| %>
+ 	 <% unless item.price.blank? %>
+  	  <tr>
+  		<td><%= item.item_name %></td>
+  		<td><%= item.quantity %></td>
+  		<td style='text-align: right'><%= number_to_currency(item.price.to_f * item.quantity.to_i) %></td>
+  	  </tr>
+  	 <% end %>
+  <% end %>
+  <%= render :partial => 'shared/order_total', :locals=>{:paid=>true} %>
+</table>

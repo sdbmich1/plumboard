@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head> 
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+</head>
+  <body> 	
+    	<%= render :partial=>'mail_header' %>
+  	<center>
+    	<h3>
+    	<span style="height:30px;font-weight:bolder;font-size:medium;">
+  		Your order has been processed.</span></h3>
+  	</center>
+
+	<%= render :partial=>'shared/transaction_order_items', :locals=>{:items=>@transaction.transaction_details} %><br />
+	<%= render :partial=>'shared/transaction_details', :locals=>{:transaction=>@transaction, :showAmt=>false} %>
+
+	<span style="margin-top:20px;">Thanks for your business.</span><br /><br />
+	<span>The Pixiboard Team</span><br /><br /> 	
+    	<%= render :partial=>'mail_footer' %>
+  </body>
+</html>
+

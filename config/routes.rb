@@ -16,14 +16,19 @@ Plumboard::Application.routes.draw do
   end
 
   resources :users, except: [:new]
-  resources :temp_listings 
+  resources :temp_listings, except: [:index] 
+
+  resources :pending_listings, except: [:new, :edit, :update, :create, :destroy] do
+    member do
+      put 'approve', 'deny'
+    end
+  end
   
   resources :transactions do
-    get 'build', :on => :collection
-    get 'refund', :on => :collection
+    get 'refund', :on => :member
   end
 
-  # match routes
+  # custom routes
   get "/about", to: "pages#about" 
   get "/privacy", to: "pages#privacy" 
   get "/help", to: "pages#help" 
@@ -31,8 +36,8 @@ Plumboard::Application.routes.draw do
   get "/welcome", to: "pages#welcome" 
   get '/system/:class/:attachment/:id/:style/:filename', :to => 'pictures#asset'
   # post "/listings/preview", to: "listings#preview", :via => :post, :as => :preview 
-  # post "/listings/new", to: "listings#new", :via => :post, :as => :new_post_listing 
-  put "/temp_listings/submit_order/:id", to: "temp_listings#submit_order", :via => :put, :as => :submit_order 
+  # put "/pending_listings/approve/:id", to: "pending_listings#approve", :via => :put, :as => :approve 
+  # put "/pending_listings/deny/:id", to: "pending_listings#deny", :via => :put, :as => :deny 
 
   # specify routes for devise user after sign-in
   namespace :user do

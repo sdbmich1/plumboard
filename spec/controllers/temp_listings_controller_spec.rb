@@ -20,28 +20,6 @@ describe TempListingsController do
     @listing = stub_model(TempListing, :id=>1, site_id: 1, seller_id: 1, title: "Guitar for Sale", description: "Guitar for Sale")
   end
 
-  describe 'GET index' do
-    before(:each) do
-      @listings = mock("listings")
-      Listing.stub!(:active).and_return(@listings)
-    end
-
-    def do_get
-      get :index
-    end
-
-    it "renders the :index view" do
-      do_get
-      response.should render_template :index
-    end
-
-    it "should assign @listings" do
-      Listing.should_receive(:active).and_return(@listings)
-      do_get 
-      assigns(:listings).should_not be_nil
-    end
-  end
-
   describe 'GET show/:id' do
     before :each do
       @photo = stub_model(Picture)
@@ -296,47 +274,4 @@ describe TempListingsController do
     end
   end
 
-  describe "PUT /submit_order/:id" do
-    before (:each) do
-      TempListing.stub!(:submit_order).and_return( @listing )
-    end
-
-    def do_submit
-      xhr :put, :submit_order, :id => "1"
-    end
-
-    context "success" do
-      before :each do
-        TempListing.stub!(:save).and_return(true)
-      end
-
-      it "should load the requested listing" do
-        TempListing.stub(:submit_order) { @listing }
-        do_submit
-      end
-
-      it "should update the requested listing" do
-        TempListing.stub(:submit_order).with("1") { mock_listing }
-	mock_listing.should_receive(:save).and_return(:success)
-        do_submit
-      end
-
-      it "should assign @listing" do
-        TempListing.stub(:submit_order) { mock_listing(:save => true) }
-        do_submit
-        assigns(:listing).should_not be_nil 
-      end
-    end
-
-    context 'failure' do
-      before :each do
-        TempListing.stub!(:save).and_return(false) 
-      end
-
-      it "should assign listing" do
-        do_submit
-        assigns(:listing).should_not be_nil 
-      end
-    end
-  end
 end

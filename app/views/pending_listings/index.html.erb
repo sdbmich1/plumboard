@@ -1,0 +1,8 @@
+<% provide(:title, 'Pending Orders') %>
+<%= content_for :content do %>
+  <div class='div-border top-hdr pixi-bkgnd center-wrapper'>Pending Orders</div>
+  <div id="pendingOrder">
+    <%= render :partial => 'shared/index_list' %>
+  </div>
+<% end %>
+

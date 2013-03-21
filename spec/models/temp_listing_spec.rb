@@ -275,9 +275,24 @@ describe TempListing do
       @temp_listing.status.should_not == 'approved'
     end
 
-    it "approve order should return approved status if listing exists" do 
+    it "approve order should return approved status" do 
       temp_listing.approve_order(user)
       temp_listing.status.should == 'approved'
+    end
+  end
+
+  describe "deny order" do
+    let(:user) { FactoryGirl.create :user }
+    let(:temp_listing) { FactoryGirl.create :temp_listing_with_transaction, seller_id: user.id }
+
+    it "deny order should not return denied status" do 
+      @temp_listing.deny_order(nil)
+      @temp_listing.status.should_not == 'denied'
+    end
+
+    it "deny order should return denied status" do 
+      temp_listing.deny_order(user)
+      temp_listing.status.should == 'denied'
     end
   end
 

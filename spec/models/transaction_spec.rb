@@ -28,6 +28,8 @@ describe Transaction do
   it { should respond_to(:cvv) }
   it { should respond_to(:confirmation_no) }
   it { should respond_to(:token) }
+  it { should respond_to(:processing_fee) }
+  it { should respond_to(:convenience_fee) }
 
   it { should respond_to(:user) }
   it { should respond_to(:listings) }
@@ -135,13 +137,14 @@ describe Transaction do
   
   describe "load transaction" do
     temp_listing = FactoryGirl.create :temp_listing 
+    order = { promo_code: '',  "item1"=> 'New Pixi Post', "quantity1"=> 1, cnt: 1, qtyCnt: 1, "price1"=> 5.00}
     it "should load new transaction" do
       contact_user = FactoryGirl.create :contact_user 
-      Transaction.load_new(contact_user, temp_listing).should_not be_nil
+      Transaction.load_new(contact_user, temp_listing, order).should_not be_nil
     end
 
     it "should not load new transaction" do
-      Transaction.load_new(nil, temp_listing).should be_nil
+      Transaction.load_new(nil, temp_listing, order).should be_nil
     end
   end
   
@@ -187,6 +190,20 @@ describe Transaction do
     it "should not save" do
       transaction = FactoryGirl.build :transaction, first_name: nil
       transaction.save_transaction(order, temp_listing).should_not be_true
+    end
+  end
+
+  describe "process transaction" do
+    it "should not process" do
+      transaction = FactoryGirl.build :transaction, first_name: nil
+      transaction.process_transaction.should_not be_true
+    end
+
+    it "should process" do
+      transaction_detail = FactoryGirl.build :transaction_detail 
+      Stripe::Charge.should_receive(:create).and_raise(true)
+      transaction_detail.save
+      transaction_detail.transaction.process_transaction.should be_true
     end
   end
 end

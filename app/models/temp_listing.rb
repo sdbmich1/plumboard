@@ -27,12 +27,20 @@ class TempListing < ListingParent
 
   # approve order
   def approve_order usr
-    if usr
-      self.status = 'approved'
-      self.edited_by = usr.name
-      self.edited_dt = Time.now
-      save!
-    end
+    edit_flds usr, 'approved' if usr
+  end
+
+  # deny order
+  def deny_order usr
+    edit_flds usr, 'denied' if usr
+  end
+
+  # edit order fields to process order
+  def edit_flds usr, val
+    self.status = val
+    self.edited_by = usr.name
+    self.edited_dt = Time.now
+    save!
   end
 
   # submit order request for review

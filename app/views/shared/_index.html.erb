@@ -1,7 +1,8 @@
 <% provide(:title, page_title) %>
 <%= content_for :content do %>
-  <h2><%= page_title %>
-  <%= link_to 'Add Pixi', new_temp_listing_path(:user_id=>@user), class: "nav pull-right btn btn-large btn-primary submit-btn" %></h2>
-  <%= render partial: 'shared/listing', collection: @listings %>
+  <h2><%= page_title %></h2>
+  <div class='pboard'>
+    <%= render partial: 'shared/listing', collection: @listings %>
+  </div>
 <% end %>
 

@@ -1,7 +1,10 @@
+require 'calc_total'
 class Transaction < ActiveRecord::Base
+  include CalcTotal
   attr_accessor :cvv
   attr_accessible :address, :address2, :amt, :city, :code, :country, :credit_card_no, :description, :email, :first_name, 
-  	:home_phone, :last_name, :payment_type, :promo_code, :state, :work_phone, :zip, :user_id, :confirmation_no, :token, :status
+  	:home_phone, :last_name, :payment_type, :promo_code, :state, :work_phone, :zip, :user_id, :confirmation_no, :token, :status,
+	:convenience_fee, :processing_fee
 
   belongs_to :user
   has_many :listings
@@ -37,9 +40,14 @@ class Transaction < ActiveRecord::Base
   		  :numericality => true
 
   # pre-load new transaction for given user
-  def self.load_new usr, listing
+  def self.load_new usr, listing, order
     if usr
       new_transaction = listing.build_transaction
+
+      # set transaction amounts
+      new_transaction.amt = CalcTotal::process_order order
+      new_transaction.processing_fee = CalcTotal::get_processing_fee
+      new_transaction.convenience_fee = CalcTotal::get_convenience_fee
 
       # load user info
       new_transaction.user_id = usr.id

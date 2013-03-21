@@ -1,6 +1,6 @@
 <% if model %>
-  <% if display_cnt == 1 %>
-    <div class='pic-frame'>
+  <% if display_cnt < 2 %>
+    <div class="<%= display_cnt == 0 ? '' : 'pic-frame' %>">
       <%= image_tag(model.pictures.first.photo.url, :size => psize) if model.pictures %>
     </div>	
   <% else %>

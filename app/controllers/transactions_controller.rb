@@ -1,12 +1,14 @@
+require 'calc_total'
 class TransactionsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :load_vars, :except => [:index, :refund]
   respond_to :html, :js, :json
+  include CalcTotal
 
   def new
     @listing = TempListing.find params[:id]
     @user = User.find params[:user_id]
-    @transaction = Transaction.load_new(@user, @listing)
+    @transaction = Transaction.load_new(@user, @listing, @order)
   end
 
   def create
@@ -30,7 +32,6 @@ class TransactionsController < ApplicationController
     @total = @fees = 0 
     @order = action_name == 'new' ? params : params[:order] ? params[:order] : params
     @qtyCnt = action_name == 'new' ? @order[:qtyCnt].to_i : 0
-    @discount = PromoCode.get_code(@order[:promo_code], Date.today)   
+    @discount = CalcTotal::get_discount
   end
-
 end

@@ -64,6 +64,7 @@ FactoryGirl.define do
     city            "LA"
     state           "CA"
     zip             "90201"
+    home_phone	    "4155551212"
   end
 
   factory :listing_parent do

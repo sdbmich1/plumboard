@@ -1,6 +1,8 @@
-<div class="span2 pic-frame">
+<div class="pixi-frame">
   <div class="center">
-    <%= render partial: 'shared/show_photo', locals: {model: listing, file_name: "star.jpg", psize: '120x120', display_cnt: 1 } %>
-    <%= link_to listing.title, listing_path(listing, :user_id=>@user) %><br />
+    <%= link_to listing_path(listing, :user_id=>@user) do %>
+      <%= render partial: 'shared/show_photo', locals: {model: listing, file_name: "star.jpg", psize: '120x120', display_cnt: 0 } %>
+      <%= listing.title %>
+    <% end %>
   </div>
  </div>

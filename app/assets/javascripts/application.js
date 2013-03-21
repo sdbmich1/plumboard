@@ -36,6 +36,12 @@ $(document).on("change", "input[type=file]", function(evt){
     return false;
 }); 
 
+// paginate on click
+$(document).on("click", "#pendingOrder .pagination a", function(){
+  $.getScript(this.href);
+  return false;
+}); 
+
 // clear input file text on click
 $(document).on("click", "#delete_photo", function(evt){
 

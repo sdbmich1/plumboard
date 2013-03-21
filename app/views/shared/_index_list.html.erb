@@ -1,0 +1,18 @@
+<table>
+  <tr>
+    <th></th>
+    <th class='width30'></th>
+    <th>Title</th>
+    <th class='width30'></th>
+    <th>Description</th>
+    <th class='width30'></th>
+    <th>Posted By</th>
+    <th class='width30'></th>
+    <th>Posted At</th>
+  </tr>
+  <%= render partial: 'shared/listing_row', collection: @listings, as: :listing %>
+</table>
+
+<div class="nav pull-right">
+  <%= will_paginate @listings, :param_name => 'pending_page' if @listings.respond_to?(:total_pages) %>
+</div> 

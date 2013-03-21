@@ -75,6 +75,9 @@ gem 'validates_timeliness', '~> 3.0'
 # add country selection
 gem 'country_select'
 
+# pagination
+gem 'will_paginate', '~> 3.0'
+
 # add sass
 gem 'bootstrap-sass', '2.1'
 

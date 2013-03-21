@@ -15,8 +15,6 @@ Spork.prefork do
   require 'database_cleaner'
   require "paperclip/matchers"
 
-#  include Capybara::DSL
-
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
@@ -28,7 +26,7 @@ Spork.prefork do
     config.include Paperclip::Shoulda::Matchers
     config.fixture_path = "#{::Rails.root}/spec/fixtures"
     config.use_transactional_fixtures = false
-    config.include Capybara::DSL
+#    config.include Capybara::DSL
 
     config.extend ControllerMacros, :type => :controller
     config.infer_base_class_for_anonymous_controllers = false
@@ -37,7 +35,7 @@ Spork.prefork do
 
     config.before(:suite) do
       DatabaseCleaner.strategy = :truncation
-      DatabaseCleaner.clean_with(:truncation)
+#      DatabaseCleaner.clean_with(:truncation)
     end
 
     config.before(:each) do
