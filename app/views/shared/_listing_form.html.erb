@@ -10,6 +10,7 @@
     </div>
 
     <div class="nav pull-right">
+      <%= link_to 'Cancel', listings_path, confirm: msg, class: "btn btn-large btn-primary stnd-btn" %>
       <%= f.submit "Next Step: Review >>", class: "btn btn-large btn-primary submit-btn" %>
     </div>
   <% end %>

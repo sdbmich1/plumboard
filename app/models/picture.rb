@@ -1,5 +1,5 @@
 class Picture < ActiveRecord::Base
-  attr_accessible :photo_file_name, :photo_content_type, :photo_file_size, :photo_updated_at, :photo, :delete_photo
+  attr_accessible :photo_file_name, :photo_content_type, :photo_file_size, :photo_updated_at, :photo, :delete_photo, :delete_flg
   
   has_attached_file :photo,
 	  url: "/system/:class/:attachment/:id/:style/:filename",

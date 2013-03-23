@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130318201624) do
+ActiveRecord::Schema.define(:version => 20130322012740) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -116,7 +116,7 @@ ActiveRecord::Schema.define(:version => 20130318201624) do
   add_index "listings", ["transaction_id"], :name => "index_listings_on_transaction_id"
 
   create_table "pictures", :force => true do |t|
-    t.string   "name"
+    t.string   "delete_flg"
     t.integer  "imageable_id"
     t.string   "imageable_type"
     t.datetime "created_at",         :null => false

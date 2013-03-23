@@ -46,7 +46,7 @@ describe PendingListingsController do
   describe 'GET show/:id' do
     before :each do
       @photo = stub_model(Picture)
-      TempListing.stub!(:find).and_return( @listing )
+      TempListing.stub!(:find_by_pixi_id).and_return( @listing )
       @listing.stub!(:pictures).and_return( @photo )
     end
 
@@ -60,7 +60,7 @@ describe PendingListingsController do
     end
 
     it "should load the requested listing" do
-      TempListing.stub(:find).with(@listing.id).and_return(@listing)
+      TempListing.stub(:find_by_pixi_id).with(@listing.id).and_return(@listing)
       do_get
     end
 
@@ -82,7 +82,7 @@ describe PendingListingsController do
 
   describe "PUT /approve/:id" do
     before (:each) do
-      TempListing.stub!(:find).and_return( @listing )
+      TempListing.stub!(:find_by_pixi_id).and_return( @listing )
     end
 
     def do_approve
@@ -95,18 +95,18 @@ describe PendingListingsController do
       end
 
       it "should load the requested listing" do
-        TempListing.stub(:find) { @listing }
+        TempListing.stub(:find_by_pixi_id) { @listing }
         do_approve
       end
 
       it "should update the requested listing" do
-        TempListing.stub(:find).with("1") { mock_listing }
+        TempListing.stub(:find_by_pixi_id).with("1") { mock_listing }
 	mock_listing.should_receive(:approve_order).and_return(:success)
         do_approve
       end
 
       it "should assign @listing" do
-        TempListing.stub(:find) { mock_listing(:approve_order => true) }
+        TempListing.stub(:find_by_pixi_id) { mock_listing(:approve_order => true) }
         do_approve
         assigns(:listing).should_not be_nil 
       end
@@ -136,7 +136,7 @@ describe PendingListingsController do
 
   describe "PUT /deny/:id" do
     before (:each) do
-      TempListing.stub!(:find).and_return( @listing )
+      TempListing.stub!(:find_by_pixi_id).and_return( @listing )
     end
 
     def do_deny
@@ -149,18 +149,18 @@ describe PendingListingsController do
       end
 
       it "should load the requested listing" do
-        TempListing.stub(:find) { @listing }
+        TempListing.stub(:find_by_pixi_id) { @listing }
         do_deny
       end
 
       it "should update the requested listing" do
-        TempListing.stub(:find).with("1") { mock_listing }
+        TempListing.stub(:find_by_pixi_id).with("1") { mock_listing }
 	mock_listing.should_receive(:deny_order).and_return(:success)
         do_deny
       end
 
       it "should assign @listing" do
-        TempListing.stub(:find) { mock_listing(:deny_order => true) }
+        TempListing.stub(:find_by_pixi_id) { mock_listing(:deny_order => true) }
         do_deny
         assigns(:listing).should_not be_nil 
       end

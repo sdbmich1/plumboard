@@ -9,14 +9,19 @@ Plumboard::Application.routes.draw do
   end
 
   # resource defs
-  resources :listings, except: [:new] do
+  resources :listings, except: [:new, :edit, :update, :create] do
     collection do
       get 'seller', 'follower'
     end
   end
 
   resources :users, except: [:new]
-  resources :temp_listings, except: [:index] 
+
+  resources :temp_listings, except: [:index] do
+    member do
+      put 'resubmit'
+    end
+  end
 
   resources :pending_listings, except: [:new, :edit, :update, :create, :destroy] do
     member do
@@ -36,8 +41,6 @@ Plumboard::Application.routes.draw do
   get "/welcome", to: "pages#welcome" 
   get '/system/:class/:attachment/:id/:style/:filename', :to => 'pictures#asset'
   # post "/listings/preview", to: "listings#preview", :via => :post, :as => :preview 
-  # put "/pending_listings/approve/:id", to: "pending_listings#approve", :via => :put, :as => :approve 
-  # put "/pending_listings/deny/:id", to: "pending_listings#deny", :via => :put, :as => :deny 
 
   # specify routes for devise user after sign-in
   namespace :user do

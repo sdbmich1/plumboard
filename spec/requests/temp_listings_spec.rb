@@ -7,6 +7,17 @@ feature "TempListings" do
   before(:each) do
     login_as(user, :scope => :user, :run_callbacks => false)
     user.confirm!
+    @user = user
+  end
+
+  def click_cancel_ok
+    click_link 'Cancel'
+    page.driver.browser.switch_to.alert.accept
+  end
+
+  def click_cancel_cancel
+    click_link 'Cancel'
+    page.driver.browser.switch_to.alert.dismiss
   end
 
   describe "Manage Temp Pixis" do
@@ -175,6 +186,19 @@ feature "TempListings" do
       page.should have_content 'Review Your Pixi'
     end
 
+    it "Cancels build pixi", js: true do
+      expect{
+              click_cancel_ok
+      }.to change(TempListing,:count).by(0)
+
+      page.should have_content "Pixis" 
+    end
+
+    it "Cancels build cancel", js: true do
+      click_cancel_cancel
+      page.should have_content "Build Pixi" 
+    end
+
     it "Changes a pixi price" do
       expect{
               fill_in 'Price', with: nil
@@ -186,11 +210,16 @@ feature "TempListings" do
   end
 
   describe 'Reviews a Pixi' do
-    let(:temp_listing) { FactoryGirl.create(:temp_listing, seller_id: user.id) }
+    let(:temp_listing) { FactoryGirl.create(:temp_listing, seller_id: user.id, status: 'new') }
     before { visit temp_listing_path(temp_listing) }
 
     it "Views a pixi" do
       page.should have_content "Acoustic Guitar" 
+    end
+
+    it "Cancel review cancel", js: true do
+      click_cancel_cancel
+      page.should have_content "Review Your Pixi" 
     end
 
     it "Deletes a pixi" do
@@ -216,6 +245,21 @@ feature "TempListings" do
 	}.not_to change(TempListing, :count)
 
       page.should have_content "Build Pixi" 
+    end
+  end
+
+  describe 'Reviews active Pixi' do
+    let(:temp_listing) { FactoryGirl.create(:temp_listing, seller_id: user.id, status: 'edit') }
+    before { visit temp_listing_path(temp_listing) }
+
+    it "Cancel review cancel on active pixi", js: true do
+      click_cancel_cancel
+      page.should have_content "Review Your Pixi" 
+    end
+
+    it "Cancel review on active pixi", js: true do
+      click_cancel_ok
+      page.should have_content "Pixis" 
     end
   end
 

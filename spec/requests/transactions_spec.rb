@@ -5,6 +5,14 @@ feature "Transactions" do
   let(:user) { FactoryGirl.create(:contact_user) }
   let(:submit) { "Done!" }
 
+  before(:each) do
+    login_as(user, :scope => :user, :run_callbacks => false)
+    user.confirm!
+    FactoryGirl.create :state
+    @user = user
+    @listing = FactoryGirl.create :temp_listing, seller_id: @user.id
+  end
+
   def visit_txn_path
     visit new_transaction_path user_id: @user.id, id: @listing.id, promo_code: '', title: @listing.title,
         "item1" => 'New Pixi Post', "quantity1" => 1, cnt: 1, qtyCnt: 1, "price1" => 5.00
@@ -13,14 +21,6 @@ feature "Transactions" do
   def visit_free_txn_path
     visit new_transaction_path user_id: @user.id, id: @listing.id, promo_code: '2013LAUNCH', title: @listing.title,
         "item1" => 'New Pixi Post', "quantity1" => 1, cnt: 1, qtyCnt: 1, "price1" => 5.00
-  end
-
-  before(:each) do
-    login_as(user, :scope => :user, :run_callbacks => false)
-    user.confirm!
-    FactoryGirl.create :state
-    @user = user
-    @listing = FactoryGirl.create :temp_listing, seller_id: @user.id
   end
 
   def user_data
@@ -50,6 +50,12 @@ feature "Transactions" do
 
   def visa_card
     fill_in "card_number", with: "4242424242424242"
+  end
+
+  def no_card_data
+    fill_in "card_number", with: ""
+    fill_in "card_code",  with: "123"
+    valid_card_dates
   end
 
   def visa_card_data
@@ -224,7 +230,7 @@ feature "Transactions" do
   def click_valid_ok
     click_button submit 
     page.driver.browser.switch_to.alert.accept
-    page.should have_selector("#pixi-hdr", :text => "Order Complete")
+    page.should have_content("your pixi will be posted")
   end
 
   def click_cancel_ok
@@ -242,9 +248,8 @@ feature "Transactions" do
     page.driver.browser.switch_to.alert.dismiss
   end
 
-  describe "Manage Free Valid Transactions", :js=>true do
+  describe "Manage Free Valid Transactions" do
     before(:each) do 
-      FactoryGirl.create :promo_code
       visit_free_txn_path 
     end
 
@@ -253,8 +258,14 @@ feature "Transactions" do
 	      click_link '<< Prev Step: Review'
 	}.not_to change(Transaction, :count)
 
-   #   page.should have_content "Review Your Pixi" 
-      page.should have_selector("#pixi-hdr", :text => "Review Your Pixi")
+      page.should have_content "Review Your Pixi" 
+    end
+  end
+
+  describe "Manage Free Valid Transactions", :js=>true do
+    before(:each) do 
+      FactoryGirl.create :promo_code
+      visit_free_txn_path 
     end
 
     it "should create a transaction with 100% discount" do
@@ -414,8 +425,7 @@ feature "Transactions" do
 
       it "should not create a transaction with no card #" do
         expect { 
-	  visa_card_data
-          fill_in 'card_number', with: ""
+	  no_card_data
 	  click_ok }.not_to change(Transaction, :count)
 
         page.should have_content 'Submit Your Order'
@@ -434,7 +444,7 @@ feature "Transactions" do
 	  visa_card_data_expired
 	  click_ok }.not_to change(Transaction, :count)
 
-	page.should have_selector("#pixi-hdr", :text => "Order")
+        page.should have_content 'Order'
       end
 
       it "should not create a transaction with declined card" do
@@ -442,7 +452,7 @@ feature "Transactions" do
 	  visa_card_declined
 	  click_ok }.not_to change(Transaction, :count)
 
-	page.should have_selector("#pixi-hdr", :text => "Order")
+        page.should have_content 'Order'
       end
 
       it "should not create a transaction with bad_cvv card" do
@@ -466,7 +476,7 @@ feature "Transactions" do
 	  visa_card_data_error
 	  click_ok }.not_to change(Transaction, :count)
 
-	page.should have_selector("#pixi-hdr", :text => "Order")
+        page.should have_content 'Order'
       end
     end
 

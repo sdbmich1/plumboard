@@ -1,5 +1,5 @@
 <%= form_tag new_transaction_path, :method => :get, :id => 'purchase_btn' do %> 
-  <%= hidden_field_tag 'id', listing.id %>
+  <%= hidden_field_tag 'id', listing.pixi_id %>
   <%= hidden_field_tag 'user_id', @user.id %>
   <%= hidden_field_tag 'title', listing.title %>
   <%= hidden_field_tag 'item1', 'New Pixi Post' %>
@@ -8,10 +8,6 @@
   <%= hidden_field_tag 'qtyCnt', 1 %>
   <%= hidden_field_tag 'quantity1', listing.get_site_count %>
   <%= hidden_field_tag 'price1', get_price %>
-  <div class="mtop nav pull-right">
-    <%= link_to '<< Prev Step: Build', edit_temp_listing_path(listing), class: 'btn btn-large btn-primary stnd-btn' %>
-    <%= link_to 'Cancel', listing, method: :delete, confirm: 'Are you sure? All your changes will be lost.', class: 'btn btn-large btn-primary stnd-btn' %>
-    <%= submit_tag('Next Step: Submit >>', :class=>'btn btn-large btn-primary submit-btn', id: 'order-btn') %>
-  </div>
+  <%= submit_tag('Next Step: Submit >>', :class=>'btn btn-large btn-primary submit-btn', id: 'order-btn') %>
 <% end %>  
 

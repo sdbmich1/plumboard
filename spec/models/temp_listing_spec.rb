@@ -251,18 +251,29 @@ describe TempListing do
     it { @temp_listing.get_site_count.should_not == 0 } 
   end
 
-  describe "should return temp listing" do
+  describe "transactions" do
     let(:transaction) { FactoryGirl.create :transaction }
+
     context "get_by_status should include new listings" do
       it { TempListing.get_by_status('active').should == [@temp_listing] } 
     end
 
-    it "submit order should not return pending status" do 
+    it "should not submit order" do 
       @temp_listing.submit_order(nil).should_not be_true
     end
 
-    it "submit order should return pending status if listing exists" do 
+    it "should submit order" do 
       @temp_listing.submit_order(transaction.id).should be_true
+    end
+
+    it "should resubmit order" do 
+      temp_listing = FactoryGirl.create :temp_listing, transaction_id: transaction.id
+      temp_listing.resubmit_order.should be_true 
+    end
+
+    it "should not resubmit order" do 
+      temp_listing = FactoryGirl.create :temp_listing, transaction_id: nil
+      temp_listing.resubmit_order.should_not be_true
     end
   end
 
@@ -308,6 +319,16 @@ describe TempListing do
       temp_listing.status = 'approved'
       temp_listing.post_to_board.should be_true
     end
+  end
+
+  describe "should verify new status" do 
+    temp_listing = FactoryGirl.build :temp_listing, status: 'new'
+    it { temp_listing.new_status?.should be_true }
+  end
+
+  describe "should not verify new status" do 
+    temp_listing = FactoryGirl.build :temp_listing, status: 'pending'
+    it { temp_listing.new_status?.should_not be_true }
   end
 
   describe "must have pictures" do

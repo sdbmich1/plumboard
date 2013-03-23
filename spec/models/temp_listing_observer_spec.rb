@@ -2,6 +2,41 @@ require 'spec_helper'
 
 describe TempListingObserver do
   
+  describe 'before_update' do
+
+    describe 'reset status' do
+      let(:temp_listing) { FactoryGirl.create :temp_listing_with_transaction }
+      let(:user) { FactoryGirl.create :user }
+
+      before(:each) do
+        temp_listing.status = 'pending'
+        temp_listing.save!
+        temp_listing.approve_order user
+        Listing.stub(:find_by_pixi_id).with(temp_listing.pixi_id).and_return(true)
+      end
+
+      it 'should reset status' do
+        temp_listing.title = 'cute room for rent'
+        temp_listing.save!
+        temp_listing.status.should == 'edit'
+      end
+    end
+
+    describe 'does not reset status' do
+      let(:temp_listing) { FactoryGirl.create :temp_listing, status: 'new' }
+
+      before(:each) do
+        Listing.stub(:find_by_pixi_id).with(temp_listing.pixi_id).and_return(false)
+      end
+
+      it 'should not reset status' do
+        temp_listing.title = 'cute room for rent'
+        temp_listing.save!
+        temp_listing.status.should_not == 'edit'
+      end
+    end
+  end
+
   describe 'after_update' do
     let(:temp_listing) { FactoryGirl.create :temp_listing_with_transaction }
 

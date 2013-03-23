@@ -6,13 +6,13 @@ class TransactionsController < ApplicationController
   include CalcTotal
 
   def new
-    @listing = TempListing.find params[:id]
+    @listing = TempListing.find_by_pixi_id params[:id]
     @user = User.find params[:user_id]
     @transaction = Transaction.load_new(@user, @listing, @order)
   end
 
   def create
-    @listing = TempListing.find params[:id]
+    @listing = TempListing.find_by_pixi_id params[:id]
     @transaction = Transaction.new(params[:transaction])
     @transaction.save_transaction(params[:order], @listing)
     respond_with(@transaction)

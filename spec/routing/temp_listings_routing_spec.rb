@@ -27,5 +27,13 @@ describe TempListingsController do
       delete("/temp_listings/1").should route_to("temp_listings#destroy", :id => "1")
     end
 
+    it "routes to #resubmit" do
+      put("/temp_listings/1/resubmit").should route_to("temp_listings#resubmit", :id => "1")
+    end
+
+    it "does not expose index route" do
+      get("/temp_listings").should_not route_to("temp_listings#index")
+    end
+
   end
 end

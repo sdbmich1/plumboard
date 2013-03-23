@@ -27,6 +27,11 @@ class ListingParent < ActiveRecord::Base
   validates :price, :allow_blank => true, :numericality => { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_PIXI_AMT.to_f }
   validate :must_have_pictures
 
+  # reset default controller id parameter to pixi_id
+  def to_param
+    pixi_id
+  end
+
   # validate existance of at least one picture
   def must_have_pictures
     if !any_pix? || pictures.all? {|pic| pic.marked_for_destruction? }

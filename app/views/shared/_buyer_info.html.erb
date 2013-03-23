@@ -1,6 +1,7 @@
     <div class="div-border">
       <h4 class="grp-hdr">2. Enter Buyer Information</h4>
-      <table class="mtop offset1">
+      <center>
+      <table class="mtop">
       <tr>
 	<td class="width360"><label>First Name*</label><%= f.text_field :first_name, id: "first_name" %></td>
 	<td class="width80"></td>
@@ -8,5 +9,6 @@
       </tr>
       <%= render :partial => 'shared/user_address', :locals => { :form => f, :toggle => false } %>
       </table>
+      </center>
     </div>
 

@@ -1,4 +1,8 @@
 <%= render partial: 'shared/listing_header', :locals => { step_no: 2, step_name: 'Review Your Pixi' } %>
 <%= render :partial => 'shared/show_listing', locals: {:listing=>listing} %>
-<%= render :partial => 'shared/item_purchase', locals: {:listing=>listing} if listing.seller?(@user.id) %>
-
+<%= render partial: 'shared/review_nav', locals: { listing: listing } %>
+<% if listing.new_status? %>
+  <%= render :partial => 'shared/item_purchase', locals: {:listing=>listing} if listing.seller?(@user.id) %>
+<% else %>
+  <%= link_to "Done!", resubmit_temp_listing_path(listing), method: :put, class: "btn btn-large btn-primary submit-btn" %>
+<% end %>
