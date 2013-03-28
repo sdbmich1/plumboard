@@ -3,10 +3,12 @@
 /* universal */
 html {
   overflow-y: scroll;
+  height: 100%;
   }
 
 body {
   padding-top: 60px;
+  height: 100%;
   }
 
 section {
@@ -68,11 +70,30 @@ p {
 	   }
   }
 
+/* Wrapper for page content to push down footer */
+#wrap {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  /* Negative indent footer by it's height */
+  margin: 0 auto -60px;
+}
+
+#push,
+#footer {
+  height: 60px;
+}
+
 /* footer */
 
 footer {
+  /*
+  position:absolute;
+  bottom:0;
   margin-top: 45px;
   padding-top: 5px;
+  */
+
   border-top: 1px solid #eaeaea;
   color: #999;
   a {
@@ -133,9 +154,6 @@ input, select, .uneditable-input {
   @extend .error;
  }
 
- .push { height: 2em; }
- .div-footer {margin-top: 20px;}
-
  .notice, .alert, .error {
    padding: 5px 0 5px 0;
    margin: 7px;
@@ -154,13 +172,12 @@ input, select, .uneditable-input {
 .error, .alert, .notice, .success {border: 2px solid;}
 
 /* primary listing(pixi) image */
+.item { border: 1px solid #AAAAAA;  box-shadow: 1px 1px 1px 1px #ccc; padding: 4px; margin: 10px; float: left; }
 .pic-frame { border: 1px solid #AAAAAA;  box-shadow: 1px 1px 1px 1px #ccc; padding: 4px; margin-bottom: 10px; }
 .pixi-frame { 
   display: block; float:left; width: 150px; border: 1px solid #AAAAAA;  
   box-shadow: 1px 1px 1px 1px #ccc; padding: 4px; margin: 0 10px 10px 0; 
 }
-
-.pboard { display: block; }
 
 /* submit button */
 .submit-btn { color: white!important; font-weight: bold; background:orange!important; border:orange!important}
@@ -243,11 +260,13 @@ input, select, .uneditable-input {
 .width360 {width: 360px!important}
 .height240 {height: 240px!important}
 .height360 {height: 360px!important}
+.height480 {height: 480px!important}
 
 .clear-all { clear:both }
 .clear-right { clear:right }
 .price { text-align: right }
 .order-total { font-weight: bolder; font-size: medium }
+.v-align { vertical-align: middle }
 
 .top-hdr { color: white; font-weight: bolder; font-size: medium }
 .item-hdr { color: black; font-weight: bolder; font-size: medium }
@@ -258,12 +277,26 @@ input, select, .uneditable-input {
 .pixi-color { color: orange }
 .pixi-bkgnd { background-color: orange }
 .pixi-lt-bkgnd { background-color: #fde9d9 }
+.pixi-blue-bkgnd { background-color: #0C6FCB }
+.pixi-blk-bkgnd { background-color: black }
+
 .div-border {  
   border: 1px solid #eaeaea; padding: 15px; margin-bottom: 15px; }
+
+h3 { padding: 10px }
+
 .mtop {margin-top: 20px;}
 .mbot {margin-bottom: 20px;}
 .sm-top { margin-top: 5px!important }  
 .cb-label { display:inline; vertical-align:middle }
+.hdescr { font-size: 0.875em; color: #ccc; width: 120px!important }
+.nxt-pg { display:none; }
+.nxt-pg-spinner { 
+  position:fixed;
+  bottom:50px;
+  right:100px;
+  text-indent:-9999px;
+  z-index: 9999!important }
 
 .cc-logo {
   width: 282px!important; height: 52px!important; vertical-align: middle;
@@ -286,4 +319,16 @@ input, select, .uneditable-input {
 
 .blk-border {
   border: 1px solid #000;
+}
+
+.scrollup{
+  width:40px;
+  height:40px;
+  opacity:0.3;
+  position:fixed;
+  bottom:30px;
+  right:100px;
+  display:none;
+  text-indent:-9999px;
+  background: url('icon_top.png') no-repeat;
 }

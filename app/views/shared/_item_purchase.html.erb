@@ -8,6 +8,7 @@
   <%= hidden_field_tag 'qtyCnt', 1 %>
   <%= hidden_field_tag 'quantity1', listing.get_site_count %>
   <%= hidden_field_tag 'price1', get_price %>
+  <%= render partial: 'shared/review_nav', locals: { listing: listing } %>
   <%= submit_tag('Next Step: Submit >>', :class=>'btn btn-large btn-primary submit-btn', id: 'order-btn') %>
 <% end %>  
 

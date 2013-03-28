@@ -16,7 +16,7 @@ describe User do
     it { should respond_to(:birth_date) }
     it { should respond_to(:remember_me) }
     it { should respond_to(:gender) }
-    it { should respond_to(:pictures) }
+    it { should respond_to(:picture) }
 
     it { should respond_to(:interests) }
     it { should respond_to(:contacts) }
@@ -115,13 +115,30 @@ describe User do
     end 
   end  
 
+  describe 'temp_listings' do
+    before(:each) do
+      @sr = @user.temp_listings.create FactoryGirl.attributes_for(:contact)
+    end
+
+    it "has many temp_listings" do 
+      @user.temp_listings.should include(@sr)
+    end
+
+    it "should destroy associated temp_listings" do
+      @user.destroy
+      [@sr].each do |s|
+         TempListing.find_by_id(s.id).should be_nil
+       end
+    end 
+  end  
+
   describe 'pictures' do
     before(:each) do
-      @sr = @user.pictures.create FactoryGirl.attributes_for(:picture)
+      @sr = @user.picture.create FactoryGirl.attributes_for(:picture)
     end
 
     it "has many pictures" do 
-      @user.pictures.should include(@sr)
+      @user.picture.should include(@sr)
     end
 
     it "should destroy associated pictures" do

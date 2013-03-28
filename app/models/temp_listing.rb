@@ -82,4 +82,17 @@ class TempListing < ListingParent
       false
     end
   end
+
+  # delete selected photo
+  def delete_photo pid
+    # find selected photo
+    pic = self.pictures.find pid
+
+    # remove photo if found and not only photo for listing
+    result = pic && self.pictures.size > 1 ? self.pictures.delete(pic) : false
+
+    # add error msg
+    errors.add :base, "Pixi must have at least one image." unless result
+    result
+  end
 end

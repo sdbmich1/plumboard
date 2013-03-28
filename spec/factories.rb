@@ -113,7 +113,14 @@ FactoryGirl.define do
     end
   end
 
+  factory :temp_listing_with_pictures, :class => "TempListing", :parent => :listing_parent do
+    before(:create) do |listing|
+      2.times { listing.pictures.build FactoryGirl.attributes_for(:picture) }
+    end
+  end
+
   factory :temp_listing_with_transaction, :class => "TempListing", :parent => :listing_parent do
+    status	'pending'
     before(:create) do |listing|
       listing.pictures.build FactoryGirl.attributes_for(:picture)
     end

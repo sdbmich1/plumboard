@@ -20,6 +20,16 @@ feature "TempListings" do
     page.driver.browser.switch_to.alert.dismiss
   end
 
+  def click_remove_ok
+    click_link 'Remove'
+    page.driver.browser.switch_to.alert.accept
+  end
+
+  def click_remove_cancel
+    click_link 'Remove'
+    page.driver.browser.switch_to.alert.dismiss
+  end
+
   describe "Manage Temp Pixis" do
     let(:submit) { "Next Step: Review >>" }
     let(:temp_listing) { FactoryGirl.build(:temp_listing) }
@@ -83,8 +93,9 @@ feature "TempListings" do
 	      }.to change(TempListing,:count).by(1)
       
         within 'span' do
-          page.should have_content "Guitar For Sale" 
+          page.should have_content "Guitar for Sale" 
         end
+
         page.should have_content 'Review Your Pixi'
       end	      
 
@@ -142,19 +153,18 @@ feature "TempListings" do
       page.should have_content 'Build Pixi'
     end
 
-    it "Empty picture should not change a listing" do
+    it "should not delete last picture from listing", js: true do
       expect { 
-	      check('delete_photo')
-	      click_button submit 
-      }.to change(temp_listing.pictures,:count).by(-1)
+	      click_remove_ok
+      }.not_to change(temp_listing.pictures,:count).by(-1)
 
-      page.should have_content 'Build Pixi'
+      page.should have_content 'Pixi must have at least one image'
     end
   end
 
   describe "Edit Temp Pixi" do 
     let(:submit) { "Next Step: Review >>" }
-    let(:temp_listing) { FactoryGirl.create(:temp_listing) }
+    let(:temp_listing) { FactoryGirl.create(:temp_listing_with_pictures) }
     before { visit edit_temp_listing_path(temp_listing) }
 
     it "Changes a pixi title" do
@@ -192,6 +202,16 @@ feature "TempListings" do
       }.to change(TempListing,:count).by(0)
 
       page.should have_content "Pixis" 
+    end
+
+    it "should cancel delete picture from listing", js: true do
+      click_remove_cancel
+      page.should have_content 'Build Pixi'
+    end
+
+    it "should delete picture from listing", js: true do
+      click_remove_ok
+      page.should have_content 'Build Pixi'
     end
 
     it "Cancels build cancel", js: true do
@@ -248,16 +268,16 @@ feature "TempListings" do
     end
   end
 
-  describe 'Reviews active Pixi' do
+  describe 'Reviews active Pixi', js: true do
     let(:temp_listing) { FactoryGirl.create(:temp_listing, seller_id: user.id, status: 'edit') }
     before { visit temp_listing_path(temp_listing) }
 
-    it "Cancel review cancel on active pixi", js: true do
+    it "Cancel review cancel on active pixi" do
       click_cancel_cancel
       page.should have_content "Review Your Pixi" 
     end
 
-    it "Cancel review on active pixi", js: true do
+    it "Cancel review on active pixi" do
       click_cancel_ok
       page.should have_content "Pixis" 
     end

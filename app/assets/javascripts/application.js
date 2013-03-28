@@ -109,3 +109,76 @@ $(document).on("ajax:error", '#purchase_btn, .back-btn, #pixi-form', function (e
       window.location.replace('/users/sign_in');
 });	
 
+$(document).ready(function(){
+  
+  // picture slider
+  $('.bxslider').bxSlider({
+    slideMargin:10,
+    pager: false,
+    mode: 'fade'
+  });
+
+  // vertically center align images in slider
+  $('.bxslider-inner').each(function(){
+    var height_parent = $(this).css('height').replace('px', '') * 1;
+    var height_child = $('div', $(this)).css('height').replace('px', '') * 1;
+    var padding_top_child = $('div', $(this)).css('padding-top').replace('px', '') * 1;
+    var padding_bottom_child = $('div', $(this)).css('padding-bottom').replace('px', '') * 1;
+    var top_margin = (height_parent - (height_child + padding_top_child + padding_bottom_child)) / 2;
+    $(this).html('<div style="height: ' + top_margin + 'px; width: 100%;"></div>' + $(this).html());
+  });
+
+  // used to scroll up page
+  $(window).scroll(function(){
+    if ($(this).scrollTop() > 100) {
+      $('.scrollup').fadeIn();
+    } 
+    else {
+      $('.scrollup').fadeOut();
+    }
+  }); 
+
+  $('.scrollup').click(function(){
+    $("html, body").animate({ scrollTop: 0 }, 600);
+    return false;
+  });
+});
+
+// use masonry to layout landing page display
+$(function(){
+
+  if( $('#px-container').length > 0 ) {
+    var $container = $('#px-container');
+ 
+    $container.imagesLoaded( function(){
+      $container.masonry({
+        itemSelector : '.item',
+        columnWidth : 150
+      });
+    });
+
+    $container.infinitescroll({
+      navSelector  : '#px-nav', 		// selector for the paged navigation (it will be hidden)
+      nextSelector : '#px-nav a',  // selector for the NEXT link (ie. page 2)  
+      itemSelector : '#pxboard .item',           // selector for all items you'll retrieve
+      loading: { 
+         msgText: "<em>Loading the next set of pixis...</em>",
+         finishedMsg: "<em>No more pixis to load.</em>"
+        }
+    },
+
+    // trigger Masonry as a callback
+    function(newElements){
+      var $newElems = $(newElements).css({ opacity: 0 });
+
+      // ensure that images load before adding to masonry layout
+      $newElems.imagesLoaded(function(){
+        // show elems now they're ready
+        $newElems.animate({ opacity: 1 });
+        $container.masonry( 'appended', $newElems, true ); 
+      });
+    });
+  }
+});
+
+

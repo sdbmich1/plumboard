@@ -7,7 +7,6 @@ class TransactionsController < ApplicationController
 
   def new
     @listing = TempListing.find_by_pixi_id params[:id]
-    @user = User.find params[:user_id]
     @transaction = Transaction.load_new(@user, @listing, @order)
   end
 
@@ -29,7 +28,7 @@ class TransactionsController < ApplicationController
   protected
 
   def load_vars    
-    @total = @fees = 0 
+#    @total = @fees = 0 
     @order = action_name == 'new' ? params : params[:order] ? params[:order] : params
     @qtyCnt = action_name == 'new' ? @order[:qtyCnt].to_i : 0
     @discount = CalcTotal::get_discount

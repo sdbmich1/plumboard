@@ -1,9 +1,14 @@
-<fieldset>
-  <td>
-  <% if !f.object.new_record? %>
-    <%= image_tag f.object.photo.url %>
-  <% end %>
+<td>
+  <div class="fields">
+  <% f.fields_for :pictures, Picture.new, index: nil do |form| %>
+    <% if !f.object.new_record? %>
+      <%= image_tag form.photo.url, :size => psize %>
+      <%= form.link_to_remove "Remove" %>
+    <% end %>
 
-  <%= f.file_field :photo, { id: "photo", multiple: true } %>
-  <%= delete_photo(f) %></td>
-</fieldset>
+    <%= form.label :photo, 'Select Image(s)' %>
+    <%= form.file_field :photo, { id: "photo" } %>
+    <p><%= f.link_to_add "Add photo", :pictures %></p>
+  <% end %>
+  </div>
+</td>

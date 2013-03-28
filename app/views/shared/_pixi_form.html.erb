@@ -1,0 +1,17 @@
+  <%= form_for(@listing, :html => { :multipart => true, id: 'pixi-form' }) do |f| %>
+    <div class="div-border">
+      <div id="notice" style="display:none"></div>
+      <div id="form_errors">
+        <%= render partial: 'shared/error_messages', :locals => { :target => @listing } %>
+      </div>
+
+      <%= render partial: 'shared/listing_fields', :locals => { f: f } %>
+      <%= f.hidden_field :start_date, value: Time.now %>
+      <%= f.hidden_field :seller_id, value: @user.id %>
+    </div>
+
+    <div class="nav pull-right">
+      <%= link_to 'Cancel', listings_path, confirm: msg, class: "btn btn-large btn-primary stnd-btn" %>
+      <%= f.submit "Next Step: Review >>", class: "btn btn-large btn-primary submit-btn" %>
+    </div>
+  <% end %>

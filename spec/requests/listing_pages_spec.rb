@@ -35,24 +35,35 @@ describe "Listings", :type => :feature do
     end
 
     it "Views a pixi" do
-      page.should have_selector('span',    text: listing.title) 
-      page.should have_selector('title', text: listing.title) 
+      page.should have_selector('title', text: listing.nice_title) 
     end
   end
 
   describe "GET /listings" do  
+    let(:temp_listing) { FactoryGirl.create(:temp_listing, title: "Guitar", description: "Lessons", seller_id: user.id ) }
+    let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id) }
+    before { visit listings_path }
+      
     it "should display listings" do 
-      listing = FactoryGirl.create(:listing, title: 'paint fence') 
-      visit listings_path  
-      page.should have_content("paint fence")
+      page.should have_content('Pixis')
+    end
+      
+    it "should scroll listings", js: true do 
+      page.execute_script "window.scrollBy(0,1000)"
     end
   end  
 
   describe "seller listings page" do
+    let(:temp_listing) { FactoryGirl.create(:temp_listing, title: "Guitar", description: "Lessons", seller_id: user.id ) }
+    let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id) }
+    before { visit seller_listings_path }
+      
     it "should display seller listings" do 
-      listing = FactoryGirl.create(:listing, title: 'paint fence', seller_id: user.id) 
-      visit seller_listings_path
-      page.should have_content("paint fence")
+      page.should have_content('My Pixis')
+    end
+      
+    it "should scroll listings", js: true do 
+      page.execute_script "window.scrollBy(0,10000)"
     end
   end
 

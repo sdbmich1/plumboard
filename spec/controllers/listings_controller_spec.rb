@@ -29,7 +29,9 @@ describe ListingsController do
   describe 'GET index' do
     before(:each) do
       @listings = mock("listings")
-      Listing.stub!(:active).and_return(@listings)
+      Listing.stub_chain(:active, :paginate).and_return(@listings)
+      @listings.stub!(:paginate).and_return(@listings)
+      controller.stub!(:load_data).and_return(:success)
     end
 
     def do_get
@@ -46,6 +48,11 @@ describe ListingsController do
       do_get 
       assigns(:listings).should_not be_nil
     end
+
+    it "should render the correct layout" do
+      do_get
+      response.should render_template("layouts/listings")
+    end
   end
 
   describe 'GET seller/:user_id' do
@@ -54,7 +61,7 @@ describe ListingsController do
       @temp_listings = mock("temp_listings")
       @user = stub_model(User)
       User.stub!(:find).and_return(@user)
-      @user.stub!(:listings).and_return( @listings )
+      @user.stub_chain(:listings, :paginate).and_return( @listings )
       @user.stub!(:temp_listings).and_return( @temp_listings )
     end
 
@@ -85,6 +92,11 @@ describe ListingsController do
     it "should show the requested listings" do
       do_get
       response.should be_success
+    end
+
+    it "should render the correct layout" do
+      do_get
+      response.should render_template("layouts/listings")
     end
   end
 

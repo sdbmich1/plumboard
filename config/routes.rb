@@ -16,6 +16,7 @@ Plumboard::Application.routes.draw do
   end
 
   resources :users, except: [:new]
+  resources :pictures, only: [:destroy]
 
   resources :temp_listings, except: [:index] do
     member do

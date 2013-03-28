@@ -132,7 +132,7 @@ describe TempListing do
   end
 
   describe "should include seller listings" do
-    it { TempListing.get_by_seller(1).should == [@temp_listing] }
+    it { TempListing.get_by_seller(1).should_not be_empty }
   end
 
   describe "should not include incorrect seller listings" do 
@@ -225,6 +225,16 @@ describe TempListing do
     it { temp_listing.nice_title.should_not == 'Guitar For Sale' }
   end
 
+  describe "should return a short title" do 
+    temp_listing = FactoryGirl.create :temp_listing, title: "a" * 40
+    it { temp_listing.short_title.length.should == 18 }
+  end
+
+  describe "should not return a short title" do 
+    temp_listing = FactoryGirl.build :temp_listing, title: 'qqq'
+    it { temp_listing.short_title.length.should_not == 18 }
+  end
+
   describe "set flds" do 
     let(:temp_listing) { FactoryGirl.create :temp_listing, status: "" }
 
@@ -255,7 +265,7 @@ describe TempListing do
     let(:transaction) { FactoryGirl.create :transaction }
 
     context "get_by_status should include new listings" do
-      it { TempListing.get_by_status('active').should == [@temp_listing] } 
+      it { TempListing.get_by_status('active').should_not be_empty } 
     end
 
     it "should not submit order" do 
@@ -344,6 +354,23 @@ describe TempListing do
       picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
       temp_listing.save
       temp_listing.should be_valid
+    end
+  end
+
+  describe "delete photo" do
+    let(:temp_listing) { FactoryGirl.create :temp_listing }
+
+    it "should not delete photo" do 
+      pic = temp_listing.pictures.first
+      temp_listing.delete_photo(pic.id).should_not be_true
+    end
+
+    it "should delete photo" do 
+      picture = temp_listing.pictures.build
+      picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
+      temp_listing.save
+      pic = temp_listing.pictures.first
+      temp_listing.delete_photo(pic.id).should be_true
     end
   end
 

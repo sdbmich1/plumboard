@@ -41,10 +41,14 @@ module TransactionsHelper
   end
   
   def confirm_msg
-    if @total > 0
+    if CalcTotal::get_amt > 0
       "Your credit card will be processed.  Would you like to proceed?"
     else
       "Your order will be processed.  Would you like to proceed?"
     end
+  end
+
+  def get_local_time(tm)
+    tm.utc.getlocal.strftime('%m/%d/%Y %I:%M%p')
   end
 end

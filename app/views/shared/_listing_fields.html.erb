@@ -3,7 +3,7 @@
 	  <td><div><output id='list'></output></div></td>
 	</tr>
 	<tr>
-	  <td><%= render partial: 'shared/edit_photo_form', locals: {model: @listing, psize: '75x75', file_name: 'star.jpg', form: f } if action_name == 'edit' %>
+	  <td><%= render partial: 'shared/edit_photo_form', locals: {model: @listing, psize: '75x75', file_name: 'star.jpg', form: f } %>
 	  </td>
 	</tr>
 	<tr>
@@ -26,4 +26,3 @@
     	  <td><%= f.label :description %><%= f.text_area :description %></td>
 	</tr>
       </table>
-

@@ -7,6 +7,7 @@ describe "PendingListings", :type => :feature do
   before(:each) do
     login_as(user, :scope => :user, :run_callbacks => false)
     user.confirm!
+    @user = user
     @listing = FactoryGirl.create :temp_listing_with_transaction
     @listing.status = 'pending'
     @listing.save!
@@ -16,7 +17,6 @@ describe "PendingListings", :type => :feature do
     before { visit pending_listing_path(@listing) }
 
     it "Views an order" do
-      page.should have_selector('span',  text: @listing.nice_title) 
       page.should have_selector('title', text: 'Review Pending Order') 
     end
 

@@ -1,8 +1,10 @@
-<div class="pixi-frame">
+<div class="item">
   <div class="center">
-    <%= link_to listing_path(listing, :user_id=>@user) do %>
+    <%= link_to listing_path(listing) do %>
       <%= render partial: 'shared/show_photo', locals: {model: listing, file_name: "star.jpg", psize: '120x120', display_cnt: 0 } %>
-      <%= listing.title %>
     <% end %>
+    <div class='hdescr'>
+      <%= listing.title %>
+    </div>
   </div>
  </div>

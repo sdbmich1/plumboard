@@ -1,11 +1,8 @@
 <% if model %>
   <% for pic in model.pictures %>
-    <%= fields_for "temp_listing[pictures_attributes][]", pic, index: nil do |form| %>
       <% unless pic.photo_file_name.blank? %>
 	<%= image_tag pic.photo.url, :size => psize %>
-        <%= form.check_box :_destroy, { checked: false, id: 'delete_photo' } %>
-        <%= form.label :_destroy, 'Remove', :class => "cb-label" %>
+	<%= link_to 'Remove', picture_path(pic, pixi_id: model), method: :delete, confirm: 'Image will be removed. Are you sure?', remote: true %>
       <% end %>
-    <% end %>
   <% end %>
 <% end %>

@@ -1,13 +1,9 @@
 <tr>
-  <td>
-    <%= render partial: 'shared/show_photo', locals: {model: listing, file_name: "star.jpg", psize: '80x80', display_cnt: 1 } %>
+  <td class='center-wrapper'>
+    <%= render partial: 'shared/show_photo', locals: {model: listing, file_name: "star.jpg", psize: '80x80', display_cnt: 0 } %>
   </td>
-  <td class='width30'></td>
   <td><%= link_to listing.nice_title, pending_listing_path(listing), class: 'pending_title' %></td>
-  <td class='width30'></td>
   <td><%= listing.brief_descr %></td>
-  <td class='width30'></td>
   <td><%= listing.seller_name %></td>
-  <td class='width30'></td>
-  <td><%= listing.get_local_time listing.updated_at %></td>
+  <td><%= time_ago_in_words(listing.updated_at) %> ago</td>
 </tr>

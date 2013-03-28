@@ -45,18 +45,18 @@ describe TransactionsController do
   describe "GET 'new'" do
 
     before :each do
-      @user = stub_model(User)
       @order.stub!("order").and_return(:success)
+      @user = stub_model(User)
       User.stub!(:find).and_return(@user)
       @listing = stub_model(TempListing)
-      TempListing.stub!(:find).and_return(@listing)
+      TempListing.stub!(:find_by_pixi_id).and_return(@listing)
       Transaction.stub!(:load_new).with(@user, @listing, @order).and_return( @transaction )
       controller.stub!(:load_vars).and_return(:success)
       controller.stub!(:set_amt).and_return(:success)
     end
 
     def do_get
-      get :new, user_id: '3', id: '1' 
+      get :new, id: '1' 
     end
 
     it "should assign @transaction" do
@@ -106,12 +106,14 @@ describe TransactionsController do
   end
 
   describe "POST create" do
+    before :each do
+      @listing = stub_model(TempListing)
+      TempListing.stub!(:find_by_pixi_id).and_return(@listing)
+    end
     
     context 'failure' do
       
       before :each do
-        @listing = stub_model(TempListing)
-        TempListing.stub!(:find).and_return(@listing)
         Transaction.stub!(:save_transaction).and_return(false)
       end
 
@@ -138,8 +140,6 @@ describe TransactionsController do
     context 'success' do
 
       before :each do
-        @listing = stub_model(TempListing)
-        TempListing.stub!(:find).and_return(@listing)
         Transaction.stub!(:save_transaction).and_return(true)
       end
 

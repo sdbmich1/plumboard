@@ -1,5 +1,6 @@
 class ListingParent < ActiveRecord::Base
   self.abstract_class = true
+  self.per_page = 30
 
   before_update :must_have_pictures
 
@@ -108,6 +109,11 @@ class ListingParent < ActiveRecord::Base
   # titleize title
   def nice_title
     title.titleize rescue nil
+  end
+
+  # short title
+  def short_title
+    nice_title[0..14] + '...' rescue nil
   end
 
   # set end date to x days after start to denote when listing is no longer displayed on network

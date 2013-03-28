@@ -24,7 +24,8 @@ describe PendingListingsController do
     before(:each) do
       @listings = mock("listings")
       TempListing.stub!(:get_by_status).with('pending').and_return(@listings)
-      @listings.stub!(:paginate).and_return(:success)
+      @listings.stub!(:paginate).and_return(@listings)
+      controller.stub!(:load_data).and_return(:success)
     end
 
     def do_get
@@ -51,7 +52,7 @@ describe PendingListingsController do
     end
 
     def do_get
-      get :show, :id => @listing
+      get :show, :id => '1'
     end
 
     it "should show the requested listing" do
@@ -60,7 +61,7 @@ describe PendingListingsController do
     end
 
     it "should load the requested listing" do
-      TempListing.stub(:find_by_pixi_id).with(@listing.id).and_return(@listing)
+      TempListing.stub(:find_by_pixi_id).with('1').and_return(@listing)
       do_get
     end
 

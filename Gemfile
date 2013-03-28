@@ -18,6 +18,9 @@ gem 'remotipart', '~> 1.0'
 # add thinking sphinx
 gem 'thinking-sphinx', '2.0.10'
 
+# add nested form
+gem 'nested_form'
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
@@ -94,6 +97,7 @@ group :development, :test do
   gem 'guard-rspec', '1.2.1'
   gem 'guard-spork', '1.4.2'
   gem 'spork', '0.9.2'
+  gem 'faker'
 end
 
 # test gems
@@ -105,7 +109,6 @@ group :test do
   gem 'win32console', '1.3.0'
   gem 'email_spec'
   gem 'launchy'
-  gem 'faker'
   gem "database_cleaner"
   gem 'connection_pool'
   gem 'selenium-webdriver'

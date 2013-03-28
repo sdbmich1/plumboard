@@ -14,12 +14,12 @@ feature "Transactions" do
   end
 
   def visit_txn_path
-    visit new_transaction_path user_id: @user.id, id: @listing.id, promo_code: '', title: @listing.title,
+    visit new_transaction_path id: @listing.pixi_id, promo_code: '', title: @listing.title,
         "item1" => 'New Pixi Post', "quantity1" => 1, cnt: 1, qtyCnt: 1, "price1" => 5.00
   end
 
   def visit_free_txn_path
-    visit new_transaction_path user_id: @user.id, id: @listing.id, promo_code: '2013LAUNCH', title: @listing.title,
+    visit new_transaction_path id: @listing.pixi_id, promo_code: '2013LAUNCH', title: @listing.title,
         "item1" => 'New Pixi Post', "quantity1" => 1, cnt: 1, qtyCnt: 1, "price1" => 5.00
   end
 
@@ -580,6 +580,5 @@ feature "Transactions" do
       end
     end
   end
-
 end
 

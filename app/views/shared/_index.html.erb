@@ -1,8 +1,15 @@
 <% provide(:title, page_title) %>
-<%= content_for :content do %>
+<%= content_for :subhead do %>
   <h2><%= page_title %></h2>
-  <div class='pboard'>
-    <%= render partial: 'shared/listing', collection: @listings %>
-  </div>
 <% end %>
+<%= content_for :content do %>
+  <div id='pxboard'>
+    <%= render partial: 'shared/listing', collection: @listings %>
+  </div> 
 
+  <nav id="px-nav" class='center-wrapper nxt-pg-spinner'>
+    <%= link_to "Next", {controller: "listings", action: atype, page: @page.to_i+1}, class: 'nxt-pg' %>
+  </nav>
+
+  <%= link_to 'Scroll', '#', class: 'scrollup' %>
+<% end %>

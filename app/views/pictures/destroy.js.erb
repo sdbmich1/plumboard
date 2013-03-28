@@ -1,0 +1,10 @@
+<% if @listing.errors.any? %>
+  $(".notice").hide(300);
+  $("#form_errors").html("<%= escape_javascript( render(partial: 'shared/error_messages', locals: {target: @listing})) %>");
+<% else %>
+  $("#notice").html("<%= escape_javascript(flash[:notice])%>");
+  $("#notice").show(300);
+  $("#listing_form").html("<%= escape_javascript( raw render(partial: 'shared/pixi_form')) %>");
+<% end %>
+
+$('#spinner').hide(300);

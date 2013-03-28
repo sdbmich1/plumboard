@@ -1,11 +1,12 @@
 class PendingListingsController < ApplicationController
   require 'will_paginate/array' 
   before_filter :authenticate_user!
+  before_filter :load_data, only: [:index]
   respond_to :html, :json, :js
 
   def index
     @listings = TempListing.get_by_status('pending')
-    @listings.paginate(:page => params[:pending_page], :per_page => 30)
+    @listings.paginate(page: @page)
   end
 
   def show
@@ -29,5 +30,11 @@ class PendingListingsController < ApplicationController
     else
       render action: :show, error: "Order denial was not successful."
     end
+  end
+
+  protected
+
+  def load_data
+    @page = params[:pending_page] || 1
   end
 end
