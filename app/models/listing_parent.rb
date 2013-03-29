@@ -1,4 +1,6 @@
+require 'rails_rinku'
 class ListingParent < ActiveRecord::Base
+  resourcify
   self.abstract_class = true
   self.per_page = 30
 
@@ -103,7 +105,12 @@ class ListingParent < ActiveRecord::Base
 
   # short description
   def brief_descr
-    description[0..26] + '...' rescue nil
+    Rinku.auto_link(description[0..96]) + '...' rescue nil
+  end
+
+  # add hyperlinks to description
+  def summary
+    Rinku.auto_link(description) rescue nil
   end
 
   # titleize title

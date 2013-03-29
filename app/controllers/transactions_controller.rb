@@ -28,7 +28,6 @@ class TransactionsController < ApplicationController
   protected
 
   def load_vars    
-#    @total = @fees = 0 
     @order = action_name == 'new' ? params : params[:order] ? params[:order] : params
     @qtyCnt = action_name == 'new' ? @order[:qtyCnt].to_i : 0
     @discount = CalcTotal::get_discount

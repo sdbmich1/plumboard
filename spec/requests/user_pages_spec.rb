@@ -7,6 +7,7 @@ feature "Users" do
   before(:each) do
     login_as(user, :scope => :user, :run_callbacks => false)
     user.confirm!
+    @user = user
   end
 
   describe "GET /users" do

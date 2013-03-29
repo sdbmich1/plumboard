@@ -206,13 +206,23 @@ describe TempListing do
   end
 
   describe "should return a short description" do 
-    temp_listing = FactoryGirl.create :temp_listing, description: "a" * 100
-    it { temp_listing.brief_descr.length.should == 30 }
+    temp_listing = FactoryGirl.create :temp_listing, description: "a" * 500
+    it { temp_listing.brief_descr.length.should == 100 }
   end
 
   describe "should not return a short description" do 
     temp_listing = FactoryGirl.create :temp_listing, description: 'qqq'
-    it { temp_listing.brief_descr.length.should_not == 30 }
+    it { temp_listing.brief_descr.length.should_not == 100 }
+  end
+
+  describe "should return a summary" do 
+    temp_listing = FactoryGirl.create :temp_listing, description: "a" * 500
+    it { temp_listing.summary.should be_true }
+  end
+
+  describe "should not return a summary" do 
+    temp_listing = FactoryGirl.create :temp_listing, description: nil
+    it { temp_listing.summary.should_not be_true }
   end
 
   describe "should return a nice title" do 

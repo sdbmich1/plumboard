@@ -18,8 +18,12 @@ gem 'remotipart', '~> 1.0'
 # add thinking sphinx
 gem 'thinking-sphinx', '2.0.10'
 
-# add nested form
-gem 'nested_form'
+# add roles
+gem 'rolify'
+gem 'cancan'
+
+# add clickable links
+gem 'rinku'
 
 # Gems used only for assets and not required
 # in production environments by default.

@@ -1,4 +1,5 @@
 class Post < ActiveRecord::Base
+  resourcify
   attr_accessible :content, :listing_id, :user_id
 
   belongs_to :user

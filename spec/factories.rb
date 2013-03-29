@@ -7,6 +7,18 @@ FactoryGirl.define do
     password_confirmation "setup#123"
     gender          	  "Male"
     birth_date            Time.parse("1967-04-23")
+
+    factory :admin do
+      after(:create) {|user| user.add_role(:admin)}
+    end
+
+    factory :editor do
+      after(:create) {|user| user.add_role(:editor)}
+    end
+
+    factory :subscriber do
+      after(:create) {|user| user.add_role(:subscriber)}
+    end
   end
 
   factory :pixi_user, :class => "User", :parent => :user do
@@ -24,11 +36,6 @@ FactoryGirl.define do
   factory :state do
     code		"CA"
     state_name		"California"
-  end
-
-  factory :admin do
-    email                 "jblow@test.com"
-    password              "setup#123"
   end
 
   factory :site do
