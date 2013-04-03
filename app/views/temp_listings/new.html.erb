@@ -1,3 +1,6 @@
+<%= content_for :subhead do %>
+  <%= render partial: 'shared/listing_header', :locals => { step_no: 1, step_name: 'Build Your Pixi' } %>
+<% end %>
 <%= content_for :content do %>
   <div id="buyTxtForm">
     <div id="buyFormError" style="display:none" class="error"></div>

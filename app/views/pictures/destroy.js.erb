@@ -1,5 +1,5 @@
 <% if @listing.errors.any? %>
-  $(".notice").hide(300);
+  $("#notice").hide(300);
   $("#form_errors").html("<%= escape_javascript( render(partial: 'shared/error_messages', locals: {target: @listing})) %>");
 <% else %>
   $("#notice").html("<%= escape_javascript(flash[:notice])%>");

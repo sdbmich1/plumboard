@@ -196,6 +196,15 @@
 	padding: 10px;
 }
 
+.bx-wrapper {
+  margin: 0;
+  padding: 0;
+}
+
+.bx-viewport {
+  max-height: 250px!important;
+}
+
 .bxslider-inner {
   vertical-align: middle;
   display: inline-block;

@@ -1,14 +1,16 @@
 @import "bootstrap";
 
 /* universal */
+html,body{
+  height: 100%
+}
+
 html {
   overflow-y: scroll;
-  height: 100%;
   }
 
 body {
   padding-top: 60px;
-  height: 100%;
   }
 
 section {
@@ -257,6 +259,7 @@ input, select, .uneditable-input {
 .width120 {width: 120px!important}
 .width180 {width: 180px!important}
 .width240 {width: 240px!important}
+.width280 {width: 280px!important}
 .width360 {width: 360px!important}
 .height240 {height: 240px!important}
 .height360 {height: 360px!important}
@@ -279,9 +282,10 @@ input, select, .uneditable-input {
 .pixi-lt-bkgnd { background-color: #fde9d9 }
 .pixi-blue-bkgnd { background-color: #0C6FCB }
 .pixi-blk-bkgnd { background-color: black }
+.pixi-grey-bkgnd { background-color: $grayMediumLight }
 
 .div-border {  
-  border: 1px solid #eaeaea; padding: 15px; margin-bottom: 15px; }
+  border: 1px solid #eaeaea; padding: 10px; margin-bottom: 10px; }
 
 h3 { padding: 10px }
 
@@ -290,6 +294,7 @@ h3 { padding: 10px }
 .sm-top { margin-top: 5px!important }  
 .cb-label { display:inline; vertical-align:middle }
 .hdescr { font-size: 0.875em; color: #ccc; width: 120px!important }
+.grey-text { color: #ccc; }
 .nxt-pg { display:none; }
 .nxt-pg-spinner { 
   position:fixed;
@@ -332,3 +337,5 @@ h3 { padding: 10px }
   text-indent:-9999px;
   background: url('icon_top.png') no-repeat;
 }
+
+.bar-top { margin-top: -20px; }

@@ -22,7 +22,9 @@ class User < ActiveRecord::Base
   has_many :user_interests, :dependent => :destroy
   has_many :interests, :through => :user_interests
 
-  has_many :posts
+  has_many :posts, dependent: :destroy
+  has_many :incoming_posts, :foreign_key => "recipient_id", :class_name => "Post", :dependent => :destroy
+
   has_many :transactions, dependent: :destroy
 
   has_one :picture, :as => :imageable, :dependent => :destroy
@@ -47,5 +49,9 @@ class User < ActiveRecord::Base
 
   def name
     [first_name, last_name].join " "
+  end
+
+  def pixis
+    self.listings | self.temp_listings
   end
 end

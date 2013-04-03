@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130328191300) do
+ActiveRecord::Schema.define(:version => 20130401045439) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -131,10 +131,13 @@ ActiveRecord::Schema.define(:version => 20130328191300) do
     t.integer  "user_id"
     t.integer  "listing_id"
     t.text     "content"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+    t.string   "pixi_id"
+    t.integer  "recipient_id"
   end
 
+  add_index "posts", ["pixi_id"], :name => "index_posts_on_pixi_id"
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id_and_created_at", :unique => true
   add_index "posts", ["user_id", "listing_id"], :name => "index_posts_on_user_id_and_listing_id", :unique => true
 

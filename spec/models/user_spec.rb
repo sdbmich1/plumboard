@@ -26,6 +26,8 @@ describe User do
     it { should respond_to(:sites) } 
     it { should respond_to(:listings) } 
     it { should respond_to(:temp_listings) } 
+    it { should respond_to(:posts) } 
+    it { should respond_to(:incoming_posts) } 
   end
 
   describe "when first_name is empty" do
@@ -117,7 +119,7 @@ describe User do
 
   describe 'temp_listings' do
     before(:each) do
-      @sr = @user.temp_listings.create FactoryGirl.attributes_for(:contact)
+      @sr = @user.temp_listings.create FactoryGirl.attributes_for(:temp_listing)
     end
 
     it "has many temp_listings" do 
@@ -134,11 +136,11 @@ describe User do
 
   describe 'pictures' do
     before(:each) do
-      @sr = @user.picture.create FactoryGirl.attributes_for(:picture)
+      @sr = @user.create_picture FactoryGirl.attributes_for(:picture)
     end
 
     it "has many pictures" do 
-      @user.picture.should include(@sr)
+      @user.picture.should == @sr
     end
 
     it "should destroy associated pictures" do
@@ -148,4 +150,17 @@ describe User do
        end
     end 
   end  
+
+  describe 'pixis' do
+    it "should return pixis" do
+      @user.temp_listings.create FactoryGirl.attributes_for(:temp_listing)
+      @user.listings.create FactoryGirl.attributes_for(:listing)
+      @user.pixis.should_not be_empty
+    end
+
+    it "should not return pixis" do
+      usr = FactoryGirl.create :user
+      usr.pixis.should be_empty
+    end
+  end
 end

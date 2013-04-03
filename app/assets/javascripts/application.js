@@ -153,7 +153,7 @@ $(function(){
     $container.imagesLoaded( function(){
       $container.masonry({
         itemSelector : '.item',
-        columnWidth : 150
+        columnWidth : 180
       });
     });
 

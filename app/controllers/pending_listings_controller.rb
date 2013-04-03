@@ -35,6 +35,6 @@ class PendingListingsController < ApplicationController
   protected
 
   def load_data
-    @page = params[:pending_page] || 1
+    @page = params[:page] || 1
   end
 end

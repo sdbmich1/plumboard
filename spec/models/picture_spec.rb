@@ -2,11 +2,19 @@ require 'spec_helper'
 
 describe Picture do
   before(:each) do
-    @file = "/spec/fixtures/photo.jpg"
+    filename = "#{Rails.root}/spec/fixtures/photo.jpg"
+    filename2 = "#{Rails.root}/spec/fixtures/photo2.png"
+
+    @file = Rack::Test::UploadedFile.new(filename, "image/jpg")
+    @bigfile = Rack::Test::UploadedFile.new(filename2, "image/png")
+
     @listing = FactoryGirl.create(:listing)
     @site = FactoryGirl.create(:site)
-    @picture = @listing.pictures.build(:photo_file_name => @file)
-    @site_picture = @site.pictures.build(:photo_file_name => @file)
+
+    @bigpic = @listing.pictures.build
+    @picture = @listing.pictures.build
+    @site_picture = @site.pictures.build
+    @picture.photo, @bigpic.photo, @site_picture.photo  = @file, @bigfile, @file
   end
 
   subject { @picture } 
@@ -26,6 +34,10 @@ describe Picture do
   it { should validate_attachment_size(:photo).less_than(1.megabytes) }
 
   describe "listing photo validations" do
+    it "big pic should not be valid" do
+      @bigpic.should_not be_valid
+    end
+
     it "should be valid" do
       @picture.should be_valid
     end
@@ -41,7 +53,7 @@ describe Picture do
     end
 
     it "should receive photo_file_name from :photo" do 
-      @picture.photo_file_name.should == @file
+      @picture.photo_file_name.should_not be_empty
     end
   end
 
@@ -61,7 +73,7 @@ describe Picture do
     end
 
     it "should receive photo_file_name from :photo" do 
-      @site_picture.photo_file_name.should == @file
+      @site_picture.photo_file_name.should_not be_empty
     end
   end
 

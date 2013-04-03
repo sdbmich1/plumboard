@@ -92,10 +92,7 @@ feature "TempListings" do
 	        click_button submit
 	      }.to change(TempListing,:count).by(1)
       
-        within 'span' do
-          page.should have_content "Guitar for Sale" 
-        end
-
+        page.should have_content "Guitar For Sale" 
         page.should have_content 'Review Your Pixi'
       end	      
 
@@ -106,7 +103,7 @@ feature "TempListings" do
 	        click_button submit
 	      }.to change(TempListing,:count).by(1)
       
-        page.should have_content "Description: Guitar for Sale" 
+        page.should have_content "Guitar For Sale" 
         page.should have_content 'Review Your Pixi'
       end	      
     end	      
@@ -153,9 +150,18 @@ feature "TempListings" do
       page.should have_content 'Build Pixi'
     end
 
+    it "should not add a large pic" do
+      expect{
+              attach_file('photo', Rails.root.join("spec", "fixtures", "photo2.png"))
+              click_button submit
+      }.not_to change(temp_listing.pictures,:count).by(-1)
+
+      page.should have_content 'Build Pixi'
+    end
+
     it "should not delete last picture from listing", js: true do
       expect { 
-	      click_remove_ok
+	      click_remove_ok; sleep 4
       }.not_to change(temp_listing.pictures,:count).by(-1)
 
       page.should have_content 'Pixi must have at least one image'
@@ -184,7 +190,7 @@ feature "TempListings" do
       }.to change(TempListing,:count).by(0)
 
       page.should have_content 'Review Your Pixi'
-      page.should have_content "Description: Acoustic bass" 
+      page.should have_content "Acoustic bass" 
     end
 
     it "Adds a pixi pic" do
@@ -210,7 +216,10 @@ feature "TempListings" do
     end
 
     it "should delete picture from listing", js: true do
-      click_remove_ok
+      expect{
+        click_remove_ok; sleep 2
+      }.to change(Picture,:count).by(-1)
+
       page.should have_content 'Build Pixi'
     end
 
@@ -278,7 +287,7 @@ feature "TempListings" do
     end
 
     it "Cancel review on active pixi" do
-      click_cancel_ok
+      click_cancel_ok; sleep 2
       page.should have_content "Pixis" 
     end
   end

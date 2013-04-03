@@ -1,5 +1,4 @@
 <div id="pmtForm">
-  <%= render partial: 'shared/listing_header', :locals => { step_no: 3, step_name: step_name } %>
   <%= form_for @transaction, :url => transactions_url(:id=>@listing, :order=>@order), :html => {id: 'payment_form'}, validate: true do |f| %>
     <%= render :partial => 'shared/error_messages', :locals => { :target => @transaction } %>
     <div id="stripe_error" style="display:none" class="error"></div>

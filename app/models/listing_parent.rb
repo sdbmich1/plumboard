@@ -2,7 +2,7 @@ require 'rails_rinku'
 class ListingParent < ActiveRecord::Base
   resourcify
   self.abstract_class = true
-  self.per_page = 30
+  self.per_page = 20
 
   before_update :must_have_pictures
 
@@ -11,6 +11,7 @@ class ListingParent < ActiveRecord::Base
   KEY_LENGTH = PIXI_KEYS['pixi']['key_length']
   SITE_FREE_AMT = PIXI_KEYS['pixi']['site_init_free']
   MAX_PIXI_AMT = PIXI_KEYS['pixi']['max_pixi_amt']
+  MAX_PIXI_PIX = PIXI_KEYS['pixi']['max_pixi_pix']
 
   attr_accessible :buyer_id, :category_id, :description, :title, :seller_id, :status, :price, :show_alias_flg, :show_phone_flg, :alias_name,
   	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id, :id, :created_at, :updated_at,
@@ -39,7 +40,12 @@ class ListingParent < ActiveRecord::Base
   def must_have_pictures
     if !any_pix? || pictures.all? {|pic| pic.marked_for_destruction? }
       errors.add(:base, 'Must have at least one picture')
+    elsif pictures.size > MAX_PIXI_PIX.to_i
+      errors.add(:base, "Can only have #{MAX_PIXI_PIX} pictures")
+    else
+      return true
     end
+    false
   end
 
   # check if pictures already exists
@@ -78,9 +84,19 @@ class ListingParent < ActiveRecord::Base
     status == 'active'
   end
 
+  # verify if listing is pending
+  def pending?
+    status == 'pending'
+  end
+
   # verify if alias is used
   def alias?
     show_alias_flg == 'yes'
+  end
+
+  # check if listing is new
+  def new_status?
+    status == 'new'
   end
 
   # verify if current user is listing seller
@@ -105,7 +121,8 @@ class ListingParent < ActiveRecord::Base
 
   # short description
   def brief_descr
-    Rinku.auto_link(description[0..96]) + '...' rescue nil
+    descr = description.length < 96 ? description.html_safe : description.html_safe[0..96] + '...' rescue nil
+    Rinku.auto_link(descr) if descr
   end
 
   # add hyperlinks to description
@@ -120,7 +137,7 @@ class ListingParent < ActiveRecord::Base
 
   # short title
   def short_title
-    nice_title[0..14] + '...' rescue nil
+    nice_title.length < 14 ? nice_title.html_safe : nice_title.html_safe[0..14] + '...' rescue nil
   end
 
   # set end date to x days after start to denote when listing is no longer displayed on network

@@ -22,4 +22,8 @@ class Site < ActiveRecord::Base
   def self.active
     where(:status => 'active')
   end
+
+  def self.active_with_pixis
+    active.select { |s| s.listings.size > 0 }
+  end
 end

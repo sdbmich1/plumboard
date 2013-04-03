@@ -5,7 +5,7 @@ class TempListing < ListingParent
 
   has_many :site_listings, :foreign_key => :listing_id, :dependent => :destroy
   has_many :pictures, :as => :imageable, :dependent => :destroy
-  accepts_nested_attributes_for :pictures, allow_destroy: true, reject_if: :all_blank #lambda { |t| t['picture'].nil? && !t['id'].blank? }
+  accepts_nested_attributes_for :pictures, allow_destroy: true, reject_if: :all_blank, limit: MAX_PIXI_PIX 
 
   # set unique key
   def generate_token
@@ -59,11 +59,6 @@ class TempListing < ListingParent
   # used to resubmit changes to previously approved orders for new approval
   def resubmit_order
     submit_order transaction_id
-  end
-
-  # check if listing is new
-  def new_status?
-    status == 'new'
   end
 
   # add listing to post if approved

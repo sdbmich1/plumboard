@@ -1,28 +1,40 @@
-<div class='div-border height360'>
-  <h3 class='top-hdr pixi-blue-bkgnd'><%= listing.nice_title %></h3>
+<div class='height360'>
   <div class='row'>
-  <div class="span4">
-    <%= render partial: 'shared/photos', locals: {model: listing, file_name: "star.jpg", psize: '150x150'} %>
+    <div class="span12 mbot">
+      <h4><%= listing.nice_title %></h4>
+      Site: <%= listing.site_name %><br />
+      Category: <%= listing.category_name %><br />
+      <% if listing.price %>
+        Price: <%= number_to_currency listing.price %><br />
+      <% end %>
+    </div>
   </div>
-  <div class="offset4">
-    Category: <%= listing.category_name %><br />
-    Site: <%= listing.site_name %><br />
-    <% if listing.price %>
-      Price: <%= number_to_currency listing.price %><br />
-    <% end %>
-    Posted By: <%= listing.seller_name %><br />
-    Description: <span class='height240'><%= listing.description %></span><br />
-  </div>
-  </div>
-  <div class='row hdescr'>
+
+  <div class="grey-text mbot row">
     <div class="span4">
       ID: <%= listing.pixi_id %>
     </div>
-    <div class="span4">
+    <div class="span4 center-wrapper">
       Posted: <%= get_local_time listing.start_date %>
     </div>
-    <div class="span3">
-      Updated: <%= get_local_time listing.updated_at %>
+    <div class="span4">
+      <span class='pull-right'>Updated: <%= get_local_time listing.updated_at %></span>
+    </div>
+  </div>
+  <div class='row'>
+    <div class="span6">
+      <%= render partial: 'shared/photos', locals: {model: listing, file_name: "star.jpg", psize: '120x120'} %>
+    </div>
+    <div class="span6">
+      <div id='post_form'>
+        <%= render partial: 'shared/contact_seller', locals: {listing: listing} %>
+      </div>
+    </div>
+  </div>
+
+  <div class="mtop row">
+    <div class="span12 mbot">
+      <%= listing.description %>
     </div>
   </div>
 </div>

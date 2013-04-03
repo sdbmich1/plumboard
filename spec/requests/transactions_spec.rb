@@ -230,7 +230,7 @@ feature "Transactions" do
   def click_valid_ok
     click_button submit 
     page.driver.browser.switch_to.alert.accept
-    page.should have_content("your pixi will be posted")
+    sleep 4
   end
 
   def click_cancel_ok
@@ -250,6 +250,7 @@ feature "Transactions" do
 
   describe "Manage Free Valid Transactions" do
     before(:each) do 
+      FactoryGirl.create :promo_code
       visit_free_txn_path 
     end
 
@@ -260,39 +261,30 @@ feature "Transactions" do
 
       page.should have_content "Review Your Pixi" 
     end
-  end
 
-  describe "Manage Free Valid Transactions", :js=>true do
-    before(:each) do 
-      FactoryGirl.create :promo_code
-      visit_free_txn_path 
-    end
+    describe "Manage Free Valid Transactions", :js=>true do
 
-    it "should create a transaction with 100% discount" do
-      user_data_with_state
-      click_ok
-      page.should have_content 'Order Complete'
-    end
-
-    it "Cancel transaction" do
-      click_cancel_ok
-      page.should have_content "Pixis" 
-    end
-
-    it "Cancel transaction cancel" do
-      expect { 
-        click_cancel_cancel
+      it "Cancel transaction cancel" do
+        expect { 
+          click_cancel_cancel
 	}.not_to change(Transaction, :count)
 
-      page.should have_content "Submit Your Order" 
-    end
+        page.should have_content "Submit Your Order" 
+      end
+ 
+      it "should create a transaction with 100% discount" do
+       user_data_with_state
+        expect { 
+          click_ok; sleep 2
+	}.to change(Transaction, :count).by(1)
 
-    it "Cancel transaction submission" do
-      expect { 
-	      click_submit_cancel
-	}.not_to change(Transaction, :count)
+        page.should have_content 'Order Complete'
+      end
 
-      page.should have_content "Submit Your Order" 
+      it "Cancel transaction" do
+        click_cancel_ok
+        page.should have_content "Pixis" 
+      end
     end
   end
 
@@ -302,28 +294,50 @@ feature "Transactions" do
       user_data_with_state
     end
 
+      it "Cancel transaction submission" do
+        expect { 
+	      click_submit_cancel
+	  }.not_to change(Transaction, :count)
+
+        page.should have_content "Submit Your Order" 
+      end
+
     it "should create a transaction with valid visa card" do
-      visa_card_data
+      expect { 
+        visa_card_data
+	}.to change(Transaction, :count).by(1)
+
+      page.should have_content("your pixi will be posted")
     end
 
     it "should create a transaction with valid mc card" do
-      mc_card_data
+      expect { 
+        mc_card_data
+	}.to change(Transaction, :count).by(1)
     end
 
     it "should create a transaction with valid ax card" do
-      ax_card_data
+      expect { 
+        ax_card_data
+	}.to change(Transaction, :count).by(1)
     end
 
     it "should create a transaction with valid discover card" do
-      discover_card_data
+      expect { 
+        discover_card_data
+	}.to change(Transaction, :count).by(1)
     end
 
     it "should create a transaction with valid diners card" do
-      diners_card_data
+      expect { 
+        diners_card_data
+	}.to change(Transaction, :count).by(1)
     end
 
     it "should create a transaction with valid jcb card" do
-      jcb_card_data
+      expect { 
+        jcb_card_data
+	}.to change(Transaction, :count).by(1)
     end
   end
 
@@ -336,7 +350,7 @@ feature "Transactions" do
           fill_in 'first_name', with: ""
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'Submit Your Order'
+        page.should have_content 'invalid'
       end
 
       it "should not create a transaction with invalid last name" do
@@ -344,7 +358,7 @@ feature "Transactions" do
           fill_in 'last_name', with: ""
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'Submit Your Order'
+        page.should have_content 'invalid'
       end
 
       it "should not create a transaction with blank home phone" do
@@ -352,7 +366,7 @@ feature "Transactions" do
           fill_in 'transaction_home_phone', with: ""
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'Submit Your Order'
+        page.should have_content 'invalid'
       end
     end
 
@@ -362,7 +376,7 @@ feature "Transactions" do
           fill_in 'transaction_email', with: ""
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'Submit Your Order'
+        page.should have_content 'invalid'
       end
 
       it "should not create a transaction with bad email" do
@@ -370,7 +384,7 @@ feature "Transactions" do
           fill_in 'transaction_email', with: "user@x."
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'Submit Your Order'
+        page.should have_content 'invalid'
       end
     end
 
@@ -381,7 +395,7 @@ feature "Transactions" do
           fill_in 'last_name', with: @user.last_name
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'Submit Your Order'
+        page.should have_content 'invalid'
       end
 
       it "should not create a transaction with no street address" do
@@ -390,7 +404,7 @@ feature "Transactions" do
           fill_in 'transaction_address', with: ""
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'Submit Your Order'
+        page.should have_content 'invalid'
       end
 
       it "should not create a transaction with no city" do
@@ -399,7 +413,7 @@ feature "Transactions" do
           fill_in 'transaction_city', with: ""
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'Submit Your Order'
+        page.should have_content 'invalid'
       end
 
       it "should not create a transaction with no state" do
@@ -407,7 +421,7 @@ feature "Transactions" do
 	  user_data
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'Submit Your Order'
+        page.should have_content 'invalid'
       end
 
       it "should not create a transaction with no zip" do
@@ -416,7 +430,7 @@ feature "Transactions" do
           fill_in 'transaction_zip', with: ""
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'Submit Your Order'
+        page.should have_content 'invalid'
       end
     end
 
@@ -428,7 +442,7 @@ feature "Transactions" do
 	  no_card_data
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'Submit Your Order'
+        page.should have_content 'invalid'
       end
 
       it "should not create a transaction with no cvv" do
@@ -436,23 +450,19 @@ feature "Transactions" do
 	  visa_card_data_no_cvv
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'Submit Your Order'
+        page.should have_content 'invalid'
       end
 
       it "should not create a transaction with expired card" do
         expect { 
 	  visa_card_data_expired
 	  click_ok }.not_to change(Transaction, :count)
-
-        page.should have_content 'Order'
       end
 
       it "should not create a transaction with declined card" do
         expect { 
 	  visa_card_declined
 	  click_ok }.not_to change(Transaction, :count)
-
-        page.should have_content 'Order'
       end
 
       it "should not create a transaction with bad_cvv card" do
@@ -460,7 +470,7 @@ feature "Transactions" do
 	  visa_card_data_bad_cvv
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'Submit Your Order'
+        page.should have_content 'invalid'
       end
 
       it "should not create a transaction with bad_dates card" do
@@ -468,15 +478,13 @@ feature "Transactions" do
 	  visa_card_data_bad_dates
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'Submit Your Order'
+        page.should have_content 'invalid'
       end
 
       it "should not create a transaction with error card" do
         expect { 
 	  visa_card_data_error
 	  click_ok }.not_to change(Transaction, :count)
-
-        page.should have_content 'Order'
       end
     end
 
@@ -488,7 +496,7 @@ feature "Transactions" do
 	  mc_card_data_bad_cvv
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'Submit Your Order'
+        page.should have_content 'invalid'
       end
 
       it "should not create a transaction with bad_dates card" do
@@ -496,7 +504,7 @@ feature "Transactions" do
 	  mc_card_data_bad_dates
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'Submit Your Order'
+        page.should have_content 'invalid'
       end
     end
 
@@ -508,7 +516,7 @@ feature "Transactions" do
 	  ax_card_data_bad_cvv
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'Submit Your Order'
+        page.should have_content 'invalid'
       end
 
       it "should not create a transaction with bad_dates card" do
@@ -516,7 +524,7 @@ feature "Transactions" do
 	  ax_card_data_bad_dates
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'Submit Your Order'
+        page.should have_content 'invalid'
       end
     end
 
@@ -528,7 +536,7 @@ feature "Transactions" do
 	  discover_card_data_bad_cvv
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'Submit Your Order'
+        page.should have_content 'invalid'
       end
 
       it "should not create a transaction with bad_dates card" do
@@ -536,7 +544,7 @@ feature "Transactions" do
 	  discover_card_data_bad_dates
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'Submit Your Order'
+        page.should have_content 'invalid'
       end
     end
 
@@ -548,7 +556,7 @@ feature "Transactions" do
 	  diners_card_data_bad_cvv
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'Submit Your Order'
+        page.should have_content 'invalid'
       end
 
       it "should not create a transaction with bad_dates card" do
@@ -556,7 +564,7 @@ feature "Transactions" do
 	  diners_card_data_bad_dates
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'Submit Your Order'
+        page.should have_content 'invalid'
       end
     end
 
@@ -568,7 +576,7 @@ feature "Transactions" do
 	  jcb_card_data_bad_cvv
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'Submit Your Order'
+        page.should have_content 'invalid'
       end
 
       it "should not create a transaction with bad_dates card" do
@@ -576,7 +584,7 @@ feature "Transactions" do
 	  jcb_card_data_bad_dates
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'Submit Your Order'
+        page.should have_content 'invalid'
       end
     end
   end

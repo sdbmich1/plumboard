@@ -1,0 +1,18 @@
+<%= form_for @post, remote: true do |f| %> 
+  <div id="notice" style="display:none"></div>
+  <% unless listing.seller?(@user.id) %>
+    <div id="form_errors">
+      <%= render partial: 'shared/error_messages', :locals => { :target => @post } %>
+    </div>
+    <%= f.text_area 'content' %>  
+  <% end %>  
+  <%= f.hidden_field 'listing_id', value: listing.id %>
+  <%= f.hidden_field 'pixi_id', value: listing.pixi_id %>
+  <%= f.hidden_field 'recipient_id', value: listing.seller_id %>
+  <%= f.hidden_field 'user_id', value: @user.id %>
+  <div class='mbot pull-right'>
+    <%= f.submit 'Contact Pixi Owner', :class=>'btn btn-large btn-primary submit-btn width240', id: 'contact-btn', 
+    		disabled: listing.seller?(@user.id) %>
+  </div>
+<% end %>  
+

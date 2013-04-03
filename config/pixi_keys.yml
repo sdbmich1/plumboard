@@ -11,6 +11,9 @@ defaults: &defaults
     percent: 2.9
     launch_promo_cd: "2013LAUNCH"
     days: 7
+    max_pixi_pix: 16
+    pixi_post: 'Hi, I found your pixi post and would like to set up a time to discuss it. Please respond and provide me more information. Thank
+    you.'
 
 development:    
   <<: *defaults

@@ -3,7 +3,7 @@
 <head>
   <link href="/assets/favicon.ico" rel="shortcut icon" />
   <title><%= full_title(yield(:title)) %></title>
-  <%= stylesheet_link_tag    "application", "breadcrumb", "jquery.bxslider", :media => "all" %>
+  <%= stylesheet_link_tag    "application", "jquery.bxslider", :media => "all" %>
   <%= javascript_include_tag "application", "http://code.jquery.com/jquery-1.7.1.min.js", "https://js.stripe.com/v1/", 'transaction.js',
      'jquery.bxslider.min.js',	'jquery.masonry.min.js','jquery.infinitescroll.js' %>
   <%= tag :meta, :name => "stripe-key", :content => STRIPE_PUBLIC_KEY %>
@@ -11,17 +11,20 @@
   <%= render 'layouts/shim' %>
 </head>
 <body>
-  <%= render 'layouts/header' %>
-  <%= yield :subhead %>
-  <div class="container" id="px-container">
-    <div id="spinner" class="round" style="display:none"></div>
-    <%= render 'layouts/notices' %>
-
-    <%= yield :content %>
-    <div id="push"></div>
+  <div id='wrap'>
+    <%= render 'layouts/header' %>
+    <%= yield :subhead %>
+    <div class="container" id="px-container">
+      <div id="spinner" class="round" style="display:none"></div>
+      <%= render 'layouts/notices' %>
+      <%= yield :content %>
+    </div>
+  </div>
+  <div id='footer'>
+    <div class="container">
+      <div id="push"></div>
+      <%= render 'layouts/footer' %>
+    </div>
   </div>
 </body>
-<div class="container div-footer">
-  <%= render 'layouts/footer' %>
-</div>
 </html>

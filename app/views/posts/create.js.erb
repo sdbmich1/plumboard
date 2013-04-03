@@ -1,0 +1,11 @@
+<% if @post.errors.any? %>
+  $("#notice").hide(300);
+  $("#form_errors").html("<%= escape_javascript( render(partial: 'shared/error_messages', locals: {target: @post})) %>");
+<% else %>
+  $("#notice").html("<%= escape_javascript(flash[:notice])%>");
+  $("#notice").show(300);
+  $("#post_form").html("<%= escape_javascript( raw render(partial: 'shared/contact_seller')) %>");
+<% end %>
+
+$('#spinner').hide(300);
+

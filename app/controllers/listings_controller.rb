@@ -13,6 +13,7 @@ class ListingsController < ApplicationController
 
   def show
     @listing = Listing.find_by_pixi_id params[:id]
+    @post = Post.load_new @listing
     @photo = @listing.pictures
   end
 
@@ -23,14 +24,13 @@ class ListingsController < ApplicationController
   end
 
   def seller
-    @listings = @user.listings.paginate(:page => @page)
-    @temp_listings = @user.temp_listings
+    @listings = @user.pixis.paginate(:page => @page)
   end
 
   protected
 
   def page_layout
-    %W(index seller).detect { |x| x == action_name } ? 'listings' : 'application'
+    action_name == 'index' ? 'listings' : 'application'
   end
 
   def load_data

@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe Site do
   before(:each) do
-    @site = FactoryGirl.create(:site) 
+    @listing = FactoryGirl.create(:listing) 
+    @site = @listing.site 
   end
    
   subject { @site } 
@@ -31,6 +32,12 @@ describe Site do
   describe "when name is empty" do
     before { @site.name = "" }
     it { should_not be_valid }
+  end
+
+  describe 'active pixis' do
+    site = Site.create(:name=>'Item', :status=>'inactive')
+    it { Site.active_with_pixis.should_not include (site) } 
+    it { Site.active_with_pixis.should include (@site) } 
   end
 
   describe 'pictures' do

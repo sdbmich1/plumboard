@@ -221,7 +221,7 @@ describe TempListing do
   end
 
   describe "should not return a summary" do 
-    temp_listing = FactoryGirl.create :temp_listing, description: nil
+    temp_listing = FactoryGirl.build :temp_listing, description: nil
     it { temp_listing.summary.should_not be_true }
   end
 
@@ -389,8 +389,14 @@ describe TempListing do
       @sr = @temp_listing.pictures.create FactoryGirl.attributes_for(:picture)
     end
 				            
-    it "should have many pictures" do 
+    it "should have pictures" do 
       @temp_listing.pictures.should include(@sr)
+    end
+
+    it "should not have too many pictures" do 
+      25.times { @temp_listing.pictures.build FactoryGirl.attributes_for(:picture) }
+      @temp_listing.save
+      @temp_listing.should_not be_valid
     end
 
     it "should destroy associated pictures" do

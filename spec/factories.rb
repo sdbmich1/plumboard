@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :user do
+  factory :user, aliases: [:recipient, :seller]  do
     first_name            "Joe"
     last_name             "Blow" 
     sequence(:email) {|n| "person#{n}@example.com" }
@@ -109,6 +109,12 @@ FactoryGirl.define do
 	x.reload
       end
     end
+
+    factory :listing_with_post do
+      after(:create) do |listing|
+        listing.posts.build FactoryGirl.attributes_for(:post, :pixi_id => listing.pixi_id)
+      end
+    end
   end
 
   factory :invalid_listing, :class => "Listing", :parent => :listing_parent do
@@ -145,7 +151,7 @@ FactoryGirl.define do
   factory :post do
     content 		"SFSU"
     user
-    listing
+    recipient
   end
 
   factory :site_listing do

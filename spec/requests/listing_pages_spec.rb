@@ -3,16 +3,46 @@ require 'spec_helper'
 describe "Listings", :type => :feature do
   subject { page }
   let(:user) { FactoryGirl.create(:user) }
+  let(:temp_listing) { FactoryGirl.create(:temp_listing, title: "Guitar", description: "Lessons", seller_id: user.id ) }
+  let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id) }
 
-  before(:each) do
-    login_as(user, :scope => :user, :run_callbacks => false)
-    user.confirm!
-    @user = user
+  describe "Contact Owner" do 
+    let(:pixi_user) { FactoryGirl.create(:user) }
+
+    before(:each) do
+      login_as(pixi_user, :scope => :user, :run_callbacks => false)
+      pixi_user.confirm!
+      @user = pixi_user
+      visit listing_path(listing) 
+    end
+     
+    it "Contacts a seller", js: true do
+      expect{
+              click_on 'Contact Pixi Owner'; sleep 3
+      }.to change(Post,:count).by(1)
+
+      page.should have_content listing.title
+    end
+     
+    it "should not contact a seller", js: true do
+      expect{
+	      fill_in 'post_content', with: nil
+              click_on 'Contact Pixi Owner'; sleep 3
+      }.not_to change(Post,:count).by(1)
+
+      page.should have_content "Content can't be blank"
+    end
   end
 
+  describe "Check Pixis" do 
+
+    before(:each) do
+      login_as(user, :scope => :user, :run_callbacks => false)
+      user.confirm!
+      @user = user
+    end
+
   describe "Review Pixis" do 
-    let(:temp_listing) { FactoryGirl.create(:temp_listing, title: "Guitar", description: "Lessons", seller_id: user.id ) }
-    let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id) }
     before { visit listing_path(listing) }
 
     it "Deletes a pixi" do
@@ -40,8 +70,6 @@ describe "Listings", :type => :feature do
   end
 
   describe "GET /listings" do  
-    let(:temp_listing) { FactoryGirl.create(:temp_listing, title: "Guitar", description: "Lessons", seller_id: user.id ) }
-    let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id) }
     before { visit listings_path }
       
     it "should display listings" do 
@@ -54,8 +82,6 @@ describe "Listings", :type => :feature do
   end  
 
   describe "seller listings page" do
-    let(:temp_listing) { FactoryGirl.create(:temp_listing, title: "Guitar", description: "Lessons", seller_id: user.id ) }
-    let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id) }
     before { visit seller_listings_path }
       
     it "should display seller listings" do 
@@ -65,6 +91,7 @@ describe "Listings", :type => :feature do
     it "should scroll listings", js: true do 
       page.execute_script "window.scrollBy(0,10000)"
     end
+  end
   end
 
 end

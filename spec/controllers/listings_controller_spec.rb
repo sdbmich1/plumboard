@@ -58,11 +58,9 @@ describe ListingsController do
   describe 'GET seller/:user_id' do
     before :each do
       @listings = mock("listings")
-      @temp_listings = mock("temp_listings")
       @user = stub_model(User)
       User.stub!(:find).and_return(@user)
-      @user.stub_chain(:listings, :paginate).and_return( @listings )
-      @user.stub!(:temp_listings).and_return( @temp_listings )
+      @user.stub_chain(:pixis, :paginate).and_return( @listings )
     end
 
     def do_get
@@ -84,26 +82,18 @@ describe ListingsController do
       assigns(:listings).should_not be_nil
     end
 
-    it "should assign @temp_listings" do
-      do_get 
-      assigns(:temp_listings).should_not be_nil
-    end
-
     it "should show the requested listings" do
       do_get
       response.should be_success
-    end
-
-    it "should render the correct layout" do
-      do_get
-      response.should render_template("layouts/listings")
     end
   end
 
   describe 'GET show/:id' do
     before :each do
       @photo = stub_model(Picture)
+      @post = stub_model(Post)
       Listing.stub!(:find_by_pixi_id).and_return( @listing )
+      Post.stub!(:load_new).with(@listing).and_return( @post )
       @listing.stub!(:pictures).and_return( @photo )
     end
 
@@ -121,9 +111,19 @@ describe ListingsController do
       do_get
     end
 
+    it "should load the new post" do
+      Post.stub(:load_new).with(@listing).and_return(@post)
+      do_get
+    end
+
     it "should assign @listing" do
       do_get
       assigns(:listing).should_not be_nil
+    end
+
+    it "should assign @post" do
+      do_get
+      assigns(:post).should_not be_nil
     end
 
     it "should assign @photo" do
