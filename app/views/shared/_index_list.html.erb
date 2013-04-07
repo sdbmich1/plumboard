@@ -14,5 +14,5 @@
   </table>
 
   <div class="nav pull-right">
-    <%= will_paginate @listings, :page_links => false if @listings.respond_to?(:total_pages) %>
+    <%= will_paginate @listings if @listings.respond_to?(:total_pages) %>
   </div> 

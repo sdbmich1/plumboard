@@ -1,39 +1,43 @@
 <% provide(:title, 'Sign Up') %>
 <%= content_for :content do %>
   <div class="center">
-    <p><h1>Sign up</h1></p>
+    <h2>Create your account</h2>
   </div>
 
   <div class="row">
-    <div class="span7 offset3">
-      <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
+    <%= form_for([resource_name, resource.with_picture], :url => registration_path(resource_name), :html => { :multipart => true }) do |f| %>
+      <div class="sm-top span4 center-wrapper" id="usr_photo">
+        <div><output id='list'><%= image_tag 'person_icon.jpg', :alt => "none", class: 'usr-photo' %></output></div>
+        <%= render partial: 'shared/user_photo', locals: { f: f } %>
+      </div>
+      <div class="sm-top span5">
     	<%= devise_error_messages! %>
 
     	<div><%= f.label :first_name %>
-    	<%= f.text_field :first_name, :autofocus => true %></div>
+	<%= f.text_field :first_name, :placeholder=>'First Name', :autofocus => true %></div>
 
     	<div><%= f.label :last_name %>
-    	<%= f.text_field :last_name %></div>
+	<%= f.text_field :last_name, :placeholder=> 'Last Name' %></div>
 
     	<div><%= f.label :email %>
-    	<%= f.email_field :email %></div>
+    	<%= f.email_field :email, :placeholder=>'Email' %></div>
 
     	<div><%= f.label :gender %>
 	<%= f.select :gender, options_for_select( ['Male', 'Female'] ), :prompt => 'Select' %></div>
 
     	<div><%= f.label :birth_date %>
-	<%= f.date_select :birth_date, :as => :date, :start_year => Date.today.year - 13,
+	<%= f.date_select :birth_date, {:as => :date, :start_year => Date.today.year - 13,
 	                  :end_year => Date.today.year - 90, 
-			  :order => [:month, :day, :year], :required => true, :prompt => true %></div>
+			  :order => [:month, :day, :year], :prompt => true}, {:class=>'width120'} %></div>
 
     	<div><%= f.label :password %>
     	<%= f.password_field :password %></div>
 
     	<div><%= f.label :password_confirmation, 'Confirmation' %>
-    	<%= f.password_field :password_confirmation %></div><br />
+    	<%= f.password_field :password_confirmation %></div>
 
-    	<div><%= f.submit "Register", class: "btn btn-large btn-primary submit-btn" %></div>
-      <% end %>
-    </div>
+    	<div class='mtop mbot'><%= f.submit "Register", class: "btn btn-large btn-primary submit-btn" %></div>
+      </div>
+    <% end %>
   </div>
 <% end %>

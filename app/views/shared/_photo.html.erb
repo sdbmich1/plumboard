@@ -1,7 +1,9 @@
   <div>
     <%= fields_for "temp_listing[pictures_attributes][]", Picture.new, index: nil do |form| %>
-      <td><%= form.label :photo, 'Select Image(s)' %>
-        <%= form.file_field :photo, { id: "photo", multiple: true, :style=>"width: 300px" } %></td>
+      <td><label class="cabinet">
+        <%= form.file_field :photo, { id: "photo", multiple: true, class: 'file' } %>
+	</label>
+      </td>
     <% end %>
   </div>
 

@@ -2,7 +2,7 @@ defaults: &defaults
   pixi:
     alias_length: 12
     key_length: 16
-    site_init_free: 0
+    site_init_free: 100
     max_pixi_amt: 1000000.00
     base_price: 5.00
     gigs_price: 20.00

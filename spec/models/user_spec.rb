@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe User do
   before(:each) do
-    @user = FactoryGirl.create(:user)
+    @user = FactoryGirl.create(:contact_user)
   end
 
   subject { @user }
@@ -16,7 +16,7 @@ describe User do
     it { should respond_to(:birth_date) }
     it { should respond_to(:remember_me) }
     it { should respond_to(:gender) }
-    it { should respond_to(:picture) }
+    it { should respond_to(:pictures) }
 
     it { should respond_to(:interests) }
     it { should respond_to(:contacts) }
@@ -102,7 +102,7 @@ describe User do
 
   describe 'contacts' do
     before(:each) do
-      @sr = @user.contacts.create FactoryGirl.attributes_for(:contact)
+      @sr = @user.contacts.build FactoryGirl.attributes_for(:contact)
     end
 
     it "has many contacts" do 
@@ -136,11 +136,11 @@ describe User do
 
   describe 'pictures' do
     before(:each) do
-      @sr = @user.create_picture FactoryGirl.attributes_for(:picture)
+      @sr = @user.pictures.create FactoryGirl.attributes_for(:picture)
     end
 
     it "has many pictures" do 
-      @user.picture.should == @sr
+      @user.pictures.should include(@sr)
     end
 
     it "should destroy associated pictures" do
@@ -151,6 +151,23 @@ describe User do
     end 
   end  
 
+  describe "must have pictures" do
+    let(:user) { FactoryGirl.build :user }
+
+    it "should not save w/o at least one picture" do
+      picture = user.pictures.build
+      user.save
+      user.should_not be_valid
+    end
+
+    it "should save with at least one picture" do
+      picture = user.pictures.build
+      picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
+      user.save
+      user.should be_valid
+    end
+  end
+
   describe 'pixis' do
     it "should return pixis" do
       @user.temp_listings.create FactoryGirl.attributes_for(:temp_listing)
@@ -159,7 +176,7 @@ describe User do
     end
 
     it "should not return pixis" do
-      usr = FactoryGirl.create :user
+      usr = FactoryGirl.create :contact_user
       usr.pixis.should be_empty
     end
   end

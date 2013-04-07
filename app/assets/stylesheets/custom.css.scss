@@ -185,41 +185,19 @@ input, select, .uneditable-input {
 .submit-btn { color: white!important; font-weight: bold; background:orange!important; border:orange!important}
 .stnd-btn { color: black!important; background:#CCCCCC!important; border:1px gray!important}
 
-/* pagination styling */
-.pagination {
-    padding: 3px;
-    margin: 3px;
-  a {
-    padding: 2px 5px 2px 5px;
-    margin: 2px;
-    border: 1px solid #aaaadd;
-    text-decoration: none;
-    color: #000099;
-  }
-  a:hover, .pagination a:active {
-    border: 1px solid #000099;
-    color: #000;
-  }
-  span.current {
-    padding: 2px 5px 2px 5px;
-    margin: 2px;
-    border: 1px solid #000099;
-    font-weight: bold;
-    background-color: #000099;
-    color: #FFF;
-  }
-  span.disabled {
-    padding: 2px 5px 2px 5px;
-    margin: 2px;
-    border: 1px solid #eee;
-    color: #ddd;
-  }
-}
-
 /* listing image thumbnails */
 .thumb {
   height: 75px;
   border: 1px solid #000;
+  margin: 10px 5px 10px 0;
+}
+
+/* user image thumbnails */
+.usr-photo {
+  height: 180px;
+  width: 180px;
+  border: 1px solid #AAAAAA;
+  box-shadow: 1px 1px 1px 1px #ccc; padding: 4px; margin: 0 10px 10px 0; 
   margin: 10px 5px 10px 0;
 }
 
@@ -339,3 +317,23 @@ h3 { padding: 10px }
 }
 
 .bar-top { margin-top: -20px; }
+
+.SI-FILES-STYLIZED label.cabinet
+{
+  width: 79px;
+  height: 22px;
+  background: url('btn-choose-file.gif') 0 0 no-repeat;
+  margin-top: 10px;
+  display: block;
+  overflow: hidden;
+  cursor: pointer;
+  input.file
+  {
+    position: relative;
+    height: 100%;
+    width: auto;
+    opacity: 0;
+    -moz-opacity: 0;
+    filter:progid:DXImageTransform.Microsoft.Alpha(opacity=0);
+  }
+}

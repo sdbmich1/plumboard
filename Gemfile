@@ -84,6 +84,7 @@ gem 'country_select'
 
 # pagination
 gem 'will_paginate', '~> 3.0'
+gem 'bootstrap-will_paginate', '0.0.6'
 
 # add sass
 gem 'bootstrap-sass', '2.1'

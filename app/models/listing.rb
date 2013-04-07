@@ -25,4 +25,9 @@ class Listing < ListingParent
   def self.free_order? val
     active.get_by_site(val).count < SITE_FREE_AMT ? true : false rescue nil
   end
+
+  # paginate
+  def self.active_page pg
+    active.paginate page: pg
+  end
 end

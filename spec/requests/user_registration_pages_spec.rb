@@ -7,9 +7,26 @@ describe "UserRegistrations", :type => :feature do
     let(:submit) { "Register" } 
 
     describe "with invalid information" do
-      it "should not create a user" do
+      it "should not create a empty user" do
         expect{ 
 		visit new_user_registration_path 
+		click_button submit 
+	}.not_to change(User, :count)
+      end
+
+      it "should not create a incomplete user" do
+        expect{ 
+		visit new_user_registration_path 
+        	fill_in "First name", with: 'New'
+        	fill_in "Last name", with: 'User'
+		click_button submit 
+	}.not_to change(User, :count)
+      end
+
+      it "should not create a user with no photo" do
+        expect{ 
+		visit new_user_registration_path 
+      		user_data
 		click_button submit 
 	}.not_to change(User, :count)
       end
@@ -27,15 +44,27 @@ describe "UserRegistrations", :type => :feature do
         fill_in "Confirmation", with: 'userpassword'
     end
 
+    def add_data_w_photo
+      attach_file('user_pic', Rails.root.join("spec", "fixtures", "photo.jpg"))
+    end
+
+    def user_with_photo
+      user_data
+      add_data_w_photo
+    end
+
     describe "create user" do
       before(:each) do
         visit root_path
         click_link 'Sign up now!'
-	user_data
       end
 
       it "should create a user" do
-        expect { click_button submit }.to change(User, :count).by(1)
+        expect { 
+	  user_with_photo
+	  click_button submit; sleep 2 
+	 }.to change(User, :count).by(1)
+
         page.should have_content 'A message with a confirmation link has been sent to your email address' 
       end	
     end

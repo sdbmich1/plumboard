@@ -9,26 +9,29 @@ FactoryGirl.define do
     birth_date            Time.parse("1967-04-23")
 
     factory :admin do
+      before(:create) {|user| user.pictures.build FactoryGirl.attributes_for(:picture)}
       after(:create) {|user| user.add_role(:admin)}
     end
 
     factory :editor do
+      before(:create) {|user| user.pictures.build FactoryGirl.attributes_for(:picture)}
       after(:create) {|user| user.add_role(:editor)}
     end
 
     factory :subscriber do
+      before(:create) {|user| user.pictures.build FactoryGirl.attributes_for(:picture)}
       after(:create) {|user| user.add_role(:subscriber)}
     end
   end
 
   factory :pixi_user, :class => "User", :parent => :user do
-    before(:create) do |user|
-      user.pictures.build FactoryGirl.attributes_for(:picture)
-    end
+    before(:create) {|user| user.pictures.build FactoryGirl.attributes_for(:picture)}
+    confirmed_at	Time.now
   end
 
   factory :contact_user, :class => "User", :parent => :user do
     before(:create) do |user|
+      user.pictures.build FactoryGirl.attributes_for(:picture)
       user.contacts.build FactoryGirl.attributes_for(:contact)
     end
   end

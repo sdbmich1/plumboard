@@ -8,8 +8,7 @@ class User < ActiveRecord::Base
   	 :lockable, :timeoutable and :omniauthable
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :first_name, :last_name, :email, :password, :password_confirmation, :remember_me, :birth_date, :gender,
-  	:picture_attributes
+  attr_accessible :first_name, :last_name, :email, :password, :password_confirmation, :remember_me, :birth_date, :gender, :pictures_attributes
 
   # define relationships
   has_many :contacts, :as => :contactable, :dependent => :destroy
@@ -27,8 +26,8 @@ class User < ActiveRecord::Base
 
   has_many :transactions, dependent: :destroy
 
-  has_one :picture, :as => :imageable, :dependent => :destroy
-  accepts_nested_attributes_for :picture, :allow_destroy => true
+  has_many :pictures, :as => :imageable, :dependent => :destroy
+  accepts_nested_attributes_for :pictures, :allow_destroy => true, :reject_if => :all_blank
 
   # name format validators
   name_regex = 	/^[A-Z]'?['-., a-zA-Z]+$/i
@@ -46,11 +45,34 @@ class User < ActiveRecord::Base
   validates :gender,  :presence => true
   validates :password, presence: true
   validates :password_confirmation, presence: true
+  validate :must_have_picture
 
+  # validate picture exists
+  def must_have_picture
+    if !any_pix?
+      errors.add(:base, 'Must have a picture')
+      false
+    else
+      true
+    end
+  end
+
+  def with_picture
+    self.pictures.build
+    self
+  end
+
+  # check for a picture
+  def any_pix?
+    pictures.detect { |x| x && !x.photo_file_name.nil? }
+  end
+
+  # combine name
   def name
     [first_name, last_name].join " "
   end
 
+  # return all pixis for user
   def pixis
     self.listings | self.temp_listings
   end

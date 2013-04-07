@@ -118,16 +118,25 @@ describe Listing do
   end
 
   describe "should include active listings" do 
-    it { Listing.active.should == [@listing] } 
+    it { Listing.active.should be_true }
+  end
+
+  describe "active page should not include inactive listings" do
+    listing = FactoryGirl.create :listing, :description=>'stuff', :status=>'inactive'
+    it { Listing.active_page(1).should_not == listing }
+  end
+
+  describe "active page should include active listings" do 
+    it { Listing.active_page(1).should be_true }
   end
 
   describe "get_by_status should not include inactive listings" do
-    listing = FactoryGirl.create :listing, :description=>'stuff', :status=>'inactive'
-    it { Listing.get_by_status('active').should_not include (listing) }
+    @listing.status = 'inactive'
+    it { Listing.get_by_status('active').should be_empty }
   end
 
   describe "get_by_status should include active listings" do 
-    it { Listing.get_by_status('active').should == [@listing] } 
+    it { Listing.get_by_status('active').should_not be_empty }
   end
 
   describe "should not include invalid site listings" do 
@@ -139,7 +148,7 @@ describe Listing do
   end
 
   describe "should include seller listings" do 
-    it { Listing.get_by_seller(1).should == [@listing] } 
+    it { Listing.get_by_seller(1).should_not be_empty } 
   end
 
   describe "should not include incorrect seller listings" do 
@@ -165,7 +174,7 @@ describe Listing do
   end
 
   describe "should find correct seller name" do 
-    let(:user) { FactoryGirl.create(:user) }
+    let(:user) { FactoryGirl.create(:pixi_user) }
     let(:listing) { FactoryGirl.create(:listing, seller_id: user.id) }
 
     it { listing.seller_name.should == "Joe Blow" } 
@@ -207,12 +216,22 @@ describe Listing do
 
   describe "should return a short description" do 
     listing = FactoryGirl.create :listing, description: "a" * 100
-    it { listing.brief_descr.length.should == 30 }
+    it { listing.brief_descr.length.should == 100 }
   end
 
-  describe "should not return a short description of 30 chars" do 
+  describe "should not return a short description of 100 chars" do 
     listing = FactoryGirl.create :listing, description: "a"
-    it { listing.brief_descr.length.should_not == 30 }
+    it { listing.brief_descr.length.should_not == 100 }
+  end
+
+  describe "should return a summary" do 
+    listing = FactoryGirl.create :listing, description: "a" * 500
+    it { listing.summary.should be_true }
+  end
+
+  describe "should not return a summary" do 
+    listing = FactoryGirl.build :listing, description: nil
+    it { listing.summary.should_not be_true }
   end
 
   describe "must have pictures" do 

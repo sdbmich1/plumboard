@@ -6,14 +6,12 @@ class ListingsController < ApplicationController
   layout :page_layout
 
   def index
-    @listings = Listing.active
-    @listings.paginate(:page => @page)
-    respond_with @listings
+    @listings = Listing.active_page @page
   end
 
   def show
     @listing = Listing.find_by_pixi_id params[:id]
-    @post = Post.load_new @listing
+    @post = Post.new 
     @photo = @listing.pictures
   end
 

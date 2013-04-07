@@ -12,6 +12,7 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require jquery-ui
 //= require bootstrap
 //= require jquery.remotipart
 //= require_tree .
@@ -32,7 +33,10 @@ $(document).on("change", "input[type=file]", function(evt){
     $('#list').empty();
 
     // render image
-    handleFileSelect(evt);
+    if($('#usr_photo').length != 0) 
+      { handleFileSelect(evt, 'usr-photo'); }
+    else  
+      { handleFileSelect(evt, 'thumb'); }
     return false;
 }); 
 
@@ -40,16 +44,6 @@ $(document).on("change", "input[type=file]", function(evt){
 $(document).on("click", "#pendingOrder .pagination a", function(){
   $.getScript(this.href);
   return false;
-}); 
-
-// clear input file text on click
-$(document).on("click", "#delete_photo", function(evt){
-
-  // reset file list
-  $('#list').empty();
-
-  // reset file field
-  $('#photo').val(null);
 }); 
 
 // set page title
@@ -61,7 +55,7 @@ function toggleLoading () {
   $("#spinner").toggle(); 
 }
 
-function handleFileSelect(evt) {
+function handleFileSelect(evt, style) {
   var files = evt.target.files; // FileList object
 
   // Loop through the FileList and render image files as thumbnails.
@@ -79,7 +73,7 @@ function handleFileSelect(evt) {
       return function(e) {
         // Render thumbnail.
 	var span = document.createElement('span');
-        span.innerHTML = ['<img class="thumb" src="', e.target.result,
+        span.innerHTML = ['<img class="', style, '" src="', e.target.result,
 		          '" title="', escape(theFile.name), '"/>'].join('');
         document.getElementById('list').insertBefore(span, null);
       };
@@ -142,6 +136,12 @@ $(document).ready(function(){
     $("html, body").animate({ scrollTop: 0 }, 600);
     return false;
   });
+
+  // repaint file fields
+  if( $('#list').length > 0 ) {
+    SI.Files.stylizeAll();
+  }
+
 });
 
 // use masonry to layout landing page display
@@ -161,6 +161,9 @@ $(function(){
       navSelector  : '#px-nav', 		// selector for the paged navigation (it will be hidden)
       nextSelector : '#px-nav a',  // selector for the NEXT link (ie. page 2)  
       itemSelector : '#pxboard .item',           // selector for all items you'll retrieve
+      animate: true,
+      extraScrollPx: 50,
+      bufferPx : 250,
       loading: { 
          msgText: "<em>Loading the next set of pixis...</em>",
          finishedMsg: "<em>No more pixis to load.</em>"
