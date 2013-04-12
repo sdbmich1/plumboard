@@ -81,12 +81,12 @@ p {
   margin: 0 auto -60px;
 }
 
+/* footer */
+
 #push,
 #footer {
   height: 60px;
 }
-
-/* footer */
 
 footer {
   /*
@@ -127,10 +127,31 @@ $grayMediumLight: #eaeaea;
 
 /* forms */
 
+#signup input, select, .uneditable-input {
+  height: 40px !important;
+  line-height: 40px !important;
+  font-size: 20px;
+  padding: 6px !important;
+  margin: 0 0 15px 0;
+  font-weight: medium;
+  -moz-border-radius:    4px;
+  -webkit-border-radius: 4px;
+  border-radius:         4px;  
+  }
+
 input, textarea, select, .uneditable-input {
+  @extend .stnd-input;
+}
+
+select {
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.stnd-input {  
   border: 1px solid #bbb;
   width: 100%;
-  padding: 4px;
+  padding: 2px;
   margin-bottom: 15px;
   @include box_sizing;
   }
@@ -156,7 +177,7 @@ input, select, .uneditable-input {
   @extend .error;
  }
 
- .notice, .alert, .error {
+.notice, .alert, .error {
    padding: 5px 0 5px 0;
    margin: 7px;
    width: 95%;
@@ -171,14 +192,22 @@ input, select, .uneditable-input {
 .error, .alert {background:#fbe3e4;color:#8a1f11;border-color:#fbc2c4;}
 .notice {background:#fff6bf;color:#514721;border-color:#ffd324;}
 .success {background:#e6efc2;color:#264409;border-color:#c6d880;}
-.error, .alert, .notice, .success {border: 2px solid;}
 
 /* primary listing(pixi) image */
-.item { border: 1px solid #AAAAAA;  box-shadow: 1px 1px 1px 1px #ccc; padding: 4px; margin: 10px; float: left; }
-.pic-frame { border: 1px solid #AAAAAA;  box-shadow: 1px 1px 1px 1px #ccc; padding: 4px; margin-bottom: 10px; }
+.pic-item { border: 1px solid #AAAAAA; box-shadow: 1px 1px 1px 1px #ccc; padding: 4px; }
+
+.item { 
+  @extend .pic-item; float: left; 
+  margin: 10px; }
+
+.pic-frame { 
+  @extend .pic-item;
+  margin-bottom: 10px; }
+
 .pixi-frame { 
-  display: block; float:left; width: 150px; border: 1px solid #AAAAAA;  
-  box-shadow: 1px 1px 1px 1px #ccc; padding: 4px; margin: 0 10px 10px 0; 
+  display: block; float: left; 
+  @extend .pic-item;
+  margin: 0 10px 10px 0; 
 }
 
 /* submit button */
@@ -187,17 +216,17 @@ input, select, .uneditable-input {
 
 /* listing image thumbnails */
 .thumb {
-  height: 75px;
-  border: 1px solid #000;
-  margin: 10px 5px 10px 0;
+  height: 100px;
+  width: 100px!important;
+  @extend .pic-item;
+  margin: 5px 10px 0 5px;
 }
 
 /* user image thumbnails */
 .usr-photo {
   height: 180px;
   width: 180px;
-  border: 1px solid #AAAAAA;
-  box-shadow: 1px 1px 1px 1px #ccc; padding: 4px; margin: 0 10px 10px 0; 
+  @extend .pic-item;
   margin: 10px 5px 10px 0;
 }
 
@@ -212,9 +241,7 @@ input, select, .uneditable-input {
   opacity: .4;
   background:#000000 url("ajax-loader.gif") no-repeat center center;
   font-weight:bold; 
-  -moz-border-radius:    10px;
-  -webkit-border-radius: 10px;
-  border-radius:         10px;  
+  @extend .round;
 }
 
 /*IE 'adjustment'*/
@@ -235,6 +262,8 @@ input, select, .uneditable-input {
 .width30 {width: 30px!important}
 .width80 {width: 80px!important}
 .width120 {width: 120px!important}
+.width124 {width: 124px!important}
+.width140 {width: 140px!important}
 .width180 {width: 180px!important}
 .width240 {width: 240px!important}
 .width280 {width: 280px!important}
@@ -249,10 +278,13 @@ input, select, .uneditable-input {
 .order-total { font-weight: bolder; font-size: medium }
 .v-align { vertical-align: middle }
 
-.top-hdr { color: white; font-weight: bolder; font-size: medium }
-.item-hdr { color: black; font-weight: bolder; font-size: medium }
-.pixi-hdr { color: orange; font-weight: bolder; font-size: medium }
-.grp-hdr { color: #0C6FCB; font-weight: bolder; font-size: medium }
+.hdr { font-weight: bolder; font-size: medium; 
+  .top-hdr { color: white; }
+  .item-hdr { color: black; }
+  .pixi-hdr { color: orange; }
+  .grp-hdr { color: #0C6FCB; }
+}
+
 .tbl-hdr { text-align:left!important; font-weight: normal!important }
 
 .pixi-color { color: orange }
@@ -270,9 +302,12 @@ h3 { padding: 10px }
 .mtop {margin-top: 20px;}
 .mbot {margin-bottom: 20px;}
 .sm-top { margin-top: 5px!important }  
+.sm-bot { margin-bottom: 5px!important }  
+
 .cb-label { display:inline; vertical-align:middle }
 .hdescr { font-size: 0.875em; color: #ccc; width: 120px!important }
 .grey-text { color: #ccc; }
+
 .nxt-pg { display:none; }
 .nxt-pg-spinner { 
   position:fixed;

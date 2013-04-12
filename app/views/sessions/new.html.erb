@@ -5,16 +5,19 @@
   </div>
 
   <div class="row">
-    <div class="span4 offset4">
+    <div class="mtop span4 offset4">
       <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
-    	<div><%= f.label :email %>
-    	<%= f.email_field :email, :autofocus => true %></div>
-
-    	<div><%= f.label :password %>
-    	<%= f.password_field :password, size: 20 %></div>
+	<div id='signup'>
+    	  <div><%= f.email_field :email, placeholder: 'Email', :autofocus => true %></div>
+    	  <div><%= f.password_field :password, placeholder: 'Password', size: 20 %></div>
+	</div>
 
     	<% if devise_mapping.rememberable? -%>
-      	  <div><span>Remember Me </span><%= f.check_box :remember_me %></div>
+      	  <div>
+	    <label class="checkbox">
+	      Remember Me <%= f.check_box :remember_me %>
+	    </label>
+	  </div>
     	<% end -%><br />
 
     	<div><%= f.submit "Sign in", class: "btn btn-large btn-primary submit-btn" %></div>

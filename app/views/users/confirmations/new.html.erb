@@ -1,0 +1,21 @@
+<% provide(:title, 'Confirm Account') %>
+<%= content_for :content do %>
+  <div class='center-wrapper'>
+    <h2>Resend Confirmation</h2>
+  </div>
+
+  <div class="sm-top row">
+  <%= form_for(resource, :as => resource_name, :url => confirmation_path(resource_name), :html => { :method => :post }) do |f| %>
+    <%= render partial: 'shared/error_messages', :locals => { :target => resource } %>
+
+       <div class="mtop span4 offset4">
+         <div id='signup'>
+    	   <div><%= f.email_field :email, placeholder: 'Email', :autofocus => true %></div>
+         </div>
+
+    	 <div><%= f.submit "Resend", class: "btn btn-large btn-primary submit-btn" %></div><br />
+  	 <%= render "devise/shared/links" %>
+      </div>
+  <% end %>
+  </div>
+<% end %>

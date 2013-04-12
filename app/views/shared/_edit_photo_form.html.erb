@@ -1,8 +1,15 @@
-<% if model %>
+<% unless model.pictures.blank? %>
+  <div class='sm-bot'>Saved photo(s)</div>
   <% for pic in model.pictures %>
       <% unless pic.id.blank? %>
-	<%= image_tag pic.photo.url, :size => psize %>
-	<%= link_to 'Remove', picture_path(pic, pixi_id: model.pixi_id), method: :delete, confirm: 'Image will be removed. Are you sure?', remote: true %>
+        <div class='span2 center-wrapper'>
+	<%= image_tag pic.photo.url, :class => psize %>
+	<% if remove_photo %>
+	  <%= link_to picture_path(pic, pixi_id: model.pixi_id), method: :delete, confirm: photo_msg, remote: true, class: 'btn btn-mini btn-primary sm-top mbot' do %>
+	   Remove 
+	  <% end %>
+        <% end %>
+	</div>
       <% end %>
   <% end %>
 <% end %>

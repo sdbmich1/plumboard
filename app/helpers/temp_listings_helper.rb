@@ -8,6 +8,10 @@ module TempListingsHelper
     'Are you sure? All your changes will be lost.'
   end
 
+  def photo_msg
+    'Image will be removed. Are you sure?'
+  end
+
   def add_photo(form_builder)
     link_to_function("add", :id => "add_photo") do |page|
       form_builder.fields_for :pictures, Picture.new, :child_index => 'NEW_RECORD' do |photo_form|

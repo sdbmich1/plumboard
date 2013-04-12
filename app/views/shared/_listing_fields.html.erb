@@ -1,13 +1,12 @@
       <table>
 	<tr>
-	  <td><div><output id='list'></output></div></td>
-	</tr>
-	<tr>
-	  <td><%= render partial: 'shared/edit_photo_form', locals: {model: @listing, psize: '75x75', file_name: 'star.jpg', form: f } %>
+	  <td>
+	  <%= render partial: 'shared/edit_photo_form', locals: {model: @listing, psize: 'thumb', form: f, remove_photo: true } %>
 	  </td>
 	</tr>
 	<tr>
-	  <%= render partial: 'shared/photo', locals: { f: f } %>
+	  <td><div class=''>Add photo(s)</div><output id='list'><%= image_tag 'photo-camera.png', class: 'thumb' %></output>
+	   <%= render partial: 'shared/photo', locals: { f: f } %></td>
 	</tr>
 	<tr>
 	  <td><%= f.label :title %><%= f.text_field :title, :autofocus => true %></td>

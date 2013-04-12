@@ -104,6 +104,11 @@ $(document).on("ajax:error", '#purchase_btn, .back-btn, #pixi-form', function (e
 });	
 
 $(document).ready(function(){
+
+  // enable placeholder text for input fields
+  if( $('#px-container').length == 0 ) {
+    $('input, textarea').placeholder();
+  }
   
   // picture slider
   $('.bxslider').bxSlider({

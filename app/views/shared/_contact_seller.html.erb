@@ -15,7 +15,10 @@
       <%= link_to 'Like', '#', class: 'btn btn-primary' %>
       <%= link_to 'Share', '#', class: 'btn btn-primary' %>
       <%= link_to 'Follow', '#', class: 'btn btn-primary' %>
-      <%= link_to 'Comment', '#', class: 'btn btn-primary' %>
+      <%= link_to '#', class: 'btn btn-primary' do %>
+        <i class="icon-comment icon-white"></i>
+        Comment 
+      <% end %>
       <%= f.submit 'Contact Owner', :class=>'btn btn-warning', id: 'contact-btn', disabled: listing.seller?(@user.id) %>
     </div>
   <% end %>  

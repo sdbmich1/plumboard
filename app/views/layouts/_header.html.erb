@@ -32,7 +32,7 @@
 	          <% if can? :view_dashboard, @user %>
             	    <li><%= link_to "Dashboard", '#' %></li>
 		  <% end %>
-                  <li><%= link_to "Profile", user_path(@user) %></li>
+                  <li><%= link_to "Profile", edit_user_path(@user) %></li>
                   <li><%= link_to "Settings", '#' %></li>
 	          <li class="divider"></li>
             	  <li><%= link_to "Sign out", destroy_user_session_path %></li>

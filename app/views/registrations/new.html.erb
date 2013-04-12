@@ -1,40 +1,24 @@
 <% provide(:title, 'Sign Up') %>
 <%= content_for :content do %>
   <div class="center">
-    <h2>Create your account</h2>
+    <h2>Create Your Account</h2>
   </div>
 
-  <div class="row">
-    <%= form_for([resource_name, resource.with_picture], :url => registration_path(resource_name), :html => { :multipart => true }) do |f| %>
-      <div class="sm-top span4 center-wrapper" id="usr_photo">
-        <div><output id='list'><%= image_tag 'person_icon.jpg', :alt => "none", class: 'usr-photo' %></output></div>
+  <div class="sm-top row">
+    <%= form_for([resource_name, resource.with_picture], :url => registration_path(resource_name)) do |f| %>
+      <%= render partial: 'shared/error_messages', :locals => { :target => resource } %>
+
+      <div class="span4 center-wrapper" id="usr_photo">
+        <div><output id='list'><%= image_tag 'person_icon.jpg', :alt => "none" %></output></div>
         <%= render partial: 'shared/user_photo', locals: { f: f } %>
       </div>
-      <div class="sm-top span5">
-    	<%= devise_error_messages! %>
 
-    	<div><%= f.label :first_name %>
-	<%= f.text_field :first_name, :placeholder=>'First Name', :autofocus => true %></div>
-
-    	<div><%= f.label :last_name %>
-	<%= f.text_field :last_name, :placeholder=> 'Last Name' %></div>
-
-    	<div><%= f.label :email %>
-    	<%= f.email_field :email, :placeholder=>'Email' %></div>
-
-    	<div><%= f.label :gender %>
-	<%= f.select :gender, options_for_select( ['Male', 'Female'] ), :prompt => 'Select' %></div>
-
-    	<div><%= f.label :birth_date %>
-	<%= f.date_select :birth_date, {:as => :date, :start_year => Date.today.year - 13,
-	                  :end_year => Date.today.year - 90, 
-			  :order => [:month, :day, :year], :prompt => true}, {:class=>'width120'} %></div>
-
-    	<div><%= f.label :password %>
-    	<%= f.password_field :password %></div>
-
-    	<div><%= f.label :password_confirmation, 'Confirmation' %>
-    	<%= f.password_field :password_confirmation %></div>
+      <div class="span5">
+        <div id='signup'>
+          <%= render partial: 'shared/user_info', locals: { f: f } %>
+    	  <div><%= f.password_field :password, placeholder: 'New password' %></div>
+    	  <div><%= f.password_field :password_confirmation, placeholder: 'Re-enter password' %></div>
+        </div>
 
     	<div class='mtop mbot'><%= f.submit "Register", class: "btn btn-large btn-primary submit-btn" %></div>
       </div>

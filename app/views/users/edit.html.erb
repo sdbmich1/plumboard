@@ -1,0 +1,23 @@
+% provide(:title, 'Edit Profile') %>
+<%= content_for :subhead do %>
+  <%= render :partial => 'shared/section_header', locals: { section_name: 'Edit Profile' } %>
+<% end %>
+<%= content_for :content do %>
+  <%= form_for @user do |f| %>
+  <div class="row">
+    <%= render partial: 'shared/error_messages', :locals => { :target => @user } %>
+    <div class="sm-top span4 center-wrapper" id="usr_photo">
+      <div><output id='list'>
+        <%= render partial: 'shared/edit_photo_form', locals: {model: @user, psize: 'usr-photo', form: f, remove_photo: false } %>
+      </output></div>
+      <%= render partial: 'shared/user_photo', locals: { f: f } %>
+    </div>
+    <div class="sm-top span5">
+      <div id='signup'>
+        <%= render partial: 'shared/user_info', locals: { f: f } %>
+      </div>
+      <%= f.submit "Save Profile", class: "btn btn-large btn-primary submit-btn" %>
+    </div>
+  </div>
+  <% end %>
+<% end %>

@@ -1,9 +1,8 @@
-  <div>
+  <div class='width120 center-wrapper mbot'>
     <%= fields_for "temp_listing[pictures_attributes][]", Picture.new, index: nil do |form| %>
-      <td><label class="cabinet">
+      <label class="cabinet">
         <%= form.file_field :photo, { id: "photo", multiple: true, class: 'file' } %>
-	</label>
-      </td>
+      </label>
     <% end %>
   </div>
 

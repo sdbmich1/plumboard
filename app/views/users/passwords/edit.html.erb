@@ -1,0 +1,24 @@
+<% provide(:title, 'Change Password') %>
+<%= content_for :content do %>
+  <div class='center-wrapper'>
+    <h2>Change your password</h2>
+  </div>
+
+  <div class="sm-top row">
+  <%= form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :put }) do |f| %>
+    <%= render partial: 'shared/error_messages', :locals => { :target => resource } %>
+    <%= f.hidden_field :reset_password_token %>
+
+    <div class="mtop span4 offset4">
+      <div id='signup'>
+        <div><%= f.password_field :password, :autofocus => true, placeholder: "New password" %></div>
+        <div><%= f.password_field :password_confirmation, placeholder: "Confirm new password" %></div>
+      </div>
+
+      <div><%= f.submit "Change Password", class: "btn btn-large btn-primary submit-btn" %></div><br />
+
+      <%= render "devise/shared/links" %>
+    </div>
+  <% end %>
+  </div>
+<% end %>
