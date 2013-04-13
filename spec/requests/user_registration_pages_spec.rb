@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "UserRegistrations", :type => :feature do
+feature "UserRegistrations" do
   subject { page }
 
   describe 'allows a user to register' do
@@ -17,8 +17,8 @@ describe "UserRegistrations", :type => :feature do
       it "should not create a incomplete user" do
         expect{ 
 		visit new_user_registration_path 
-        	fill_in "First name", with: 'New'
-        	fill_in "Last name", with: 'User'
+        	fill_in "user_first_name", with: 'New'
+        	fill_in "user_last_name", with: 'User'
 		click_button submit 
 	}.not_to change(User, :count)
       end
@@ -33,15 +33,15 @@ describe "UserRegistrations", :type => :feature do
     end
 
     def user_data
-        fill_in "First name", with: 'New'
-        fill_in "Last name", with: 'User'
-        fill_in 'Email', :with => 'newuser@example.com'
-	select('Male', :from => 'Gender')
-	select('January', :from => "user_birth_date_2i")
+        fill_in "user_first_name", with: 'New'
+        fill_in "user_last_name", with: 'User'
+        fill_in 'user_email', :with => 'newuser@example.com'
+	select('Male', :from => 'user_gender')
+	select('1', :from => "user_birth_date_2i")
 	select('10', :from => 'user_birth_date_3i')
 	select('1983', :from => 'user_birth_date_1i')
-        fill_in 'Password', :with => 'userpassword'
-        fill_in "Confirmation", with: 'userpassword'
+        fill_in 'user_password', :with => 'userpassword'
+        fill_in "user_password_confirmation", with: 'userpassword'
     end
 
     def add_data_w_photo
@@ -68,6 +68,5 @@ describe "UserRegistrations", :type => :feature do
         page.should have_content 'A message with a confirmation link has been sent to your email address' 
       end	
     end
-
   end  
 end

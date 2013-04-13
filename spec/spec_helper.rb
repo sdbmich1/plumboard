@@ -26,12 +26,12 @@ Spork.prefork do
     config.include Paperclip::Shoulda::Matchers
     config.fixture_path = "#{::Rails.root}/spec/fixtures"
     config.use_transactional_fixtures = false
-#    config.include Capybara::DSL
 
     config.extend ControllerMacros, :type => :controller
     config.infer_base_class_for_anonymous_controllers = false
     config.include Rails.application.routes.url_helpers
     config.include(MailerMacros)  
+    config.include IntegrationSpecHelper, :type => :request
 
     config.before(:suite) do
       DatabaseCleaner.strategy = :truncation
@@ -57,21 +57,16 @@ Spork.prefork do
   end
 end
 
+Capybara.default_host = 'http://example.org'
+OmniAuth.config.test_mode = true
+OmniAuth.config.add_mock :facebook, uid: "fb-12345", info: { name: "Bob Smith" }, extra: { raw_info: { first_name: 'Bob', last_name: 'Smith',   
+      email: 'bob.smith@test.com', birthday: "01/03/1989", gender: 'male' } }
+
+OmniAuth.config.mock_auth[:facebook] = OmniAuth::AuthHash.new({
+     provider: 'facebook', uid: "fb-12345", info: { name: "Bob Smith" }, extra: { raw_info: { first_name: 'Bob', last_name: 'Smith',   
+     email: 'bob.smith@test.com', birthday: "01/03/1989", gender: 'male' } }
+})
+
 Spork.each_run do
-  # This code will be run each time you run your specs.
   FactoryGirl.reload
-
-  # Forces all threads to share the same connection. This works on
-  # Capybara because it starts the web server in a thread.
-  # ActiveRecord::Base.shared_connection = ActiveRecord::Base.connection
 end
-
-#class ActiveRecord::Base
-#  mattr_accessor :shared_connection
-#  @@shared_connection = nil
-
-#  def self.connection
-#   @@shared_connection || retrieve_connection
-#    @@shared_connection || ConnectionPool::Wrapper.new(:size => 1) { retrieve_connection }
-#  end
-#end

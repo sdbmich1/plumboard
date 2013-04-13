@@ -2,7 +2,7 @@ require 'spec_helper'
 
 feature "Users" do
   subject { page }
-  let(:user) { FactoryGirl.create(:user) }
+  let(:user) { FactoryGirl.create(:pixi_user) }
 
   before(:each) do
     login_as(user, :scope => :user, :run_callbacks => false)
@@ -12,7 +12,6 @@ feature "Users" do
 
   describe "GET /users" do
     it "should display listings" do 
-      user = FactoryGirl.create(:user)
       visit users_path  
       page.should have_content("Joe Blow")
     end

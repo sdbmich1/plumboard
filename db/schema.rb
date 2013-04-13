@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130401045439) do
+ActiveRecord::Schema.define(:version => 20130413073934) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -175,6 +175,16 @@ ActiveRecord::Schema.define(:version => 20130401045439) do
   add_index "roles", ["name", "resource_type", "resource_id"], :name => "index_roles_on_name_and_resource_type_and_resource_id"
   add_index "roles", ["name"], :name => "index_roles_on_name"
 
+  create_table "sessions", :force => true do |t|
+    t.string   "session_id", :null => false
+    t.text     "data"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
+  add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
+
   create_table "site_listings", :force => true do |t|
     t.integer  "site_id"
     t.integer  "listing_id"
@@ -317,6 +327,9 @@ ActiveRecord::Schema.define(:version => 20130401045439) do
     t.datetime "updated_at",                             :null => false
     t.date     "birth_date"
     t.string   "gender"
+    t.boolean  "fb_user"
+    t.string   "provider"
+    t.string   "uid"
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true

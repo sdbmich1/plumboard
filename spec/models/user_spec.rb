@@ -16,6 +16,9 @@ describe User do
     it { should respond_to(:birth_date) }
     it { should respond_to(:remember_me) }
     it { should respond_to(:gender) }
+    it { should respond_to(:provider) }
+    it { should respond_to(:uid) }
+    it { should respond_to(:fb_user) }
     it { should respond_to(:pictures) }
 
     it { should respond_to(:interests) }
@@ -178,6 +181,54 @@ describe User do
     it "should not return pixis" do
       usr = FactoryGirl.create :contact_user
       usr.pixis.should be_empty
+    end
+  end
+
+  describe 'facebook' do
+    let(:user) { FactoryGirl.build :user }
+    let(:auth) { OmniAuth.config.mock_auth[:facebook] = OmniAuth::AuthHash.new({
+               provider: 'facebook', uid: "fb-12345", info: { name: "Bob Smith", image: "http://graph.facebook.com/708798320/picture?type=square" }, 
+	       extra: { raw_info: { first_name: 'Bob', last_name: 'Smith',
+	                email: 'bob.smith@test.com', birthday: "01/03/1989", gender: 'male' } } }) }
+
+    it 'should return a user' do
+      User.find_for_facebook_oauth(auth).email.should == 'bob.smith@test.com'
+    end
+
+    it 'should return a picture' do
+      User.picture_from_url(user, auth).should_not be_nil
+    end
+  end
+
+  describe 'password' do
+    let(:user) { FactoryGirl.build :user }
+
+    it 'should valid password' do
+      user.password_required?.should be_true  
+    end
+
+    it 'should confirm password' do
+      user.confirmation_required?.should be_true  
+    end
+
+    it 'should not valid password' do
+      user.provider = 'facebook'
+      user.password_required?.should_not be_true  
+    end
+
+    it 'should not confirm password' do
+      user.provider = 'facebook'
+      user.confirmation_required?.should_not be_true  
+    end
+  end
+
+  describe 'convert time' do
+    it 'should return a date' do
+      User.convert_date("01/13/1989").should == "13/01/1989".to_date
+    end
+
+    it 'should not return a date' do
+      User.convert_date(nil).should_not == "13/01/1989".to_date
     end
   end
 end

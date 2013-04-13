@@ -143,11 +143,6 @@ input, textarea, select, .uneditable-input {
   @extend .stnd-input;
 }
 
-select {
-  font-size: 14px;
-  line-height: 20px;
-}
-
 .stnd-input {  
   border: 1px solid #bbb;
   width: 100%;
@@ -371,4 +366,9 @@ h3 { padding: 10px }
     -moz-opacity: 0;
     filter:progid:DXImageTransform.Microsoft.Alpha(opacity=0);
   }
+}
+
+.img-icon {
+  height: 18px;
+  width: 18px;
 }

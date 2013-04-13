@@ -1,3 +1,4 @@
+require "open-uri"
 class User < ActiveRecord::Base
   rolify
 
@@ -5,10 +6,11 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable,
   	 :token_authenticatable, :confirmable,
-  	 :lockable, :timeoutable and :omniauthable
+  	 :lockable, :timeoutable, :omniauthable, :omniauth_providers => [:facebook]
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :first_name, :last_name, :email, :password, :password_confirmation, :remember_me, :birth_date, :gender, :pictures_attributes
+  attr_accessible :first_name, :last_name, :email, :password, :password_confirmation, :remember_me, :birth_date, :gender, :pictures_attributes,
+    :fb_user, :provider, :uid
 
   # define relationships
   has_many :contacts, :as => :contactable, :dependent => :destroy
@@ -57,6 +59,7 @@ class User < ActiveRecord::Base
     end
   end
 
+  # used to add pictures for new user
   def with_picture
     self.pictures.build
     self
@@ -74,6 +77,56 @@ class User < ActiveRecord::Base
 
   # return all pixis for user
   def pixis
-    self.listings | self.temp_listings
+    self.listings | self.temp_listings.where("status NOT IN ('approved')")
+  end
+
+  # converts date format
+  def self.convert_date(old_dt)
+    Date.strptime(old_dt, '%m/%d/%Y') if old_dt    
+  end  
+
+  # process facebook user
+  def self.find_for_facebook_oauth(access_token, signed_in_resource=nil)
+    # load token
+    data = access_token.extra.raw_info
+
+    # find or create user
+    unless user = User.where(:email => data.email).first
+      user = User.new(:first_name => data.first_name, :last_name => data.last_name, 
+	      :birth_date => convert_date(data.birthday), :provider => access_token.provider, :uid => access_token.uid,
+	      :gender => data.gender.capitalize, :email => data.email) 
+      user.password = user.password_confirmation = Devise.friendly_token[0,20]
+      user.fb_user = true
+
+      #add photo 
+      picture_from_url user, access_token
+      user.save(:validate => false)
+    end
+    user
+  end
+
+  # add photo from url
+  def self.picture_from_url usr, access_token
+    pic = usr.pictures.build
+    pic.photo = URI.parse(access_token.info.image.sub("square","large"))
+    pic
+  end
+
+  # devise user handler
+  def self.new_with_session(params, session)
+    super.tap do |user|
+      if data = session["devise.facebook_data"] && session["devise.facebook_data"]["extra"]["raw_info"]
+        user.email = data["email"] if user.email.blank?
+      end
+    end
+  end
+
+  # used to bypass devise validations for facebook users
+  def password_required?
+    super && provider.blank?
+  end
+
+  def confirmation_required?
+    super && provider.blank?
   end
 end

@@ -17,6 +17,9 @@ namespace :db do
         password: password,
         password_confirmation: password)
 
+      picture = usr.pictures.build
+      picture.photo = File.new "c:/RoRDev/images/photo#{i}.jpg"
+
       street = Faker::Address.street_address
       city = Faker::Address.city
       state = Faker::Address.state

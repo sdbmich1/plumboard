@@ -9,7 +9,7 @@
       <%= render partial: 'shared/error_messages', :locals => { :target => resource } %>
 
       <div class="span4 center-wrapper" id="usr_photo">
-        <div><output id='list'><%= image_tag 'person_icon.jpg', :alt => "none" %></output></div>
+        <div><output id='list'><%= image_tag 'person_icon.jpg', :class => "usr-photo" %></output></div>
         <%= render partial: 'shared/user_photo', locals: { f: f } %>
       </div>
 
