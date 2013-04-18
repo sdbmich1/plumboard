@@ -6,5 +6,4 @@
   <% else %>
     <%= render partial: 'shared/photos', locals: {model: model, psize: psize } %>
   <% end %>
-  <%= render :partial => 'shared/photo_item', :locals => {:file_name=>file_name, :model=>model, :psize=>psize} %>
 <% end %>

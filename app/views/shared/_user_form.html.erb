@@ -1,0 +1,20 @@
+  <%= form_for @user, url: user_path(@user, target: 'shared/user_form'), :html => { multipart: true, class: 'uform' }, remote: true do |f| %>
+    <div id="notice"><%= render partial: 'layouts/notices' %></div>
+    <div id="form_errors"><%= render partial: 'shared/error_messages', :locals => { :target => @user } %></div>
+
+    <div class="sm-top span4 center-wrapper" id="usr_photo">
+      <div><output id='list'>
+        <%= image_tag @user.pictures[0].photo.url, class: 'usr-photo' unless @user.pictures.blank? %>
+      </output></div>
+      <%= render partial: 'shared/user_photo', locals: { f: f } %>
+    </div>
+
+    <div class="sm-top span5">
+      <div id='signup'>
+        <%= render partial: 'shared/user_info', locals: { f: f } %>
+      </div>
+      <%= f.submit "Save Changes", class: "btn btn-large btn-primary submit-btn" %>
+    </div>
+  <% end %>
+
+

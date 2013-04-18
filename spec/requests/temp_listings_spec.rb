@@ -2,7 +2,7 @@ require 'spec_helper'
 
 feature "TempListings" do
   subject { page }
-  let(:user) { FactoryGirl.create(:user) }
+  let(:user) { FactoryGirl.create(:pixi_user) }
 
   before(:each) do
     login_as(user, :scope => :user, :run_callbacks => false)
@@ -35,7 +35,6 @@ feature "TempListings" do
     let(:temp_listing) { FactoryGirl.build(:temp_listing) }
 
     before(:each) do
-      @user = user
       FactoryGirl.create :site
       FactoryGirl.create :category
       visit new_temp_listing_path
@@ -204,7 +203,7 @@ feature "TempListings" do
 
     it "Cancels build pixi", js: true do
       expect{
-              click_cancel_ok
+         click_cancel_ok
       }.to change(TempListing,:count).by(0)
 
       page.should have_content "Pixis" 

@@ -17,7 +17,9 @@ Plumboard::Application.routes.draw do
     end
   end
 
+  resources :settings, except: [:new, :show, :create, :edit, :destroy, :update]
   resources :users, except: [:new]
+
   resources :pictures, only: [:destroy]
   resources :posts
 
@@ -45,6 +47,10 @@ Plumboard::Application.routes.draw do
   get "/welcome", to: "pages#welcome" 
   get '/system/:class/:attachment/:id/:style/:filename', :to => 'pictures#asset'
   # post "/listings/preview", to: "listings#preview", :via => :post, :as => :preview 
+
+  # custom user routes to edit member info
+  get "/settings/contact", to: "settings#contact" 
+  get "/settings/password", to: "settings#password" 
 
   # specify routes for devise user after sign-in
   namespace :user do

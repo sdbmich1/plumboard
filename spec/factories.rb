@@ -26,12 +26,14 @@ FactoryGirl.define do
 
   factory :pixi_user, :class => "User", :parent => :user do
     before(:create) {|user| user.pictures.build FactoryGirl.attributes_for(:picture)}
-    confirmed_at	Time.now
+    after(:create) do |user|
+      user.confirm!
+      user.confirmed_at		{ Time.now }
+    end
   end
 
-  factory :contact_user, :class => "User", :parent => :user do
+  factory :contact_user, :class => "User", :parent => :pixi_user do
     before(:create) do |user|
-      user.pictures.build FactoryGirl.attributes_for(:picture)
       user.contacts.build FactoryGirl.attributes_for(:contact)
     end
   end

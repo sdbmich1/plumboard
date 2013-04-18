@@ -89,8 +89,8 @@ describe User do
   end
 
   describe "when password confirmation is nil" do
-    before { @user.password_confirmation = nil }
-    it { should_not be_valid } 
+    user = FactoryGirl.build :pixi_user, password_confirmation: nil }
+    user.should_not be_valid
   end
 
   it "returns a user's full name as a string" do

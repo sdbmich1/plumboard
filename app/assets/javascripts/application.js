@@ -12,7 +12,6 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require jquery-ui
 //= require bootstrap
 //= require jquery.remotipart
 //= require_tree .
@@ -45,6 +44,20 @@ $(document).on("click", "#pendingOrder .pagination a", function(){
   $.getScript(this.href);
   return false;
 }); 
+
+// change active state for menu on click
+$(document).on("click", "#profile-menu .nav li a", function(e){
+  $('#profile-menu .nav li').removeClass('active');
+  $('#profile-menu .nav li a').css('background-color', 'transparent').css('color', '#555555');
+
+  var $this = $(this);
+  if (!$this.hasClass('active')) {
+    $this.parent().addClass('active');
+    $this.css('background-color', '#e6e6e6').css('color', '#F95700');
+  }
+
+  e.preventDefault();
+});
 
 // set page title
 function set_title(val) { 
@@ -85,15 +98,15 @@ function handleFileSelect(evt, style) {
 }
 
 // used to toggle spinner
-$(document).on("ajax:beforeSend", '#purchase_btn, .back-btn, #pixi-form', function () {
+$(document).on("ajax:beforeSend", '#purchase_btn, .uform, .back-btn, #pixi-form', function () {
   toggleLoading();
 });	
 
-$(document).on("ajax:complete", '#purchase_btn, .back-btn, #pixi-form', function () {
+$(document).on("ajax:complete", '#purchase_btn, .uform, .back-btn, #pixi-form', function () {
   toggleLoading;
 });	
 
-$(document).on("ajax:success", '#purchase_btn, .back-btn, #pixi-form', function (event, data, status, xhr) {
+$(document).on("ajax:success", '#purchase_btn, .uform, .back-btn, #pixi-form', function (event, data, status, xhr) {
   $("#response").html(data);
   toggleLoading;
 });	

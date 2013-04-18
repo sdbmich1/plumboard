@@ -10,10 +10,9 @@ class User < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :first_name, :last_name, :email, :password, :password_confirmation, :remember_me, :birth_date, :gender, :pictures_attributes,
-    :fb_user, :provider, :uid
+    :fb_user, :provider, :uid, :contacts_attributes
 
   # define relationships
-  has_many :contacts, :as => :contactable, :dependent => :destroy
   has_many :listings, foreign_key: :seller_id
   has_many :temp_listings, foreign_key: :seller_id, dependent: :destroy
 
@@ -31,6 +30,9 @@ class User < ActiveRecord::Base
   has_many :pictures, :as => :imageable, :dependent => :destroy
   accepts_nested_attributes_for :pictures, :allow_destroy => true, :reject_if => :all_blank
 
+  has_many :contacts, :as => :contactable, :dependent => :destroy
+  accepts_nested_attributes_for :contacts, :allow_destroy => true, :reject_if => :all_blank
+
   # name format validators
   name_regex = 	/^[A-Z]'?['-., a-zA-Z]+$/i
 
@@ -45,8 +47,6 @@ class User < ActiveRecord::Base
 
   validates :birth_date,  :presence => true  
   validates :gender,  :presence => true
-  validates :password, presence: true
-  validates :password_confirmation, presence: true
   validate :must_have_picture
 
   # validate picture exists

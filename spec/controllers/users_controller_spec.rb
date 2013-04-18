@@ -73,4 +73,89 @@ describe UsersController do
     end
   end
 
+  describe "GET 'edit/:id'" do
+
+    before :each do
+      User.stub!(:find).and_return( @user )
+    end
+
+    def do_get
+      get :edit, id: '1'
+    end
+
+    it "should load the requested user" do
+      User.stub(:find).with('1').and_return(@user)
+      do_get
+    end
+
+    it "should assign @user" do
+      do_get
+      assigns(:user).should_not be_nil
+    end
+
+    it "should load the edit template" do
+      do_get
+      response.should render_template :edit
+    end
+  end
+
+  describe "PUT /:id" do
+    before (:each) do
+      controller.stub!(:changing_email).and_return(true)
+      User.stub!(:find).and_return( @user )
+    end
+
+    def do_update
+      xhr :put, :update, :id => "1", :user => {'first_name'=>'test', 'last_name' => 'test'}
+    end
+
+    context "with valid params" do
+      before (:each) do
+        @user.stub(:update_attributes).and_return(true)
+      end
+
+      it "should load the requested user" do
+        User.stub(:find) { @user }
+        do_update
+      end
+
+      it "should update the requested user" do
+        User.stub(:find).with("1") { mock_user }
+	mock_user.should_receive(:update_attributes).with({'first_name'=>'test', 'last_name' => 'test'})
+        do_update
+      end
+
+      it "should assign @user" do
+        User.stub(:find) { mock_user(:update_attributes => true) }
+        do_update
+        assigns(:user).should_not be_nil 
+      end
+      
+      it "should render nothing" do
+        do_update
+        controller.stub!(:render)
+      end
+    end
+
+    context "with invalid params" do
+      before (:each) do
+        @user.stub(:update_attributes).and_return(false)
+      end
+
+      it "should load the requested user" do
+        User.stub(:find) { @user }
+        do_update
+      end
+
+      it "should assign @user" do
+        User.stub(:find) { mock_user(:update_attributes => false) }
+        do_update
+        assigns(:user).should_not be_nil 
+      end
+
+      it "renders nothing" do 
+        controller.stub!(:render)
+      end
+    end
+  end
 end

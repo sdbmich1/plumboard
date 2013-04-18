@@ -93,7 +93,6 @@ describe "Listings", :type => :feature do
     end
 
     describe "pagination" do
-
       it "should list each listing" do
         @user.pixis.paginate(page: 1).each do |listing|
           page.should have_selector('td', text: listing.title)

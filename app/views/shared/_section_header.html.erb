@@ -1,6 +1,15 @@
 <div id='pixi-hdr' class='div-border bar-top pixi-grey-bkgnd'>
-  <div class='container hdr'>
-    <div class='grp-hdr'><%= section_name %></div>
+  <div class='row'>
+    <div class='container'>
+      <div class='hdr'>
+        <div class='span2 grp-hdr'><%= section_name %></div>
+      </div>
+      <% if section_name == 'Edit Profile' %>
+        <div class='span2'><%= link_to 'Contact', '#' %></div>
+        <div class='span2'><%= link_to 'Sites', '#' %></div>
+        <div class='span2'><%= link_to 'Change Password', '#' %></div>
+      <% end %>
+    </div>
   </div>
 </div>
 

@@ -27,13 +27,13 @@
                 </ul>
             </li>
             <li id="fat-menu" class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Account <b class="caret"></b></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <%= @user.name %> <b class="caret"></b></a>
 		<ul class="dropdown-menu">
 	          <% if can? :view_dashboard, @user %>
             	    <li><%= link_to "Dashboard", '#' %></li>
 		  <% end %>
                   <li><%= link_to "Profile", edit_user_path(@user) %></li>
-                  <li><%= link_to "Settings", '#' %></li>
+                  <li><%= link_to "Settings", settings_path %></li>
 	          <li class="divider"></li>
             	  <li><%= link_to "Sign out", destroy_user_session_path %></li>
                 </ul>

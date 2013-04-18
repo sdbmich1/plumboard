@@ -7,7 +7,6 @@ feature "Transactions" do
 
   before(:each) do
     login_as(user, :scope => :user, :run_callbacks => false)
-    user.confirm!
     FactoryGirl.create :state
     @user = user
     @listing = FactoryGirl.create :temp_listing, seller_id: @user.id
@@ -288,13 +287,13 @@ feature "Transactions" do
     end
   end
 
-  describe "Manage Valid Transactions", :js=>true do
+  describe "Manage Valid Transactions" do
     before(:each) do
       visit_txn_path 
       user_data_with_state
     end
 
-      it "Cancel transaction submission" do
+      it "Cancel transaction submission", :js=>true do
         expect { 
 	      click_submit_cancel
 	  }.not_to change(Transaction, :count)
@@ -302,7 +301,7 @@ feature "Transactions" do
         page.should have_content "Submit Your Order" 
       end
 
-    it "should create a transaction with valid visa card" do
+    it "should create a transaction with valid visa card", :js=>true do
       expect { 
         visa_card_data
 	}.to change(Transaction, :count).by(1)
@@ -310,31 +309,31 @@ feature "Transactions" do
       page.should have_content("your pixi will be posted")
     end
 
-    it "should create a transaction with valid mc card" do
+    it "should create a transaction with valid mc card", :js=>true do
       expect { 
         mc_card_data
 	}.to change(Transaction, :count).by(1)
     end
 
-    it "should create a transaction with valid ax card" do
+    it "should create a transaction with valid ax card", :js=>true do
       expect { 
         ax_card_data
 	}.to change(Transaction, :count).by(1)
     end
 
-    it "should create a transaction with valid discover card" do
+    it "should create a transaction with valid discover card", :js=>true do
       expect { 
         discover_card_data
 	}.to change(Transaction, :count).by(1)
     end
 
-    it "should create a transaction with valid diners card" do
+    it "should create a transaction with valid diners card", :js=>true do
       expect { 
         diners_card_data
 	}.to change(Transaction, :count).by(1)
     end
 
-    it "should create a transaction with valid jcb card" do
+    it "should create a transaction with valid jcb card", :js=>true do
       expect { 
         jcb_card_data
 	}.to change(Transaction, :count).by(1)

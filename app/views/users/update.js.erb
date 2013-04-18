@@ -1,0 +1,11 @@
+<% if @user.errors.any? %>
+  $("#notice").hide(300);
+  $("#form_errors").html("<%= escape_javascript( render(partial: 'shared/error_messages', locals: {target: @user})) %>");
+<% else %>
+  $("#notice").html("<%= escape_javascript( raw render(partial: 'layouts/notices')) %>");
+  $("#notice").show(300);
+  $("#user_form").html("<%= escape_javascript( raw render(partial: @target)) %>");
+<% end %>
+
+$('#spinner').hide(300);
+

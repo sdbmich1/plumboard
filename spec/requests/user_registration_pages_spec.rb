@@ -6,6 +6,17 @@ feature "UserRegistrations" do
   describe 'allows a user to register' do
     let(:submit) { "Register" } 
 
+    def user_info
+      fill_in "user_first_name", with: 'New'
+      fill_in "user_last_name", with: 'User'
+    end
+
+    def user_birth_date
+	select('1', :from => "user_birth_date_2i")
+	select('10', :from => 'user_birth_date_3i')
+	select('1983', :from => 'user_birth_date_1i')
+    end
+
     describe "with invalid information" do
       it "should not create a empty user" do
         expect{ 
@@ -17,8 +28,71 @@ feature "UserRegistrations" do
       it "should not create a incomplete user" do
         expect{ 
 		visit new_user_registration_path 
-        	fill_in "user_first_name", with: 'New'
-        	fill_in "user_last_name", with: 'User'
+		user_info
+		click_button submit 
+	}.not_to change(User, :count)
+      end
+
+      it "should not create user w/o email" do
+        expect{ 
+		visit new_user_registration_path 
+		user_info
+		user_birth_date
+		select('Male', :from => 'user_gender')
+        	fill_in 'user_password', :with => 'userpassword'
+        	fill_in "user_password_confirmation", with: 'userpassword'
+		click_button submit 
+	}.not_to change(User, :count)
+      end
+
+      it "should not create user w/o gender" do
+        expect{ 
+		visit new_user_registration_path 
+		user_info
+		user_birth_date
+        	fill_in 'user_email', :with => 'newuser@example.com'
+        	fill_in 'user_password', :with => 'userpassword'
+        	fill_in "user_password_confirmation", with: 'userpassword'
+      		add_data_w_photo
+		click_button submit 
+	}.not_to change(User, :count)
+      end
+
+      it "should not create user w/o birthdate" do
+        expect{ 
+		visit new_user_registration_path 
+		user_info
+		select('Male', :from => 'user_gender')
+        	fill_in 'user_email', :with => 'newuser@example.com'
+        	fill_in 'user_password', :with => 'userpassword'
+        	fill_in "user_password_confirmation", with: 'userpassword'
+      		add_data_w_photo
+		click_button submit 
+	}.not_to change(User, :count)
+      end
+
+      it "should not create user w/o password" do
+        expect{ 
+		visit new_user_registration_path 
+		user_info
+		user_birth_date
+		select('Male', :from => 'user_gender')
+        	fill_in 'user_email', :with => 'newuser@example.com'
+        	fill_in "user_password_confirmation", with: 'userpassword'
+      		add_data_w_photo
+		click_button submit 
+	}.not_to change(User, :count)
+      end
+
+      it "should not create user w/o password confirmation" do
+        expect{ 
+		visit new_user_registration_path 
+		user_info
+		user_birth_date
+		select('Male', :from => 'user_gender')
+        	fill_in 'user_email', :with => 'newuser@example.com'
+        	fill_in "user_password", with: 'userpassword'
+      		add_data_w_photo
 		click_button submit 
 	}.not_to change(User, :count)
       end
@@ -33,13 +107,10 @@ feature "UserRegistrations" do
     end
 
     def user_data
-        fill_in "user_first_name", with: 'New'
-        fill_in "user_last_name", with: 'User'
+        user_info
         fill_in 'user_email', :with => 'newuser@example.com'
+	user_birth_date
 	select('Male', :from => 'user_gender')
-	select('1', :from => "user_birth_date_2i")
-	select('10', :from => 'user_birth_date_3i')
-	select('1983', :from => 'user_birth_date_1i')
         fill_in 'user_password', :with => 'userpassword'
         fill_in "user_password_confirmation", with: 'userpassword'
     end
