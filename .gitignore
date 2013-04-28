@@ -14,7 +14,11 @@
 /log/*.log
 /tmp
 *.swp
+*.swo
 *~
+
+# Ignore all sphinx files
+/db/sphinx
 
 # Ignore all picture files
 /public/system/pictures
@@ -22,6 +26,3 @@
 # ignore yml files
 /config/*.yml
 
-*.swp
-*.swo
-*~
