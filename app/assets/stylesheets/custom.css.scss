@@ -319,7 +319,9 @@ h3 { padding: 10px }
 .sm-bot { margin-bottom: 5px!important }  
 
 .cb-label { display:inline; vertical-align:middle }
-.hdescr { font-size: 0.875em; color: #ccc; width: 120px!important }
+.hdescr { font-size: 0.75em; color: #ccc; }
+.gdescr { font-size: 0.675em; color: #555555; }
+.bdescr { font-size: 0.875em; color: #000; width: 120px!important }
 .grey-text { color: #ccc; }
 
 .nxt-pg { display:none; }
@@ -410,3 +412,32 @@ h3 { padding: 10px }
   -webkit-box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.125);  
   box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.125);  
   }
+
+.item-cat {
+  float:left;
+  padding-right:5px;
+}
+
+.item-dt {
+  float:right;
+  padding-left:5px;
+}
+
+.navbar-search {
+  position: relative;
+  padding-left: 60px !important;
+}
+
+.search-text {
+  margin-bottom: 0;
+}
+
+.btn-medium {
+  margin-top: 0!important;
+  height: 30px!important;
+  background: #F95700!important;
+}
+
+.navbar-photo {
+  margin-right: 10px;
+}

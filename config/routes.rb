@@ -22,6 +22,7 @@ Plumboard::Application.routes.draw do
 
   resources :pictures, only: [:destroy]
   resources :posts
+  resources :searches, only: [:index]
 
   resources :temp_listings, except: [:index] do
     member do

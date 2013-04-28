@@ -22,3 +22,6 @@
 # ignore yml files
 /config/*.yml
 
+*.swp
+*.swo
+*~

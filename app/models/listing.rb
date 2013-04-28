@@ -1,8 +1,8 @@
 class Listing < ListingParent
   self.table_name = "listings"
+  include ThinkingSphinx::Scopes
 
   before_create :activate
-
   attr_accessor :parent_pixi_id
 
   has_many :posts, :dependent => :destroy
@@ -11,6 +11,14 @@ class Listing < ListingParent
 
   has_many :pictures, :as => :imageable, :dependent => :destroy
   accepts_nested_attributes_for :pictures, :allow_destroy => true
+
+  sphinx_scope(:latest_first) {
+    {:order => 'updated_at DESC, created_at DESC'}
+  }
+
+  sphinx_scope(:by_title) { |title|
+    {:conditions => {:title => title}}
+  }
 
   # set active status
   def activate

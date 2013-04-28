@@ -61,3 +61,27 @@ task :category => :environment do
     end
   end
 end
+
+task :import_point_system => :environment do
+
+  PixiPoint.delete_all
+  CSV.foreach(Rails.root.join('db', 'Pixiboard_Point_System_042613.csv'), :headers => true) do |row|
+
+    attrs = {
+	      	:value             => row[0],
+      		:action_name       => row[1],
+		:category_name	   => row[2],
+		:code	   	   => row[3]
+    }
+
+    # add pixi_point
+    new_pixi_point = PixiPoint.new(attrs)
+
+    # save pixi_point
+    if new_pixi_point.save 
+      puts "Saved pixi_point #{attrs.inspect}"
+    else
+      puts new_pixi_point.errors
+    end
+  end
+end

@@ -7,7 +7,7 @@ gem 'rake'
 gem 'devise'
 
 # use mysql as db
-gem "mysql2", "~> 0.3.11"
+gem "mysql2", "~> 0.3.12b5" #, "~> 0.3.11"
 
 # add paperclip for photos
 gem 'paperclip'
@@ -16,7 +16,7 @@ gem 'paperclip'
 gem 'remotipart', '~> 1.0'
 
 # add thinking sphinx
-gem 'thinking-sphinx', '2.0.10'
+gem 'thinking-sphinx', '~> 3.0.2'
 
 # add roles
 gem 'rolify'

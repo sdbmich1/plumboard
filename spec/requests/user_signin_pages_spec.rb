@@ -37,7 +37,7 @@ feature "UserSignins" do
   end
 
   describe 'registered unconfirmed users' do 
-    let(:user) { FactoryGirl.create :pixi_user, confirmed_at: nil }
+    let(:user) { FactoryGirl.create :subscriber, confirmed_at: nil }
 
     it "should display confirm message to a registered user" do
       user_login
@@ -59,7 +59,7 @@ feature "UserSignins" do
       @user = user
     end
 
-    it { should have_link('Profile', href: edit_user_path(user)) }
+    it { should have_content(user.first_name) }
     it { should have_link('Sign out', href: destroy_user_session_path) }
     it { should_not have_link('Orders', href: pending_listings_path) }
     it { should_not have_link('Transactions', href: transactions_path) }
@@ -80,6 +80,7 @@ feature "UserSignins" do
       @user = user
     end
 
+    it { should have_content(user.first_name) }
     it { should have_content('Manage') }
     it { should have_link('Pending Orders', href: pending_listings_path) }
     it { should have_link('Transactions', href: transactions_path) }
@@ -101,6 +102,7 @@ feature "UserSignins" do
       @user = user
     end
 
+    it { should have_content(user.first_name) }
     it { should have_content('Manage') }
     it { should have_link('Pending Orders', href: pending_listings_path) }
     it { should_not have_link('Transactions', href: transactions_path) }
@@ -122,6 +124,7 @@ feature "UserSignins" do
       @user = user
     end
 
+    it { should have_content(user.first_name) }
     it { should_not have_content('Manage') }
     it { should_not have_link('Pending Orders', href: pending_listings_path) }
     it { should_not have_link('Transactions', href: transactions_path) }

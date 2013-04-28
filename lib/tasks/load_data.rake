@@ -12,6 +12,10 @@ namespace :db do
   task :update_contactable_type => :environment do
     update_contactable_type
   end
+
+  task :update_pixis => :environment do
+    update_pixis
+  end
 end
 
 def set_keys
@@ -29,6 +33,11 @@ end
 def process_record listing
   listing.generate_token
   listing.save!
+end
+
+def update_pixis
+  pixis = Listing.active
+  pixis.map! {|p| p.end_date = Time.now+14.days; p.save}
 end
 
 def update_sites

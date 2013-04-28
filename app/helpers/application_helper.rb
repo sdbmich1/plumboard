@@ -45,4 +45,12 @@ module ApplicationHelper
     bcrumb >= val ? file1 : file2     
   end
 
+  # used do determine if search form is displayed
+  def display_search
+    case controller_name
+      when 'listings'; render 'shared/search'
+      when 'users'; render 'shared/search_users'
+      when 'pending_listings'; render 'shared/search_pending'
+    end
+  end
 end

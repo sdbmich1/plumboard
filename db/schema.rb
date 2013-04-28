@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130413073934) do
+ActiveRecord::Schema.define(:version => 20130428024435) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -126,6 +126,17 @@ ActiveRecord::Schema.define(:version => 20130413073934) do
     t.integer  "photo_file_size"
     t.datetime "photo_updated_at"
   end
+
+  create_table "pixi_points", :force => true do |t|
+    t.integer  "value"
+    t.string   "action_name"
+    t.string   "category_name"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+    t.string   "code"
+  end
+
+  add_index "pixi_points", ["code"], :name => "index_pixi_points_on_code"
 
   create_table "posts", :force => true do |t|
     t.integer  "user_id"
@@ -302,6 +313,15 @@ ActiveRecord::Schema.define(:version => 20130413073934) do
 
   add_index "user_interests", ["user_id", "interest_id"], :name => "index_user_interests_on_user_id_and_interest_id", :unique => true
 
+  create_table "user_pixi_points", :force => true do |t|
+    t.integer  "user_id"
+    t.string   "code"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "user_pixi_points", ["user_id", "code", "created_at"], :name => "index_user_pixi_points_on_user_id_and_code_and_created_at"
+
   create_table "users", :force => true do |t|
     t.string   "first_name"
     t.string   "last_name"
@@ -330,6 +350,7 @@ ActiveRecord::Schema.define(:version => 20130413073934) do
     t.boolean  "fb_user"
     t.string   "provider"
     t.string   "uid"
+    t.string   "status"
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true

@@ -189,5 +189,17 @@ FactoryGirl.define do
     price		5.00
     transaction
   end
+
+  factory :pixi_point do
+    category_name	'Post'
+    action_name		'Post Pixi'
+    code		'ppx'
+    value		5
+  end
+
+  factory :user_pixi_point do
+    code		'ppx'
+    user
+  end
 end
 		 

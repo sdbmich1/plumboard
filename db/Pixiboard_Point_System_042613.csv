@@ -1,0 +1,22 @@
+Value,Action,Category,Code
+100,Direct Registration,Register,dr
+100,Facebook Registration,Register,fr
+25,Add Basic Pixi,Post,abp
+50,Add Premium Pixi,Post,app
+1,Login to Board,View,lb
+1,View Pixi,View,vpx
+1,Find Pixi,View,fpx
+1,Save Pixi Reminder,View,spr
+1,Rate Pixi,View,rpx
+1,Post Comment,Comment,pc
+1,Reply Comment,Comment,rc
+100,Buy Pixi,Buy,bpx
+100,Sell Pixi,Sell,spx
+10,Contact Seller,Contact,cs
+10,Reply to Buyer,Contact,rb
+5,Share Pixi,Share,shx
+50,Silver Subscription,Subscribe,ssub
+100,Gold Subscription,Subscribe,gsub
+250,Platinum Subscription,Subscribe,psub
+10,Add Pixi Site,Profile,apx
+10,Add Contact Info,Profile,act

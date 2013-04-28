@@ -10,7 +10,7 @@ class User < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :first_name, :last_name, :email, :password, :password_confirmation, :remember_me, :birth_date, :gender, :pictures_attributes,
-    :fb_user, :provider, :uid, :contacts_attributes
+    :fb_user, :provider, :uid, :contacts_attributes, :status
 
   # define relationships
   has_many :listings, foreign_key: :seller_id
@@ -26,6 +26,7 @@ class User < ActiveRecord::Base
   has_many :incoming_posts, :foreign_key => "recipient_id", :class_name => "Post", :dependent => :destroy
 
   has_many :transactions, dependent: :destroy
+  has_many :user_pixi_points, dependent: :destroy
 
   has_many :pictures, :as => :imageable, :dependent => :destroy
   accepts_nested_attributes_for :pictures, :allow_destroy => true, :reject_if => :all_blank
@@ -121,6 +122,11 @@ class User < ActiveRecord::Base
     end
   end
 
+  # verify if user is active
+  def active?
+    status == 'active'
+  end
+
   # used to bypass devise validations for facebook users
   def password_required?
     super && provider.blank?
@@ -129,4 +135,11 @@ class User < ActiveRecord::Base
   def confirmation_required?
     super && provider.blank?
   end
+
+  # set account to inctive status
+  def deactivate
+    self.status = 'inactive'
+    self
+  end
+
 end

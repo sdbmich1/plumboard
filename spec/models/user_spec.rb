@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe User do
   before(:each) do
-    @user = FactoryGirl.create(:contact_user)
+    @user = FactoryGirl.create(:contact_user, status: 'active')
   end
 
   subject { @user }
@@ -20,11 +20,13 @@ describe User do
     it { should respond_to(:uid) }
     it { should respond_to(:fb_user) }
     it { should respond_to(:pictures) }
+    it { should respond_to(:status) }
 
     it { should respond_to(:interests) }
     it { should respond_to(:contacts) }
     it { should respond_to(:user_interests) }
     it { should respond_to(:transactions) }
+    it { should respond_to(:user_pixi_points) }
     it { should respond_to(:site_users) }
     it { should respond_to(:sites) } 
     it { should respond_to(:listings) } 
@@ -88,8 +90,8 @@ describe User do
     it { should_not be_valid }
   end
 
-  describe "when password confirmation is nil" do
-    user = FactoryGirl.build :pixi_user, password_confirmation: nil }
+  it "should not be valid when password confirmation is nil" do
+    user = FactoryGirl.build :pixi_user, password_confirmation: nil 
     user.should_not be_valid
   end
 
@@ -219,6 +221,19 @@ describe User do
     it 'should not confirm password' do
       user.provider = 'facebook'
       user.confirmation_required?.should_not be_true  
+    end
+  end
+
+  describe "status" do 
+    it { @user.active?.should be_true }
+
+    it 'should not be active' do
+      user = FactoryGirl.build :user, status: 'inactive'
+      user.active?.should_not be_true
+    end
+
+    it 'should be inactive' do
+      @user.deactivate.status.should_not == 'active'
     end
   end
 

@@ -14,6 +14,7 @@ Spork.prefork do
   require 'capybara/rails'
   require 'database_cleaner'
   require "paperclip/matchers"
+  require "thinking_sphinx/test"
 
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.

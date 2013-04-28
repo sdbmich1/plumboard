@@ -2,6 +2,7 @@
   <div class="navbar-inner">
     <div class="container">
       <%= link_to "Pixiboard", root_path, id: "logo" %>
+      <%= display_search if signed_in? %>
       <nav>
         <ul class="nav pull-right">
           <li><%= link_to "Help", help_path %></li>
@@ -27,16 +28,21 @@
                 </ul>
             </li>
             <li id="fat-menu" class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <%= @user.name %> <b class="caret"></b></a>
-		<ul class="dropdown-menu">
-	          <% if can? :view_dashboard, @user %>
-            	    <li><%= link_to "Dashboard", '#' %></li>
-		  <% end %>
-                  <li><%= link_to "Profile", edit_user_path(@user) %></li>
-                  <li><%= link_to "Settings", settings_path %></li>
-	          <li class="divider"></li>
-            	  <li><%= link_to "Sign out", destroy_user_session_path %></li>
-                </ul>
+	      <%= link_to '#', class: "dropdown-toggle", "data-toggle"=>"dropdown" do %>
+	        <div class='pull-left navbar-photo'>
+	          <%= render partial: 'shared/show_photo', locals: {model: @user, file_name: "star.jpg", psize: '30x30', display_cnt: 0 } %>
+	        </div>
+	        <%= @user.first_name %>
+		<b class="caret"></b>
+	      <% end %>
+  	      <ul class="dropdown-menu">
+	        <% if can? :view_dashboard, @user %>
+            	  <li><%= link_to "Dashboard", '#' %></li>
+		<% end %>
+                <li><%= link_to "Settings", settings_path %></li>
+	        <li class="divider"></li>
+            	<li><%= link_to "Sign out", destroy_user_session_path %></li>
+             </ul>
             </li>
 	  <% else %>
             <li><%= link_to "Sign in", new_user_session_path %></li>

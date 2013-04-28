@@ -98,20 +98,20 @@ function handleFileSelect(evt, style) {
 }
 
 // used to toggle spinner
-$(document).on("ajax:beforeSend", '#purchase_btn, .uform, .back-btn, #pixi-form', function () {
+$(document).on("ajax:beforeSend", '#purchase_btn, #search_btn, .uform, .back-btn, #pixi-form', function () {
   toggleLoading();
 });	
 
-$(document).on("ajax:complete", '#purchase_btn, .uform, .back-btn, #pixi-form', function () {
-  toggleLoading;
+$(document).on("ajax:success", '#purchase_btn, #search_btn, .uform, .back-btn, #pixi-form', function () {
+  toggleLoading();
 });	
 
-$(document).on("ajax:success", '#purchase_btn, .uform, .back-btn, #pixi-form', function (event, data, status, xhr) {
-  $("#response").html(data);
-  toggleLoading;
+$(document).on("ajax:complete", '#purchase_btn, #search_btn, .uform, .back-btn, #pixi-form', function () {
+  toggleLoading();
 });	
 
-$(document).on("ajax:error", '#purchase_btn, .back-btn, #pixi-form', function (event, data, status, xhr) {
+
+$(document).on("ajax:error", function (event, data, status, xhr) {
   if (status == 401) // # thrownError is 'Unauthorized'
       window.location.replace('/users/sign_in');
 });	
