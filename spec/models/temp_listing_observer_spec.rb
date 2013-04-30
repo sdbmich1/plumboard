@@ -6,7 +6,7 @@ describe TempListingObserver do
 
     describe 'reset status' do
       let(:temp_listing) { FactoryGirl.create :temp_listing_with_transaction }
-      let(:user) { FactoryGirl.create :user }
+      let(:user) { FactoryGirl.create :pixi_user }
 
       before(:each) do
         temp_listing.status = 'pending'
@@ -53,8 +53,8 @@ describe TempListingObserver do
 
     it "should add listing" do
       expect {
-	       temp_listing.save!
-	     }.to change {Listing.count}.by(1)
+	temp_listing.save!
+      }.to change {Listing.count}.by(1)
     end
 
     it "should update transaction" do
@@ -65,8 +65,8 @@ describe TempListingObserver do
     it "should not add listing" do
       temp_listing.status = 'pending'
       expect {
-	       temp_listing.save!
-	      }.to change {Listing.count}.by(0)
+	temp_listing.save!
+      }.to change {Listing.count}.by(0)
     end
 
     it 'should not add listing and transaction' do

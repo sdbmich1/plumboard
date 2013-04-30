@@ -1,5 +1,7 @@
 class SearchesController < ApplicationController
+  include PointManager
   before_filter :authenticate_user!
+  after_filter :add_points, only: [:index]
   require 'will_paginate/array' 
 
   def index
@@ -14,5 +16,9 @@ class SearchesController < ApplicationController
 
   def page
     @page = params[:page] || 1
+  end
+
+  def add_points
+     PointManager::add_points @user, 'fpx'
   end
 end

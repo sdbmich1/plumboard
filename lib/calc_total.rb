@@ -1,5 +1,7 @@
 module CalcTotal
 
+  # used to calc transaction total
+
   # process order details
   def self.process_order order
     @amt = 0.0
@@ -43,8 +45,8 @@ module CalcTotal
     PIXI_PERCENT.to_f > 0.0 rescue nil
   end
 
-  def self.get_price
-    PIXI_BASE_PRICE.to_f rescue nil
+  def self.get_price *args
+    args[0] ? PIXI_PREMIUM_PRICE.to_f : PIXI_BASE_PRICE.to_f rescue nil
   end
   
   # set discount if any based on promo code

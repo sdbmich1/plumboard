@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe Transaction do
   before(:each) do
-    @transaction = FactoryGirl.build(:transaction)
+    @user = FactoryGirl.create :pixi_user
+    @transaction = @user.transactions.build FactoryGirl.attributes_for(:transaction)
   end
 
   subject { @transaction }
@@ -149,27 +150,24 @@ describe Transaction do
   end
   
   describe "refundable" do
-    let(:transaction) { FactoryGirl.create :transaction, created_at: Time.now }
-
     it "should be refundable" do
-      transaction.refundable?.should be_true
+      @transaction.created_at = Time.now
+      @transaction.refundable?.should be_true
     end
 
     it "should not be refundable" do
-      transaction.created_at = Time.now-2.months
-      transaction.refundable?.should_not be_true
+      @transaction.created_at = Time.now-6.months
+      @transaction.refundable?.should_not be_true
     end
   end
 
   describe "load item detail" do
-    let(:transaction) { FactoryGirl.build :transaction }
     it "should load new item detail" do
-      transaction_detail = FactoryGirl.build :transaction_detail 
-      transaction.add_details('pixi', 1, 10.99).should_not be_nil
+      @transaction.add_details('pixi', 1, 10.99).should_not be_nil
     end
 
     it "should not load new item detail" do
-      transaction.add_details(nil, 0, 0).should be_nil
+      @transaction.add_details(nil, 0, 0).should be_nil
     end
   end
 
@@ -177,33 +175,39 @@ describe Transaction do
     let(:order) { {"cnt"=> 1, "quantity1"=> 1, "item1"=> 'Pixi Post', "price1"=> 0.0 } }
     let(:temp_listing) { FactoryGirl.create :temp_listing }
 
-    it "should be valid" do
-      transaction_detail = FactoryGirl.build :transaction_detail 
-      transaction_detail.transaction.should be_valid
-    end
-
     it "should save" do
-      transaction_detail = FactoryGirl.build :transaction_detail 
-      transaction_detail.transaction.save_transaction(order, temp_listing).should be_true
+      @transaction.save_transaction(order, temp_listing).should be_true
     end
 
     it "should not save" do
-      transaction = FactoryGirl.build :transaction, first_name: nil
-      transaction.save_transaction(order, temp_listing).should_not be_true
+      @transaction.first_name = nil
+      @transaction.save_transaction(order, temp_listing).should_not be_true
+    end
+  end
+
+  describe 'approved?' do
+    it 'should return true' do
+      @transaction.status = 'approved'
+      @transaction.approved?.should be_true
+    end
+
+    it 'should not return true' do
+      @transaction.status = 'pending'
+      @transaction.approved?.should_not be_true
     end
   end
 
   describe "process transaction" do
+
     it "should not process" do
-      transaction = FactoryGirl.build :transaction, first_name: nil
-      transaction.process_transaction.should_not be_true
+      @transaction.first_name = nil
+      @transaction.process_transaction.should_not be_true
     end
 
     it "should process" do
-      transaction_detail = FactoryGirl.build :transaction_detail 
       Stripe::Charge.should_receive(:create).and_raise(true)
-      transaction_detail.save
-      transaction_detail.transaction.process_transaction.should be_true
+      @transaction.save
+      @transaction.process_transaction.should be_true
     end
   end
 end

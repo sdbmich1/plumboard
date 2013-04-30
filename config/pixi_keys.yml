@@ -5,8 +5,7 @@ defaults: &defaults
     site_init_free: 100
     max_pixi_amt: 1000000.00
     base_price: 5.00
-    gigs_price: 20.00
-    cars_price: 20.00
+    premium_price: 20.00
     fee: 0.30
     percent: 2.9
     launch_promo_cd: "2013LAUNCH"

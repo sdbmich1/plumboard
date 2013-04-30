@@ -14,7 +14,7 @@ class TempListingObserver < ActiveRecord::Observer
   def after_update model
     if model.status == 'approved'
       model.post_to_board
-      model.transaction.process_transaction
+      model.transaction.process_transaction unless model.transaction.approved?
     end
   end
 end

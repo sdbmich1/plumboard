@@ -10,6 +10,7 @@ describe Category do
   it { should respond_to(:name) }
   it { should respond_to(:status) }
   it { should respond_to(:category_type) }
+  it { should respond_to(:pixi_type) }
   it { should respond_to(:listings) }
   it { should respond_to(:temp_listings) }
 
@@ -52,4 +53,17 @@ describe Category do
     category = Category.create(:status => "inactive")
     it { Category.active.should_not include(category) }
   end
+
+  describe 'premium?' do
+    it 'should return true' do
+      @category.pixi_type = 'premium'
+      @category.premium?.should be_true
+    end
+
+    it 'should not return true' do
+      @category.pixi_type = nil
+      @category.premium?.should_not be_true
+    end
+  end
+
 end

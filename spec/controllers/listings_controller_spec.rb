@@ -88,6 +88,7 @@ describe ListingsController do
       Listing.stub!(:find_by_pixi_id).and_return( @listing )
       Post.stub!(:load_new).with(@listing).and_return( @post )
       @listing.stub!(:pictures).and_return( @photo )
+      controller.stub!(:add_points).and_return(:success)
     end
 
     def do_get

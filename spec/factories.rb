@@ -155,7 +155,9 @@ FactoryGirl.define do
 
   factory :post do
     content 		"SFSU"
-    user
+    before(:create) do |post|
+      post.create_user FactoryGirl.attributes_for(:pixi_user)
+    end
     recipient
   end
 
@@ -180,7 +182,9 @@ FactoryGirl.define do
     home_phone		"1234567890"
     amt			100.00
     status		'pending'
-    user
+    before(:create) do |txn|
+      txn.create_user FactoryGirl.attributes_for(:pixi_user)
+    end
   end
 
   factory :transaction_detail do
@@ -199,7 +203,9 @@ FactoryGirl.define do
 
   factory :user_pixi_point do
     code		'ppx'
-    user
+    before(:create) do |user|
+      user.create_user FactoryGirl.attributes_for(:pixi_user)
+    end
   end
 end
 		 

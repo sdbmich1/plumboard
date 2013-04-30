@@ -1,7 +1,9 @@
+require 'will_paginate/array' 
 class ListingsController < ApplicationController
-  require 'will_paginate/array' 
+  include PointManager
   before_filter :authenticate_user!
   before_filter :load_data, only: [:index, :seller]
+  after_filter :add_points, only: [:show]
   respond_to :html, :json, :js
   layout :page_layout
 
@@ -33,5 +35,9 @@ class ListingsController < ApplicationController
 
   def load_data
     @page = params[:page] || 1
+  end
+
+  def add_points
+    PointManager::add_points @user, 'vpx'
   end
 end

@@ -15,9 +15,11 @@ describe SearchesController do
 
   describe 'GET /index' do
     before :each do
+      @user = FactoryGirl.create(:pixi_user)
+      @listing = FactoryGirl.create(:listing, seller_id: @user.id)
       @listings = mock("listings")
       Listing.stub!(:search).and_return( @listings )
-      controller.stub_chain(:query, :page).and_return(:success)
+      controller.stub_chain(:query, :page, :add_points).and_return(:success)
     end
 
     def do_get
@@ -30,13 +32,11 @@ describe SearchesController do
     end
 
     it "should assign @listings" do
-      listing = FactoryGirl.create(:listing)
       do_get
       assigns(:listings).should == @listings
     end
     
     it "searching for listings" do
-      listing = FactoryGirl.create(:listing)
       ThinkingSphinx::Test.run do
         do_get
 	assigns(:listings).should_not be_nil

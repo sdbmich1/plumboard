@@ -1,4 +1,3 @@
-require 'calc_total'
 class Transaction < ActiveRecord::Base
   include CalcTotal
   attr_accessor :cvv
@@ -81,7 +80,7 @@ class Transaction < ActiveRecord::Base
   
   # process transaction
   def process_transaction
-    if valid?
+    if valid? 
       # charge the credit card using Stripe
       if amt > 0.0 then
         result = Stripe::Charge.create(:amount => (amt * 100).to_i, :currency => "usd", :card => token, :description => description)  
@@ -147,5 +146,10 @@ class Transaction < ActiveRecord::Base
   # handle credit card error
   def check_for_stripe_error
     self.errors[:credit_card_no] = @stripe_error
+  end
+
+  # set approval status
+  def approved?
+    status == 'approved'
   end
 end

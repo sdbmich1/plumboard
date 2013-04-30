@@ -18,6 +18,7 @@
 *~
 
 # Ignore all sphinx files
+/config/*.conf
 /db/sphinx
 
 # Ignore all picture files

@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe TempListing do
   before(:each) do
-    @temp_listing = FactoryGirl.create(:temp_listing) 
+    @category = FactoryGirl.create(:category, pixi_type: 'premium') 
+    @temp_listing = FactoryGirl.create(:temp_listing)
   end
 
   subject { @temp_listing }
@@ -163,7 +164,7 @@ describe TempListing do
   end
 
   describe "should find correct seller name" do 
-    let(:user) { FactoryGirl.create(:user) }
+    let(:user) { FactoryGirl.create(:pixi_user) }
     let(:temp_listing) { FactoryGirl.create(:temp_listing, seller_id: user.id) }
 
     it { temp_listing.seller_name.should == "Joe Blow" } 
@@ -298,7 +299,7 @@ describe TempListing do
   end
 
   describe "approved order" do
-    let(:user) { FactoryGirl.create :user }
+    let(:user) { FactoryGirl.create :pixi_user }
     let(:temp_listing) { FactoryGirl.create :temp_listing_with_transaction, seller_id: user.id }
 
     it "approve order should not return approved status" do 
@@ -313,7 +314,7 @@ describe TempListing do
   end
 
   describe "deny order" do
-    let(:user) { FactoryGirl.create :user }
+    let(:user) { FactoryGirl.create :pixi_user }
     let(:temp_listing) { FactoryGirl.create :temp_listing_with_transaction, seller_id: user.id }
 
     it "deny order should not return denied status" do 
@@ -328,7 +329,7 @@ describe TempListing do
   end
 
   describe "post to board" do
-    let(:user) { FactoryGirl.create :user }
+    let(:user) { FactoryGirl.create :pixi_user }
     let(:temp_listing) { FactoryGirl.create :temp_listing_with_transaction, seller_id: user.id }
 
     it "post to board should not return new listing" do 
@@ -381,6 +382,17 @@ describe TempListing do
       temp_listing.save
       pic = temp_listing.pictures.first
       temp_listing.delete_photo(pic.id).should be_true
+    end
+  end
+
+  describe 'premium?' do
+    it 'should return true' do
+      temp_listing = FactoryGirl.create(:temp_listing, category_id: @category.id) 
+      temp_listing.premium?.should be_true
+    end
+
+    it 'should not return true' do
+      @temp_listing.premium?.should_not be_true
     end
   end
 

@@ -56,7 +56,7 @@ class ListingParent < ActiveRecord::Base
   # select active listings
   def self.active
     where(:status=>'active').order('updated_at DESC')
-  #  where("status = 'active' AND end_date => curdate()")
+  #  where("status = 'active' AND end_date => curdate()").order('updated_at DESC')
   end
 
   # find listings by status
@@ -153,5 +153,10 @@ class ListingParent < ActiveRecord::Base
   # set nice time
   def get_local_time(tm)
     tm.utc.getlocal.strftime('%m/%d/%Y %I:%M%p') rescue nil
+  end
+
+  # check for premium categories
+  def premium?
+    category.premium?
   end
 end

@@ -2,7 +2,9 @@ require 'spec_helper'
 
 describe Listing do
   before(:each) do
-    @listing = FactoryGirl.create(:listing) 
+    @user = FactoryGirl.create(:pixi_user) 
+    @category = FactoryGirl.create(:category, pixi_type: 'premium') 
+    @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
   end
 
   subject { @listing }
@@ -112,27 +114,31 @@ describe Listing do
     it { should_not be_valid }
   end
 
-  describe "should not include inactive listings" do
-    listing = FactoryGirl.create :listing, :description=>'stuff', :status=>'inactive'
-    it { Listing.active.should_not == listing }
+  describe "inactive listings" do
+    before(:each) do
+      @listing.status = 'inactive' 
+      @listing.save
+    end
+
+    it "should not include inactive listings" do
+      Listing.active.should_not == @listing 
+    end
+
+    it "active page should not include inactive listings" do
+      Listing.active_page(1).should_not == @listing 
+    end
+
+    it "get_by_status should not include inactive listings" do
+      Listing.get_by_status('active').should be_empty 
+    end
   end
 
   describe "should include active listings" do 
     it { Listing.active.should be_true }
   end
 
-  describe "active page should not include inactive listings" do
-    listing = FactoryGirl.create :listing, :description=>'stuff', :status=>'inactive'
-    it { Listing.active_page(1).should_not == listing }
-  end
-
   describe "active page should include active listings" do 
     it { Listing.active_page(1).should be_true }
-  end
-
-  describe "get_by_status should not include inactive listings" do
-    @listing.status = 'inactive'
-    it { Listing.get_by_status('active').should be_empty }
   end
 
   describe "get_by_status should include active listings" do 
@@ -147,8 +153,10 @@ describe Listing do
     it { Listing.get_by_site(@listing.site.id).should_not be_empty }
   end
 
-  describe "should include seller listings" do 
-    it { Listing.get_by_seller(1).should_not be_empty } 
+  it "should include seller listings" do 
+    @listing.seller_id = 1
+    @listing.save
+    Listing.get_by_seller(1).should_not be_empty  
   end
 
   describe "should not include incorrect seller listings" do 
@@ -159,9 +167,20 @@ describe Listing do
     it { @listing.site_name.should_not be_empty } 
   end
 
-  describe "should not find correct site name" do 
-    listing = FactoryGirl.create :listing, site_id: 100
-    it { listing.site_name.should be_nil } 
+  describe "incorrect site" do 
+    before { @listing.site_id = 100 }
+
+    it "should not find correct site name" do 
+      @listing.site_name.should be_nil 
+    end
+
+    it "should not return site count > 0" do 
+      @listing.get_site_count.should == 0  
+    end
+  end
+
+  describe "should return site count > 0" do 
+    it { @listing.get_site_count.should_not == 0 } 
   end
 
   describe "should find correct category name" do 
@@ -169,20 +188,17 @@ describe Listing do
   end
 
   describe "should not find correct category name" do 
-    listing = FactoryGirl.create :listing, category_id: 100
-    it { listing.category_name.should be_nil } 
+    before { @listing.category_id = 100 }
+    it { @listing.category_name.should be_nil } 
   end
 
   describe "should find correct seller name" do 
-    let(:user) { FactoryGirl.create(:pixi_user) }
-    let(:listing) { FactoryGirl.create(:listing, seller_id: user.id) }
-
-    it { listing.seller_name.should == "Joe Blow" } 
+    it { @listing.seller_name.should == "Joe Blow" } 
   end
 
   describe "should not find correct seller name" do 
-    listing = FactoryGirl.create :listing, seller_id: 100
-    it { listing.seller_name.should be_nil } 
+    before { @listing.seller_id = 100 }
+    it { @listing.seller_name.should be_nil } 
   end
 
   describe "should have a transaction" do 
@@ -190,48 +206,52 @@ describe Listing do
   end
 
   describe "should not have a transaction" do 
-    listing = FactoryGirl.create :listing, transaction_id: nil
-    it { listing.has_transaction?.should_not be_true }
+    before { @listing.transaction_id = nil }
+    it { @listing.has_transaction?.should_not be_true }
   end
 
-  describe "should verify if seller name is an alias" do 
-    listing = FactoryGirl.create :listing, show_alias_flg: 'yes'
-    it { listing.alias?.should be_true }
+  it "should verify if seller name is an alias" do 
+    @listing.show_alias_flg = 'yes'
+    @listing.alias?.should be_true 
   end
 
-  describe "should not have an alias" do 
-    listing = FactoryGirl.create :listing, show_alias_flg: 'no'
-    it { listing.alias?.should_not be_true }
+  it "should not have an alias" do 
+    @listing.show_alias_flg = 'no'
+    @listing.alias?.should_not be_true 
   end
 
-  describe "should verify user is seller" do 
-    listing = FactoryGirl.create :listing, seller_id: 1
-    it { listing.seller?(1).should be_true }
+  describe "seller" do 
+    before { @listing.seller_id = 1 }
+
+    it "should verify user is seller" do 
+      @listing.seller?(1).should be_true 
+    end
+
+    it  "should not verify user is seller" do 
+      @listing.seller?(2).should_not be_true 
+    end
   end
 
-  describe "should not verify user is seller" do 
-    listing = FactoryGirl.create :listing, seller_id: 1
-    it { listing.seller?(2).should_not be_true }
+  describe "description" do 
+    before { @listing.description = "a" * 100 }
+
+    it "should return a short description" do 
+      @listing.brief_descr.length.should == 100 
+    end
+
+    it "should return a summary" do 
+      @listing.summary.should be_true 
+    end
   end
 
-  describe "should return a short description" do 
-    listing = FactoryGirl.create :listing, description: "a" * 100
-    it { listing.brief_descr.length.should == 100 }
+  it "should not return a short description of 100 chars" do 
+    @listing.description = "a" 
+    @listing.brief_descr.length.should_not == 100 
   end
 
-  describe "should not return a short description of 100 chars" do 
-    listing = FactoryGirl.create :listing, description: "a"
-    it { listing.brief_descr.length.should_not == 100 }
-  end
-
-  describe "should return a summary" do 
-    listing = FactoryGirl.create :listing, description: "a" * 500
-    it { listing.summary.should be_true }
-  end
-
-  describe "should not return a summary" do 
-    listing = FactoryGirl.build :listing, description: nil
-    it { listing.summary.should_not be_true }
+  it "should not return a summary" do 
+    @listing.description = nil
+    @listing.summary.should_not be_true 
   end
 
   describe "must have pictures" do 
@@ -250,15 +270,6 @@ describe Listing do
   describe "should not activate" do 
     let(:listing) { FactoryGirl.build :listing, start_date: Time.now, status: 'sold' }
     it { listing.activate.status.should_not == 'active' } 
-  end
-
-  describe "should return site count > 0" do 
-    listing = FactoryGirl.create :listing, site_id: 100 
-    it { listing.get_site_count.should == 0 } 
-  end
-
-  describe "should not return site count > 0" do 
-    it { @listing.get_site_count.should_not == 0 } 
   end
 
   describe 'pictures' do
@@ -281,16 +292,27 @@ describe Listing do
   describe 'check for free order' do
     it "should not allow free order" do 
       (0..100).each do
-        listing = FactoryGirl.create(:listing, site_id: 100) 
-	listing.status = 'active'
-	listing.save!
+        @listing = FactoryGirl.create(:listing, seller_id: @user.id, site_id: 100) 
       end
       Listing.free_order?(100).should_not be_true  
     end
 
     it "should allow free order" do 
-      FactoryGirl.create(:listing, site_id: 2)
+      @listing.site_id = 2 
       Listing.free_order?(2).should be_true  
     end
   end  
+
+  describe 'premium?' do
+    it 'should return true' do
+      @listing.category_id = @category.id 
+      @listing.premium?.should be_true
+    end
+
+    it 'should not return true' do
+      category = FactoryGirl.create(:category)
+      @listing.category_id = category.id
+      @listing.premium?.should_not be_true
+    end
+  end
 end

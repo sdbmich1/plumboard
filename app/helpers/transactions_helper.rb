@@ -33,7 +33,7 @@ module TransactionsHelper
   end
 
   def get_price
-    PIXI_BASE_PRICE.to_f rescue nil
+    CalcTotal::get_price @listing.premium?
   end
   
   def show_title paid
