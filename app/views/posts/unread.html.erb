@@ -1,0 +1,10 @@
+<% provide(:title, 'Read Posts') %>
+<%= content_for :subhead do %>
+  <%= render :partial => 'shared/navbar_posts', locals: { section_name: 'Read Posts' } %>
+<% end %>
+<%= content_for :content do %>
+  <div id='post_form'>
+    <%= render :partial => 'shared/posts' %>
+  </div>
+<% end %>
+

@@ -20,6 +20,9 @@ describe SearchesController do
       @listings = mock("listings")
       Listing.stub!(:search).and_return( @listings )
       controller.stub_chain(:query, :page, :add_points).and_return(:success)
+
+      ThinkingSphinx::Test.index 
+      sleep 0.5
     end
 
     def do_get

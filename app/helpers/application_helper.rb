@@ -51,6 +51,29 @@ module ApplicationHelper
       when 'listings'; render 'shared/search'
       when 'users'; render 'shared/search_users'
       when 'pending_listings'; render 'shared/search_pending'
+      else render 'shared/search'
     end
+  end
+
+  # truncate timestamp in words
+  def ts_in_words tm
+    time_ago_in_words(tm).gsub('about','') 
+  end
+
+  # get number of unread messages for user
+  def get_unread_count(usr)
+    Post.unread_count usr
+  end
+
+  # set pixi logo home path
+  def pixi_home
+    link_to_unless(signed_in?, "Pixiboard", root_path, id: "logo") do
+      link_to 'Pixiboard', listings_path, id: "logo"
+    end
+  end
+
+  # set user image
+  def get_user_image usr
+    usr.pictures.blank? ? usr.pictures[0].photo.url : 'person_icon.jpg'
   end
 end

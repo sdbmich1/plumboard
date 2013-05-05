@@ -6,12 +6,8 @@
 
   <div class="sm-top row">
     <%= form_for([resource_name, resource.with_picture], :url => registration_path(resource_name)) do |f| %>
-      <%= render partial: 'shared/error_messages', :locals => { :target => resource } %>
-
-      <div class="span4 center-wrapper" id="usr_photo">
-        <div><output id='list'><%= image_tag 'person_icon.jpg', :class => "usr-photo" %></output></div>
-        <%= render partial: 'shared/user_photo', locals: { f: f } %>
-      </div>
+      <%= render partial: 'shared/error_messages', :locals => { :target => f.object } %>
+      <%= render partial: 'shared/show_user_photo', locals: { f: f } %>
 
       <div class="span5">
         <div id='signup'>

@@ -155,10 +155,9 @@ FactoryGirl.define do
 
   factory :post do
     content 		"SFSU"
-    before(:create) do |post|
-      post.create_user FactoryGirl.attributes_for(:pixi_user)
-    end
+    user
     recipient
+    listing
   end
 
   factory :site_listing do

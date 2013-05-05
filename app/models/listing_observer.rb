@@ -5,7 +5,7 @@ class ListingObserver < ActiveRecord::Observer
   # update points
   def after_create model
     ptype = model.premium? ? 'app' : 'abp'
-    PointManager::add_points model.user, ptype 
+    PointManager::add_points model.user, ptype if model.user
   end
 
 end

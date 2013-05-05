@@ -3,6 +3,12 @@ require 'login_user_spec'
 describe PostsController do
   include LoginTestUser
 
+  def mock_user(stubs={})
+    (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
+      user.stub(stubs) unless stubs.empty?
+    end
+  end
+
   def mock_listing(stubs={})
     (@mock_listing ||= mock_model(Listing, stubs).as_null_object).tap do |listing|
       listing.stub(stubs) unless stubs.empty?
@@ -17,6 +23,7 @@ describe PostsController do
 
   before(:each) do
     log_in_test_user
+    @user = mock_user
   end
 
   describe "POST create" do
@@ -83,4 +90,159 @@ describe PostsController do
     end
   end
 
+  describe 'GET unread' do
+
+    before :each do
+      @posts = mock("posts")
+      Post.stub!(:get_unread).with(@user).and_return( @posts )
+      @posts.stub!(:paginate).and_return( @posts )
+    end
+
+    def do_get
+      get :unread
+    end
+
+    it "should load the requested posts" do
+      Post.stub(:get_unread).with(@user).and_return(@posts)
+      do_get
+      assigns(:posts).should_not be_nil 
+    end
+
+    it "renders the :unread view" do
+      do_get
+      response.should render_template :unread
+    end
+  end
+
+  describe 'xhr GET unread' do
+
+    before :each do
+      @posts = mock("posts")
+      Post.stub!(:get_unread).with(@user).and_return( @posts )
+      @posts.stub!(:paginate).and_return( @posts )
+    end
+
+    def do_get
+      xhr :get, :unread
+    end
+
+    it "should load the requested posts" do
+      Post.stub(:get_unread).with(@user).and_return(@posts)
+      do_get
+      assigns(:posts).should_not be_nil 
+    end
+
+    it "renders the :unread view" do
+      do_get
+      response.should render_template :unread
+    end
+  end
+
+  describe 'GET sent' do
+
+    before :each do
+      @posts = mock("posts")
+      @user.stub!(:posts).and_return( @posts )
+      @posts.stub!(:paginate).and_return( @posts )
+    end
+
+    def do_get
+      xhr :get, :sent
+    end
+
+    it "should load the requested posts" do
+      @user.stub(:posts).and_return(@posts)
+      do_get
+      assigns(:posts).should_not be_nil 
+    end
+
+    it "should render nothing" do
+      do_get
+      controller.stub!(:render)
+    end
+  end
+
+  describe 'GET index' do
+
+    before :each do
+      @posts = mock("posts")
+      @user.stub!(:incoming_posts).and_return( @posts )
+      @posts.stub!(:paginate).and_return( @posts )
+    end
+
+    def do_get
+      xhr :get, :index
+    end
+
+    it "should load the requested posts" do
+      @user.stub(:incoming_posts).and_return(@posts)
+      do_get
+      assigns(:posts).should_not be_nil 
+    end
+
+    it "should render nothing" do
+      do_get
+      controller.stub!(:render)
+    end
+  end
+
+  describe "POST reply" do
+    before :each do
+      @post = mock_model Post
+      controller.stub!(:mark_post).and_return(:success)
+    end
+    
+    def do_reply
+      xhr :post, :reply, id: '1', post: { pixi_id: '1', 'content'=>'test' }
+    end
+
+    context 'failure' do
+      
+      before :each do
+        Post.stub!(:save).and_return(false)
+        do_reply
+      end
+
+      it "should assign @post" do
+        assigns(:post).should_not be_nil 
+      end
+
+      it "should render nothing" do
+	controller.stub!(:render)
+      end
+    end
+
+    context 'success' do
+
+      before :each do
+        @posts = mock("posts")
+        Post.stub!(:save).and_return(true)
+        Post.stub!(:get_unread).with(@user).and_return(@posts)
+        @posts.stub!(:paginate).and_return( @posts )
+      end
+       
+      it "should load the requested post" do
+        Post.stub(:new).with({'pixi_id'=>'1', 'content'=>'test' }) { mock_post(:save => true) }
+        do_reply
+      end
+
+      it "should assign @post" do
+        do_reply
+        assigns(:post).should_not be_nil 
+      end
+
+      it "should load the requested posts" do
+        Post.stub(:get_unread).with(@user).and_return(@posts)
+        do_reply
+        assigns(:posts).should be_nil 
+      end
+
+      it "should change post count" do
+        lambda do
+          do_reply
+          should change(Post, :count).by(1)
+        end
+      end
+    end
+  end
 end

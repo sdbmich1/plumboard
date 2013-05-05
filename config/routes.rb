@@ -17,11 +17,17 @@ Plumboard::Application.routes.draw do
     end
   end
 
+  resources :posts, except: [:new, :edit, :update] do
+    collection do
+      get 'unread', 'sent'
+      post 'reply'
+    end
+  end
+
   resources :settings, except: [:new, :show, :create, :edit, :destroy, :update]
   resources :users, except: [:new]
 
   resources :pictures, only: [:destroy]
-  resources :posts
   resources :searches, only: [:index]
 
   resources :temp_listings, except: [:index] do

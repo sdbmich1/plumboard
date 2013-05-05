@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130429022114) do
+ActiveRecord::Schema.define(:version => 20130430203707) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -175,6 +175,15 @@ ActiveRecord::Schema.define(:version => 20130429022114) do
   add_index "promo_codes", ["code", "status"], :name => "index_promo_codes_on_code_and_status"
   add_index "promo_codes", ["end_date", "start_date"], :name => "index_promo_codes_on_end_date_and_start_date"
   add_index "promo_codes", ["site_id"], :name => "index_promo_codes_on_site_id"
+
+  create_table "read_marks", :force => true do |t|
+    t.integer  "readable_id"
+    t.integer  "user_id",                     :null => false
+    t.string   "readable_type", :limit => 20, :null => false
+    t.datetime "timestamp"
+  end
+
+  add_index "read_marks", ["user_id", "readable_type", "readable_id"], :name => "index_read_marks_on_user_id_and_readable_type_and_readable_id"
 
   create_table "roles", :force => true do |t|
     t.string   "name"

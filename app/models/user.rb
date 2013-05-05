@@ -1,6 +1,7 @@
 require "open-uri"
 class User < ActiveRecord::Base
   rolify
+  acts_as_reader
 
   # Include default devise modules. Others available are:
   devise :database_authenticatable, :registerable,
@@ -62,7 +63,7 @@ class User < ActiveRecord::Base
 
   # used to add pictures for new user
   def with_picture
-    self.pictures.build
+    self.pictures.build if self.pictures.blank?
     self
   end
 

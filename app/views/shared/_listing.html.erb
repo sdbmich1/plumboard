@@ -11,7 +11,7 @@
         <%= listing.category_name %> 
       </div>
      <div class='item-dt pixi-grey-bkgnd'>
-       <%= time_ago_in_words(listing.updated_at).gsub('about','') %> ago
+       <%= ts_in_words(listing.updated_at) %> ago
       </div>
     </div>
   </div>

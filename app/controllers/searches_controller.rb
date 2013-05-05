@@ -11,7 +11,7 @@ class SearchesController < ApplicationController
   protected
 
   def query
-    @query = params[:search]
+    @query = Riddle::Query.escape params[:search]
   end  
 
   def page

@@ -12,7 +12,6 @@ describe "Listings", :type => :feature do
 
     before(:each) do
       login_as(pixi_user, :scope => :user, :run_callbacks => false)
-      pixi_user.confirm!
       @user = pixi_user
       visit listing_path(listing) 
     end
@@ -88,7 +87,7 @@ describe "Listings", :type => :feature do
       it "should search for a listing", js: true do
         fill_in 'search', with: 'guitar'
 	click_on 'submit-btn'
-#	page.should have_image "photo.jpg"
+        page.should have_content('Guitar')
       end
     end  
 

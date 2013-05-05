@@ -1,0 +1,17 @@
+<li id="<%= post.id %>">
+  <%= render partial: 'shared/show_photo', locals: {model: post.user, file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
+  <div class='span10'>
+    <div class='sender'>
+      <%= post.user.name %>
+    </div>
+    <div>
+      RE: <%= link_to post.listing.title, post.listing %>
+    </div>
+    <span class="content"><%= post.summary %><%= link_to ' more...', '#', :id=>'more-btn' if post.long_content? %></span>
+    <span id='fcontent' style="display: none"><%= post.full_content %></span>
+    <span class="timestamp">
+      Posted <%= ts_in_words(post.created_at) %> ago.
+    </span>
+    <%= render partial: 'shared/reply', locals: { post: post } unless post.sender? @user %>
+  </div>
+</li>

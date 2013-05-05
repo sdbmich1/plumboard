@@ -40,7 +40,7 @@ $(document).on("change", "input[type=file]", function(evt){
 }); 
 
 // paginate on click
-$(document).on("click", "#pendingOrder .pagination a", function(){
+$(document).on("click", "#pendingOrder .pagination a, #post_form .pagination a", function(){
   $.getScript(this.href);
   return false;
 }); 
@@ -201,5 +201,11 @@ $(function(){
     });
   }
 });
+
+// check for text display toggle
+$(document).on("click", "#more-btn", function(){
+  $('.content').hide('fast');
+  $('#fcontent').show('fast') 
+});	
 
 

@@ -1,13 +1,7 @@
-  <%= form_for @user, url: user_path(@user, target: 'shared/user_form'), :html => { multipart: true, class: 'uform' }, remote: true do |f| %>
+  <%= form_for [@user, @user.with_picture], url: user_path(@user, target: 'shared/user_form'), html: { multipart: true, class: 'uform' }, remote: true do |f| %>
     <div id="notice"><%= render partial: 'layouts/notices' %></div>
-    <div id="form_errors"><%= render partial: 'shared/error_messages', :locals => { :target => @user } %></div>
-
-    <div class="sm-top span4 center-wrapper" id="usr_photo">
-      <div><output id='list'>
-        <%= image_tag @user.pictures[0].photo.url, class: 'usr-photo' unless @user.pictures.blank? %>
-      </output></div>
-      <%= render partial: 'shared/user_photo', locals: { f: f } %>
-    </div>
+    <div id="form_errors"><%= render partial: 'shared/error_messages', locals: { target: f.object } %></div>
+    <%= render partial: 'shared/show_user_photo', locals: { f: f } %>
 
     <div class="sm-top span5">
       <div id='signup'>

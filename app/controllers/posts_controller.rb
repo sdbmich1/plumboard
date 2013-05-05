@@ -1,10 +1,27 @@
+require 'will_paginate/array' 
 class PostsController < ApplicationController
   before_filter :authenticate_user!
+  before_filter :load_data, only: [:index, :unread, :sent]
+  before_filter :mark_post, only: [:reply]
 
   def index
+    @posts = @user.incoming_posts.paginate(page: @page)
   end
 
-  def show
+  def reply
+    @post = Post.new params[:post]
+    if @post.save
+      flash[:notice] = "Successfully sent post."
+      @posts = Post.get_unread @user
+    end
+  end
+
+  def sent
+    @posts = @user.posts.paginate(page: @page)
+  end
+
+  def unread
+    @posts = Post.get_unread(@user).paginate(page: @page)
   end
 
   def create
@@ -12,10 +29,22 @@ class PostsController < ApplicationController
     @post = Post.new params[:post]
     if @post.save
       flash[:notice] = "Successfully created post."
-      @posts = Post.load_new @listing
+      @post = Post.load_new @listing
     end
   end
 
   def destroy
+    @post = Post.find params[:id]
+  end
+   
+  private
+
+  def mark_post
+    @old_post = Post.find params[:id]
+    @old_post.mark_as_read! for: @user if @old_post
+  end
+
+  def load_data
+    @page = params[:page] || 1
   end
 end

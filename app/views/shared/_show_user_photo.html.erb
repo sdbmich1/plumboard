@@ -1,0 +1,9 @@
+<div class="span4 center-wrapper" id="usr_photo">
+  <div>
+    <output id='list'>
+      <%= image_tag get_user_image(@user), class: 'usr-photo' %>
+    </output>
+  </div>
+  <%= render partial: 'shared/user_photo', locals: { f: f } %>
+</div>
+

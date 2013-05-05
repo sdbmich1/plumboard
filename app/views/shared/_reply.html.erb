@@ -1,0 +1,14 @@
+  <%= form_for setup_post(@user), url: reply_posts_path(id: post), method: :post, remote: true do |f| %> 
+    <div id="notice" style="display:none"></div>
+    <div id="form_errors">
+      <%= render partial: 'shared/error_messages', :locals => { :target => f.object } %>
+    </div>
+    <%= f.hidden_field 'listing_id', value: post.listing_id %>
+    <%= f.hidden_field 'pixi_id', value: post.pixi_id %>
+    <%= f.hidden_field 'recipient_id', value: post.user_id %>
+    <%= f.hidden_field 'user_id', value: post.recipient_id %>
+    <div class="reply_form">
+      <%= f.text_area 'content', placeholder: 'Type something and click reply to send...', id: 'post_content' %>  
+      <%= f.submit 'Reply', class: "btn btn-medium btn-primary submit-btn" %>
+    </div>
+  <% end %>

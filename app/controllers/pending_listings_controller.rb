@@ -5,8 +5,7 @@ class PendingListingsController < ApplicationController
   respond_to :html, :json, :js
 
   def index
-    @listings = TempListing.get_by_status('pending')
-    @listings.paginate(page: @page)
+    @listings = TempListing.get_by_status('pending').paginate(page: @page)
   end
 
   def show

@@ -22,8 +22,11 @@ gem 'thinking-sphinx', '~> 3.0.2'
 gem 'rolify'
 gem 'cancan'
 
-# add clickable links
+# add clickable links for comment text
 gem 'rinku'
+
+# used to mark messages as read/unread
+gem 'unread'
 
 # Gems used only for assets and not required
 # in production environments by default.

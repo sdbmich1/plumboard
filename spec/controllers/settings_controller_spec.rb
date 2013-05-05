@@ -39,6 +39,30 @@ describe SettingsController do
     end
   end
 
+  describe "xhr GET 'index'" do
+
+    before :each do
+      do_get
+      controller.stub!(:current_user).and_return(@user)
+    end
+
+    def do_get
+      xhr :get, :index
+    end
+
+    it "should load the requested user" do
+      controller.current_user.should == @user
+    end
+
+    it "should assign @user" do
+      assigns(:user).should_not be_nil 
+    end
+
+    it "should load nothing" do
+      controller.stub!(:render)
+    end
+  end
+
   describe "GET 'password'" do
 
     before :each do

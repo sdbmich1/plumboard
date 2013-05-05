@@ -2,15 +2,12 @@ require 'spec_helper'
 
 describe "PendingListings", :type => :feature do
   subject { page }
-  let(:user) { FactoryGirl.create(:user) }
+  let(:user) { FactoryGirl.create(:pixi_user) }
 
   before(:each) do
     login_as(user, :scope => :user, :run_callbacks => false)
-    user.confirm!
     @user = user
     @listing = FactoryGirl.create :temp_listing_with_transaction
-    @listing.status = 'pending'
-    @listing.save!
   end
 
   describe "Review Pending Orders" do 
@@ -44,9 +41,19 @@ describe "PendingListings", :type => :feature do
   end
 
   describe "GET /pending_listings" do  
+    let(:listings) { 30.times { FactoryGirl.create(:temp_listing_with_transaction, seller_id: @user.id) } }
+    before :each do
+      visit pending_listings_path 
+    end
+
     it "should display listings" do 
-      visit pending_listings_path  
       page.should have_content("Pending Orders")
+    end
+
+    it "paginate should list each listing" do
+      @user.temp_listings.get_by_status('pending').paginate(page: 1).each do |listing|
+        page.should have_selector('td', text: listing.title)
+      end
     end
   end
 end

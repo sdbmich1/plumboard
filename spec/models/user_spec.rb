@@ -139,6 +139,19 @@ describe User do
     end 
   end  
 
+  describe 'with_picture' do
+    let(:user) { FactoryGirl.build :user }
+    let(:pixi_user) { FactoryGirl.build :pixi_user }
+
+    it "should add a picture" do
+      user.with_picture.pictures.size.should == 1
+    end
+
+    it "should not add a picture" do
+      pixi_user.with_picture.pictures.size.should == 1
+    end
+  end  
+
   describe 'pictures' do
     before(:each) do
       @sr = @user.pictures.create FactoryGirl.attributes_for(:picture)
@@ -244,6 +257,34 @@ describe User do
 
     it 'should not return a date' do
       User.convert_date(nil).should_not == "13/01/1989".to_date
+    end
+  end
+
+  describe "post associations" do
+    let(:listing) { FactoryGirl.create :listing, seller_id: @user.id }
+    let(:newer_listing) { FactoryGirl.create :listing, seller_id: @user.id }
+    let(:recipient) { FactoryGirl.create :pixi_user, first_name: 'Wilson' }
+
+    let!(:older_post) do 
+      FactoryGirl.create(:post, user: @user, recipient: recipient, listing: listing, pixi_id: listing.pixi_id, created_at: 1.day.ago)
+    end
+
+    let!(:newer_post) do
+      FactoryGirl.create(:post, user: @user, recipient: recipient, listing: newer_listing, pixi_id: newer_listing.pixi_id, created_at: 1.hour.ago)
+    end
+
+    it "should have the right posts in the right order" do
+      @user.posts.should == [newer_post, older_post]
+    end
+
+    it "should destroy associated posts" do
+      posts = @user.posts.dup
+      @user.destroy
+      posts.should_not be_empty
+
+      posts.each do |post|
+        Post.find_by_id(post.id).should be_nil
+      end
     end
   end
 end
