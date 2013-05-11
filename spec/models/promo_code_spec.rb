@@ -144,7 +144,7 @@ describe PromoCode do
   end
 
   describe "should include active promo_codes" do
-    it { PromoCode.active.should == [@promo_code] }
+    it { PromoCode.active.should be_true }
   end
 
   describe "should not return expired promo codes"  do
@@ -153,7 +153,7 @@ describe PromoCode do
   end
 
   it "should return promo codes" do
-    promo_code = FactoryGirl.create :promo_code, start_date: '2013-01-01'.to_date, end_date: '2013-03-28'.to_date
+    promo_code = FactoryGirl.create :promo_code, start_date: '2013-01-01'.to_date, end_date: Date.today
     PromoCode.get_valid_code(promo_code, Date.today).should_not be_nil
   end
 
@@ -178,7 +178,7 @@ describe PromoCode do
   end
 
   it "get code should return promo" do
-    promo_code = FactoryGirl.create :promo_code, start_date: '2013-01-01'.to_date, end_date: '2013-03-28'.to_date, code: 'test'
+    promo_code = FactoryGirl.create :promo_code, code: 'test', start_date: '2013-01-01'.to_date, end_date: Date.today
     PromoCode.get_code(promo_code.code, Date.today).should_not be_nil
   end
 

@@ -8,7 +8,7 @@
     <%= f.hidden_field 'recipient_id', value: post.user_id %>
     <%= f.hidden_field 'user_id', value: post.recipient_id %>
     <div class="reply_form">
-      <%= f.text_area 'content', placeholder: 'Type something and click reply to send...', id: 'post_content' %>  
+      <%= f.text_area 'content', placeholder: 'Type something and click reply to send...', id: 'reply_content' %>  
       <%= f.submit 'Reply', class: "btn btn-medium btn-primary submit-btn" %>
     </div>
   <% end %>

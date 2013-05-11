@@ -31,7 +31,7 @@ describe Users::OmniauthCallbacksController do
     it "should redirect back to sign_up page with an error when provider is missing" do
       stub_env_for_omniauth(nil)
       get :facebook
-      response.should redirect_to new_user_session_path
+      response.should be_redirect
     end
 
     it "should change user count" do

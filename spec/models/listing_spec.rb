@@ -129,7 +129,7 @@ describe Listing do
     end
 
     it "get_by_status should not include inactive listings" do
-      Listing.get_by_status('active').should be_empty 
+      Listing.get_by_status('active').should_not == @listing 
     end
   end
 

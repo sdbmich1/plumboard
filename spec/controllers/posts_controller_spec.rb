@@ -215,7 +215,6 @@ describe PostsController do
     context 'success' do
 
       before :each do
-        @posts = mock("posts")
         Post.stub!(:save).and_return(true)
         Post.stub!(:get_unread).with(@user).and_return(@posts)
         @posts.stub!(:paginate).and_return( @posts )
@@ -234,7 +233,7 @@ describe PostsController do
       it "should load the requested posts" do
         Post.stub(:get_unread).with(@user).and_return(@posts)
         do_reply
-        assigns(:posts).should be_nil 
+        assigns(:posts).should == @posts
       end
 
       it "should change post count" do

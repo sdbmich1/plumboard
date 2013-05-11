@@ -12,14 +12,13 @@
     <%= f.hidden_field 'recipient_id', value: listing.seller_id %>
     <%= f.hidden_field 'user_id', value: @user.id %>
     <div class='mbot pull-right'>
-      <%= link_to 'Like', '#', class: 'btn btn-primary' %>
       <%= link_to 'Share', '#', class: 'btn btn-primary' %>
       <%= link_to 'Follow', '#', class: 'btn btn-primary' %>
       <%= link_to '#', class: 'btn btn-primary' do %>
         <i class="icon-comment icon-white"></i>
         Comment 
       <% end %>
-      <%= f.submit 'Contact Owner', :class=>'btn btn-warning', id: 'contact-btn', disabled: listing.seller?(@user.id) %>
+      <%= f.submit 'Contact Owner', :class=>'btn btn-primary submit-btn', id: 'contact-btn', disabled: listing.seller?(@user.id) %>
     </div>
   <% end %>  
 <% end %>  

@@ -23,6 +23,7 @@ describe ListingsController do
 
   before(:each) do
     log_in_test_user
+    @user = mock_user
     @listing = stub_model(Listing, :id=>1, site_id: 1, seller_id: 1, title: "Guitar for Sale", description: "Guitar for Sale")
   end
 
@@ -51,17 +52,16 @@ describe ListingsController do
     end
   end
 
-  describe 'GET seller/:user_id' do
+  describe 'GET seller' do
     before :each do
       @listings = mock("listings")
-      @user = stub_model(User)
-      User.stub!(:find).and_return(@user)
+      controller.stub!(:current_user).and_return(@user)
       @user.stub_chain(:pixis, :paginate).and_return( @listings )
       do_get
     end
 
     def do_get
-      get :seller, user_id: '1'
+      get :seller
     end
 
     it "renders the :seller view" do
@@ -80,6 +80,36 @@ describe ListingsController do
       response.should be_success
     end
   end
+
+  describe 'GET sold' do
+    before :each do
+      @listings = mock("listings")
+      controller.stub!(:current_user).and_return(@user)
+      @user.stub_chain(:sold_pixis, :paginate).and_return( @listings )
+      do_get
+    end
+
+    def do_get
+      xhr :get, :sold
+    end
+
+    it "renders the :sold view" do
+      response.should render_template :sold
+    end
+
+    it "should assign @user" do
+      assigns(:user).should_not be_nil
+    end
+
+    it "should assign @listings" do
+      assigns(:listings).should_not be_nil
+    end
+
+    it "should show the requested listings" do
+      response.should be_success
+    end
+  end
+
 
   describe 'GET show/:id' do
     before :each do

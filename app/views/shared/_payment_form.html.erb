@@ -16,10 +16,10 @@
     <%= f.hidden_field :convenience_fee, :value => @transaction.convenience_fee, :id=>'convenience_fee' %>
     <%= f.hidden_field :description, :value => @order[:title] %>
 
+    <%= link_to '<< Prev Step: Review', @listing, class: 'btn btn-primary stnd-btn back-btn' %>
     <div class="nav pull-right">
-      <%= link_to '<< Prev Step: Review', @listing, class: 'btn btn-large btn-primary stnd-btn back-btn' %>
-      <%= link_to 'Cancel', @listing, method: :delete, confirm: 'Are you sure? All your changes will be lost.', class: 'btn btn-large btn-primary stnd-btn' %>
-      <%= f.submit "Done!", :confirm => confirm_msg, :id => 'payForm', class: "btn btn-large btn-primary submit-btn" %>
+      <%= link_to 'Cancel', @listing, method: :delete, confirm: 'Are you sure? All your changes will be lost.', class: 'btn btn-primary stnd-btn' %>
+      <%= f.submit "Done!", :confirm => confirm_msg, :id => 'payForm', class: "btn btn-primary submit-btn" %>
     </div>
   <% end %>
 </div>

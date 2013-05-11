@@ -12,7 +12,7 @@ class PostsController < ApplicationController
     @post = Post.new params[:post]
     if @post.save
       flash[:notice] = "Successfully sent post."
-      @posts = Post.get_unread @user
+      @posts = Post.get_unread(@user).paginate(page: @page)
     end
   end
 

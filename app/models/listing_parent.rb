@@ -61,7 +61,7 @@ class ListingParent < ActiveRecord::Base
 
   # find listings by status
   def self.get_by_status val
-    where(:status => val).order('updated_at ASC')
+    where(:status => val).order('updated_at DESC')
   end
 
   # find listings by site id

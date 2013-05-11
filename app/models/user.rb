@@ -79,7 +79,17 @@ class User < ActiveRecord::Base
 
   # return all pixis for user
   def pixis
-    self.listings | self.temp_listings.where("status NOT IN ('approved')")
+    self.listings.active
+  end
+
+  # return all new pixis for user
+  def new_pixis
+    self.temp_listings.where("status NOT IN ('approved')")
+  end
+
+  # return all pixis for user
+  def sold_pixis
+    self.listings.get_by_status('sold')
   end
 
   # converts date format
@@ -110,7 +120,7 @@ class User < ActiveRecord::Base
   # add photo from url
   def self.picture_from_url usr, access_token
     pic = usr.pictures.build
-    pic.photo = URI.parse(access_token.info.image.sub("square","large"))
+    pic.photo = URI.parse(access_token.info.image.sub("square","large")) rescue nil
     pic
   end
 

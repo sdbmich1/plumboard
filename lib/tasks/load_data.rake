@@ -36,7 +36,7 @@ def process_record listing
 end
 
 def update_pixis
-  pixis = Listing.active
+  pixis = Listing.active.where('category_id < ?', 5)
   pixis.map! {|p| p.end_date = Time.now+14.days; p.save}
 end
 

@@ -23,7 +23,6 @@ class Post < ActiveRecord::Base
     if listing
       new_post = listing.posts.build
       new_post.recipient_id, new_post.pixi_id = listing.seller_id, listing.pixi_id
-      new_post.content = PIXI_POST
       new_post
     end
   end

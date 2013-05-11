@@ -57,7 +57,7 @@ module ApplicationHelper
 
   # truncate timestamp in words
   def ts_in_words tm
-    time_ago_in_words(tm).gsub('about','') 
+    time_ago_in_words(tm).gsub('about','') + ' ago'
   end
 
   # get number of unread messages for user
@@ -74,6 +74,11 @@ module ApplicationHelper
 
   # set user image
   def get_user_image usr
-    usr.pictures.blank? ? usr.pictures[0].photo.url : 'person_icon.jpg'
+    usr.pictures.blank? ? 'person_icon.jpg' : usr.pictures[0].photo.url
+  end
+
+  # return sites based on pixi type
+  def get_sites ptype
+    ptype ? Site.with_new_pixis : Site.with_pixis
   end
 end

@@ -17,6 +17,7 @@ describe TransactionsController do
 
   before(:each) do
     log_in_test_user
+    @user = mock_user
     @transaction = stub_model(Transaction, :id=>1, first_name: "Test", last_name: "user", price: 5.00)
   end
 
@@ -45,18 +46,17 @@ describe TransactionsController do
   describe "GET 'new'" do
 
     before :each do
-      @order.stub!("order").and_return(:success)
-      @user = stub_model(User)
-      User.stub!(:find).and_return(@user)
       @listing = stub_model(TempListing)
       TempListing.stub!(:find_by_pixi_id).and_return(@listing)
-      Transaction.stub!(:load_new).with(@user, @listing, @order).and_return( @transaction )
+      controller.stub(:order) {['order', 'order']}
+      controller.stub!(:current_user).and_return(@user)
       controller.stub!(:load_vars).and_return(:success)
       controller.stub!(:set_amt).and_return(:success)
+      Transaction.stub!(:load_new).with(@user, @listing, @order).and_return( @transaction )
     end
 
     def do_get
-      get :new, id: '1' 
+      get :new
     end
 
     it "should assign @transaction" do

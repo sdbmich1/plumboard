@@ -10,8 +10,9 @@
     <span class="content"><%= post.summary %><%= link_to ' more...', '#', :id=>'more-btn' if post.long_content? %></span>
     <span id='fcontent' style="display: none"><%= post.full_content %></span>
     <span class="timestamp">
-      Posted <%= ts_in_words(post.created_at) %> ago.
+      Posted <%= ts_in_words(post.created_at) %>.
     </span>
     <%= render partial: 'shared/reply', locals: { post: post } unless post.sender? @user %>
   </div>
+  <div class='clear-all'></div>
 </li>

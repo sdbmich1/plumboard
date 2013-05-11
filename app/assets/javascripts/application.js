@@ -41,6 +41,7 @@ $(document).on("change", "input[type=file]", function(evt){
 
 // paginate on click
 $(document).on("click", "#pendingOrder .pagination a, #post_form .pagination a", function(){
+  toggleLoading();
   $.getScript(this.href);
   return false;
 }); 
@@ -98,15 +99,15 @@ function handleFileSelect(evt, style) {
 }
 
 // used to toggle spinner
-$(document).on("ajax:beforeSend", '#purchase_btn, #search_btn, .uform, .back-btn, #pixi-form', function () {
+$(document).on("ajax:beforeSend", '#purchase_btn, #search_btn, .uform, .back-btn, #pixi-form, .submenu', function () {
   toggleLoading();
 });	
 
-$(document).on("ajax:success", '#purchase_btn, #search_btn, .uform, .back-btn, #pixi-form', function () {
+$(document).on("ajax:success", '#purchase_btn, #search_btn, .uform, .back-btn, #pixi-form, .submenu', function () {
   toggleLoading();
 });	
 
-$(document).on("ajax:complete", '#purchase_btn, #search_btn, .uform, .back-btn, #pixi-form', function () {
+$(document).on("ajax:complete", '#purchase_btn, #search_btn, .uform, .back-btn, #pixi-form, .submenu', function () {
   toggleLoading();
 });	
 

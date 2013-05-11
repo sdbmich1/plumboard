@@ -188,14 +188,38 @@ describe User do
 
   describe 'pixis' do
     it "should return pixis" do
-      @user.temp_listings.create FactoryGirl.attributes_for(:temp_listing)
-      @user.listings.create FactoryGirl.attributes_for(:listing)
+      @listing = FactoryGirl.create(:listing, seller_id: @user.id)
+      @user.listings.create FactoryGirl.attributes_for(:listing, status: 'active')
       @user.pixis.should_not be_empty
     end
 
     it "should not return pixis" do
       usr = FactoryGirl.create :contact_user
       usr.pixis.should be_empty
+    end
+  end
+
+  describe 'sold pixis' do
+    it "should return pixis" do
+      @listing = FactoryGirl.create(:listing, seller_id: @user.id, status: 'sold')
+      @user.sold_pixis.should_not be_empty
+    end
+
+    it "should not return pixis" do
+      usr = FactoryGirl.create :contact_user
+      usr.sold_pixis.should be_empty
+    end
+  end
+
+  describe 'new pixis' do
+    it "should return new pixis" do
+      @temp_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id)
+      @user.new_pixis.should_not be_empty
+    end
+
+    it "should not return new pixis" do
+      usr = FactoryGirl.create :contact_user
+      usr.new_pixis.should be_empty
     end
   end
 

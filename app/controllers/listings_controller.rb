@@ -24,7 +24,11 @@ class ListingsController < ApplicationController
   end
 
   def seller
-    @listings = @user.pixis.paginate(:page => @page)
+    @listings = @user.pixis.paginate(page: @page)
+  end
+
+  def sold
+    @listings = @user.sold_pixis.paginate(page: @page)
   end
 
   protected

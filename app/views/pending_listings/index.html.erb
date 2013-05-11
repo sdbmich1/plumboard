@@ -1,6 +1,8 @@
 <% provide(:title, 'Pending Orders') %>
+<%= content_for :subhead do %>
+  <%= render partial: 'shared/navbar_pending', locals: { section_name: 'Pending Orders' } %>
+<% end %>
 <%= content_for :content do %>
-  <div class='div-border top-hdr pixi-bkgnd center-wrapper'>Pending Orders</div>
   <div id="pendingOrder">
     <%= render :partial => 'shared/index_list' %>
   </div>
