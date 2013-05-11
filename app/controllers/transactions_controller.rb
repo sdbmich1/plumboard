@@ -1,4 +1,3 @@
-require 'calc_total'
 class TransactionsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :load_vars, :except => [:index, :refund]

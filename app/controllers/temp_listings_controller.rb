@@ -1,5 +1,7 @@
+require 'will_paginate/array' 
 class TempListingsController < ApplicationController
   before_filter :authenticate_user!
+  before_filter :load_data, only: [:unposted]
   respond_to :html, :json, :js
 
   def new
@@ -43,4 +45,15 @@ class TempListingsController < ApplicationController
     flash[:notice] = 'Successfully removed pixi.' if @listing.destroy 
     redirect_to listings_path
   end
+
+  def unposted
+    @listings = @user.new_pixis.paginate(page: @page)
+  end
+  
+  private
+
+  def load_data
+    @page = params[:page] || 1
+  end
+
 end

@@ -13,7 +13,7 @@ Plumboard::Application.routes.draw do
   # resource defs
   resources :listings, except: [:new, :edit, :update, :create] do
     collection do
-      get 'seller', 'follower'
+      get 'seller', 'follower', 'sold'
     end
   end
 
@@ -31,6 +31,9 @@ Plumboard::Application.routes.draw do
   resources :searches, only: [:index]
 
   resources :temp_listings, except: [:index] do
+    collection do
+      get 'unposted'
+    end
     member do
       put 'resubmit'
     end

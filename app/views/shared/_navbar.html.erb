@@ -2,14 +2,15 @@
   <div class="navbar">
     <div class="navbar-inner">
       <div class="container">
-        <a class="brand" href="#">Settings</a>
+        <span class="brand">Settings</span>
         <div id="profile-menu">
 	  <nav>
 	  <ul class="nav pull-right">
-	    <li class="active"><%= link_to "Profile", settings_path, remote: true %></li>
-	    <li><%= link_to "Contact", settings_contact_path, remote: true %></li>
+	    <li class="active"><%= link_to "Profile", settings_path, class: 'submenu', remote: true %></li>
+	    <li><%= link_to "Contact", settings_contact_path, class: 'submenu', remote: true %></li>
 	    <li><a href="#">My Sites</a></li>
-	    <li><%= link_to "Change Password", settings_password_path, remote: true %></li>
+	    <li><a href="#">Preferences</a></li>
+	    <li><%= link_to "Change Password", settings_password_path, class: 'submenu', remote: true %></li>
           </ul>
 	  </nav>
         </div>

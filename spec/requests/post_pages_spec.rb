@@ -28,7 +28,7 @@ feature "Posts" do
 
     it "should reply to a post", js: true do
       expect{
-      	  fill_in 'post_content', with: "I'm interested in this pixi. Please contact me." 
+      	  fill_in 'reply_content', with: "I'm interested in this pixi. Please contact me." 
           click_reply
       }.to change(Post,:count).by(1)
 
@@ -37,7 +37,7 @@ feature "Posts" do
      
     it "should not reply to a post", js: true do
       expect{
-	  fill_in 'post_content', with: nil
+	  fill_in 'reply_content', with: nil
           click_reply
       }.not_to change(Post,:count).by(1)
 
@@ -58,7 +58,7 @@ feature "Posts" do
 
     it "should reply to a post" do
       expect{
-      	  fill_in 'post_content', with: "I'm interested in this pixi. Please contact me." 
+      	  fill_in 'reply_content', with: "I'm interested in this pixi. Please contact me." 
           click_reply
       }.to change(Post,:count).by(1)
 
@@ -67,7 +67,7 @@ feature "Posts" do
      
     it "should not reply to a post" do
       expect{
-	  fill_in 'post_content', with: nil
+	  fill_in 'reply_content', with: nil
           click_reply
       }.not_to change(Post,:count).by(1)
 
@@ -86,6 +86,5 @@ feature "Posts" do
     it { should have_content @reply_post.user.name }
     it { should have_content @reply_post.listing.title }
     it { should have_content @reply_post.content }
-
   end
 end

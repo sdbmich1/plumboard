@@ -1,0 +1,20 @@
+<div id="submenu" class="bar-top">
+  <div class="navbar">
+    <div class="navbar-inner">
+      <div class="container">
+        <span class="brand">Pixis</span>
+        <div id="profile-menu">
+	  <nav>
+	  <ul class="nav pull-right">
+	    <li class="active"><%= link_to "Recent", listings_path, class: 'submenu', remote: true %></li>
+	    <li><a href="#">Suggested</a></li>
+          </ul>
+	  <div class="width240 pixi-select pull-right">
+	    <%= render partial: 'shared/sites', locals: { ptype: false } %>
+          </div>
+	  </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -9,7 +9,7 @@
 
           <ul class="nav pull-right">
             <li><%= link_to "Help", help_path %></li>
-            <li><%= link_to "Add+", new_temp_listing_path %></li>
+            <li><%= link_to "Post", new_temp_listing_path, id: 'add-pixi' %></li>
 
 	    <% if can? :manage_items, @user %>
 	      <%= render 'layouts/manage' %>

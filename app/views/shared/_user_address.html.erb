@@ -12,10 +12,10 @@
   <td><label>City* </label><%= form.text_field :city %></td>
   <td></td>
   <td><label>State/Province*</label>
-	<%= form.collection_select :state, State.all, :code, :state_name, {:prompt => 'Select State'} %></td>
+	<%= form.collection_select :state, State.all, :code, :state_name, {prompt: 'Select State', class: 'pixi-select'} %></td>
 </tr>
 <tr>
   <td><label>Zip* </label><%= form.text_field :zip, :size => 10 %></td>
   <td></td>
-  <td><label>Country </label><%= country_select "transaction", "country", ["United States"], :class => 'country' %></td>	  
+  <td><label>Country </label><%= country_select "transaction", "country", ["United States"], class: 'country pixi-select' %></td>	  
 </tr>

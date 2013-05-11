@@ -1,6 +1,6 @@
 <% provide(:title, page_title) %>
 <%= content_for :subhead do %>
-  <%= render :partial => 'shared/section_header', locals: { section_name: page_title } %>
+  <%= render :partial => 'shared/navbar_pixis', locals: { section_name: page_title } %>
 <% end %>
 <%= content_for :content do %>
   <div id="pxboard">
