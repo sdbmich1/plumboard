@@ -90,17 +90,18 @@ function set_token(response) {
 function stripeResponseHandler(status, response) {
   var stripeError = getFormID('#stripe_error'); 
       
-  if(status == 200 || status == '200') {
+  if(status == 200) {
     toggleLoading();
     stripeError.hide(300);
 	  
     // insert the token
     set_token(response);
- 	}
+   }
   else {
     if(response.error.message == "An unexpected error has occurred. We have been notified of the problem.") {
       payForm.attr('disabled', false);
 	  
+      alert(response.error.message);
       // insert the token
       set_token(response);
     }

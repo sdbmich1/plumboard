@@ -132,13 +132,12 @@ $pixiBlue: #0C6FCB;
 
 #signup input, select, .uneditable-input {
   max-height: 40px !important;
-  padding: 6px !important;
   margin: 0 0 15px 0;
   font-size: 20px;
   font-weight: medium;
-  -moz-border-radius:    4px;
-  -webkit-border-radius: 4px;
-  border-radius:         4px;  
+  -moz-border-radius:    3px;
+  -webkit-border-radius: 3px;
+  border-radius:         3px;  
 }
 
 .contact label {
@@ -228,6 +227,19 @@ input, select, .uneditable-input {
   width: 100px!important;
   @extend .pic-item;
   margin: 5px 10px 0 5px;
+}
+
+.pixi-photo img {
+  max-height: 125px!important;
+  width: 125px;
+  @extend .pic-item;
+  margin: 10px 5px 10px 0;
+}
+
+.inv-pic img {
+  max-height: 60px!important;
+  width: 60px;
+  @extend .pic-item;
 }
 
 /* user image thumbnails */
@@ -321,6 +333,8 @@ h3 { padding: 10px }
 .mbot {margin-bottom: 20px;}
 .sm-top { margin-top: 5px!important }  
 .sm-bot { margin-bottom: 5px!important }  
+.neg-top { margin-top: -10px!important }  
+.ng-top { margin-top: -3px!important }  
 
 .cb-label { display:inline; vertical-align:middle }
 .hdescr { font-size: 0.75em; color: #ccc; }
@@ -437,7 +451,6 @@ h3 { padding: 10px }
 .btn-medium {
   margin-top: 0!important;
   height: 30px!important;
-  background: $pixiOrange!important;
 }
 
 .btn-search {
@@ -445,7 +458,7 @@ h3 { padding: 10px }
   background: $pixiBlue;
 }
 
-.navbar-photo {
+.navbar-photo, .link {
   margin-right: 10px;
 }
 
@@ -466,7 +479,7 @@ h3 { padding: 10px }
   padding: 10px 2px 0px 2px;
 }
 
-a#add-pixi {
+a#add-pixi, a#add-inv {
   @extend .menubar-item;
   width: 50px;
   background:$pixiOrange;
@@ -518,9 +531,9 @@ a#notice-btn {
 
 .myimage img {
   float: left;
-  max-width: 60px!important;
-  max-height: 60px!important;
-  margin-right: 10px;
+  max-width: 50px!important;
+  max-height: 50px!important;
+  border: 1px solid #000000; 
 }
 
 .list-font {
@@ -554,9 +567,18 @@ a#notice-btn {
   vertical-align: bottom;
 }
 
-.pixi-select select {
-  margin-top: 5px!important;
+.pixi-select {
   margin-bottom: 0px!important;
-  height: 30px!important;
+  height: 28px!important;
   font-size: 13px!important;
+}
+
+#purchase_btn {
+  float: right;
+  width: 60px!important;
+}
+
+#post-frm, #new_post {
+  float: left;
+  width: 820px!important;
 }

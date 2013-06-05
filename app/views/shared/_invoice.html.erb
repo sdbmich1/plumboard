@@ -1,0 +1,10 @@
+<tr>
+  <td class='width80'>
+    <%= render partial: 'shared/show_photo', locals: {model: invoice.listing, file_name: "inv-pic", psize: '80x80', display_cnt: 0 } %>
+  </td>
+  <td class='width80'><%= link_to invoice.id, invoice, remote: true %></td>
+  <td class='width180'><%= invoice.buyer.name %></td>
+  <td class='width280'><%= link_to invoice.listing.nice_title, invoice.listing, class: 'pending_title' %></td>
+  <td class='width120 price'><%= number_to_currency(invoice.amount) %></td>
+  <td><%= invoice.status.titleize %></td>
+</tr>

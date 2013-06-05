@@ -17,6 +17,15 @@ Plumboard::Application.routes.draw do
     end
   end
 
+  resources :invoices do
+    collection do
+      get 'sent', 'received', 'get_pixi', 'autocomplete_user_first_name'
+    end
+    member do
+      get 'pay'
+    end
+  end
+
   resources :posts, except: [:new, :edit, :update] do
     collection do
       get 'unread', 'sent'

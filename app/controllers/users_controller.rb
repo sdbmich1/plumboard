@@ -20,17 +20,22 @@ class UsersController < ApplicationController
     @user = User.find params[:id]
     changing_email = params[:user][:email] != @user.email
     if @user.update_attributes(params[:user])
-      flash_msg = (changing_email && @user.pending_reconfirmation?) ?
-        t("devise.registrations.update_needs_confirmation") : t("devise.registrations.updated")
-      flash[:notice] = flash_msg
+      flash.now[:notice] = flash_msg changing_email
       @user = User.find params[:id]
+    else
+      respond_with(@user)
     end
-    respond_with(@user)
   end
 
   private
 
   def load_target
     @target = params[:target]
+  end
+
+  # loads confirmation message
+  def flash_msg chg_email
+    (chg_email && @user.pending_reconfirmation?) ?
+        t("devise.registrations.update_needs_confirmation") : t("devise.registrations.updated")
   end
 end

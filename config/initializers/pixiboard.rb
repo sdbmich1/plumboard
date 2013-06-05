@@ -5,4 +5,6 @@ PIXI_PERCENT = PIXI_KEYS['pixi']['percent']
 PIXI_BASE_PRICE = PIXI_KEYS['pixi']['base_price']
 PIXI_PREMIUM_PRICE = PIXI_KEYS['pixi']['premium_price']
 PIXI_DAYS = PIXI_KEYS['pixi']['days']
+MAX_PIXI_AMT = PIXI_KEYS['pixi']['max_pixi_amt']
+MAX_INV_QTY = PIXI_KEYS['pixi']['max_inv_qty']
 

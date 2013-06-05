@@ -1,7 +1,7 @@
-<% provide(:title, 'Submit Your Order') %>
+<% provide(:title, get_page_title) %>
 <%= content_for :subhead do %>
-  <%= render partial: 'shared/listing_header', :locals => { step_no: 3, step_name: 'Submit Your Order' } %>
+  <%= render partial: 'shared/listing_header', :locals => { step_no: 3, step_name: get_page_title } %>
 <% end %>
 <%= content_for :content do %>
-  <%= render :partial => "shared/payment_form", locals: { step_name: 'Submit Your Order' } %>
+  <%= render partial: "shared/payment_form", locals: { step_name: get_page_title } %>
 <% end %>

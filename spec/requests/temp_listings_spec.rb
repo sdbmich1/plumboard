@@ -31,7 +31,7 @@ feature "TempListings" do
   end
 
   describe "Manage Temp Pixis" do
-    let(:submit) { "Next Step: Review >>" }
+    let(:submit) { "Next" }
     let(:temp_listing) { FactoryGirl.build(:temp_listing) }
 
     before(:each) do
@@ -109,7 +109,7 @@ feature "TempListings" do
   end
 
   describe "Edit Invalid Temp Pixi" do 
-    let(:submit) { "Next Step: Review >>" }
+    let(:submit) { "Next" }
     let(:temp_listing) { FactoryGirl.create(:temp_listing) }
     before { visit edit_temp_listing_path(temp_listing) }
 
@@ -168,7 +168,7 @@ feature "TempListings" do
   end
 
   describe "Edit Temp Pixi" do 
-    let(:submit) { "Next Step: Review >>" }
+    let(:submit) { "Next" }
     let(:temp_listing) { FactoryGirl.create(:temp_listing_with_pictures) }
     before { visit edit_temp_listing_path(temp_listing) }
 
@@ -261,7 +261,7 @@ feature "TempListings" do
 
     it "Submits a pixi" do
       expect { 
-	      click_button 'Next Step: Submit >>'
+	      click_button 'Next'
 	}.not_to change(TempListing, :count)
 
       page.should have_content "Submit Your Order" 
@@ -269,7 +269,7 @@ feature "TempListings" do
 
     it "Builds a pixi" do
       expect { 
-	      click_link '<< Prev Step: Build'
+	      click_link 'Prev'
 	}.not_to change(TempListing, :count)
 
       page.should have_content "Build Pixi" 
@@ -290,5 +290,4 @@ feature "TempListings" do
       page.should have_content "Pixis" 
     end
   end
-
 end

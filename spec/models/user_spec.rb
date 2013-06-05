@@ -33,6 +33,10 @@ describe User do
     it { should respond_to(:temp_listings) } 
     it { should respond_to(:posts) } 
     it { should respond_to(:incoming_posts) } 
+    it { should respond_to(:invoices) } 
+    it { should respond_to(:received_invoices) } 
+    it { should respond_to(:unpaid_invoices) } 
+    it { should respond_to(:paid_invoices) } 
   end
 
   describe "when first_name is empty" do
@@ -191,11 +195,13 @@ describe User do
       @listing = FactoryGirl.create(:listing, seller_id: @user.id)
       @user.listings.create FactoryGirl.attributes_for(:listing, status: 'active')
       @user.pixis.should_not be_empty
+      @user.has_pixis?.should be_true
     end
 
     it "should not return pixis" do
       usr = FactoryGirl.create :contact_user
       usr.pixis.should be_empty
+      @user.has_pixis?.should_not be_true
     end
   end
 
@@ -261,6 +267,18 @@ describe User do
     end
   end
 
+  describe "pic_with_name" do 
+    let(:user) { FactoryGirl.build :user }
+
+    it "should not be true" do
+      user.pic_with_name.should_not be_true
+    end
+
+    it "should be true" do
+      @user.pic_with_name.should be_true
+    end
+  end
+
   describe "status" do 
     it { @user.active?.should be_true }
 
@@ -272,6 +290,10 @@ describe User do
     it 'should be inactive' do
       @user.deactivate.status.should_not == 'active'
     end
+
+    it 'should be inactive' do
+      @user.deactivate.status.should == 'inactive'
+    end
   end
 
   describe 'convert time' do
@@ -281,6 +303,31 @@ describe User do
 
     it 'should not return a date' do
       User.convert_date(nil).should_not == "13/01/1989".to_date
+    end
+  end
+
+  describe "invoice associations" do
+    before do
+      @buyer = FactoryGirl.create(:pixi_user) 
+      @listing = FactoryGirl.create(:listing, seller_id: @user.id)
+    end
+
+    it 'should not have unpaid invoices' do
+      @user.unpaid_invoices.should be_empty
+    end
+
+    it 'should have only unpaid invoices' do
+      @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id)
+      @user.unpaid_invoices.should_not be_empty
+      @user.paid_invoices.should be_empty
+    end
+
+    it 'should have paid invoices' do
+      @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id)
+      @invoice.status = 'paid'
+      @invoice.save
+      @user.paid_invoices.should_not be_empty
+      @user.unpaid_invoices.should be_empty
     end
   end
 

@@ -3,7 +3,8 @@ class Picture < ActiveRecord::Base
   
   has_attached_file :photo,
 	  url: "/system/:class/:attachment/:id/:style/:filename",
-	  path: ":rails_root/public/system/:class/:attachment/:id_partition/:style/:filename"    
+	  path: ":rails_root/public/system/:class/:attachment/:id_partition/:style/:filename", 
+	  styles: { :large => "300x300>", :medium => "150x150>", :thumb => "100x100>", :tiny => "30x30>" }
 
   belongs_to :imageable, :polymorphic => true
 

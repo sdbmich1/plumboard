@@ -1,5 +1,6 @@
 require "open-uri"
 class User < ActiveRecord::Base
+  include ThinkingSphinx::Scopes
   rolify
   acts_as_reader
 
@@ -15,6 +16,7 @@ class User < ActiveRecord::Base
 
   # define relationships
   has_many :listings, foreign_key: :seller_id
+  has_many :active_listings, foreign_key: :seller_id, class_name: 'Listing', conditions: { :status => 'active' }
   has_many :temp_listings, foreign_key: :seller_id, dependent: :destroy
 
   has_many :site_users, :dependent => :destroy
@@ -25,6 +27,11 @@ class User < ActiveRecord::Base
 
   has_many :posts, dependent: :destroy
   has_many :incoming_posts, :foreign_key => "recipient_id", :class_name => "Post", :dependent => :destroy
+
+  has_many :invoices, foreign_key: :seller_id
+  has_many :unpaid_invoices, foreign_key: :seller_id, class_name: 'Invoice', conditions: { :status => 'unpaid' }
+  has_many :paid_invoices, foreign_key: :seller_id, class_name: 'Invoice', conditions: { :status => 'paid' }
+  has_many :received_invoices, :foreign_key => "buyer_id", :class_name => "Invoice"
 
   has_many :transactions, dependent: :destroy
   has_many :user_pixi_points, dependent: :destroy
@@ -80,6 +87,11 @@ class User < ActiveRecord::Base
   # return all pixis for user
   def pixis
     self.listings.active
+  end
+
+  # return all pixis for user
+  def has_pixis?
+    pixis.size > 0
   end
 
   # return all new pixis for user
@@ -152,5 +164,16 @@ class User < ActiveRecord::Base
     self.status = 'inactive'
     self
   end
+
+  # display image with name for autocomplete
+  def pic_with_name
+    pic = self.pictures[0].photo(:tiny) rescue nil
+    pic ? "<img src='#{pic}' class='inv-pic' /> #{self.name}" : nil
+  end
+
+  # set sphinx scopes
+  sphinx_scope(:by_email) { |email|
+    {:conditions => {:email => email}}
+  }
 
 end

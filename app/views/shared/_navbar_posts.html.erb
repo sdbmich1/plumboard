@@ -1,18 +1,4 @@
-<div id="submenu" class="bar-top">
-  <div class="navbar">
-    <div class="navbar-inner">
-      <div class="container">
-        <span class="brand">Posts</span>
-        <div id="profile-menu">
-	  <nav>
-	  <ul class="nav pull-right">
-	    <li class="active"><%= link_to "Unread", unread_posts_path, class: 'submenu', remote: true %></li>
-	    <li><%= link_to "Received", posts_path, class: 'submenu', remote: true %></li>
-	    <li><%= link_to "Sent", sent_posts_path, class: 'submenu', remote: true %></li>
-          </ul>
-	  </nav>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+<ul class="nav pull-right">
+    <li class="active"><%= link_to "Received", posts_path, class: 'submenu', remote: true %></li>
+    <li><%= link_to "Sent", sent_posts_path, class: 'submenu', remote: true %></li>
+</ul>

@@ -25,6 +25,7 @@ Spork.prefork do
     config.include(EmailSpec::Matchers)
     config.mock_with :rspec
     config.include Paperclip::Shoulda::Matchers
+    config.include Capybara::RSpecMatchers
     config.fixture_path = "#{::Rails.root}/spec/fixtures"
     config.use_transactional_fixtures = false
 

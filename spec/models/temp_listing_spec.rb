@@ -24,6 +24,7 @@ describe TempListing do
   it { should respond_to(:category_id) }
   it { should respond_to(:pixi_id) }
   it { should respond_to(:parent_pixi_id) }
+  it { should respond_to(:post_ip) }
 
   it { should respond_to(:user) }
   it { should respond_to(:site) }

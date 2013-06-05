@@ -12,6 +12,7 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require jquery.ui.all
 //= require bootstrap
 //= require jquery.remotipart
 //= require_tree .
@@ -22,8 +23,8 @@ $.ajaxSetup({
 	xhr.setRequestHeader("X-CSRF-Token", token);
   	toggleLoading();
     },
-  'complete': function(){ },
-  'success': function() { toggleLoading }
+  'complete': function(){ toggleLoading(); },
+  'success': function() { toggleLoading(); }
 }); 
 
 // preview image on file upload
@@ -46,16 +47,24 @@ $(document).on("click", "#pendingOrder .pagination a, #post_form .pagination a",
   return false;
 }); 
 
-// change active state for menu on click
-$(document).on("click", "#profile-menu .nav li a", function(e){
+// clear active state
+function reset_menu_state($this, hFlg) {
   $('#profile-menu .nav li').removeClass('active');
-  $('#profile-menu .nav li a').css('background-color', 'transparent').css('color', '#555555');
+  $('#li_home, #profile-menu .nav li a').css('background-color', 'transparent').css('color', '#555555');
 
-  var $this = $(this);
   if (!$this.hasClass('active')) {
     $this.parent().addClass('active');
     $this.css('background-color', '#e6e6e6').css('color', '#F95700');
   }
+
+  if (hFlg) 
+    $this.addClass('active');
+}
+
+// change active state for menu on click
+$(document).on("click", "#profile-menu .nav li a", function(e){
+  var $this = $(this);
+  reset_menu_state($this, false);
 
   e.preventDefault();
 });
@@ -209,4 +218,61 @@ $(document).on("click", "#more-btn", function(){
   $('#fcontent').show('fast') 
 });	
 
+// calc invoice amount
+function calc_amt(){
+  var qty = $('#inv_qty').val();
+  var price = $('#inv_price').val();
+  var tax = $('#inv_tax').val();
+
+  if (qty.length > 0 && price.length > 0) {
+    var amt = parseInt(qty) * parseFloat(price);
+    $('#inv_amt').val(amt.toFixed(2)); 
+
+    // calc tax
+    if (tax.length > 0) {
+      var tax_total = amt * parseFloat(tax)/100;
+    }
+    else {
+      var tax_total = 0.0;
+    }
+
+    // update tax total
+    $('#inv_tax_total').val(tax_total.toFixed(2)); 
+
+    // set & update invoice total
+    var inv_total = amt + tax_total;
+    $('#inv_total').val(inv_total.toFixed(2)); 
+  }
+}
+
+// calc invoice amt
+$(document).on("change", "#inv_qty, #inv_price, #inv_tax", function(){
+  calc_amt();
+});
+
+// get pixi based selection of pixi ID
+$(document).on("change", "select[id*=pixi_id]", function() {
+  var pid = $(this).val();
+  var url = '/invoices/get_pixi?pixi_id=' + pid;
+
+  // process script
+  processUrl(url);
+});
+
+// process url calls
+function processUrl(url) {
+  $.ajax({
+        url: url,
+	dataType: 'script'
+  });
+}
+
+// set autocomplete to accept images
+$( "input#buyer_name" ).autocomplete({ html: true });
+
+// set autocomplete selection value
+$(document).on("railsAutocomplete.select", "#buyer_name", function(event, data){
+  var bname = data.item.first_name + ' ' + data.item.last_name;
+  $('#buyer_name').val(bname);
+});
 

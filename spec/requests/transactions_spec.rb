@@ -2,7 +2,7 @@ require 'spec_helper'
 
 feature "Transactions" do
   subject { page }
-  let(:user) { FactoryGirl.create(:contact_user) }
+  let(:user) { FactoryGirl.create(:pixi_user) }
   let(:submit) { "Done!" }
 
   before(:each) do
@@ -12,29 +12,42 @@ feature "Transactions" do
     @listing = FactoryGirl.create :temp_listing, seller_id: @user.id
   end
 
+  def add_invoice
+    @buyer = FactoryGirl.create(:pixi_user, first_name: 'Kim', last_name: 'Harris', email: 'kharris@pixitest.com')
+    @listing2 = FactoryGirl.create(:listing, seller_id: @user.id)
+    @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing2.pixi_id, buyer_id: @buyer.id)
+  end
+
   def visit_txn_path
     visit new_transaction_path id: @listing.pixi_id, promo_code: '', title: @listing.title,
-        "item1" => 'New Pixi Post', "quantity1" => 1, cnt: 1, qtyCnt: 1, "price1" => 5.00
+        "item1" => 'New Pixi Post', "quantity1" => 1, cnt: 1, qtyCnt: 1, "price1" => 5.00, transaction_type: 'pixi'
   end
 
   def visit_free_txn_path
     visit new_transaction_path id: @listing.pixi_id, promo_code: '2013LAUNCH', title: @listing.title,
-        "item1" => 'New Pixi Post', "quantity1" => 1, cnt: 1, qtyCnt: 1, "price1" => 5.00
+        "item1" => 'New Pixi Post', "quantity1" => 1, cnt: 1, qtyCnt: 1, "price1" => 5.00, transaction_type: 'pixi'
+  end
+
+  def visit_inv_txn_path
+    add_invoice
+    visit new_transaction_path id: @listing2.pixi_id, promo_code: '', title: "Invoice # #{@invoice.id}", 
+        "item1" => @listing2.title, "quantity1" => 1, cnt: 1, qtyCnt: 1, "price1" => 100.00, transaction_type: 'invoice',
+	"sales_tax"=> 8.25, invoice_id: @invoice.id
   end
 
   def user_data
     fill_in 'first_name', with: @user.first_name
     fill_in 'last_name', with: @user.last_name
     fill_in 'transaction_email', with: @user.email
-    fill_in 'transaction_home_phone', with: @user.contacts[0].home_phone
-    fill_in 'transaction_address', with: @user.contacts[0].address
-    fill_in 'transaction_city', with: @user.contacts[0].city
+    fill_in 'transaction_home_phone', with: '4152419755'
+    fill_in 'transaction_address', with: '251 Connecticut'
+    fill_in 'transaction_city', with: 'San Francisco'
   end
 
   def user_data_with_state
     user_data
     select("California", :from => "transaction_state")
-    fill_in 'transaction_zip', with: @user.contacts[0].zip
+    fill_in 'transaction_zip', with: '94103'
   end
 
   def invalid_card_dates
@@ -253,15 +266,19 @@ feature "Transactions" do
       visit_free_txn_path 
     end
 
+    it { should have_link('Prev', href: temp_listing_path(@listing)) }
+    it { should have_link('Cancel', href: temp_listing_path(@listing)) }
+    it { should have_button('Done!') }
+
     it "Reviews a pixi" do
       expect { 
-	      click_link '<< Prev Step: Review'
+	      click_link 'Prev'
 	}.not_to change(Transaction, :count)
 
       page.should have_content "Review Your Pixi" 
     end
 
-    describe "Manage Free Valid Transactions", :js=>true do
+    describe "Manage Free Valid Transactions", js: true do
 
       it "Cancel transaction cancel" do
         expect { 
@@ -277,29 +294,60 @@ feature "Transactions" do
           click_ok; sleep 2
 	}.to change(Transaction, :count).by(1)
 
-        page.should have_content 'Order Complete'
+        page.should have_content "Order Complete"
       end
 
       it "Cancel transaction" do
         click_cancel_ok
-        page.should have_content "Pixis" 
+
+        page.should_not have_content "Total Due"
+        page.should have_content "Successfully removed pixi" 
       end
     end
   end
 
-  describe "Manage Valid Transactions" do
+  describe "Manage Valid Invoice Transactions" do
+    before(:each) do
+      visit_inv_txn_path 
+      user_data_with_state
+    end
+
+    it { should have_selector('title', text: 'Pay Invoice') }
+    it { should have_link('Prev', href: invoice_path(@invoice)) }
+    it { should_not have_link('Cancel', href: temp_listing_path(@listing)) }
+    it { should have_button('Done!') }
+
+    it "Reviews an invoice" do
+      expect { 
+	      click_link 'Prev'
+	}.not_to change(Transaction, :count)
+
+      page.should have_selector('title', text: 'Invoices')
+      page.should have_content "INVOICE" 
+    end
+
+    it "should create a transaction with valid visa card", :js=>true do
+      expect { 
+        visa_card_data
+	}.to change(Transaction, :count).by(1)
+
+      page.should have_content("Purchase Complete")
+    end
+  end
+
+  describe "Manage Valid Pixi Transactions" do
     before(:each) do
       visit_txn_path 
       user_data_with_state
     end
 
-      it "Cancel transaction submission", :js=>true do
-        expect { 
+    it "Cancel transaction submission", :js=>true do
+      expect { 
 	      click_submit_cancel
 	  }.not_to change(Transaction, :count)
 
-        page.should have_content "Submit Your Order" 
-      end
+      page.should have_content "Submit Your Order" 
+    end
 
     it "should create a transaction with valid visa card", :js=>true do
       expect { 
@@ -346,44 +394,54 @@ feature "Transactions" do
     describe "Create with invalid address information" do
       it "should not create a transaction with invalid first name" do
         expect { 
+          user_data_with_state
           fill_in 'first_name', with: ""
+          jcb_card_data
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'invalid'
+        page.should have_content "First name can't be blank"
       end
 
       it "should not create a transaction with invalid last name" do
         expect { 
+          user_data_with_state
           fill_in 'last_name', with: ""
+          jcb_card_data
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'invalid'
+        page.should have_content "Last name can't be blank"
       end
 
       it "should not create a transaction with blank home phone" do
         expect { 
+	  user_data_with_state
           fill_in 'transaction_home_phone', with: ""
+          jcb_card_data
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'invalid'
+        page.should have_content "Home phone can't be blank"
       end
     end
 
     describe "Create with invalid email information" do
       it "should not create a transaction with blank email" do
         expect { 
+	  user_data_with_state
           fill_in 'transaction_email', with: ""
+          jcb_card_data
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'invalid'
+        page.should have_content "Email can't be blank"
       end
 
       it "should not create a transaction with bad email" do
         expect { 
+	  user_data_with_state
           fill_in 'transaction_email', with: "user@x."
+          jcb_card_data
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'invalid'
+        page.should have_content 'Email is not formatted properly'
       end
     end
 
@@ -392,44 +450,50 @@ feature "Transactions" do
         expect { 
           fill_in 'first_name', with: @user.first_name
           fill_in 'last_name', with: @user.last_name
+    	  fill_in 'transaction_email', with: @user.email
+          jcb_card_data
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'invalid'
+        page.should have_content "Address can't be blank"
       end
 
       it "should not create a transaction with no street address" do
         expect { 
-	  user_data
+	  user_data_with_state
           fill_in 'transaction_address', with: ""
+          jcb_card_data
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'invalid'
+        page.should have_content "Address can't be blank"
       end
 
       it "should not create a transaction with no city" do
         expect { 
-	  user_data
+	  user_data_with_state
           fill_in 'transaction_city', with: ""
+          jcb_card_data
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'invalid'
+        page.should have_content "City can't be blank"
       end
 
       it "should not create a transaction with no state" do
         expect { 
 	  user_data
+          jcb_card_data
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'invalid'
+        page.should have_content "State can't be blank"
       end
 
       it "should not create a transaction with no zip" do
         expect { 
 	  user_data_with_state
           fill_in 'transaction_zip', with: ""
+          jcb_card_data
 	  click_ok }.not_to change(Transaction, :count)
 
-        page.should have_content 'invalid'
+        page.should have_content "Zip can't be blank"
       end
     end
 

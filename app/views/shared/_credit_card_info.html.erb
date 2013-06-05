@@ -15,11 +15,11 @@
     <td class="width120"><%= text_field_tag :card_code, nil, name: nil, :maxlength => 4, :size => 4 %> 
     <td class="width30"></td>
     <td class="width180">
-        <%= select_month nil, {add_month_numbers_true: true}, {name: nil, id: "card_month", class: "sm-top pixi-select" } %>
+        <%= select_month nil, {add_month_numbers_true: true}, {name: nil, id: "card_month", class: "neg-top pixi-select" } %>
     </td>
     <td class="width30"></td>
     <td class="width120">
-        <%= select_year nil, {start_year: Date.today.year, end_year: Date.today.year+15}, {name: nil, id: "card_year", class: "sm-top pixi-select"} %>
+        <%= select_year nil, {start_year: Date.today.year, end_year: Date.today.year+15}, {name: nil, id: "card_year", class: "neg-top pixi-select"} %>
     </td>
   </tr>
   <tr>

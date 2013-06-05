@@ -1,0 +1,5 @@
+<%= text_field_tag :acct_number, nil, name: nil, :size => 16, placeholder: 'Account Number' %>
+<%= text_field_tag :routing_number, nil, name: nil, :size => 16, placeholder: 'Routing Number' %>
+<%= text_field_tag :acct_name, nil, name: nil, :size => 30, placeholder: 'Account Name' %>
+<%= select_tag :acct_type, options_for_select( ['Checking', 'Savings'] ), {placeholder: 'Account Type'} %>
+

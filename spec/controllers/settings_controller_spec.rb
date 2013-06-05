@@ -1,7 +1,6 @@
 require 'login_user_spec'
 
 describe SettingsController do
-
   include LoginTestUser
 
   def mock_user(stubs={})

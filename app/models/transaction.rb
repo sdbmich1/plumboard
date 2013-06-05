@@ -1,14 +1,16 @@
 class Transaction < ActiveRecord::Base
   include CalcTotal
+
   attr_accessor :cvv
   attr_accessible :address, :address2, :amt, :city, :code, :country, :credit_card_no, :description, :email, :first_name, 
   	:home_phone, :last_name, :payment_type, :promo_code, :state, :work_phone, :zip, :user_id, :confirmation_no, :token, :status,
-	:convenience_fee, :processing_fee
+	:convenience_fee, :processing_fee, :transaction_type
 
   belongs_to :user
   has_many :listings
   has_many :temp_listings
   has_many :transaction_details
+  has_many :invoices
 
   name_regex =  /^[A-Z]'?['-., a-zA-Z]+$/i
   text_regex = /^[-\w\,. _\/&@]+$/i
@@ -38,15 +40,26 @@ class Transaction < ActiveRecord::Base
   validates :amt, :presence => true,
   		  :numericality => true
 
+  # validate existance of txn token
+  def must_have_token
+    if token.blank?
+      errors.add(:base, 'Card info is invalid.  Must have valid card, cvv and expiration date.')
+    else
+      return true
+    end
+    false
+  end
+  
   # pre-load new transaction for given user
   def self.load_new usr, listing, order
-    if usr
+    if usr && listing
       new_transaction = listing.build_transaction
 
       # set transaction amounts
       new_transaction.amt = CalcTotal::process_order order
       new_transaction.processing_fee = CalcTotal::get_processing_fee
       new_transaction.convenience_fee = CalcTotal::get_convenience_fee
+      new_transaction.transaction_type = order[:transaction_type]
 
       # load user info
       new_transaction.user_id = usr.id
@@ -76,6 +89,52 @@ class Transaction < ActiveRecord::Base
   def refundable? 
     new_dt = created_at + 30.days rescue nil
     new_dt ? new_dt > Date.today() : false
+  end
+
+  # check transaction type
+  def pixi?
+    transaction_type == 'pixi'
+  end
+
+  # save transaction
+  def save_transaction order, listing
+    if valid?
+      # add transaction details      
+      (1..order[:cnt].to_i).each do |i| 
+        if order['quantity'+i.to_s].to_i > 0 
+          add_details order['item'+i.to_s], order['quantity'+i.to_s], order['price'+i.to_s].to_f * order['quantity'+i.to_s].to_i
+        end 
+      end 
+
+      # set status
+      self.status = 'pending'
+      save!  
+
+      # submit payment or order based on transaction type
+      if pixi? 
+        listing.submit_order(self.id) 
+      else
+        listing.get_invoice(order["invoice_id"]).submit_payment(self.id)
+      end
+    else
+      false
+    end
+  end
+
+  # process credit card messages
+  def process_error e
+    logger.error "Stripe error while processing this transaction: #{e.message}"
+    errors.add :base, "There was a problem with your credit card. #{e.message}"    
+  end
+
+  # handle credit card error
+  def check_for_stripe_error
+    self.errors[:credit_card_no] = @stripe_error
+  end
+
+  # set approval status
+  def approved?
+    status == 'approved'
   end
   
   # process transaction
@@ -114,42 +173,5 @@ class Transaction < ActiveRecord::Base
       process_error e
     rescue => e
       process_error e
-  end
-
-  # save transaction
-  def save_transaction order, listing
-    if valid?
-      # add transaction details      
-      (1..order[:cnt].to_i).each do |i| 
-        if order['quantity'+i.to_s].to_i > 0 
-          add_details order['item'+i.to_s], order['quantity'+i.to_s], order['price'+i.to_s].to_f * order['quantity'+i.to_s].to_i
-        end 
-      end 
-
-      # set status
-      self.status = 'pending'
-      save!  
-
-      # submit order
-      listing.submit_order self.id
-    else
-      false
-    end
-  end
-
-  # process credit card messages
-  def process_error e
-    logger.error "Stripe error while processing this transaction: #{e.message}"
-    errors.add :base, "There was a problem with your credit card. #{e.message}"    
-  end
-
-  # handle credit card error
-  def check_for_stripe_error
-    self.errors[:credit_card_no] = @stripe_error
-  end
-
-  # set approval status
-  def approved?
-    status == 'approved'
   end
 end

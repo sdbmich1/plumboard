@@ -81,4 +81,26 @@ module ApplicationHelper
   def get_sites ptype
     ptype ? Site.with_new_pixis : Site.with_pixis
   end
+
+  # set display date 
+  def get_local_date(tm)
+    tm.utc.getlocal.strftime('%m/%d/%Y')
+  end
+
+  # set appropriate submenu nav bar
+  def set_submenu menu_type
+    case menu_type
+      when 'Invoices'; render 'shared/navbar_invoices'
+      when 'Pixis'; render 'shared/navbar_pixis'
+      when 'My Pixis'; render 'shared/navbar_mypixis'
+      when 'Pending Orders'; render 'shared/navbar_pending'
+      when 'Posts'; render 'shared/navbar_posts'
+      else render 'shared/navbar_main'
+    end
+  end
+  
+  # build array for quantity selection dropdown
+  def get_ary
+    (1..99).inject([]){|x,y| x << y}
+  end
 end

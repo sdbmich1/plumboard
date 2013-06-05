@@ -1,0 +1,24 @@
+  <table class="mtop table table-bordered">
+  <%= render 'shared/inv_header' %>
+  <tr>
+    <td class='width120'>
+      <%= f.select 'quantity', options_for_select(get_ary, :selected => set_quantity), {}, {id: 'inv_qty', class: 'pixi-select'} %></td>
+    <td class="width360"><%= render partial: 'shared/active_listings' %></td>
+    <td class="width120"><%= f.text_field :price, id: 'inv_price', class: 'price' %></td>
+    <td class="width120"><%= f.text_field :subtotal, id: 'inv_amt', readonly: true, class: 'price' %></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><div class='price'>Sales Tax</div></td>
+    <td class="width120"><%= f.text_field :sales_tax, id: 'inv_tax', class: 'price' %></td>
+    <td class="width120"><%= f.text_field :tax_total, readonly: true, id: 'inv_tax_total', class: 'price' %></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td><div class='order-total price'>Amount Due</div></td>
+    <td class="width120"><%= f.text_field :amount, readonly: true, id: 'inv_total', class: 'order-total price' %></td>
+  </tr>
+  </table>
+</div>
+

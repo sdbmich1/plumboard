@@ -90,54 +90,6 @@ describe PostsController do
     end
   end
 
-  describe 'GET unread' do
-
-    before :each do
-      @posts = mock("posts")
-      Post.stub!(:get_unread).with(@user).and_return( @posts )
-      @posts.stub!(:paginate).and_return( @posts )
-    end
-
-    def do_get
-      get :unread
-    end
-
-    it "should load the requested posts" do
-      Post.stub(:get_unread).with(@user).and_return(@posts)
-      do_get
-      assigns(:posts).should_not be_nil 
-    end
-
-    it "renders the :unread view" do
-      do_get
-      response.should render_template :unread
-    end
-  end
-
-  describe 'xhr GET unread' do
-
-    before :each do
-      @posts = mock("posts")
-      Post.stub!(:get_unread).with(@user).and_return( @posts )
-      @posts.stub!(:paginate).and_return( @posts )
-    end
-
-    def do_get
-      xhr :get, :unread
-    end
-
-    it "should load the requested posts" do
-      Post.stub(:get_unread).with(@user).and_return(@posts)
-      do_get
-      assigns(:posts).should_not be_nil 
-    end
-
-    it "renders the :unread view" do
-      do_get
-      response.should render_template :unread
-    end
-  end
-
   describe 'GET sent' do
 
     before :each do
@@ -162,7 +114,7 @@ describe PostsController do
     end
   end
 
-  describe 'GET index' do
+  describe 'xhr GET index' do
 
     before :each do
       @posts = mock("posts")
@@ -172,6 +124,30 @@ describe PostsController do
 
     def do_get
       xhr :get, :index
+    end
+
+    it "should load the requested posts" do
+      @user.stub(:incoming_posts).and_return(@posts)
+      do_get
+      assigns(:posts).should_not be_nil 
+    end
+
+    it "should render nothing" do
+      do_get
+      controller.stub!(:render)
+    end
+  end
+
+  describe 'GET index' do
+
+    before :each do
+      @posts = mock("posts")
+      @user.stub!(:incoming_posts).and_return( @posts )
+      @posts.stub!(:paginate).and_return( @posts )
+    end
+
+    def do_get
+      get :index
     end
 
     it "should load the requested posts" do
@@ -216,7 +192,7 @@ describe PostsController do
 
       before :each do
         Post.stub!(:save).and_return(true)
-        Post.stub!(:get_unread).with(@user).and_return(@posts)
+        Post.stub!(:get_posts).with(@user).and_return(@posts)
         @posts.stub!(:paginate).and_return( @posts )
       end
        

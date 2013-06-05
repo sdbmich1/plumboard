@@ -23,6 +23,7 @@ describe Transaction do
   it { should respond_to(:credit_card_no) }
   it { should respond_to(:description) }
   it { should respond_to(:amt) }
+  it { should respond_to(:transaction_type) }
   it { should respond_to(:code) }
   it { should respond_to(:promo_code) }
   it { should respond_to(:user_id) }
@@ -35,6 +36,7 @@ describe Transaction do
   it { should respond_to(:user) }
   it { should respond_to(:listings) }
   it { should respond_to(:transaction_details) }
+  it { should respond_to(:invoices) }
 
   describe "when first_name is too long" do
     before { @transaction.first_name = "a" * 31 }
@@ -171,15 +173,15 @@ describe Transaction do
     end
   end
 
-  describe "save transaction" do
-    let(:order) { {"cnt"=> 1, "quantity1"=> 1, "item1"=> 'Pixi Post', "price1"=> 0.0 } }
+  describe "save transaction - pixi" do
     let(:temp_listing) { FactoryGirl.create :temp_listing }
+    let(:order) { {"cnt"=> 1, "quantity1"=> 1, "item1"=> 'Pixi Post', "price1"=> 5.0} }
 
-    it "should save" do
+    it "should save order" do
       @transaction.save_transaction(order, temp_listing).should be_true
     end
 
-    it "should not save" do
+    it "should not save order" do
       @transaction.first_name = nil
       @transaction.save_transaction(order, temp_listing).should_not be_true
     end
@@ -197,8 +199,19 @@ describe Transaction do
     end
   end
 
-  describe "process transaction" do
+  describe 'pixi?' do
+    it 'should return true' do
+      @transaction.transaction_type = 'pixi'
+      @transaction.pixi?.should be_true
+    end
 
+    it 'should not return true' do
+      @transaction.transaction_type = 'invoice'
+      @transaction.pixi?.should_not be_true
+    end
+  end
+
+  describe "process transaction" do
     it "should not process" do
       @transaction.first_name = nil
       @transaction.process_transaction.should_not be_true
@@ -208,6 +221,25 @@ describe Transaction do
       Stripe::Charge.should_receive(:create).and_raise(true)
       @transaction.save
       @transaction.process_transaction.should be_true
+    end
+  end
+
+  describe "save transaction - payment" do
+    before do
+      @buyer = FactoryGirl.create(:pixi_user) 
+      @listing = FactoryGirl.create(:listing, seller_id: @user.id)
+      @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id)
+      @order = {"cnt"=> 1, "quantity1"=> 1, "item1"=> 'Pixi Post', "price1"=> 5.0, "invoice_id"=>@invoice.id, "amount"=>500.00 } 
+    end
+
+    it "should not save payment" do
+      @transaction.first_name = nil
+      @transaction.save_transaction(@order, @invoice.listing).should_not be_true
+    end
+
+    it "should save payment" do
+      @transaction.transaction_type = 'invoice'
+      @transaction.save_transaction(@order, @listing).should be_true
     end
   end
 end

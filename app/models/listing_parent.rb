@@ -10,12 +10,11 @@ class ListingParent < ActiveRecord::Base
   ALIAS_LENGTH = PIXI_KEYS['pixi']['alias_length']
   KEY_LENGTH = PIXI_KEYS['pixi']['key_length']
   SITE_FREE_AMT = PIXI_KEYS['pixi']['site_init_free']
-  MAX_PIXI_AMT = PIXI_KEYS['pixi']['max_pixi_amt']
   MAX_PIXI_PIX = PIXI_KEYS['pixi']['max_pixi_pix']
 
   attr_accessible :buyer_id, :category_id, :description, :title, :seller_id, :status, :price, :show_alias_flg, :show_phone_flg, :alias_name,
   	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id, :id, :created_at, :updated_at,
-	:edited_by, :edited_dt
+	:edited_by, :edited_dt, :post_ip
 
   belongs_to :user, :foreign_key => :seller_id
   belongs_to :site

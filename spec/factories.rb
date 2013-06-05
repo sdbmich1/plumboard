@@ -87,7 +87,7 @@ FactoryGirl.define do
     start_date		{ Time.now }
     end_date		{ Time.now+7.days }
     status		"active"
-    price		5.00
+    price		100.00
     category_id		1
     site_id		1
     transaction_id	1
@@ -157,7 +157,18 @@ FactoryGirl.define do
     content 		"SFSU"
     user
     recipient
-    listing
+  end
+
+  factory :invoice do
+    comment		'stuff'
+    quantity		2
+    price		185.00
+    sales_tax		8.25
+    tax_total		30.52
+    inv_date		Time.now
+    subtotal		370.00
+    amount		400.52
+    status	'unpaid'
   end
 
   factory :site_listing do
@@ -181,6 +192,8 @@ FactoryGirl.define do
     home_phone		"1234567890"
     amt			100.00
     status		'pending'
+    transaction_type	'pixi'
+    token		{ rand(36**8).to_s(36) }
     before(:create) do |txn|
       txn.create_user FactoryGirl.attributes_for(:pixi_user)
     end

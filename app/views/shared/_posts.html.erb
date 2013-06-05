@@ -1,7 +1,11 @@
+<% unless @posts.blank? %>
   <ol class="posts">
-    <%= render partial: 'shared/post', collection: @posts %>
+    <%= render partial: 'shared/post', collection: @posts, locals: { sentFlg: sentFlg } %>
   </ol>
+<% else %>
+  <div class='center-wrapper'>No posts found.</div>
+<% end %>
 
-  <div class="nav pull-right">
-    <%= will_paginate @posts if @posts.respond_to?(:total_pages) %>
-  </div> 
+<div class="nav pull-right">
+  <%= will_paginate @posts if @posts.respond_to?(:total_pages) %>
+</div> 

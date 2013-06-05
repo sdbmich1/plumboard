@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130430203707) do
+ActiveRecord::Schema.define(:version => 20130531143625) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -79,6 +79,28 @@ ActiveRecord::Schema.define(:version => 20130430203707) do
 
   add_index "interests", ["name"], :name => "index_interests_on_name"
 
+  create_table "invoices", :force => true do |t|
+    t.string   "pixi_id"
+    t.integer  "seller_id"
+    t.integer  "buyer_id"
+    t.integer  "quantity"
+    t.float    "price"
+    t.float    "amount"
+    t.text     "comment"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+    t.string   "status"
+    t.float    "sales_tax"
+    t.datetime "inv_date"
+    t.float    "subtotal"
+    t.float    "tax_total"
+    t.integer  "transaction_id"
+  end
+
+  add_index "invoices", ["pixi_id", "buyer_id", "seller_id"], :name => "index_invoices_on_pixi_id_and_buyer_id_and_seller_id"
+  add_index "invoices", ["status"], :name => "index_invoices_on_status"
+  add_index "invoices", ["transaction_id"], :name => "index_invoices_on_transaction_id"
+
   create_table "listing_categories", :force => true do |t|
     t.integer  "category_id"
     t.integer  "listing_id"
@@ -108,6 +130,7 @@ ActiveRecord::Schema.define(:version => 20130430203707) do
     t.string   "pixi_id"
     t.string   "edited_by"
     t.datetime "edited_dt"
+    t.string   "post_ip"
   end
 
   add_index "listings", ["end_date", "start_date"], :name => "index_listings_on_end_date_and_start_date"
@@ -151,7 +174,6 @@ ActiveRecord::Schema.define(:version => 20130430203707) do
 
   add_index "posts", ["pixi_id"], :name => "index_posts_on_pixi_id"
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id_and_created_at", :unique => true
-  add_index "posts", ["user_id", "listing_id"], :name => "index_posts_on_user_id_and_listing_id", :unique => true
 
   create_table "promo_codes", :force => true do |t|
     t.string   "code"
@@ -265,6 +287,7 @@ ActiveRecord::Schema.define(:version => 20130430203707) do
     t.string   "parent_pixi_id"
     t.string   "edited_by"
     t.datetime "edited_dt"
+    t.string   "post_ip"
   end
 
   add_index "temp_listings", ["parent_pixi_id"], :name => "index_temp_listings_on_parent_pixi_id"
@@ -300,18 +323,20 @@ ActiveRecord::Schema.define(:version => 20130430203707) do
     t.string   "code"
     t.string   "description"
     t.float    "amt"
-    t.datetime "created_at",      :null => false
-    t.datetime "updated_at",      :null => false
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
     t.integer  "user_id"
     t.string   "token"
     t.string   "confirmation_no"
     t.string   "status"
     t.float    "convenience_fee"
     t.float    "processing_fee"
+    t.string   "transaction_type"
   end
 
   add_index "transactions", ["code"], :name => "index_transactions_on_code"
   add_index "transactions", ["confirmation_no"], :name => "index_transactions_on_confirmation_no"
+  add_index "transactions", ["transaction_type"], :name => "index_transactions_on_transaction_type"
   add_index "transactions", ["user_id"], :name => "index_transactions_on_user_id"
 
   create_table "user_interests", :force => true do |t|

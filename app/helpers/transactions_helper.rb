@@ -1,5 +1,6 @@
 module TransactionsHelper
 
+  # set default quantity
   def set_qty fldname
     if @order
       @order[fldname] ? @order[fldname].to_i : 0
@@ -8,20 +9,18 @@ module TransactionsHelper
     end
   end
   
+  # discount display text
   def get_descr
     'A ' + get_discount + ' discount will be applied at checkout.' if @discount
   end
   
+  # display discount % if any
   def get_discount
     if @discount
       @discount.amountOff ? '$'+ @discount.amountOff.to_s : @discount.percentOff.to_s + '%'
     else
       'N/A'
     end
-  end
-  
-  def get_ary
-    (0..30).inject([]){|x,y| x << y}
   end
   
   def get_fname txn, fname, flg
@@ -32,23 +31,44 @@ module TransactionsHelper
     @order ? @order[:promo_code] ? @order[:promo_code] : nil : nil
   end
 
+  # get price
   def get_price
     CalcTotal::get_price @listing.premium?
   end
   
+  # set display text based on paid status
   def show_title paid
     paid ? 'Total Paid' : 'Total Due'
   end
   
+  # set confirmation message based on txn amount
   def confirm_msg
-    if CalcTotal::get_amt > 0
-      "Your credit card will be processed.  Would you like to proceed?"
-    else
-      "Your order will be processed.  Would you like to proceed?"
-    end
+    msg = CalcTotal::get_amt > 0 ? "Your credit card " : "Your order "
+    msg += "will be processed.  Would you like to proceed?"
   end
 
+  # reset time display format
   def get_local_time(tm)
     tm.utc.getlocal.strftime('%m/%d/%Y %I:%M%p')
+  end
+
+  # return page title based on transaction type
+  def get_page_title
+    @transaction.pixi? ? 'Submit Your Order' : 'Pay Invoice'
+  end
+
+  # return page header based on transaction type
+  def get_page_header
+    @transaction.pixi? ? 'Order' : 'Purchase'
+  end
+
+  # set cancel message
+  def cancel_msg
+    'Are you sure? All your changes will be lost.'
+  end
+
+  # set prev btn based on txn type
+  def set_prev_btn
+    @transaction.pixi? ? @listing : @invoice
   end
 end

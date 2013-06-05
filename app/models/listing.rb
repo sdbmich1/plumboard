@@ -5,20 +5,14 @@ class Listing < ListingParent
   before_create :activate
   attr_accessor :parent_pixi_id
 
-  has_many :posts, :dependent => :destroy
+  has_many :posts, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
+  has_many :invoices, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
+
   has_many :site_listings, :dependent => :destroy
   #has_many :sites, :through => :site_listings, :dependent => :destroy
 
   has_many :pictures, :as => :imageable, :dependent => :destroy
   accepts_nested_attributes_for :pictures, :allow_destroy => true
-
-  sphinx_scope(:latest_first) {
-    {:order => 'updated_at DESC, created_at DESC'}
-  }
-
-  sphinx_scope(:by_title) { |title|
-    {:conditions => {:title => title}}
-  }
 
   # set active status
   def activate
@@ -38,4 +32,18 @@ class Listing < ListingParent
   def self.active_page pg
     active.paginate page: pg
   end
+
+  # get invoice
+  def get_invoice val
+    invoices.where(:id => val).first rescue nil
+  end
+
+  # sphinx scopes
+  sphinx_scope(:latest_first) {
+    {:order => 'updated_at DESC, created_at DESC'}
+  }
+
+  sphinx_scope(:by_title) { |title|
+    {:conditions => {:title => title}}
+  }
 end

@@ -1,0 +1,16 @@
+<div id="pmtForm">
+  <%= render partial: 'shared/listing_header', :locals => { step_no: 3, step_name: step_name } %>
+  <div class="center-wrapper mtop grp-hdr">Your purchase <%= @transaction.description %> has been processed.</div>
+  <div class="clear-all"></div>
+  <table>
+    <%= render :partial=>'shared/order_details', :locals=>{:order=>@order, :paid=>true} %>
+  </table>  
+  <%= render :partial=>'shared/transaction_details', :locals=>{:transaction=>@transaction, :showAmt=>false} %>
+  <div class="clear-all"></div>
+  <div class="mtop">Thank you for your business.</div>
+  <div class="mtop">
+  <center>
+	<%= link_to "Done", listings_path, :class => "btn btn-large btn-primary submit-btn", :id => 'done-btn' %>
+  </center>
+  </div>
+</div>

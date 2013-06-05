@@ -1,7 +1,11 @@
-<% provide(:title, 'Order Complete') %>
+<% provide(:title, "#{get_page_header} Complete") %>
 <%= content_for :content do %>
   <div id="buyTxtForm">
-    <%= render :partial => 'shared/order_complete', locals: {step_name: 'Order Complete!'} %>
+    <% if @transaction.pixi? %>
+      <%= render :partial => 'shared/order_complete', locals: {step_name: "#{get_page_header} Complete"} %>
+    <% else %>
+      <%= render :partial => 'shared/purchase_complete', locals: {step_name: "#{get_page_header} Complete"} %>
+    <% end %>
   </div>
 <% end %>
 

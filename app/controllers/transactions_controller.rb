@@ -5,15 +5,16 @@ class TransactionsController < ApplicationController
   include CalcTotal
 
   def new
-    @listing = TempListing.find_by_pixi_id params[:id]
+    @listing = Listing.find_by_pixi_id(params[:id]) || TempListing.find_by_pixi_id(params[:id])
     @transaction = Transaction.load_new(@user, @listing, @order)
+    @invoice = Invoice.find_invoice(@order) unless @transaction.pixi?
   end
 
   def create
-    @listing = TempListing.find_by_pixi_id params[:id]
-    @transaction = Transaction.new(params[:transaction])
+    @listing = Listing.find_by_pixi_id(params[:id]) || TempListing.find_by_pixi_id(params[:id])
+    @transaction = Transaction.new params[:transaction] 
     @transaction.save_transaction(params[:order], @listing)
-    respond_with(@transaction)
+    respond_with @transaction
   end
 
   def show

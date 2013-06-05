@@ -8,6 +8,8 @@ defaults: &defaults
   stripe:
     api_key: "sk_test_87BbvJVr6Gy2KEhNe9N3HlOF"
     public_key: "pk_test_ND2g6VoRttLN98bVM9rPsiyD"
+  balanced:
+    api_key: "78bbce26bb9111e29195026ba7cd33d0"
 
 development:    
   <<: *defaults

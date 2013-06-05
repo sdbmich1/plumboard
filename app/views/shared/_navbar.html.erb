@@ -2,16 +2,10 @@
   <div class="navbar">
     <div class="navbar-inner">
       <div class="container">
-        <span class="brand">Settings</span>
+        <span class="brand"><%= menu_name %></span>
         <div id="profile-menu">
 	  <nav>
-	  <ul class="nav pull-right">
-	    <li class="active"><%= link_to "Profile", settings_path, class: 'submenu', remote: true %></li>
-	    <li><%= link_to "Contact", settings_contact_path, class: 'submenu', remote: true %></li>
-	    <li><a href="#">My Sites</a></li>
-	    <li><a href="#">Preferences</a></li>
-	    <li><%= link_to "Change Password", settings_password_path, class: 'submenu', remote: true %></li>
-          </ul>
+	    <%= set_submenu menu_name %>
 	  </nav>
         </div>
       </div>

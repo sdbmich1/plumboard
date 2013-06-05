@@ -1,5 +1,10 @@
 <%= render :partial => 'shared/show_discount' %> 
 
+<% if @order[:sales_tax] %>
+  <tr><td>Sales Tax</td><td></td>
+  	<td class="price"><%= number_to_currency(@order[:sales_tax].to_f) %></td>
+  </tr>
+<% end %>
 <% unless @transaction.processing_fee.blank? %>
   <tr><td>Processing Fee</td><td></td>
   	<td class="price"><%= number_to_currency(@transaction.processing_fee) %></td>

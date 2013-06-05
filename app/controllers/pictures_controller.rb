@@ -11,7 +11,7 @@ class PicturesController < ApplicationController
   def destroy
     @listing = TempListing.find_by_pixi_id params[:pixi_id]
     if @listing.delete_photo(params[:id])
-      flash[:notice] = "Successfully removed image."
+      flash.now[:notice] = "Successfully removed image."
       @listing = TempListing.find_by_pixi_id params[:pixi_id]
     end
   end

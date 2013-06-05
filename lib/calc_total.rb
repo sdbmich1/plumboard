@@ -1,10 +1,9 @@
 module CalcTotal
-
   # used to calc transaction total
 
   # process order details
   def self.process_order order
-    @amt = 0.0
+    @amt, @pfee = 0.0, nil
 
     # process each order item
     (1..order[:cnt].to_i).each do |i| 
@@ -15,6 +14,9 @@ module CalcTotal
 
     # determine discount if any
     set_discount order[:promo_code]
+     
+    # check for sales tax
+    @amt += order[:sales_tax].to_f if order[:sales_tax]
 
     # return total order amount
     grand_total
@@ -83,7 +85,7 @@ module CalcTotal
   end
 
   def self.get_processing_fee 
-    (@amt + calc_discount) * (PIXI_PERCENT.to_f / 100)
+    @pfee ||= (@amt + calc_discount) * (PIXI_PERCENT.to_f / 100)
   end
   
   def self.get_convenience_fee

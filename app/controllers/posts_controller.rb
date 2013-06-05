@@ -11,17 +11,13 @@ class PostsController < ApplicationController
   def reply
     @post = Post.new params[:post]
     if @post.save
-      flash[:notice] = "Successfully sent post."
-      @posts = Post.get_unread(@user).paginate(page: @page)
+      flash.now[:notice] = "Successfully sent post."
+      @posts = Post.get_posts(@user).paginate(page: @page)
     end
   end
 
   def sent
     @posts = @user.posts.paginate(page: @page)
-  end
-
-  def unread
-    @posts = Post.get_unread(@user).paginate(page: @page)
   end
 
   def create

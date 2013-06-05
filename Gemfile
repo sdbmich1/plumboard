@@ -41,6 +41,11 @@ group :assets do
 end
 
 gem 'jquery-rails', '~> 2.1'
+gem 'jquery-ui-rails'
+gem 'jquery-ui-themes'
+
+# add autocomplete
+gem 'rails3-jquery-autocomplete'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
@@ -63,6 +68,7 @@ gem 'capistrano'
 # add payment gateways
 gem 'activemerchant'
 gem 'stripe'
+gem 'balanced'
 
 # install oauth
 gem 'omniauth'
@@ -84,6 +90,9 @@ gem 'validates_timeliness', '~> 3.0'
 
 # add country selection
 gem 'country_select'
+
+# add images
+gem "rmagick", "~> 2.13.1"
 
 # pagination
 gem 'will_paginate', '~> 3.0'

@@ -1,0 +1,17 @@
+<%= form_tag new_transaction_path, :method => :get, :id => 'purchase_btn' do %> 
+  <%= hidden_field_tag 'invoice_id', invoice.id %>
+  <%= hidden_field_tag 'id', invoice.pixi_id %>
+  <%= hidden_field_tag 'user_id', invoice.buyer_id %>
+  <%= hidden_field_tag 'title', "Invoice # #{invoice.id}" %>
+  <%= hidden_field_tag 'seller', invoice.seller.name %>
+  <%= hidden_field_tag 'item1', invoice.listing.title %>
+  <%= hidden_field_tag 'promo_code', '' %>
+  <%= hidden_field_tag 'cnt', 1 %>
+  <%= hidden_field_tag 'qtyCnt', invoice.quantity %>
+  <%= hidden_field_tag 'quantity1', invoice.quantity %>
+  <%= hidden_field_tag 'sales_tax', invoice.tax_total %>
+  <%= hidden_field_tag 'price1', invoice.price %>
+  <%= hidden_field_tag 'transaction_type', 'invoice' %>
+  <%= submit_tag('Pay', :class=>'btn btn-medium btn-success', id: 'pay-btn') %>
+<% end %>  
+

@@ -7,11 +7,11 @@ class Post < ActiveRecord::Base
   PIXI_POST = PIXI_KEYS['pixi']['pixi_post']
 
   belongs_to :user
-  belongs_to :listing
+  belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id"
   belongs_to :recipient, class_name: 'User', foreign_key: :recipient_id
+  belongs_to :invoice, foreign_key: 'pixi_id', primary_key: 'pixi_id'
 
   validates :content, :presence => true 
-  validates :listing_id, :presence => true
   validates :user_id, :presence => true
   validates :pixi_id, :presence => true
   validates :recipient_id, :presence => true
@@ -48,13 +48,81 @@ class Post < ActiveRecord::Base
     usr.id == user_id
   end
 
-  # get recipient
+  # get posts for recipient
+  def self.get_posts usr
+    where(:recipient_id=>usr)
+  end
+
+  # get unread posts for recipient
   def self.get_unread usr
-    where(:recipient_id=>usr).unread_by(usr) rescue nil
+    get_posts(usr).unread_by(usr) rescue nil
   end
 
   # get count of unread messages
   def self.unread_count usr
     get_unread(usr).count
+  end
+
+  # add post for invoice creation or payment
+  def self.add_post inv, listing, sender, recipient, msg
+    if sender && recipient
+      # new post
+      post = listing.posts.build
+      post.pixi_id, post.recipient_id, post.user_id = inv.pixi_id, recipient, sender
+
+      # set amount format
+      amt = "%0.2f" % inv.amount
+
+      #set content
+      post.content = msg + amt
+
+      # add post
+      post.save!
+    else
+      false
+    end
+  end
+
+  # send invoice post
+  def self.send_invoice inv, listing
+    if !inv.blank? && !listing.blank?
+
+      # set content msg 
+      msg = "You received an invoice ##{inv.id} from #{inv.seller.name} for $"
+
+      # add post
+      add_post inv, listing, inv.seller_id, inv.buyer_id, msg
+    else
+      false
+    end
+  end
+
+  # pay invoice post
+  def self.pay_invoice model
+
+    # get invoice and pixi
+    inv = model.invoices[0] rescue nil
+    listing = inv.listing if inv
+
+    # send post
+    if !inv.blank? && !listing.blank?
+
+      # set content msg 
+      msg = "You received a payment for Invoice ##{inv.id} from #{inv.buyer.name} for $"
+
+      # add post
+      add_post inv, listing, inv.buyer_id, inv.seller_id, msg
+    else
+      false
+    end
+  end
+
+  # check if invoice is due
+  def due_invoice? usr
+    if invoice
+      !invoice.owner?(usr) && invoice.unpaid? ? true : false
+    else
+      false
+    end
   end
 end

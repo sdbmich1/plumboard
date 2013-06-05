@@ -25,10 +25,12 @@ describe Listing do
   it { should respond_to(:category_id) }
   it { should respond_to(:pixi_id) }
   it { should respond_to(:parent_pixi_id) }
+  it { should respond_to(:post_ip) }
 
   it { should respond_to(:user) }
   it { should respond_to(:site) }
   it { should respond_to(:posts) }
+  it { should respond_to(:invoices) }
   it { should respond_to(:site_listings) }
   it { should respond_to(:transaction) }
   it { should respond_to(:pictures) }
@@ -313,6 +315,21 @@ describe Listing do
       category = FactoryGirl.create(:category)
       @listing.category_id = category.id
       @listing.premium?.should_not be_true
+    end
+  end
+
+  describe 'get invoice' do
+    before do 
+      @buyer = FactoryGirl.create(:pixi_user)
+      @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id) 
+    end
+
+    it 'should return true' do
+      @listing.get_invoice(@invoice.id).should be_true
+    end
+
+    it 'should not return true' do
+      @listing.get_invoice(0).should_not be_true
     end
   end
 end

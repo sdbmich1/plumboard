@@ -1,5 +1,5 @@
+require 'will_paginate/array' 
 class PendingListingsController < ApplicationController
-  require 'will_paginate/array' 
   before_filter :authenticate_user!
   before_filter :load_data, only: [:index]
   respond_to :html, :json, :js

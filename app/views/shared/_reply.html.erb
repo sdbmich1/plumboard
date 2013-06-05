@@ -1,4 +1,4 @@
-  <%= form_for setup_post(@user), url: reply_posts_path(id: post), method: :post, remote: true do |f| %> 
+  <%= form_for setup_post(@user), url: reply_posts_path(id: post), id: 'post-frm', method: :post, remote: true do |f| %> 
     <div id="notice" style="display:none"></div>
     <div id="form_errors">
       <%= render partial: 'shared/error_messages', :locals => { :target => f.object } %>
@@ -9,6 +9,7 @@
     <%= f.hidden_field 'user_id', value: post.recipient_id %>
     <div class="reply_form">
       <%= f.text_area 'content', placeholder: 'Type something and click reply to send...', id: 'reply_content' %>  
-      <%= f.submit 'Reply', class: "btn btn-medium btn-primary submit-btn" %>
+      <%= f.submit 'Reply', class: "btn btn-medium btn-primary submit-btn", id: 'reply-btn' %>
+    <% end %>
+      <%= render partial: 'shared/pay_invoice', locals: { invoice: post.invoice } if post.due_invoice?(@user) %>
     </div>
-  <% end %>

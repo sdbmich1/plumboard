@@ -11,6 +11,7 @@ defaults: &defaults
     launch_promo_cd: "2013LAUNCH"
     days: 7
     max_pixi_pix: 16
+    max_inv_qty: 100
     pixi_post: 'Hi, I found your pixi post and would like to set up a time to discuss it. Please respond and provide me more information. Thank
     you.'
 
