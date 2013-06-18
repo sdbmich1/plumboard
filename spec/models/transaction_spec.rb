@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Transaction do
   before(:each) do
-    @user = FactoryGirl.create :pixi_user
+    @user = FactoryGirl.create :pixi_user, email: 'jblow@pixitest.com'
     @transaction = @user.transactions.build FactoryGirl.attributes_for(:transaction)
   end
 
@@ -211,22 +211,78 @@ describe Transaction do
     end
   end
 
-  describe "process transaction" do
-    it "should not process" do
+  describe 'get invoice pixi' do
+    before do
+      @buyer = FactoryGirl.create(:pixi_user, first_name: 'Lucy', last_name: 'Smith', email: 'lucy.smith@lucy.com')
+      @seller = FactoryGirl.create(:pixi_user, first_name: 'Lucy', last_name: 'Burns', email: 'lucy.burns@lucy.com') 
+      @listing = FactoryGirl.create(:listing, seller_id: @user.id)
+      @invoice = @seller.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id)
+      @order = {"cnt"=> 1, "quantity1"=> 1, "item1"=> 'Pixi Post', "price1"=> 5.0, "invoice_id"=>@invoice.id, "amount"=>500.00 } 
+    end
+
+    it "should not get pixi" do
+      @transaction.get_invoice_listing.should_not be_true
+    end
+
+    it "should get pixi" do
+      @txn = @user.transactions.create FactoryGirl.attributes_for(:transaction, transaction_type: 'invoice')
+      @invoice.transaction_id, @invoice.status = @txn.id, 'pending'
+      @invoice.save!
+      @invoice.transaction.get_invoice_listing.should be_true
+    end
+  end
+
+  describe "process transaction - Balanced" do
+    before do
+      CREDIT_CARD_API = 'balanced'
+      @buyer = FactoryGirl.create(:pixi_user, email: 'joedblow@pixitest.com') 
+      @bal_charge = mock('Balanced::Marketplace', id: 1, card: {card_type: 'visa', last_four: '0000'}) 
+      @bal_charge.stub!(:create_buyer).with(email_address: @buyer.email, card_uri: @transaction.token).and_return(@bal_charge)
+      @bal_charge.stub!(:debit).with(amount: 10000).and_return(@bal_charge)
+      Balanced::Marketplace.stub!(:my_marketplace).and_return(@bal_charge)
+    end
+
+    it "does not process" do
       @transaction.first_name = nil
       @transaction.process_transaction.should_not be_true
     end
 
-    it "should process" do
-      Stripe::Charge.should_receive(:create).and_raise(true)
-      @transaction.save
+    it "processes with amt = 0" do
+      @transaction.amt = 0.0
+      @transaction.process_transaction.should be_true
+    end
+
+    it "processes txn" do
+      @transaction.process_transaction.should be_true
+    end
+  end
+
+  describe "process transaction - Stripe" do
+    before do
+      CREDIT_CARD_API = 'stripe'
+      @stripe_charge = mock('Stripe::Charge', id: 1, card: {type: 'visa', last4: '0000'})
+      @stripe_charge.stub!(:create).with(:amount=>50000, currency: 'usd', card: 'Visa', description: 'test').and_return(@stripe_charge)
+      Stripe::Charge.stub!(:create).and_return(@stripe_charge)
+    end
+
+    it "does not process" do
+      @transaction.first_name = nil
+      @transaction.process_transaction.should_not be_true
+    end
+
+    it "processes with amt = 0" do
+      @transaction.amt = 0.0
+      @transaction.process_transaction.should be_true
+    end
+
+    it "processes Stripe txn" do
       @transaction.process_transaction.should be_true
     end
   end
 
   describe "save transaction - payment" do
     before do
-      @buyer = FactoryGirl.create(:pixi_user) 
+      @buyer = FactoryGirl.create(:pixi_user, email: 'joedblow@pixitest.com') 
       @listing = FactoryGirl.create(:listing, seller_id: @user.id)
       @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id)
       @order = {"cnt"=> 1, "quantity1"=> 1, "item1"=> 'Pixi Post', "price1"=> 5.0, "invoice_id"=>@invoice.id, "amount"=>500.00 } 

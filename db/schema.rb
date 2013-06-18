@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130531143625) do
+ActiveRecord::Schema.define(:version => 20130618060028) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -41,6 +41,20 @@ ActiveRecord::Schema.define(:version => 20130531143625) do
   add_index "admins", ["email"], :name => "index_admins_on_email", :unique => true
   add_index "admins", ["reset_password_token"], :name => "index_admins_on_reset_password_token", :unique => true
   add_index "admins", ["unlock_token"], :name => "index_admins_on_unlock_token", :unique => true
+
+  create_table "bank_accounts", :force => true do |t|
+    t.string   "token"
+    t.integer  "user_id"
+    t.string   "acct_no"
+    t.string   "acct_name"
+    t.string   "acct_type"
+    t.string   "status"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+    t.string   "description"
+  end
+
+  add_index "bank_accounts", ["user_id"], :name => "index_bank_accounts_on_user_id"
 
   create_table "categories", :force => true do |t|
     t.string   "name"
@@ -87,16 +101,18 @@ ActiveRecord::Schema.define(:version => 20130531143625) do
     t.float    "price"
     t.float    "amount"
     t.text     "comment"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
     t.string   "status"
     t.float    "sales_tax"
     t.datetime "inv_date"
     t.float    "subtotal"
     t.float    "tax_total"
     t.integer  "transaction_id"
+    t.integer  "bank_account_id"
   end
 
+  add_index "invoices", ["bank_account_id"], :name => "index_invoices_on_bank_account_id"
   add_index "invoices", ["pixi_id", "buyer_id", "seller_id"], :name => "index_invoices_on_pixi_id_and_buyer_id_and_seller_id"
   add_index "invoices", ["status"], :name => "index_invoices_on_status"
   add_index "invoices", ["transaction_id"], :name => "index_invoices_on_transaction_id"

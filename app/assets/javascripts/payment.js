@@ -1,38 +1,104 @@
-// process Stripe payment form for credit card payments
-$(document).on('click', '#payForm', function () {
+var $formID, marketplaceUri;
+var $balancedError = $('#balanced_error'); 
+
+// process Balanced bank account form for ACH payments
+$(document).on('click', '#acctForm', function () {
+  marketplaceUri = $('meta[name="balanced-key"]').attr('content');  // get balanced key		
+
+  // set form id
+  $formID = $('#bank-acct-form');
 	
-  // check card # to avoid resubmitting form twice
-  if (getFormID('#card_number').length > 0) {	  
-    balanced.init($('meta[name="balanced-key"]').attr('content'));  // get balanced key		
-    processCard(); // process card
+  // check acct # to avoid resubmitting form twice
+  if ($('#acct_number').length > 0) {	  
+
+    // initialize object
+    balanced.init(marketplaceUri);
+
+    processAcct(); // process acct
     return false 
   }
   else {
-    var amt = parseFloat(getFormID('#amt').val());	
-    if (amt == 0.0)
-       	getFormID("#payment_form").trigger("submit.rails");
+    $("#bank-acct-form").trigger("submit.rails");
     return true
   }
 });
+ 
+// process card
+function BalancedCard() {
+  $formID = $('#payment_form');
+  marketplaceUri = $('meta[name="balanced-key"]').attr('content');  // get balanced key		
 
+  // disable form
+  $('#payForm').attr('disabled', true);
+
+  // initialize object
+  balanced.init(marketplaceUri);
+
+  // create token	
+  balanced.card.create({
+    card_number: $('#card_number').val(),
+    security_code: $('#card_code').val(),
+    expiration_month: $('#card_month').val(),
+    expiration_year: $('#card_year').val()    
+  }, callbackHandler);
+
+  // prevent the form from submitting with the default action
+  return false;
+}
+
+// create token if credit card info is valid
+function processAcct() {
+    $('#bank-acct-form').attr('disabled', true);
+	
+      balanced.bankAccount.create({
+        name: $('#bank_account_acct_name').val(),
+        account_number: $('#acct_number').val(),
+        routing_number: $('#routing_number').val(),
+        type: $('#bank_account_acct_type').val()
+      }, callbackHandler);
+
+    // prevent the form from submitting with the default action
+    return false;
+}
+
+// process errors
+function processError(response) {
+  $balancedError.show(300).text(response.error);
+  $formID.attr('disabled', false);
+
+  // scroll to top of page
+  $('html, body').animate({scrollTop:0}, 100); 
+}
+
+// process balanced callback
 function callbackHandler(response) {
   switch (response.status) {
-    case 201:
-      // WOO HOO!
-      // response.data.uri == uri of the card or bank account resource
-      break;
     case 400:
-      // missing field - check response.error for details
-      break;
-    case 402:
-      // we couldn't authorize the buyer's credit card
-      // check response.error for details
+      console.log(response.error);
+      processError(response);
       break;
     case 404:
-      // your marketplace URI is incorrect
+      console.log(response.error);
+      processError(response);
       break;
-    case 500:
-      // Balanced did something bad, please retry the request
+    case 409:
+      console.log(response.error);
+      processError(response);
       break;
+    case 201:
+      toggleLoading();
+      $balancedError.hide(300);
+
+      // insert the data into the form 
+      $('#pay_token').val(response.data.uri);
+
+      if($('#bank_account_acct_no').length > 0) {
+        $('#bank_account_acct_no').val(response.data.account_number); }
+
+      // submit to the server
+      $formID.trigger("submit.rails");    	  
+      return true
   }
+    
+  return false;
 }

@@ -7,4 +7,6 @@ PIXI_PREMIUM_PRICE = PIXI_KEYS['pixi']['premium_price']
 PIXI_DAYS = PIXI_KEYS['pixi']['days']
 MAX_PIXI_AMT = PIXI_KEYS['pixi']['max_pixi_amt']
 MAX_INV_QTY = PIXI_KEYS['pixi']['max_inv_qty']
+PAYMENT_API = PIXI_KEYS['pixi']['payment_api']
+CREDIT_CARD_API = PIXI_KEYS['pixi']['credit_card_api']
 

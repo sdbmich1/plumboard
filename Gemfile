@@ -68,7 +68,7 @@ gem 'capistrano'
 # add payment gateways
 gem 'activemerchant'
 gem 'stripe'
-gem 'balanced'
+gem 'balanced', "~> 0.7.1"
 
 # install oauth
 gem 'omniauth'
@@ -115,6 +115,7 @@ group :development, :test do
   gem 'guard-spork', '1.4.2'
   gem 'spork', '0.9.2'
   gem 'faker'
+  gem "vcr", "~> 2.5.0"
 end
 
 # test gems
@@ -129,6 +130,7 @@ group :test do
   gem "database_cleaner"
   gem 'connection_pool'
   gem 'selenium-webdriver'
+  # gem "webmock", "~> 1.11.0"
 end
 
 # production gems

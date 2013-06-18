@@ -8,8 +8,10 @@
  */
 (function( $ ) {
 
-var proto = $.ui.autocomplete.prototype,
+if ( $.ui !== undefined ) {
+  var proto = $.ui.autocomplete.prototype,
 	initSource = proto._initSource;
+}
 
 function filter( array, term ) {
 	var matcher = new RegExp( $.ui.autocomplete.escapeRegex(term), "i" );

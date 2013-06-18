@@ -38,6 +38,21 @@ class Listing < ListingParent
     invoices.where(:id => val).first rescue nil
   end
 
+  # verify if listing is sold
+  def sold?
+    status == 'sold'
+  end
+
+  # mark pixi as sold
+  def mark_as_sold
+    unless sold?
+      self.status = 'sold'
+      save!
+    else
+      false
+    end
+  end
+
   # sphinx scopes
   sphinx_scope(:latest_first) {
     {:order => 'updated_at DESC, created_at DESC'}

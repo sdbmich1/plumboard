@@ -24,10 +24,12 @@ class Site < ActiveRecord::Base
 
   default_scope :order => "name ASC"
   
+  # select active sites
   def self.active
-    where(:status => 'active')
+    where(:status => 'active').sort_by { |e| e[:name] }.inject([]) { |m,e| m.last.nil? ? [e] : m.last[:name] == e[:name] ? m : m << e }
   end
 
+  # select active sites w/ pixis
   def self.active_with_pixis
     active.select { |s| s.listings.size > 0 }
   end

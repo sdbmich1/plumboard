@@ -1,24 +1,28 @@
-<p>
-  	<span class="span3">Confirmation #: </span><span class="span9 last"><%= transaction.confirmation_no %></span><br />
-  	<% if transaction.amt > 0.0 %>
-  	  <span class="span3">Payment Type: </span><span class="span9 last"><%= transaction.payment_type %></span><br />
-  	  <span class="span3">Card #: </span><span class="span9 last">************<%= transaction.credit_card_no %></span><br />
-  	<% end %>
-  	<span class="span3">Date & Time: </span><span class="span9 last"><%= get_local_time(transaction.created_at) %></span><br />  	
-  	<span class="span3">First Name: </span><span class="span9 last"><%= transaction.first_name %></span><br />
-	<span class="span3">Last Name: </span><span class="span9 last"><%= transaction.last_name %></span><br />
-	<span class="span3">Address 1: </span><span class="span9 last">	<%= transaction.address %></span><br />
-	<% unless transaction.address2.blank? %>
-	  <span class="span3">Address 2: </span><span class="span9 last"><%= transaction.address2 %></span><br />
-	<% end %>
-	<span class="span3">City: </span><span class="span9 last"><%= transaction.city %></span><br />
-	<span class="span3">State/Province:</span><span class="span9 last"> <%= transaction.state %></span><br />
-	<span class="span3">Zip: </span><span class="span9 last"><%= transaction.zip %></span><br />
-	<span class="span3">Country: </span><span class="span9 last"><%= transaction.country %></span><br />	  
-	<span class="span3">Home Phone: </span><span class="span9 last"><%= transaction.home_phone %></span><br />
-	<span class="span3">Email: </span><span class="span9 last"><%= transaction.email %></span><br />
-	<span class="span3">Description: </span><span class="span9 last"><%= transaction.description %></span><br />	
-	<% if showAmt %>
-  	  <span class="span3">Amount: </span><span class="span9 last"><%= number_to_currency transaction.amt %></span><br />	
-	<% end %>		
-</p>
+<table>
+  <tr><td class='width240'>Confirmation #:</td><td><%= transaction.confirmation_no %></td></tr>
+
+  <% if transaction.amt > 0.0 %>
+    <tr><td class='width240'>Payment Type: </td><td><%= transaction.payment_type %></td></tr>
+    <tr><td class='width240'>Card #:</td><td>************<%= transaction.credit_card_no %></td></tr>
+    <tr><td class='width240'>Amount:</td><td><%= number_to_currency(transaction.amt) %></td></tr>
+  <% end %>
+
+  <tr><td class='width240'>Date & Time: </td><td><%= get_local_time(transaction.created_at) %></td></tr>
+  <tr><td class='width240'>Name: </td><td><%= "#{transaction.first_name} #{transaction.last_name}" %></td></tr>
+  <tr><td class='width240'></td><td>
+    <address>
+      <%= transaction.address %><br />
+      <% unless transaction.address2.blank? %>
+        <%= transaction.address2 %><br />
+      <% end %>
+       <%= "#{transaction.city}, #{transaction.state} #{transaction.zip}" %><br />
+       <%= transaction.country %><br />	  
+    </address>
+  </td></tr>
+  <tr><td class='width240'>Home Phone: </td><td><%= transaction.home_phone %></span><br /></td></tr>
+  <tr><td class='width240'>Email: </td><td><%= transaction.email %></span><br /></td></tr>
+  <tr><td class='width240'>Description: </td><td><%= transaction.description %></span><br /></td></tr>
+  <% if showAmt %>
+    <tr><td class='width240'>Amount: </td><td><%= number_to_currency transaction.amt %></span><br /></td></tr>
+  <% end %>		
+</table>

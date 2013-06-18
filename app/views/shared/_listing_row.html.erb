@@ -2,11 +2,7 @@
   <td class='center-wrapper'>
     <%= render partial: 'shared/show_photo', locals: {model: listing, file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
   </td>
-  <% if listing.pending? %>
-    <td><%= link_to listing.nice_title, pending_listing_path(listing), class: 'pending_title' %></td>
-  <% else %>
-    <td><%= link_to listing.nice_title, listing, class: 'pending_title' %></td>
-  <% end %>
+  <td><%= link_to listing.title, set_pixi_path(listing), class: 'pending_title' %></td>
   <td class='width280'><%= listing.brief_descr %></td>
   <td><%= listing.site.name %></td>
   <td><%= ts_in_words(listing.updated_at) %></td>

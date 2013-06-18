@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="/assets/favicon.ico" rel="shortcut icon" />
+  <title><%= full_title(yield(:title)) %></title>
+  <%= stylesheet_link_tag    "application", :media => "all" %>
+  <%= javascript_include_tag "application", "http://code.jquery.com/jquery-1.10.1.min.js",  'jquery.placeholder.min.js', 'payment.js',
+  	"https://js.balancedpayments.com/v1/balanced.js" %>
+  <%= tag :meta, :name => "balanced-key", :content => BALANCED_URI %>
+  <%= csrf_meta_tags %>
+  <%= render 'layouts/shim' %>
+</head>
+<body>
+  <div id='wrap'>
+    <%= render 'layouts/header' %>
+    <%= yield :subhead %>
+    <div class="container">
+      <div id="spinner" class="round" style="display:none"></div>
+      <%= render 'layouts/notices' %>
+      <%= yield :content %>
+    </div>
+  </div>
+  <div id='footer'>
+    <div class="container">
+      <div id="push"></div>
+      <%= render 'layouts/footer' %>
+    </div>
+  </div>
+</body>
+</html>

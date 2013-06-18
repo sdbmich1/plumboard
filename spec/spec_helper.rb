@@ -15,17 +15,31 @@ Spork.prefork do
   require 'database_cleaner'
   require "paperclip/matchers"
   require "thinking_sphinx/test"
+  require 'balanced'
 
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
+  host = ENV['BALANCED_HOST'] or nil
+  options = {}
+
+  if !host.nil? then
+    options[:scheme] = 'http'
+    options[:host] = host
+    options[:port] = 5000
+    options[:ssl_verify] = false
+    Balanced.configure(nil, options)
+  end
+
   RSpec.configure do |config|
+    config.treat_symbols_as_metadata_keys_with_true_values = true
     config.include(EmailSpec::Helpers)
     config.include(EmailSpec::Matchers)
     config.mock_with :rspec
     config.include Paperclip::Shoulda::Matchers
     config.include Capybara::RSpecMatchers
+    config.include Capybara::DSL, :type => :request
     config.fixture_path = "#{::Rails.root}/spec/fixtures"
     config.use_transactional_fixtures = false
 
@@ -55,6 +69,12 @@ Spork.prefork do
     config.after(:each) do
       DatabaseCleaner.clean
       Warden.test_reset!
+    end
+
+    def make_marketplace
+      api_key = Balanced::ApiKey.new.save
+      Balanced.configure api_key.secret
+      Balanced::Marketplace.new.save
     end
   end
 end

@@ -57,8 +57,8 @@ function reset_menu_state($this, hFlg) {
     $this.css('background-color', '#e6e6e6').css('color', '#F95700');
   }
 
-  if (hFlg) 
-    $this.addClass('active');
+  if (hFlg) { 
+    $this.addClass('active'); }
 }
 
 // change active state for menu on click
@@ -134,21 +134,23 @@ $(document).ready(function(){
   }
   
   // picture slider
-  $('.bxslider').bxSlider({
-    slideMargin:10,
-    pager: false,
-    mode: 'fade'
-  });
+  if( $('.bxslider').length > 0 ) {
+    $('.bxslider').bxSlider({
+      slideMargin:10,
+      pager: false,
+      mode: 'fade'
+    });
 
-  // vertically center align images in slider
-  $('.bxslider-inner').each(function(){
-    var height_parent = $(this).css('height').replace('px', '') * 1;
-    var height_child = $('div', $(this)).css('height').replace('px', '') * 1;
-    var padding_top_child = $('div', $(this)).css('padding-top').replace('px', '') * 1;
-    var padding_bottom_child = $('div', $(this)).css('padding-bottom').replace('px', '') * 1;
-    var top_margin = (height_parent - (height_child + padding_top_child + padding_bottom_child)) / 2;
-    $(this).html('<div style="height: ' + top_margin + 'px; width: 100%;"></div>' + $(this).html());
-  });
+    // vertically center align images in slider
+    $('.bxslider-inner').each(function(){
+      var height_parent = $(this).css('height').replace('px', '') * 1;
+      var height_child = $('div', $(this)).css('height').replace('px', '') * 1;
+      var padding_top_child = $('div', $(this)).css('padding-top').replace('px', '') * 1;
+      var padding_bottom_child = $('div', $(this)).css('padding-bottom').replace('px', '') * 1;
+      var top_margin = (height_parent - (height_child + padding_top_child + padding_bottom_child)) / 2;
+      $(this).html('<div style="height: ' + top_margin + 'px; width: 100%;"></div>' + $(this).html());
+    });
+  }
 
   // used to scroll up page
   $(window).scroll(function(){
@@ -250,10 +252,10 @@ $(document).on("change", "#inv_qty, #inv_price, #inv_tax", function(){
   calc_amt();
 });
 
-// get pixi based selection of pixi ID
+// get pixi price based selection of pixi ID
 $(document).on("change", "select[id*=pixi_id]", function() {
   var pid = $(this).val();
-  var url = '/invoices/get_pixi?pixi_id=' + pid;
+  var url = '/invoices/get_pixi_price?pixi_id=' + pid;
 
   // process script
   processUrl(url);

@@ -3,12 +3,13 @@ class Invoice < ActiveRecord::Base
 
   attr_accessor :buyer_name
   attr_accessible :amount, :buyer_id, :comment, :pixi_id, :price, :quantity, :seller_id, :status, :buyer_name,
-    :sales_tax, :tax_total, :subtotal, :inv_date, :transaction_id
+    :sales_tax, :tax_total, :subtotal, :inv_date, :transaction_id, :bank_account_id
 
   belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id"
   belongs_to :seller, foreign_key: "seller_id", class_name: "User"
   belongs_to :buyer, foreign_key: "buyer_id", class_name: "User"
   belongs_to :transaction
+  belongs_to :bank_account
 
   has_many :posts, foreign_key: "pixi_id", primary_key: "pixi_id"
 
@@ -22,7 +23,7 @@ class Invoice < ActiveRecord::Base
 
   # set flds
   def set_flds
-    self.status = 'unpaid'
+    self.status = 'unpaid' if status.nil?
   end
 
   # get by status
@@ -60,8 +61,17 @@ class Invoice < ActiveRecord::Base
 
     # set transaction id
     if val
-      self.transaction_id, self.status = val, 'pending' 
+      self.transaction_id, self.status = val, 'paid' 
       save!
+    else
+      false
+    end
+  end
+
+  # credit account
+  def credit_account
+    if amount
+      bank_account.credit_account amount
     else
       false
     end

@@ -1,3 +1,4 @@
+<%= render partial: 'shared/review_nav', locals: { listing: listing } %>
 <%= form_tag new_transaction_path, :method => :get, :id => 'purchase_btn' do %> 
   <%= hidden_field_tag 'id', listing.pixi_id %>
   <%= hidden_field_tag 'user_id', @user.id %>
@@ -9,7 +10,5 @@
   <%= hidden_field_tag 'quantity1', listing.get_site_count %>
   <%= hidden_field_tag 'price1', get_price %>
   <%= hidden_field_tag 'transaction_type', 'pixi' %>
-  <%= render partial: 'shared/review_nav', locals: { listing: listing } %>
   <%= submit_tag('Next', :class=>'btn btn-large btn-primary submit-btn', id: 'order-btn') %>
 <% end %>  
-

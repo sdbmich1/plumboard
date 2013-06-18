@@ -33,7 +33,9 @@ class User < ActiveRecord::Base
   has_many :paid_invoices, foreign_key: :seller_id, class_name: 'Invoice', conditions: { :status => 'paid' }
   has_many :received_invoices, :foreign_key => "buyer_id", :class_name => "Invoice"
 
+  has_many :bank_accounts, dependent: :destroy
   has_many :transactions, dependent: :destroy
+
   has_many :user_pixi_points, dependent: :destroy
 
   has_many :pictures, :as => :imageable, :dependent => :destroy
@@ -89,7 +91,7 @@ class User < ActiveRecord::Base
     self.listings.active
   end
 
-  # return all pixis for user
+  # return whether user has pixis
   def has_pixis?
     pixis.size > 0
   end
@@ -102,6 +104,11 @@ class User < ActiveRecord::Base
   # return all pixis for user
   def sold_pixis
     self.listings.get_by_status('sold')
+  end
+
+  # return whether user has any bank accounts
+  def has_bank_account?
+    bank_accounts.size > 0 rescue nil
   end
 
   # converts date format

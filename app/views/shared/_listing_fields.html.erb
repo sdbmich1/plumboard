@@ -16,10 +16,10 @@
 	</tr>
 	<tr>
     	  <td><%= f.label :site_id, 'Site' %>
-	    <%= f.collection_select :site_id, Site.active, :id, :name, {:prompt => 'Select'} %></td>
+	    <%= f.collection_select :site_id, Site.active, :id, :name, {:prompt => 'Select'}, {class: 'pixi-select'} %></td>
 	  <td class='width30'></td>
     	  <td><%= f.label :category_id, 'Category' %>
-	    <%= f.collection_select :category_id, Category.active, :id, :name, {:prompt => 'Select'} %></td>
+	    <%= f.collection_select :category_id, Category.active, :id, :name, {:prompt => 'Select'}, {class: 'pixi-select'} %></td>
 	</tr>
 	<tr>
     	  <td><%= f.label :description %><%= f.text_area :description %></td>

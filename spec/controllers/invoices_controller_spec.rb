@@ -82,7 +82,6 @@ describe InvoicesController do
     end
   end
 
-
   describe 'xhr GET received' do
     before :each do
       @invoices = mock("invoices")
@@ -375,7 +374,7 @@ describe InvoicesController do
     end
   end
 
-  describe 'xhr GET get_pixi' do
+  describe 'xhr GET get_pixi_price' do
     before :each do
       @listing = mock_listing
       Listing.stub_chain(:find_by_pixi_id, :price).and_return( @listing )
@@ -384,7 +383,7 @@ describe InvoicesController do
     end
 
     def do_get
-      xhr :get, :get_pixi, pixi_id: '1'
+      xhr :get, :get_pixi_price, pixi_id: '1'
     end
 
     it "should load nothing" do

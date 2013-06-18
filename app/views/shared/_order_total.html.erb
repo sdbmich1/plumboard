@@ -1,23 +1,26 @@
 <%= render :partial => 'shared/show_discount' %> 
 
-<% if @order[:sales_tax] %>
+<% if @order %>
   <tr><td>Sales Tax</td><td></td>
   	<td class="price"><%= number_to_currency(@order[:sales_tax].to_f) %></td>
   </tr>
 <% end %>
-<% unless @transaction.processing_fee.blank? %>
-  <tr><td>Processing Fee</td><td></td>
+
+<% if @transaction %>
+  <% unless @transaction.processing_fee.blank? %>
+    <tr><td>Processing Fee</td><td></td>
   	<td class="price"><%= number_to_currency(@transaction.processing_fee) %></td>
-  </tr>
-<% end %>
-<% unless @transaction.convenience_fee.blank? %>
-  <tr>
+    </tr>
+  <% end %>
+  <% unless @transaction.convenience_fee.blank? %>
+    <tr>
   	<td>Convenience Fee</td><td></td>
   	<td class="price"><%= number_to_currency(@transaction.convenience_fee)%></td>
-  </tr>
-<% end %>
-<tr class='pixi-bkgnd'>
+    </tr>
+  <% end %>
+  <tr class='pixi-bkgnd'>
   	<td class='order-total'><%= show_title(paid) %></td>
   	<td></td>
   	<td class='order-total price'><%= number_to_currency(@transaction.amt) %></td>
-</tr>
+  </tr>
+<% end %>

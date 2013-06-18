@@ -19,7 +19,7 @@ Plumboard::Application.routes.draw do
 
   resources :invoices do
     collection do
-      get 'sent', 'received', 'get_pixi', 'autocomplete_user_first_name'
+      get 'sent', 'received', 'get_pixi_price', 'autocomplete_user_first_name'
     end
     member do
       get 'pay'
@@ -35,6 +35,7 @@ Plumboard::Application.routes.draw do
 
   resources :settings, except: [:new, :show, :create, :edit, :destroy, :update]
   resources :users, except: [:new]
+  resources :bank_accounts
 
   resources :pictures, only: [:destroy]
   resources :searches, only: [:index]

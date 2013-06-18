@@ -1,67 +1,66 @@
 // checks ticket order form quantity fields to ensure selections are made prior to submission 
-var formError, formTxtForm, pmtForm, payForm; 
+var formError, formTxtForm, pmtForm, payForm, api_type; 
  
-function getFormID(fld) { 
-  if ($('#fancybox-content').length > 0) {
-	return $('#fancybox-content').find(fld);
-	}		
-  else {
-  	return $(fld);   
-  }
-}  
-
 // process Stripe payment form for credit card payments
 $(document).on('click', '#payForm', function () {
+  var api_type = $('meta[name="credit-card-api"]').attr('content');  // get api type
 	
   // check card # to avoid resubmitting form twice
-  if (getFormID('#card_number').length > 0) {	  
-    Stripe.setPublishableKey($('meta[name="stripe-key"]').attr('content'));  // get stripe key		
-    processCard(); // process card
+  if ($('#card_number').length > 0) {	  
+    
+    // process payment based on api type
+    if(api_type == 'stripe') { StripeCard() } 
+    if(api_type == 'balanced') { BalancedCard() } 
+
     return false 
   }
   else {
-    var amt = parseFloat(getFormID('#amt').val());	
+    var amt = parseFloat($('#amt').val());	
     if (amt == 0.0)
-       	getFormID("#payment_form").trigger("submit.rails");
+       	$("#payment_form").trigger("submit.rails");
     return true
-      }
+  }
 });  
 
 // create token if credit card info is valid
-function processCard() {
-    $('#payForm').attr('disabled', true);
-	
-      Stripe.createToken({
-        number: getFormID('#card_number').val(),
-        cvc: getFormID('#card_code').val(),
-        expMonth: getFormID('#card_month').val(),
-        expYear: getFormID('#card_year').val()    
-      }, stripeResponseHandler);
+function StripeCard() {
+  Stripe.setPublishableKey($('meta[name="stripe-key"]').attr('content'));  // get stripe key		
 
-    // prevent the form from submitting with the default action
-    return false;
+  // disable form
+  $('#payForm').attr('disabled', true);
+	
+  // create token	
+  Stripe.createToken({
+    number: $('#card_number').val(),
+    cvc: $('#card_code').val(),
+    expMonth: $('#card_month').val(),
+    expYear: $('#card_year').val()    
+  }, stripeResponseHandler);
+
+  // prevent the form from submitting with the default action
+  return false;
 }
 
 // used to toggle promo codes
 $(document).on('click', '.promo-cd', function () {
-   	$(".promo-code").show();
+  $(".promo-code").show();
 });	
 
 $(document).ready(function() {	
   if ($('#pmtForm').length == 0 || $('#buyTxtForm').length == 0) {
-	payForm = getFormID('#payForm');		
+    payForm = $('#payForm');		
   } 
 });
 
 // process discount
 $(document).on('click', '#discount_btn', function () {
-    var cd = $('#promo_code').val();
-    if (cd.length > 0) {
-  		var url = '/discount.js?promo_code=' + cd; 
-  		process_url(url);
-  	}
+  var cd = $('#promo_code').val();
+  if (cd.length > 0) {
+    var url = '/discount.js?promo_code=' + cd; 
+    process_url(url);
+   }
   	
-	return false;
+  return false;
 });
 
 // print page
@@ -73,22 +72,22 @@ $(document).on('click', '#print-btn', function () {
 var win=null;
 function printIt(printThis)
 {
-	win = window.open();
-	self.focus();
-	win.document.write(printThis);	
-	win.print();
-	win.close();	
+  win = window.open();
+  self.focus();
+  win.document.write(printThis);	
+  win.print();
+  win.close();	
 }
 
 // insert the token into the form so it gets submitted to the server
 function set_token(response) {
-  getFormID('#transaction_token').val(response.id);
-  getFormID("#payment_form").trigger("submit.rails");    	  
+  $('#pay_token').val(response.id);
+  $("#payment_form").trigger("submit.rails");    	  
 }
 
 // handle credit card response
 function stripeResponseHandler(status, response) {
-  var stripeError = getFormID('#stripe_error'); 
+  var stripeError = $('#stripe_error'); 
       
   if(status == 200) {
     toggleLoading();
@@ -101,7 +100,6 @@ function stripeResponseHandler(status, response) {
     if(response.error.message == "An unexpected error has occurred. We have been notified of the problem.") {
       payForm.attr('disabled', false);
 	  
-      alert(response.error.message);
       // insert the token
       set_token(response);
     }

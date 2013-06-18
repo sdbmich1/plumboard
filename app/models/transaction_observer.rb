@@ -4,8 +4,10 @@ class TransactionObserver < ActiveRecord::Observer
 
   # update points
   def after_create txn
-    PointManager::add_points txn.user, 'inv' unless txn.pixi?
-    send_post txn
+    unless txn.pixi?
+      PointManager::add_points txn.user, 'inv' 
+      send_post txn
+    end
   end
 
   # send receipt upon approval

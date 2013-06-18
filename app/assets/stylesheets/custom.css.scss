@@ -533,7 +533,7 @@ a#notice-btn {
   float: left;
   max-width: 50px!important;
   max-height: 50px!important;
-  border: 1px solid #000000; 
+  border: 1px solid #AAAAAA; 
 }
 
 .list-font {
@@ -549,7 +549,7 @@ a#notice-btn {
  
 #reply_content {
   height: 30px!important;
-  width: 680px!important;
+  width: 715px!important;
   margin-bottom: 0!important;
   @extend #post_content;
 }
@@ -578,7 +578,15 @@ a#notice-btn {
   width: 60px!important;
 }
 
-#post-frm, #new_post {
+#post-frm {
   float: left;
   width: 820px!important;
+}
+
+.float-left {
+  float: left;
+}
+
+.img-valign {
+  vertical-align: middle;
 }

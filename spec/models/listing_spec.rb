@@ -332,4 +332,26 @@ describe Listing do
       @listing.get_invoice(0).should_not be_true
     end
   end
+
+  describe 'sold?' do
+    it 'should return true' do
+      @listing.status = 'sold'
+      @listing.sold?.should be_true
+    end
+
+    it 'should not return true' do
+      @listing.sold?.should_not be_true
+    end
+  end
+
+  describe 'mark_as_sold' do
+    it 'should return true' do
+      @listing.mark_as_sold.should be_true
+    end
+
+    it 'should not return true' do
+      @listing.status = 'sold'
+      @listing.mark_as_sold.should_not be_true
+    end
+  end
 end

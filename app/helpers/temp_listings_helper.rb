@@ -1,32 +1,23 @@
 module TempListingsHelper
+
   # set promo code for free order if appropriate
   def set_promo_code site
     PIXI_KEYS['pixi']['launch_promo_cd'] if Listing.free_order?(site)
   end
 
+  # set delete messsage for pixi
   def msg
     'Are you sure? All your changes will be lost.'
   end
 
+  # set delete messsage for photo
   def photo_msg
     'Image will be removed. Are you sure?'
   end
 
-  def add_photo(form_builder)
-    link_to_function("add", :id => "add_photo") do |page|
-      form_builder.fields_for :pictures, Picture.new, :child_index => 'NEW_RECORD' do |photo_form|
-	html = render(:partial => 'pixi_photo', :locals => { :f => photo_form })
-        page << "$('add_photo').insert({ before: '#{escape_javascript(raw html)}'.replace(/NEW_RECORD/g, new Date().getTime()) });"
-      end
-    end
+  # set different url if pixi is pending
+  def set_pixi_path listing
+    listing.pending? ? pending_listing_url(listing) : listing
   end
 
-  def delete_photo(form_builder)
-    if form_builder.object.new_record?
-      link_to_function("Remove Image", "this.up('fieldset').remove()")
-    else
-      form_builder.hidden_field(:_destroy) +
-        link_to_function("Remove Image", "this.up('fieldset').hide(); $(this).previous().value = '1'")
-    end
-  end
 end

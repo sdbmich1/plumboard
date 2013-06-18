@@ -8,7 +8,7 @@
       <% if @order[:transaction_type] == 'invoice' %>
         <h5><%= @order[:title] %>: <%= @order[:seller] %></h5>
       <% else %>
-        <h5><%= @listing.nice_title %></h5>
+        <h5><%= @listing.title %></h5>
       <% end %>
     </div>
     <table class="offset3">

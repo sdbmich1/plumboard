@@ -50,7 +50,7 @@ class InvoicesController < ApplicationController
   end
 
   # get pixi price
-  def get_pixi
+  def get_pixi_price
     @price = Listing.find_by_pixi_id(params[:pixi_id]).price
   end
 

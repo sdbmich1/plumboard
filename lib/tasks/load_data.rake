@@ -41,12 +41,25 @@ def update_pixis
 end
 
 def update_sites
-  sites = Site.where("name like '%Beauty%' or name like '%High School%' 
-  	or name like '%Hospital' or name like '%Adult%' or name like '%School%'")
-  sites.map! { |s| s.status = 'inactive'; s.save }
+  %W(Barber Center Dental Dentistry Medical Cosmetology Group Vocational Residency Internship Hair Seminary Foundation Bais Professional Language
+    Maintenance Learning Health Career Hospital Beauty School Adult Associated Family Church God Animal Training System Clinic Counseling Associate
+    Job Aveda Program Healing Acupuncture Message Driving Council Ministries Village Academia Aesthetic Ultrasound Xenon Defense Yeshiva Institucion
+    Oneida Medicine Roy BOCES Salon Service Reporting Planning Consulting Therapy Centro Bureau Home Childcare Diving Funeral Skills Pivot Irene
+    Recording Massage Automotive Esthetic Study ROP District Guy Universidad UPR CET Flight Division Test Jerusalem SABER Corporation Skin House Plus
+    Studies Quest Liceo Diesel Holistics NASCAR NCME ABC Video Nails Detective Solution Fast Train Education Mortuary Baking Theater Partners Society
+    Corporate LLC Bellus AIMS Firecamp Federal Tribeca Caribbean Union Torah Travel Creative Cathedral International Desert Fila Montessori Fiber
+    Film Radio Laboratory Ames Repair Welding
+    Planned Trade global Colegio Labs Tutor Escuela Employment Care Aviation Puerto Instituto Surgical Helicopter Make-up Marketing Company Chaplain
+    ZMS ORT Mildred Cultural Scool Beis Paralegal Cosmetic Religion Somatic Inovatech Hospice Height Golf Firenze Dietetic Theatre Limit).each do |loc|
+    
+    sites = Site.where("status = 'active' and name like ?", '%' + loc + '%').update_all(status: 'inactive')
+  end
 end
 
 def update_contactable_type
   contacts = Contact.where("contactable_type like '%Organization%'")
   contacts.map! { |s| s.contactable_type = 'Site'; s.save }
+end
+
+def update_pix
 end

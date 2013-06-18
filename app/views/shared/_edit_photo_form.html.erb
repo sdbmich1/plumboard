@@ -1,4 +1,4 @@
-<% unless model.pictures.blank? %>
+<% unless model.new_record? %>
   <div class='sm-bot'>Saved photo(s)</div>
   <% for pic in model.pictures %>
       <% unless pic.id.blank? %>

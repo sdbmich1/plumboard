@@ -11,15 +11,28 @@ describe InvoiceObserver do
     @observer.stub(:send_post).with(@model).and_return(@post)
   end
 
+  def mark_pixi
+    @listing = mock(Listing)
+    @observer = InvoiceObserver.instance
+    @observer.stub(:mark_pixi).with(@model).and_return(@listing)
+  end
+
   describe 'after_update' do
 
     before(:each) do
       @model = user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: listing.pixi_id, buyer_id: buyer.id) 
-      @model.price = 150.00
+      @model.price, @model.status = 150.00, 'paid'
     end
 
     it 'should send a post' do
       process_post
+    end
+
+    it 'should mark as sold' do
+      mark_pixi
+    end
+
+    it 'should credit account' do
     end
   end
 

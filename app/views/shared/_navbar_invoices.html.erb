@@ -1,7 +1,7 @@
 <ul class="nav pull-right">
-  <li id='li_home' class="active"><%= link_to "Sent", invoices_path, class: 'submenu', remote: true %></li>
+  <li id='li_home' class="<%= active == 'sent' ? 'active' : '' %>"><%= link_to "Sent", invoices_path, class: 'submenu', remote: true %></li>
   <li><%= link_to "Received", received_invoices_path, class: 'submenu', remote: true %></li>
   <% if @user.has_pixis? %>
-    <li><%= link_to "Create", new_invoice_path, class: 'submenu', remote: true %></li>
+    <li class="<%= active == 'create' ? 'active' : '' %>"><%= link_to "Create", get_invoice_path, class: 'submenu', remote: true %></li>
   <% end %>
 </ul>

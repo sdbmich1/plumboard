@@ -5,20 +5,28 @@ feature "Invoices" do
   let(:user) { FactoryGirl.create(:pixi_user) }
 
   before(:each) do
-    FactoryGirl.create(:pixi_user, first_name: 'Bob', last_name: 'Jones') 
-    FactoryGirl.create(:pixi_user, first_name: 'Bob', last_name: 'Nelson') 
-    FactoryGirl.create(:pixi_user, first_name: 'Bob', last_name: 'Davis') 
     login_as(user, :scope => :user, :run_callbacks => false)
     @user = user
+    create_buyers
+  end
+
+  def create_buyers
+    @buyer1 = FactoryGirl.create(:pixi_user, first_name: 'Bob', last_name: 'Jones', email: 'bjones@pixitest.com') 
+    FactoryGirl.create(:pixi_user, first_name: 'Bob', last_name: 'Nelson', email: 'bnelson@pixitest.com') 
+    FactoryGirl.create(:pixi_user, first_name: 'Bob', last_name: 'Davis', email: 'bdavis@pixitest.com') 
   end
 
   def select_buyer
     fill_in "buyer_name", :with => "Bob"
     fill_autocomplete "Bob Jones", "#buyer_name"
   end
+
+  def set_buyer_id
+    page.execute_script %Q{ $('#invoice_buyer_id').val("#{@buyer1.id}") }
+  end
    
   def select_pixi
-    select('Acoustic guitar - $100 Barely Used', :from => 'invoice_pixi_id')
+    select(@listing.title, :from => 'invoice_pixi_id')
   end
 
   def edit_invoice
@@ -40,6 +48,7 @@ feature "Invoices" do
     select_buyer
     select("2", :from => "inv_qty")
     select_pixi
+    set_buyer_id
     fill_in 'inv_price', with: 200.00
     fill_in 'inv_tax', with: 8.25
     fill_in 'invoice_comment', with: "Thanks for your business."
@@ -49,21 +58,26 @@ feature "Invoices" do
     @buyer = FactoryGirl.create(:pixi_user, first_name: 'Phil', last_name: 'Hayes') 
     @person = FactoryGirl.create(:pixi_user, first_name: 'Kim', last_name: 'Harris') 
     @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
+    @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
+  end
+
+  def add_paid_invoice
+    init_data
+    @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id, status: 'paid')  
   end
 
   def add_invoices
     init_data
-    @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id) 
+    @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id)
     @listing2 = FactoryGirl.create(:listing, title: 'Leather Bookbag', seller_id: @buyer.id) 
     @listing3 = FactoryGirl.create(:listing, title: 'Xbox 360', seller_id: @person.id) 
-    @invoice2 = @buyer.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing2.pixi_id, buyer_id: @user.id) 
-    @invoice3 = @person.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing3.pixi_id, buyer_id: @user.id) 
+    @invoice2 = @buyer.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing2.pixi_id, buyer_id: @user.id, status: 'paid')  
+    @invoice3 = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing3.pixi_id, buyer_id: @person.id)
   end
 
   def unknown_buyer
     fill_in "buyer_name", :with => "Ed Wilson"
     click_button 'Send'
-    page.should have_content "can't be blank" 
   end
 
   def zero_price
@@ -74,7 +88,7 @@ feature "Invoices" do
 
   describe "Visit Invoices" do
     before do
-      visit root_path 
+      visit listings_path 
       click_link 'My Invoices'
     end
 
@@ -89,13 +103,31 @@ feature "Invoices" do
     end
   end
 
-  describe 'user has pixis' do
+  describe 'user has pixis w/o bank acct' do
     before do
       FactoryGirl.create(:listing, seller_id: @user.id) 
-      visit root_path 
+      visit listings_path 
       click_link 'My Invoices'
     end
 
+    it { should have_link('Create', href: new_bank_account_path(target: 'shared/invoice_form')) }
+    it { should_not have_link('Create', href: new_invoice_path) }
+
+    it "displays new invoice link" do
+      @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
+      page.should_not have_link 'Create', href: new_bank_account_path
+    end
+  end
+
+  describe 'user has pixis w bank acct' do
+    before do
+      FactoryGirl.create(:listing, seller_id: @user.id) 
+      @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
+      visit listings_path 
+      click_link 'My Invoices'
+    end
+
+    it { should_not have_link('Create', href: new_bank_account_path) }
     it { should have_link('Create', href: new_invoice_path) }
   end
 
@@ -108,7 +140,7 @@ feature "Invoices" do
     it { should have_link("#{@invoice.id}", href: invoice_path(@invoice)) }
     it { should have_content "Status" }
     it { should have_content "Phil Hayes" }
-    it { should have_content "Guitar" }
+    it { should have_content @listing.title }
   end
 
   describe "View Unpaid Invoice" do
@@ -117,31 +149,31 @@ feature "Invoices" do
       visit invoices_path 
     end
 
-    it { should have_link("#{@invoice.id}", href: invoice_path(@invoice)) }
-    it "should show invoice page", js: true do
+    it "shows invoice page", js: true do
+      page.should have_link("#{@invoice.id}", href: invoice_path(@invoice)) 
+    
       click_on "#{@invoice.id}"
-
-      page.should have_content "Phil Hayes" 
-      page.should have_content "Guitar" 
+      page.should have_content @invoice.buyer.name
+      page.should have_content @invoice.listing.title
       page.should have_content "Amount Due" 
       page.should have_link('Edit', href: edit_invoice_path(@invoice)) 
       page.should have_link('Remove', href: invoice_path(@invoice)) 
 
       click_on 'Edit'
       unknown_buyer
+      page.should have_content "Buyer can't be blank" 
     end
   end
 
   describe "View Paid Invoice" do
     before do
-      add_invoices
-      @invoice.status = 'paid'
-      @invoice.save!
+      add_paid_invoice
       visit invoices_path 
     end
 
     it { should have_link("#{@invoice.id}", href: invoice_path(@invoice)) }
-    it "should show invoice page", js: true do
+
+    it "shows invoice page", js: true do
       click_on "#{@invoice.id}"
 
       page.should have_content "Amount Due" 
@@ -157,7 +189,7 @@ feature "Invoices" do
     end
         
     it { should have_link("#{@invoice.id}", href: invoice_path(@invoice)) }
-    it 'should change price', js: true  do
+    it 'changes price', js: true  do
       click_on "#{@invoice.id}"
       page.should have_link('Edit', href: edit_invoice_path(@invoice)) 
 
@@ -180,7 +212,8 @@ feature "Invoices" do
     end
         
     it { should have_link("#{@invoice.id}", href: invoice_path(@invoice)) }
-    it 'should remove invoice', js: true  do
+
+    it 'removes invoice', js: true  do
       click_on "#{@invoice.id}"
       page.should have_link('Remove', href: invoice_path(@invoice)) 
 
@@ -188,7 +221,7 @@ feature "Invoices" do
       page.should have_link('Remove', href: invoice_path(@invoice)) 
 
       click_remove_ok
-      page.should_not have_content "#{@invoice.id}"
+      page.should_not have_link("#{@invoice.id}", href: invoice_path(@invoice)) 
     end
   end
 
@@ -197,7 +230,7 @@ feature "Invoices" do
       visit invoices_path 
     end
 
-    it "should view no received invoices", js: true do
+    it "has no received invoices", js: true do
       click_link 'Received'
       page.should have_content "No invoices found." 
     end
@@ -209,15 +242,15 @@ feature "Invoices" do
       visit invoices_path 
     end
 
-    it { should have_link('Received', href: received_invoices_path) }
-    it "should view received invoices", js: true do
+    it "shows received invoices", js: true do
+      page.should have_link('Received', href: received_invoices_path) 
       click_link 'Received'
     
       page.should have_content "Status" 
       page.should have_content @user.name
-      page.should have_link("#{@invoice2.id}", href: invoice_path(@invoice2)) 
+      page.should have_link("#{@invoice.id}", href: invoice_path(@invoice)) 
 
-      click_on "#{@invoice2.id}"
+      click_on "#{@invoice.id}"
       page.should have_button 'Pay'
       page.should have_content "Bookbag" 
 
@@ -236,7 +269,7 @@ feature "Invoices" do
       click_link 'Create'
     end
 
-    it "should show content", js: true do
+    it "displays invoice content", js: true do
       page.should have_content "From:" 
       page.should have_content @user.name 
       page.should have_content "Bill To:" 
@@ -247,36 +280,39 @@ feature "Invoices" do
 
       describe 'invalid invoices', js: true do
         
-        it 'should not submit empty form' do
+        it 'does not submit empty form' do
 	  click_button 'Send'
           page.should have_content "Pixi can't be blank" 
         end
         
-        it 'should have pixi' do
+        it 'has pixi' do
 	  select_buyer
 	  click_button 'Send'
           page.should have_content "can't be blank" 
         end
         
-        it 'should not accept unknown buyer' do
+        it 'does not accept unknown buyer' do
 	  unknown_buyer
+          page.should have_content "Pixi can't be blank" 
         end
         
-        it 'should have a buyer' do
+        it 'must have a buyer' do
 	  select_pixi
 	  click_button 'Send'
           page.should have_content "Buyer can't be blank" 
         end
         
-        it 'should not have zero price' do
+        it 'does not accept zero price' do
 	  select_buyer
 	  select_pixi
+	  set_buyer_id
 	  zero_price
         end
         
-        it 'should not accept bad price' do
+        it 'does not accept bad price' do
 	  select_buyer
 	  select_pixi
+	  set_buyer_id
           fill_in 'inv_price', with: "R0"
 	  click_button 'Send'
           page.should have_content "Price is not a number" 
@@ -285,14 +321,16 @@ feature "Invoices" do
         it 'should not accept bad sales tax' do
 	  select_buyer
 	  select_pixi
+	  set_buyer_id
           fill_in 'inv_tax', with: "R0"
 	  click_button 'Send'
           page.should have_content "is not a number" 
         end
         
-        it 'should not accept invalid sales tax' do
+        it 'does not accept invalid sales tax' do
 	  select_buyer
 	  select_pixi
+	  set_buyer_id
           fill_in 'inv_tax', with: 5000
 	  click_button 'Send'
           page.should have_content "Sales tax must be less than or equal to 100" 
@@ -300,7 +338,7 @@ feature "Invoices" do
       end
 
       describe 'valid invoices', js: true do
-        it 'should accept with sales tax' do
+        it 'accepts invoice with sales tax' do
 	  add_data
 	  expect { 
 	    click_button 'Send'; sleep 3
@@ -310,9 +348,10 @@ feature "Invoices" do
 	  page.should have_content "Bob Jones" 
         end
         
-        it 'should accept w/o sales tax' do
+        it 'accepts invoice w/o sales tax' do
 	  select_buyer
 	  select_pixi
+	  set_buyer_id
 	  expect { 
 	    click_button 'Send'; sleep 3
 	  }.to change(Invoice, :count).by(1)

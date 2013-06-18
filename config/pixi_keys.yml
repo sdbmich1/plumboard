@@ -3,7 +3,7 @@ defaults: &defaults
     alias_length: 12
     key_length: 16
     site_init_free: 100
-    max_pixi_amt: 1000000.00
+    max_pixi_amt: 100000.00
     base_price: 5.00
     premium_price: 20.00
     fee: 0.30
@@ -14,6 +14,8 @@ defaults: &defaults
     max_inv_qty: 100
     pixi_post: 'Hi, I found your pixi post and would like to set up a time to discuss it. Please respond and provide me more information. Thank
     you.'
+    payment_api: 'balanced'
+    credit_card_api: 'balanced'
 
 development:    
   <<: *defaults

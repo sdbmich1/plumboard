@@ -1,12 +1,19 @@
 <div id="pmtForm">
-  <%= render partial: 'shared/listing_header', :locals => { step_no: 3, step_name: step_name } %>
-  <div class="center-wrapper mtop grp-hdr">Your order <%= @transaction.description %> has been processed.</div>
-  <div class="mtop">
+  <div class='center hdr mbot'><h2 class='grp-hdr'><%= step_name %></h2></div>
+  <div class='row'>
+    <span class="span2 offset3">
+      <%= render partial: 'shared/show_photo', :locals => {model: @transaction.temp_listings[0], psize: '180x180', file_name:'pixi-photo', display_cnt: 0} %>
+    </span>
+    <span class="span7">
+      <div class="mtop hdr">Your order <span class='grp-hdr'><%= @transaction.temp_listings[0].title %></span> has been processed.</div>
+    </span>
+  </div>
+  <div class="mtop offset2">
     Subject to approval, your pixi will be posted within the next hour. 
     <%= 'Your credit card will be charged upon approval.' if @transaction.amt > 0.0 %>
   </div>
-  <div class="mtop">Thank you for your business.</div>
-  <div class="mtop">
+  <div class="mtop center">Thank you for your business.</div>
+  <div class="mtop mbot">
   <center>
 	<%= link_to "Done", listings_path, :class => "btn btn-large btn-primary submit-btn", :id => 'cancel-btn' %>
   </center>

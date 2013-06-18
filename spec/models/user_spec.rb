@@ -37,6 +37,7 @@ describe User do
     it { should respond_to(:received_invoices) } 
     it { should respond_to(:unpaid_invoices) } 
     it { should respond_to(:paid_invoices) } 
+    it { should respond_to(:bank_accounts) } 
   end
 
   describe "when first_name is empty" do
@@ -226,6 +227,17 @@ describe User do
     it "should not return new pixis" do
       usr = FactoryGirl.create :contact_user
       usr.new_pixis.should be_empty
+    end
+  end
+
+  describe 'bank_account' do
+    it "should have account" do
+      @user.bank_accounts.build FactoryGirl.attributes_for(:bank_account, status: 'active')
+      @user.has_bank_account?.should be_true
+    end
+
+    it "should not have account" do
+      @user.has_bank_account?.should_not be_true
     end
   end
 

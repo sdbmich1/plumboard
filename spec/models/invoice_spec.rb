@@ -23,12 +23,14 @@ describe Invoice do
   it { should respond_to(:inv_date) }
   it { should respond_to(:buyer_name) }
   it { should respond_to(:subtotal) }
+  it { should respond_to(:bank_account_id) }
 
   it { should respond_to(:seller) }
   it { should respond_to(:buyer) }
   it { should respond_to(:listing) }
   it { should respond_to(:transaction) }
   it { should respond_to(:posts) }
+  it { should respond_to(:bank_account) }
   it { should respond_to(:set_flds) }
   
   describe "when seller_id is empty" do
@@ -166,26 +168,57 @@ describe Invoice do
   end
 
   describe "owner" do 
-
     it "should verify user is owner" do 
       @invoice.owner?(@user).should be_true 
     end
 
-    it  "should not verify user is owner" do 
+    it "should not verify user is owner" do 
       @invoice.owner?(@buyer).should_not be_true 
+    end
+  end
+
+  describe 'credit_account' do
+    before do
+      @account = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account
+      @invoice.bank_account_id = @account.id
+      @bank_acct = mock('Balanced::BankAccount', :amount=>50000)
+      Balanced::BankAccount.stub!(:find).with(@account.token).and_return(@bank_acct)
+      @bank_acct.stub!(:credit).and_return(true)
+    end
+
+    it "should credit account" do 
+      @invoice.credit_account.should be_nil
+    end
+
+    it "should not credit account" do 
+      @invoice.amount = 0.00
+      @invoice.credit_account.should_not be_true 
     end
   end
 
   describe "transactions" do
     let(:transaction) { FactoryGirl.create :transaction }
 
-    it "should not submit payment" do 
+    it "does not submit payment" do 
       @invoice.submit_payment(nil).should_not be_true
     end
 
-    it "should submit payment" do 
+    it "submits payment" do 
       @invoice.submit_payment(transaction.id).should be_true
     end
   end
 
+  describe "set_flds" do
+    it "does not set flds" do 
+      invoice = @user.invoices.build FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id, status: 'paid')
+      invoice.save
+      invoice.status.should_not == 'unpaid'
+    end
+
+    it "does not set flds" do 
+      @invoice.status = nil
+      @invoice.save
+      @invoice.status.should == 'unpaid'
+    end
+  end
 end

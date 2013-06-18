@@ -1,5 +1,5 @@
 class Transaction < ActiveRecord::Base
-  include CalcTotal
+  include CalcTotal, Payment
 
   attr_accessor :cvv
   attr_accessible :address, :address2, :amt, :city, :code, :country, :credit_card_no, :description, :email, :first_name, 
@@ -40,16 +40,6 @@ class Transaction < ActiveRecord::Base
   validates :amt, :presence => true,
   		  :numericality => true
 
-  # validate existance of txn token
-  def must_have_token
-    if token.blank?
-      errors.add(:base, 'Card info is invalid.  Must have valid card, cvv and expiration date.')
-    else
-      return true
-    end
-    false
-  end
-  
   # pre-load new transaction for given user
   def self.load_new usr, listing, order
     if usr && listing
@@ -106,48 +96,49 @@ class Transaction < ActiveRecord::Base
         end 
       end 
 
-      # set status
-      self.status = 'pending'
-      save!  
-
       # submit payment or order based on transaction type
       if pixi? 
-        listing.submit_order(self.id) 
+        self.status = 'pending' # set status
+        save!  
+
+ 	# submit order
+        listing.submit_order(self.id) unless self.errors.any?
       else
-        listing.get_invoice(order["invoice_id"]).submit_payment(self.id)
+
+        # process credit card
+        if process_transaction
+          listing.get_invoice(order["invoice_id"]).submit_payment(self.id) # mark invoice as paid
+	else
+	  return false
+	end
       end
     else
       false
     end
   end
 
-  # process credit card messages
-  def process_error e
-    logger.error "Stripe error while processing this transaction: #{e.message}"
-    errors.add :base, "There was a problem with your credit card. #{e.message}"    
-  end
-
-  # handle credit card error
-  def check_for_stripe_error
-    self.errors[:credit_card_no] = @stripe_error
-  end
-
   # set approval status
   def approved?
     status == 'approved'
+  end
+
+  # get invoice pixi
+  def get_invoice_listing
+    invoices[0].listing rescue nil
   end
   
   # process transaction
   def process_transaction
     if valid? 
-      # charge the credit card using Stripe
-      if amt > 0.0 then
-        result = Stripe::Charge.create(:amount => (amt * 100).to_i, :currency => "usd", :card => token, :description => description)  
-      end
+      # charge the credit card
+      result = Payment::charge_card(token, amt, description, self) if amt > 0.0
+
+      # check for errors
+      return false if self.errors.any?
 
       # check result - update confirmation # if nil (free transactions) use timestamp instead
       if result
-        self.confirmation_no, self.payment_type, self.credit_card_no = result.id, result.card[:type], result.card[:last4] 
+        Payment::process_result(result, self)
       else
         self.confirmation_no = Time.now.to_i.to_s   
       end  
@@ -158,20 +149,5 @@ class Transaction < ActiveRecord::Base
     else
       false
     end
-
-    # rescue errors
-    rescue Stripe::CardError => e
-      process_error e
-    rescue Stripe::AuthenticationError => e
-      process_error e
-    rescue Stripe::InvalidRequestError => e
-      process_error e
-    rescue Stripe::APIConnectionError => e
-      process_error e
-    rescue Stripe::StripeError => e
-      ExceptionNotifier::Notifier.exception_notification('StripeError', e).deliver if Rails.env.production?
-      process_error e
-    rescue => e
-      process_error e
   end
 end

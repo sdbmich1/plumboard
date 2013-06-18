@@ -74,7 +74,7 @@ module ApplicationHelper
 
   # set user image
   def get_user_image usr
-    usr.pictures.blank? ? 'person_icon.jpg' : usr.pictures[0].photo.url
+    !usr.any_pix? ? 'person_icon.jpg' : usr.pictures[0].photo.url
   end
 
   # return sites based on pixi type
@@ -88,9 +88,10 @@ module ApplicationHelper
   end
 
   # set appropriate submenu nav bar
-  def set_submenu menu_type
-    case menu_type
-      when 'Invoices'; render 'shared/navbar_invoices'
+  def set_submenu *args
+    case args[0]
+      when 'Invoices'; render partial: 'shared/navbar_invoices', locals: { active: 'sent' }
+      when 'My Invoices'; render partial: 'shared/navbar_invoices', locals: { active: 'create' }
       when 'Pixis'; render 'shared/navbar_pixis'
       when 'My Pixis'; render 'shared/navbar_mypixis'
       when 'Pending Orders'; render 'shared/navbar_pending'

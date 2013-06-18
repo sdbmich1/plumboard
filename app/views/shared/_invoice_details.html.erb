@@ -2,7 +2,9 @@
   <%= render 'shared/inv_header' %>
   <tr>
     <td class="width120"><div class='price'><%= @invoice.quantity %></div></td>
-    <td class="width360"><%= @invoice.listing.nice_title %></td>
+    <td class="width360">
+      <%= render partial: 'shared/show_tiny_photo', locals: {model: @invoice.listing} %>
+      <%= @invoice.listing.title %></td>
     <td class="width120"><div class='price'><%= number_to_currency @invoice.price %></div></td>
     <td class="width120"><div class='price'><%= number_to_currency @invoice.subtotal %></div></td>
   </tr>

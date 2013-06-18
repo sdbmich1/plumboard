@@ -219,5 +219,16 @@ FactoryGirl.define do
       user.create_user FactoryGirl.attributes_for(:pixi_user)
     end
   end
+
+  factory :bank_account do
+    acct_name	"Joe's Checking"
+    status		'active'
+    acct_type	'checking'
+    acct_number	90009000
+    token	"/v1/marketplaces/TEST-MP2Q4OaIanQuIDJIixHGmhQA/bank_accounts/BA7ehO1oDwPUBAR9cz71sd2g"
+    before(:create) do |acct|
+      acct.create_user FactoryGirl.attributes_for(:pixi_user)
+    end
+  end
 end
 		 
