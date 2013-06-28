@@ -16,6 +16,7 @@ defaults: &defaults
     you.'
     payment_api: 'balanced'
     credit_card_api: 'balanced'
+    company_info: 'Pixiboard, Inc., 1188 Mission Street, Ste 1915, SF, CA 94103'
 
 development:    
   <<: *defaults

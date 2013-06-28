@@ -1,0 +1,20 @@
+<div class="item">
+  <div class="center-wrapper">
+    <%= render partial: 'shared/show_thumb_photo', locals: {model: category} %>
+    <div class='sm-top bdescr'>
+      <% if can?(:manage_users, @user) %> 
+        <%= link_to category.name_title, edit_category_path(category), remote: true %>
+      <% else %>
+        <%= category.name_title %>
+      <% end %>
+    </div>
+    <div class='sm-top gdescr'>
+      <div class='item-cat pixi-grey-bkgnd'>
+        <%= link_to "(#{category.active_listings.size})", category_listings_path(cid: category), remote: true %> 
+      </div>
+     <div class='item-dt pixi-grey-bkgnd'>
+       <%= "More..." %>
+      </div>
+    </div>
+  </div>
+ </div>

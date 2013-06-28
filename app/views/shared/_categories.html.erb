@@ -1,0 +1,6 @@
+<%= render partial: 'shared/category', collection: @categories %>
+
+<nav id="px-nav" class='center-wrapper nxt-pg-spinner'>
+  <%= link_to_if @categories.next_page, "Next", categories_path(page: @categories.next_page), class: 'nxt-pg', remote: true %>
+</nav>
+

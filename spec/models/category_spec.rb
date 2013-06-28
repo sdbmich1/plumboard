@@ -13,6 +13,8 @@ describe Category do
   it { should respond_to(:pixi_type) }
   it { should respond_to(:listings) }
   it { should respond_to(:temp_listings) }
+  it { should respond_to(:active_listings) } 
+  it { should respond_to(:pictures) }
 
   describe "when name is empty" do
     before { @category.name = "" }
@@ -44,25 +46,75 @@ describe Category do
     it { @category.category_type.should == "gigs" }
   end
 
-  describe "should include active categories" do
-    category = Category.create(:status => "active")
+  describe "active categories" do
+    before { FactoryGirl.create(:category) }
     it { Category.active.should_not be_nil } 
+    it { Category.inactive.should be_empty } 
   end
 
-  describe "should not include inactive categories" do
-    category = Category.create(:status => "inactive")
-    it { Category.active.should_not include(category) }
+  describe "inactive categories" do
+    before { FactoryGirl.create(:category, status: 'inactive') }
+    it { Category.active.should be_empty } 
+    it { Category.inactive.should_not be_empty } 
   end
 
   describe 'premium?' do
-    it 'should return true' do
+    it 'returns true' do
       @category.pixi_type = 'premium'
       @category.premium?.should be_true
     end
 
-    it 'should not return true' do
+    it 'does not return true' do
       @category.pixi_type = nil
       @category.premium?.should_not be_true
+    end
+  end
+
+  describe 'name_title' do
+    it { @category.name_title.should == @category.name.titleize }
+
+    it 'does not return titleized name' do
+      @category.name = nil
+      @category.name_title.should be_nil
+    end
+  end
+
+  describe 'with_picture' do
+    let(:category) { FactoryGirl.build :category }
+
+    it "adds a picture" do
+      category.with_picture.pictures.size.should == 1
+    end
+  end  
+
+  describe 'pictures' do
+    before(:each) do
+      @sr = @category.pictures.build FactoryGirl.attributes_for(:picture)
+    end
+
+    it "has many pictures" do 
+      @category.pictures.should include(@sr)
+    end
+
+    it "should destroy associated pictures" do
+      @category.destroy
+      [@sr].each do |s|
+         Picture.find_by_id(s.id).should be_nil
+       end
+    end 
+  end  
+
+  describe "must have pictures" do
+
+    it "does not save w/o at least one picture" do
+      @category.should_not be_valid
+    end
+
+    it "saves with at least one picture" do
+      picture = @category.pictures.build
+      picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
+      @category.save
+      @category.should be_valid
     end
   end
 

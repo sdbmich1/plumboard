@@ -22,7 +22,7 @@ feature "UserSignins" do
     scenario 'should sign-in from sign-in page' do
       click_on "Sign in with Facebook"
       page.should have_link('Sign out', href: destroy_user_session_path)
-      page.should have_content "Successfully authenticated from Facebook account"
+      page.should have_content "Welcome"
     end
 
     scenario 'should sign-in from home page' do
@@ -32,7 +32,7 @@ feature "UserSignins" do
       }.to change(User, :count).by(1)
 
       page.should have_link('Sign out', href: destroy_user_session_path)
-      page.should have_content "Successfully authenticated from Facebook account"
+      page.should have_content "Welcome"
     end
   end
 
@@ -64,6 +64,10 @@ feature "UserSignins" do
     it { should_not have_link('Orders', href: pending_listings_path) }
     it { should_not have_link('Transactions', href: transactions_path) }
     it { should_not have_content('Dashboard') }
+    it { should have_link('My Pixis', href: seller_listings_path) }
+    it { should have_link('My Posts', href: posts_path) }
+    it { should have_link('My Invoices', href: invoices_path) }
+    it { should have_link('Settings', href: settings_path) }
     it { should_not have_link('Users', href: users_path) }
     it { should_not have_link('Sign in', href: new_user_session_path) }
 
@@ -83,9 +87,14 @@ feature "UserSignins" do
     it { should have_content(user.first_name) }
     it { should have_content('Manage') }
     it { should have_link('Pending Orders', href: pending_listings_path) }
+    it { should have_link('Categories', href: categories_path) }
     it { should have_link('Transactions', href: transactions_path) }
     it { should have_link('Users', href: users_path) }
     it { should have_content('Dashboard') }
+    it { should have_link('My Pixis', href: seller_listings_path) }
+    it { should have_link('My Posts', href: posts_path) }
+    it { should have_link('My Invoices', href: invoices_path) }
+    it { should have_link('Settings', href: settings_path) }
     it { should have_link('Sign out', href: destroy_user_session_path) }
     it { should_not have_link('Sign in', href: new_user_session_path) }
 
@@ -105,9 +114,14 @@ feature "UserSignins" do
     it { should have_content(user.first_name) }
     it { should have_content('Manage') }
     it { should have_link('Pending Orders', href: pending_listings_path) }
+    it { should_not have_link('Categories', href: categories_path) }
     it { should_not have_link('Transactions', href: transactions_path) }
     it { should_not have_link('Users', href: users_path) }
     it { should have_content('Dashboard') }
+    it { should have_link('My Pixis', href: seller_listings_path) }
+    it { should have_link('My Posts', href: posts_path) }
+    it { should have_link('My Invoices', href: invoices_path) }
+    it { should have_link('Settings', href: settings_path) }
     it { should have_link('Sign out', href: destroy_user_session_path) }
     it { should_not have_link('Sign in', href: new_user_session_path) }
 
@@ -127,9 +141,14 @@ feature "UserSignins" do
     it { should have_content(user.first_name) }
     it { should_not have_content('Manage') }
     it { should_not have_link('Pending Orders', href: pending_listings_path) }
+    it { should_not have_link('Categories', href: categories_path) }
     it { should_not have_link('Transactions', href: transactions_path) }
     it { should_not have_link('Users', href: users_path) }
     it { should have_content('Dashboard') }
+    it { should have_link('My Pixis', href: seller_listings_path) }
+    it { should have_link('My Posts', href: posts_path) }
+    it { should have_link('My Invoices', href: invoices_path) }
+    it { should have_link('Settings', href: settings_path) }
     it { should have_link('Sign out', href: destroy_user_session_path) }
     it { should_not have_link('Sign in', href: new_user_session_path) }
 

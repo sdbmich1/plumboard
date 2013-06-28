@@ -72,9 +72,9 @@ module ApplicationHelper
     end
   end
 
-  # set user image
-  def get_user_image usr
-    !usr.any_pix? ? 'person_icon.jpg' : usr.pictures[0].photo.url
+  # set image
+  def get_image model, file_name
+    !model.any_pix? ? file_name : model.pictures[0].photo.url
   end
 
   # return sites based on pixi type
@@ -92,6 +92,7 @@ module ApplicationHelper
     case args[0]
       when 'Invoices'; render partial: 'shared/navbar_invoices', locals: { active: 'sent' }
       when 'My Invoices'; render partial: 'shared/navbar_invoices', locals: { active: 'create' }
+      when 'Categories'; render 'shared/navbar_categories'
       when 'Pixis'; render 'shared/navbar_pixis'
       when 'My Pixis'; render 'shared/navbar_mypixis'
       when 'Pending Orders'; render 'shared/navbar_pending'

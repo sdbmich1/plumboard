@@ -2,9 +2,7 @@
 <% if model %>
   <div class="bxslider">
     <% for pic in model.pictures %>
-        <div>
-	  <%= image_tag pic.photo.url(:large) unless pic.photo_file_name.blank? %>
-	</div>
+      <div><%= image_tag pic.photo.url(:large) unless pic.photo_file_name.blank? %></div>
     <% end %>
   </div>
 <% end %>

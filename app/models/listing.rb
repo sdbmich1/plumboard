@@ -33,6 +33,11 @@ class Listing < ListingParent
     active.paginate page: pg
   end
 
+  # get pixis by category id
+  def self.get_by_category cid, pg
+    active.where(:category_id => cid).paginate page: pg
+  end
+
   # get invoice
   def get_invoice val
     invoices.where(:id => val).first rescue nil
@@ -49,6 +54,7 @@ class Listing < ListingParent
       self.status = 'sold'
       save!
     else
+      errors.add(:base, 'Pixi already marked as sold.')
       false
     end
   end

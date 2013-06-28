@@ -12,6 +12,7 @@ class TempListing < ListingParent
     begin
       token = SecureRandom.urlsafe_base64
     end while TempListing.where(:pixi_id => token).exists?
+
     self.pixi_id = token
   end
 
@@ -52,6 +53,7 @@ class TempListing < ListingParent
       self.status = 'pending' 
       save!
     else
+      errors.add :base, "Pixi must have transaction to submit an order."
       false
     end
   end
@@ -74,6 +76,7 @@ class TempListing < ListingParent
       # add to board
       listing.save!
     else
+      errors.add :base, "Pixi must be approved prior to posting to board."
       false
     end
   end

@@ -40,7 +40,7 @@ task :import => :environment do
   end
 end
 
-task :category => :environment do
+task :load_categories => :environment do
 
   CSV.foreach(Rails.root.join('db', 'category_data_020613.csv'), :headers => true) do |row|
 
@@ -50,8 +50,14 @@ task :category => :environment do
 		:status		   => 'active'
     }
 
-    # add category
-    new_category = Category.new(attrs)
+    # find or add category
+    new_category = Category.find_or_initialize_by_name(attrs)
+
+    # add photo
+    if new_category.pictures.size == 0
+      picture = new_category.pictures.build
+      picture.photo = File.new row[2]
+    end
 
     # save category
     if new_category.save 

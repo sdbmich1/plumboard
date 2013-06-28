@@ -4,12 +4,12 @@
 <% end %>
 <%= content_for :content do %>
   <div id="pxboard">
-    <%= render partial: 'shared/listing', collection: @listings %>
+    <%= render 'shared/listings' %>
   </div> 
 
-  <nav id="px-nav" class='center-wrapper nxt-pg-spinner'>
-    <%= link_to "Next", {controller: "listings", action: atype, page: @page.to_i+1}, class: 'nxt-pg' %>
-  </nav>
+  <div id="px-nav" class='center-wrapper nxt-pg-spinner'>
+    <%= render 'shared/listing_next_page' %>
+  </div>
 
   <%= link_to 'Scroll', '#', class: 'scrollup' %>
 <% end %>

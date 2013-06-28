@@ -4,9 +4,8 @@
   <link href="/assets/favicon.ico" rel="shortcut icon" />
   <title><%= full_title(yield(:title)) %></title>
   <%= stylesheet_link_tag    "application", "jquery.bxslider", :media => "all" %>
-  <%= javascript_include_tag "application", "http://code.jquery.com/jquery-1.7.1.min.js", "https://js.stripe.com/v1/", 'transaction.js',
-     'jquery.bxslider.min.js',	'jquery.masonry.min.js','jquery.infinitescroll.js' %>
-  <%= tag :meta, :name => "stripe-key", :content => STRIPE_PUBLIC_KEY %>
+  <%= javascript_include_tag "application", "http://code.jquery.com/jquery-1.7.1.min.js",'jquery.bxslider.min.js','jquery.masonry.min.js',
+     'jquery.infinitescroll.js' %>
   <%= csrf_meta_tags %>
   <%= render 'layouts/shim' %>
 </head>

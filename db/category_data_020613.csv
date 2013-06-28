@@ -1,23 +1,45 @@
-Name ,Type
-gigs,Employment
-for sale,sales
-happenings,Community
-jobs,Employment
-community,Community
-beauty,Services 
-creative,Services 
-computer,Services 
-cycle,Services 
-event,Services 
-financial,Services 
-legal,Services 
-lessons,Services 
-pet,Services 
-automotive,Services 
-move,Services 
-household,Services 
-handiwork,Services 
-housing,Services 
-tutoring,Services 
-deals,sales
-travel,Services 
+Name ,Type,Image_file
+gigs,Employment,C:\RoRDev\images\help-wanted.jpg
+for sale,sales,C:\RoRDev\images\for_sale_sign.jpg
+happenings,Community,C:\RoRDev\images\event.jpg
+jobs,Employment,C:\RoRDev\images\job_openings.png
+community,Community,C:\RoRDev\images\Community2.jpg
+beauty,Services ,C:\RoRDev\images\beauty.jpg
+creative,Services ,C:\RoRDev\images\bulb.png
+computer,Services ,C:\RoRDev\images\photo9.jpg
+cycle,Services ,C:\RoRDev\images\bike2.jpg
+event,Services ,C:\RoRDev\images\Events1.jpg
+financial,Services ,C:\RoRDev\images\financial.jpg
+legal,Services ,C:\RoRDev\images\law3.jpg
+lessons,Services ,C:\RoRDev\images\small_chalkboard-3024.jpg
+pet,Services ,C:\RoRDev\images\pets.png
+automotive,Services ,C:\RoRDev\images\muscle-car-sale.jpg
+move,Services ,C:\RoRDev\images\moving1.jpg
+household,Services ,C:\RoRDev\images\housework.jpg
+handiwork,Services ,C:\RoRDev\images\tools1.jpg
+housing,Services ,C:\RoRDev\images\forrent.gif
+tutoring,Services ,C:\RoRDev\images\tutor1.jpg
+deals,sales,C:\RoRDev\images\coupons.png
+travel,Services ,C:\RoRDev\images\travelsuitcase.jpg
+tickets,sales,C:\RoRDev\images\tickets.png
+lost & found,Services ,C:\RoRDev\images\lost_and_found.gif
+electronics,sales,C:\RoRDev\images\television.jpg
+focus groups,Services ,C:\RoRDev\images\Focus-group2.jpg
+scholarships,Services ,C:\RoRDev\images\scholarship2.jpg
+music,sales,C:\RoRDev\images\music2.jpg
+jewelry,sales,C:\RoRDev\images\bracelet.jpg
+real estate,sales,C:\RoRDev\images\house-for-sale1.jpg
+furniture,sales,C:\RoRDev\images\furniture-f13.jpg
+clothes,sales,C:\RoRDev\images\pile-of-clothes.jpg
+motorcycle,sales,C:\RoRDev\images\motorcycle.jpg
+roommate,Services ,C:\RoRDev\images\roommate.jpg
+arts & crafts,sales,C:\RoRDev\images\glass-arts-and-crafts.jpg
+ride share,Services ,C:\RoRDev\images\medium_carpool.jpg
+baby & kids,sales,C:\RoRDev\images\babies.jpg
+childcare,Services ,C:\RoRDev\images\Childcare1.jpeg
+books,sales,C:\RoRDev\images\textbooks.jpg
+appliances,sales,C:\RoRDev\images\fridge.jpg
+video games,sales,C:\RoRDev\images\video-games.jpg
+cell phones,sales,C:\RoRDev\images\Cell.bmp
+photo,sales,C:\RoRDev\images\old_camera.JPG
+video,sales,C:\RoRDev\images\old-film.jpg

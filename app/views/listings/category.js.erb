@@ -1,0 +1,7 @@
+$("#pxboard").html("<%= escape_javascript(render(partial: 'shared/listing', collection: @listings)) %>");
+
+<% unless @listings.next_page %>
+  $('a.nxt-pg').remove();
+<% end %>
+
+$('#spinner').hide(300);

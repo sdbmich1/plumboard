@@ -1,16 +1,35 @@
 <div class='height360'>
   <div class='row'>
     <div class="span12 mbot">
-      <h4><%= listing.title %></h4>
+      <h4 class='mbot'><%= listing.title %></h4>
+      Posted By: <%= render partial: 'shared/show_tiny_photo', locals: {model: listing.user} %><%= listing.user.name %><br />
+      <div class='mtop'>
       Site: <%= listing.site_name %><br />
       Category: <%= listing.category_name %><br />
       <% if listing.price %>
         Price: <%= number_to_currency listing.price %><br />
       <% end %>
+      </div>
+    </div>
+  </div>
+  <div class='row'>
+    <div class="span5 mbot">
+      <%= render partial: 'shared/photos', locals: {model: listing, file_name: "", psize: '120x120'} %>
+    </div>
+    <div class="offset1 span6">
+      <div id='post_form'>
+        <%= render partial: 'shared/contact_seller', locals: {listing: listing} unless listing.seller? @user.id %>
+      </div>
     </div>
   </div>
 
-  <div class="grey-text mbot row">
+  <div class="mtop row">
+    <div class="span12 mbot">
+      <%= listing.description %>
+    </div>
+  </div>
+
+  <div class="grey-text mtop row">
     <div class="span4">
       ID: <%= listing.pixi_id %>
     </div>
@@ -19,22 +38,6 @@
     </div>
     <div class="span4">
       <span class='pull-right'>Updated: <%= get_local_time listing.updated_at %></span>
-    </div>
-  </div>
-  <div class='row'>
-    <div class="span6">
-      <%= render partial: 'shared/photos', locals: {model: listing, file_name: "", psize: '120x120'} %>
-    </div>
-    <div class="span6">
-      <div id='post_form'>
-        <%= render partial: 'shared/contact_seller', locals: {listing: listing} %>
-      </div>
-    </div>
-  </div>
-
-  <div class="mtop row">
-    <div class="span12 mbot">
-      <%= listing.description %>
     </div>
   </div>
 </div>

@@ -52,6 +52,7 @@ FactoryGirl.define do
     name 		"Foo bar"
     category_type	"Gigs"
     status 		"active"
+    before(:create) {|category| category.pictures.build FactoryGirl.attributes_for(:picture)}
   end
 
   factory :promo_code do

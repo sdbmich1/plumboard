@@ -13,7 +13,7 @@ Plumboard::Application.routes.draw do
   # resource defs
   resources :listings, except: [:new, :edit, :update, :create] do
     collection do
-      get 'seller', 'follower', 'sold'
+      get 'seller', 'follower', 'sold', 'category'
     end
   end
 
@@ -49,6 +49,12 @@ Plumboard::Application.routes.draw do
     end
   end
 
+  resources :categories, except: [:show] do
+    collection do
+      get 'inactive', 'manage'
+    end
+  end
+
   resources :pending_listings, except: [:new, :edit, :update, :create, :destroy] do
     member do
       put 'approve', 'deny'
@@ -77,5 +83,7 @@ Plumboard::Application.routes.draw do
     root :to => "users#show", :as => :user_root
   end
 
+  # specify root route based on user sign in status
+  root to: 'listings#index', :constraints => lambda {|r| r.env["warden"].authenticate? }
   root to: 'pages#home'
 end

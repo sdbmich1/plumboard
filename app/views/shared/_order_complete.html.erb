@@ -1,14 +1,14 @@
 <div id="pmtForm">
   <div class='center hdr mbot'><h2 class='grp-hdr'><%= step_name %></h2></div>
   <div class='row'>
-    <span class="span2 offset3">
+    <span class="span2 offset2">
       <%= render partial: 'shared/show_photo', :locals => {model: @transaction.temp_listings[0], psize: '180x180', file_name:'pixi-photo', display_cnt: 0} %>
     </span>
     <span class="span7">
       <div class="mtop hdr">Your order <span class='grp-hdr'><%= @transaction.temp_listings[0].title %></span> has been processed.</div>
     </span>
   </div>
-  <div class="mtop offset2">
+  <div class="mtop center">
     Subject to approval, your pixi will be posted within the next hour. 
     <%= 'Your credit card will be charged upon approval.' if @transaction.amt > 0.0 %>
   </div>

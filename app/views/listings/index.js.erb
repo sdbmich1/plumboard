@@ -1,2 +1,7 @@
-$("#pxboard").append("<%= escape_javascript(render(partial: 'shared/listing', collection: @listings)) %>");
+<% if @page > 1 %>
+  $("#pxboard").append("<%= escape_javascript(render(partial: 'shared/listing', collection: @listings)) %>");
+<% else %>  
+  $("#pxboard").html("<%= escape_javascript(render(partial: 'shared/listing', collection: @listings)) %>");
+<% end %>  
+$('a.nxt-pg').attr('href', '#{listings_path page: @listings.next_page}');
 $('#spinner').hide(300);

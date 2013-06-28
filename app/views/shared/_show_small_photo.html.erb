@@ -1,0 +1,3 @@
+<% if model %>
+  <%= image_tag(model.pictures[0].photo.url(:small), class: 'img-valign') if model.pictures[0] %>
+<% end %>

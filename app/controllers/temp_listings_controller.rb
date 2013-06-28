@@ -43,7 +43,7 @@ class TempListingsController < ApplicationController
   def destroy
     @listing = TempListing.find_by_pixi_id params[:id]
     flash[:notice] = 'Successfully removed pixi.' if @listing.destroy 
-    redirect_to listings_path
+    redirect_to :back
   end
 
   def unposted

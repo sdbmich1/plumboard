@@ -1,0 +1,7 @@
+<ul class="nav pull-right">
+  <% if can? :manage, @user %>
+    <li id='li_home' class="active"><%= link_to "Active", manage_categories_path, class: 'submenu', remote: true %></li>
+    <li><%= link_to "Inactive", inactive_categories_path, class: 'submenu', remote: true %></li>
+    <li><%= link_to "New", new_category_path, class: 'submenu', remote: true %></li>
+  <% end %>
+</ul>

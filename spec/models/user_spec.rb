@@ -31,6 +31,7 @@ describe User do
     it { should respond_to(:sites) } 
     it { should respond_to(:listings) } 
     it { should respond_to(:temp_listings) } 
+    it { should respond_to(:active_listings) } 
     it { should respond_to(:posts) } 
     it { should respond_to(:incoming_posts) } 
     it { should respond_to(:invoices) } 

@@ -1,0 +1,6 @@
+$("#pxboard").html("<%= escape_javascript(render(partial: 'shared/categories')) %>");
+
+// reload board
+clearScroll(this); 
+
+$('#spinner').hide(300);

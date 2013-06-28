@@ -52,6 +52,48 @@ describe ListingsController do
     end
   end
 
+  describe 'xhr GET index' do
+    before(:each) do
+      @listings = mock("listings")
+      Listing.stub!(:active_page).and_return(@listings)
+      controller.stub!(:load_data).and_return(:success)
+      do_get
+    end
+
+    def do_get
+      xhr :get, :index
+    end
+
+    it "renders the :index view" do
+      response.should render_template :index
+    end
+
+    it "should assign @listings" do
+      assigns(:listings).should == @listings
+    end
+  end
+
+  describe 'GET category' do
+    before(:each) do
+      @listings = mock("listings")
+      Listing.stub!(:get_by_category).and_return(@listings)
+      controller.stub!(:load_data).and_return(:success)
+      do_get
+    end
+
+    def do_get
+      xhr :get, :category
+    end
+
+    it "renders the :category view" do
+      response.should render_template :category
+    end
+
+    it "assigns @listings" do
+      assigns(:listings).should == @listings
+    end
+  end
+
   describe 'GET seller' do
     before :each do
       @listings = mock("listings")

@@ -1,0 +1,3 @@
+<% if model %>
+  <%= image_tag(model.pictures[0].photo.url(:medium)) if model.pictures[0] %>
+<% end %>

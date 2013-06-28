@@ -7,8 +7,8 @@
       <%= listing.title %>
     </div>
     <div class='sm-top gdescr'>
-      <div class='item-cat pixi-grey-bkgnd'>
-        <%= listing.category_name %> 
+      <div class='item-cat pixi-grey-bkgnd' data-cat-id="<%= listing.category.id %>">
+        <%= link_to listing.category_name, '#', class: 'pixi-cat', 'data-cat-id'=> listing.category.id %> 
       </div>
      <div class='item-dt pixi-grey-bkgnd'>
        <%= ts_in_words(listing.updated_at) %>

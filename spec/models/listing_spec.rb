@@ -135,27 +135,35 @@ describe Listing do
     end
   end
 
-  describe "should include active listings" do 
+  describe "includes active listings" do 
     it { Listing.active.should be_true }
   end
 
-  describe "active page should include active listings" do 
+  describe "active page includes active listings" do 
     it { Listing.active_page(1).should be_true }
   end
 
-  describe "get_by_status should include active listings" do 
+  describe "get_by_status includes active listings" do 
     it { Listing.get_by_status('active').should_not be_empty }
   end
 
-  describe "should not include invalid site listings" do 
+  describe "does not include invalid site listings" do 
     it { Listing.get_by_site(0).should_not include @listing } 
   end
 
-  describe "should include active site listings" do 
+  describe "includes active site listings" do 
     it { Listing.get_by_site(@listing.site.id).should_not be_empty }
   end
 
-  it "should include seller listings" do 
+  describe "does not include invalid category listings" do 
+    it { Listing.get_by_category(0, 1).should_not include @listing } 
+  end
+
+  describe "includes active category listings" do 
+    it { Listing.get_by_category(@listing.category_id, 1).should_not be_empty }
+  end
+
+  it "includes seller listings" do 
     @listing.seller_id = 1
     @listing.save
     Listing.get_by_seller(1).should_not be_empty  
