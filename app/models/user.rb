@@ -35,6 +35,7 @@ class User < ActiveRecord::Base
 
   has_many :bank_accounts, dependent: :destroy
   has_many :transactions, dependent: :destroy
+  has_many :comments, dependent: :destroy
 
   has_many :user_pixi_points, dependent: :destroy
 

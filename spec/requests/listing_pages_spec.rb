@@ -8,7 +8,7 @@ describe "Listings", :type => :feature do
   let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id) }
 
   describe "Contact Owner" do 
-    let(:pixi_user) { FactoryGirl.create(:pixi_user) }
+    let(:pixi_user) { FactoryGirl.create(:pixi_user, email: 'jdoe2@pixitest.com') }
 
     before(:each) do
       login_as(pixi_user, :scope => :user, :run_callbacks => false)
@@ -18,20 +18,93 @@ describe "Listings", :type => :feature do
      
     it "Contacts a seller", js: true do
       expect{
-      	  fill_in 'post_content', with: "I'm interested in this pixi. Please contact me." 
-          click_on 'Contact Owner'; sleep 3
+      	  fill_in 'contact_content', with: "I'm interested in this pixi. Please contact me.\n"
+	  sleep 3
       }.to change(Post,:count).by(1)
 
       page.should have_content listing.title
     end
      
-    it "should not contact a seller", js: true do
+    it "does not contact a seller", js: true do
       expect{
-	      fill_in 'post_content', with: nil
-              click_on 'Contact Owner'; sleep 3
+	  fill_in 'contact_content', with: "\n"
       }.not_to change(Post,:count).by(1)
 
       page.should have_content "Content can't be blank"
+    end
+
+    it { should have_link listing.site_name, href: '#' }
+    it { should have_link listing.category_name, href: category_path(listing.category) }
+    it { should_not have_link 'Back', href: listings_path }
+    it { should_not have_link 'Remove', href: listing_path(listing) }
+    it { should_not have_link 'Edit', href: edit_temp_listing_path(listing) }
+    it { should have_content "ID: #{listing.pixi_id}" }
+    it { should have_content "Posted: #{get_local_time(listing.start_date)}" }
+    it { should have_content "Updated: #{get_local_time(listing.updated_at)}" }
+  end
+
+  describe "Owner-viewed Pixi" do 
+
+    before(:each) do
+      login_as(user, :scope => :user, :run_callbacks => false)
+      @user = user
+      visit listing_path(listing) 
+    end
+
+    it { should_not have_selector('#contact_content') }
+    it { should_not have_selector('#comment_content') }
+    it { should have_link 'Back', href: listings_path }
+    it { should have_link 'Remove', href: listing_path(listing) }
+    it { should have_link 'Edit', href: edit_temp_listing_path(listing) }
+  end
+
+  describe "Add Comments" do 
+    let(:pixi_user) { FactoryGirl.create(:pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tdavis@pixitext.com') }
+
+    before(:each) do
+      login_as(pixi_user, :scope => :user, :run_callbacks => false)
+      @user = pixi_user
+      visit listing_path(listing) 
+    end
+
+    it { should have_content "No comments found." }
+    it { should have_content "Comments (#{listing.comments.size})" }
+     
+    it "adds a comment", js: true do
+      expect{
+      	  fill_in 'comment_content', with: "Great pixi. I highly recommend it.\n" 
+	  sleep 3
+      }.to change(Comment,:count).by(1)
+
+      page.should have_content "Great pixi. I highly recommend it." 
+      page.should have_content "Comments (#{listing.comments.size})"
+    end
+     
+    it "does not add a comment", js: true do
+      expect{
+	  fill_in 'comment_content', with: "\n"
+      }.not_to change(Comment,:count).by(1)
+
+      page.should have_content "Content can't be blank"
+    end
+  end
+
+  describe "pagination" do
+    let(:pixi_user) { FactoryGirl.create(:pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tdavis@pixitext.com') }
+    before(:all) { 10.times { listing.comments.create FactoryGirl.attributes_for(:comment, user_id: pixi_user.id) } }
+
+    before(:each) do
+      login_as(pixi_user, :scope => :user, :run_callbacks => false)
+      @user = pixi_user
+      visit listing_path(listing) 
+    end
+
+    it { should have_selector('div.pagination') }
+
+    it "should list each comment" do
+      listing.comments.paginate(page: 1).each do |comment|
+        page.should have_selector('li', text: comment.summary)
+      end
     end
   end
 
@@ -61,7 +134,7 @@ describe "Listings", :type => :feature do
       end
 
       it "Returns to pixi list" do
-        click_link '<< Back'
+        click_link 'Back'
         page.should have_content("Pixis")
       end
 

@@ -5,26 +5,25 @@ class PostsController < ApplicationController
   before_filter :mark_post, only: [:reply]
 
   def index
-    @posts = @user.incoming_posts.paginate(page: @page)
+    @posts = @user.incoming_posts.paginate(page: @page, per_page: @per_page)
   end
 
   def reply
     @post = Post.new params[:post]
     if @post.save
       flash.now[:notice] = "Successfully sent post."
-      @posts = Post.get_posts(@user).paginate(page: @page)
+      @posts = Post.get_posts(@user).paginate(page: @page, per_page: @per_page)
     end
   end
 
   def sent
-    @posts = @user.posts.paginate(page: @page)
+    @posts = @user.posts.paginate(page: @page, per_page: @per_page)
   end
 
   def create
     @listing = Listing.find_by_pixi_id params[:post][:pixi_id]
     @post = Post.new params[:post]
     if @post.save
-      flash[:notice] = "Successfully created post."
       @post = Post.load_new @listing
     end
   end
@@ -42,5 +41,6 @@ class PostsController < ApplicationController
 
   def load_data
     @page = params[:page] || 1
+    @per_page = params[:per_page] || 15
   end
 end

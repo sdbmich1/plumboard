@@ -231,5 +231,10 @@ FactoryGirl.define do
       acct.create_user FactoryGirl.attributes_for(:pixi_user)
     end
   end
+
+  factory :comment do
+    content 		"I love this"
+    listing
+  end
 end
 		 

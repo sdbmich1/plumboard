@@ -99,8 +99,8 @@ class ListingParent < ActiveRecord::Base
   end
 
   # verify if current user is listing seller
-  def seller? uid
-    seller_id == uid
+  def seller? usr
+    seller_id == usr.id rescue nil
   end
 
   # get category name for a listing

@@ -2,7 +2,7 @@ require 'will_paginate/array'
 class ListingsController < ApplicationController
   include PointManager
   before_filter :authenticate_user!
-  before_filter :load_data, only: [:index, :seller, :category]
+  before_filter :load_data, only: [:index, :seller, :category, :show]
   after_filter :add_points, only: [:show]
   respond_to :html, :json, :js
   layout :page_layout
@@ -14,7 +14,8 @@ class ListingsController < ApplicationController
   def show
     @listing = Listing.find_by_pixi_id params[:id]
     @post = Post.new 
-    @photo = @listing.pictures
+    @comment = @listing.comments.build
+    load_comments
   end
 
   def destroy
@@ -48,5 +49,9 @@ class ListingsController < ApplicationController
 
   def add_points
     PointManager::add_points @user, 'vpx'
+  end
+
+  def load_comments
+    @comments = @listing.comments.paginate(page: @page, per_page: params[:per_page] || 4)
   end
 end

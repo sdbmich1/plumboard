@@ -1,0 +1,7 @@
+<div id='comment-entry'>
+  Comments (<%= @listing.comments.count %>)
+  <%= render partial: 'shared/comment_form' unless @listing.seller? @user %>
+</div> 
+<div id='comment-item'>
+  <%= render partial: 'shared/comment_list' %>
+</div> 

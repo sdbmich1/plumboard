@@ -195,15 +195,17 @@ describe TempListing do
     it { temp_listing.alias?.should_not be_true }
   end
 
-  describe "seller" do 
-    let(:temp_listing) { FactoryGirl.create :temp_listing, seller_id: 1 }
+  describe "seller?" do 
+    let(:user) { FactoryGirl.create :pixi_user }
+    let(:user2) { FactoryGirl.create :pixi_user, first_name: 'Kate', last_name: 'Davis', email: 'katedavis@pixitest.com' }
+    let(:temp_listing) { FactoryGirl.create :temp_listing, seller_id: user.id }
 
     it "should verify user is seller" do 
-      temp_listing.seller?(1).should be_true 
+      temp_listing.seller?(user).should be_true 
     end
 
     it "should not verify user is seller" do 
-      temp_listing.seller?(2).should_not be_true 
+      temp_listing.seller?(user2).should_not be_true 
     end
   end
 

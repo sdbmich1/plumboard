@@ -35,6 +35,7 @@ describe Listing do
   it { should respond_to(:transaction) }
   it { should respond_to(:pictures) }
   it { should respond_to(:category) }
+  it { should respond_to(:comments) }
 
   describe "when site_id is empty" do
     before { @listing.site_id = "" }
@@ -231,14 +232,16 @@ describe Listing do
   end
 
   describe "seller" do 
-    before { @listing.seller_id = 1 }
+    before do
+      @user2 = FactoryGirl.create(:pixi_user, first_name: 'Lisa', last_name: 'Harden', email: 'lisaharden@pixitest.com') 
+    end
 
     it "should verify user is seller" do 
-      @listing.seller?(1).should be_true 
+      @listing.seller?(@user).should be_true 
     end
 
     it  "should not verify user is seller" do 
-      @listing.seller?(2).should_not be_true 
+      @listing.seller?(@user2).should_not be_true 
     end
   end
 
@@ -360,6 +363,31 @@ describe Listing do
     it 'should not return true' do
       @listing.status = 'sold'
       @listing.mark_as_sold.should_not be_true
+    end
+  end
+
+  describe "comment associations" do
+
+    let!(:older_comment) do 
+      FactoryGirl.create(:comment, listing: @listing, user_id: @user.id, created_at: 1.day.ago)
+    end
+
+    let!(:newer_comment) do
+      FactoryGirl.create(:comment, listing: @listing, user_id: @user.id, created_at: 1.hour.ago)
+    end
+
+    it "should have the right comments in the right order" do
+      @listing.comments.should == [newer_comment, older_comment]
+    end
+
+    it "should destroy associated comments" do
+      comments = @listing.comments.dup
+      @listing.destroy
+      comments.should_not be_empty
+
+      comments.each do |comment|
+        Comment.find_by_id(comment.id).should be_nil
+      end
     end
   end
 end

@@ -420,6 +420,13 @@ h3 { padding: 10px }
   vertical-align: top;
 }
 
+#submenu .navbar .nav > span {
+  float:none;
+  display:inline-block;
+  vertical-align: middle;
+  margin-top: 10px;
+}
+
 #submenu .navbar-inner > .container { width:940px; }
 #submenu .nav > li > a:hover {color: $pixiOrange;}
 #submenu .nav .active > a, .menu .active > a:hover {
@@ -495,12 +502,24 @@ a#notice-btn {
   &:hover { background:#990000; text-decoration: none }
 }   
 
+.pagination {
+  margin-top: 10px!important;
+  a {
+    font-size: 10px!important;
+    line-height: 14px!important;
+  }  
+}
+
+#comment-list {
+  height: 30px!important;
+}
+
 /* posts */
 
 .posts {
   list-style: none;
-  font-size: 11px!important;
-  margin: 10px 0 0 0;
+  font-size: 10px!important;
+  margin: 5px 0 0 0;
 
   li {
      padding: 10px 0;
@@ -522,10 +541,12 @@ a#notice-btn {
 
 .content, #fcontent {
   display: block;
+  margin-top: -5px!important;
 }
 
 .timestamp {
   color: $grayLight;
+  margin-top: 5px!important;
   margin-bottom: 10px;
 }
 
@@ -538,20 +559,44 @@ a#notice-btn {
 
 .list-font {
     font-family: verdana;
-    font-size: 11px;
+    font-size: 10px;
 }
 
 #post_content {
-    margin-top: 2px;
-    margin-right: 5px;
-    @extend .list-font;
-  }
+  margin-top: 2px;
+  margin-right: 5px;
+  @extend .list-font;
+}
  
 #reply_content {
   height: 30px!important;
-  width: 715px!important;
+  width: 625px!important;
   margin-bottom: 0!important;
   @extend #post_content;
+}
+
+@mixin listing_text {
+  textarea { 
+    font-size: 10px!important;
+    line-height: 14px!important;
+  }
+}
+
+.ta_content {
+  height: 40px!important;
+  margin-bottom: 0!important;
+  @extend #post_content;
+  @include listing_text;
+}
+ 
+#contact_content {
+  width: 305px!important;
+  @extend .ta_content;
+}
+ 
+#comment_content {
+  width: 365px!important;
+  @extend .ta_content;
 }
 
 #pendingOrder table td {
@@ -565,6 +610,9 @@ a#notice-btn {
 .reply_form {
   display: inline;
   vertical-align: bottom;
+  textarea {
+    line-height: 14px!important;
+  }
 }
 
 .pixi-select {
@@ -580,7 +628,18 @@ a#notice-btn {
 
 #post-frm {
   float: left;
-  width: 820px!important;
+  width: 860px!important;
+}
+
+#post_form {
+  float: left;
+  width: 280px!important;
+}
+
+#comment_form {
+  float: left;
+  width: 365px!important;
+  height: 325px!important;
 }
 
 .float-left {
@@ -589,4 +648,19 @@ a#notice-btn {
 
 .img-valign {
   vertical-align: middle;
+}
+
+hr.vertical
+{
+   width: 0px;
+   height: 100%; /* or height in PX */
+} 
+
+.verticalLine {
+  border-right: 1px solid #e8e8e8;
+  margin-right: 20px;
+}
+
+#contact-btn, #comment-btn {
+  visibility: hidden;
 }

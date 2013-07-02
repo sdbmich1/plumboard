@@ -57,7 +57,7 @@ module ApplicationHelper
 
   # truncate timestamp in words
   def ts_in_words tm
-    time_ago_in_words(tm).gsub('about','') + ' ago'
+    time_ago_in_words(tm).gsub('about','') + ' ago' if tm
   end
 
   # get number of unread messages for user
@@ -84,7 +84,7 @@ module ApplicationHelper
 
   # set display date 
   def get_local_date(tm)
-    tm.utc.getlocal.strftime('%m/%d/%Y')
+    tm.utc.getlocal.strftime('%m/%d/%Y') if tm
   end
 
   # set appropriate submenu nav bar
@@ -94,6 +94,7 @@ module ApplicationHelper
       when 'My Invoices'; render partial: 'shared/navbar_invoices', locals: { active: 'create' }
       when 'Categories'; render 'shared/navbar_categories'
       when 'Pixis'; render 'shared/navbar_pixis'
+      when 'Pixi'; render 'shared/navbar_show_pixi'
       when 'My Pixis'; render 'shared/navbar_mypixis'
       when 'Pending Orders'; render 'shared/navbar_pending'
       when 'Posts'; render 'shared/navbar_posts'

@@ -39,6 +39,7 @@ Plumboard::Application.routes.draw do
 
   resources :pictures, only: [:destroy]
   resources :searches, only: [:index]
+  resources :comments, only: [:index, :new, :create]
 
   resources :temp_listings, except: [:index] do
     collection do

@@ -21,6 +21,12 @@ describe ListingsController do
     end
   end
 
+  def mock_comment(stubs={})
+    (@mock_comment ||= mock_model(Comment, stubs).as_null_object).tap do |comment|
+      comment.stub(stubs) unless stubs.empty?
+    end
+  end
+
   before(:each) do
     log_in_test_user
     @user = mock_user
@@ -152,14 +158,14 @@ describe ListingsController do
     end
   end
 
-
   describe 'GET show/:id' do
     before :each do
-      @photo = stub_model(Picture)
       @post = stub_model(Post)
+      @comment = stub_model(Comment)
       Listing.stub!(:find_by_pixi_id).and_return( @listing )
-      Post.stub!(:load_new).with(@listing).and_return( @post )
-      @listing.stub!(:pictures).and_return( @photo )
+      Post.stub!(:new).and_return( @post )
+      @listing.stub_chain(:comments, :build).and_return( @comment )
+      controller.stub!(:load_comments).and_return(:success)
       controller.stub!(:add_points).and_return(:success)
     end
 
@@ -178,7 +184,7 @@ describe ListingsController do
     end
 
     it "should load the new post" do
-      Post.stub(:load_new).with(@listing).and_return(@post)
+      Post.stub(:new).and_return(@post)
       do_get
     end
 
@@ -192,9 +198,60 @@ describe ListingsController do
       assigns(:post).should_not be_nil
     end
 
-    it "should assign @photo" do
+    it "should assign @comment" do
       do_get
-      assigns(:listing).pictures.should_not be_nil
+      assigns(:comment).should_not be_nil
+    end
+
+    it "show action should render show template" do
+      do_get
+      response.should render_template(:show)
+    end
+  end
+
+  describe 'xhr GET show/:id' do
+    before :each do
+      @post = stub_model(Post)
+      @comment = stub_model(Comment)
+      Listing.stub!(:find_by_pixi_id).and_return( @listing )
+      Post.stub!(:new).and_return( @post )
+      @listing.stub_chain(:comments, :build).and_return( @comment )
+      controller.stub!(:load_comments).and_return(:success)
+      controller.stub!(:add_points).and_return(:success)
+    end
+
+    def do_get
+      xhr :get, :show, :id => '1', :page => '2', :per_page=> '4'
+    end
+
+    it "should show the requested listing" do
+      do_get
+      response.should be_success
+    end
+
+    it "should load the requested listing" do
+      Listing.stub(:find_by_pixi_id).with(@listing).and_return(@listing)
+      do_get
+    end
+
+    it "should load the new post" do
+      Post.stub(:new).and_return(@post)
+      do_get
+    end
+
+    it "should assign @listing" do
+      do_get
+      assigns(:listing).should_not be_nil
+    end
+
+    it "should assign @post" do
+      do_get
+      assigns(:post).should_not be_nil
+    end
+
+    it "should assign @comment" do
+      do_get
+      assigns(:comment).should_not be_nil
     end
 
     it "show action should render show template" do

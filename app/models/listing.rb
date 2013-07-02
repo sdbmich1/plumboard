@@ -7,6 +7,7 @@ class Listing < ListingParent
 
   has_many :posts, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :invoices, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
+  has_many :comments, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
 
   has_many :site_listings, :dependent => :destroy
   #has_many :sites, :through => :site_listings, :dependent => :destroy

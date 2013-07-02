@@ -1,0 +1,15 @@
+  <%= form_for @post, remote: true, class: 'width320' do |f| %> 
+    <div id="notice" style="display:none"></div>
+    <div id="form_errors">
+      <%= render partial: 'shared/error_messages', :locals => { :target => f.object } %>
+    </div>
+
+    <%= f.hidden_field 'pixi_id', value: listing.pixi_id %>
+    <%= f.hidden_field 'recipient_id', value: listing.seller_id %>
+    <%= f.hidden_field 'user_id', value: @user.id %>
+
+    <div class="reply_form">
+      <%= f.text_area 'content', placeholder: 'Type something and press Enter to send...', id: 'contact_content' %>  
+      <%= f.submit 'Contact', :class=>'btn btn-warning', id: 'contact-btn' %>
+    </div>
+  <% end %>

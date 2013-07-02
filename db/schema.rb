@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130618060028) do
+ActiveRecord::Schema.define(:version => 20130628054755) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -64,6 +64,16 @@ ActiveRecord::Schema.define(:version => 20130618060028) do
     t.datetime "updated_at",    :null => false
     t.string   "pixi_type"
   end
+
+  create_table "comments", :force => true do |t|
+    t.string   "pixi_id"
+    t.integer  "user_id"
+    t.text     "content"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "comments", ["pixi_id"], :name => "index_comments_on_pixi_id"
 
   create_table "contacts", :force => true do |t|
     t.string   "address"

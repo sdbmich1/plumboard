@@ -1,0 +1,11 @@
+<% if @comment.errors.any? %>
+  $("#comment_notice").hide(300);
+  $("#comment_errors").html("<%= escape_javascript( render(partial: 'shared/error_messages', locals: {target: @comment})) %>");
+<% else %>
+  $("#comment_notice").html("<%= escape_javascript(render(partial: 'layouts/notices')) %>");
+  $("#comment_notice").show(300);
+  $("#comment_form").html("<%= escape_javascript( render(partial: 'shared/comments') ) %>");
+<% end %>
+
+$('#spinner').hide(300);
+

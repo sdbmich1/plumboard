@@ -6,13 +6,12 @@ describe Post do
     @recipient = FactoryGirl.create :pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tom.davis@pixitest.com'
     @buyer = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Smith', email: 'jack.smith99@pixitest.com'
     @listing = FactoryGirl.create :listing, seller_id: @user.id
-    @post = FactoryGirl.build :post, user: @user, recipient: @recipient, pixi_id: @listing.pixi_id
+    @post = @listing.posts.build user_id: @user.id, recipient_id: @recipient.id
   end
    
   subject { @post }
 
   it { should respond_to(:content) }
-  it { should respond_to(:listing_id) }
   it { should respond_to(:user_id) }
   it { should respond_to(:pixi_id) }
   it { should respond_to(:recipient_id) }
@@ -195,6 +194,24 @@ describe Post do
     
     it "should return true" do
       Post.pay_invoice(@invoice.transaction).should be_true
+    end
+  end
+
+  describe "sender name" do 
+    it { @post.sender_name.should == "Joe Blow" } 
+
+    it "does not return sender name" do 
+      @post.user_id = 100 
+      @post.sender_name.should be_nil 
+    end
+  end
+
+  describe "recipient name" do 
+    it { @post.recipient_name.should == "Tom Davis" } 
+
+    it "does not return recipient name" do 
+      @post.recipient_id = 100 
+      @post.recipient_name.should be_nil 
     end
   end
 

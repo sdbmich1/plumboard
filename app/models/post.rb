@@ -2,7 +2,7 @@ class Post < ActiveRecord::Base
   resourcify
   acts_as_readable :on => :created_at
 
-  attr_accessible :content, :listing_id, :user_id, :pixi_id, :recipient_id
+  attr_accessible :content, :user_id, :pixi_id, :recipient_id
 
   PIXI_POST = PIXI_KEYS['pixi']['pixi_post']
 
@@ -20,11 +20,7 @@ class Post < ActiveRecord::Base
 
   # load default content
   def self.load_new listing
-    if listing
-      new_post = listing.posts.build
-      new_post.recipient_id, new_post.pixi_id = listing.seller_id, listing.pixi_id
-      new_post
-    end
+    listing.posts.build recipient_id: listing.seller_id if listing
   end
 
   # short content
@@ -48,6 +44,16 @@ class Post < ActiveRecord::Base
     usr.id == user_id
   end
 
+  # get sender name
+  def sender_name
+    user.name if user
+  end
+
+  # get recipient name
+  def recipient_name
+    recipient.name if recipient
+  end
+
   # get posts for recipient
   def self.get_posts usr
     where(:recipient_id=>usr)
@@ -67,8 +73,7 @@ class Post < ActiveRecord::Base
   def self.add_post inv, listing, sender, recipient, msg
     if sender && recipient
       # new post
-      post = listing.posts.build
-      post.pixi_id, post.recipient_id, post.user_id = inv.pixi_id, recipient, sender
+      post = listing.posts.build recipient_id: recipient, user_id: sender
 
       # set amount format
       amt = "%0.2f" % inv.amount

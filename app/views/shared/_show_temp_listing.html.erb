@@ -1,7 +1,7 @@
 <%= render :partial => 'shared/show_listing', locals: {:listing=>listing} %>
 <div class="mtop width240 pull-right">
   <% if listing.new_status? %>
-      <%= render :partial => 'shared/item_purchase', locals: {:listing=>listing} if listing.seller?(@user.id) %>
+      <%= render :partial => 'shared/item_purchase', locals: {:listing=>listing} if listing.seller?(@user) %>
   <% else %>
     <%= render partial: 'shared/review_nav', locals: { listing: listing } %>
     <%= link_to "Done!", resubmit_temp_listing_path(listing), method: :put, class: "btn btn-large btn-primary submit-btn" %>

@@ -41,7 +41,7 @@ $(document).on("change", "input[type=file]", function(evt){
 }); 
 
 // paginate on click
-$(document).on("click", "#pendingOrder .pagination a, #post_form .pagination a", function(){
+$(document).on("click", "#pendingOrder .pagination a, #post_form .pagination a, #comment-list .pagination a", function(){
   toggleLoading();
   $.getScript(this.href);
   return false;
@@ -110,7 +110,7 @@ function handleFileSelect(evt, style) {
 }
 
 // used to toggle spinner
-$(document).on("ajax:beforeSend", '.pixi-cat, #purchase_btn, #search_btn, .uform, .back-btn, #pixi-form, .submenu', function () {
+$(document).on("ajax:beforeSend", '#comment-doc, .pixi-cat, #purchase_btn, #search_btn, .uform, .back-btn, #pixi-form, .submenu', function () {
   toggleLoading();
 });	
 
@@ -118,13 +118,13 @@ $(document).on("ajax:success", '.pixi-cat, #purchase_btn, #search_btn, .uform, .
   toggleLoading();
 });	
 
-$(document).on("ajax:complete", '.pixi-cat, #purchase_btn, #search_btn, .uform, .back-btn, #pixi-form, .submenu', function () {
+$(document).on("ajax:complete", '#comment-doc, .pixi-cat, #purchase_btn, #search_btn, .uform, .back-btn, #pixi-form, .submenu', function () {
   toggleLoading();
 });	
 
-
-$(document).on("ajax:error", function (event, data, status, xhr) {
-  if (status == 401) // # thrownError is 'Unauthorized'
+// handle 401 ajax error
+$(document).ajaxError( function(e, xhr, options){
+  if(xhr.status == 401)
       window.location.replace('/users/sign_in');
 });	
 
@@ -243,7 +243,7 @@ function clearScroll(showElem, url, param) {
   initScroll();
 
   // Re-initialize
-  //$container.infinitescroll({pathParse: [$("#px-nav").find("span.page:last").find("a:first").attr('href')+'?page='], state:{currPage:1} });
+  $container.infinitescroll({path: [$("div#px-nav").find("span.page:last").find("a:first").attr('href')+'?page='], state:{currPage:1} });
 }
 
 // reload board
@@ -304,9 +304,9 @@ function load_masonry(){
 }
 
 // check for text display toggle
-$(document).on("click", "#more-btn", function(){
+$(document).on("click", ".moreBtn, #more-btn", function(){
   $('.content').hide('fast');
-  $('#fcontent').show('fast') 
+  $('#fcontent, .fcontent').show('fast') 
 });	
 
 // calc invoice amount
@@ -367,3 +367,39 @@ $(document).on("railsAutocomplete.select", "#buyer_name", function(event, data){
   $('#buyer_name').val(bname);
 });
 
+// submit contact form on enter key
+$(document).on("keypress", "#contact_content", function(e){
+  if (e.keyCode == 13 && !e.shiftKey) {
+    e.preventDefault();
+    $('#contact-btn').click();
+  }
+});
+
+var keyPress = false; 
+
+// submit comment form on enter key
+$(document).on("keypress", "#comment_content", function(e){
+  if (e.keyCode == 13 && !e.shiftKey && !keyPress) {
+    keyPress = true;
+    e.preventDefault();
+    $('#comment-btn').click();
+  }
+});
+
+// initialize infinite scroll
+function commentScroll() {
+  var $container = $('.posts');
+
+  $container.infinitescroll({
+      navSelector  : '#comment-nav', 		// selector for the paged navigation (it will be hidden)
+      nextSelector : '#comment-nav a',  		// selector for the NEXT link (ie. page 2)  
+      itemSelector : '#pxboard .item',          // selector for all items that's retrieve
+      animate: true,
+      extraScrollPx: 50,
+      bufferPx : 250,
+      loading: { 
+         msgText: "<em>Loading the next set of comments...</em>",
+         finishedMsg: "<em>No more comments to load.</em>"
+        }
+  });
+}

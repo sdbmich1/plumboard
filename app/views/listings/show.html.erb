@@ -1,12 +1,14 @@
 <% provide(:title, @listing.title) %>
+<%= content_for :subhead do %>
+  <%= render partial: 'shared/navbar', locals: { menu_name: 'Pixi' } %>
+<% end %>
 <%= content_for :content do %>
   <%= render :partial => 'shared/show_listing', locals: {:listing=>@listing} %>
-  <div class="nav pull-right">
-    <% if @listing.seller? @user.id %>
-      <%= link_to '<< Back', listings_path, class: 'btn btn-large btn-primary stnd-btn' %>
+  <div class="mtop nav pull-right">
+    <% if @listing.seller? @user %>
+      <%= link_to 'Back', listings_path, class: 'btn btn-large btn-primary stnd-btn' %>
       <%= link_to 'Remove', @listing, method: :delete, confirm: 'Are you sure?', class: 'btn btn-large btn-primary stnd-btn' %>
       <%= link_to 'Edit', edit_temp_listing_path(@listing), class: 'btn btn-large btn-primary submit-btn' %>
-    <% else %>  
     <% end %>  
   </div>
 <% end %>
