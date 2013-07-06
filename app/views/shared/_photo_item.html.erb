@@ -1,5 +1,0 @@
-  <% if has_facebook_photo? && model.pictures.blank? %>
-	<%= image_tag chk_photo(controller_name, action_name, file_name), :alt => "none", :size => psize %>
-  <% elsif !has_facebook_photo? && model.pictures.blank? %>
-    <%= image_tag file_name, :alt => "none", :size => psize %>
-  <% end %>

@@ -1,3 +1,4 @@
+require "simple_time_select"
 module TempListingsHelper
 
   # set promo code for free order if appropriate

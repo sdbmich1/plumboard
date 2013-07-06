@@ -27,3 +27,5 @@
 # ignore yml files
 /config/*.yml
 
+
+.elasticbeanstalk/

@@ -55,6 +55,14 @@ FactoryGirl.define do
     before(:create) {|category| category.pictures.build FactoryGirl.attributes_for(:picture)}
   end
 
+  factory :subcategory do
+    name 		"Foobie"
+    subcategory_type	"Gigs"
+    status 		"active"
+    before(:create) {|cat| cat.pictures.build FactoryGirl.attributes_for(:picture)}
+    category
+  end
+
   factory :promo_code do
     code		"2013LAUNCH"
     promo_name 		"2013LAUNCH"

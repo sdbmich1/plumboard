@@ -1,0 +1,14 @@
+[global]
+ApplicationName=pixiboard
+AwsCredentialFile=C:\cygwin\home\Sean Browm\.elasticbeanstalk\aws_credential_file
+DevToolsEndpoint=git.elasticbeanstalk.us-west-1.amazonaws.com
+EnvironmentName=pixiboard-staging
+InstanceProfileName=admin
+OptionSettingFile=C:\Documents\Aptana Studio 3 Workspace\plumboard\.elasticbeanstalk\optionsettings.pixiboard-staging
+RdsDeletionPolicy=Delete
+RdsEnabled=Yes
+RdsSourceSnapshotName=
+Region=us-west-1
+ServiceEndpoint=https://elasticbeanstalk.us-west-1.amazonaws.com
+SolutionStack=64bit Amazon Linux running Ruby 1.9.3
+

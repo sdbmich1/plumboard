@@ -25,6 +25,13 @@ describe TempListing do
   it { should respond_to(:pixi_id) }
   it { should respond_to(:parent_pixi_id) }
   it { should respond_to(:post_ip) }
+  it { should respond_to(:event_start_date) }
+  it { should respond_to(:event_end_date) }
+  it { should respond_to(:compensation) }
+  it { should respond_to(:lng) }
+  it { should respond_to(:lat) }
+  it { should respond_to(:event_start_time) }
+  it { should respond_to(:event_end_time) }
 
   it { should respond_to(:user) }
   it { should respond_to(:site) }
@@ -156,11 +163,11 @@ describe TempListing do
   end
 
   describe "should find correct category name" do 
-    it { @temp_listing.category_name.should == 'Foo Bar' } 
+    it { @temp_listing.category_name.should == @category.name.titleize } 
   end
 
   describe "should not find correct category name" do 
-    temp_listing = FactoryGirl.create :temp_listing, category_id: 100
+    temp_listing = FactoryGirl.build :temp_listing, category_id: nil
     it { temp_listing.category_name.should be_nil } 
   end
 
@@ -168,7 +175,7 @@ describe TempListing do
     let(:user) { FactoryGirl.create(:pixi_user) }
     let(:temp_listing) { FactoryGirl.create(:temp_listing, seller_id: user.id) }
 
-    it { temp_listing.seller_name.should == "Joe Blow" } 
+    it { temp_listing.seller_name.should == user.name } 
   end
 
   describe "should not find correct seller name" do 
@@ -409,7 +416,7 @@ describe TempListing do
     end
 
     it "should not have too many pictures" do 
-      25.times { @temp_listing.pictures.build FactoryGirl.attributes_for(:picture) }
+      20.times { @temp_listing.pictures.build FactoryGirl.attributes_for(:picture) }
       @temp_listing.save
       @temp_listing.should_not be_valid
     end
@@ -421,4 +428,175 @@ describe TempListing do
        end
     end  
   end  
+
+  describe '.same_day?' do
+    before do
+      @cat = FactoryGirl.create(:category, name: 'Events', pixi_type: 'premium') 
+      @temp_listing.category_id = @cat.id
+    end
+
+    it "should respond to same_day? method" do
+      @temp_listing.should respond_to(:same_day?)
+    end
+
+    it "should be the same day" do
+      @temp_listing.event_start_date = Date.today
+      @temp_listing.event_end_date = Date.today
+      @temp_listing.same_day?.should be_true
+    end
+
+    it "should not be the same day" do
+      @temp_listing.event_start_date = Date.today
+      @temp_listing.event_end_date = Date.today+1.day
+      @temp_listing.same_day?.should be_false 
+    end
+  end
+
+  describe '.event?' do
+    before do
+      @cat = FactoryGirl.create(:category, name: 'Events', pixi_type: 'premium') 
+    end
+
+    it "is not an event" do
+      @temp_listing.event?.should be_false 
+    end
+
+    it "is an event" do
+      @temp_listing.category_id = @cat.id
+      @temp_listing.event?.should be_true 
+    end
+  end
+
+  describe '.job?' do
+    before do
+      @cat = FactoryGirl.create(:category, name: 'Jobs', pixi_type: 'premium') 
+    end
+
+    it "is not a job" do
+      @temp_listing.job?.should be_false 
+    end
+
+    it "is a job" do
+      @temp_listing.category_id = @cat.id
+      @temp_listing.job?.should be_true 
+    end
+  end
+
+  describe '.start_date?' do
+    it "has no start date" do
+      @temp_listing.start_date?.should be_false
+    end
+
+    it "has a start date" do
+      @temp_listing.event_start_date = Time.now
+      @temp_listing.start_date?.should be_true
+    end
+  end
+
+  describe "date validations" do
+    before do
+      @cat = FactoryGirl.create(:category, name: 'Events', pixi_type: 'premium') 
+      @temp_listing.category_id = @cat.id
+      @temp_listing.event_end_date = Date.today+3.days 
+      @temp_listing.event_start_time = Time.now+2.hours
+      @temp_listing.event_end_time = Time.now+3.hours
+    end
+
+    describe 'start date' do
+      it "has valid start date" do
+        @temp_listing.event_start_date = Date.today+2.days
+        @temp_listing.should be_valid
+      end
+
+      it "should reject a bad start date" do
+        @temp_listing.event_start_date = Date.today-2.days
+        @temp_listing.should_not be_valid
+      end
+
+      it "should not be valid without a start date" do
+        @temp_listing.event_start_date = nil
+        @temp_listing.should_not be_valid
+      end
+    end
+
+    describe 'end date' do
+      before do
+        @temp_listing.event_start_date = Date.today+2.days 
+        @temp_listing.event_start_time = Time.now+2.hours
+        @temp_listing.event_end_time = Time.now+3.hours
+      end
+
+      it "has valid end date" do
+        @temp_listing.event_end_date = Date.today+3.days
+        @temp_listing.should be_valid
+      end
+
+      it "should reject a bad end date" do
+        @temp_listing.event_end_date = ''
+        @temp_listing.should_not be_valid
+      end
+
+      it "should reject end date < start date" do
+        @temp_listing.event_end_date = Date.today-2.days
+        @temp_listing.should_not be_valid
+      end
+
+      it "should not be valid without a end date" do
+        @temp_listing.event_end_date = nil
+        @temp_listing.should_not be_valid
+      end
+    end
+
+    describe 'start time' do
+      before do
+        @temp_listing.event_start_date = Date.today+2.days 
+        @temp_listing.event_end_date = Date.today+3.days 
+        @temp_listing.event_end_time = Time.now+3.hours
+      end
+
+      it "has valid start time" do
+        @temp_listing.event_start_time = Time.now+2.hours
+        @temp_listing.should be_valid
+      end
+
+      it "should reject a bad start time" do
+        @temp_listing.event_start_time = ''
+        @temp_listing.should_not be_valid
+      end
+
+      it "should not be valid without a start time" do
+        @temp_listing.event_start_time = nil
+        @temp_listing.should_not be_valid
+      end
+    end
+
+    describe 'end time' do
+      before do
+        @temp_listing.event_start_date = Date.today+2.days 
+        @temp_listing.event_end_date = Date.today+3.days 
+        @temp_listing.event_start_time = Time.now+2.hours
+      end
+
+      it "has valid end time" do
+        @temp_listing.event_end_time = Time.now+3.hours
+        @temp_listing.should be_valid
+      end
+
+      it "should reject a bad end time" do
+        @temp_listing.event_end_time = ''
+        @temp_listing.should_not be_valid
+      end
+
+      it "should reject end time < start time" do
+        @temp_listing.event_end_date = @temp_listing.event_start_date
+        @temp_listing.event_end_time = Time.now.advance(:hours => -2)
+        @temp_listing.should_not be_valid
+      end
+
+      it "should not be valid without a end time" do
+        @temp_listing.event_end_time = nil
+        @temp_listing.should_not be_valid
+      end
+    end
+  end
 end

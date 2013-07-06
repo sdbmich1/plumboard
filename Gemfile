@@ -62,6 +62,9 @@ gem 'thin'
 # Deploy with Capistrano
 gem 'capistrano'
 
+# amazon aws
+gem "aws-sdk", "~> 1.11.3"
+
 # To use debugger
 # gem 'debugger'
 
@@ -90,6 +93,9 @@ gem 'validates_timeliness', '~> 3.0'
 
 # add country selection
 gem 'country_select'
+
+# add geocoder
+gem "geocoder", "~> 1.1.8"
 
 # add images
 gem "rmagick", "~> 2.13.1"

@@ -2,6 +2,6 @@
 <% unless listing.new_status? %>
   <%= link_to 'Cancel', listings_path, confirm: msg, class: 'btn btn-large btn-primary stnd-btn' %>
 <% else %>
-  <%= link_to 'Cancel', listing, method: :delete, confirm: msg, class: 'btn btn-large btn-primary stnd-btn' %>
+  <%= link_to 'Remove', listing, method: :delete, confirm: msg, class: 'btn btn-large btn-primary stnd-btn' %>
 <% end %>
 

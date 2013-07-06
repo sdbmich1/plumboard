@@ -31,8 +31,8 @@ describe Comment do
   describe "large content" do 
     before { @comment.content = "a" * 500 }
 
-    it "should return a summary of 30 chars" do 
-      @comment.summary.length.should == 30 
+    it "should return a summary of 40 chars" do 
+      @comment.summary.length.should == 40 
     end
 
     it "long content should return true" do 
@@ -47,8 +47,8 @@ describe Comment do
   describe "should not return a short content" do 
     before { @comment.content = "a" * 20 }
 
-    it "should not return a summary of 30 chars" do 
-      @comment.summary.length.should_not == 30 
+    it "should not return a summary of 40 chars" do 
+      @comment.summary.length.should_not == 40 
     end
 
     it "long content should not return true" do 

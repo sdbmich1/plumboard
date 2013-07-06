@@ -10,15 +10,18 @@
         <%= render partial: 'shared/show_small_photo', locals: {model: listing.user} %>
       </div>
       <div class='span4'>
-        Posted By: <%= listing.seller_name %>
-          <div id='post_form'><%= render partial: 'shared/contact', locals: { listing: listing } unless listing.seller? @user %></div>
+        Posted By: <%= listing.seller_name %> 
+        <% unless listing.seller? @user %>
+	  <%= link_to 'Follow', '#' %>
+          <div id='post_form'><%= render partial: 'shared/contact', locals: { listing: listing } %></div>
+	<% end %>  
       </div>
       <div class="span5 sm-top">
         <%= render partial: 'shared/photos', locals: {model: listing, file_name: "", psize: '120x120'} %>
       </div>
     </div>
     <div class="span5">
-      <div id='comment_form'><%= render partial: 'shared/comments' %></div>
+      <div id='comment_form'><%= render partial: 'shared/comments' unless listing.seller? @user %></div>
     </div>
   </div>
 

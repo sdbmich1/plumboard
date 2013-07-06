@@ -1,7 +1,7 @@
 <ul class="nav pull-right">
   <li class="<%= controller_name == 'listings' ? 'active' : '' %>">
     <%= link_to "Recent", listings_path, id: 'recent-link', class: 'submenu', remote: true %></li>
-  <li><a href="#">Suggested</a></li>
+  <li><a href="#">Following</a></li>
   <li><a href="#">Hot</a></li>
   <li class="<%= controller_name == 'categories' ? 'active' : '' %>">
     <%= link_to "Categories", categories_path, class: 'submenu', id: 'cat-link', remote: true %></li>

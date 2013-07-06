@@ -10,9 +10,11 @@ class Comment < ActiveRecord::Base
 
   default_scope order: 'comments.created_at DESC'
 
+  CONTENT_LENGTH = 40   # set comment display length
+
   # short content
   def summary
-    descr = content.length < 30 ? content.html_safe : content.html_safe[0..29] rescue nil
+    descr = content.length < CONTENT_LENGTH ? content.html_safe : content.html_safe[0..CONTENT_LENGTH-1] rescue nil
     Rinku.auto_link(descr) if descr
   end
 
@@ -21,9 +23,9 @@ class Comment < ActiveRecord::Base
     Rinku.auto_link(content.html_safe) rescue nil
   end
 
-  # check if content length > 30
+  # check if content length > CONTENT_LENGTH
   def long_content?
-    content.length > 30 rescue nil
+    content.length > CONTENT_LENGTH rescue nil
   end
 
   # get sender name

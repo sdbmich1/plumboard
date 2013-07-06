@@ -36,7 +36,7 @@ $(document).on("change", "input[type=file]", function(evt){
     if($('#usr_photo').length != 0) 
       { handleFileSelect(evt, 'usr-photo'); }
     else  
-      { handleFileSelect(evt, 'thumb'); }
+      { handleFileSelect(evt, 'sm-thumb'); }
     return false;
 }); 
 

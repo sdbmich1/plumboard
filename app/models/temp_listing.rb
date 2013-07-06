@@ -66,7 +66,9 @@ class TempListing < ListingParent
   # add listing to post if approved
   def post_to_board
     if self.status == 'approved'
-      listing = Listing.find_or_initialize_by_pixi_id self.pixi_id, self.attributes
+      unless listing = Listing.where(:pixi_id => self.pixi_id).first
+        listing = self.dup
+      end
 
       # add photos
       self.pictures.each do |pic|

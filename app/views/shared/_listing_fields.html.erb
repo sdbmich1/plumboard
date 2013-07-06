@@ -1,27 +1,32 @@
-      <table>
-	<tr>
-	  <td>
-	  <%= render partial: 'shared/edit_photo_form', locals: {model: @listing, psize: 'thumb', form: f, remove_photo: true } %>
-	  </td>
-	</tr>
-	<tr>
-	  <td><div class=''>Add photo(s)</div><output id='list'><%= image_tag 'photo-camera.png', class: 'thumb' %></output>
-	   <%= render partial: 'shared/photo', locals: { f: f } %></td>
-	</tr>
-	<tr>
-	  <td><%= f.label :title %><%= f.text_field :title, :autofocus => true %></td>
-	  <td class='width30'></td>
-    	  <td><%= f.label :price %>
-	    <%= f.text_field :price, :size => 10, :value => number_with_precision(f.object.send("price"), :precision=>2), class: 'width120' %></td>
-	</tr>
-	<tr>
-    	  <td><%= f.label :site_id, 'Site' %>
-	    <%= f.collection_select :site_id, Site.active, :id, :name, {:prompt => 'Select'}, {class: 'pixi-select'} %></td>
-	  <td class='width30'></td>
-    	  <td><%= f.label :category_id, 'Category' %>
-	    <%= f.collection_select :category_id, Category.active, :id, :name_title, {:prompt => 'Select'}, {class: 'pixi-select'} %></td>
-	</tr>
-	<tr>
-    	  <td><%= f.label :description %><%= f.text_area :description %></td>
-	</tr>
-      </table>
+<%= render partial: 'shared/edit_photo_form', locals: {model: @listing, psize: 'sm-thumb', form: f, remove_photo: true } %>
+<div class='row'>
+  <div class='span1'>Add photo(s)</div>
+  <div id='add-pixi-photo' class='span10'>
+    <output id='list'><%= image_tag 'photo-camera.png', class: 'sm-thumb' %></output>
+    <%= render partial: 'shared/photo', locals: { f: f } %>
+  </div>
+</div>
+<table>
+  <tr>
+    <td><%= f.label :title %><%= f.text_field :title, :autofocus => true %></td>
+    <td class='width30'></td>
+    <td><%= f.label :price %>
+    <%= f.text_field :price, :size => 10, :value => number_with_precision(f.object.send("price"), :precision=>2), class: 'width120' %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :site_id, 'Site' %>
+    <%= f.collection_select :site_id, Site.active, :id, :name, {:prompt => 'Select'}, {class: 'pixi-select'} %></td>
+    <td class='width30'></td>
+    <td><%= f.label :category_id, 'Category' %>
+    <%= f.collection_select :category_id, Category.active, :id, :name_title, {:prompt => 'Select'}, {class: 'pixi-select'} %></td>
+  </tr>
+  <tr style="<%= !@listing.event? ? 'display:none' : '' %>">
+    <td><%= f.label :event_start_date, 'Start Date' %>
+    <%= f.text_field :event_start_date, :value => @listing.event_start_date, :size => 10, :id => "start-date" %></td>
+    <td><%= f.label :event_end_date, 'End Date' %>
+    <%= f.text_field :event_end_date, :value => @listing.event_end_date, :size => 10, :id => "end-date" %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :description, class: 'med-top' %><%= f.text_area :description %></td>
+  </tr>
+</table>

@@ -11,10 +11,7 @@
             <li><%= link_to "Help", help_path %></li>
             <li><%= link_to "Post", new_temp_listing_path, id: 'add-pixi' %></li>
 
-	    <% if can? :manage_items, @user %>
-	      <%= render 'layouts/manage' %>
-	    <% end %>
-
+	    <%= render 'layouts/manage' if can? :manage_items, @user %>
 	    <%= render 'layouts/user_menu' %>
           </ul>
 	<% else %>

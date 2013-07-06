@@ -16,6 +16,17 @@ describe "Listings", :type => :feature do
       visit listing_path(listing) 
     end
      
+    it { should have_content "Posted By: #{listing.seller_name}" }
+    it { should have_link 'Follow', href: '#' }
+    it { should have_link listing.site_name, href: '#' }
+    it { should have_link listing.category_name, href: category_path(listing.category) }
+    it { should_not have_link 'Back', href: listings_path }
+    it { should_not have_link 'Remove', href: listing_path(listing) }
+    it { should_not have_link 'Edit', href: edit_temp_listing_path(listing) }
+    it { should have_content "ID: #{listing.pixi_id}" }
+    it { should have_content "Posted: #{get_local_time(listing.start_date)}" }
+    it { should have_content "Updated: #{get_local_time(listing.updated_at)}" }
+
     it "Contacts a seller", js: true do
       expect{
       	  fill_in 'contact_content', with: "I'm interested in this pixi. Please contact me.\n"
@@ -32,15 +43,6 @@ describe "Listings", :type => :feature do
 
       page.should have_content "Content can't be blank"
     end
-
-    it { should have_link listing.site_name, href: '#' }
-    it { should have_link listing.category_name, href: category_path(listing.category) }
-    it { should_not have_link 'Back', href: listings_path }
-    it { should_not have_link 'Remove', href: listing_path(listing) }
-    it { should_not have_link 'Edit', href: edit_temp_listing_path(listing) }
-    it { should have_content "ID: #{listing.pixi_id}" }
-    it { should have_content "Posted: #{get_local_time(listing.start_date)}" }
-    it { should have_content "Updated: #{get_local_time(listing.updated_at)}" }
   end
 
   describe "Owner-viewed Pixi" do 
@@ -51,8 +53,10 @@ describe "Listings", :type => :feature do
       visit listing_path(listing) 
     end
 
+    it { should have_content "Posted By: #{listing.seller_name}" }
     it { should_not have_selector('#contact_content') }
     it { should_not have_selector('#comment_content') }
+    it { should_not have_link 'Follow', href: '#' }
     it { should have_link 'Back', href: listings_path }
     it { should have_link 'Remove', href: listing_path(listing) }
     it { should have_link 'Edit', href: edit_temp_listing_path(listing) }
@@ -149,9 +153,11 @@ describe "Listings", :type => :feature do
       let(:listings) { 30.times { FactoryGirl.create(:listing, seller_id: @user.id) } }
       before { visit listings_path }
       
-      it "should display listings" do 
-        page.should have_content('Pixis')
-      end
+      it { should have_link 'Recent', href: listings_path }
+      it { should have_link 'Following', href: '#' }
+      it { should have_link 'Hot', href: '#' }
+      it { should have_link 'Categories', href: categories_path }
+      it { should have_content('Pixis') }
       
       it "should scroll listings", js: true do 
         page.execute_script "window.scrollBy(0,1000)"
@@ -168,9 +174,7 @@ describe "Listings", :type => :feature do
       let(:listings) { 30.times { FactoryGirl.create(:listing, seller_id: @user.id) } }
       before { visit seller_listings_path }
       
-      it "should display seller listings" do 
-        page.should have_content('My Pixis')
-      end
+      it { should have_content('My Pixis') }
 
       describe "pagination" do
         it "should list each listing" do

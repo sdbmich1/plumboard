@@ -13,8 +13,8 @@ class ListingParent < ActiveRecord::Base
   MAX_PIXI_PIX = PIXI_KEYS['pixi']['max_pixi_pix']
 
   attr_accessible :buyer_id, :category_id, :description, :title, :seller_id, :status, :price, :show_alias_flg, :show_phone_flg, :alias_name,
-  	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id, :id, :created_at, :updated_at,
-	:edited_by, :edited_dt, :post_ip
+  	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id, 
+	:edited_by, :edited_dt, :post_ip, :lng, :lat, :event_start_date, :event_end_date, :compensation, :event_start_time, :event_end_time
 
   belongs_to :user, :foreign_key => :seller_id
   belongs_to :site
@@ -29,6 +29,27 @@ class ListingParent < ActiveRecord::Base
   validates :category_id, :presence => true
   validates :price, :allow_blank => true, :numericality => { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_PIXI_AMT.to_f }
   validate :must_have_pictures
+
+  # event date and time
+  validates_date :event_start_date, on_or_after: Date.today, presence: true, if: :event?
+  validates_date :event_end_date, on_or_after: :event_start_date, presence: true, if: :start_date?
+  validates_datetime :event_start_time, presence: true, on_or_after: lambda { Time.now }, if: :start_date?
+  validates_datetime :event_end_time, presence: true, after: :event_start_time, :if => :start_date?
+
+  # check if pixi is an event
+  def event?
+    %w(Events Happenings).detect { |cat| cat == category_name}
+  end
+
+  # check if event start date exists
+  def start_date?
+    !event_start_date.blank?
+  end
+
+  # check if event starts and ends on same date
+  def same_day?
+    start_date? && event_start_date == event_end_date
+  end
 
   # reset default controller id parameter to pixi_id
   def to_param
@@ -157,5 +178,10 @@ class ListingParent < ActiveRecord::Base
   # check for premium categories
   def premium?
     category.premium?
+  end
+
+  # check if pixi is a job
+  def job?
+    %w(Jobs Employment).detect { |cat| cat == category_name}
   end
 end

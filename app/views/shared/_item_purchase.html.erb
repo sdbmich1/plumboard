@@ -1,7 +1,6 @@
 <%= render partial: 'shared/review_nav', locals: { listing: listing } %>
 <%= form_tag new_transaction_path, :method => :get, :id => 'purchase_btn' do %> 
   <%= hidden_field_tag 'id', listing.pixi_id %>
-  <%= hidden_field_tag 'user_id', @user.id %>
   <%= hidden_field_tag 'title', listing.title %>
   <%= hidden_field_tag 'item1', 'New Pixi Post' %>
   <%= hidden_field_tag 'promo_code', set_promo_code(listing.site_id) %>

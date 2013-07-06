@@ -1,17 +1,15 @@
-class Category < ActiveRecord::Base
-  attr_accessible :category_type, :name, :status, :pixi_type, :pictures_attributes
+class Subcategory < ActiveRecord::Base
+  attr_accessible :category_id, :name, :status, :subcategory_type, :pictures_attributes
 
-  has_many :subcategories
-  has_many :listings
-  has_many :temp_listings
-  has_many :active_listings, class_name: 'Listing', conditions: { :status => 'active' }
+  belongs_to :category
 
   has_many :pictures, :as => :imageable, :dependent => :destroy
   accepts_nested_attributes_for :pictures, :allow_destroy => true, :reject_if => :all_blank
 
+  validates :category_id, :presence => true
   validates :name, :presence => true
   validates :status, :presence => true
-  validates :category_type, :presence => true
+  validates :subcategory_type, :presence => true
   validate :must_have_picture
 
   default_scope :order => "name ASC"
@@ -45,15 +43,5 @@ class Category < ActiveRecord::Base
   # return inactive categories
   def self.inactive
     where(:status => 'inactive')
-  end
-
-  # check if category is premium
-  def premium?
-    pixi_type == 'premium'  
-  end
-
-  # titleize name
-  def name_title
-    name.titleize rescue nil
   end
 end
