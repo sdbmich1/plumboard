@@ -67,7 +67,14 @@ class TempListing < ListingParent
   def post_to_board
     if self.status == 'approved'
       unless listing = Listing.where(:pixi_id => self.pixi_id).first
-        listing = self.dup
+        # copy attributes
+	attr = self.attributes
+
+	# remove protected attributes
+	%w(id created_at updated_at).map {|x| attr.delete x}
+
+	# load attributes to new record
+        listing = Listing.new attr
       end
 
       # add photos

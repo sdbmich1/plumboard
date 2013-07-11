@@ -12,7 +12,7 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require jquery.ui.all
+//= require jquery-ui
 //= require bootstrap
 //= require jquery.remotipart
 //= require_tree .
@@ -38,6 +38,45 @@ $(document).on("change", "input[type=file]", function(evt){
     else  
       { handleFileSelect(evt, 'sm-thumb'); }
     return false;
+}); 
+
+// hide & reset comp field
+function hideComp(){
+  $('#comp-fld').hide('fast').val('');
+  $('#price-fld').show('fast');
+}
+
+$(function (){
+  // when the #category id field changes
+  $(document).on("change", "select[id*=category_id]", function(evt){
+
+    // grab the selected category
+    var cat = $("select[id*=category_id] option:selected").text();
+
+    // toggle field display based on category value
+    if(cat == 'Event') {
+      $('#event-fields').show('fast');
+      hideComp();
+    }
+    else {
+      $('#event-fields').hide('fast');
+
+      // clear flds
+      $('#start-date').val('');
+      $('#end-date').val('');
+      $('#start-time').val('');
+      $('#end-time').val('');
+      
+      if(cat == 'Jobs' || cat == 'Gigs') {
+        $('#price-fld').hide('fast').val('');
+        $('#comp-fld').show('fast');
+      }
+      else {
+        hideComp();
+      }
+    }
+
+  }); 
 }); 
 
 // paginate on click

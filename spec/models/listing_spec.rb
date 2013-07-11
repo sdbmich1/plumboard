@@ -423,7 +423,7 @@ describe Listing do
 
   describe '.event?' do
     before do
-      @cat = FactoryGirl.create(:category, name: 'Events', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Event', pixi_type: 'premium') 
     end
 
     it "is not an event" do
@@ -464,7 +464,7 @@ describe Listing do
 
   describe "date validations" do
     before do
-      @cat = FactoryGirl.create(:category, name: 'Events', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Event', pixi_type: 'premium') 
       @listing.category_id = @cat.id
       @listing.event_end_date = Date.today+3.days 
       @listing.event_start_time = Time.now+2.hours

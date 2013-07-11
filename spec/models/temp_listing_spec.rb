@@ -454,7 +454,7 @@ describe TempListing do
 
   describe '.event?' do
     before do
-      @cat = FactoryGirl.create(:category, name: 'Events', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Event', pixi_type: 'premium') 
     end
 
     it "is not an event" do
@@ -495,7 +495,7 @@ describe TempListing do
 
   describe "date validations" do
     before do
-      @cat = FactoryGirl.create(:category, name: 'Events', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Event', pixi_type: 'premium') 
       @temp_listing.category_id = @cat.id
       @temp_listing.event_end_date = Date.today+3.days 
       @temp_listing.event_start_time = Time.now+2.hours

@@ -86,6 +86,9 @@ describe TempListingsController do
   end
 
   describe "POST create" do
+    before do
+      controller.stub!(:set_params).and_return(:success)
+    end
     
     context 'failure' do
       
@@ -174,6 +177,7 @@ describe TempListingsController do
   describe "PUT /:id" do
     before (:each) do
       TempListing.stub!(:find_by_pixi_id).and_return( @listing )
+      controller.stub!(:set_params).and_return(:success)
     end
 
     def do_update
@@ -324,4 +328,28 @@ describe TempListingsController do
     end
   end
 
+  describe "GET /unposted" do
+    before :each do
+      @listings = mock("temp_listings")
+      controller.stub!(:current_user).and_return(@user)
+      @user.stub_chain(:new_pixis, :paginate).and_return( @listings )
+      do_get
+    end
+
+    def do_get
+      xhr :get, :unposted, page: '1'
+    end
+
+    it "renders the :unposted view" do
+      response.should render_template :unposted
+    end
+
+    it "should assign @listings" do
+      assigns(:listings).should_not be_nil
+    end
+
+    it "should show the requested listings" do
+      response.should be_success
+    end
+  end
 end

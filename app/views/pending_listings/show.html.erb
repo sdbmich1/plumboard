@@ -3,7 +3,7 @@
   <div id="showOrderForm">
     <%= render :partial => 'shared/show_listing', locals: {:listing=>@listing} %>
     <div class='mtop nav pull-right'>
-      <%= link_to '<< Back', pending_listings_path, class: 'btn btn-large btn-primary stnd-btn' %>
+      <%= link_to 'Back', pending_listings_path, class: 'btn btn-large btn-primary stnd-btn' %>
       <%= link_to 'Deny', deny_pending_listing_path(@listing), method: :put, class: 'btn btn-large btn-primary stnd-btn' %>
       <%= link_to 'Approve', approve_pending_listing_path(@listing), method: :put, class: 'btn btn-large btn-primary submit-btn' %>
     </div>

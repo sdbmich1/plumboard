@@ -39,12 +39,20 @@ feature "TempListings" do
     select('Foo Bar', :from => 'temp_listing_category_id')
   end
 
+  def select_date fld
+    page.execute_script %Q{ $("##{fld}").trigger("focus") } # activate datetime picker
+    page.execute_script %Q{ $('a.ui-datepicker-next').trigger("click") } # move one month forward
+    page.execute_script %Q{ $("a.ui-state-default:contains('15')").trigger("click") } # click on day 15
+  end
+
   describe "Manage Temp Pixis" do
     let(:temp_listing) { FactoryGirl.build(:temp_listing) }
 
     before(:each) do
       FactoryGirl.create :site
       FactoryGirl.create :category 
+      FactoryGirl.create :category, name: 'Event'
+      FactoryGirl.create :category, name: 'Jobs'
       visit new_temp_listing_path
     end
 
@@ -65,9 +73,20 @@ feature "TempListings" do
       add_data
     end
 
+    def event_data sdt, edt
+      attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
+      fill_in 'Title', with: "Guitar for Sale"
+      select_site
+      select('Event', :from => 'temp_listing_category_id')
+      fill_in 'Description', with: "Guitar for Sale"
+      fill_in 'start-date', with: sdt
+      fill_in 'end-date', with: edt
+    end
+
     describe "Create with invalid information" do
       it "should not create a listing" do
         expect { click_button submit }.not_to change(TempListing, :count)
+	page.should have_content "Title can't be blank"
       end
 
       it "should not create a listing w/o site" do
@@ -78,9 +97,11 @@ feature "TempListings" do
           fill_in 'Description', with: "Guitar for Sale"
           attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
 	  click_button submit }.not_to change(TempListing, :count)
+
+	  page.should have_content "Site can't be blank"
       end
 
-      it "should not create a listing w/o category" do
+      it "does not create a listing w/o category" do
         expect { 
           fill_in 'Title', with: "Guitar for Sale"
           fill_in 'Price', with: "150.00"
@@ -88,6 +109,68 @@ feature "TempListings" do
           fill_in 'Description', with: "Guitar for Sale"
           attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
 	  click_button submit }.not_to change(TempListing, :count)
+
+	  page.should have_content "Category can't be blank"
+      end
+
+      it "does not create a listing w/o description" do
+        expect { 
+          fill_in 'Title', with: "Guitar for Sale"
+          fill_in 'Price', with: "150.00"
+	  select_site
+          select_category
+          attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
+	  click_button submit }.not_to change(TempListing, :count)
+
+	  page.should have_content "Description can't be blank"
+      end
+
+      it "does not create a listing w/o start date" do
+        expect { 
+	  event_data nil, Date.today().strftime('%m/%d/%Y')
+	  click_button submit }.not_to change(TempListing, :count)
+
+	  page.should have_content "Start Date is not a valid date"
+      end
+
+      it "does not create a listing w/ bad start date" do
+        expect { 
+	  event_data "30/30/2456", Date.today().strftime('%m/%d/%Y')
+	  click_button submit }.not_to change(TempListing, :count)
+
+	  page.should have_content "Start Date is not a valid date"
+      end
+
+      it "does not create a listing w/ invalid start date" do
+        expect { 
+	  event_data Date.yesterday.strftime('%m/%d/%Y'), Date.today().strftime('%m/%d/%Y')
+	  click_button submit }.not_to change(TempListing, :count)
+
+	  page.should have_content "Start Date must be on or after "
+      end
+
+      it "does not create a listing w/o end date" do
+        expect { 
+	  event_data Date.today().strftime('%m/%d/%Y'), nil
+	  click_button submit }.not_to change(TempListing, :count)
+
+	  page.should have_content "End Date is not a valid date"
+      end
+
+      it "does not create a listing w/ bad end date" do
+        expect { 
+	  event_data Date.today().strftime('%m/%d/%Y'), "30/30/2456"
+	  click_button submit }.not_to change(TempListing, :count)
+
+	  page.should have_content "End Date is not a valid date"
+      end
+
+      it "does not create a listing w/ invalid end date" do
+        expect { 
+	  event_data Date.today().strftime('%m/%d/%Y'), Date.yesterday.strftime('%m/%d/%Y') 
+	  click_button submit }.not_to change(TempListing, :count)
+
+	  page.should have_content "End Date must be on or after"
       end
 
       it "should not create a listing w/o photo" do
@@ -98,7 +181,7 @@ feature "TempListings" do
     end
 
     describe "Create with valid information" do
-      it "Adds a new listing w/o price and displays the results" do
+      it "Adds a new listing w/o price" do
         expect{
 		add_data_w_photo
 	        click_button submit
@@ -106,9 +189,10 @@ feature "TempListings" do
       
         page.should have_content "Guitar for Sale" 
         page.should have_content 'Review Your Pixi'
+        page.should_not have_content "Price:" 
       end	      
 
-      it "Adds a new listing w price and displays the results" do
+      it "Adds a new listing w price" do
         expect{
 		add_data_w_photo
                 fill_in 'Price', with: "150.00"
@@ -117,6 +201,43 @@ feature "TempListings" do
       
         page.should have_content "Guitar for Sale" 
         page.should have_content 'Review Your Pixi'
+        page.should have_content "Price: $150.00" 
+      end	      
+
+      it "Adds a new listing w compensation" do
+        expect{
+		add_data_w_photo
+                select('Jobs', :from => 'temp_listing_category_id')
+                fill_in 'salary', with: "Competitive"
+	        click_button submit
+	      }.to change(TempListing,:count).by(1)
+      
+        page.should have_content "Guitar for Sale" 
+        page.should have_content 'Review Your Pixi'
+        page.should have_content "Compensation: Competitive" 
+        page.should_not have_content "Price:" 
+      end	      
+
+      it "Adds a new listing w event" do
+        expect{
+		add_data_w_photo
+                fill_in 'Price', with: "150.00"
+                select('Event', :from => 'temp_listing_category_id')
+                fill_in 'start-date', with: Date.today().strftime('%m/%d/%Y')
+                fill_in 'end-date', with: Date.today().strftime('%m/%d/%Y')
+		select('15:00', :from => 'start-time')
+		select('20:00', :from => 'end-time')
+	        click_button submit
+	      }.to change(TempListing,:count).by(1)
+      
+        page.should have_content "Guitar for Sale" 
+        page.should have_content 'Review Your Pixi'
+        page.should have_content "Start Date: "
+        page.should have_content "End Date: "
+        page.should have_content "Start Time: "
+        page.should have_content "End Time: "
+        page.should_not have_content "Compensation: Competitive" 
+        page.should have_content "Price:" 
       end	      
     end	      
   end
@@ -136,6 +257,7 @@ feature "TempListings" do
 	      click_button submit 
 	}.not_to change(TempListing, :count)
 
+      page.should have_content "Title can't be blank"
       page.should have_content 'Build Pixi'
     end
 
@@ -145,6 +267,7 @@ feature "TempListings" do
 	      click_button submit 
 	}.not_to change(TempListing, :count)
 
+      page.should have_content "Description can't be blank"
       page.should have_content 'Build Pixi'
     end
 
@@ -155,6 +278,7 @@ feature "TempListings" do
 	}.not_to change(TempListing, :count)
 
       page.should have_content 'Build Pixi'
+      page.should have_content "Price is not a number"
     end
 
     it "huge price should not change a listing" do

@@ -2,6 +2,8 @@ require 'will_paginate/array'
 class TempListingsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :load_data, only: [:unposted]
+  before_filter :set_params, only: [:create, :update]
+  include ResetDate
   respond_to :html, :json, :js
 
   def new
@@ -21,7 +23,7 @@ class TempListingsController < ApplicationController
 
   def update
     @listing = TempListing.find_by_pixi_id params[:id]
-    @listing.update_attributes(params[:temp_listing])
+    @listing.update_attributes params[:temp_listing]
     respond_with(@listing)
   end
 
@@ -57,6 +59,10 @@ class TempListingsController < ApplicationController
 
   def load_data
     @page = params[:page] || 1
+  end
+
+  def set_params
+    params[:temp_listing] = ResetDate::reset_dates(params[:temp_listing])
   end
 
 end

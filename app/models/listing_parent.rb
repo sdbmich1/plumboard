@@ -31,14 +31,14 @@ class ListingParent < ActiveRecord::Base
   validate :must_have_pictures
 
   # event date and time
-  validates_date :event_start_date, on_or_after: Date.today, presence: true, if: :event?
+  validates_date :event_start_date, on_or_after: lambda { Date.current }, presence: true, if: :event?
   validates_date :event_end_date, on_or_after: :event_start_date, presence: true, if: :start_date?
-  validates_datetime :event_start_time, presence: true, on_or_after: lambda { Time.now }, if: :start_date?
+  validates_datetime :event_start_time, presence: true, if: :start_date?
   validates_datetime :event_end_time, presence: true, after: :event_start_time, :if => :start_date?
 
   # check if pixi is an event
   def event?
-    %w(Events Happenings).detect { |cat| cat == category_name}
+    %w(Event Happenings).detect { |cat| cat == category_name}
   end
 
   # check if event start date exists
@@ -182,6 +182,6 @@ class ListingParent < ActiveRecord::Base
 
   # check if pixi is a job
   def job?
-    %w(Jobs Employment).detect { |cat| cat == category_name}
+    %w(Gigs Jobs Employment).detect { |cat| cat == category_name}
   end
 end

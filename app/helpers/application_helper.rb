@@ -98,4 +98,9 @@ module ApplicationHelper
   def get_ary
     (1..99).inject([]){|x,y| x << y}
   end
+
+  # set numeric display
+  def num_display model, fld
+    number_with_precision(model.send(fld), :precision=>2)
+  end
 end

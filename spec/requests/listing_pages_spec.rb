@@ -16,6 +16,7 @@ describe "Listings", :type => :feature do
       visit listing_path(listing) 
     end
      
+    it { should have_content listing.title }
     it { should have_content "Posted By: #{listing.seller_name}" }
     it { should have_link 'Follow', href: '#' }
     it { should have_link listing.site_name, href: '#' }
@@ -26,6 +27,12 @@ describe "Listings", :type => :feature do
     it { should have_content "ID: #{listing.pixi_id}" }
     it { should have_content "Posted: #{get_local_time(listing.start_date)}" }
     it { should have_content "Updated: #{get_local_time(listing.updated_at)}" }
+    it { should_not have_content "Start Date: #{short_date(listing.event_start_date)}" }
+    it { should_not have_content "End Date: #{short_date(listing.event_end_date)}" }
+    it { should_not have_content "Start Time: #{short_time(listing.event_start_time)}" }
+    it { should_not have_content "End Time: #{short_time(listing.event_end_time)}" }
+    it { should have_content "Price: " }
+    it { should_not have_content "Compensation: #{(listing.compensation)}" }
 
     it "Contacts a seller", js: true do
       expect{
@@ -43,6 +50,47 @@ describe "Listings", :type => :feature do
 
       page.should have_content "Content can't be blank"
     end
+  end
+
+  describe "View Event Pixi" do 
+    let(:category) { FactoryGirl.create :category, name: 'Event' }
+    let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id, 
+      category_id: category.id, event_start_date: Date.today, event_end_date: Date.today, event_start_time: Time.now+2.hours, 
+      event_end_time: Time.now+3.hours ) }
+    let(:pixi_user) { FactoryGirl.create(:pixi_user, email: 'jdoe2@pixitest.com') }
+
+    before(:each) do
+      login_as(pixi_user, :scope => :user, :run_callbacks => false)
+      @user = pixi_user
+      visit listing_path(listing) 
+    end
+     
+    it { should have_content "Start Date: #{short_date(listing.event_start_date)}" }
+    it { should have_content "End Date: #{short_date(listing.event_end_date)}" }
+    it { should have_content "Start Time: #{short_time(listing.event_start_time)}" }
+    it { should have_content "End Time: #{short_time(listing.event_end_time)}" }
+    it { should have_content "Price: " }
+    it { should_not have_content "Compensation: #{(listing.compensation)}" }
+  end
+
+  describe "View Compensation Pixi" do 
+    let(:category) { FactoryGirl.create :category, name: 'Gigs' }
+    let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id, 
+      category_id: category.id, compensation: 'Salary + Equity', price: nil) }
+    let(:pixi_user) { FactoryGirl.create(:pixi_user, email: 'jdoe2@pixitest.com') }
+
+    before(:each) do
+      login_as(pixi_user, :scope => :user, :run_callbacks => false)
+      @user = pixi_user
+      visit listing_path(listing) 
+    end
+     
+    it { should_not have_content "Start Date: #{short_date(listing.event_start_date)}" }
+    it { should_not have_content "End Date: #{short_date(listing.event_end_date)}" }
+    it { should_not have_content "Start Time: #{short_time(listing.event_start_time)}" }
+    it { should_not have_content "End Time: #{short_time(listing.event_end_time)}" }
+    it { should_not have_content "Price: #{(listing.price)}" }
+    it { should have_content "Compensation: #{(listing.compensation)}" }
   end
 
   describe "Owner-viewed Pixi" do 

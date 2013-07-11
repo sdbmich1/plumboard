@@ -1,3 +1,4 @@
+<% if @post %>
   <%= form_for @post, remote: true, class: 'width320' do |f| %> 
     <div id="notice" style="display:none"></div>
     <div id="form_errors">
@@ -13,3 +14,4 @@
       <%= f.submit 'Contact', :class=>'btn btn-warning', id: 'contact-btn' %>
     </div>
   <% end %>
+<% end %>

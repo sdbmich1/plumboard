@@ -28,6 +28,8 @@ gem 'rinku'
 # used to mark messages as read/unread
 gem 'unread'
 
+gem 'jquery-rails', '~> 2.1'
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
@@ -38,11 +40,12 @@ group :assets do
   # gem 'therubyracer', :platforms => :ruby
 
   gem 'uglifier', '1.2.3'
+  gem 'jquery-ui-rails'
+  gem 'jquery-ui-themes'
 end
 
-gem 'jquery-rails', '~> 2.1'
-gem 'jquery-ui-rails'
-gem 'jquery-ui-themes'
+# add datepicker
+gem 'bootstrap-datepicker-rails'
 
 # add autocomplete
 gem 'rails3-jquery-autocomplete'
@@ -90,6 +93,9 @@ gem 'client_side_validations'
 
 # datetime validations
 gem 'validates_timeliness', '~> 3.0'
+
+# time select
+gem "combined_time_select", "~> 1.0.1"
 
 # add country selection
 gem 'country_select'
