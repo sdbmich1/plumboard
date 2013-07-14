@@ -2,9 +2,9 @@
 ApplicationName=pixiboard
 AwsCredentialFile=C:\cygwin\home\Sean Browm\.elasticbeanstalk\aws_credential_file
 DevToolsEndpoint=git.elasticbeanstalk.us-west-1.amazonaws.com
-EnvironmentName=pixiboard-staging
-InstanceProfileName=admin
-OptionSettingFile=C:\Documents\Aptana Studio 3 Workspace\plumboard\.elasticbeanstalk\optionsettings.pixiboard-staging
+EnvironmentName=pixiboard-dev
+InstanceProfileName=developer
+OptionSettingFile=C:\Documents\Aptana Studio 3 Workspace\plumboard\.elasticbeanstalk\optionsettings.pixiboard-dev
 RdsDeletionPolicy=Delete
 RdsEnabled=Yes
 RdsSourceSnapshotName=
