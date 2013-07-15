@@ -6,11 +6,15 @@ EnvironmentName=pixiboard-dev
 InstanceProfileName=developer
 OptionSettingFile=C:\Documents\Aptana Studio 3 Workspace\plumboard\.elasticbeanstalk\optionsettings.pixiboard-dev
 RdsDeletionPolicy=Delete
-RdsEnabled=Yes
+RdsEnabled=No
 RdsSourceSnapshotName=
 Region=us-west-1
 ServiceEndpoint=https://elasticbeanstalk.us-west-1.amazonaws.com
 SolutionStack=64bit Amazon Linux running Ruby 1.9.3
+
+[branches]
+master=pixiboard-master-env
+
 [branch:master]
 ApplicationVersionName=Sample Application
 EnvironmentName=pixiboard-master-env
@@ -19,5 +23,4 @@ OptionSettingFile=c:\Documents\Aptana Studio 3 Workspace\plumboard\.elasticbeans
 RdsDeletionPolicy=Delete
 RdsEnabled=Yes
 RdsSourceSnapshotName=
-[branches]
-master=pixiboard-master-env
+
