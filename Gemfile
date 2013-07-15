@@ -143,6 +143,7 @@ group :test do
   gem 'connection_pool'
   gem 'selenium-webdriver'
   # gem "webmock", "~> 1.11.0"
+  gem "fakeweb", "~> 1.3"
 end
 
 # production gems

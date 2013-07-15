@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
 
   def after_sign_in_path_for(resource)
     @user ||= resource
-    @user.sign_in_count <= 1 ? welcome_path(@user) : session[:return_to] || listings_path
+    @user.sign_in_count <= 1 ? welcome_path(@user) : listings_path
   end
 
   # set user if signed in 

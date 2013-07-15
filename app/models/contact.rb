@@ -9,4 +9,11 @@ class Contact < ActiveRecord::Base
   validates :city, :presence => true, :format => { :with => name_regex }
   validates :state, :presence => true
   validates :zip, :presence => true
+  
+  geocoded_by :full_address, :latitude  => :lat, :longitude => :lng
+  after_validation :geocode  
+
+  def full_address
+    [address, city, state, country].compact.join(', ')
+  end
 end

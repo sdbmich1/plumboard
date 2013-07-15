@@ -1,3 +1,4 @@
+<% unless @listings.blank? %>    
     <table class="table table-hover table-condensed table-bordered">
     <thead>
       <tr>
@@ -16,3 +17,6 @@
   <div class="nav pull-right">
     <%= will_paginate @listings if @listings.respond_to?(:total_pages) %>
   </div> 
+<% else %>
+  <div class='center-wrapper'>No pixis found.</div>
+<% end %>

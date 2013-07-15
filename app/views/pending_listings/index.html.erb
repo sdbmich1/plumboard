@@ -4,11 +4,7 @@
 <% end %>
 <%= content_for :content do %>
   <div id="pendingOrder">
-    <% unless @listings.blank? %>  
-      <%= render :partial => 'shared/index_list' %>
-    <% else %>
-      <div class='center-wrapper'>No pending orders found.</div>
-    <% end %>
+    <%= render :partial => 'shared/index_list' %>
   </div>
 <% end %>
 

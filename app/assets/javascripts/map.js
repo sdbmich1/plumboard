@@ -143,7 +143,7 @@ function processLocations(addrs, tFlg) {
             // actually display the map and markers, this is only done the last time
             if(k == addrs.length) {
                 // It's the last address so we can display the map
-				displayMap(centerPt.getCenter(), false, true, tFlg); 
+		displayMap(centerPt.getCenter(), false, true, tFlg); 
           	} 
         }         
       }); 

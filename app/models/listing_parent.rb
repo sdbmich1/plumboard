@@ -36,9 +36,13 @@ class ListingParent < ActiveRecord::Base
   validates_datetime :event_start_time, presence: true, if: :start_date?
   validates_datetime :event_end_time, presence: true, after: :event_start_time, :if => :start_date?
 
+  # geocode
+  geocoded_by :post_ip, :latitude => :lat, :longitude => :lng
+  after_validation :geocode
+
   # check if pixi is an event
   def event?
-    %w(Event Happenings).detect { |cat| cat == category_name}
+    %w(Event Events Happenings).detect { |cat| cat == category_name}
   end
 
   # check if event start date exists

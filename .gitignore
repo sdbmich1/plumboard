@@ -28,4 +28,4 @@
 /config/aws.yml
 
 
-.elasticbeanstalk/
+/.elasticbeanstalk

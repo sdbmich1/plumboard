@@ -4,4 +4,6 @@
   $("#pxboard").html("<%= escape_javascript(render(partial: 'shared/listing', collection: @listings)) %>");
 <% end %>  
 $('a.nxt-pg').attr('href', '#{listings_path page: @listings.next_page}');
+
+$('#nearby-map').hide('fast');
 $('#spinner').hide(300);

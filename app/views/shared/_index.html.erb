@@ -2,6 +2,23 @@
 <%= content_for :subhead do %>
   <%= render partial: 'shared/navbar', locals: { menu_name: page_title } %>
 <% end %>
+
+<%= content_for :map do %>
+  <script type="text/javascript">
+    $(document).on('click', '#pixi-map', function() {
+      if ( $('#nearby-map').length != 0 ) { 
+        var locations = <%= raw build_lnglat_ary(@listings) %>;
+        loadLocations(locations, false);
+	$('#nearby-map').show('fast');
+      } 
+    });
+  </script>
+
+  <div id='nearby-map' style='display:none'>
+    <div id="map_canvas"></div>
+  </div>
+<% end %>
+
 <%= content_for :content do %>
   <div id="pxboard">
     <%= render 'shared/listings' %>

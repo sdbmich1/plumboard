@@ -44,4 +44,8 @@ describe Contact do
     it { should_not be_valid }
   end
 
+  it "has full address" do
+    @contact.full_address.should == [@contact.address, @contact.city, @contact.state, @contact.country].compact.join(', ')
+  end
+
 end

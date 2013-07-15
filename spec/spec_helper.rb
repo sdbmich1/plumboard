@@ -1,4 +1,4 @@
-require 'rubygems'
+Require 'rubygems'
 require 'spork'
 
 Spork.prefork do
@@ -63,6 +63,9 @@ Spork.prefork do
 
     config.before(:each) do
       reset_email
+      Contact.any_instance.stub(:geocode) { [1,1] }
+      TempListing.any_instance.stub(:geocode) { [1,1] }
+      Listing.any_instance.stub(:geocode) { [1,1] }
       DatabaseCleaner.start
     end
 
