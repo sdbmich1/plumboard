@@ -120,7 +120,7 @@ group :development do
 end
 
 group :development, :test do
-  gem 'wdm', '~> 0.1.0'
+  gem 'wdm', '~> 0.1.0', :platforms => [:mswin, :mingw], :require => false
   # gem 'wdm', :platforms => [:mswin, :mingw], :require => false
   gem 'rspec-rails', '2.12.0'
   gem 'guard-rspec', '1.2.1'
