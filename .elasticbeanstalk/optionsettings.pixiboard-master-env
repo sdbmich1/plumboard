@@ -20,8 +20,8 @@ Application Healthcheck URL=
 BUNDLE_WITHOUT=test:development
 PARAM1=
 PARAM2=
-RACK_ENV=production
-RAILS_SKIP_ASSET_COMPILATION=false
+RACK_ENV=development
+RAILS_SKIP_ASSET_COMPILATION=true
 RAILS_SKIP_MIGRATIONS=false
 
 [aws:elasticbeanstalk:hostmanager]

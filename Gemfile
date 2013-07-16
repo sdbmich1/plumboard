@@ -7,7 +7,7 @@ gem 'rake'
 gem 'devise'
 
 # use mysql as db
-gem "mysql2", "~> 0.3.12b5" #, "~> 0.3.11"
+gem "mysql2", "~> 0.3.12"
 
 # add paperclip for photos
 gem 'paperclip'
