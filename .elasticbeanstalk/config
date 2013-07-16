@@ -1,12 +1,12 @@
 [global]
 ApplicationName=pixiboard
-AwsCredentialFile=c:/Users/Sean Browm\.elasticbeanstalk\aws_credential_file
+AwsCredentialFile=C:\cygwin\home\Sean Browm\.elasticbeanstalk\aws_credential_file
 DevToolsEndpoint=git.elasticbeanstalk.us-west-1.amazonaws.com
-EnvironmentName=pixiboard-dev
+EnvironmentName=pixiboard-master-env
 InstanceProfileName=developer
-OptionSettingFile=C:\Documents\Aptana Studio 3 Workspace\plumboard\.elasticbeanstalk\optionsettings.pixiboard-dev
+OptionSettingFile=C:\Documents\Aptana Studio 3 Workspace\plumboard\.elasticbeanstalk\optionsettings.pixiboard-master-env
 RdsDeletionPolicy=Delete
-RdsEnabled=No
+RdsEnabled=Yes
 RdsSourceSnapshotName=
 Region=us-west-1
 ServiceEndpoint=https://elasticbeanstalk.us-west-1.amazonaws.com
