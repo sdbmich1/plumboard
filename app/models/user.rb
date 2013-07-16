@@ -1,7 +1,9 @@
 require "open-uri"
 class User < ActiveRecord::Base
   include ThinkingSphinx::Scopes
-  resourcify
+  extend Rolify
+
+  rolify
   acts_as_reader
 
   # Include default devise modules. Others available are:
