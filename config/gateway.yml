@@ -9,7 +9,7 @@ defaults: &defaults
     api_key: "sk_test_87BbvJVr6Gy2KEhNe9N3HlOF"
     public_key: "pk_test_ND2g6VoRttLN98bVM9rPsiyD"
   balanced:
-    uri: '/v1/marketplaces/TEST-MP2Q4OaIanQuIDJIixHGmhQA'
+    uri: /v1/marketplaces/TEST-MP2Q4OaIanQuIDJIixHGmhQA
     api_key: 5d38a206cee611e29cdf026ba7f8ec28
 
 development:    
