@@ -1,5 +1,4 @@
 defaults: &defaults
-  bin_path: "C:/Sphinx/bin"
   searchd_binary_name: searchd
   indexer_binary_name: indexer 
   enable_star: true
@@ -7,8 +6,18 @@ defaults: &defaults
 
 development:
   mysql41: 9306
+  bin_path: "C:/Sphinx/bin"
   <<: *defaults
 
 test:
   mysql41: 9307
+  bin_path: "C:/Sphinx/bin"
+  <<: *defaults
+
+staging:
+  mysql41: 9308
+  <<: *defaults
+
+production:
+  mysql41: 9312
   <<: *defaults
