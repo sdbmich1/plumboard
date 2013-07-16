@@ -25,8 +25,8 @@
 /public/system/pictures
 
 # ignore yml files
-/config/aws.yml
+#/config/aws.yml
 
 
-/.elasticbeanstalk
+.elasticbeanstalk
 .elasticbeanstalk/
