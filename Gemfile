@@ -114,12 +114,12 @@ gem 'bootstrap-will_paginate', '0.0.6'
 gem 'bootstrap-sass', '2.1'
 
 # development gems
-group :development do
+group :development, :staging do
   gem 'better_errors'
   gem 'binding_of_caller'
 end
 
-group :development, :test do
+group :development, :test, :staging do
   gem 'wdm', '~> 0.1.0', :platforms => [:mswin, :mingw], :require => false
   # gem 'wdm', :platforms => [:mswin, :mingw], :require => false
   gem 'rspec-rails', '2.12.0'
