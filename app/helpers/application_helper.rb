@@ -66,7 +66,11 @@ module ApplicationHelper
 
   # set image
   def get_image model, file_name
-    !model.any_pix? ? file_name : model.pictures[0].photo.url
+    if model
+      !model.any_pix? ? file_name : model.pictures[0].photo.url
+    else
+      file_name
+    end
   end
 
   # return sites based on pixi type
