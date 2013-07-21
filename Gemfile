@@ -37,7 +37,7 @@ group :assets do
   gem 'coffee-rails', '3.2.2'
 
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-  # gem 'therubyracer', :platforms => :ruby
+  gem 'therubyracer', :platforms => :ruby
 
   gem 'uglifier', '1.2.3'
   gem 'jquery-ui-rails'
@@ -62,11 +62,12 @@ gem 'rails3-jquery-autocomplete'
 # Use thin as the development app server
 gem 'thin'
 
-# Deploy with Capistrano
-gem 'capistrano'
+# add whenever for cron jobs
+gem 'whenever'
 
 # amazon aws
 gem "aws-sdk", "~> 1.11.3"
+gem 'aws-s3', :require => 'aws/s3'
 
 # To use debugger
 # gem 'debugger'
@@ -114,9 +115,15 @@ gem 'bootstrap-will_paginate', '0.0.6'
 gem 'bootstrap-sass', '2.1'
 
 # development gems
-group :development, :staging do
+group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
+
+  # Deploy with Capistrano
+  gem 'capistrano'
+
+  # Capistrano RVM integration
+  gem 'rvm-capistrano'
 end
 
 group :development, :test, :staging do
@@ -136,7 +143,7 @@ group :test do
   gem 'capybara', '1.1.2'
   gem 'rb-fchange', '0.0.5'
   gem 'rb-notifu', '0.0.4'
-  gem 'win32console', '~> 1.3.2'
+  gem 'win32console', '~> 1.3.2', :platforms => [:mswin, :mingw], :require => false
   gem 'email_spec'
   gem 'launchy'
   gem "database_cleaner"
@@ -155,3 +162,10 @@ group :production do
    # google analytics
    gem 'rack-google_analytics', :require => "rack/google_analytics"
 end 
+
+gem 'rubber'
+gem 'open4'
+gem 'gelf'
+gem 'graylog2_exceptions', :git => 'git://github.com/wr0ngway/graylog2_exceptions.git'
+gem 'graylog2-resque'
+gem 'excon', '~> 0.21.0'
