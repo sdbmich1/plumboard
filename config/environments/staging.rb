@@ -24,7 +24,7 @@ Plumboard::Application.configure do
   # config.assets.manifest = YOUR_PATH
 
   # Specifies the header that your server uses for sending files
-  # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for apache
+  config.action_dispatch.x_sendfile_header = "X-Sendfile" # for apache
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for nginx
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
@@ -64,15 +64,10 @@ Plumboard::Application.configure do
 
   # Log the query plan for queries taking more than this (works
   # with SQLite, MySQL, and PostgreSQL)
-  # config.active_record.auto_explain_threshold_in_seconds = 0.5
+  config.active_record.auto_explain_threshold_in_seconds = 0.5
 
   # set paperclip aws settings
-  config.paperclip_defaults = {
-    :storage => :s3,
-    :s3_credentials => {
-    :bucket => ENV['AWS_BUCKET'],
-    :access_key_id => ENV['AWS_ACCESS_KEY_ID'],
-    :secret_access_key => ENV['AWS_SECRET_ACCESS_KEY']
-    }
-  }
+  PAPERCLIP_STORAGE_OPTIONS = {:storage => :s3, 
+                               :s3_credentials => YAML.load_file("#{Rails.root}/config/aws.yml")[Rails.env],
+			       :path => "/:style/:filename"}
 end

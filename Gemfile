@@ -67,7 +67,7 @@ gem 'whenever'
 
 # amazon aws
 gem "aws-sdk", "~> 1.11.3"
-gem 'aws-s3', :require => 'aws/s3'
+#gem 'aws-s3', :require => 'aws/s3'
 
 # To use debugger
 # gem 'debugger'

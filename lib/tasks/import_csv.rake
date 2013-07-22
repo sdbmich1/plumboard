@@ -12,11 +12,27 @@ task :import => :environment do
 		:org_type	   => 'school'
       }
 
-    # add site
-    new_site = Site.find_or_initialize_by_institution_id(attrs)
+    # filter specialty schools
+    spec_site = %W(Barber Center Dental Dentistry Medical Cosmetology Group Vocational Residency Internship Hair Seminary Foundation 
+    Maintenance Learning Health Career Hospital Beauty School Adult Associated Family Church God Animal Training System Clinic Counseling Associate
+    Job Aveda Program Healing Acupuncture Message Driving Council Ministries Village Academia Aesthetic Ultrasound Xenon Defense Yeshiva Institucion
+    Oneida Medicine Roy BOCES Salon Service Reporting Planning Consulting Therapy Centro Bureau Home Childcare Diving Funeral Skills Pivot Irene
+    Recording Massage Automotive Esthetic Study ROP District Guy Universidad UPR CET Flight Division Test Jerusalem SABER Corporation Skin House Plus
+    Studies Quest Liceo Diesel Holistic NASCAR NCME ABC Video Nail Detective Solution Fast Train Education Mortuary Baking Theater Partners Society
+    Corporate LLC Bellus AIMS Firecamp Federal Tribeca Caribbean Union Torah Travel Creative Cathedral International Desert Fila Montessori Fiber
+    Film Radio Laboratory Ames Repair Welding Management Maternidad IMEDIA Police Hypnosis Motivation Hot esprit Notary Midwifery Loraine Association
+    ROC Anesthesia Ohr Ballet Symphony Profession OISE Professor AGE Proteus Applied Rolf Children Jeweler Cactus Chubb Collective Coiffure 
+    Trend Retirement Joel Motorcycle Waynesville AMS Learnet Kade Mandalyn Digital Headline Interior Social Dale Fairview PSC Research
+    Planned Trade global Colegio Labs Tutor Escuela Employment Care Aviation Puerto Instituto Surgical Helicopter Make-up Marketing Company Chaplain
+    ZMS ORT Mildred Cultural Scool Beis Paralegal Cosmetic Religion Somatic Inovatech Hospice Height Golf Firenze Dietetic 
+    Bais Professional Language Theatre Limit).detect { |x| x =~ /^.*\b(#{row[1]})\b.*$/i }
 
-    # set location/contact attributes
-    loc_attrs = { 
+    # add site
+    unless site = Site.where(:name => row[1]).first || spec_site
+      new_site = Site.new(attrs)
+
+      # set location/contact attributes
+      loc_attrs = { 
 		:address         => row[2],
 	     	:city            => row[3],
           	:state           => row[4],
@@ -25,14 +41,15 @@ task :import => :environment do
 		:website	 => row[9]
 		}
 
-    # add contact info for site
-    new_site.contacts.build(loc_attrs)
+      # add contact info for site
+      new_site.contacts.build(loc_attrs)
 
-    # save site
-    if new_site.save 
-      puts "Saved site #{attrs.inspect}"
-    else
-      puts new_site.errors
+      # save site
+      if new_site.save 
+        puts "Saved site #{attrs.inspect}"
+      else
+        puts new_site.errors
+      end
     end
 
     # set prev id
@@ -56,7 +73,7 @@ task :load_categories => :environment do
     # add photo
     if new_category.pictures.size == 0
       picture = new_category.pictures.build
-      picture.photo = File.new row[2]
+      picture.photo = File.new "#{Rails.root}" + row[2]
     end
 
     # save category

@@ -53,4 +53,7 @@ Plumboard::Application.configure do
     :authentication       => "plain",
     :enable_starttls_auto => true
   }
+
+  # paperclip storage setting
+  PAPERCLIP_STORAGE_OPTIONS = {}
 end
