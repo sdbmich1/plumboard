@@ -47,7 +47,10 @@ Plumboard::Application.configure do
 
   # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
   # config.assets.precompile += %w( search.js )
-  config.assets.precompile += %w[jquery.bxslider.css datepicker.css]
+  files = Dir[Rails.root.join('app', 'assets', '{javascripts,stylesheets}', '**', '[^_]*.{js,css}*')]
+  files.map! {|file| file.sub(%r(#{Rails.root}/app/assets/(javascripts|stylesheets)/), '') }
+  files.map! {|file| file.sub(%r(\.(coffee|scss)), '') }
+  config.assets.precompile += files
   config.assets.precompile += ['.css', '.js', '.png', '.jpg', '.bmp', '.gif', '.ico']
 
   # Disable delivery errors, bad email addresses will be ignored
