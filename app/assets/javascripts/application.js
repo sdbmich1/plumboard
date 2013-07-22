@@ -15,6 +15,10 @@
 //= require jquery-ui
 //= require bootstrap
 //= require jquery.remotipart
+//= require jquery.bxslider.min.js
+//= require jquery.placeholder.min.js
+//= require bootstrap-datepicker.js
+//= require datepicker.js
 //= require_tree .
 
 $.ajaxSetup({  

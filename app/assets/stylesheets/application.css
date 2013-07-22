@@ -10,5 +10,7 @@
  *
  *= require_self
  *= require jquery.ui.all
+ *= require jquery.bxslider.css
+ *= require datepicker.css
  *= require_tree .
  */
