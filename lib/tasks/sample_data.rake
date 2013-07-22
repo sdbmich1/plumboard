@@ -27,13 +27,27 @@ namespace :db do
       country = 'US'
       phone_number = Faker::PhoneNumber.phone_number
 
+      site = Site.where('name like "%Berkeley%"').first
+
       usr.contacts.build address: street, city: city, state: state, zip: zip_code, home_phone: phone_number, country: country
       usr.save!
 
       10.times do |i|
+        title = ['Barely used bookbag','Like New Futon','Calc 201 Book','Roommate Needed','Cool bike for sale','Car for sale','Apt for rent',
+	    'Stereo available','Great Sofa', 'Must see 19" Flat screen TV']
+
+        descr = ['School bookbag for sale. Like new.','Barely used Futon available.  Must sale.',
+	    'Calc 201 Book.  Hard to beat price.','Roommate Needed for great apt near campus to live w 2 females roomies. ',
+	    'Cool bike for sale.  Great for hills.',
+	    'Car for sale.  low mileage. rides great.','Apt for rent. cool 1 br/1 ba downtown avail next month.',
+	    'Bose stereo available. surround sound.  ipod dock.',
+	    'Black Leather Sofa in great condition', 'Must see 19" Vizio Flat screen TV.  Barely used']
+
+        prices = [30, 50, 25, 500, 80, 2600, 1200, 120, 100, 90]
+
         # create listing
-        listing = TempListing.new(title: "Test #{n} - #{i} Listing", description: "Test", site_id: 1284, seller_id: usr.id, category_id: i+1, 
-		start_date: Time.now)
+        listing = TempListing.new(title: title[i], description: descr[i], site_id: 1284, seller_id: usr.id, category_id: i+1, 
+		start_date: Time.now, price: prices[i])
         picture = listing.pictures.build
         picture.photo = File.new "c:/RoRDev/images/photo#{i}.jpg"
         listing.save!
