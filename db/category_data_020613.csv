@@ -1,45 +1,45 @@
 Name ,Type,Image_file
-gigs,Employment,\app\assets\images\help-wanted.jpg
-for sale,sales,\app\assets\images\for_sale_sign.jpg
-happenings,Community,\app\assets\images\event.jpg
-jobs,Employment,\app\assets\images\job_openings.png
-community,Community,\app\assets\images\Community2.jpg
-beauty,Services ,\app\assets\images\beauty.jpg
-creative,Services ,\app\assets\images\bulb.png
-computer,Services ,\app\assets\images\old_mac_computer.jpg
-cycle,Services ,\app\assets\images\bike2.jpg
-event,Services ,\app\assets\images\Events1.jpg
-financial,Services ,\app\assets\images\financial.jpg
-legal,Services ,\app\assets\images\law3.jpg
-lessons,Services ,\app\assets\images\small_chalkboard-3024.jpg
-pet,Services ,\app\assets\images\pets.png
-automotive,Services ,\app\assets\images\muscle-car-sale.jpg
-move,Services ,\app\assets\images\moving1.jpg
-household,Services ,\app\assets\images\housework.jpg
-handiwork,Services ,\app\assets\images\tools1.jpg
-housing,Services ,\app\assets\images\forrent.gif
-tutoring,Services ,\app\assets\images\tutor1.jpg
-deals,sales,\app\assets\images\coupons.png
-travel,Services ,\app\assets\images\travelsuitcase.jpg
-tickets,sales,\app\assets\images\tickets.png
-lost & found,Services ,\app\assets\images\lost_and_found.gif
-electronics,sales,\app\assets\images\television.jpg
-focus groups,Services ,\app\assets\images\Focus-group2.jpg
-scholarships,Services ,\app\assets\images\scholarship2.jpg
-music,sales,\app\assets\images\music2.jpg
-jewelry,sales,\app\assets\images\bracelet.jpg
-real estate,sales,\app\assets\images\house-for-sale1.jpg
-furniture,sales,\app\assets\images\furniture-f13.jpg
-clothes,sales,\app\assets\images\pile-of-clothes.jpg
-motorcycle,sales,\app\assets\images\motorcycle.jpg
-roommate,Services ,\app\assets\images\roommate.jpg
-arts & crafts,sales,\app\assets\images\glass-arts-and-crafts.jpg
-ride share,Services ,\app\assets\images\medium_carpool.jpg
-baby & kids,sales,\app\assets\images\babies.jpg
-childcare,Services ,\app\assets\images\Childcare1.jpeg
-books,sales,\app\assets\images\textbooks.jpg
-appliances,sales,\app\assets\images\fridge.jpg
-video games,sales,\app\assets\images\video-games.jpg
-cell phones,sales,\app\assets\images\Cell.bmp
-photo,sales,\app\assets\images\old_camera.JPG
-video,sales,\app\assets\images\old-film.jpg
+gigs,Employment,/app/assets/images/help-wanted.jpg
+for sale,sales,/app/assets/images/for_sale_sign.jpg
+happenings,Community,/app/assets/images/event.jpg
+jobs,Employment,/app/assets/images/job_openings.png
+community,Community,/app/assets/images/Community2.jpg
+beauty,Services ,/app/assets/images/beauty.jpg
+creative,Services ,/app/assets/images/bulb.png
+computer,Services ,/app/assets/images/old_mac_computer.jpg
+cycle,Services ,/app/assets/images/bike2.jpg
+event,Services ,/app/assets/images/Events1.jpg
+financial,Services ,/app/assets/images/financial.jpg
+legal,Services ,/app/assets/images/law3.jpg
+lessons,Services ,/app/assets/images/small_chalkboard-3024.jpg
+pet,Services ,/app/assets/images/pets.png
+automotive,Services ,/app/assets/images/muscle-car-sale.jpg
+move,Services ,/app/assets/images/moving1.jpg
+household,Services ,/app/assets/images/housework.jpg
+handiwork,Services ,/app/assets/images/tools1.jpg
+housing,Services ,/app/assets/images/forrent.gif
+tutoring,Services ,/app/assets/images/tutor1.jpg
+deals,sales,/app/assets/images/coupons.png
+travel,Services ,/app/assets/images/travelsuitcase.jpg
+tickets,sales,/app/assets/images/tickets.png
+lost & found,Services ,/app/assets/images/lost_and_found.gif
+electronics,sales,/app/assets/images/television.jpg
+focus groups,Services ,/app/assets/images/Focus-group2.jpg
+scholarships,Services ,/app/assets/images/scholarship2.jpg
+music,sales,/app/assets/images/music2.jpg
+jewelry,sales,/app/assets/images/bracelet.jpg
+real estate,sales,/app/assets/images/house-for-sale1.jpg
+furniture,sales,/app/assets/images/furniture-f13.jpg
+clothes,sales,/app/assets/images/pile-of-clothes.jpg
+motorcycle,sales,/app/assets/images/motorcycle.jpg
+roommate,Services ,/app/assets/images/roommate.jpg
+arts & crafts,sales,/app/assets/images/glass-arts-and-crafts.jpg
+ride share,Services ,/app/assets/images/medium_carpool.jpg
+baby & kids,sales,/app/assets/images/babies.jpg
+childcare,Services ,/app/assets/images/Childcare1.jpeg
+books,sales,/app/assets/images/textbooks.jpg
+appliances,sales,/app/assets/images/fridge.jpg
+video games,sales,/app/assets/images/video-games.jpg
+cell phones,sales,/app/assets/images/Cell.bmp
+photo,sales,/app/assets/images/old_camera.JPG
+video,sales,/app/assets/images/old-film.jpg
