@@ -38,7 +38,7 @@
 
   <div class="row">
     <div class="span12 mbot">
-      <div class='span12 mtop'>
+      <div class='span12'>
         <%= listing.description %><br />
         <% if listing.price %>
           Price: <%= number_to_currency listing.price %>
@@ -50,6 +50,10 @@
     </div>
   </div>
 
+  <div class="row">
+    <%= render partial: 'shared/show_temp_listing', locals: {listing: listing} if edit_mode %>
+  </div>
+
   <div class="grey-text mtop row">
     <div class="span4">
       ID: <%= listing.pixi_id %>
@@ -57,7 +61,7 @@
     <div class="span4 center-wrapper">
       Posted: <%= get_local_time listing.start_date %>
     </div>
-    <div class="span4">
+    <div class="span4 mbot">
       <span class='pull-right'>Updated: <%= get_local_time listing.updated_at %></span>
     </div>
   </div>

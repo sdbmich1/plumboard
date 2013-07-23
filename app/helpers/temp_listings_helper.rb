@@ -20,4 +20,8 @@ module TempListingsHelper
     listing.pending? ? pending_listing_url(listing) : listing
   end
 
+  # return # of steps to submit new pixi
+  def step_count
+    @listing.free? ? 2 : !@listing.new_status? ? 2 : 3
+  end
 end

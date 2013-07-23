@@ -1,9 +1,12 @@
-<%= render :partial => 'shared/show_listing', locals: {:listing=>listing} %>
-<div class="mtop width240 pull-right">
+<div class="mtop width250 pull-right">
+  <%= render partial: 'shared/review_nav', locals: { listing: listing } %>
   <% if listing.new_status? %>
+    <% unless listing.free? %>
       <%= render :partial => 'shared/item_purchase', locals: {:listing=>listing} if listing.seller?(@user) %>
+    <% else %>
+      <%= link_to "Done!", submit_temp_listing_path(listing), method: :put, class: "btn btn-large btn-primary submit-btn" %>
+    <% end %>
   <% else %>
-    <%= render partial: 'shared/review_nav', locals: { listing: listing } %>
     <%= link_to "Done!", resubmit_temp_listing_path(listing), method: :put, class: "btn btn-large btn-primary submit-btn" %>
   <% end %>
 </div>

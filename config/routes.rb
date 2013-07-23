@@ -46,7 +46,7 @@ Plumboard::Application.routes.draw do
       get 'unposted'
     end
     member do
-      put 'resubmit'
+      put 'resubmit', 'submit'
     end
   end
 

@@ -126,7 +126,7 @@ group :development do
   gem 'rvm-capistrano'
 end
 
-group :development, :test, :staging do
+group :development, :test do
   gem 'wdm', '~> 0.1.0', :platforms => [:mswin, :mingw], :require => false
   # gem 'wdm', :platforms => [:mswin, :mingw], :require => false
   gem 'rspec-rails', '2.12.0'
@@ -143,7 +143,7 @@ group :test do
   gem 'capybara', '1.1.2'
   gem 'rb-fchange', '0.0.5'
   gem 'rb-notifu', '0.0.4'
-  gem 'win32console', '~> 1.3.2', :platforms => [:mswin, :mingw], :require => false
+  gem 'win32console', '~> 1.3.2' #, :platforms => [:mswin, :mingw], :require => false
   gem 'email_spec'
   gem 'launchy'
   gem "database_cleaner"

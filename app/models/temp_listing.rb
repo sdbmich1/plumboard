@@ -1,5 +1,7 @@
 class TempListing < ListingParent
   self.table_name = "temp_listings"
+
+  include CalcTotal
    
   before_create :set_flds
 
@@ -44,12 +46,17 @@ class TempListing < ListingParent
     save!
   end
 
+  # check if pixi is free
+  def free?
+    CalcTotal::get_price(self.premium?) == 0.00
+  end
+
   # submit order request for review
   def submit_order val
 
     # set transaction id
-    if val
-      self.transaction_id = val
+    if val || free?
+      self.transaction_id = val if val
       self.status = 'pending' 
       save!
     else

@@ -328,6 +328,60 @@ describe TempListingsController do
     end
   end
 
+  describe "PUT /submit/:id" do
+    before (:each) do
+      TempListing.stub!(:find_by_pixi_id).and_return( @listing )
+    end
+
+    def do_submit
+      put :submit, :id => "1"
+    end
+
+    context "success" do
+      before :each do
+        @listing.stub!(:resubmit_order).and_return(true)
+      end
+
+      it "should load the requested listing" do
+        TempListing.stub(:find_by_pixi_id) { @listing }
+        do_submit
+      end
+
+      it "should update the requested listing" do
+        TempListing.stub(:find_by_pixi_id).with("1") { mock_listing }
+	mock_listing.should_receive(:resubmit_order).and_return(:success)
+        do_submit
+      end
+
+      it "should assign @listing" do
+        TempListing.stub(:find_by_pixi_id) { mock_listing(:resubmit_order => true) }
+        do_submit
+        assigns(:listing).should_not be_nil 
+      end
+
+      it "renders the page" do
+        do_submit
+        response.should render_template(:submit)
+      end
+    end
+
+    context 'failure' do
+      before :each do
+        @listing.stub!(:resubmit_order).and_return(false) 
+      end
+
+      it "should assign listing" do
+        do_submit
+        assigns(:listing).should_not be_nil 
+      end
+
+      it "should render show template" do
+        do_submit
+        response.should render_template(:show)
+      end
+    end
+  end
+
   describe "GET /unposted" do
     before :each do
       @listings = mock("temp_listings")

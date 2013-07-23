@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe TempListing do
   before(:each) do
-    @category = FactoryGirl.create(:category, pixi_type: 'premium') 
+    @category = FactoryGirl.create(:category, pixi_type: 'basic') 
     @temp_listing = FactoryGirl.create(:temp_listing)
   end
 
@@ -284,12 +284,16 @@ describe TempListing do
 
   describe "transactions" do
     let(:transaction) { FactoryGirl.create :transaction }
+    before do
+      @cat = FactoryGirl.create(:category, name: 'Jobs', pixi_type: 'premium') 
+    end
 
     context "get_by_status should include new listings" do
       it { TempListing.get_by_status('active').should_not be_empty } 
     end
 
     it "should not submit order" do 
+      @temp_listing.category_id = @cat.id
       @temp_listing.submit_order(nil).should_not be_true
     end
 
@@ -303,7 +307,7 @@ describe TempListing do
     end
 
     it "should not resubmit order" do 
-      temp_listing = FactoryGirl.create :temp_listing, transaction_id: nil
+      temp_listing = FactoryGirl.create :temp_listing, transaction_id: nil, category_id: @cat.id
       temp_listing.resubmit_order.should_not be_true
     end
   end
@@ -479,6 +483,21 @@ describe TempListing do
     it "is a job" do
       @temp_listing.category_id = @cat.id
       @temp_listing.job?.should be_true 
+    end
+  end
+
+  describe '.free?' do
+    before do
+      @cat = FactoryGirl.create(:category, name: 'Jobs', pixi_type: 'premium') 
+    end
+
+    it "is not free" do
+      @temp_listing.category_id = @cat.id
+      @temp_listing.free?.should be_false 
+    end
+
+    it "is free" do
+      @temp_listing.free?.should be_true 
     end
   end
 

@@ -1,10 +1,10 @@
 <% provide(:title, 'Review Pixi') %>
 <%= content_for :subhead do %>
-  <%= render partial: 'shared/listing_header', :locals => { step_no: 2, step_name: 'Review Your Pixi' } %>
+  <%= render partial: 'shared/listing_header', locals: { step_no: 2, step_name: 'Review Your Pixi' } %>
 <% end %>
 <%= content_for :content do %>
   <div id="buyTxtForm">
     <div id="buyFormError" style="display:none" class="error"></div>
-    <%= render :partial => 'shared/show_temp_listing', locals: {:listing=>@listing} %>
+    <%= render partial: 'shared/show_listing', locals: {listing: @listing, edit_mode: true} %>
   </div>
 <% end %>

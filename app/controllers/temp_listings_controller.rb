@@ -33,12 +33,19 @@ class TempListingsController < ApplicationController
     respond_with(@listing)
   end
 
+  def submit
+    @listing = TempListing.find_by_pixi_id params[:id]
+    unless @listing.resubmit_order 
+      render action: :show, error: "Pixi was not submitted."
+    end
+  end
+
   def resubmit
     @listing = TempListing.find_by_pixi_id params[:id]
     if @listing.resubmit_order
       redirect_to listings_path
     else
-      render action: :show, error: "Order resubmit was not successful."
+      render action: :show, error: "Pixi was not resubmitted."
     end
   end
 

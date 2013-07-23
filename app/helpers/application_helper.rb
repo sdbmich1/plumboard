@@ -62,6 +62,12 @@ module ApplicationHelper
     link_to_unless(signed_in?, "Pixiboard", root_path, id: "logo") do
       link_to 'Pixiboard', listings_path, id: "logo"
     end
+   # link_to image_tag('rsz_pixilogo_word_wings.png', size: '180x90'), get_home_path, id: "logo"
+  end
+
+  # set home path
+  def get_home_path
+    signed_in? ? listings_path : root_path 
   end
 
   # set image

@@ -38,4 +38,7 @@ Plumboard::Application.configure do
 
   # paperclip storage setting
   PAPERCLIP_STORAGE_OPTIONS = {}
+
+  # facebook ssl setting
+  FACEBOOK_SSL_OPTIONS = {:ca_path => "/etc/ssl/certs"}
 end

@@ -35,8 +35,8 @@ feature "TempListings" do
     select("SFSU", :from => "temp_listing_site_id")
   end
 
-  def select_category
-    select('Foo Bar', :from => 'temp_listing_category_id')
+  def select_category val
+    select(val, :from => 'temp_listing_category_id')
   end
 
   def select_date fld
@@ -56,6 +56,7 @@ feature "TempListings" do
       visit new_temp_listing_path
     end
 
+    it { should have_content "Step 1 of 2" }
     it { should have_selector('.sm-thumb') }
     it { should have_selector('#photo') }
     it { should have_link 'Cancel', href: listings_path }
@@ -64,7 +65,7 @@ feature "TempListings" do
     def add_data
       fill_in 'Title', with: "Guitar for Sale"
       select_site
-      select_category
+      select_category 'Foo Bar'
       fill_in 'Description', with: "Guitar for Sale"
     end
 
@@ -77,7 +78,7 @@ feature "TempListings" do
       attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
       fill_in 'Title', with: "Guitar for Sale"
       select_site
-      select('Event', :from => 'temp_listing_category_id')
+      select_category 'Event'
       fill_in 'Description', with: "Guitar for Sale"
       fill_in 'start-date', with: sdt
       fill_in 'end-date', with: edt
@@ -89,11 +90,11 @@ feature "TempListings" do
 	page.should have_content "Title can't be blank"
       end
 
-      it "should not create a listing w/o site" do
+      it "does not create a listing w/o site" do
         expect { 
           fill_in 'Title', with: "Guitar for Sale"
           fill_in 'Price', with: "150.00"
-          select_category
+          select_category 'Foo Bar'
           fill_in 'Description', with: "Guitar for Sale"
           attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
 	  click_button submit }.not_to change(TempListing, :count)
@@ -118,7 +119,7 @@ feature "TempListings" do
           fill_in 'Title', with: "Guitar for Sale"
           fill_in 'Price', with: "150.00"
 	  select_site
-          select_category
+          select_category 'Foo Bar'
           attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
 	  click_button submit }.not_to change(TempListing, :count)
 
@@ -326,7 +327,7 @@ feature "TempListings" do
       page.should have_content 'Review Your Pixi'
     end
 
-    it "Changes a pixi description" do
+    it "changes a pixi description" do
       expect{
 	      fill_in 'Description', with: "Acoustic bass"
               click_button submit
@@ -336,7 +337,7 @@ feature "TempListings" do
       page.should have_content "Acoustic bass" 
     end
 
-    it "Adds a pixi pic" do
+    it "adds a pixi pic" do
       expect{
               attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
               click_button submit
@@ -345,7 +346,7 @@ feature "TempListings" do
       page.should have_content 'Review Your Pixi'
     end
 
-    it "Cancels build pixi", js: true do
+    it "cancels build pixi", js: true do
       expect{
          click_remove_ok
       }.to change(TempListing,:count).by(0)
@@ -353,12 +354,12 @@ feature "TempListings" do
       page.should have_content "Pixis" 
     end
 
-    it "should cancel delete picture from listing", js: true do
+    it "cancels delete picture from listing", js: true do
       click_remove_cancel
       page.should have_content 'Build Pixi'
     end
 
-    it "should delete picture from listing", js: true do
+    it "deletes picture from listing", js: true do
       expect{
         click_remove_ok; sleep 2
       }.to change(Picture,:count).by(-1)
@@ -366,12 +367,12 @@ feature "TempListings" do
       page.should have_content 'Build Pixi'
     end
 
-    it "Cancels build cancel", js: true do
+    it "cancels build cancel", js: true do
       click_remove_cancel
       page.should have_content "Build Pixi" 
     end
 
-    it "Changes a pixi price" do
+    it "changes a pixi price" do
       expect{
               fill_in 'Price', with: nil
               click_button submit
@@ -385,13 +386,15 @@ feature "TempListings" do
     let(:temp_listing) { FactoryGirl.create(:temp_listing, seller_id: user.id, status: 'new') }
     before { visit temp_listing_path(temp_listing) }
 
+    it { should have_content "Step 2 of 2" }
     it { should have_content "Posted By: #{temp_listing.seller_name}" }
     it { should_not have_selector('#contact_content') }
     it { should_not have_selector('#comment_content') }
     it { should_not have_link 'Follow', href: '#' }
     it { should have_link 'Prev', href: edit_temp_listing_path(temp_listing) }
     it { should have_link 'Remove', href: temp_listing_path(temp_listing) }
-    it { should have_button 'Next' }
+    it { should have_link 'Done!', href: submit_temp_listing_path(temp_listing) }
+    it { should_not have_button 'Next' }
     it { should have_content "ID: #{temp_listing.pixi_id}" }
     it { should have_content "Posted: #{get_local_time(temp_listing.start_date)}" }
     it { should have_content "Updated: #{get_local_time(temp_listing.updated_at)}" }
@@ -414,10 +417,12 @@ feature "TempListings" do
 
     it "submits a pixi" do
       expect { 
-	      click_button submit
+	      click_link 'Done!'
 	}.not_to change(TempListing, :count)
 
-      page.should have_content "Submit Your Order" 
+      page.should have_content "Pixi Submitted" 
+      page.should have_content temp_listing.title
+      page.should have_link 'Done', href: listings_path
     end
 
     it "goes back to build a pixi" do
@@ -429,9 +434,32 @@ feature "TempListings" do
     end
   end
 
+  describe 'Reviews premium pixi' do
+    let(:category) { FactoryGirl.create :category, name: 'Jobs', pixi_type: 'premium' }
+    let(:temp_listing) { FactoryGirl.create(:temp_listing, seller_id: user.id, status: 'new', category_id: category.id) }
+    before { visit temp_listing_path(temp_listing) }
+
+    it { should have_content "Step 2 of 3" }
+    it { should_not have_link 'Done!', href: resubmit_temp_listing_path(temp_listing) }
+    it { should_not have_link 'Done!', href: submit_temp_listing_path(temp_listing) }
+    it { should have_button 'Next' }
+
+    it "submits a pixi" do
+      expect { 
+	      click_button submit
+	}.not_to change(TempListing, :count)
+
+      page.should have_content "Submit Your Pixi" 
+    end
+  end
+
   describe 'Reviews active Pixi', js: true do
     let(:temp_listing) { FactoryGirl.create(:temp_listing, seller_id: user.id, status: 'edit') }
     before { visit temp_listing_path(temp_listing) }
+
+    it { should have_link 'Done!', href: resubmit_temp_listing_path(temp_listing) }
+    it { should_not have_link 'Done!', href: submit_temp_listing_path(temp_listing) }
+    it { should_not have_button 'Next' }
 
     it "cancels review of active pixi" do
       click_cancel_cancel

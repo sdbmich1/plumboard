@@ -53,18 +53,18 @@ module TransactionsHelper
   end
 
   # return page title based on transaction type
-  def get_page_title
-    @transaction.pixi? ? 'Submit Your Order' : 'Pay Invoice'
+  def get_page_title *args
+    @transaction.pixi? ? 'Submit Your Pixi' : 'Pay Invoice'
   end
 
   # return page header based on transaction type
   def get_header
-    @transaction.pixi? ? "Step 3 of 3: Submit Your Order" : "Pay Invoice"
+    @transaction.pixi? ? "Step 3 of 3: Submit Your Pixi" : "Pay Invoice"
   end
 
   # return page header based on transaction type
   def get_page_header
-    @transaction.pixi? ? 'Order' : 'Purchase'
+    @transaction.pixi? ? 'Pixi' : 'Purchase'
   end
 
   # set cancel message

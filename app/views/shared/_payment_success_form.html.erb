@@ -1,20 +1,21 @@
 <div class="span6 offset3">
   <div id="printable">
-  	<center>
-    	<h3 class="grp-hdr">Payment Information<hr />
-  		<div class="purchase_title">Your order has been processed.</div></h3>
-  	</center>
-  <p><center><span class="listing-title"><%= @listing.title %></span></center></p>
-  <div class="clear-all"></div>
-  	<%= render :partial=>'shared/order_details', :locals=>{:order=>@order, :paid=>true} %>
-  	<%= render :partial=>'shared/transaction_details', :locals=>{:transaction=>@transaction, :showAmt=>false} %>
+    <center>
+      <h3 class="grp-hdr">Payment Information<hr />
+        <div class="purchase_title">Your order has been processed.</div>
+      </h3>
+    </center>
+    <p><center><span class="listing-title"><%= @listing.title %></span></center></p>
+    <div class="clear-all"></div>
+    <%= render :partial=>'shared/order_details', :locals=>{:order=>@order, :paid=>true} %>
+    <%= render :partial=>'shared/transaction_details', :locals=>{:transaction=>@transaction, :showAmt=>false} %>
   </div>
   <div class="clear-all"></div>
   <div class="mtop">Thank you for your business.</div>
   <div class="mtop">
-	  <center>
-		<%= link_to "Print Receipt",'#', :class => "btn btn-large btn-primary stnd-btn", :id => 'print-btn' %>
-		<%= link_to "Done",'#', :class => "btn btn-large btn-primary submit-btn", :id => 'cancel-btn' %>
-	  </center>
+    <center>
+	<%= link_to "Print Receipt",'#', :class => "btn btn-large btn-primary stnd-btn", :id => 'print-btn' %>
+	<%= link_to "Done",'#', :class => "btn btn-large btn-primary submit-btn", :id => 'cancel-btn' %>
+    </center>
   </div>
 </div>

@@ -181,7 +181,7 @@ class ListingParent < ActiveRecord::Base
 
   # check for premium categories
   def premium?
-    category.premium?
+    category.premium? rescue nil
   end
 
   # check if pixi is a job
