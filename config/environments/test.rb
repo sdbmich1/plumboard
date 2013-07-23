@@ -37,7 +37,10 @@ Plumboard::Application.configure do
   config.active_support.deprecation = :stderr
 
   # paperclip storage setting
-  PAPERCLIP_STORAGE_OPTIONS = {}
+  PAPERCLIP_STORAGE_OPTIONS = {
+	  url: "/system/:class/:attachment/:id/:style/:filename",
+	  path: ":rails_root/public/system/:class/:attachment/:id_partition/:style/:filename" 
+  }
 
   # facebook ssl setting
   FACEBOOK_SSL_OPTIONS = {:ca_path => "/etc/ssl/certs"}

@@ -3,7 +3,7 @@
   <%= render partial: 'shared/navbar', locals: { menu_name: 'Pixi' } %>
 <% end %>
 <%= content_for :content do %>
-  <%= render partial: 'shared/show_listing', locals: {listing :@listing, edit_mode: false} %>
+  <%= render partial: 'shared/show_listing', locals: {listing: @listing, edit_mode: false} %>
   <div class="mtop nav pull-right">
     <% if @listing.seller? @user %>
       <%= link_to 'Back', listings_path, class: 'btn btn-large btn-primary stnd-btn' %>
