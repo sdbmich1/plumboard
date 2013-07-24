@@ -74,6 +74,7 @@ Plumboard::Application.routes.draw do
   get "/welcome", to: "pages#welcome" 
   get '/system/:class/:attachment/:id/:style/:filename', :to => 'pictures#asset'
   get '/:bucket/:style/:filename', :to => 'pictures#asset'
+  get 'http://s3.amazonaws.com/:bucket_name/:style/:filename', :to => 'pictures#asset'
   # post "/listings/preview", to: "listings#preview", :via => :post, :as => :preview 
 
   # custom user routes to edit member info
