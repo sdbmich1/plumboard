@@ -5,7 +5,11 @@ class PicturesController < ApplicationController
     @picture = Picture.find(params[:id])
 
     #check permissions before delivering asset
-    send_file @picture.photo.path(style), type: @picture.photo_content_type, disposition: 'inline'
+    if Rails.env.development? || Rails.env.test?
+      send_file @picture.photo.path(style), type: @picture.photo_content_type, disposition: 'inline'
+    else
+      redirect_to @picture.photo.url
+    end
   end
 
   def destroy
