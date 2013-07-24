@@ -74,7 +74,8 @@ Plumboard::Application.configure do
   # set paperclip aws settings
   PAPERCLIP_STORAGE_OPTIONS = {:storage => :s3, 
                                :s3_credentials => YAML.load_file("#{Rails.root}/config/aws.yml")[Rails.env],
-			       :path => "/:style/:filename"}
+			       :path => ":attachment/:id_partition/:style/:filename"}
+	  		      
 
   # facebook ssl setting
   FACEBOOK_SSL_OPTIONS = {:ca_file => '/etc/pki/tls/certs/ca-bundle.crt'}
