@@ -37,7 +37,12 @@ Plumboard::Application.routes.draw do
   resources :users, except: [:new]
   resources :bank_accounts
 
-  resources :pictures, only: [:destroy]
+  resources :pictures, only: [:destroy] do
+    member do
+      get 'display'
+    end
+  end
+
   resources :searches, only: [:index]
   resources :comments, only: [:index, :new, :create]
 
@@ -73,8 +78,6 @@ Plumboard::Application.routes.draw do
   get "/contact", to: "pages#contact" 
   get "/welcome", to: "pages#welcome" 
   get '/system/:class/:attachment/:id/:style/:filename', :to => 'pictures#asset'
-  get '/:bucket_name/:style/:filename', :to => 'pictures#asset'
-  get 'http://s3.amazonaws.com/:bucket_name/:style/:filename', :to => 'pictures#asset'
   # post "/listings/preview", to: "listings#preview", :via => :post, :as => :preview 
 
   # custom user routes to edit member info
