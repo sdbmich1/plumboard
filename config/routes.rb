@@ -78,6 +78,7 @@ Plumboard::Application.routes.draw do
   get "/contact", to: "pages#contact" 
   get "/welcome", to: "pages#welcome" 
   get '/system/:class/:attachment/:id/:style/:filename', :to => 'pictures#asset'
+  get '/:class/:attachment/:id/:style/:filename', :to => 'pictures#display'
   # post "/listings/preview", to: "listings#preview", :via => :post, :as => :preview 
 
   # custom user routes to edit member info
