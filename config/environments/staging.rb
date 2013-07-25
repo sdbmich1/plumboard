@@ -75,7 +75,7 @@ Plumboard::Application.configure do
   PAPERCLIP_STORAGE_OPTIONS = {:storage => :s3, 
                                :s3_credentials => YAML.load_file("#{Rails.root}/config/aws.yml")[Rails.env],
 	  		       url: "/:class/:attachment/:id/:style/:filename",
-			       path: "/:attachment/:id_partition/:style/:filename"}
+			       path: ":attachment/:id_partition/:style/:filename"}
 	  		      
 
   # facebook ssl setting
