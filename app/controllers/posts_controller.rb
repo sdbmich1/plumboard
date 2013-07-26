@@ -41,6 +41,6 @@ class PostsController < ApplicationController
 
   def load_data
     @page = params[:page] || 1
-    @per_page = params[:per_page] || 15
+    @per_page = params[:per_page] || 10
   end
 end

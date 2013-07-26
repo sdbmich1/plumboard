@@ -7,7 +7,7 @@
   <div class='row mbot'>
     <div class='span6 verticalLine'>
       <div class='span1'>
-        <%= render partial: 'shared/show_small_photo', locals: {model: listing.user} %>
+        <%= render partial: 'shared/show_picture', locals: {psize: 'small', model: listing.user} %>
       </div>
       <div class='span4'>
         Posted By: <%= listing.seller_name %> 

@@ -2,11 +2,11 @@
   <div class="span8">
     <label class='control-label'><span class='span1'>Date: </span><%= get_local_date(@invoice.inv_date) %></label>
     <label class='control-label'><span class='span1'>From: </span>
-      <%= render partial: 'shared/show_tiny_photo', locals: {model: @invoice.seller} %>
+      <%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: @invoice.seller} %>
       <%= @invoice.seller.name %></label>
     <div class="mtop">
       <label class="control-label"><span class='span1'>Bill To: </span>
-        <%= render partial: 'shared/show_tiny_photo', locals: {model: @invoice.buyer} %>
+        <%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: @invoice.buyer} %>
         <%= @invoice.buyer.name %></label>
     </div>
   </div>

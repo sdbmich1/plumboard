@@ -456,6 +456,28 @@ describe TempListing do
     end
   end
 
+  describe '.pending?' do
+    it "is not pending" do
+      @temp_listing.pending?.should be_false 
+    end
+
+    it "is pending" do
+      @temp_listing.status = 'pending'
+      @temp_listing.pending?.should be_true 
+    end
+  end
+
+  describe '.edit?' do
+    it "is not edit" do
+      @temp_listing.edit?.should be_false 
+    end
+
+    it "is edit" do
+      @temp_listing.status = 'edit'
+      @temp_listing.edit?.should be_true 
+    end
+  end
+
   describe '.event?' do
     before do
       @cat = FactoryGirl.create(:category, name: 'Event', pixi_type: 'premium') 

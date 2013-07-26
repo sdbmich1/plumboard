@@ -79,8 +79,11 @@ class ListingParent < ActiveRecord::Base
 
   # select active listings
   def self.active
-    where(:status=>'active').order('updated_at DESC')
-  #  where("status = 'active' AND end_date => curdate()").order('updated_at DESC')
+    if Rails.env.development? || Rails.env.test?
+      where(:status=>'active').order('updated_at DESC')
+    else
+      where("status = 'active' AND end_date => curdate()").order('updated_at DESC')
+    end
   end
 
   # find listings by status
@@ -111,6 +114,11 @@ class ListingParent < ActiveRecord::Base
   # verify if listing is pending
   def pending?
     status == 'pending'
+  end
+
+  # verify if listing is edit
+  def edit?
+    status == 'edit'
   end
 
   # verify if alias is used

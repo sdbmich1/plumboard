@@ -1,3 +1,6 @@
 $("#user_form").html("<%= escape_javascript( raw render(:partial => "shared/user_form") ) %>");
+
+// reload choose file image
+SI.Files.stylizeById('#user_pic');
 $("#spinner").hide('fast'); 
 

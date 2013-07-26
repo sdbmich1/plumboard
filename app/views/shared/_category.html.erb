@@ -1,6 +1,6 @@
 <div class="item">
   <div class="center-wrapper">
-    <%= render partial: 'shared/show_thumb_photo', locals: {model: category} %>
+    <%= render partial: 'shared/show_picture', locals: {psize: 'thumb', model: category} %>
     <div class='sm-top bdescr'>
       <% if can?(:manage_users, @user) %> 
         <%= link_to category.name_title, edit_category_path(category), remote: true %>

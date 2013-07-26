@@ -1,5 +1,5 @@
 <li id="<%= comment.id %>">
-  <%= render partial: 'shared/show_tiny_photo', locals: {model: comment.user} %>
+  <%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: comment.user} %>
   <div class='span4'>
     <div class='sender'>
       <%= comment.sender_name %>

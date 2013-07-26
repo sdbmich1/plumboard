@@ -214,7 +214,7 @@ $(document).ready(function(){
   });
 
   // repaint file fields
-  if( $('#list').length > 0 ) {
+  if( $('.cabinet').length > 0 ) {
     SI.Files.stylizeAll();
   }
 

@@ -1,6 +1,6 @@
 <tr>
-  <td class='width80'>
-    <%= render partial: 'shared/show_photo', locals: {model: invoice.listing, file_name: "inv-pic", psize: '80x80', display_cnt: 0 } %>
+  <td class=''>
+    <%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: invoice.listing} %>
   </td>
   <td class='width80'><div class='price'><%= link_to invoice.id, invoice, remote: true %></div></td>
   <td class='width180'><%= invoice.buyer.name %></td>

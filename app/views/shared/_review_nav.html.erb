@@ -1,5 +1,5 @@
 <%= link_to 'Prev', edit_temp_listing_path(listing), class: 'btn btn-large btn-primary stnd-btn' %>
-<% unless listing.new_status? %>
+<% if listing.edit? %>
   <%= link_to 'Cancel', listings_path, confirm: msg, class: 'btn btn-large btn-primary stnd-btn' %>
 <% else %>
   <%= link_to 'Remove', listing, method: :delete, confirm: msg, class: 'btn btn-large btn-primary stnd-btn' %>

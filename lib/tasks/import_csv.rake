@@ -73,8 +73,11 @@ task :load_categories => :environment do
     # add photo
     if new_category.pictures.size == 0
       picture = new_category.pictures.build
-      picture.photo = File.new("#{Rails.root}" + row[2])
+    else
+      picture = new_category.pictures.first
     end
+
+    picture.photo = File.new("#{Rails.root}" + row[2]) if picture
 
     # save category
     if new_category.save 
