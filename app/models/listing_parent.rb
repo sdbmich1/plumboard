@@ -82,7 +82,7 @@ class ListingParent < ActiveRecord::Base
     if Rails.env.development? || Rails.env.test?
       where(:status=>'active').order('updated_at DESC')
     else
-      where("status = 'active' AND end_date => curdate()").order('updated_at DESC')
+      where("status = 'active' AND end_date >= curdate()").order('updated_at DESC')
     end
   end
 
