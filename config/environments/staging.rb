@@ -89,10 +89,4 @@ Plumboard::Application.configure do
 
   # facebook ssl setting
   FACEBOOK_SSL_OPTIONS = {:ca_file => '/etc/pki/tls/certs/ca-bundle.crt'}
-
-  # exception notification
-  config.middleware.use ExceptionNotification::Rack,
-    :email_prefix => "Pixiboard: ",
-    :sender_address => %{"Pixiboard Admin" <webmaster@pixiboard.com>},
-    :exception_recipients => %w{sbrown@pixiboard.com}
 end
