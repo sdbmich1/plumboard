@@ -68,5 +68,5 @@ def update_contactable_type
 end
 
 def update_points
-  PixiPoint.update_all(value: value * 5)
+  PixiPoint.all.each {|p| p.value *= 10; p.save}
 end
