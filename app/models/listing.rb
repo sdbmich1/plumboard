@@ -30,13 +30,27 @@ class Listing < ListingParent
   end
 
   # paginate
-  def self.active_page pg
+  def self.active_page pg=1
     active.paginate page: pg
   end
 
   # get pixis by category id
-  def self.get_by_category cid, pg
+  def self.get_by_category cid, pg=1
     active.where(:category_id => cid).paginate page: pg
+  end
+
+  # get pixis by category & site ids
+  def self.get_category_by_site cid, sid, pg=1
+    if sid
+      active.where('category_id = ? and site_id = ?', cid, sid).paginate page: pg
+    else
+      get_by_category cid, pg
+    end
+  end
+
+  # get active pixis by site id
+  def self.get_by_site sid, pg=1
+    active.where(:site_id => sid).paginate page: pg
   end
 
   # get invoice

@@ -4,8 +4,11 @@ describe "Listings", :type => :feature do
   subject { page }
   
   let(:user) { FactoryGirl.create(:contact_user) }
+  let(:site) { FactoryGirl.create :site }
+  let(:site_contact) { site.contacts.create FactoryGirl.attributes_for(:contact) }
   let(:temp_listing) { FactoryGirl.create(:temp_listing, title: "Guitar", description: "Lessons", seller_id: user.id ) }
-  let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id) }
+  let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id,
+    site_id: site.id) }
 
   describe "Contact Owner" do 
     let(:pixi_user) { FactoryGirl.create(:pixi_user, email: 'jdoe2@pixitest.com') }
@@ -19,8 +22,8 @@ describe "Listings", :type => :feature do
     it { should have_content listing.title }
     it { should have_content "Posted By: #{listing.seller_name}" }
     it { should have_link 'Follow', href: '#' }
-    it { should have_link listing.site_name, href: '#' }
-    it { should have_link listing.category_name, href: category_path(listing.category) }
+    it { should have_link listing.site_name, href: location_listings_path(loc: listing.site_id) }
+    it { should have_link listing.category_name, href: category_listings_path(cid: listing.category_id, loc: listing.site_id) }
     it { should_not have_link 'Back', href: listings_path }
     it { should_not have_link 'Remove', href: listing_path(listing) }
     it { should_not have_link 'Edit', href: edit_temp_listing_path(listing) }
@@ -50,12 +53,24 @@ describe "Listings", :type => :feature do
 
       page.should have_content "Content can't be blank"
     end
+
+    it "clicks on site" do
+      click_link listing.site_name
+      page.should have_content 'Pixis'
+      page.should have_content listing.title
+    end
+
+    it "clicks on category by site" do
+      click_link listing.category_name
+      page.should have_content 'Pixis'
+      page.should have_content listing.title
+    end
   end
 
   describe "View Event Pixi" do 
     let(:category) { FactoryGirl.create :category, name: 'Event' }
     let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id, 
-      category_id: category.id, event_start_date: Date.today, event_end_date: Date.today, event_start_time: Time.now+2.hours, 
+      category_id: category.id, event_start_date: Date.tomorrow, event_end_date: Date.tomorrow, event_start_time: Time.now+2.hours, 
       event_end_time: Time.now+3.hours ) }
     let(:pixi_user) { FactoryGirl.create(:pixi_user, email: 'jdoe2@pixitest.com') }
 
@@ -71,6 +86,22 @@ describe "Listings", :type => :feature do
     it { should have_content "End Time: #{short_time(listing.event_end_time)}" }
     it { should have_content "Price: " }
     it { should_not have_content "Compensation: #{(listing.compensation)}" }
+
+    it "clicks on a location" do
+      click_link listing.site_name
+
+      page.should have_content "Pixis" 
+      page.should have_content listing.title
+    end
+
+    it "clicks on a category" do
+      click_link listing.category_name
+
+      page.should have_content "Pixis" 
+      page.should have_content listing.title
+      page.should have_content listing.category_name
+    end
+
   end
 
   describe "View Compensation Pixi" do 
@@ -103,8 +134,8 @@ describe "Listings", :type => :feature do
 
     it { should have_content "Posted By: #{listing.seller_name}" }
     it { should_not have_selector('#contact_content') }
-    it { should_not have_selector('#comment_content') }
     it { should_not have_link 'Follow', href: '#' }
+    # it { should_not have_link 'Follow', href: '#' }
     it { should have_link 'Back', href: listings_path }
     it { should have_link 'Remove', href: listing_path(listing) }
     it { should have_link 'Edit', href: edit_temp_listing_path(listing) }
@@ -197,24 +228,44 @@ describe "Listings", :type => :feature do
 
     describe "GET /listings" do  
       let(:temp_listing) { FactoryGirl.create(:temp_listing, title: "Guitar", description: "Lessons", seller_id: @user.id ) }
-      let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: @user.id, pixi_id: temp_listing.pixi_id) }
       let(:listings) { 30.times { FactoryGirl.create(:listing, seller_id: @user.id) } }
-      before { visit listings_path }
+
+      before do
+        @site = FactoryGirl.create :site, name: 'Pixi Tech'
+        FactoryGirl.create(:listing, title: "HP Printer J4580", description: "printer", seller_id: @user.id, site_id: @site.id) 
+        @listing = FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: @user.id, pixi_id: temp_listing.pixi_id) 
+	@category = FactoryGirl.create :category
+        visit listings_path 
+      end
       
       it { should have_link 'Recent', href: listings_path }
-      it { should have_link 'Following', href: '#' }
-      it { should have_link 'Hot', href: '#' }
+      # it { should have_link 'Following', href: '#' }
+      # it { should have_link 'Map', href: '#' }
       it { should have_link 'Categories', href: categories_path }
       it { should have_content('Pixis') }
       
-      it "should scroll listings", js: true do 
+      it "scrolls listings", js: true do 
         page.execute_script "window.scrollBy(0,1000)"
       end
 
-      it "should search for a listing", js: true do
+      it "searches for a listing", js: true do
         fill_in 'search', with: 'guitar'
 	click_on 'submit-btn'
-        page.should have_content('Guitar')
+        page.should_not have_content 'HP Printer J4580'
+        page.should have_content @listing.title
+      end
+
+      it "selects a site", js: true do
+        select(@site.name, :from => 'site_id')
+        page.should have_content 'HP Printer J4580'
+
+	click_link 'Recent'
+        page.should have_content @listing.title
+      end
+
+      it "selects categories", js: true do
+	click_link 'Categories'
+        page.should have_content @category.name_title
       end
     end  
 

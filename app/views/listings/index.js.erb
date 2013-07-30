@@ -5,5 +5,8 @@
 <% end %>  
 $('a.nxt-pg').attr('href', '#{listings_path page: @listings.next_page}');
 
+// reload board
+clearScroll(this); 
+
 $('#nearby-map').hide('fast');
 $('#spinner').hide(300);

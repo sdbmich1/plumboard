@@ -91,11 +91,6 @@ class ListingParent < ActiveRecord::Base
     where(:status => val).order('updated_at DESC')
   end
 
-  # find listings by site id
-  def self.get_by_site val
-    where(:site_id => val)
-  end
-
   # find listings by seller user id
   def self.get_by_seller val
     where(:seller_id => val)

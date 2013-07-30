@@ -6,7 +6,7 @@
 <%= content_for :map do %>
   <script type="text/javascript">
     $(document).on('click', '#pixi-map', function() {
-      if ( $('#nearby-map').length != 0 ) { 
+      if ( $('#nearby-map').length > 0 ) { 
         var locations = <%= raw build_lnglat_ary(@listings) %>;
         loadLocations(locations, false);
 	$('#nearby-map').show('fast');

@@ -109,4 +109,9 @@ class TempListing < ListingParent
     errors.add :base, "Pixi must have at least one image." unless result
     result
   end
+
+  # find listings by site id
+  def self.get_by_site val
+    where(:site_id => val)
+  end
 end

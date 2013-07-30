@@ -6,4 +6,8 @@ class UserPixiPoint < ActiveRecord::Base
 
   validates :code, presence: true
   validates :user_id, presence: true
+
+  def pt_value
+    pixi_point.value
+  end
 end

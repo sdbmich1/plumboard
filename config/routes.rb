@@ -13,7 +13,7 @@ Plumboard::Application.routes.draw do
   # resource defs
   resources :listings, except: [:new, :edit, :update, :create] do
     collection do
-      get 'seller', 'follower', 'sold', 'category'
+      get 'seller', 'follower', 'sold', 'category', 'location'
     end
   end
 
@@ -70,6 +70,8 @@ Plumboard::Application.routes.draw do
   resources :transactions do
     get 'refund', :on => :member
   end
+
+  resources :pages, only: [:index]
 
   # custom routes
   get "/about", to: "pages#about" 

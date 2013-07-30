@@ -16,6 +16,10 @@ namespace :db do
   task :update_pixis => :environment do
     update_pixis
   end
+
+  task :reset_points => :environment do
+    update_points
+  end
 end
 
 def set_keys
@@ -63,5 +67,6 @@ def update_contactable_type
   contacts.map! { |s| s.contactable_type = 'Site'; s.save }
 end
 
-def update_pix
+def update_points
+  PixiPoint.update_all(value: value * 5)
 end

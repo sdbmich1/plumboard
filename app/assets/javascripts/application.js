@@ -103,7 +103,7 @@ function reset_menu_state($this, hFlg) {
   if (hFlg) { 
       $this.addClass('active');
       $this.css('color', '#F95700');
-    }
+  }
 }
 
 // change active state for menu on click
@@ -111,7 +111,7 @@ $(document).on("click", "#profile-menu .nav li a", function(e){
   var $this = $(this);
   reset_menu_state($this, false);
 
-  e.preventDefault();
+  //e.preventDefault();
 });
 
 // set page title
@@ -153,15 +153,16 @@ function handleFileSelect(evt, style) {
 }
 
 // used to toggle spinner
-$(document).on("ajax:beforeSend", '#comment-doc, .pixi-cat, #purchase_btn, #search_btn, .uform, .back-btn, #pixi-form, .submenu', function () {
-  toggleLoading();
+$(document).on("ajax:beforeSend", '#comment-doc, #site_id, .pixi-cat, #purchase_btn, #search_btn, .uform, .back-btn, #pixi-form, .submenu', 
+  function () {
+    toggleLoading();
 });	
 
 $(document).on("ajax:success", '.pixi-cat, #purchase_btn, #search_btn, .uform, .back-btn, #pixi-form, .submenu', function () {
   toggleLoading();
 });	
 
-$(document).on("ajax:complete", '#comment-doc, .pixi-cat, #purchase_btn, #search_btn, .uform, .back-btn, #pixi-form, .submenu', function () {
+$(document).on("ajax:complete", '#comment-doc, #site_id, .pixi-cat, #purchase_btn, #search_btn, .uform, .back-btn, #pixi-form, .submenu', function () {
   toggleLoading();
 });	
 
@@ -231,10 +232,10 @@ $(document).on("ajax:success", "#recent-link", function(showElem){
 
 // reload masonry on ajax calls to swap data
 $(document).on("click", ".pixi-cat", function(showElem){
-  var catid = $(this).attr("data-cat-id");
-  var url = '/listings/category.js?category=' + catid;
+  var cid = $(this).attr("data-cat-id");
+  var url = '/listings/category.js?cid=' + cid;
   var newUrl = '/listings/category?page=';
-  var param = '&category=' + catid;
+  var param = '&cid=' + cid;
 
   toggleLoading();
 
@@ -446,3 +447,53 @@ function commentScroll() {
         }
   });
 }
+var time_id;
+function set_timer() {
+ time_id = setTimeout(updatePixis, 30000);  
+}
+
+// polling for recent pixis
+$(function () {  
+  if ($('#recent-pixis').length > 0) {  
+  //  set_timer(); 
+  }
+  else {
+    clearTimeout(time_id);
+  }  
+});  
+
+// refresh recent pixis
+function updatePixis() {  
+  if ($('.pixi').length > 0) {  
+    var after = $('.pixi:last').attr('data-time');  
+  }  
+  else {  
+    var after = 0;  
+  }
+
+  $.getScript('/pages.js?after=' + after);
+  set_timer();
+}  
+
+// check for location changes
+$(document).on("change", "#site_id", function() {
+  var loc = $(this).val(); // grab the selected location 
+
+  // check location
+  if (loc > 0) {
+    var url = '/listings/location?loc=' + loc; 
+  }
+  else {
+    var url = '/listings.js';
+  }
+
+  toggleLoading();
+
+  // refresh the page
+  $.getScript(url);
+
+  //prevent the default behavior of the click event
+  return false;
+});
+
+

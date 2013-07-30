@@ -5,6 +5,7 @@ class Site < ActiveRecord::Base
   has_many :users, :through => :site_users
 
   has_many :listings, :dependent => :destroy
+  has_many :active_listings, class_name: 'Listing', conditions: { :status => 'active' }
   scope :with_pixis, :include    => :listings, 
                      :conditions => "listings.id IS NOT NULL"
 
@@ -24,13 +25,14 @@ class Site < ActiveRecord::Base
 
   default_scope :order => "name ASC"
   
-  # select active sites
+  # select active sites and remove dups
   def self.active
     where(:status => 'active').sort_by { |e| e[:name] }.inject([]) { |m,e| m.last.nil? ? [e] : m.last[:name] == e[:name] ? m : m << e }
   end
 
   # select active sites w/ pixis
   def self.active_with_pixis
-    active.select { |s| s.listings.size > 0 }
+    list = Listing.active.group(:site_id).select(:site_id)
+    Site.where(:id => list.map {|x| x.site_id})
   end
 end

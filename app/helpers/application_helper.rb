@@ -59,10 +59,7 @@ module ApplicationHelper
 
   # set pixi logo home path
   def pixi_home
-    link_to_unless(signed_in?, "Pixiboard", root_path, id: "logo") do
-      link_to 'Pixiboard', listings_path, id: "logo"
-    end
-   # link_to image_tag('rsz_pixilogo_word_wings.png', size: '180x90'), get_home_path, id: "logo"
+    link_to image_tag('px_word_logo.png'), get_home_path, class: "pixi-logo"
   end
 
   # set home path
@@ -81,7 +78,7 @@ module ApplicationHelper
 
   # return sites based on pixi type
   def get_sites ptype
-    ptype ? Site.with_new_pixis : Site.with_pixis
+    ptype ? Site.with_new_pixis : Site.active_with_pixis
   end
 
   # set display date 

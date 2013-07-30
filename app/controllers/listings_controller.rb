@@ -2,7 +2,7 @@ require 'will_paginate/array'
 class ListingsController < ApplicationController
   include PointManager
   before_filter :authenticate_user!
-  before_filter :load_data, only: [:index, :seller, :category, :show]
+  before_filter :load_data, only: [:index, :seller, :category, :show, :location]
   after_filter :add_points, only: [:show]
   respond_to :html, :json, :js
   layout :page_layout
@@ -33,18 +33,22 @@ class ListingsController < ApplicationController
   end
 
   def category
-    @listings = Listing.get_by_category @category, @page
+    @listings = Listing.get_category_by_site @category, params[:loc], @page
+  end
+
+  def location
+    @listings = Listing.get_by_site params[:loc], @page
   end
 
   protected
 
   def page_layout
-    action_name == 'index' ? 'listings' : 'application'
+    %w(index category location).detect {|x| action_name == x} ? 'listings' : 'application'
   end
 
   def load_data
     @page = params[:page] || 1
-    @category = params[:category]
+    @category = params[:cid]
   end
 
   def add_points

@@ -82,17 +82,38 @@ describe ListingsController do
   describe 'GET category' do
     before(:each) do
       @listings = mock("listings")
-      Listing.stub!(:get_by_category).and_return(@listings)
+      Listing.stub!(:get_category_by_site).and_return(@listings)
       controller.stub!(:load_data).and_return(:success)
       do_get
     end
 
     def do_get
-      xhr :get, :category
+      xhr :get, :category, cid: '1', sid: '1'
     end
 
     it "renders the :category view" do
       response.should render_template :category
+    end
+
+    it "assigns @listings" do
+      assigns(:listings).should == @listings
+    end
+  end
+
+  describe 'GET location' do
+    before(:each) do
+      @listings = mock("listings")
+      Listing.stub!(:get_by_site).and_return(@listings)
+      controller.stub!(:load_data).and_return(:success)
+      do_get
+    end
+
+    def do_get
+      xhr :get, :location, sid: '1'
+    end
+
+    it "renders the :location view" do
+      response.should render_template :location
     end
 
     it "assigns @listings" do

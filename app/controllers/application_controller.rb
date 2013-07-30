@@ -5,18 +5,28 @@ class ApplicationController < ActionController::Base
   protected
 
   def authenticate_user!
-    session[:return_to] = request.fullpath
+    request.xhr? ? clear_stored_location : store_location
     super
   end
 
   def after_sign_in_path_for(resource)
     @user ||= resource
-    @user.sign_in_count <= 1 ? welcome_path(@user) : listings_path
+    session[:return_to] || listings_path
   end
 
   # set user if signed in 
   def load_settings
     @user = signed_in? ? current_user : User.new
+  end
+
+  # set store path
+  def store_location
+    session[:return_to] = request.fullpath
+  end
+
+  # clear stored path
+  def clear_stored_location
+    session[:return_to] = nil
   end
 
   # Handle authorization exceptions

@@ -1,0 +1,11 @@
+$("#pxboard").html("<%= escape_javascript(render(partial: 'shared/listing', collection: @listings)) %>");
+
+// reload board
+clearScroll(this); 
+
+<% unless @listings.next_page %>
+  $('a.nxt-pg').remove();
+<% end %>
+
+$('#nearby-map').hide('fast');
+$('#spinner').hide(300);

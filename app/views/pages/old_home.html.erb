@@ -1,0 +1,13 @@
+<%= content_for :content do %>
+  <div class="center hero-unit">
+    <h1><%= "Welcome to #{full_title('')}" %></h1>
+    <h2>
+        Pixiboard is a innovative new marketplace that takes the hassle out of selling or trading goods and services within your local community.
+    </h2>
+    <%= link_to "Sign up now!", new_user_registration_path, class: "btn btn-large btn-primary" %>
+    <%= link_to user_omniauth_authorize_path(:facebook), class: "btn btn-large btn-primary" do %>
+      <%= image_tag 'icon_facebook.png', class: 'img-icon' %>
+      Sign in via Facebook
+    <% end %>
+  </div>
+<% end %>

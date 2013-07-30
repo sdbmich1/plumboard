@@ -20,7 +20,11 @@ module ListingsHelper
     ary = []
 
     # build array
-    pixis.map { |x| ary << x.site.contacts[0].full_address }
+    pixis.map do |x| 
+      if x.site
+        ary << x.site.contacts[0].full_address if x.site.contacts[0] 
+      end
+    end
 
     # flatten and return as json
     ary.flatten(1).to_json       

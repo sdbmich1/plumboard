@@ -185,6 +185,7 @@ input, select, .uneditable-input {
  }
 
 .notice, .alert, .error {
+   margin-top: 30px!important;
    padding: 5px 0 5px 0;
    margin: 7px;
    width: 95%;
@@ -220,6 +221,9 @@ input, select, .uneditable-input {
 /* submit button */
 .submit-btn { color: white!important; font-weight: bold; background: $pixiOrange!important; border: $pixiOrange!important; }
 .stnd-btn { color: black!important; background:#CCCCCC!important; border:1px gray!important}
+.fb-btn { 
+  background: #2A528E!important; color: white!important; border: #2A528E!important;
+}
 
 /* listing image thumbnails */
 .thumb {
@@ -395,7 +399,7 @@ h3 { padding: 10px }
   background: url('icon_top.png') no-repeat;
 }
 
-.bar-top { margin-top: -20px; }
+.bar-top { margin-top: 20px; }
 
 .SI-FILES-STYLIZED label.cabinet
 {
@@ -420,6 +424,11 @@ h3 { padding: 10px }
 .img-icon {
   height: 18px;
   width: 18px;
+}
+
+.lrg-img-icon {
+  height: 40px;
+  width: 40px;
 }
 
 #submenu .navbar .nav, .navbar .nav > li {
@@ -457,7 +466,7 @@ h3 { padding: 10px }
 
 .navbar-search {
   position: relative;
-  padding-left: 60px !important;
+  padding-left: 40px !important;
 }
 
 .search-text {
@@ -507,10 +516,15 @@ a#notice-btn {
   @extend .menubar-item;
   font-weight: bold;
   width: 30px;
-  margin-left: 60px;
+  margin-left: 40px;
   background:#990000;
   &:hover { background:#990000; text-decoration: none }
 }   
+
+a.btn-mask {
+  color: #ffffff!important;
+  &:hover { text-decoration: none }
+}
 
 .pagination {
   margin-top: 10px!important;
@@ -549,6 +563,17 @@ a#notice-btn {
   margin-right: 5px;
 }
 
+.recent {
+  font-size: 14px;
+  display: inline;
+  vertical-align: middle;
+  line-height: 20px;
+  margin-right: 5px;
+  a {
+    &:hover { color: #000000!important; text-decoration: underline; }
+  }  
+}
+
 .content, #fcontent {
   display: block;
   margin-top: -5px!important;
@@ -562,8 +587,8 @@ a#notice-btn {
 
 .myimage img {
   float: left;
-  max-width: 50px!important;
-  max-height: 50px!important;
+  width: 40px!important;
+  height: 40px!important;
   border: 1px solid #AAAAAA; 
 }
 
@@ -703,4 +728,15 @@ a.home-link {
   width:100%; 
   height:300px!important;
   border: 1px solid #e8e8e8;
+}
+
+.px-logo {
+  width: 260px!important;
+  height: auto;
+}
+
+.pixi-logo {
+  float: left;
+  width: 200px!important;
+  height: auto;
 }

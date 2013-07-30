@@ -1,0 +1,15 @@
+  <%= form_for("user", :url => user_session_path) do |f| %>
+    <div id='signup'>
+      <div><%= f.email_field :email, placeholder: 'Email', :autofocus => true %></div>
+      <div><%= f.password_field :password, placeholder: 'Password', size: 20 %></div>
+    </div>
+
+    <div>
+      <%= f.submit "Sign in", class: "btn btn-large btn-primary submit-btn" %>
+      <%= link_to user_omniauth_authorize_path(:facebook), id: 'fb-btn', class: "pull-right" do %>
+        <%= image_tag 'icon_facebook.png', class: 'lrg-img-icon' %>
+      <% end %>
+      <%= link_to "Sign up for free!", new_user_registration_path, class: "btn btn-large btn-primary btn-mask" %>
+    </div>
+  <% end %>
+

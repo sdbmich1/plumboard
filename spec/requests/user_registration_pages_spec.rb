@@ -18,24 +18,27 @@ feature "UserRegistrations" do
     end
 
     describe "with invalid information" do
+      before { visit new_user_registration_path }
+
       it "should not create a empty user" do
         expect{ 
-		visit new_user_registration_path 
 		click_button submit 
 	}.not_to change(User, :count)
+
+        page.should have_content "can't be blank"
       end
 
       it "should not create a incomplete user" do
         expect{ 
-		visit new_user_registration_path 
 		user_info
 		click_button submit 
 	}.not_to change(User, :count)
+
+        page.should have_content "can't be blank"
       end
 
       it "should not create user w/o email" do
         expect{ 
-		visit new_user_registration_path 
 		user_info
 		user_birth_date
 		select('Male', :from => 'user_gender')
@@ -43,11 +46,12 @@ feature "UserRegistrations" do
         	fill_in "user_password_confirmation", with: 'userpassword'
 		click_button submit 
 	}.not_to change(User, :count)
+
+        page.should have_content "can't be blank"
       end
 
       it "should not create user w/o gender" do
         expect{ 
-		visit new_user_registration_path 
 		user_info
 		user_birth_date
         	fill_in 'user_email', :with => 'newuser@example.com'
@@ -60,7 +64,6 @@ feature "UserRegistrations" do
 
       it "should not create user w/o birthdate" do
         expect{ 
-		visit new_user_registration_path 
 		user_info
 		select('Male', :from => 'user_gender')
         	fill_in 'user_email', :with => 'newuser@example.com'
@@ -73,7 +76,6 @@ feature "UserRegistrations" do
 
       it "should not create user w/o password" do
         expect{ 
-		visit new_user_registration_path 
 		user_info
 		user_birth_date
 		select('Male', :from => 'user_gender')
@@ -86,7 +88,6 @@ feature "UserRegistrations" do
 
       it "should not create user w/o password confirmation" do
         expect{ 
-		visit new_user_registration_path 
 		user_info
 		user_birth_date
 		select('Male', :from => 'user_gender')
@@ -99,7 +100,6 @@ feature "UserRegistrations" do
 
       it "should not create a user with no photo" do
         expect{ 
-		visit new_user_registration_path 
       		user_data
 		click_button submit 
 	}.not_to change(User, :count)
@@ -107,12 +107,12 @@ feature "UserRegistrations" do
     end
 
     def user_data
-        user_info
-        fill_in 'user_email', :with => 'newuser@example.com'
-	user_birth_date
-	select('Male', :from => 'user_gender')
-        fill_in 'user_password', :with => 'userpassword'
-        fill_in "user_password_confirmation", with: 'userpassword'
+      user_info
+      fill_in 'user_email', :with => 'newuser@example.com'
+      user_birth_date
+      select('Male', :from => 'user_gender')
+      fill_in 'user_password', :with => 'userpassword'
+      fill_in "user_password_confirmation", with: 'userpassword'
     end
 
     def add_data_w_photo
@@ -127,7 +127,7 @@ feature "UserRegistrations" do
     describe "create user" do
       before(:each) do
         visit root_path
-        click_link 'Sign up now!'
+        click_link 'Sign up for free!'
       end
 
       it "should create a user" do
@@ -136,6 +136,7 @@ feature "UserRegistrations" do
 	  click_button submit; sleep 2 
 	 }.to change(User, :count).by(1)
 
+        page.should have_content 'Pixis'
         page.should have_content 'A message with a confirmation link has been sent to your email address' 
       end	
     end

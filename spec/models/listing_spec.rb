@@ -171,6 +171,11 @@ describe Listing do
     it { Listing.get_by_category(@listing.category_id, 1).should_not be_empty }
   end
 
+  describe "category_by_site" do
+    it { Listing.get_category_by_site(0, 1, 1).should_not include @listing } 
+    it { Listing.get_category_by_site(@listing.category_id, @listing.site_id, 1).should_not be_empty }
+  end
+
   it "includes seller listings" do 
     @listing.seller_id = 1
     @listing.save

@@ -1,0 +1,15 @@
+<li id="<%= listing.id %>">
+  <%= render partial: 'shared/show_photo', locals: {model: listing, file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
+  <div class='span5'>
+    <div class='recent'>
+      <%= link_to listing.title, listing %>
+    </div>
+    <div class="pixi pull-right" data-time="<%= listing.created_at.to_i %>"> 
+      <span class="timestamp">
+        Posted <%= ts_in_words(listing.created_at) %>.
+      </span>
+    </div>
+    <span class="content"><%= listing.site_name %></span>
+  </div>
+  <div class='clear-all'></div>
+</li>

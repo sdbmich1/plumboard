@@ -1,0 +1,8 @@
+<h4>Today's Leaderboard</h4>
+<% unless @leaders.blank? %>
+  <ol class="posts">
+    <%= render partial: 'shared/pixi_star', collection: @leaders, as: :leader %>
+  </ol>
+<% else %>
+  <div class='center-wrapper'>No leaders present.</div>
+<% end %>
