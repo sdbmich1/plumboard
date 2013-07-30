@@ -154,10 +154,14 @@ group :test do
 end
 
 # production gems
-group :production do
+group :production, :staging do
 
    # handle exceptions
    gem 'exception_notification', :require => 'exception_notifier'
+end
+
+# production gems
+group :production do
 
    # google analytics
    gem 'rack-google_analytics', :require => "rack/google_analytics"
