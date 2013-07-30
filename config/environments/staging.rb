@@ -77,7 +77,7 @@ Plumboard::Application.configure do
     :address              => "smtpout.secureserver.net",
     :port                 => 80,
     :domain               => "www.pixiboard.com",
-    :user_name            => "sdbmich1@gmail.com",
+    :user_name            => "sdbmich1",
     :password             => "sDb0594BKb",
     :authentication       => "plain",
     :enable_starttls_auto => true
