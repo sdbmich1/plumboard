@@ -74,13 +74,10 @@ Plumboard::Application.configure do
   # add mailer config for godaddy
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    :address              => "smtpout.secureserver.net",
-    :port                 => 80,
+    :address              => "relay-hosting.secureserver.net",  
+    :port                 => 25,  
     :domain               => "www.pixiboard.com",
-    :user_name            => "sdbmich1",
-    :password             => "sDb0594BKb",
-    :authentication       => "plain",
-    :enable_starttls_auto => true
+    :authentication       => "plain"
   }
 
   # set paperclip aws settings
@@ -88,8 +85,13 @@ Plumboard::Application.configure do
                                :s3_credentials => YAML.load_file("#{Rails.root}/config/aws.yml")[Rails.env],
 	  		       url: ":s3_domain_url",
 			       path: ":attachment/:id_partition/:style/:filename"}
-	  		      
 
   # facebook ssl setting
   FACEBOOK_SSL_OPTIONS = {:ca_file => '/etc/pki/tls/certs/ca-bundle.crt'}
+
+  # exception notification
+  config.middleware.use ExceptionNotifier,
+    :email_prefix => "Pixiboard: ",
+    :sender_address => %{"Pixiboard Admin" <webmaster@pixiboard.com>},
+    :exception_recipients => %w{sbrown@pixiboard.com}
 end

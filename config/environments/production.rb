@@ -79,4 +79,10 @@ Plumboard::Application.configure do
 
   # facebook ssl setting
   FACEBOOK_SSL_OPTIONS = {:ca_path => "/etc/ssl/certs"}
+
+  # exception notification
+  config.middleware.use ExceptionNotifier,
+    :email_prefix => "Pixiboard Live: ",
+    :sender_address => %{"Pixiboard Admin" <webmaster@pixiboard.com>},
+    :exception_recipients => %w{sbrown@pixiboard.com}
 end
