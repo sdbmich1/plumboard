@@ -116,6 +116,7 @@ GEM
       launchy (~> 2.1)
       mail (~> 2.2)
     erubis (2.7.0)
+    eventmachine (1.0.3)
     eventmachine (1.0.3-x86-mingw32)
     exception_notification (4.0.0)
       actionmailer (>= 3.0.4)
