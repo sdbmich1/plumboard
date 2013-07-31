@@ -75,8 +75,10 @@ Plumboard::Application.configure do
   # add mailer config for godaddy
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    :address              => "relay-hosting.secureserver.net",  
-    :port                 => 25,  
+    :address              => "smtpout.secureserver.net",  
+    :port                 => 80,  
+    :user_name            => "info@www.pixiboard.com",  
+    :password             => "piXi#123",
     :domain               => "www.pixiboard.com",
     :authentication       => "plain"
   }

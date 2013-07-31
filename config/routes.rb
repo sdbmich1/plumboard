@@ -92,6 +92,9 @@ Plumboard::Application.routes.draw do
     root :to => "users#show", :as => :user_root
   end
 
+  # exception handling
+  match '*', :to => 'application#rescue_with_handler'
+
   # specify root route based on user sign in status
   root to: 'listings#index', :constraints => lambda {|r| r.env["warden"].authenticate? }
   root to: 'pages#home'

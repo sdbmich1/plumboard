@@ -12,11 +12,11 @@
 <%= content_for :topcontent do %>
   <div class='container'>
     <div class='row mtop'>
-      <div class='mtop span6 home-title-grp'>
+      <div class='mtop span7 home-title-grp'>
         <span class='home-title'><%= PIXI_KEYS['pixi']['caption'] %></span><br />
         <span class='tag-line'><%= PIXI_KEYS['pixi']['tag_line'] %></span>
       </div>
-      <div class='mtop span4 offset1 pull-right div-blk-border round'>
+      <div class='mtop span4 pull-right div-blk-border round'>
         <%= render partial: 'shared/signin_form', locals: { rmbrFlg: false } %>
       </div>
     </div>
