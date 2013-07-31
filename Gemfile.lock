@@ -118,9 +118,8 @@ GEM
     erubis (2.7.0)
     eventmachine (1.0.3)
     eventmachine (1.0.3-x86-mingw32)
-    exception_notification (4.0.0)
+    exception_notification (3.0.1)
       actionmailer (>= 3.0.4)
-      activesupport (>= 3.0.4)
     excon (0.21.0)
     execjs (1.4.0)
       multi_json (~> 1.0)
@@ -436,7 +435,7 @@ DEPENDENCIES
   database_cleaner
   devise
   email_spec
-  exception_notification
+  exception_notification (~> 3.0.1)
   excon (~> 0.21.0)
   factory_girl_rails
   faker

@@ -157,7 +157,7 @@ end
 group :production, :staging do
 
    # handle exceptions
-   gem 'exception_notification', :require => 'exception_notifier'
+   gem 'exception_notification', "~> 3.0.1", :require => 'exception_notifier'
 end
 
 # production gems
