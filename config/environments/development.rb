@@ -42,18 +42,6 @@ Plumboard::Application.configure do
   # Expands the lines which load the assets
   config.assets.debug = true
 
-  # add mailer config for gmail
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-    :address              => "smtp.gmail.com",
-    :port                 => 587,
-    :domain               => "gmail.com",
-    :user_name            => "sdbmich1",
-    :password             => "sdb91mse",
-    :authentication       => "plain",
-    :enable_starttls_auto => true
-  }
-
   # paperclip storage setting
   PAPERCLIP_STORAGE_OPTIONS = {
 	  url: "/system/:class/:attachment/:id/:style/:filename",
