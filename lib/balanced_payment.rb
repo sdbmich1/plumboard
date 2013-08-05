@@ -10,6 +10,8 @@ module BalancedPayment
 
   # add bank account
   def self.add_bank_account acct
+    Balanced.configure BALANCED_API_KEY
+
     @bank_account = Balanced::BankAccount.new(
       account_number: 	acct.acct_number, 
       routing_number: 	acct.routing_number,
@@ -22,6 +24,8 @@ module BalancedPayment
 
   # get account
   def self.get_bank_account token, acct
+    Balanced.configure BALANCED_API_KEY
+
     @acct ||= acct
     @bank_account ||= Balanced::BankAccount.find token
 
@@ -31,6 +35,7 @@ module BalancedPayment
 
   # credit bank account
   def self.credit_account token, amt, acct
+    Balanced.configure BALANCED_API_KEY
     get_bank_account(token, acct).credit(amount: (amt * 100).to_i) if amt > 0.0
 
     rescue => ex
@@ -39,7 +44,14 @@ module BalancedPayment
 
   # delete bank account
   def self.delete_account token, acct
-    get_bank_account(token, acct).destroy
+    Balanced.configure BALANCED_API_KEY
+    @bank_account ||= Balanced::BankAccount.find token
+
+    if @bank_account
+      @bank_account.unstore 
+    else
+      return false
+    end
 
     rescue => ex
       process_error ex

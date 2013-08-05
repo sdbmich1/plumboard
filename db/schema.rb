@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130706030717) do
+ActiveRecord::Schema.define(:version => 20130804190849) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -52,6 +52,7 @@ ActiveRecord::Schema.define(:version => 20130706030717) do
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
     t.string   "description"
+    t.string   "bank_name"
   end
 
   add_index "bank_accounts", ["user_id"], :name => "index_bank_accounts_on_user_id"
@@ -96,6 +97,22 @@ ActiveRecord::Schema.define(:version => 20130706030717) do
 
   add_index "contacts", ["contactable_id"], :name => "index_contacts_on_contactable_id"
   add_index "contacts", ["lng", "lat"], :name => "index_contacts_on_long_and_lat"
+
+  create_table "delayed_jobs", :force => true do |t|
+    t.integer  "priority",   :default => 0, :null => false
+    t.integer  "attempts",   :default => 0, :null => false
+    t.text     "handler",                   :null => false
+    t.text     "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by"
+    t.string   "queue"
+    t.datetime "created_at",                :null => false
+    t.datetime "updated_at",                :null => false
+  end
+
+  add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
 
   create_table "interests", :force => true do |t|
     t.string   "name"

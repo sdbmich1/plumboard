@@ -221,4 +221,14 @@ describe Invoice do
       @invoice.status.should == 'unpaid'
     end
   end
+
+  describe "buyer" do 
+    it { @invoice.buyer_name.should_not be_empty } 
+
+    it "should not find correct buyer name" do 
+      @invoice.buyer_id = 100 
+      @invoice.buyer_name.should be_nil 
+    end
+  end
+
 end

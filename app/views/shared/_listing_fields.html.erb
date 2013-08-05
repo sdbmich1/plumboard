@@ -8,7 +8,7 @@
 </div>
 <div class='row'>
   <div class='span7'>
-    <%= f.label :title %><%= f.text_field :title, :autofocus => true %>
+    <%= f.label :title %><%= f.text_field :title, :autofocus => true, :placeholder => 'Pixi Title' %>
   </div>
   <div class='span4'>
     <div id='price-fld' style="<%= @listing.job? ? 'display:none' : '' %>"><%= f.label :price %>
@@ -20,7 +20,9 @@
 <div class='row'>
   <div class='span7'>
     <%= f.label :site_id, 'Site' %>
-    <%= f.collection_select :site_id, Site.active, :id, :name, {:prompt => 'Select'}, {class: 'pixi-select'} %>
+    <%= autocomplete_field_tag 'site_name', @listing.site_name, autocomplete_site_name_temp_listings_path,
+	        :update_elements => { :id => '#site_id' }, :placeholder => 'Site Name' %> 
+    <%= f.hidden_field :site_id, id: 'site_id' %>
   </div>
   <div class='span4'>
     <%= f.label :category_id, 'Category' %>
@@ -49,6 +51,6 @@
 </div>
 <div class='row'>
   <div class='span11'>
-    <%= f.label :description, class: 'med-top' %><%= f.text_area :description %>
+    <%= f.label :description, class: 'med-top' %><%= f.text_area :description, :placeholder => 'Describe Your Pixi' %>
   </div>
 </div>

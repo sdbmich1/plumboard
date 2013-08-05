@@ -82,4 +82,8 @@ class Listing < ListingParent
   sphinx_scope(:by_title) { |title|
     {:conditions => {:title => title}}
   }
+
+  sphinx_scope(:by_point) do |lat, lng|
+    {:geo => [lat, lng]}
+  end
 end

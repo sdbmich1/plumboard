@@ -1,0 +1,21 @@
+<div class='center'>
+  <h2>Your Payment Account</h2>
+</div>
+<div class="row">
+  <div id="notice"><%= render partial: 'layouts/notices' %></div>
+  <div id="balanced_error" style="display:none" class="error"></div>
+
+  <div class="sm-top span6 offset4">
+    <table>
+      <tr><td>Bank Name: </td><td class='width30'></td><td><%= @account.bank_name %></td></tr> 
+      <tr><td>Account #: </td><td class='width30'></td><td><%= @account.acct_no %></td></tr>
+      <tr><td>Account Name: </td><td class='width30'></td><td><%= @account.acct_name %></td></tr> 
+      <tr><td>Description: </td><td class='width30'></td><td><%= @account.description %></td></tr> 
+      <tr><td>Account Type: </td><td class='width30'></td><td><%= @account.acct_type %></td></tr> 
+    </table>
+  </div>
+  <div class="span4 offset5 mtop">
+    <%= link_to 'Remove', @account, method: :delete, confirm: 'Are you sure?', class: "btn btn-large btn-primary stnd-btn" %>
+  </div>
+</div>
+

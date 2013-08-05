@@ -59,6 +59,27 @@ describe BankAccountsController do
     end
 
     def do_get
+      get :new
+    end
+
+    it "assigns @account" do
+      assigns(:account).should_not be_nil
+    end
+
+    it "loads new template" do
+      response.should render_template(:new)
+    end
+  end
+
+  describe "xhr GET 'new'" do
+
+    before :each do
+      controller.stub_chain(:load_target, :current_user).and_return(@user)
+      @user.stub_chain(:accounts, :build).and_return( @account )
+      do_get
+    end
+
+    def do_get
       xhr :get, :new
     end
 
@@ -71,93 +92,6 @@ describe BankAccountsController do
     end
   end
 
-  describe "GET 'edit/:id'" do
-
-    before :each do
-      BankAccount.stub!(:find).and_return( @account )
-    end
-
-    def do_get
-      xhr :get, :edit, id: '1'
-    end
-
-    it "loads the requested account" do
-      BankAccount.should_receive(:find).with('1').and_return(@account)
-      do_get
-    end
-
-    it "assigns @account" do
-      do_get
-      assigns(:account).should_not be_nil 
-    end
-
-    it "loads nothing" do
-      controller.stub!(:render)
-    end
-
-    it "loads the requested account" do
-      do_get
-      response.should be_success
-    end
-  end
-
-  describe "PUT /:id" do
-    before (:each) do
-      BankAccount.stub!(:find).and_return( @account )
-    end
-
-    def do_update
-      xhr :put, :update, :id => "1", :bank_account => {'user_id'=>'test', 'acct_type' => 'test'}
-    end
-
-    context "with valid params" do
-      before (:each) do
-        @account.stub(:update_attributes).and_return(true)
-      end
-
-      it "loads the requested account" do
-        BankAccount.stub(:find) { @account }
-        do_update
-      end
-
-      it "updates the requested account" do
-        BankAccount.stub(:find).with("1") { mock_account }
-	mock_account.should_receive(:update_attributes).with({'user_id' => 'test', 'acct_type' => 'test'})
-        do_update
-      end
-
-      it "assigns @account" do
-        BankAccount.stub(:find) { mock_account(:update_attributes => true) }
-        do_update
-        assigns(:account).should_not be_nil 
-      end
-    end
-
-    context "with invalid params" do
-    
-      before (:each) do
-        @account.stub(:update_attributes).and_return(false)
-      end
-
-      it "loads the requested account" do
-        BankAccount.stub(:find) { @account }
-        do_update
-      end
-
-      it "assigns @account" do
-        BankAccount.stub(:find) { mock_account(:update_attributes => false) }
-        do_update
-        assigns(:account).should_not be_nil 
-      end
-
-      it "does not render anything" do 
-        BankAccount.stub(:find) { mock_account(:update_attributes => false) }
-        do_update
-        controller.stub!(:render)
-      end
-    end
-  end
-
   describe "POST create" do
 
     def do_create
@@ -167,7 +101,7 @@ describe BankAccountsController do
     context 'failure' do
       
       before :each do
-        BankAccount.stub!(:save).and_return(false)
+        BankAccount.stub!(:save_account).and_return(false)
       end
 
       it "assigns @account" do
@@ -184,7 +118,7 @@ describe BankAccountsController do
     context 'success' do
 
       before :each do
-        BankAccount.stub!(:save).and_return(true)
+        BankAccount.stub!(:save_account).and_return(true)
 	User.stub_chain(:find, :bank_accounts, :first).and_return(@user)
         controller.stub_chain(:load_target, :reload_data, :redirect_path).and_return(:success)
       end
@@ -217,7 +151,7 @@ describe BankAccountsController do
     context 'failure' do
       
       before :each do
-        BankAccount.stub!(:save).and_return(false)
+        BankAccount.stub!(:save_account).and_return(false)
       end
 
       it "assigns @account" do
@@ -225,7 +159,7 @@ describe BankAccountsController do
         assigns(:account).should_not be_nil 
       end
 
-      it "renders the new template" do
+      it "renders nothing" do
         do_create
         controller.stub!(:render)
       end
@@ -234,7 +168,7 @@ describe BankAccountsController do
     context 'success' do
 
       before :each do
-        BankAccount.stub!(:save).and_return(true)
+        BankAccount.stub!(:save_account).and_return(true)
 	User.stub_chain(:find, :bank_accounts, :first).and_return(@user)
         controller.stub_chain(:load_target, :reload_data, :redirect_path).and_return(:success)
       end
@@ -273,6 +207,22 @@ describe BankAccountsController do
       xhr :delete, :destroy, :id => "37"
     end
 
+    context 'failure' do
+      before :each do
+        @account.stub!(:delete_account).and_return(false) 
+      end
+
+      it "should assign account" do
+        do_delete
+        assigns(:account).should_not be_nil 
+      end
+
+      it "should render nothing" do
+        do_delete
+        controller.stub!(:render)
+      end
+    end
+
     context 'success' do
 
       after (:each) do
@@ -286,14 +236,14 @@ describe BankAccountsController do
 
       it "destroys the requested account" do
         BankAccount.stub(:find).with("37") { mock_account }
-        mock_account.should_receive(:destroy)
+        mock_account.should_receive(:delete_account)
         do_delete
       end
 
       it "redirects to the accounts list" do
         BankAccount.stub(:find) { mock_account }
         do_delete
-        response.should_not be_redirect
+        response.should be_redirect
       end
 
       it "decrements the BankAccount count" do

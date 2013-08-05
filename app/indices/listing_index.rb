@@ -6,5 +6,6 @@ ThinkingSphinx::Index.define :listing, :with => :active_record do
 
   has :id, :as => :listing_id 
   has :pixi_id, :created_at, :updated_at
+  has lat, lng
   where "(listings.status = 'active')" 
 end

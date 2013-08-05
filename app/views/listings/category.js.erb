@@ -4,5 +4,8 @@ $("#pxboard").html("<%= escape_javascript(render(partial: 'shared/listing', coll
   $('a.nxt-pg').remove();
 <% end %>
 
+// reload board
+clearScroll(this); 
+
 $('#nearby-map').hide('fast');
 $('#spinner').hide(300);

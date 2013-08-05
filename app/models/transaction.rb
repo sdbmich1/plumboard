@@ -138,7 +138,13 @@ class Transaction < ActiveRecord::Base
 
       # check result - update confirmation # if nil (free transactions) use timestamp instead
       if result
-        Payment::process_result(result, self)
+        self.confirmation_no = result.id 
+
+        if CREDIT_CARD_API == 'balanced'
+	  self.payment_type, self.credit_card_no = result.card[:card_type], result.card[:last_four]
+	else
+	  self.payment_type, self.credit_card_no = result.card[:type], result.card[:last4]
+	end
       else
         self.confirmation_no = Time.now.to_i.to_s   
       end  

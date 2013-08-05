@@ -5,7 +5,7 @@
       <%= set_poster(post, sentFlg).name %>
     </div>
     <div>
-      RE: <%= link_to post.listing.title, post.listing %>
+      RE: <%= link_to post.listing.title, post.listing, class: 'pixi-link' %>
     </div>
     <span class="content"><%= post.summary %><%= link_to ' more...', '#', :id=>'more-btn' if post.long_content? %></span>
     <span id='fcontent' style="display: none"><%= post.full_content %></span>

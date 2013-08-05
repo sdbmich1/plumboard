@@ -3,6 +3,7 @@ class TempListingsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :load_data, only: [:unposted]
   before_filter :set_params, only: [:create, :update]
+  autocomplete :site, :name, :full => true
   include ResetDate
   respond_to :html, :json, :js
 
@@ -70,6 +71,11 @@ class TempListingsController < ApplicationController
 
   def set_params
     params[:temp_listing] = ResetDate::reset_dates(params[:temp_listing])
+  end
+
+  def get_autocomplete_items(parameters)
+    items = super(parameters)
+    items = items.active
   end
 
 end

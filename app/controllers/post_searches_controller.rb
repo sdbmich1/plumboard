@@ -1,12 +1,12 @@
 require 'will_paginate/array' 
-class SearchesController < ApplicationController
-  before_filter :authenticate_user!, :get_location
+class PostSearchesController < ApplicationController
+  before_filter :authenticate_user!
   after_filter :add_points, only: [:index]
-  autocomplete :listing, :title, :full => true
+  autocomplete :post, :content, :full => true
   include PointManager
 
   def index
-    @listings = Listing.search query, geo: [@lat, @lng], order: "geodist ASC, @weight DESC", star: true, page: page unless query.blank?
+    @posts = Post.search query, star: true, page: page unless query.blank?
   end
 
   protected
@@ -26,10 +26,6 @@ class SearchesController < ApplicationController
 
   def get_autocomplete_items(parameters)
     items = super(parameters)
-    items = items.active
-  end
-
-  def get_location
-    @lat, @lng = request.location.latitude, request.location.longitude
+    items = items.get_posts @user.id
   end
 end
