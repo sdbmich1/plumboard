@@ -20,6 +20,7 @@
 # Ignore all sphinx files
 /config/*.conf
 /db/sphinx
+*.pid
 
 # Ignore all picture files
 /public/system/pictures
