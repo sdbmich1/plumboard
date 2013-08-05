@@ -11,7 +11,7 @@
         <div id='signup'>
 	    <div class="control-group">
 	      <label class="control-label">Routing #</label>
-	      <div class='controls'><%= text_field_tag :routing_number, nil, name: nil, :size => 16, placeholder: 'Routing Number' %></div>
+	      <div class='controls'><%= f.text_field :routing_number, :size => 16, placeholder: 'Routing Number', id: 'routing_number' %></div>
 	      <label class="control-label">Account #</label>
 	      <div class='controls'><%= f.text_field :acct_number, :size => 16, placeholder: 'Account Number', id: 'acct_number' %></div>
 	      <label class="control-label">Account Name</label>
@@ -28,7 +28,9 @@
       <%= f.hidden_field :token, id: 'pay_token' %>
       <%= f.hidden_field :acct_no %>
 
-      <div class="span4 offset5 mbot"><%= f.submit set_btn_name, id: 'acctForm', class: "btn btn-large btn-primary submit-btn" %></div>
+      <div class="span4 offset5 mbot"><%= f.submit set_btn_name, class: "btn btn-large btn-primary submit-btn" %></div>
     <% end %>
+
+    <div class="span4 offset5 sm-top mbot"><%= image_tag "check_sample.gif" %></div>
   </div>
 

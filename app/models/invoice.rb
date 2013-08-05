@@ -76,4 +76,9 @@ class Invoice < ActiveRecord::Base
       false
     end
   end
+
+  # get buyer name
+  def buyer_name
+    buyer.name rescue nil
+  end
 end

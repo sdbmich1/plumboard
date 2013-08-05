@@ -1,15 +1,23 @@
 <header class="navbar navbar-fixed-top navbar-inverse">
   <div class="navbar-inner">
     <div class="container">
+       <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+         <span class="icon-bar"></span>
+	 <span class="icon-bar"></span>
+         <span class="icon-bar"></span>
+      </a>
       <%= pixi_home %>
+      <div class="nav-collapse">
       <nav>
 	<% if signed_in? %>
-          <%= display_search %>
+	  <div id='search'><%= display_search %></div>
           <%= link_to get_unread_count(@user), posts_path, id: "notice-btn", title: 'Messages' %>
 
           <ul class="nav pull-right">
-            <li><%= link_to "Help", help_path %></li>
             <li><%= link_to "Post", new_temp_listing_path, id: 'add-pixi' %></li>
+            <% if @user.has_pixis? %>
+    	      <li><%= link_to "Bill", get_invoice_path, id: 'bill-pixi' %></li>
+  	    <% end %>
 
 	    <%= render 'layouts/manage' if can? :manage_items, @user %>
 	    <%= render 'layouts/user_menu' %>
@@ -20,6 +28,7 @@
           </ul>
 	<% end %>
       </nav>
+      </div>
     </div>
   </div>
 </header>

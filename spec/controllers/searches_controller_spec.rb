@@ -19,7 +19,7 @@ describe SearchesController do
       @listing = FactoryGirl.create(:listing, seller_id: @user.id)
       @listings = mock("listings")
       Listing.stub!(:search).and_return( @listings )
-      controller.stub_chain(:query, :page, :add_points).and_return(:success)
+      controller.stub_chain(:query, :page, :add_points, :get_location).and_return(:success)
 
       ThinkingSphinx::Test.index 
       sleep 0.5

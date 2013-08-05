@@ -7,7 +7,7 @@ class User < ActiveRecord::Base
   acts_as_reader
 
   # Include default devise modules. Others available are:
-  devise :database_authenticatable, :registerable,
+  devise :database_authenticatable, :async, :registerable,
          :recoverable, :rememberable, :trackable, :validatable,
   	 :token_authenticatable, :confirmable,
   	 :lockable, :timeoutable, :omniauthable, :omniauth_providers => [:facebook]
@@ -111,7 +111,7 @@ class User < ActiveRecord::Base
 
   # return whether user has any bank accounts
   def has_bank_account?
-    bank_accounts.size > 0 rescue nil
+    bank_accounts.count > 0 rescue nil
   end
 
   # converts date format

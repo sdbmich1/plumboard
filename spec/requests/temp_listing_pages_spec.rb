@@ -9,6 +9,14 @@ feature "TempListings" do
     login_as(user, :scope => :user, :run_callbacks => false)
     user.confirm!
     @user = user
+    create_sites
+  end
+
+  def create_sites
+    FactoryGirl.create :site
+    @site = FactoryGirl.create :site, name: 'Santa Clara University'
+    FactoryGirl.create :site, name: 'Stanford University'
+    FactoryGirl.create :site, name: 'San Francisco - Nob Hill'
   end
 
   def click_cancel_ok
@@ -31,8 +39,15 @@ feature "TempListings" do
     page.driver.browser.switch_to.alert.dismiss
   end
 
-  def select_site
-    select("SFSU", :from => "temp_listing_site_id")
+  def set_site_id val
+    val ||= 1
+    page.execute_script('$("#site_id").val("#{val}")')
+  end
+
+  def select_site val='SF', result='SFSU'
+    # select("SFSU", :from => "temp_listing_site_id")
+    fill_in "site_name", :with => val
+    fill_autocomplete result, "#site_name"
   end
 
   def select_category val
@@ -49,7 +64,6 @@ feature "TempListings" do
     let(:temp_listing) { FactoryGirl.build(:temp_listing) }
 
     before(:each) do
-      FactoryGirl.create :site
       FactoryGirl.create :category 
       FactoryGirl.create :category, name: 'Event'
       FactoryGirl.create :category, name: 'Jobs'
@@ -84,7 +98,7 @@ feature "TempListings" do
       fill_in 'end-date', with: edt
     end
 
-    describe "Create with invalid information" do
+    describe "Create with invalid information", js: true do
       it "should not create a listing" do
         expect { click_button submit }.not_to change(TempListing, :count)
 	page.should have_content "Title can't be blank"
@@ -181,7 +195,7 @@ feature "TempListings" do
       end
     end
 
-    describe "Create with valid information" do
+    describe "Create with valid information", js: true do
       it "Adds a new listing w/o price" do
         expect{
 		add_data_w_photo
@@ -324,6 +338,17 @@ feature "TempListings" do
       }.to change(TempListing,:count).by(0)
 
       page.should have_content "Guitar for Sale"
+      page.should have_content 'Review Your Pixi'
+    end
+
+    it "Changes a pixi site", js: true do
+      page.should have_css('#site_id', :visible => false)
+      expect{
+      	      select_site 'Santa', 'Santa Clara University'; sleep 0.5
+              set_site_id @site.id
+              click_button submit
+      }.to change(TempListing,:count).by(0)
+
       page.should have_content 'Review Your Pixi'
     end
 

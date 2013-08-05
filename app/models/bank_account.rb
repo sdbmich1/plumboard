@@ -1,10 +1,10 @@
 class BankAccount < ActiveRecord::Base
   include Payment
 
-  before_create :set_flds
+  before_create :set_flds, :must_have_token
 
   attr_accessor :acct_number, :routing_number
-  attr_accessible :acct_name, :acct_no, :acct_type, :status, :token, :user_id, :description, :acct_number, :routing_number
+  attr_accessible :acct_name, :acct_no, :acct_type, :status, :token, :user_id, :description, :acct_number, :routing_number, :bank_name
 
   belongs_to :user
   has_many :invoices
@@ -12,6 +12,17 @@ class BankAccount < ActiveRecord::Base
   validates :user_id, presence: true
   validates :acct_name, presence: true
 #  validate :must_be_numeric
+  validate :must_have_token
+
+  # verify token exists before creating record
+  def must_have_token
+    if self.token.blank?
+      errors.add(:base, 'Must have a token')
+      false
+    else
+      true
+    end
+  end
 
   # check if numeric
   def must_be_numeric
@@ -50,11 +61,15 @@ class BankAccount < ActiveRecord::Base
   def save_account
     acct = Payment::add_bank_account self
 
+    unless acct
+      errors.add :base, "Error: There was a problem with your Balanced account."
+    end
+
     # check for errors
     return false if self.errors.any?
 
     # set fields
-    self.token, self.acct_no = acct.uri, acct.account_number
+    self.token, self.acct_no, self.bank_name = acct.uri, acct.account_number, acct.bank_name
 
     # save new account
     save!
@@ -65,14 +80,19 @@ class BankAccount < ActiveRecord::Base
     Payment::credit_account token, amt, self
 
     # check for errors
-    return false if self.errors.any?
+    self.errors.any? ? false : true 
   end
 
   # delete account
   def delete_account
-    Payment::delete_account token, self if token
+    result = Payment::delete_account token, self if token
 
-    # check for errors
-    return false if self.errors.any?
+    # remove account
+    if result 
+      self.errors.any? ? false : self.destroy 
+    else
+      errors.add :base, "Error: There was a problem with your Balanced account."
+      false
+    end
   end
 end

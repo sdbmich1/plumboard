@@ -79,10 +79,4 @@ describe "Pages" do
     it { should have_selector('h1',    text: 'Privacy') }
     it { should have_selector('title', text: full_title('Privacy')) }
   end
-
-  describe "Welcome page" do
-    before { visit welcome_path } 
-    it { should have_selector('h1',    text: 'Welcome') }
-    it { should have_selector('title', text: full_title('Welcome')) }
-  end
 end

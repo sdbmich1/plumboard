@@ -10,7 +10,7 @@
 	  <label class='control-label'>Date: <%= get_local_date(Time.now) %></label>
 	  <label class="sm-top control-label">Bill To:</label>
 	  <div class='width360'>
-	    <%= autocomplete_field_tag 'buyer_name', get_buyer, autocomplete_user_first_name_invoices_path,
+	    <%= autocomplete_field_tag 'buyer_name', @invoice.buyer_name, autocomplete_user_first_name_invoices_path,
 	        :update_elements => { :id => '#invoice_buyer_id' }, :placeholder => 'Buyer Name' %> 
           </div>
         </div>

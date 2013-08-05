@@ -5,7 +5,11 @@
         <span class="brand"><%= menu_name %></span>
         <div id="profile-menu">
 	  <nav>
-	    <%= link_to image_tag('home-4-xxl.png', class: 'home-img'), listings_path, class: 'home-link' %>
+	    <% if controller_name == 'listings' %>
+	      <%= link_to image_tag('home-4-xxl.png', class: 'home-img'), listings_path, remote: true, class: 'home-link' %>
+	    <% else %>
+	      <%= link_to image_tag('home-4-xxl.png', class: 'home-img'), listings_path, class: 'home-link' %>
+	    <% end %>
 	    <%= set_submenu menu_name %>
 	  </nav>
         </div>

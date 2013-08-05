@@ -44,7 +44,7 @@ feature "UserSignins" do
       end
 
       scenario 'signs-in from sign-in page' do
-        click_on "Sign in with Facebook"
+        click_on "fb-btn"
         page.should have_link('Sign out', href: destroy_user_session_path)
         page.should have_content "Pixis"
       end
@@ -89,6 +89,7 @@ feature "UserSignins" do
       it { should have_link('My Pixis', href: seller_listings_path) }
       it { should have_link('My Posts', href: posts_path) }
       it { should have_link('My Invoices', href: invoices_path) }
+      it { should have_link('My Accounts', href: new_bank_account_path) }
       it { should have_link('Settings', href: settings_path) }
       it { should_not have_link('Users', href: users_path) }
       it { should_not have_link('Sign in', href: new_user_session_path) }
@@ -116,6 +117,7 @@ feature "UserSignins" do
       it { should have_link('My Pixis', href: seller_listings_path) }
       it { should have_link('My Posts', href: posts_path) }
       it { should have_link('My Invoices', href: invoices_path) }
+      it { should have_link('My Accounts', href: new_bank_account_path) }
       it { should have_link('Settings', href: settings_path) }
       it { should have_link('Sign out', href: destroy_user_session_path) }
       it { should_not have_link('Sign in', href: new_user_session_path) }
@@ -139,10 +141,11 @@ feature "UserSignins" do
       it { should_not have_link('Categories', href: manage_categories_path) }
       it { should_not have_link('Transactions', href: transactions_path) }
       it { should_not have_link('Users', href: users_path) }
-      it { should have_content('Dashboard') }
+      it { should have_link('Dashboard', href: '#') }
       it { should have_link('My Pixis', href: seller_listings_path) }
       it { should have_link('My Posts', href: posts_path) }
       it { should have_link('My Invoices', href: invoices_path) }
+      it { should have_link('My Accounts', href: new_bank_account_path) }
       it { should have_link('Settings', href: settings_path) }
       it { should have_link('Sign out', href: destroy_user_session_path) }
       it { should_not have_link('Sign in', href: new_user_session_path) }
@@ -151,6 +154,20 @@ feature "UserSignins" do
         click_link "Sign out"
         page.should have_content 'How It Works'
       end
+    end
+
+    describe "displays my accounts link" do
+      let(:user) { FactoryGirl.create :subscriber, confirmed_at: Time.now }
+      before(:each) do
+        user_login
+        @user = user
+        FactoryGirl.create(:listing, seller_id: @user.id)
+	@account = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
+	visit listings_path
+      end
+
+      it { should have_content('My Accounts') }
+      it { should have_link('My Accounts', href: bank_account_path(@account)) }
     end
 
     describe 'registered subscriber users' do

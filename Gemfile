@@ -6,6 +6,12 @@ gem 'rake'
 # use devise for user authenication
 gem 'devise'
 
+# add delayed job
+gem 'delayed_job_active_record'
+
+# process devise mails in background
+gem 'devise-async'
+
 # use mysql as db
 gem "mysql2", "~> 0.3.12"
 
@@ -75,7 +81,7 @@ gem "aws-sdk", "~> 1.11.3"
 # add payment gateways
 gem 'activemerchant'
 gem 'stripe'
-gem 'balanced', "~> 0.7.1"
+gem 'balanced', "~> 0.7.2"
 
 # install oauth
 gem 'omniauth'
@@ -140,7 +146,7 @@ end
 # test gems
 group :test do
   gem 'factory_girl_rails'
-  gem 'capybara', '1.1.2'
+  gem 'capybara', '1.1.3'
   gem 'rb-fchange', '0.0.5'
   gem 'rb-notifu', '0.0.4'
   gem 'win32console', '~> 1.3.2', :platforms => [:mswin, :mingw], :require => false

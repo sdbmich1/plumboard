@@ -11,18 +11,9 @@ class BankAccountsController < ApplicationController
     @accounts = @user.bank_accounts
   end
 
-  def edit
-    @account = BankAccount.find params[:id]
-  end
-
-  def update
-    @account = BankAccount.find params[:id]
-    flash.now[:notice] = 'Successfully updated account.' if @account.update_attributes(params[:bank_account])
-  end
-
   def create
     @account = BankAccount.new params[:bank_account]
-    if @account.save 
+    if @account.save_account 
       flash.now[:notice] = 'Successfully created account.' 
       respond_to do |format|
         format.js { reload_data }
@@ -36,9 +27,12 @@ class BankAccountsController < ApplicationController
 
   def destroy
     @account = BankAccount.find params[:id]
-    if @account.destroy 
+    if @account.delete_account 
       flash.now[:notice] = 'Successfully removed account.' 
-      @accounts = User.find(@user).bank_accounts rescue nil
+      redirect_to listings_path
+    else
+      flash.now[:error] = @account.errors
+      render :nothing => true
     end
   end
 
@@ -63,7 +57,7 @@ class BankAccountsController < ApplicationController
     if !(@target =~ /invoice/i).nil?
       redirect_to new_invoice_path
     else
-      redirect_to settings_path
+      redirect_to listings_path
     end
   end
 end

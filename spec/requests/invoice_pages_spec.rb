@@ -86,6 +86,37 @@ feature "Invoices" do
     page.should have_content "Price must be greater than 0" 
   end
 
+  describe "Check menu invoice link" do
+    before do
+      visit listings_path 
+    end
+
+    describe 'user has no pixis' do
+      it { should_not have_link('Bill', href: new_invoice_path) }
+    end
+  end
+
+  describe 'user has pixis w/o bank acct' do
+    before do
+      FactoryGirl.create(:listing, seller_id: @user.id) 
+      visit listings_path 
+    end
+
+    it { should have_link('Bill', href: new_bank_account_path(target: 'shared/invoice_form')) }
+    it { should_not have_link('Bill', href: new_invoice_path) }
+  end
+
+  describe 'user has pixis w bank acct' do
+    before do
+      FactoryGirl.create(:listing, seller_id: @user.id) 
+      @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
+      visit listings_path 
+    end
+
+    it { should_not have_link('Bill', href: new_bank_account_path(target: 'shared/invoice_form')) }
+    it { should have_link('Bill', href: new_invoice_path) }
+  end
+
   describe "Visit Invoices" do
     before do
       visit listings_path 

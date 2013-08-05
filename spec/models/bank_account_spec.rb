@@ -10,6 +10,7 @@ describe BankAccount do
 
   it { should respond_to(:user_id) }
   it { should respond_to(:acct_name) }
+  it { should respond_to(:bank_name) }
   it { should respond_to(:acct_no) }
   it { should respond_to(:acct_number) }
   it { should respond_to(:acct_type) }
@@ -39,6 +40,17 @@ describe BankAccount do
   describe "when acct_name is entered" do
     before { @account.acct_name = "temp checking" }
     it { @account.acct_name.should == "temp checking" }
+  end
+
+  describe 'must_have_token' do
+    it 'has a token' do
+      @account.valid?.should be_true
+    end
+
+    it 'has no token' do
+      @account.token = nil
+      @account.valid?.should_not be_true
+    end
   end
   
   describe 'active' do
@@ -71,6 +83,26 @@ describe BankAccount do
     end
   end
 
+  describe 'save_account' do
+    before do
+      @bank_acct = mock('Balanced::BankAccount', uri: 'abcdef', account_number: 'xxx0001', bank_name: 'BofA')
+      @bank_acct.stub_chain(:new, :save).and_return(true)
+      @bank_acct.stub_chain(:uri, :account_number, :bank_name).and_return(@bank_acct)
+      Balanced::BankAccount.stub_chain(:new, :save).and_return(@bank_acct)
+      Balanced::BankAccount.stub_chain(:uri, :account_number, :bank_name).and_return(@bank_acct)
+    end
+
+    it 'should save account' do
+      @account.save_account
+      @account.errors.any?.should_not be_true
+    end
+
+    it 'should not save account' do
+      @account.token = nil
+      @account.save_account.should_not be_true
+    end
+  end
+
   describe 'credit_account' do
     before do
       @bank_acct = mock('Balanced::BankAccount', amount: '50000') 
@@ -92,9 +124,9 @@ describe BankAccount do
   describe 'delete_account' do
     before do
       @bank_acct = mock('Balanced::BankAccount')
-      @bank_acct.stub!(:destroy).and_return(true)
       Balanced::BankAccount.stub!(:find).with(@account.token).and_return(@bank_acct)
-      Balanced::BankAccount.stub!(:destroy).and_return(true)
+      Balanced::BankAccount.stub!(:unstore).and_return(true)
+      @bank_acct.stub!(:unstore).and_return(true)
     end
 
     it 'should delete account' do

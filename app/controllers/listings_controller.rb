@@ -58,4 +58,8 @@ class ListingsController < ApplicationController
   def load_comments
     @comments = @listing.comments.paginate(page: @page, per_page: params[:per_page] || 4)
   end
+
+  def get_location
+    @lat, @lng = request.location.latitude, request.location.longitude
+  end
 end

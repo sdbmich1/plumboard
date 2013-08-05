@@ -41,9 +41,9 @@ module ApplicationHelper
   def display_search
     case controller_name
       when 'listings'; render 'shared/search'
+      when 'posts'; render 'shared/search'
       when 'users'; render 'shared/search_users'
       when 'pending_listings'; render 'shared/search_pending'
-      else render 'shared/search'
     end
   end
 
@@ -95,6 +95,7 @@ module ApplicationHelper
       when 'Pixis'; render 'shared/navbar_pixis'
       when 'Pixi'; render 'shared/navbar_show_pixi'
       when 'My Pixis'; render 'shared/navbar_mypixis'
+      when 'My Accounts'; render 'shared/navbar_accounts'
       when 'Pending Orders'; render 'shared/navbar_pending'
       when 'Posts'; render 'shared/navbar_posts'
       else render 'shared/navbar_main'
@@ -109,5 +110,15 @@ module ApplicationHelper
   # set numeric display
   def num_display model, fld
     number_with_precision(model.send(fld), :precision=>2)
+  end
+
+  # set account path based on user has an account
+  def get_account_path
+    if @user.has_bank_account? 
+      @account ||= @user.bank_accounts.first
+      bank_account_path(@account)
+    else 
+      new_bank_account_path
+    end
   end
 end

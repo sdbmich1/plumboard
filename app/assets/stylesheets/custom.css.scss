@@ -519,11 +519,19 @@ a#add-pixi, a#add-inv {
   &:hover { background:$pixiOrange; text-decoration: none }
 }   
 
+a#bill-pixi {
+  @extend .menubar-item;
+  width: 50px;
+  background:$pixiBlue;
+  &:hover { background:$pixiBlue; text-decoration: none }
+}
+
 a#notice-btn {
   @extend .menubar-item;
   font-weight: bold;
   width: 30px;
-  margin-left: 40px;
+  position: fixed;
+  left: 55%;
   background:#990000;
   &:hover { background:#990000; text-decoration: none }
 }   
@@ -746,4 +754,17 @@ a.home-link {
   float: left;
   width: 200px!important;
   height: auto;
+  margin-left: -8px!important;
+}
+
+.div-gray-border {  
+  border: 1px solid #cccccc; padding: 10px; margin-bottom: 10px; 
+  background-color: #cccccc;
+}
+
+a.pixi-link {
+  &:hover {
+    background-color: transparent;
+    text-decoration: underline;
+  }
 }

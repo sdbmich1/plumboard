@@ -17,6 +17,11 @@ feature "BankAccounts" do
     select("checking", :from => "bank_account_acct_type")
   end
 
+  def change_data
+    fill_in 'acct_number', with: 9900000004
+    fill_in 'bank_account_acct_name', with: "Personal Business"
+  end
+
   def balanced
     @api_key = Balanced::ApiKey.new.save
     Balanced.configure @api_key.secret
@@ -44,6 +49,72 @@ feature "BankAccounts" do
   end
 
   describe "Create Bank Account" do 
+    before do
+      @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
+      visit listings_path
+      click_link 'My Accounts'
+      add_data
+    end
+
+    it { should have_selector('h2', text: 'Setup Your Payment Account') }
+    it { should have_content("Account #") }
+    it { should have_button("Save") }
+
+    it "creates an new account" do
+      expect {
+          click_on 'Save'; sleep 3;
+      }.to change(BankAccount, :count).by(1)
+
+      page.should have_content 'Pixis'
+      page.should_not have_content 'Account #'
+    end
+  end
+
+  describe "Delete Bank Account" do 
+    before do
+      @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
+      @account = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
+      visit listings_path
+      click_link 'My Accounts'
+    end
+
+    it { should have_selector('h2', text: 'Your Payment Account') }
+    it { should have_content("Account #") }
+    it { should have_link("Remove", href: bank_account_path(@account)) }
+
+    it "removes an account" do
+      expect {
+          click_on 'Remove'; sleep 3;
+      }.to change(BankAccount, :count).by(0)
+
+      # page.should have_content 'Pixis'
+      # page.should_not have_content 'Account #'
+    end
+  end
+
+  describe "Create Bank Account - Bill" do 
+    before do
+      @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
+      visit listings_path
+      click_link 'Bill'
+      add_data
+    end
+
+    it { should have_selector('h2', text: 'Setup Your Payment Account') }
+    it { should have_content("Account #") }
+    it { should have_button("Next") }
+
+    it "creates an new account" do
+      expect {
+          click_on 'Next'; sleep 3;
+      }.to change(BankAccount, :count).by(1)
+
+      page.should have_content 'My Invoices'
+      page.should_not have_content 'Account #'
+    end
+  end
+
+  describe "Create Invoice Bank Account" do 
     before do
       @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
       visit invoices_path 

@@ -1,2 +1,6 @@
 $("#pxboard").html("<%= escape_javascript( raw render(partial: 'shared/listing', collection: @listings) ) %>");
+
+// reload board
+clearScroll(this); 
+
 $("#spinner").hide(300); 

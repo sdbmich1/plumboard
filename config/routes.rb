@@ -43,12 +43,23 @@ Plumboard::Application.routes.draw do
     end
   end
 
-  resources :searches, only: [:index]
+  resources :searches, except: [:new, :edit, :update, :create, :destroy, :show] do
+    collection do
+      get :autocomplete_listing_title
+    end
+  end
+
+  resources :post_searches, except: [:new, :edit, :update, :create, :destroy, :show] do
+    collection do
+      get :autocomplete_post_content
+    end
+  end
+
   resources :comments, only: [:index, :new, :create]
 
   resources :temp_listings, except: [:index] do
     collection do
-      get 'unposted'
+      get :autocomplete_site_name, 'unposted'
     end
     member do
       put 'resubmit', 'submit'
@@ -97,5 +108,5 @@ Plumboard::Application.routes.draw do
   root to: 'pages#home'
 
   # exception handling
-  match '*path', :to => 'application#rescue_with_handler'
+  # match '/*path', :to => 'application#rescue_with_handler'
 end
