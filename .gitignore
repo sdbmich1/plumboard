@@ -20,7 +20,7 @@
 # Ignore all sphinx files
 /config/*.conf
 /db/sphinx
-*.pid
+/log/*.pid
 
 # Ignore all picture files
 /public/system/pictures
@@ -28,6 +28,4 @@
 # ignore yml files
 /config/*.yml
 
-
-.elasticbeanstalk
 .elasticbeanstalk/
