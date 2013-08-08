@@ -1,0 +1,32 @@
+<%= form_tag advanced_searches_path, :method => :get, :remote=>true, id: 'search_btn', class: 'navbar-search' do %> 	
+  <div class='span4 pad10'>
+    <h4>Advanced Search</h4>
+    <div class='mtop mleft'>
+      <div><%= autocomplete_field_tag 'search', nil, autocomplete_listing_title_advanced_searches_path, :id_element => '', :update_elements => {}, 
+          :placeholder => 'Search', class: 'width280 search-text', autofocus: true %></div>
+      <div class='mtop'>
+        <%= autocomplete_field_tag 'location', nil, autocomplete_site_name_advanced_searches_path, :id_element => '#site_id', 
+          :placeholder => 'Location', class: 'width280 search-text' %></div>
+	<%= hidden_field_tag 'site_id', nil, id: 'site_id' %>
+      <div class='mtop'>
+        <%= select_tag 'category', options_for_select(Category.active.map{ |u| [u.name_title, u.id] }), {prompt: 'Select Category', 
+	      class: 'width280 pixi-select'} %>
+      </div>
+      <div id='price-range' class='sm-top form-inline'>
+	<%= text_field_tag 'min_price', nil, {class: 'width120', placeholder: 'Min Price'} %>
+	<label class='width60 pad10'>to</label>
+	<%= text_field_tag 'max_price', nil, {class: 'width120', placeholder: 'Max Price'} %>
+      </div>
+      <div id='comp-range' class='sm-top form-inline' style='display:none'>
+	<%= text_field_tag 'min_salary', nil, {class: 'width120', placeholder: 'Min Salary'} %>
+	<label class='width60 pad10'>to</label>
+	<%= text_field_tag 'max_salary', nil, {class: 'width120', placeholder: 'Max Salary'} %>
+      </div>
+    </div>
+    <div class='mtop mleft'>
+      <button type='submit' class="btn btn-large btn-search round" type="button">
+        <i class="icon-search icon-white"></i>
+      </button>
+    </div>
+  </div>
+<% end %>

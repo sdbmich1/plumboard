@@ -5,7 +5,7 @@ describe Post do
     @user = FactoryGirl.create :pixi_user
     @recipient = FactoryGirl.create :pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tom.davis@pixitest.com'
     @buyer = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Smith', email: 'jack.smith99@pixitest.com'
-    @listing = FactoryGirl.create :listing, seller_id: @user.id
+    @listing = FactoryGirl.create :listing, seller_id: @user.id, title: 'Big Guitar'
     @post = @listing.posts.build user_id: @user.id, recipient_id: @recipient.id
   end
    
@@ -212,6 +212,15 @@ describe Post do
     it "does not return recipient name" do 
       @post.recipient_id = 100 
       @post.recipient_name.should be_nil 
+    end
+  end
+
+  describe "pixi title" do 
+    it { @post.pixi_title.should == "Big Guitar" } 
+
+    it "does not return pixi title" do 
+      @post.pixi_id = 100 
+      @post.pixi_title.should be_nil 
     end
   end
 

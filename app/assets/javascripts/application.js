@@ -496,4 +496,14 @@ $(document).on("change", "#site_id", function() {
   return false;
 });
 
+$(function() {
+  // Fix input element click problem
+  $('.dropdown input, .dropdown label, .dropdown-menu input, .dropdown-menu select').click(function(e) {
+    e.stopPropagation();
+  });
+});
 
+
+$(document).on(".dropdown-menu railsAutocomplete.select", "#location", function(event, data){
+  event.stopPropagation();
+});

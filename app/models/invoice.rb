@@ -1,4 +1,5 @@
 class Invoice < ActiveRecord::Base
+  include CalcTotal
   before_create :set_flds
 
   attr_accessor :buyer_name
@@ -24,6 +25,7 @@ class Invoice < ActiveRecord::Base
   # set flds
   def set_flds
     self.status = 'unpaid' if status.nil?
+    self.bank_account_id = seller.bank_accounts.first.id if seller.has_bank_account?
   end
 
   # get by status
@@ -71,7 +73,11 @@ class Invoice < ActiveRecord::Base
   # credit account
   def credit_account
     if amount
-      bank_account.credit_account amount
+      # calculate fee
+      txn_fee = CalcTotal::get_convenience_fee amount
+
+      # process payment
+      bank_account.credit_account (amount - txn_fee)
     else
       false
     end

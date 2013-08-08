@@ -127,7 +127,9 @@ footer {
 
 $grayMediumLight: #eaeaea;
 $pixiOrange: #F95700;
-$pixiBlue: #0C6FCB;
+//$pixiBlue: #0C6FCB;
+//$pixiOrange: #F15A25;
+$pixiBlue: #026FB7;
 
 @mixin box_sizing {
   -moz-box-sizing: border-box; 
@@ -192,7 +194,7 @@ input, select, .uneditable-input {
  }
 
 .notice, .alert, .error {
-   margin-top: 30px!important;
+   margin-top: 10px!important;
    padding: 5px 0 5px 0;
    margin: 7px;
    width: 95%;
@@ -356,6 +358,7 @@ h3 { padding: 10px }
 .ng-top { margin-top: -3px!important }  
 .mright { margin-right: 10px!important }
 .med-top {margin-top: 10px;}
+.no-mtop {margin-top: 0!important}
 
 .cb-label { display:inline; vertical-align:middle }
 .hdescr { font-size: 0.75em; color: #ccc; }
@@ -473,7 +476,7 @@ h3 { padding: 10px }
 
 .navbar-search {
   position: relative;
-  padding-left: 40px !important;
+  padding-left: 25px!important;
 }
 
 .search-text {
@@ -754,7 +757,7 @@ a.home-link {
   float: left;
   width: 200px!important;
   height: auto;
-  margin-left: -8px!important;
+  margin-left: -5px!important;
 }
 
 .div-gray-border {  
@@ -764,7 +767,19 @@ a.home-link {
 
 a.pixi-link {
   &:hover {
-    background-color: transparent;
+    background: none;
     text-decoration: underline;
   }
+}
+ 
+.pad10 {
+  padding: 10px!important;
+}
+
+.mleft10 {
+  margin-left: 10px!important;
+}
+
+.ui-autocomplete {
+  z-index: 9999 !important;
 }

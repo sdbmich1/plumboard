@@ -55,6 +55,12 @@ Plumboard::Application.routes.draw do
     end
   end
 
+  resources :advanced_searches, except: [:new, :edit, :update, :create, :destroy, :show] do
+    collection do
+      get :autocomplete_listing_title, :autocomplete_site_name
+    end
+  end
+
   resources :comments, only: [:index, :new, :create]
 
   resources :temp_listings, except: [:index] do

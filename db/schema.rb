@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130804190849) do
+ActiveRecord::Schema.define(:version => 20130807171101) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -184,6 +184,7 @@ ActiveRecord::Schema.define(:version => 20130804190849) do
     t.datetime "event_end_date"
     t.datetime "event_start_time"
     t.datetime "event_end_time"
+    t.integer  "year_built"
   end
 
   add_index "listings", ["end_date", "start_date"], :name => "index_listings_on_end_date_and_start_date"
@@ -361,6 +362,7 @@ ActiveRecord::Schema.define(:version => 20130804190849) do
     t.datetime "event_end_date"
     t.datetime "event_start_time"
     t.datetime "event_end_time"
+    t.integer  "year_built"
   end
 
   add_index "temp_listings", ["parent_pixi_id"], :name => "index_temp_listings_on_parent_pixi_id"

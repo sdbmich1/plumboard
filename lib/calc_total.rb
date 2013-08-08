@@ -88,8 +88,17 @@ module CalcTotal
     @pfee ||= (@amt + calc_discount) * (PIXI_PERCENT.to_f / 100)
   end
   
-  def self.get_convenience_fee
-    @amt + calc_discount > 0.0 ? PIXI_FEE.to_f : 0.0
+  # calculate pixi convenience fee based on amount and min transaction threshold
+  def self.get_convenience_fee *val
+    # set amount if empty
+    @amt ||= val[0] if val
+
+    # check if fee needs to be applied
+    if @amt + calc_discount > 0.0 
+      @amt > MIN_TXN_AMT ? (@amt * PIXI_TXN_PERCENT)/2 : PIXI_FEE.to_f 
+    else
+      0.0
+    end
   end
   
   # calculate txn total
