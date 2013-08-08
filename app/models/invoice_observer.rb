@@ -5,6 +5,8 @@ class InvoiceObserver < ActiveRecord::Observer
   # update points
   def after_create model
     PointManager::add_points model.seller, 'inv' if model.seller
+
+    # send post
     send_post model
   end
 

@@ -32,6 +32,7 @@ describe TempListing do
   it { should respond_to(:lat) }
   it { should respond_to(:event_start_time) }
   it { should respond_to(:event_end_time) }
+  it { should respond_to(:year_built) }
 
   it { should respond_to(:user) }
   it { should respond_to(:site) }

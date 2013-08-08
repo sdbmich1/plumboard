@@ -17,8 +17,8 @@ describe TransactionObserver do
 
     it 'should deliver the receipt' do
       @user_mailer = mock(UserMailer)
-      @user_mailer.should_receive(:deliver)
-      UserMailer.stub(:send_transaction_receipt).with(transaction).and_return(@user_mailer)
+      UserMailer.stub(:delay).and_return(UserMailer)
+      UserMailer.should_receive(:send_transaction_receipt).with(transaction)
       transaction.save!
     end
   end

@@ -54,6 +54,11 @@ class Post < ActiveRecord::Base
     recipient.name if recipient
   end
 
+  # get pixi title
+  def pixi_title
+    listing.title if listing
+  end
+
   # get posts for recipient
   def self.get_posts usr
     where(:recipient_id=>usr)

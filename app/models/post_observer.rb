@@ -2,8 +2,11 @@ class PostObserver < ActiveRecord::Observer
   observe Post
   include PointManager
 
-  # update points
   def after_create model
+    # send notice to recipient
+    UserMailer.delay.send_notice(model)
+
+    # update points
     PointManager::add_points model.user, 'cs' if model.user
   end
 end

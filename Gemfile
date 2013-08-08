@@ -8,6 +8,7 @@ gem 'devise'
 
 # add delayed job
 gem 'delayed_job_active_record'
+gem "daemons"
 
 # process devise mails in background
 gem 'devise-async'

@@ -12,7 +12,6 @@
       <div class='span4'>
         Posted By: <%= listing.seller_name %> 
         <% unless !listing.active? || listing.seller?(@user) %>
-	  <%= link_to 'Follow', '#' %>
           <div id='post_form'><%= render partial: 'shared/contact', locals: { listing: listing } %></div>
 	<% end %>  
       </div>

@@ -15,6 +15,7 @@ feature "Transactions" do
   def add_invoice
     @buyer = FactoryGirl.create(:pixi_user, first_name: 'Kim', last_name: 'Harris', email: 'kharris@pixitest.com')
     @listing2 = FactoryGirl.create(:listing, seller_id: @user.id)
+    @account = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
     @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing2.pixi_id, buyer_id: @buyer.id)
   end
 
@@ -57,11 +58,11 @@ feature "Transactions" do
 
   def valid_card_dates
     select "January", from: "card_month"
-    select (Date.today.year+1).to_s, from: "card_year"
+    select (Date.today.year+2).to_s, from: "card_year"
   end
 
-  def visa_card
-    fill_in "card_number", with: "4242424242424242"
+  def visa_card val="4242424242424242"
+    fill_in "card_number", with: val
   end
 
   def no_card_data
@@ -70,8 +71,8 @@ feature "Transactions" do
     valid_card_dates
   end
 
-  def visa_card_data
-    visa_card
+  def visa_card_data val="4242424242424242"
+    visa_card val
     fill_in "card_code",  with: "123"
     valid_card_dates
     click_valid_ok
@@ -326,9 +327,18 @@ feature "Transactions" do
       page.should have_content "INVOICE" 
     end
 
-    it "should create a transaction with valid visa card", :js=>true do
+    it "creates a stripe transaction with valid visa card", :js=>true do
+      CREDIT_CARD_API = 'stripe'
       expect { 
         visa_card_data
+	}.to change(Transaction, :count).by(1)
+
+      page.should have_content("Purchase Complete")
+    end
+
+    it "creates a balanced transaction with valid visa card", :js=>true do
+      expect { 
+        visa_card_data '4111111111111111'
 	}.to change(Transaction, :count).by(1)
 
       page.should have_content("Purchase Complete")

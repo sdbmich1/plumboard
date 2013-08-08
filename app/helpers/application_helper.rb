@@ -40,8 +40,8 @@ module ApplicationHelper
   # used do determine if search form is displayed
   def display_search
     case controller_name
-      when 'listings'; render 'shared/search'
-      when 'posts'; render 'shared/search'
+      when 'listings'; render 'shared/search' if action_name != 'show'
+      when 'posts'; render 'shared/search_posts'
       when 'users'; render 'shared/search_users'
       when 'pending_listings'; render 'shared/search_pending'
     end

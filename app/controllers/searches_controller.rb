@@ -28,7 +28,8 @@ class SearchesController < ApplicationController
     items = super(parameters)
     items = items.active
   end
-
+ 
+  # specify default search location based on user location
   def get_location
     @lat, @lng = request.location.latitude, request.location.longitude
   end

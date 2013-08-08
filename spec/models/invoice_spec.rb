@@ -5,6 +5,7 @@ describe Invoice do
     @user = FactoryGirl.create(:pixi_user, email: "jblow123@pixitest.com") 
     @buyer = FactoryGirl.create(:pixi_user, first_name: 'Jaine', last_name: 'Smith', email: 'jaine.smith@pixitest.com') 
     @listing = FactoryGirl.create(:listing, seller_id: @user.id)
+    @account = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account
     @invoice = @user.invoices.build FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id)
   end
 
@@ -187,11 +188,11 @@ describe Invoice do
     end
 
     it "should credit account" do 
-      @invoice.credit_account.should be_nil
+      @invoice.credit_account.should be_true
     end
 
     it "should not credit account" do 
-      @invoice.amount = 0.00
+      @invoice.amount = nil
       @invoice.credit_account.should_not be_true 
     end
   end

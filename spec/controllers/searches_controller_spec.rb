@@ -4,7 +4,7 @@ describe SearchesController do
   include LoginTestUser
 
   def mock_listing(stubs={})
-    (@mock_listing ||= mock_model(TempListing, stubs).as_null_object).tap do |listing|
+    (@mock_listing ||= mock_model(Listing, stubs).as_null_object).tap do |listing|
        listing.stub(stubs) unless stubs.empty?
     end
   end
@@ -20,9 +20,6 @@ describe SearchesController do
       @listings = mock("listings")
       Listing.stub!(:search).and_return( @listings )
       controller.stub_chain(:query, :page, :add_points, :get_location).and_return(:success)
-
-      ThinkingSphinx::Test.index 
-      sleep 0.5
     end
 
     def do_get
@@ -37,13 +34,6 @@ describe SearchesController do
     it "should assign @listings" do
       do_get
       assigns(:listings).should == @listings
-    end
-    
-    it "searching for listings" do
-      ThinkingSphinx::Test.run do
-        do_get
-	assigns(:listings).should_not be_nil
-      end
     end
 
     it "index action should render nothing" do
