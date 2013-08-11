@@ -494,6 +494,21 @@ describe TempListing do
     end
   end
 
+  describe '.has_year?' do
+    before do
+      @cat = FactoryGirl.create(:category, name: 'Automotive', pixi_type: 'premium') 
+    end
+
+    it "does not have a year" do
+      @temp_listing.has_year?.should be_false 
+    end
+
+    it "has a year" do
+      @temp_listing.category_id = @cat.id
+      @temp_listing.has_year?.should be_true 
+    end
+  end
+
   describe '.job?' do
     before do
       @cat = FactoryGirl.create(:category, name: 'Jobs', pixi_type: 'premium') 

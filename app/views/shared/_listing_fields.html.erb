@@ -6,16 +6,17 @@
     <%= render partial: 'shared/photo', locals: { f: f } %>
   </div>
 </div>
-<div class='row'>
+<div class='row' id='input-form'>
   <div class='span7'>
     <%= f.label :title %><%= f.text_field :title, :autofocus => true, :placeholder => 'Pixi Title' %>
   </div>
-  <div class='span4'>
-    <div id='price-fld' style="<%= @listing.job? ? 'display:none' : '' %>"><%= f.label :price %>
-        <%= f.text_field :price, :size => 10, value: num_display(f.object, "price"), class: 'width120' %></div>
-    <div id='comp-fld' style="<%= !@listing.job? ? 'display:none' : '' %>"><%= f.label :compensation %>
-	<%= f.text_field :compensation, id: 'salary' %></div>
+  <div class='span2' id='price-fld' style="<%= @listing.job? ? 'display:none' : '' %>"><%= f.label :price %>
+    <%= f.text_field :price, :size => 10, value: num_display(f.object, "price"), class: 'width120' %>
   </div>
+  <div class='span2' id='yr-fld' style="<%= !@listing.has_year? ? 'display:none' : '' %>"><%= f.label 'Year' %>
+    <%= f.select 'year_built', options_for_select(get_year_ary, :selected => @listing.year_built), {:prompt => 'Select'}, {id: 'yr_built', class: 'pixi-select'} %></div>
+  <div class='span4' id='comp-fld' style="<%= !@listing.job? ? 'display:none' : '' %>"><%= f.label :compensation %>
+    <%= f.text_field :compensation, id: 'salary' %></div>
 </div>
 <div class='row'>
   <div class='span7'>

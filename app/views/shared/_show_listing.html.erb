@@ -45,6 +45,9 @@
         <% if listing.job? %>
           Compensation: <%= listing.compensation %>
         <% end %>
+        <% if listing.has_year? %>
+          Year: <%= listing.year_built %>
+        <% end %>
       </div>
     </div>
   </div>
