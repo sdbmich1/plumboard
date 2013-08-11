@@ -10,17 +10,22 @@
 	<%= hidden_field_tag 'site_id', nil, id: 'site_id' %>
       <div class='mtop'>
         <%= select_tag 'category', options_for_select(Category.active.map{ |u| [u.name_title, u.id] }), {prompt: 'Select Category', 
-	      class: 'width280 pixi-select'} %>
+	      class: 'width280 pixi-select', id: 'category_id'} %>
       </div>
-      <div id='price-range' class='sm-top form-inline'>
+      <div id='price-fld' class='sm-top form-inline'>
 	<%= text_field_tag 'min_price', nil, {class: 'width120', placeholder: 'Min Price'} %>
 	<label class='width60 pad10'>to</label>
 	<%= text_field_tag 'max_price', nil, {class: 'width120', placeholder: 'Max Price'} %>
       </div>
-      <div id='comp-range' class='sm-top form-inline' style='display:none'>
+      <div id='comp-fld' class='sm-top form-inline' style='display:none'>
 	<%= text_field_tag 'min_salary', nil, {class: 'width120', placeholder: 'Min Salary'} %>
 	<label class='width60 pad10'>to</label>
 	<%= text_field_tag 'max_salary', nil, {class: 'width120', placeholder: 'Max Salary'} %>
+      </div>
+      <div id='yr-fld' class='sm-top form-inline' style='display:none'>
+        <%= select_tag 'min_year', options_for_select(get_year_ary), {:prompt => 'Min Year', id: 'min_yr', class: 'pixi-select width120'} %>
+	<label class='width60 pad10'>to</label>
+        <%= select_tag 'max_year', options_for_select(get_year_ary), {:prompt => 'Min Year', id: 'max_yr', class: 'pixi-select width120'} %>
       </div>
     </div>
     <div class='mtop mleft'>

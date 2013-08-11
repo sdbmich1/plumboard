@@ -534,7 +534,8 @@ a#notice-btn {
   font-weight: bold;
   width: 30px;
   position: fixed;
-  left: 55%;
+  top: 0.05em;
+  right: 42%;
   background:#990000;
   &:hover { background:#990000; text-decoration: none }
 }   

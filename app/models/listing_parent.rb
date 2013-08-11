@@ -42,7 +42,12 @@ class ListingParent < ActiveRecord::Base
 
   # check if pixi is an event
   def event?
-    %w(Event Events Happenings).detect { |cat| cat == category_name}
+    %w(Event Events Happenings).detect { |cat| cat == category_name }
+  end
+
+  # check if pixi can have a year
+  def has_year?
+    %w(Automotive Antiques Motorcycle Boats).detect { |cat| cat == category_name }
   end
 
   # check if event start date exists

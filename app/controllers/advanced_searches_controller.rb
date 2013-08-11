@@ -7,7 +7,7 @@ class AdvancedSearchesController < ApplicationController
   include PointManager
 
   def index
-    @listings = Listing.search query, star: true, with: { category_id: params[:category] }, geo: [@lat, @lng], 
+    @listings = Listing.search query, star: true, with: { category_id: params[:category_id] }, geo: [@lat, @lng], 
       order: "geodist ASC, @weight DESC", page: page unless query.blank?
   end
 

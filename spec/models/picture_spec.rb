@@ -77,4 +77,7 @@ describe Picture do
     end
   end
 
+  describe "regenerate_styles" do
+    it { @picture.should respond_to :regenerate_styles }
+  end
 end

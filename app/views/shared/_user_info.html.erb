@@ -4,6 +4,6 @@
 <div><%= f.select :gender, options_for_select( ['Male', 'Female'], :selected=>@user.gender ), :prompt => 'Gender' %></div>
 <div><%= f.label :birth_date %>
 	<%= f.date_select :birth_date, {:as => :date, :start_year => Date.today.year - 13,
-	                  :end_year => Date.today.year - 90, :use_month_numbers => true,
+	                  :end_year => Date.today.year - 90, :use_short_month => true,
 			  :order => [:month, :day, :year], :prompt => true}, {:class=>'width120'} %></div>
 

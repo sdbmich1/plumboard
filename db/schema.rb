@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130807171101) do
+ActiveRecord::Schema.define(:version => 20130811051129) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -205,7 +205,24 @@ ActiveRecord::Schema.define(:version => 20130807171101) do
     t.string   "photo_content_type"
     t.integer  "photo_file_size"
     t.datetime "photo_updated_at"
+    t.boolean  "processing"
   end
+
+  create_table "pixi_payments", :force => true do |t|
+    t.string   "pixi_id"
+    t.integer  "transaction_id"
+    t.integer  "invoice_id"
+    t.string   "token"
+    t.integer  "seller_id"
+    t.integer  "buyer_id"
+    t.float    "amount"
+    t.float    "pixi_fee"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+  end
+
+  add_index "pixi_payments", ["pixi_id", "seller_id", "buyer_id"], :name => "index_pixi_payments_on_pixi_id_and_seller_id_and_buyer_id"
+  add_index "pixi_payments", ["pixi_id", "transaction_id", "invoice_id"], :name => "index_pixi_payments_on_pixi_id_and_transaction_id_and_invoice_id"
 
   create_table "pixi_points", :force => true do |t|
     t.integer  "value"

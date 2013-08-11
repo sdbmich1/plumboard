@@ -442,6 +442,21 @@ describe Listing do
     end
   end
 
+  describe '.has_year?' do
+    before do
+      @cat = FactoryGirl.create(:category, name: 'Automotive', pixi_type: 'premium') 
+    end
+
+    it "does not have a year" do
+      @listing.has_year?.should be_false 
+    end
+
+    it "has a year" do
+      @listing.category_id = @cat.id
+      @listing.has_year?.should be_true 
+    end
+  end
+
   describe '.job?' do
     before do
       @cat = FactoryGirl.create(:category, name: 'Jobs', pixi_type: 'premium') 

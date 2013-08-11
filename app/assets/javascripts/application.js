@@ -16,10 +16,17 @@
 //= require bootstrap
 //= require jquery.remotipart
 //= require jquery.bxslider.min.js
+//= require jquery.masonry.min.js
+//= require jquery.infinitescroll.js
 //= require jquery.placeholder.min.js
 //= require bootstrap-datepicker.js
 //= require datepicker.js
-//= require_tree .
+//= require map.js
+//= require transaction.js
+//= require payment.js
+//= require si.files.js
+//= require autocomplete-rails.js
+//= require jquery.ui.autocomplete.html.js
 
 $.ajaxSetup({  
   'beforeSend': function (xhr) {
@@ -46,8 +53,12 @@ $(document).on("change", "input[type=file]", function(evt){
 
 // hide & reset comp field
 function hideComp(){
-  $('#comp-fld').hide('fast').val('');
+  $('#comp-fld').hide('fast');
   $('#price-fld').show('fast');
+
+  if($('#input-form').length > 0) {
+    $('#salary').val('');
+  }  
 }
 
 $(function (){
@@ -60,23 +71,37 @@ $(function (){
     // toggle field display based on category value
     if(cat == 'Event') {
       $('#event-fields').show('fast');
+
+      // hide fields
       hideComp();
+      $('#yr-fld').hide('fast');
     }
     else {
       $('#event-fields').hide('fast');
 
-      // clear flds
-      $('#start-date').val('');
-      $('#end-date').val('');
-      $('#start-time').val('');
-      $('#end-time').val('');
+      // clear event flds
+      $('#start-date, #end-date, #start-time, #end-time').val('');
       
+      // check for jobs
       if(cat == 'Jobs' || cat == 'Gigs') {
-        $('#price-fld').hide('fast').val('');
+        $('#price-fld, #yr-fld').hide('fast');
         $('#comp-fld').show('fast');
+
+	// reset fields
+	if($('#input-form').length > 0) {
+	  $('#temp_listing_price, #yr_built').val('');
+	}
       }
       else {
         hideComp();
+
+        // check for year categories
+        if(cat == 'Automotive' || cat == 'Motorcycle' || cat == 'Boats') {
+          $('#yr-fld').show('fast');
+        }
+        else {
+          $('#yr-fld').hide('fast');
+        }
       }
     }
 
@@ -503,7 +528,7 @@ $(function() {
   });
 });
 
-
-$(document).on(".dropdown-menu railsAutocomplete.select", "#location", function(event, data){
+$(document).on(".dropdown-menu railsAutocomplete.select", "#location, #", function(event, data){
   event.stopPropagation();
+  alert('got here');
 });

@@ -24,4 +24,9 @@ module TempListingsHelper
   def step_count
     @listing.free? ? 2 : !@listing.new_status? ? 2 : 3
   end
+  
+  # build array for year selection dropdown
+  def get_year_ary
+    (Date.today.year-99..Date.today.year).inject([]){|x,y| x << y}.reverse
+  end
 end

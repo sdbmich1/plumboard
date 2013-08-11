@@ -13,8 +13,8 @@ feature "TempListings" do
   end
 
   def create_sites
-    FactoryGirl.create :site
     @site = FactoryGirl.create :site, name: 'Santa Clara University'
+    FactoryGirl.create :site
     FactoryGirl.create :site, name: 'Stanford University'
     FactoryGirl.create :site, name: 'San Francisco - Nob Hill'
   end
@@ -39,9 +39,8 @@ feature "TempListings" do
     page.driver.browser.switch_to.alert.dismiss
   end
 
-  def set_site_id val
-    val ||= 1
-    page.execute_script('$("#site_id").val("#{val}")')
+  def set_site_id 
+    page.execute_script %Q{ $('#site_id').val("#{@site.id}") }
   end
 
   def select_site val='SF', result='SFSU'
@@ -65,6 +64,7 @@ feature "TempListings" do
 
     before(:each) do
       FactoryGirl.create :category 
+      FactoryGirl.create :category, name: 'Automotive'
       FactoryGirl.create :category, name: 'Event'
       FactoryGirl.create :category, name: 'Jobs'
       visit new_temp_listing_path
@@ -78,20 +78,22 @@ feature "TempListings" do
 
     def add_data
       fill_in 'Title', with: "Guitar for Sale"
-      select_site
+      select_site 'SF', 'SFSU'
       select_category 'Foo Bar'
+      set_site_id
       fill_in 'Description', with: "Guitar for Sale"
     end
 
     def add_data_w_photo
-      attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
+      attach_file('photo', "#{Rails.root}/spec/fixtures/photo.jpg")
       add_data
     end
 
     def event_data sdt, edt
       attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
       fill_in 'Title', with: "Guitar for Sale"
-      select_site
+      select_site 'SF', 'SFSU'; sleep 0.5
+      set_site_id
       select_category 'Event'
       fill_in 'Description', with: "Guitar for Sale"
       fill_in 'start-date', with: sdt
@@ -120,7 +122,8 @@ feature "TempListings" do
         expect { 
           fill_in 'Title', with: "Guitar for Sale"
           fill_in 'Price', with: "150.00"
-	  select_site
+          select_site 'SF', 'SFSU'; sleep 0.5
+          set_site_id
           fill_in 'Description', with: "Guitar for Sale"
           attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
 	  click_button submit }.not_to change(TempListing, :count)
@@ -132,7 +135,8 @@ feature "TempListings" do
         expect { 
           fill_in 'Title', with: "Guitar for Sale"
           fill_in 'Price', with: "150.00"
-	  select_site
+          select_site 'SF', 'SFSU'; sleep 0.5
+          set_site_id
           select_category 'Foo Bar'
           attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
 	  click_button submit }.not_to change(TempListing, :count)
@@ -231,6 +235,21 @@ feature "TempListings" do
         page.should have_content 'Review Your Pixi'
         page.should have_content "Compensation: Competitive" 
         page.should_not have_content "Price:" 
+      end	      
+
+      it "Adds a new listing w year" do
+        expect{
+		add_data_w_photo
+                fill_in 'Title', with: "Buick Regal for sale"
+                select('Automotive', :from => 'temp_listing_category_id')
+                select('2001', :from => 'yr_built')
+	        click_button submit
+	      }.to change(TempListing,:count).by(1)
+      
+        page.should have_content "Buick Regal for sale" 
+        page.should have_content 'Review Your Pixi'
+        page.should have_content "Price:" 
+        page.should have_content "Year: 2001" 
       end	      
 
       it "Adds a new listing w event" do

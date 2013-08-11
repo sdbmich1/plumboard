@@ -22,3 +22,7 @@
   def short_time tm
     tm.utc.getlocal.strftime('%I:%M%p') rescue nil
   end
+
+  def (ActionDispatch::Integration::Session).fixture_path
+    RSpec.configuration.fixture_path
+  end
