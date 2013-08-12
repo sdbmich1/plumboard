@@ -527,8 +527,3 @@ $(function() {
     e.stopPropagation();
   });
 });
-
-$(document).on(".dropdown-menu railsAutocomplete.select", "#location, #", function(event, data){
-  event.stopPropagation();
-  alert('got here');
-});
