@@ -4,10 +4,10 @@ class Transaction < ActiveRecord::Base
   attr_accessor :cvv
   attr_accessible :address, :address2, :amt, :city, :code, :country, :credit_card_no, :description, :email, :first_name, 
   	:home_phone, :last_name, :payment_type, :promo_code, :state, :work_phone, :zip, :user_id, :confirmation_no, :token, :status,
-	:convenience_fee, :processing_fee, :transaction_type
+	:convenience_fee, :processing_fee, :transaction_type, :debit_token
 
   belongs_to :user
-  has_many :listings
+  has_many :listings, through: :invoices
   has_many :temp_listings
   has_many :transaction_details
   has_many :invoices
@@ -107,9 +107,12 @@ class Transaction < ActiveRecord::Base
 
         # process credit card
         if process_transaction
-          listing.get_invoice(order["invoice_id"]).submit_payment(self.id) # mark invoice as paid
+	  inv = listing.get_invoice(order["invoice_id"])
+
+	  # submit payment
+	  inv.submit_payment(self.id) if inv
 	else
-	  return false
+	  false
 	end
       end
     else
@@ -124,7 +127,12 @@ class Transaction < ActiveRecord::Base
 
   # get invoice pixi
   def get_invoice_listing
-    invoices[0].listing rescue nil
+    listings.first rescue nil
+  end
+
+  # get primary invoice
+  def get_invoice
+    invoices.first rescue nil
   end
   
   # process transaction
@@ -141,12 +149,16 @@ class Transaction < ActiveRecord::Base
         self.confirmation_no = result.id 
 
         if CREDIT_CARD_API == 'balanced'
-	  self.payment_type, self.credit_card_no = result.card[:card_type], result.card[:last_four]
+	  self.payment_type, self.credit_card_no, self.debit_token = result.source.card_type, result.source.last_four, result.uri
 	else
 	  self.payment_type, self.credit_card_no = result.card[:type], result.card[:last4]
 	end
       else
-        self.confirmation_no = Time.now.to_i.to_s   
+        if amt > 0.0
+	  return false
+	else
+          self.confirmation_no = Time.now.to_i.to_s   
+	end
       end  
 
       # set status

@@ -77,10 +77,15 @@ class BankAccount < ActiveRecord::Base
 
   # issue account credit
   def credit_account amt
-    Payment::credit_account token, amt, self
+    result = Payment::credit_account token, amt, self
 
     # check for errors
-    self.errors.any? ? false : true 
+    if result 
+      self.errors.any? ? false : result 
+    else
+      errors.add :base, "Error: There was a problem with your Balanced account."
+      false
+    end
   end
 
   # delete account

@@ -4,7 +4,7 @@
 <% else %>
   $("#notice").html("<%= escape_javascript(flash[:notice])%>");
   $("#notice").show(300);
-  $("#post-frm").html("<%= escape_javascript( raw render(:partial => "shared/posts", collection: @posts, locals: { sentFlg: false }) ) %>");
+  $("#post-frm").html("<%= escape_javascript( raw render(partial: "shared/posts", locals: { sentFlg: false }) ) %>");
 <% end %>
 $("#spinner").hide('fast'); 
 

@@ -1,11 +1,3 @@
-<% unless @posts.blank? %>
-  <ol class="posts">
-    <%= render partial: 'shared/post', collection: @posts, locals: { sentFlg: sentFlg } %>
-  </ol>
-<% else %>
-  <div class='center-wrapper'>No posts found.</div>
-<% end %>
-
-<div class="nav pull-right">
-  <%= will_paginate @posts, page_links: false if @posts.respond_to?(:total_pages) %>
+<div id='post-item'>
+  <%= render partial: 'shared/post_list', locals: { sentFlg: sentFlg } %>
 </div> 

@@ -38,6 +38,9 @@ feature "Posts" do
       click_on 'notice-btn'
     end
 
+    it { should have_link('Sent', href: sent_posts_path) }
+    it { should have_link('Received', href: posts_path) }
+    it { should_not have_link('Mark All Read', href: mark_posts_path) }
     it { should have_content 'No posts found.' }
     it { should_not have_button('Pay') }
     it { should_not have_button('Reply') }
@@ -54,19 +57,41 @@ feature "Posts" do
     it { should have_content @post.user.name }
     it { should have_link('Sent', href: sent_posts_path) }
     it { should have_link('Received', href: posts_path) }
+    it { should have_link('Mark All Read', href: mark_posts_path) }
     it { should_not have_button('Pay') }
 
-    it "should reply to a post", js: true do
+    it "replies to a post", js: true do
       send_reply
     end
      
-    it "should not reply to a post", js: true do
+    it "does not reply to a post", js: true do
       expect{
 	  fill_in 'reply_content', with: nil
           click_reply
       }.not_to change(Post,:count).by(1)
 
       page.should have_content "Content can't be blank"
+    end
+
+    it "marks all posts read", js: true do
+      click_on 'Mark All Read'
+      page.should have_css('li.active a') 
+    end
+     
+    describe 'pay invoice' do
+      before :each do
+        add_post
+        add_invoice
+	visit posts_path
+      end
+
+      it { should have_button('Pay') }
+
+      it "opens pay invoice page" do
+        click_on 'Pay'
+        page.should have_selector('title', text: 'Pay Invoice')
+        page.should have_content 'Total Due'
+      end
     end
   end
      
@@ -79,6 +104,7 @@ feature "Posts" do
       click_on 'Received'
     end
     
+    it { should have_link('Mark All Read', href: mark_posts_path) }
     it { should have_content @post.user.name }
     it { should have_content @post.listing.title }
     it { should have_content @post.content }
@@ -105,24 +131,30 @@ feature "Posts" do
     end
   end
      
-  describe 'sent posts w/o posts', js: true do
+  describe 'sent posts w/o posts' do
     before :each do 
       visit posts_path 
-      click_on 'Sent'
     end
 
-    it { should have_content 'No posts found' }
+    it 'shows no sent posts', js: true do
+      click_on 'Sent'
+      page.should_not have_link('Mark All Read', href: mark_posts_path) 
+      page.should have_content 'No posts found' 
+    end
   end
      
-  describe 'sent posts', js: true do
+  describe 'sent posts' do
     before :each do 
       @reply_post = FactoryGirl.create :post, user: @user, recipient: @sender, listing: @listing, pixi_id: @listing.pixi_id
       visit posts_path 
-      click_on 'Sent'
     end
 
-    it { should have_content @reply_post.recipient.name }
-    it { should have_content @reply_post.listing.title }
-    it { should have_content @reply_post.content }
+    it 'shows sent posts', js: true do
+      click_on 'Sent'
+      page.should_not have_link('Mark All Read', href: mark_posts_path) 
+      page.should have_content @reply_post.recipient.name 
+      page.should have_content @reply_post.listing.title 
+      page.should have_content @reply_post.content 
+    end
   end
 end

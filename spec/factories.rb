@@ -177,7 +177,7 @@ FactoryGirl.define do
     inv_date		Time.now
     subtotal		370.00
     amount		400.52
-    status	'unpaid'
+    status		'unpaid'
   end
 
   factory :site_listing do
@@ -206,6 +206,10 @@ FactoryGirl.define do
     before(:create) do |txn|
       txn.create_user FactoryGirl.attributes_for(:pixi_user)
     end
+  end
+
+  factory :balanced_transaction, :class => "Transaction", :parent => :transaction do
+    token		"/v1/marketplaces/TEST-MP2Q4OaIanQuIDJIixHGmhQA/cards/CC6HczhlX2JS7HBZQUXNaEK4"
   end
 
   factory :transaction_detail do
@@ -243,6 +247,12 @@ FactoryGirl.define do
   factory :comment do
     content 		"I love this"
     listing
+  end
+
+  factory :pixi_payment do
+    pixi_fee		0.99
+    token		"/v1/marketplaces/TEST-MP2ORkhLY8htilmM6AlLwBDp/cards/CC3lncKU8HDchttA692Vyyw8"
+    invoice
   end
 end
 		 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130811051129) do
+ActiveRecord::Schema.define(:version => 20130816154617) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -217,10 +217,12 @@ ActiveRecord::Schema.define(:version => 20130811051129) do
     t.integer  "buyer_id"
     t.float    "amount"
     t.float    "pixi_fee"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+    t.string   "confirmation_no"
   end
 
+  add_index "pixi_payments", ["confirmation_no"], :name => "index_pixi_payments_on_confirmation_no"
   add_index "pixi_payments", ["pixi_id", "seller_id", "buyer_id"], :name => "index_pixi_payments_on_pixi_id_and_seller_id_and_buyer_id"
   add_index "pixi_payments", ["pixi_id", "transaction_id", "invoice_id"], :name => "index_pixi_payments_on_pixi_id_and_transaction_id_and_invoice_id"
 
@@ -237,7 +239,6 @@ ActiveRecord::Schema.define(:version => 20130811051129) do
 
   create_table "posts", :force => true do |t|
     t.integer  "user_id"
-    t.integer  "listing_id"
     t.text     "content"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
@@ -424,6 +425,7 @@ ActiveRecord::Schema.define(:version => 20130811051129) do
     t.float    "convenience_fee"
     t.float    "processing_fee"
     t.string   "transaction_type"
+    t.string   "debit_token"
   end
 
   add_index "transactions", ["code"], :name => "index_transactions_on_code"

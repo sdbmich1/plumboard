@@ -12,14 +12,24 @@ class InvoiceObserver < ActiveRecord::Observer
 
   def after_update model
     # send post
-    send_post(model) if model.status == 'unpaid'
+    send_post(model) if model.unpaid?
 
     # toggle status
-    if model.status == 'paid'
+    if model.paid?
       mark_pixi(model) 
 
       # credit seller account
-      model.credit_account
+      if model.amount > 0
+
+        # get txn amount & fee
+        fee = model.transaction.convenience_fee
+
+        # process payment
+        result = model.bank_account.credit_account(model.amount - fee)
+
+        # record payment
+	PixiPayment.add_transaction model, fee, result.uri, result.id if result
+      end
     end
   end
 

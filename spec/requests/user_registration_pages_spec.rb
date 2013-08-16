@@ -12,7 +12,7 @@ feature "UserRegistrations" do
     end
 
     def user_birth_date
-	select('1', :from => "user_birth_date_2i")
+	select('Jan', :from => "user_birth_date_2i")
 	select('10', :from => 'user_birth_date_3i')
 	select('1983', :from => 'user_birth_date_1i')
     end

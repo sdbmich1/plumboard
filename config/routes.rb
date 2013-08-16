@@ -28,7 +28,7 @@ Plumboard::Application.routes.draw do
 
   resources :posts, except: [:new, :edit, :update] do
     collection do
-      get 'unread', 'sent'
+      get 'unread', 'sent', 'mark'
       post 'reply'
     end
   end

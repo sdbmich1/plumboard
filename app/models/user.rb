@@ -89,6 +89,11 @@ class User < ActiveRecord::Base
     [first_name, last_name].join " "
   end
 
+  # abbreviated name
+  def abbr_name
+    [first_name, last_name[0]].join " "
+  end
+
   # return all pixis for user
   def pixis
     self.listings.active

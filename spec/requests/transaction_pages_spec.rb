@@ -13,14 +13,15 @@ feature "Transactions" do
   end
 
   def add_invoice
-    @buyer = FactoryGirl.create(:pixi_user, first_name: 'Kim', last_name: 'Harris', email: 'kharris@pixitest.com')
-    @listing2 = FactoryGirl.create(:listing, seller_id: @user.id)
-    @account = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
-    @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing2.pixi_id, buyer_id: @buyer.id)
+    @seller = FactoryGirl.create(:pixi_user, first_name: 'Kim', last_name: 'Harris', email: 'kharris@pixitest.com')
+    @listing2 = FactoryGirl.create(:listing, seller_id: @seller.id)
+    @account = @seller.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
+    @invoice = @seller.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing2.pixi_id, buyer_id: @user.id, 
+      bank_account_id: @account.id)
   end
 
   def visit_txn_path
-    visit new_transaction_path id: @listing.pixi_id, promo_code: '', title: @listing.title,
+    visit new_transaction_path id: @listing.pixi_id, promo_code: '', title: @listing.title, 
         "item1" => 'New Pixi Post', "quantity1" => 1, cnt: 1, qtyCnt: 1, "price1" => 5.00, transaction_type: 'pixi'
   end
 
@@ -31,9 +32,9 @@ feature "Transactions" do
 
   def visit_inv_txn_path
     add_invoice
-    visit new_transaction_path id: @listing2.pixi_id, promo_code: '', title: "Invoice # #{@invoice.id}", 
-        "item1" => @listing2.title, "quantity1" => 1, cnt: 1, qtyCnt: 1, "price1" => 100.00, transaction_type: 'invoice',
-	"sales_tax"=> 8.25, invoice_id: @invoice.id
+    visit new_transaction_path id: @invoice.pixi_id, promo_code: '', title: "Invoice # #{@invoice.id}", seller: @seller.name,
+        "item1" => @invoice.pixi_title, "quantity1" => 1, cnt: 1, qtyCnt: 1, "price1" => 100.00, transaction_type: 'invoice',
+	"sales_tax"=> 8.25, "invoice_id"=> @invoice.id
   end
 
   def user_data
@@ -243,7 +244,7 @@ feature "Transactions" do
   def click_valid_ok
     click_button submit 
     page.driver.browser.switch_to.alert.accept
-    sleep 4
+    sleep 2
   end
 
   def click_cancel_ok
@@ -314,6 +315,8 @@ feature "Transactions" do
     end
 
     it { should have_selector('title', text: 'Pay Invoice') }
+    it { should have_content "Invoice # #{@invoice.id} from #{@seller.name}" }
+    it { should have_content @invoice.pixi_title }
     it { should have_link('Prev', href: invoice_path(@invoice)) }
     it { should_not have_link('Cancel', href: temp_listing_path(@listing)) }
     it { should have_button('Done!') }
@@ -338,10 +341,32 @@ feature "Transactions" do
 
     it "creates a balanced transaction with valid visa card", :js=>true do
       expect { 
+        user_data_with_state
         visa_card_data '4111111111111111'
-	}.to change(Transaction, :count).by(1)
+        page.should have_content("Purchase Complete")
+      }.to change(Transaction, :count).by(1)
 
-      page.should have_content("Purchase Complete")
+    end
+  end
+
+  describe 'pay invoice from post page' do
+    before :each do
+      add_invoice
+      visit posts_path
+    end
+
+    it { should have_button('Pay') }
+
+    it "creates a balanced transaction with valid visa card", :js=>true do
+      click_on 'Pay'
+      page.should have_content 'Pay Invoice'
+      page.should have_content 'Total Due'
+
+      expect { 
+        user_data_with_state
+        visa_card_data '4111111111111111'
+        page.should have_content("Purchase Complete")
+      }.to change(Transaction, :count).by(1)
     end
   end
 

@@ -1,13 +1,12 @@
 ActionMailer::Base.delivery_method = :smtp
 
 # toggle based on Rails environment
-if Rails.env.development? || Rails.env.staging?
-  domain_name = Rails.env.development? ? "pixiboard.com" : "gmail.com" 
+if Rails.env.development? 
   smtp_settings = {
       :address              => "smtp.gmail.com",
       :port                 => 587,
-      :domain               => domain_name,
-      :user_name            => "sdbmich1",
+      :domain               => "gmail.com",
+      :user_name            => "sdbmich1@gmail.com",
       :password             => "sdb91mse",
       :authentication       => "plain",
       :enable_starttls_auto => true

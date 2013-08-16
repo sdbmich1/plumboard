@@ -17,10 +17,21 @@ describe InvoiceObserver do
     @observer.stub(:mark_pixi).with(@model).and_return(@listing)
   end
 
+  def credit_account
+    @txn = mock(Transaction)
+    @observer = InvoiceObserver.instance
+    @observer.stub(:convenience_fee).with(@model).and_return(@txn)
+    @account = mock(BankAccount)
+    @observer = InvoiceObserver.instance
+    @observer.stub(:credit_account).with(@model).and_return(@account)
+  end
+
   describe 'after_update' do
 
     before(:each) do
-      @model = user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: listing.pixi_id, buyer_id: buyer.id) 
+      @account = user.bank_accounts.build FactoryGirl.attributes_for :bank_account
+      @model = user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: listing.pixi_id, buyer_id: buyer.id, 
+        bank_account_id: @account.id) 
       @model.price, @model.status = 150.00, 'paid'
     end
 
@@ -33,6 +44,8 @@ describe InvoiceObserver do
     end
 
     it 'should credit account' do
+      credit_account
+      PixiPayment.stub(:add_transaction).with(@model, 0.99, 'abcdeg').and_return(true)
     end
   end
 

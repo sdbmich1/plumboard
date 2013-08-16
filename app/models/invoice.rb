@@ -13,6 +13,7 @@ class Invoice < ActiveRecord::Base
   belongs_to :bank_account
 
   has_many :posts, foreign_key: "pixi_id", primary_key: "pixi_id"
+  has_many :pixi_payments
 
   validates :pixi_id, presence: true  
   validates :buyer_id, presence: true  
@@ -77,7 +78,7 @@ class Invoice < ActiveRecord::Base
       txn_fee = CalcTotal::get_convenience_fee amount
 
       # process payment
-      bank_account.credit_account (amount - txn_fee)
+      result = bank_account.credit_account (amount - txn_fee)
     else
       false
     end
@@ -86,5 +87,15 @@ class Invoice < ActiveRecord::Base
   # get buyer name
   def buyer_name
     buyer.name rescue nil
+  end
+
+  # get seller name
+  def seller_name
+    seller.name rescue nil
+  end
+
+  # get title
+  def pixi_title
+    listing.title rescue nil
   end
 end

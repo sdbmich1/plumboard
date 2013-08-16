@@ -112,6 +112,12 @@ describe User do
     user.name.should_not == "John Smith"
   end
 
+  it "returns a user's abbr name as a string" do
+    user = FactoryGirl.build(:user, first_name: "John", last_name: "Doe", email: "jdoe@test.com")
+    user.abbr_name.should == "John D"
+    user.abbr_name.should_not == "John Doe"
+  end
+
   describe 'contacts' do
     before(:each) do
       @sr = @user.contacts.build FactoryGirl.attributes_for(:contact)

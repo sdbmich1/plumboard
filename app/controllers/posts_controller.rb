@@ -1,7 +1,7 @@
 require 'will_paginate/array' 
 class PostsController < ApplicationController
   before_filter :authenticate_user!
-  before_filter :load_data, only: [:index, :unread, :sent]
+  before_filter :load_data, only: [:index, :unread, :sent, :reply, :show]
   before_filter :mark_post, only: [:reply]
 
   def index
@@ -12,8 +12,17 @@ class PostsController < ApplicationController
     @post = Post.new params[:post]
     if @post.save
       flash.now[:notice] = "Successfully sent post."
-      @posts = Post.get_posts(@user).paginate(page: @page, per_page: @per_page)
+      @posts = @user.reload.incoming_posts.paginate(page: @page, per_page: @per_page)
     end
+  end
+
+  def show
+    @posts = @user.incoming_posts.paginate(page: @page, per_page: @per_page)
+  end
+
+  def mark
+    Post.mark_as_read! :all, :for => @user
+    render :nothing => true
   end
 
   def sent
@@ -41,6 +50,6 @@ class PostsController < ApplicationController
 
   def load_data
     @page = params[:page] || 1
-    @per_page = params[:per_page] || 10
+    @per_page = params[:per_page] || 5
   end
 end

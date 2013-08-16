@@ -159,7 +159,7 @@ class ListingParent < ActiveRecord::Base
 
   # add hyperlinks to description
   def summary
-    Rinku.auto_link(description) rescue nil
+    Rinku.auto_link(description.html_safe) rescue nil
   end
 
   # titleize title

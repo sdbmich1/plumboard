@@ -98,7 +98,7 @@ class Post < ActiveRecord::Base
     if !inv.blank? && !listing.blank?
 
       # set content msg 
-      msg = "You received an invoice ##{inv.id} from #{inv.seller.name} for $"
+      msg = "You received Invoice ##{inv.id} from #{inv.seller.name} for $"
 
       # add post
       add_post inv, listing, inv.seller_id, inv.buyer_id, msg
@@ -115,10 +115,10 @@ class Post < ActiveRecord::Base
     listing = inv.listing if inv
 
     # send post
-    if !inv.blank? && !listing.blank?
+    if inv && listing
 
       # set content msg 
-      msg = "You received a payment for Invoice ##{inv.id} from #{inv.buyer.name} for $"
+      msg = "You received a payment for Invoice ##{inv.id} from #{inv.buyer_name} for $"
 
       # add post
       add_post inv, listing, inv.buyer_id, inv.seller_id, msg

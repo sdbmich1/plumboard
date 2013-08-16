@@ -1,16 +1,21 @@
 module BalancedPayment
 
-  # configure account
+  # configure settings
   def self.included base
+    initialize
+  end
+
+  def self.initialize mpFlg=true
+    # configure account
     Balanced.configure BALANCED_API_KEY
 
     # set marketplace
-    @marketplace = Balanced::Marketplace.my_marketplace
+    @marketplace = Balanced::Marketplace.my_marketplace if mpFlg
   end
 
   # add bank account
   def self.add_bank_account acct
-    Balanced.configure BALANCED_API_KEY
+    initialize false
 
     @bank_account = Balanced::BankAccount.new(
       account_number: 	acct.acct_number, 
@@ -24,7 +29,6 @@ module BalancedPayment
 
   # get account
   def self.get_bank_account token, acct
-    Balanced.configure BALANCED_API_KEY
 
     @acct ||= acct
     @bank_account ||= Balanced::BankAccount.find token
@@ -35,8 +39,10 @@ module BalancedPayment
 
   # credit bank account
   def self.credit_account token, amt, acct
-    Balanced.configure BALANCED_API_KEY
-    get_bank_account(token, acct).credit(amount: (amt * 100).to_i) if amt > 0.0
+    initialize
+
+    # credit account
+    result = get_bank_account(token, acct).credit(amount: (amt * 100).to_i) if amt > 0.0
 
     rescue => ex
       process_error ex
@@ -44,14 +50,10 @@ module BalancedPayment
 
   # delete bank account
   def self.delete_account token, acct
-    Balanced.configure BALANCED_API_KEY
-    @bank_account ||= Balanced::BankAccount.find token
+    initialize
 
-    if @bank_account
-      @bank_account.unstore 
-    else
-      return false
-    end
+    # find existing account
+    result = get_bank_account(token, acct).unstore
 
     rescue => ex
       process_error ex
@@ -59,6 +61,8 @@ module BalancedPayment
 
   # create card account
   def self.create_card card_no, exp_month, exp_yr, cvv
+    initialize
+
     card = Balanced::Card.create(
       card_number: card_no, 
       expiration_month: exp_month,
@@ -71,8 +75,14 @@ module BalancedPayment
 
   # create card account
   def self.charge_card token, amt, descr, txn 
+    initialize
+
     # set buyer
-    buyer = @marketplace.create_buyer(email_address: txn.user.email, card_uri: token)
+    unless buyer = Balanced::Account.where(email: txn.user.email).first
+      buyer = @marketplace.create_buyer(email_address: txn.user.email, card_uri: token)
+    else
+      buyer
+    end
 
     # charge card
     result = buyer.debit(amount: (amt * 100).to_i.to_s)
@@ -83,7 +93,7 @@ module BalancedPayment
 
   # process result data
   def self.process_result result, txn 
-    txn.confirmation_no, txn.payment_type, txn.credit_card_no = result.id, result.card[:card_type], result.card[:last_four]
+    txn.confirmation_no, txn.payment_type, txn.credit_card_no = result.id, result.source.card_type, result.source.last_four
     txn
   end
 

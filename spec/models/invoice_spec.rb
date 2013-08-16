@@ -210,7 +210,7 @@ describe Invoice do
   end
 
   describe "set_flds" do
-    it "does not set flds" do 
+    it "does set flds" do 
       invoice = @user.invoices.build FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id, status: 'paid')
       invoice.save
       invoice.status.should_not == 'unpaid'
@@ -229,6 +229,24 @@ describe Invoice do
     it "should not find correct buyer name" do 
       @invoice.buyer_id = 100 
       @invoice.buyer_name.should be_nil 
+    end
+  end
+
+  describe "seller" do 
+    it { @invoice.seller_name.should_not be_empty } 
+
+    it "should not find correct seller name" do 
+      @invoice.seller_id = 100 
+      @invoice.seller_name.should be_nil 
+    end
+  end
+
+  describe "pixi_title" do 
+    it { @invoice.pixi_title.should_not be_empty } 
+
+    it "should not find correct pixi_title" do 
+      @invoice.pixi_id = '100' 
+      @invoice.pixi_title.should be_nil 
     end
   end
 

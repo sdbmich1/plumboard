@@ -114,6 +114,45 @@ describe PostsController do
     end
   end
 
+  describe "GET /mark" do
+    before :each do
+      @post = mock_model Post
+      Post.stub!(:mark_as_read).with(@user).and_return(true)
+    end
+    
+    def do_mark
+      xhr :get, :mark
+    end
+
+    it "should render nothing" do
+      do_mark
+      controller.stub!(:render)
+    end
+  end
+
+  describe "GET /show" do
+    before :each do
+      @posts = mock("posts")
+      @user.stub!(:incoming_posts).and_return( @posts )
+      @posts.stub!(:paginate).and_return( @posts )
+    end
+    
+    def do_get
+      xhr :get, :show, :id => 'reply', :page => '2'
+    end
+
+    it "should load the requested posts" do
+      @user.stub(:incoming_posts).and_return(@posts)
+      do_get
+      assigns(:posts).should_not be_nil 
+    end
+
+    it "show action should render show template" do
+      do_get
+      response.should render_template(:show)
+    end
+  end
+
   describe 'xhr GET index' do
 
     before :each do
@@ -132,9 +171,9 @@ describe PostsController do
       assigns(:posts).should_not be_nil 
     end
 
-    it "should render nothing" do
+    it "index action should render index template" do
       do_get
-      controller.stub!(:render)
+      response.should render_template(:index)
     end
   end
 
@@ -156,9 +195,9 @@ describe PostsController do
       assigns(:posts).should_not be_nil 
     end
 
-    it "should render nothing" do
+    it "index action should render index template" do
       do_get
-      controller.stub!(:render)
+      response.should render_template(:index)
     end
   end
 
@@ -192,7 +231,7 @@ describe PostsController do
 
       before :each do
         Post.stub!(:save).and_return(true)
-        Post.stub!(:get_posts).with(@user).and_return(@posts)
+        @user.stub_chain(:reload, :incoming_posts).and_return( @posts )
         @posts.stub!(:paginate).and_return( @posts )
       end
        

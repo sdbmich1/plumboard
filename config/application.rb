@@ -60,7 +60,7 @@ module Plumboard
     config.assets.enabled = true
 
     # Version of your assets, change this if you want to expire all your assets
-    config.assets.version = '1.0'
+    config.assets.version = '1.1'
 
     # don't generate RSpec tests for views and helpers
     config.generators do |g|

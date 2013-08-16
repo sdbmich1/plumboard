@@ -106,9 +106,9 @@ describe BankAccount do
   describe 'credit_account' do
     before do
       @bank_acct = mock('Balanced::BankAccount', amount: '50000') 
-      @bank_acct.stub!(:credit).with(:amount=>50000).and_return(true)
       Balanced::BankAccount.stub!(:find).with(@account.token).and_return(@bank_acct)
-      Balanced::BankAccount.stub!(:credit).and_return(@bank_acct)
+      Balanced::BankAccount.stub!(:credit).with(:amount=>50000).and_return(@bank_acct)
+      @bank_acct.stub!(:credit).with(:amount=>50000).and_return(true)
     end
 
     it 'should credit account' do
@@ -117,7 +117,7 @@ describe BankAccount do
     end
 
     it 'should not credit account' do
-      @account.credit_account(0.00).should be_nil
+      @account.credit_account(0.00).should_not be_true
     end
   end
 

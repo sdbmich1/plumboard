@@ -32,6 +32,7 @@ describe Transaction do
   it { should respond_to(:token) }
   it { should respond_to(:processing_fee) }
   it { should respond_to(:convenience_fee) }
+  it { should respond_to(:debit_token) }
 
   it { should respond_to(:user) }
   it { should respond_to(:listings) }
@@ -211,24 +212,25 @@ describe Transaction do
     end
   end
 
-  describe 'get invoice pixi' do
+  describe 'get invoice' do
     before do
       @buyer = FactoryGirl.create(:pixi_user, first_name: 'Lucy', last_name: 'Smith', email: 'lucy.smith@lucy.com')
       @seller = FactoryGirl.create(:pixi_user, first_name: 'Lucy', last_name: 'Burns', email: 'lucy.burns@lucy.com') 
       @listing = FactoryGirl.create(:listing, seller_id: @user.id)
       @invoice = @seller.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id)
-      @order = {"cnt"=> 1, "quantity1"=> 1, "item1"=> 'Pixi Post', "price1"=> 5.0, "invoice_id"=>@invoice.id, "amount"=>500.00 } 
     end
 
-    it "should not get pixi" do
+    it "should not get invoice pixi" do
       @transaction.get_invoice_listing.should_not be_true
+      @transaction.get_invoice.should_not be_true
     end
 
-    it "should get pixi" do
+    it "should get invoice pixi" do
       @txn = @user.transactions.create FactoryGirl.attributes_for(:transaction, transaction_type: 'invoice')
       @invoice.transaction_id, @invoice.status = @txn.id, 'pending'
       @invoice.save!
       @invoice.transaction.get_invoice_listing.should be_true
+      @invoice.transaction.get_invoice.should be_true
     end
   end
 
@@ -284,18 +286,22 @@ describe Transaction do
     before do
       @buyer = FactoryGirl.create(:pixi_user, email: 'joedblow@pixitest.com') 
       @listing = FactoryGirl.create(:listing, seller_id: @user.id)
-      @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id)
+      @account = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account
+      @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id, 
+        bank_account_id: @account.id)
       @order = {"cnt"=> 1, "quantity1"=> 1, "item1"=> 'Pixi Post', "price1"=> 5.0, "invoice_id"=>@invoice.id, "amount"=>500.00 } 
+      @txn = @user.transactions.build FactoryGirl.attributes_for(:balanced_transaction, transaction_type: 'invoice')
     end
 
+    it { should be_valid }
+
     it "should not save payment" do
-      @transaction.first_name = nil
-      @transaction.save_transaction(@order, @invoice.listing).should_not be_true
+      @txn.first_name = nil
+      @txn.save_transaction(@order, @invoice.listing).should_not be_true
     end
 
     it "should save payment" do
-      @transaction.transaction_type = 'invoice'
-      @transaction.save_transaction(@order, @listing).should be_true
+      @txn.save_transaction(@order, @listing).should be_true
     end
   end
 end

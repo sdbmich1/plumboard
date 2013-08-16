@@ -181,6 +181,9 @@ input, select, .uneditable-input {
   }
 
 #error_explanation {
+  @extend .alert;
+  @extend .alert-error;
+  @extend .alert-block; /* optional */
   color: #f00;
   ul {
     list-style: none;
@@ -316,6 +319,7 @@ input, select, .uneditable-input {
 .width240 {width: 240px!important}
 .width250 {width: 250px!important}
 .width280 {width: 280px!important}
+.width320 {width: 320px!important}
 .width360 {width: 360px!important}
 .height240 {height: 240px!important}
 .height360 {height: 360px!important}
@@ -598,6 +602,12 @@ a.btn-mask {
   margin-top: -5px!important;
 }
 
+.gray-content {
+  @extend .content;
+  color: $grayLight;
+  float: left;
+}
+
 .timestamp {
   color: $grayLight;
   margin-top: 5px!important;
@@ -783,4 +793,8 @@ a.pixi-link {
 
 .ui-autocomplete {
   z-index: 9999 !important;
+}
+
+form .clearfix:before, form .clearfix:after {
+  display: inline;
 }
