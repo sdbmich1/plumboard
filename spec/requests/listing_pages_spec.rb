@@ -232,9 +232,19 @@ describe "Listings", :type => :feature do
 
       before do
         @site = FactoryGirl.create :site, name: 'Pixi Tech'
-        FactoryGirl.create(:listing, title: "HP Printer J4580", description: "printer", seller_id: @user.id, site_id: @site.id) 
-        @listing = FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: @user.id, pixi_id: temp_listing.pixi_id) 
 	@category = FactoryGirl.create :category
+        FactoryGirl.create(:listing, title: "HP Printer J4580", description: "printer", seller_id: @user.id, site_id: @site.id, 
+	  category_id: @category.id) 
+        @listing = FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: @user.id, pixi_id: temp_listing.pixi_id) 
+	@category1 = FactoryGirl.create :category, name: 'Gigs'
+	@category2 = FactoryGirl.create :category, name: 'Automotive'
+	@category3 = FactoryGirl.create :category, name: 'Furniture'
+	@category4 = FactoryGirl.create :category, name: 'Books'
+        @listing1 = FactoryGirl.create(:listing, title: "Intern", description: "Unpaid job", seller_id: @user.id, category_id: @category1.id, 
+	  site_id: @site.id) 
+        @listing2 = FactoryGirl.create(:listing, title: "Buick Regal", description: "used car", seller_id: @user.id, category_id: @category2.id) 
+        @listing3 = FactoryGirl.create(:listing, title: "Sofa", description: "used couch", seller_id: @user.id, category_id: @category3.id) 
+        @listing4 = FactoryGirl.create(:listing, title: "Calc 201", description: "text book", seller_id: @user.id, category_id: @category4.id) 
         visit listings_path 
       end
       
@@ -266,6 +276,7 @@ describe "Listings", :type => :feature do
       it "selects categories", js: true do
 	click_link 'Categories'
         page.should have_content @category.name_title
+        page.should have_content "(#{@category.active_pixis_by_site(@site.id).size})" 
       end
     end  
 

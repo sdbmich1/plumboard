@@ -1,12 +1,13 @@
 <% if @page > 1 %>
   $("#pxboard").append("<%= escape_javascript(render(partial: 'shared/listing', collection: @listings)) %>");
+  $('a.nxt-pg').attr('href', '#{listings_path page: @listings.next_page}');
 <% else %>  
   $("#pxboard").html("<%= escape_javascript(render(partial: 'shared/listing', collection: @listings)) %>");
+  $("#px-nav").html("<%= escape_javascript(render(partial: 'shared/listing_next_page')) %>");
 <% end %>  
-$('a.nxt-pg').attr('href', '#{listings_path page: @listings.next_page}');
 
 // reload board
-clearScroll(this); 
+reload_board(this);
 
 $('#nearby-map').hide('fast');
 $('#spinner').hide(300);

@@ -1,8 +1,8 @@
 <ul class="nav pull-right">
-  <li class="<%= controller_name == 'listings' ? 'active' : '' %>">
-    <%= link_to "Recent", listings_path, id: 'recent-link', class: 'submenu', remote: true %></li>
+  <li id='li_home' class="<%= controller_name == 'listings' ? 'active' : '' %>">
+    <%= link_to "Recent", '#', id: 'recent-link', class: 'submenu' %></li>
   <li class="<%= controller_name == 'categories' ? 'active' : '' %>">
-    <%= link_to "Categories", categories_path, class: 'submenu', id: 'cat-link', remote: true %></li>
+    <%= link_to "Categories", '#', class: 'submenu', id: 'cat-link' %></li>
 </ul>
 <div class="width240 pixi-select pull-right">
   <%= render partial: 'shared/sites', locals: { ptype: false } %>

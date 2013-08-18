@@ -33,11 +33,11 @@ class ListingsController < ApplicationController
   end
 
   def category
-    @listings = Listing.get_category_by_site @category, params[:loc], @page
+    @listings = Listing.get_category_by_site @category, @loc, @page
   end
 
   def location
-    @listings = Listing.get_by_site params[:loc], @page
+    @listings = Listing.get_by_site @loc, @page
   end
 
   protected
@@ -48,7 +48,7 @@ class ListingsController < ApplicationController
 
   def load_data
     @page = params[:page] || 1
-    @category = params[:cid]
+    @category, @loc = params[:cid], params[:loc]
   end
 
   def add_points

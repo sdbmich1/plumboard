@@ -5,7 +5,7 @@ $("#pxboard").html("<%= escape_javascript(render(partial: 'shared/listing', coll
 <% end %>
 
 // reload board
-clearScroll(this); 
+reload_board(this);
 
 $('#nearby-map').hide('fast');
 $('#spinner').hide(300);

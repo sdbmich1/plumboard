@@ -1,7 +1,7 @@
 $("#pxboard").html("<%= escape_javascript(render(partial: 'shared/listing', collection: @listings)) %>");
 
 // reload board
-clearScroll(this); 
+reload_board(this);
 
 <% unless @listings.next_page %>
   $('a.nxt-pg').remove();

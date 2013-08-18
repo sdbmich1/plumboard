@@ -56,4 +56,18 @@ class Category < ActiveRecord::Base
   def name_title
     name.titleize rescue nil
   end
+
+  # active listings by site
+  def active_pixis_by_site loc
+    unless loc.blank? 
+      active_listings.where("site_id = ?", loc)
+    else
+      active_listings
+    end
+  end
+
+  # check for subcategories
+  def subcats?
+    !subcategories.empty?
+  end
 end

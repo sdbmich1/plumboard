@@ -10,9 +10,10 @@
     </div>
     <div class='sm-top gdescr'>
       <div class='item-cat pixi-grey-bkgnd'>
-        <%= link_to "(#{category.active_listings.size})", category_listings_path(cid: category), remote: true %> 
+        <%= pixi_link(category, @loc) %>
       </div>
       <div class='item-dt pixi-grey-bkgnd'>
+        <%= link_to "More...", "#", id: 'more-btn' if category.subcats? %>
       </div>
     </div>
   </div>

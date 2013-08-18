@@ -178,7 +178,7 @@ function handleFileSelect(evt, style) {
 }
 
 // used to toggle spinner
-$(document).on("ajax:beforeSend", '#mark-posts, #post-frm, #comment-doc, #site_id, .pixi-cat, #purchase_btn, #search_btn, .uform, .back-btn, #pixi-form, .submenu', function () {
+$(document).on("ajax:beforeSend", '#mark-posts, #post-frm, #comment-doc, #site_id, .pixi-cat, #purchase_btn, #search_btn, .uform, .back-btn, #pixi-form, .submenu, #cat-link', function () {
     toggleLoading();
 });	
 
@@ -186,7 +186,7 @@ $(document).on("ajax:success", '.pixi-cat, #purchase_btn, #search_btn, .uform, .
   toggleLoading();
 });	
 
-$(document).on("ajax:complete", '#mark-posts, #post-frm, #comment-doc, #site_id, .pixi-cat, #purchase_btn, #search_btn, .uform, .back-btn, #pixi-form, .submenu', function () {
+$(document).on("ajax:complete", '#mark-posts, #post-frm, #comment-doc, #site_id, .pixi-cat, #purchase_btn, #search_btn, .uform, .back-btn, #pixi-form, .submenu, #cat-link', function () {
   toggleLoading();
 });	
 
@@ -246,42 +246,21 @@ $(document).ready(function(){
 });
 
 $(document).ready(function(){
-  load_masonry();
-});
-
-// reload masonry on ajax calls
-$(document).on("ajax:success", "#recent-link", function(showElem){
-  reload_board(showElem);
+  load_masonry('#px-nav', '#px-nav a', '#pxboard .item');
 });
 
 // reload masonry on ajax calls to swap data
 $(document).on("click", ".pixi-cat", function(showElem){
   var cid = $(this).attr("data-cat-id");
-  var url = '/listings/category.js?cid=' + cid;
-  var newUrl = '/listings/category?page=';
-  var param = '&cid=' + cid;
-
-  toggleLoading();
+  var loc = $('#site_id').val(); // grab the selected location 
+  var url = '/listings/category.js?cid=' + cid + '&loc=' + loc;
 
   // process ajax call
-  $.ajax({
-     url: url,
-     success: function(data){
-
-       // clear pending pages
-       $(document).unbind('retrieve.infscr');
-
-       // clear scroll data
-       clearScroll(data, newUrl, param);
-
-       // reset spinner
-       toggleLoading();
-    }
-  });
+  processUrl(url);
 });
 
 // clear next page scroll data
-function clearScroll(showElem, url, param) {
+function clearScroll(showElem, nav, nxt, item) {
   var $container = $('#px-container');
   var currentUrl = url + param;
 
@@ -296,9 +275,6 @@ function clearScroll(showElem, url, param) {
 
   //reinstantiate the container
   $container.infinitescroll({                      
-    pathParse: function (path, currentPage) {
-      return currentUrl;
-    },
     state: {                                              
       isDuringAjax: false,
       isInvalidPage: false,
@@ -308,7 +284,7 @@ function clearScroll(showElem, url, param) {
   });
 
   // initialize infinite scroll
-  initScroll();
+  initScroll('#px-container', nav, nxt, item);
 
   // Re-initialize
   $container.infinitescroll({path: [$("div#px-nav").find("span.page:last").find("a:first").attr('href')+'?page='], state:{currPage:1} });
@@ -324,20 +300,16 @@ function reload_board(element) {
 }
 
 // initialize infinite scroll
-function initScroll() {
-  var $container = $('#px-container');
+function initScroll(cntr, nav, nxt, item) {
+  var $container = $(cntr);
 
   $container.infinitescroll({
-      navSelector  : '#px-nav', 		// selector for the paged navigation (it will be hidden)
-      nextSelector : '#px-nav a',  		// selector for the NEXT link (ie. page 2)  
-      itemSelector : '#pxboard .item',          // selector for all items that's retrieve
+      navSelector  : nav, 		// selector for the paged navigation (it will be hidden)
+      nextSelector : nxt,  		// selector for the NEXT link (ie. page 2)  
+      itemSelector : item,          // selector for all items that's retrieve
       animate: true,
       extraScrollPx: 50,
-      bufferPx : 250,
-      loading: { 
-         msgText: "<em>Loading the next set of pixis...</em>",
-         finishedMsg: "<em>No more pixis to load.</em>"
-        }
+      bufferPx : 250
     },
 
     // trigger Masonry as a callback
@@ -354,7 +326,7 @@ function initScroll() {
 }
 
 // use masonry to layout landing page display
-function load_masonry(){
+function load_masonry(nav, nxt, item){
 
   if( $('#px-container').length > 0 ) {
     var $container = $('#px-container');
@@ -367,9 +339,19 @@ function load_masonry(){
     });
 
     // initialize infinite scroll
-    initScroll();
+    initScroll('#px-container', nav, nxt, item);
   }
 }
+
+// check for category board
+$(document).on("click", "#cat-link", function(){
+  var loc = $('#site_id').val(); // grab the selected location 
+  var url = '/categories.js?loc=' + loc;
+
+  // process ajax call
+  processUrl(url);
+});	
+
 
 // check for text display toggle
 $(document).on("click", ".moreBtn, #more-btn", function(){
@@ -421,13 +403,22 @@ $(document).on("change", "select[id*=pixi_id]", function() {
 // process url calls
 function processUrl(url) {
   $.ajax({
-        url: url,
-	dataType: 'script'
+    url: url,
+    dataType: 'script',
+    'beforeSend': function() {
+      toggleLoading();
+    },
+    'complete':  function() {  				
+      toggleLoading();
+    },
+    'success': function() {
+      toggleLoading();	
+    }
   });
 }
 
 // set autocomplete to accept images
-$( "input#buyer_name" ).autocomplete({ html: true });
+$("input#buyer_name").autocomplete({ html: true });
 
 // set autocomplete selection value
 $(document).on("railsAutocomplete.select", "#buyer_name", function(event, data){
@@ -454,23 +445,6 @@ $(document).on("keypress", "#comment_content", function(e){
   }
 });
 
-// initialize infinite scroll
-function commentScroll() {
-  var $container = $('.posts');
-
-  $container.infinitescroll({
-      navSelector  : '#comment-nav', 		// selector for the paged navigation (it will be hidden)
-      nextSelector : '#comment-nav a',  		// selector for the NEXT link (ie. page 2)  
-      itemSelector : '#pxboard .item',          // selector for all items that's retrieve
-      animate: true,
-      extraScrollPx: 50,
-      bufferPx : 250,
-      loading: { 
-         msgText: "<em>Loading the next set of comments...</em>",
-         finishedMsg: "<em>No more comments to load.</em>"
-        }
-  });
-}
 var time_id;
 function set_timer() {
  time_id = setTimeout(updatePixis, 30000);  
@@ -495,13 +469,33 @@ function updatePixis() {
     var after = 0;  
   }
 
-  $.getScript('/pages.js?after=' + after);
+  processUrl('/pages.js?after=' + after);
   set_timer();
 }  
 
 // check for location changes
 $(document).on("change", "#site_id", function() {
-  var loc = $(this).val(); // grab the selected location 
+
+  // reset board
+  setBoardByLocation();
+  
+  //prevent the default behavior of the click event
+  return false;
+});
+
+// check for recent link click
+$(document).on("click", "#recent-link", function() {
+
+  // reset board
+  setBoardByLocation();
+  
+  //prevent the default behavior of the click event
+  return false;
+});
+
+// reset board pixi based on location
+function setBoardByLocation() {
+  var loc = $('#site_id').val(); // grab the selected location 
 
   // check location
   if (loc > 0) {
@@ -511,14 +505,13 @@ $(document).on("change", "#site_id", function() {
     var url = '/listings.js';
   }
 
-  toggleLoading();
-
   // refresh the page
-  $.getScript(url);
+  processUrl(url);
 
-  //prevent the default behavior of the click event
-  return false;
-});
+  // toggle menu
+  var $this = $("#li_home");
+  reset_menu_state($this, true);
+}
 
 $(function() {
   // Fix input element click problem
@@ -530,6 +523,15 @@ $(function() {
 // toggle menu post menu item
 $(document).on('click', '.post-menu', function(e) {
   $('#mark-posts').toggle();
+});
+
+// toggle menu post menu item
+$(document).on('click', '.home-link', function(e) {
+  $('#site_id').val('').prop('selectedIndex',0);
+
+  // toggle menu
+  var $this = $("#li_home");
+  reset_menu_state($this, true);
 });
 
 // toggle menu state

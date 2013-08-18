@@ -5,5 +5,5 @@ ThinkingSphinx::Index.define :post, :with => :active_record do
   indexes listing(:title), :as => :title, :sortable => true
 
   has :id, :as => :post_id 
-  has :pixi_id, :listing_id, :user_id, :recipient_id, :created_at, :updated_at
+  has pixi_id, user_id, recipient_id, created_at, updated_at
 end
