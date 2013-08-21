@@ -1,6 +1,5 @@
 <div class="row">
   <%= form_for(@invoice, remote: true ) do |f| %>
-    <div id="notice"><%= render partial: 'layouts/notices' %></div>
     <div id="form_errors"><%= render partial: 'shared/error_messages', locals: { target: f.object } %></div>
 
     <div class="sm-top span12">

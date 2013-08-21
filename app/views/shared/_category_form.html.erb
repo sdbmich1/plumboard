@@ -1,5 +1,4 @@
 <%= form_for @category, url: get_category_path, html: { class: 'uform' }, remote: true do |f| %>
-    <div id="notice"><%= render partial: 'layouts/notices' %></div>
     <div id="form_errors"><%= render partial: 'shared/error_messages', locals: { target: f.object } %></div>
     <%= render partial: 'shared/show_user_photo', locals: { f: f, model: @category, file_name: 'photo-camera.png' } %>
 

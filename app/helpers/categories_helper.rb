@@ -8,10 +8,15 @@ module CategoriesHelper
   # set pixi link
   def pixi_link category, loc
     cnt = category.active_pixis_by_site(loc).size
-    if cnt > 0
-      link_to "(#{cnt})", '#', class: 'pixi-cat', 'data-cat-id'=> category.id
-    else
-      "(#{cnt})"
-    end
+    "(#{cnt})"
+  end
+
+  # enable edit link if allowed
+  def show_category_title category
+    if can?(:manage_users, @user)  
+      link_to category.name_title, edit_category_path(category), remote: true 
+    else 
+      category.name_title 
+    end 
   end
 end

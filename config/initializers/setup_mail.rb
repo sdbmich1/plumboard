@@ -1,28 +1,19 @@
 ActionMailer::Base.delivery_method = :smtp
 
-# toggle based on Rails environment
-if Rails.env.development? 
-  smtp_settings = {
-      :address              => "smtp.gmail.com",
-      :port                 => 587,
-      :domain               => "gmail.com",
-      :user_name            => "sdbmich1@gmail.com",
-      :password             => "sdb91mse",
-      :authentication       => "plain",
-      :enable_starttls_auto => true
-    }
-  host_url = Rails.env.development? ? "localhost:3000" : "www.pixiboard.com"
-else
-  smtp_settings = {  
-    :address              => "smtpout.secureserver.net",  
-    :port                 => 3535,  
-    :user_name            => "info@pixiboard.com",  
-    :password             => "piXi#123",
-    :domain               => "pixiboard.com",
-    :authentication       => "plain"
-    } 
-  host_url = "www.pixiboard.com"
-end
+# set user and password
+yml = YAML::load_file("#{Rails.root}/config/sendmail.yml")[Rails.env]
+uname, pwd, domain, host_url, smtp_addr = yml['user_name'], yml['password'], yml['domain'], yml['host'], yml['smtp_addr']
+
+# set smtp parameters
+smtp_settings = {
+  :address              => smtp_addr,
+  :port                 => 587,
+  :domain               => domain,
+  :user_name            => uname,
+  :password             => pwd,
+  :authentication       => "plain",
+  :enable_starttls_auto => true
+}
 
 # set vars    
 ActionMailer::Base.smtp_settings = smtp_settings

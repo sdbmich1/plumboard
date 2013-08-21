@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head> 
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+</head>
+  <body> 	
+    	<%= render :partial=>'mail_header' %><br />
+	Hi <%= @user.first_name %>,<br />
+    	<h2>Welcome to Pixiboard!</h2>
+
+    	<span style="height:20px;">
+  	  Thanks for joining the Pixiboard community! Before you can start pixing, we need you to confirm your email address.  
+	  Use the link below to sign-in so you can 
+	  confirm your email to start viewing, posting and managing pixis.</span><br /> 	
+
+	<center style='width: 240px;'>
+	<%= link_to 'Confirm Your Account', confirmation_url(@user, :confirmation_token => @user.confirmation_token), 
+	    class: 'btn btn-large btn-success' %>
+	</center><br />
+
+	<p>
+	   To login to the site, just follow this link: <%= root_url %>.
+	</p>
+
+	<span style="margin-top:20px;">Happy Pixing!</span><br /><br />
+	<span>The Pixiboard Team</span><br /><br /> 	
+    	<%= render :partial=>'mail_footer' %>
+  </body>
+</html>
+

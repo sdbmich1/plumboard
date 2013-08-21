@@ -41,7 +41,7 @@ class Listing < ListingParent
 
   # get pixis by category & site ids
   def self.get_category_by_site cid, sid, pg=1
-    if sid
+    unless sid.blank?
       active.where('category_id = ? and site_id = ?', cid, sid).paginate page: pg
     else
       get_by_category cid, pg

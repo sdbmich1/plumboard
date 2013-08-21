@@ -2,6 +2,13 @@ require 'spec_helper'
 
 describe UserObserver do
 
+  def send_mailer usr
+    @mailer = mock(UserMailer)
+    @observer = InvoiceObserver.instance
+    @observer.stub(:delay).with(@mailer).and_return(@mailer)
+    @observer.stub(:welcome_email).with(usr).and_return(@mailer)
+  end
+
   describe 'after_update' do
     let(:user) { FactoryGirl.create :pixi_user }
 
@@ -22,12 +29,16 @@ describe UserObserver do
     let(:user) { FactoryGirl.create :pixi_user }
     let(:pixi_user) { FactoryGirl.create :pixi_user, uid: '11111' }
 
-    it 'should add dr pixi points' do
+    it 'adds dr pixi points' do
       user.user_pixi_points.find_by_code('dr').code.should == 'dr'
     end
 
-    it 'should add fr pixi points' do
+    it 'adds fr pixi points' do
       pixi_user.user_pixi_points.find_by_code('fr').code.should == 'fr'
+    end
+
+    it 'delivers the welcome message' do
+      send_mailer user
     end
   end
 end

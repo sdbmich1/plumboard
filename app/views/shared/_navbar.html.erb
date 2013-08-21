@@ -5,7 +5,7 @@
         <span class="brand"><%= menu_name %></span>
         <div id="profile-menu">
 	  <nav>
-	    <% if controller_name == 'listings' && action_name != 'show' %>
+	    <% if controller_name == 'listings' && !refresh_page?(action_name) %>
 	      <%= link_to image_tag('home-4-xxl.png', class: 'home-img'), listings_path, remote: true, class: 'home-link' %>
 	    <% else %>
 	      <%= link_to image_tag('home-4-xxl.png', class: 'home-img'), listings_path, class: 'home-link' %>

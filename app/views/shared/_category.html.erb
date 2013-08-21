@@ -1,12 +1,10 @@
 <div class="item">
   <div class="center-wrapper">
-    <%= render partial: 'shared/show_picture', locals: {psize: 'thumb', model: category} %>
+    <%= link_to category_listings_path(cid: category, loc: @loc) do %>
+      <%= render partial: 'shared/show_picture', locals: {psize: 'thumb', model: category} %>
+    <% end %>
     <div class='sm-top bdescr'>
-      <% if can?(:manage_users, @user) %> 
-        <%= link_to category.name_title, edit_category_path(category), remote: true %>
-      <% else %>
-        <%= category.name_title %>
-      <% end %>
+      <%= show_category_title(category) %>
     </div>
     <div class='sm-top gdescr'>
       <div class='item-cat pixi-grey-bkgnd'>

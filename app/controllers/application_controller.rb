@@ -38,7 +38,8 @@ class ApplicationController < ActionController::Base
         render json: {:status => :error, :message => "You must be logged in to do that!"}, :status => 401
       end
     else
-      redirect_to root_url, :alert => exception.message
+      flash[:error] = exception.message
+      redirect_to root_url
     end
   end
 

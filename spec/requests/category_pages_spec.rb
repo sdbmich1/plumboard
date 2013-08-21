@@ -64,7 +64,7 @@ feature "Categories" do
     it { should have_content('Categories') }
     it { should have_link('Active', href: manage_categories_path) }
     it { should have_link('Inactive', href: inactive_categories_path) }
-    it { should have_link('New', href: new_category_path) }
+    it { should have_link('Create', href: new_category_path) }
     it { should have_content(@category.name_title) }
     it { should have_content('Computer') }
     it { should have_link(@category.name_title, href: edit_category_path(@category)) }
@@ -109,7 +109,7 @@ feature "Categories" do
 
       describe 'create - invalid category', js: true do
         before do
-          click_on 'New'
+          click_on 'Create'
 	end
         
         it { should have_button('Save Changes') }
@@ -132,7 +132,7 @@ feature "Categories" do
 
       describe 'create - valid category', js: true do
         before do
-          click_on 'New'
+          click_on 'Create'
 	end
         
         it { should have_button('Save Changes') }

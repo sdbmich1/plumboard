@@ -1,6 +1,5 @@
   <%= form_for(@listing, :html => { :multipart => true, id: 'pixi-form' }) do |f| %>
     <div class="div-border">
-      <div id="notice" style="display:none"></div>
       <div id="form_errors">
         <%= render partial: 'shared/error_messages', :locals => { :target => @listing } %>
       </div>

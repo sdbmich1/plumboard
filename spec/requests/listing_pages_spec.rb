@@ -235,7 +235,8 @@ describe "Listings", :type => :feature do
 	@category = FactoryGirl.create :category
         FactoryGirl.create(:listing, title: "HP Printer J4580", description: "printer", seller_id: @user.id, site_id: @site.id, 
 	  category_id: @category.id) 
-        @listing = FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: @user.id, pixi_id: temp_listing.pixi_id) 
+        @listing = FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: @user.id, pixi_id: temp_listing.pixi_id,
+	  category_id: @category.id) 
 	@category1 = FactoryGirl.create :category, name: 'Gigs'
 	@category2 = FactoryGirl.create :category, name: 'Automotive'
 	@category3 = FactoryGirl.create :category, name: 'Furniture'
@@ -251,7 +252,7 @@ describe "Listings", :type => :feature do
       it { should have_link 'Recent', href: listings_path }
       # it { should have_link 'Following', href: '#' }
       # it { should have_link 'Map', href: '#' }
-      it { should have_link 'Categories', href: categories_path }
+      # it { should have_link 'Categories', href: categories_path }
       it { should have_content('Pixis') }
       
       it "scrolls listings", js: true do 
@@ -274,9 +275,14 @@ describe "Listings", :type => :feature do
       end
 
       it "selects categories", js: true do
-	click_link 'Categories'
+        select(@category.name_title, :from => 'category_id')
         page.should have_content @category.name_title
-        page.should have_content "(#{@category.active_pixis_by_site(@site.id).size})" 
+        page.should have_content 'HP Printer J4580'
+        page.should_not have_content @listing1.title
+        page.should have_content @listing.title
+	# click_link 'Categories'
+        # page.should have_content @category.name_title
+        # page.should have_content "(#{@category.active_pixis_by_site(@site.id).size})" 
       end
     end  
 

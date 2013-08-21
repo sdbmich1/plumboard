@@ -309,7 +309,11 @@ function initScroll(cntr, nav, nxt, item) {
       itemSelector : item,          // selector for all items that's retrieve
       animate: true,
       extraScrollPx: 50,
-      bufferPx : 250
+      bufferPx : 250,
+      loading: {
+	msgText: "<em>Loading the next set of pixis...</em>",
+	speed: 'fast'
+      }
     },
 
     // trigger Masonry as a callback
@@ -474,10 +478,12 @@ function updatePixis() {
 }  
 
 // check for location changes
-$(document).on("change", "#site_id", function() {
+$(document).on("change", "#site_id, #category_id", function() {
 
   // reset board
-  setBoardByLocation();
+  if($('#px-container').length > 0) {
+    resetBoard();
+  }
   
   //prevent the default behavior of the click event
   return false;
@@ -487,26 +493,38 @@ $(document).on("change", "#site_id", function() {
 $(document).on("click", "#recent-link", function() {
 
   // reset board
-  setBoardByLocation();
+  resetBoard();
   
   //prevent the default behavior of the click event
   return false;
 });
 
 // reset board pixi based on location
-function setBoardByLocation() {
+function resetBoard() {
   var loc = $('#site_id').val(); // grab the selected location 
+  var cid = $('#category_id').val(); // grab the selected category 
 
   // check location
   if (loc > 0) {
-    var url = '/listings/location?loc=' + loc; 
+    if (cid > 0) {
+      var url = '/listings/category?loc=' + loc + '&cid=' + cid; 
+    }
+    else {
+      var url = '/listings/location?loc=' + loc; 
+    }
   }
   else {
-    var url = '/listings.js';
+    if (cid > 0) {
+      var url = '/listings/category?loc=' + loc + '&cid=' + cid; 
+    }
+    else {
+      var url = '/listings.js';
+    }
   }
 
   // refresh the page
   processUrl(url);
+  // resetScroll(url);
 
   // toggle menu
   var $this = $("#li_home");
@@ -528,6 +546,7 @@ $(document).on('click', '.post-menu', function(e) {
 // toggle menu post menu item
 $(document).on('click', '.home-link', function(e) {
   $('#site_id').val('').prop('selectedIndex',0);
+  $('#category_id').val('').prop('selectedIndex',0);
 
   // toggle menu
   var $this = $("#li_home");
@@ -539,3 +558,33 @@ $(document).on('click', '#mark-posts', function(e) {
   var $this = $("#li_home");
   reset_menu_state($this, true);
 });
+
+// reset next page scroll data
+function resetScroll(url) {
+  var $container = $('#px-container');
+
+  $.ajax({
+    url: url,
+    dataType: 'script',
+    success: function(data){
+
+      //call the method to destroy the current infinitescroll session.
+      $container.infinitescroll('destroy');
+
+      //reinstantiate the container
+      $container.infinitescroll({                      
+        state: {                                              
+          isDestroyed: false,
+          isDone: false                           
+        }
+      });
+
+      // initialize infinite scroll
+      initScroll('#px-container', '#px-nav', '#px-nav a', '#pxboard .item');
+
+      // rebind
+      $container.infinitescroll('bind');
+    }
+  });
+
+}

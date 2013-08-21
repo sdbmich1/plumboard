@@ -62,172 +62,15 @@ feature "Transactions" do
     select (Date.today.year+2).to_s, from: "card_year"
   end
 
-  def visa_card val="4242424242424242"
+  def credit_card val="4242424242424242"
     fill_in "card_number", with: val
   end
 
-  def no_card_data
-    fill_in "card_number", with: ""
-    fill_in "card_code",  with: "123"
-    valid_card_dates
-  end
-
-  def visa_card_data val="4242424242424242"
-    visa_card val
-    fill_in "card_code",  with: "123"
-    valid_card_dates
+  def credit_card_data cid="4242424242424242", cvv="123", valid=true
+    credit_card cid
+    fill_in "card_code",  with: cvv
+    valid ? valid_card_dates : invalid_card_dates
     click_valid_ok
-  end
-
-  def visa_card_data_bad_dates
-    visa_card
-    fill_in "card_code",  with: "123"
-    invalid_card_dates
-  end
-
-  def visa_card_data_bad_cvv
-    visa_card
-    fill_in "card_code",  with: "12"
-    valid_card_dates
-  end
-
-  def visa_card_data_no_cvv
-    visa_card
-    fill_in "card_code",  with: ""
-    valid_card_dates
-  end
-
-  def visa_card_declined
-    fill_in "card_number", with: "4000000000000002"
-    fill_in "card_code",  with: "123"
-    valid_card_dates
-  end
-
-  def visa_card_data_expired
-    fill_in "card_number", with: "4000000000000069"
-    fill_in "card_code",  with: "123"
-    valid_card_dates
-  end
-
-  def visa_card_data_error
-    fill_in "card_number", with: "4000000000000119"
-    fill_in "card_code",  with: "123"
-    valid_card_dates
-  end
-
-  def mc_card
-    fill_in "card_number", with: "5555555555554444"
-  end
-
-  def mc_card_data
-    mc_card
-    fill_in "card_code",  with: "123"
-    valid_card_dates
-    click_valid_ok
-  end
-
-  def mc_card_data_bad_dates
-    mc_card
-    fill_in "card_code",  with: "123"
-    invalid_card_dates
-  end
-
-  def mc_card_data_bad_cvv
-    mc_card
-    fill_in "card_code",  with: "12"
-    valid_card_dates
-  end
-
-  def ax_card
-    fill_in "card_number", with: "378282246310005"
-  end
-
-  def ax_card_data
-    ax_card
-    fill_in "card_code",  with: "123"
-    valid_card_dates
-    click_valid_ok
-  end
-
-  def ax_card_data_bad_dates
-    ax_card
-    fill_in "card_code",  with: "123"
-    invalid_card_dates
-  end
-
-  def ax_card_data_bad_cvv
-    ax_card
-    fill_in "card_code",  with: "12"
-    valid_card_dates
-  end
-
-  def discover_card
-    fill_in "card_number", with: "6011000990139424"
-  end
-
-  def discover_card_data
-    discover_card
-    fill_in "card_code",  with: "123"
-    valid_card_dates
-    click_valid_ok
-  end
-
-  def discover_card_data_bad_dates
-    discover_card
-    fill_in "card_code",  with: "123"
-    invalid_card_dates
-  end
-
-  def discover_card_data_bad_cvv
-    discover_card
-    fill_in "card_code",  with: "12"
-    valid_card_dates
-  end
-
-  def diners_card
-    fill_in "card_number", with: "6011000990139424"
-  end
-
-  def diners_card_data
-    diners_card
-    fill_in "card_code",  with: "123"
-    valid_card_dates
-    click_valid_ok
-  end
-
-  def diners_card_data_bad_dates
-    diners_card
-    fill_in "card_code",  with: "123"
-    invalid_card_dates
-  end
-
-  def diners_card_data_bad_cvv
-    diners_card
-    fill_in "card_code",  with: "12"
-    valid_card_dates
-  end
-
-  def jcb_card
-    fill_in "card_number", with: "3530111333300000"
-  end
-
-  def jcb_card_data
-    jcb_card
-    fill_in "card_code",  with: "123"
-    valid_card_dates
-    click_valid_ok
-  end
-
-  def jcb_card_data_bad_dates
-    jcb_card
-    fill_in "card_code",  with: "123"
-    invalid_card_dates
-  end
-
-  def jcb_card_data_bad_cvv
-    jcb_card
-    fill_in "card_code",  with: "12"
-    valid_card_dates
   end
 
   def user_login
@@ -333,7 +176,7 @@ feature "Transactions" do
     it "creates a stripe transaction with valid visa card", :js=>true do
       CREDIT_CARD_API = 'stripe'
       expect { 
-        visa_card_data
+        credit_card_data
 	}.to change(Transaction, :count).by(1)
 
       page.should have_content("Purchase Complete")
@@ -341,8 +184,7 @@ feature "Transactions" do
 
     it "creates a balanced transaction with valid visa card", :js=>true do
       expect { 
-        user_data_with_state
-        visa_card_data '4111111111111111'
+        credit_card_data '4111111111111111'
         page.should have_content("Purchase Complete")
       }.to change(Transaction, :count).by(1)
 
@@ -364,9 +206,48 @@ feature "Transactions" do
 
       expect { 
         user_data_with_state
-        visa_card_data '4111111111111111'
+        credit_card_data '4111111111111111'
         page.should have_content("Purchase Complete")
       }.to change(Transaction, :count).by(1)
+    end
+  end
+
+  describe "Manage Invalid Invoice Transactions" do
+    before(:each) do
+      visit_inv_txn_path 
+      user_data_with_state
+    end
+
+    it "should not create a transaction with no card #", :js=>true do
+      expect { 
+	  credit_card_data '', '123', true
+	  click_ok }.not_to change(Transaction, :count)
+
+      page.should have_content 'invalid'
+    end
+
+    it "should not create a transaction with bad card #", :js=>true do
+      expect { 
+	  credit_card_data '6666666666666666', '123', true
+	  click_ok }.not_to change(Transaction, :count)
+
+      page.should have_content 'invalid'
+    end
+
+    it "should not create a transaction with no cvv", :js=>true do
+      expect { 
+	  credit_card_data '4242424242424242', '', true
+	  click_ok }.not_to change(Transaction, :count)
+
+      page.should have_content 'invalid'
+    end
+
+    it "should not create a transaction with bad_dates card", :js=>true do
+      expect { 
+	  credit_card_data '4242424242424242', '123', false
+	  click_ok }.not_to change(Transaction, :count)
+
+      page.should have_content 'invalid'
     end
   end
 
@@ -378,48 +259,51 @@ feature "Transactions" do
 
     it "Cancel transaction submission", :js=>true do
       expect { 
-	      click_submit_cancel
-	  }.not_to change(Transaction, :count)
-
-      page.should have_content "Submit Your Order" 
+	click_submit_cancel      
+      }.not_to change(Transaction, :count)
+      page.should have_content "Submit Your Pixi" 
     end
 
     it "should create a transaction with valid visa card", :js=>true do
       expect { 
-        visa_card_data
-	}.to change(Transaction, :count).by(1)
-
+        credit_card_data 
+      }.to change(Transaction, :count).by(1)
       page.should have_content("your pixi will be posted")
     end
 
     it "should create a transaction with valid mc card", :js=>true do
       expect { 
-        mc_card_data
+        credit_card_data "5555555555554444"
 	}.to change(Transaction, :count).by(1)
+      page.should have_content("your pixi will be posted")
     end
 
     it "should create a transaction with valid ax card", :js=>true do
       expect { 
-        ax_card_data
+        credit_card_data "378282246310005"
 	}.to change(Transaction, :count).by(1)
+      page.should have_content("your pixi will be posted")
     end
 
     it "should create a transaction with valid discover card", :js=>true do
       expect { 
-        discover_card_data
+        credit_card_data "6011000990139424"
 	}.to change(Transaction, :count).by(1)
+      page.should have_content("your pixi will be posted")
     end
 
     it "should create a transaction with valid diners card", :js=>true do
       expect { 
-        diners_card_data
+        credit_card_data "6011000990139424"
 	}.to change(Transaction, :count).by(1)
+      page.should have_content("your pixi will be posted")
     end
 
     it "should create a transaction with valid jcb card", :js=>true do
       expect { 
-        jcb_card_data
+        credit_card_data "3530111333300000"
 	}.to change(Transaction, :count).by(1)
+      page.should have_content("your pixi will be posted")
     end
   end
 
@@ -431,7 +315,7 @@ feature "Transactions" do
         expect { 
           user_data_with_state
           fill_in 'first_name', with: ""
-          jcb_card_data
+          credit_card_data
 	  click_ok }.not_to change(Transaction, :count)
 
         page.should have_content "First name can't be blank"
@@ -441,7 +325,7 @@ feature "Transactions" do
         expect { 
           user_data_with_state
           fill_in 'last_name', with: ""
-          jcb_card_data
+          credit_card_data
 	  click_ok }.not_to change(Transaction, :count)
 
         page.should have_content "Last name can't be blank"
@@ -451,7 +335,7 @@ feature "Transactions" do
         expect { 
 	  user_data_with_state
           fill_in 'transaction_home_phone', with: ""
-          jcb_card_data
+          credit_card_data
 	  click_ok }.not_to change(Transaction, :count)
 
         page.should have_content "Home phone can't be blank"
@@ -463,7 +347,7 @@ feature "Transactions" do
         expect { 
 	  user_data_with_state
           fill_in 'transaction_email', with: ""
-          jcb_card_data
+          credit_card_data
 	  click_ok }.not_to change(Transaction, :count)
 
         page.should have_content "Email can't be blank"
@@ -473,7 +357,7 @@ feature "Transactions" do
         expect { 
 	  user_data_with_state
           fill_in 'transaction_email', with: "user@x."
-          jcb_card_data
+          credit_card_data
 	  click_ok }.not_to change(Transaction, :count)
 
         page.should have_content 'Email is not formatted properly'
@@ -486,7 +370,7 @@ feature "Transactions" do
           fill_in 'first_name', with: @user.first_name
           fill_in 'last_name', with: @user.last_name
     	  fill_in 'transaction_email', with: @user.email
-          jcb_card_data
+          credit_card_data
 	  click_ok }.not_to change(Transaction, :count)
 
         page.should have_content "Address can't be blank"
@@ -496,7 +380,7 @@ feature "Transactions" do
         expect { 
 	  user_data_with_state
           fill_in 'transaction_address', with: ""
-          jcb_card_data
+          credit_card_data
 	  click_ok }.not_to change(Transaction, :count)
 
         page.should have_content "Address can't be blank"
@@ -506,7 +390,7 @@ feature "Transactions" do
         expect { 
 	  user_data_with_state
           fill_in 'transaction_city', with: ""
-          jcb_card_data
+          credit_card_data
 	  click_ok }.not_to change(Transaction, :count)
 
         page.should have_content "City can't be blank"
@@ -515,7 +399,7 @@ feature "Transactions" do
       it "should not create a transaction with no state" do
         expect { 
 	  user_data
-          jcb_card_data
+          credit_card_data
 	  click_ok }.not_to change(Transaction, :count)
 
         page.should have_content "State can't be blank"
@@ -525,7 +409,7 @@ feature "Transactions" do
         expect { 
 	  user_data_with_state
           fill_in 'transaction_zip', with: ""
-          jcb_card_data
+          credit_card_data
 	  click_ok }.not_to change(Transaction, :count)
 
         page.should have_content "Zip can't be blank"
@@ -537,7 +421,7 @@ feature "Transactions" do
 
       it "should not create a transaction with no card #" do
         expect { 
-	  no_card_data
+	  credit_card_data nil
 	  click_ok }.not_to change(Transaction, :count)
 
         page.should have_content 'invalid'
@@ -545,7 +429,7 @@ feature "Transactions" do
 
       it "should not create a transaction with no cvv" do
         expect { 
-	  visa_card_data_no_cvv
+	  credit_card_data '4242424242424242', nil, true
 	  click_ok }.not_to change(Transaction, :count)
 
         page.should have_content 'invalid'
@@ -553,19 +437,19 @@ feature "Transactions" do
 
       it "should not create a transaction with expired card" do
         expect { 
-	  visa_card_data_expired
+	  credit_card_data '4000000000000069', '123', true
 	  click_ok }.not_to change(Transaction, :count)
       end
 
       it "should not create a transaction with declined card" do
         expect { 
-	  visa_card_declined
+	  credit_card_data '4000000000000002', '123', true
 	  click_ok }.not_to change(Transaction, :count)
       end
 
       it "should not create a transaction with bad_cvv card" do
         expect { 
-	  visa_card_data_bad_cvv
+	  credit_card_data '4242424242424242', '12', true
 	  click_ok }.not_to change(Transaction, :count)
 
         page.should have_content 'invalid'
@@ -573,7 +457,7 @@ feature "Transactions" do
 
       it "should not create a transaction with bad_dates card" do
         expect { 
-	  visa_card_data_bad_dates
+	  credit_card_data '4242424242424242', '123', false
 	  click_ok }.not_to change(Transaction, :count)
 
         page.should have_content 'invalid'
@@ -581,7 +465,7 @@ feature "Transactions" do
 
       it "should not create a transaction with error card" do
         expect { 
-	  visa_card_data_error
+	  credit_card_data '4000000000000119', '123', false
 	  click_ok }.not_to change(Transaction, :count)
       end
     end
@@ -591,7 +475,7 @@ feature "Transactions" do
 
       it "should not create a transaction with bad_cvv card" do
         expect { 
-	  mc_card_data_bad_cvv
+          credit_card_data "5555555555554444", '12', true
 	  click_ok }.not_to change(Transaction, :count)
 
         page.should have_content 'invalid'
@@ -599,7 +483,7 @@ feature "Transactions" do
 
       it "should not create a transaction with bad_dates card" do
         expect { 
-	  mc_card_data_bad_dates
+          credit_card_data "5555555555554444", '123', false
 	  click_ok }.not_to change(Transaction, :count)
 
         page.should have_content 'invalid'
@@ -611,7 +495,7 @@ feature "Transactions" do
 
       it "should not create a transaction with bad_cvv card" do
         expect { 
-	  ax_card_data_bad_cvv
+          credit_card_data "378282246310005", '12', true
 	  click_ok }.not_to change(Transaction, :count)
 
         page.should have_content 'invalid'
@@ -619,7 +503,7 @@ feature "Transactions" do
 
       it "should not create a transaction with bad_dates card" do
         expect { 
-	  ax_card_data_bad_dates
+          credit_card_data "378282246310005", '123', false
 	  click_ok }.not_to change(Transaction, :count)
 
         page.should have_content 'invalid'
@@ -631,7 +515,7 @@ feature "Transactions" do
 
       it "should not create a transaction with bad_cvv card" do
         expect { 
-	  discover_card_data_bad_cvv
+          credit_card_data "6011000990139424", '12', true
 	  click_ok }.not_to change(Transaction, :count)
 
         page.should have_content 'invalid'
@@ -639,7 +523,7 @@ feature "Transactions" do
 
       it "should not create a transaction with bad_dates card" do
         expect { 
-	  discover_card_data_bad_dates
+          credit_card_data "6011000990139424", '123', false
 	  click_ok }.not_to change(Transaction, :count)
 
         page.should have_content 'invalid'
@@ -651,7 +535,7 @@ feature "Transactions" do
 
       it "should not create a transaction with bad_cvv card" do
         expect { 
-	  diners_card_data_bad_cvv
+          credit_card_data "6011000990139424", '12', true
 	  click_ok }.not_to change(Transaction, :count)
 
         page.should have_content 'invalid'
@@ -659,7 +543,7 @@ feature "Transactions" do
 
       it "should not create a transaction with bad_dates card" do
         expect { 
-	  diners_card_data_bad_dates
+          credit_card_data "6011000990139424", '123', false
 	  click_ok }.not_to change(Transaction, :count)
 
         page.should have_content 'invalid'
@@ -671,7 +555,7 @@ feature "Transactions" do
 
       it "should not create a transaction with bad_cvv card" do
         expect { 
-	  jcb_card_data_bad_cvv
+          credit_card_data "3530111333300000", '12', true
 	  click_ok }.not_to change(Transaction, :count)
 
         page.should have_content 'invalid'
@@ -679,7 +563,7 @@ feature "Transactions" do
 
       it "should not create a transaction with bad_dates card" do
         expect { 
-	  jcb_card_data_bad_dates
+          credit_card_data "3530111333300000", '123', false
 	  click_ok }.not_to change(Transaction, :count)
 
         page.should have_content 'invalid'

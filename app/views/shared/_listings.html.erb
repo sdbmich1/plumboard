@@ -1,2 +1,6 @@
-<%= render partial: 'shared/listing', collection: @listings %>
+<% unless @listings.blank? %>
+  <%= render partial: 'shared/listing', collection: @listings %>
+<% else %>
+  <div class='center-wrapper'>No pixis found.</div>
+<% end %>
 

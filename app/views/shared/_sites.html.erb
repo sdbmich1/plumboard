@@ -1,1 +1,1 @@
-<%= collection_select(:site, :id, get_sites(ptype), :id, :name, {:prompt => 'Select Location'}, {class: 'sm-top pixi-select'}) %>
+<%= collection_select(:site, :id, get_sites(ptype), :id, :name, {selected: @loc, prompt: 'Select Location'}, {class: 'sm-top width240 pixi-select'}) %>

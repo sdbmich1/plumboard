@@ -1,0 +1,11 @@
+<table>
+  <tr><td class='width240'>Confirmation #:</td><td><%= payment.id %></td></tr>
+
+  <tr><td class='width240'>Bank Name: </td><td><%= payment.bank_name %></td></tr>
+  <tr><td class='width240'>Account #:</td><td>******<%= payment.bank_account.account_number %></td></tr>
+  <tr><td class='width240'>Deposit Amount:</td><td><%= number_to_currency(payment.amount) %></td></tr>
+
+  <tr><td class='width240'>Date & Time: </td><td><%= get_local_time(payment.created_at) %></td></tr>
+  <tr><td class='width240'>From: </td><td><%= invoice.buyer_name %></td></tr>
+  <tr><td class='width240'>Description: </td><td><%= invoice.pixi_title %></span><br /></td></tr>
+</table>

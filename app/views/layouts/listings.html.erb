@@ -16,10 +16,10 @@
     <%= yield :subhead %>
     <div class="container">
       <%= yield :map %>
+      <%= render 'layouts/flash_messages' %>
     </div>
     <div class="container" id="px-container">
       <div id="spinner" class="round" style="display:none"></div>
-      <%= render 'layouts/notices' %>
       <%= yield :content %>
     </div>
   </div>

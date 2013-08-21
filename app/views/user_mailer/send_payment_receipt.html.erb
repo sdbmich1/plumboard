@@ -4,14 +4,16 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
 </head>
   <body> 	
-    	<%= render :partial=>'mail_header' %><br />
-	Hi <%= @post.recipient.first_name %>,<br />
+    	<%= render :partial=>'mail_header' %>
+  	<center>
     	<h3>
     	<span style="height:30px;font-weight:bolder;font-size:medium;">
-  		You received a message on Pixiboard from <%= @post.sender_name %>.  
-		Visit <%= posts_url %> to check it out.</span></h3><br />
+  		A payment has been deposited into your account.</span></h3>
+  	</center>
 
-	<span style="margin-top:20px;">Happy Pixing!</span><br /><br />
+	<%= render :partial=>'shared/payment_details', :locals=>{:payment=>@payment, :invoice=>@invoice} %>
+
+	<span style="margin-top:20px;">Thanks for your business.</span><br /><br />
 	<span>The Pixiboard Team</span><br /><br /> 	
     	<%= render :partial=>'mail_footer' %>
   </body>

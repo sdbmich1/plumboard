@@ -28,7 +28,12 @@ class InvoiceObserver < ActiveRecord::Observer
         result = model.bank_account.credit_account(model.amount - fee)
 
         # record payment
-	PixiPayment.add_transaction model, fee, result.uri, result.id if result
+	if result
+	  PixiPayment.add_transaction model, fee, result.uri, result.id 
+
+          # send receipt upon approval
+          UserMailer.delay.send_payment_receipt(model, result)
+	end
       end
     end
   end

@@ -1,5 +1,5 @@
 var $formID, marketplaceUri;
-var $balancedError = $('#balanced_error'); 
+var $balancedError = $('#card_error'); 
 
 // process Balanced bank account form for ACH payments
 $(document).on('click', '#acctForm', function () {
@@ -25,11 +25,11 @@ $(document).on('click', '#acctForm', function () {
  
 // process card
 function BalancedCard() {
-  $formID = $('#payment_form');
+  $formID = $('#payForm');
   marketplaceUri = $('meta[name="balanced-key"]').attr('content');  // get balanced key		
 
   // disable form
-  $('#payForm').attr('disabled', true);
+  $formID.attr('disabled', true);
 
   // initialize object
   balanced.init(marketplaceUri);
@@ -62,8 +62,10 @@ function processAcct() {
 }
 
 // process errors
-function processError(response) {
-  $balancedError.show(300).text(response.error);
+function processError(response, msg) {
+  var $balancedError = $('#card_error'); 
+
+  $balancedError.show(300).text(msg);
   $formID.attr('disabled', false);
 
   // scroll to top of page
@@ -75,15 +77,18 @@ function callbackHandler(response) {
   switch (response.status) {
     case 400:
       console.log(response.error);
-      processError(response);
+      processError(response, 'Card number or cvv invalid');
+      break;
+    case 402:
+      console.log(response.error);
+      processError(response, 'Card is invalid and could not be authorized');
       break;
     case 404:
       console.log(response.error);
-      processError(response);
+      processError(response, 'Payment token is invalid');
       break;
-    case 409:
-      console.log(response.error);
-      processError(response);
+    case 500:
+      processError(response, 'Network request invalid. Please try again.');
       break;
     case 201:
       toggleLoading();

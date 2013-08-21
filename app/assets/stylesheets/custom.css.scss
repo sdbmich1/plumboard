@@ -769,6 +769,10 @@ a.home-link {
   width: 200px!important;
   height: auto;
   margin-left: -5px!important;
+  &:hover {
+	    text-decoration: none;
+	    background: transparent;
+	   }
 }
 
 .div-gray-border {  

@@ -20,18 +20,28 @@ describe InvoiceObserver do
   def credit_account
     @txn = mock(Transaction)
     @observer = InvoiceObserver.instance
+    @observer.stub(:transaction).with(@model).and_return(@txn)
     @observer.stub(:convenience_fee).with(@model).and_return(@txn)
     @account = mock(BankAccount)
+    @observer1 = InvoiceObserver.instance
+    @observer1.stub(:bank_account).with(@model).and_return(@account)
+    @observer1.stub(:credit_account).with(@model).and_return(@account)
+  end
+
+  def send_mailer
+    @mailer = mock(UserMailer)
     @observer = InvoiceObserver.instance
-    @observer.stub(:credit_account).with(@model).and_return(@account)
+    @observer.stub(:delay).with(@mailer).and_return(@mailer)
+    @observer.stub(:send_payment_receipt).with(@model).and_return(@mailer)
   end
 
   describe 'after_update' do
 
     before(:each) do
-      @account = user.bank_accounts.build FactoryGirl.attributes_for :bank_account
+      @transaction = FactoryGirl.create :transaction, convenience_fee: 0.99
+      @account = user.bank_accounts.create FactoryGirl.attributes_for :bank_account
       @model = user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: listing.pixi_id, buyer_id: buyer.id, 
-        bank_account_id: @account.id) 
+        bank_account_id: @account.id, transaction_id: @transaction.id ) 
       @model.price, @model.status = 150.00, 'paid'
     end
 
@@ -46,6 +56,11 @@ describe InvoiceObserver do
     it 'should credit account' do
       credit_account
       PixiPayment.stub(:add_transaction).with(@model, 0.99, 'abcdeg').and_return(true)
+    end
+
+    it 'should deliver the receipt' do
+      credit_account
+      send_mailer
     end
   end
 

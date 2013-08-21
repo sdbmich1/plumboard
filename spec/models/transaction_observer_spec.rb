@@ -36,5 +36,13 @@ describe TransactionObserver do
       @model.save!
       user.user_pixi_points.find_by_code('inv').code.should == 'inv'
     end
+
+    it 'should deliver the receipt' do
+      @model.status = 'approved'
+      @user_mailer = mock(UserMailer)
+      UserMailer.stub(:delay).and_return(UserMailer)
+      UserMailer.should_receive(:send_transaction_receipt).with(@model)
+      @model.save!
+    end
   end
 end

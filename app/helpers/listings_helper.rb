@@ -29,4 +29,9 @@ module ListingsHelper
     # flatten and return as json
     ary.flatten(1).to_json       
   end
+
+  # check if page needs refreshing
+  def refresh_page?(axn)
+    (%w(show category).detect { |x| x == axn })
+  end
 end

@@ -13,6 +13,10 @@ class Ability
     else
       can :read, :all
 
+      can :read, Transaction do |txn|
+        txn.try(:user) == user
+      end
+
       can :create, Post
       can :update, Post do |post|
         post.try(:user) == user || user.role?(:editor)
@@ -24,6 +28,14 @@ class Ability
       end
       can :delete, TempListing do |listing|
         listing.try(:user) == user
+      end
+
+      can :create, Invoice
+      can :update, Invoice do |invoice|
+        invoice.try(:user) == user
+      end
+      can :delete, Invoice do |invoice|
+        invoice.try(:user) == user
       end
 
       can :delete, Listing do |listing|
