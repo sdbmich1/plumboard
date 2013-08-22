@@ -435,7 +435,7 @@ feature "TempListings" do
     it { should_not have_selector('#contact_content') }
     it { should_not have_selector('#comment_content') }
     it { should_not have_link 'Follow', href: '#' }
-    it { should have_link 'Prev', href: edit_temp_listing_path(temp_listing) }
+    it { should have_link 'Edit', href: edit_temp_listing_path(temp_listing) }
     it { should have_link 'Remove', href: temp_listing_path(temp_listing) }
     it { should have_link 'Done!', href: submit_temp_listing_path(temp_listing) }
     it { should_not have_button 'Next' }
@@ -471,7 +471,7 @@ feature "TempListings" do
 
     it "goes back to build a pixi" do
       expect { 
-	      click_link 'Prev'
+	      click_link 'Edit'
 	}.not_to change(TempListing, :count)
 
       page.should have_content "Build Pixi" 
