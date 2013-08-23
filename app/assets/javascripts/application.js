@@ -449,6 +449,16 @@ $(document).on("keypress", "#comment_content", function(e){
   }
 });
 
+// submit comment form on enter key
+$(document).on("keypress", "#search", function(e){
+  if (e.keyCode == 13 && !e.shiftKey && !keyPress) {
+    keyPress = true;
+    e.preventDefault();
+    if($(this).val().length > 0)
+      $('#submit-btn').click();
+  }
+});
+
 var time_id;
 function set_timer() {
  time_id = setTimeout(updatePixis, 30000);  
@@ -503,6 +513,10 @@ $(document).on("click", "#recent-link", function() {
 function resetBoard() {
   var loc = $('#site_id').val(); // grab the selected location 
   var cid = $('#category_id').val(); // grab the selected category 
+
+  // set search form fields
+  $('#search_category_id').val(cid);
+  $('#search_site_id').val(loc);
 
   // check location
   if (loc > 0) {

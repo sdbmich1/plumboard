@@ -134,8 +134,10 @@ describe "Listings", :type => :feature do
 
     it { should have_content "Posted By: #{listing.seller_name}" }
     it { should_not have_selector('#contact_content') }
+    it { should_not have_selector('#comment_content') }
     it { should_not have_link 'Follow', href: '#' }
     # it { should_not have_link 'Follow', href: '#' }
+    it { should have_content "Comments (#{listing.comments.size})" }
     it { should have_link 'Back', href: listings_path }
     it { should have_link 'Remove', href: listing_path(listing) }
     it { should have_link 'Edit', href: edit_temp_listing_path(listing) }
