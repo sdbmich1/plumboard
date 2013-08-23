@@ -19,9 +19,6 @@ class BankAccountsController < ApplicationController
         format.js { reload_data }
         format.html { redirect_path }
       end
-    else
-      flash.now[:error] = @account.errors
-      render :nothing => true
     end
   end
 

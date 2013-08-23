@@ -61,18 +61,19 @@ class BankAccount < ActiveRecord::Base
   def save_account
     acct = Payment::add_bank_account self
 
-    unless acct
-      errors.add :base, "Error: There was a problem with your Balanced account."
+    # check for errors
+    if acct 
+      return false if self.errors.any?
+
+      # set fields
+      self.token, self.acct_no, self.bank_name = acct.uri, acct.account_number, acct.bank_name
+    else
+      errors.add :base, "Account number, routing number, or account name is invalid."
+      return false
     end
 
-    # check for errors
-    return false if self.errors.any?
-
-    # set fields
-    self.token, self.acct_no, self.bank_name = acct.uri, acct.account_number, acct.bank_name
-
     # save new account
-    save!
+    save
   end
 
   # issue account credit

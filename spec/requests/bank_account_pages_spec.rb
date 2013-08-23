@@ -46,6 +46,7 @@ feature "BankAccounts" do
 
     page.should_not have_content 'Bill To'
     page.should have_content 'Account #'
+    page.should have_content 'invalid'
   end
 
   describe "Create Bank Account" do 

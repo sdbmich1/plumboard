@@ -25,11 +25,11 @@ $(document).on('click', '#acctForm', function () {
  
 // process card
 function BalancedCard() {
-  $formID = $('#payForm');
+  $formID = $('#payment_form');
   marketplaceUri = $('meta[name="balanced-key"]').attr('content');  // get balanced key		
 
   // disable form
-  $formID.attr('disabled', true);
+  $('#payForm').attr('disabled', true);
 
   // initialize object
   balanced.init(marketplaceUri);
@@ -63,10 +63,14 @@ function processAcct() {
 
 // process errors
 function processError(response, msg) {
-  var $balancedError = $('#card_error'); 
+  var $balancedError = $('#data_error'); 
 
   $balancedError.show(300).text(msg);
-  $formID.attr('disabled', false);
+
+  if($('#bank-acct-form').length > 0) {
+    $('#bank-acct-form').attr('disabled', false); }
+  else {
+    $('#payForm').attr('disabled', false); }
 
   // scroll to top of page
   $('html, body').animate({scrollTop:0}, 100); 
@@ -77,11 +81,11 @@ function callbackHandler(response) {
   switch (response.status) {
     case 400:
       console.log(response.error);
-      processError(response, 'Card number or cvv invalid');
+      processError(response, 'Card/Account number or cvv invalid');
       break;
     case 402:
       console.log(response.error);
-      processError(response, 'Card is invalid and could not be authorized');
+      processError(response, 'Card/Account is invalid and could not be authorized');
       break;
     case 404:
       console.log(response.error);

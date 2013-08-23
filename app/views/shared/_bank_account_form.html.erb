@@ -4,7 +4,7 @@
   <div class="row">
     <%= form_for(@account, url: set_account_path, html: { id: 'bank-acct-form', class: "form-horizontal uform" }, :remote=>true) do |f| %>
       <div id="form_errors"><%= render partial: 'shared/error_messages', locals: { :target => f.object } %></div>
-      <div id="balanced_error" style="display:none" class="error"></div>
+      <div id="data_error" style="display:none" class="error"></div>
 
       <div class="sm-top span6 offset3">
         <div id='signup'>

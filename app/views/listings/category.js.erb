@@ -1,4 +1,4 @@
-$("#pxboard").html("<%= escape_javascript(render(partial: 'shared/listing', collection: @listings)) %>");
+$("#pxboard").html("<%= escape_javascript(render(partial: 'shared/listings')) %>");
 
 <% unless @listings.next_page %>
   $('a.nxt-pg').remove();

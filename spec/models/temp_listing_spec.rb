@@ -343,6 +343,20 @@ describe TempListing do
     end
   end
 
+  describe "dup pixi" do
+    let(:user) { FactoryGirl.create :pixi_user }
+    let(:temp_listing) { FactoryGirl.create :temp_listing_with_transaction, seller_id: user.id }
+
+    it "does not return new listing" do 
+      listing = FactoryGirl.build :temp_listing, seller_id: user.id 
+      listing.dup_pixi(true).should_not be_true
+    end
+
+    it "returns new listing" do 
+      temp_listing.dup_pixi(true).should be_true
+    end
+  end
+
   describe "post to board" do
     let(:user) { FactoryGirl.create :pixi_user }
     let(:temp_listing) { FactoryGirl.create :temp_listing_with_transaction, seller_id: user.id }

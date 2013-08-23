@@ -87,7 +87,7 @@ function set_token(response) {
 
 // handle credit card response
 function stripeResponseHandler(status, response) {
-  var stripeError = $('#card_error'); 
+  var stripeError = $('#data_error'); 
       
   if(status == 200) {
     toggleLoading();

@@ -2,7 +2,6 @@ class TempListing < ListingParent
   self.table_name = "temp_listings"
 
   include CalcTotal
-   
   before_create :set_flds
 
   has_many :site_listings, :foreign_key => :listing_id, :dependent => :destroy
@@ -70,27 +69,10 @@ class TempListing < ListingParent
     submit_order transaction_id
   end
 
-  # add listing to post if approved
+  # add listing to board if approved
   def post_to_board
     if self.status == 'approved'
-      unless listing = Listing.where(:pixi_id => self.pixi_id).first
-        # copy attributes
-	attr = self.attributes
-
-	# remove protected attributes
-	%w(id created_at updated_at).map {|x| attr.delete x}
-
-	# load attributes to new record
-        listing = Listing.new attr
-      end
-
-      # add photos
-      self.pictures.each do |pic|
-        listing.pictures.build(:photo => pic.photo)
-      end
-
-      # add to board
-      listing.save!
+      dup_pixi true
     else
       errors.add :base, "Pixi must be approved prior to posting to board."
       false

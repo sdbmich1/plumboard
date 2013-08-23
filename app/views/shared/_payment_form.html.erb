@@ -1,7 +1,7 @@
 <div id="pmtForm">
   <%= form_for @transaction, :url => transactions_url(:id=>@listing, :order=>@order), :html => {id: 'payment_form'} do |f| %>
     <%= render partial: 'shared/error_messages', locals: { :target => @transaction } %>
-    <div id="card_error" style="display:none" class="error"></div>
+    <div id="data_error" style="display:none" class="error"></div>
     <%= render 'shared/purchase_summary' %>
     <%= render partial: 'shared/buyer_info', locals: { f: f } %>
     <%= render partial: 'shared/credit_card_info' if @transaction.amt > 0.0 %>

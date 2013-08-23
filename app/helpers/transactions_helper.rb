@@ -59,7 +59,7 @@ module TransactionsHelper
 
   # return page header based on transaction type
   def get_header
-    @transaction.pixi? ? "Step 3 of 3: Submit Your Pixi" : "Pay Invoice"
+    @transaction.pixi? ? "Step 3 of 3: Submit Your Pixi" : "PixiPay | Pay Invoice"
   end
 
   # return page header based on transaction type

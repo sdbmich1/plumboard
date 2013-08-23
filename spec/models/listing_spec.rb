@@ -483,6 +483,20 @@ describe Listing do
     end
   end
 
+  describe "dup pixi" do
+    let(:user) { FactoryGirl.create :pixi_user }
+    let(:listing) { FactoryGirl.create :listing, seller_id: user.id }
+
+    it "does not return new listing" do 
+      listing = FactoryGirl.build :listing, seller_id: user.id 
+      listing.dup_pixi(false).should_not be_true
+    end
+
+    it "returns new listing" do 
+      listing.dup_pixi(false).should be_true
+    end
+  end
+
   describe "date validations" do
     before do
       @cat = FactoryGirl.create(:category, name: 'Event', pixi_type: 'premium') 

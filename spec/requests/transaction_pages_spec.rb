@@ -87,7 +87,7 @@ feature "Transactions" do
   def click_valid_ok
     click_button submit 
     page.driver.browser.switch_to.alert.accept
-    sleep 2
+    sleep 3
   end
 
   def click_cancel_ok
@@ -187,7 +187,6 @@ feature "Transactions" do
         credit_card_data '4111111111111111'
         page.should have_content("Purchase Complete")
       }.to change(Transaction, :count).by(1)
-
     end
   end
 
@@ -248,6 +247,19 @@ feature "Transactions" do
 	  click_ok }.not_to change(Transaction, :count)
 
       page.should have_content 'invalid'
+    end
+
+    it "creates a transaction after bad_dates error", :js=>true do
+      expect { 
+	  credit_card_data '4242424242424242', '123', false
+	  click_ok }.not_to change(Transaction, :count)
+
+      page.should have_content 'invalid'
+
+      expect { 
+        credit_card_data '4111111111111111'
+        page.should have_content("Purchase Complete")
+      }.to change(Transaction, :count).by(1)
     end
   end
 

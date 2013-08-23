@@ -211,9 +211,21 @@ describe "Listings", :type => :feature do
         page.should_not have_content "Guitar Lessons" 
       end
 
-      it "Edits a pixi" do
-        click_link 'Edit'
-        page.should have_content("Build Pixi")
+      describe "Edits active pixi" do
+        before :each do
+          click_link 'Edit'
+	end
+
+        it { should have_content("Build Pixi") }
+
+        it "adds a pixi pic" do
+          expect{
+              attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
+              click_button 'Next'; sleep 2
+          }.to change(Picture,:count).by(1)
+
+          page.should have_content 'Review Your Pixi'
+        end
       end
 
       it "Returns to pixi list" do

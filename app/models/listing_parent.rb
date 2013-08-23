@@ -196,4 +196,36 @@ class ListingParent < ActiveRecord::Base
   def job?
     %w(Gigs Jobs Employment).detect { |cat| cat == category_name}
   end
+
+  # duplicate pixi between models
+  def dup_pixi tmpFlg
+    
+    # check for temp or active pixi based on flag
+    listing = tmpFlg ? Listing.where(:pixi_id => self.pixi_id).first : TempListing.where(:pixi_id => self.pixi_id).first
+
+    unless listing
+      attr = self.attributes  # copy attributes
+
+      # remove protected attributes
+      %w(id created_at updated_at).map {|x| attr.delete x}
+
+      # load attributes to new record
+      listing = tmpFlg ? Listing.new(attr) : TempListing.new(attr)
+    end
+
+    # add photos
+    self.pictures.each do |pic|
+
+      # check if listing & photo already exists for pixi edit
+      if tmpFlg && !listing.new_record? 
+        next if listing.pictures.where(:photo_file_name => pic.photo_file_name).first
+      end
+
+      # add photo
+      listing.pictures.build(:photo => pic.photo)
+    end
+
+    # add dup
+    listing.save ? listing : false
+  end
 end
