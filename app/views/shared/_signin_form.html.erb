@@ -14,10 +14,10 @@
 
     <div>
       <%= f.submit "Sign in", class: "btn btn-large btn-primary submit-btn" %>
-      <%= link_to user_omniauth_authorize_path(:facebook), id: 'fb-btn', class: "pull-right" do %>
+      <%= link_to "Sign up for free!", new_user_registration_path, class: "btn btn-large btn-primary btn-mask" %>
+      <%= link_to user_omniauth_authorize_path(:facebook), id: 'fb-btn' do %>
         <%= image_tag 'icon_facebook.png', class: 'lrg-img-icon' %>
       <% end %>
-      <%= link_to "Sign up for free!", new_user_registration_path, class: "btn btn-large btn-primary btn-mask" %>
     </div>
   <% end %>
 
