@@ -30,13 +30,13 @@ class SearchesController < ApplicationController
   end
  
   def load_data
-    @cat = params[:search_category_id]
-    @loc = params[:search_site_id] if params[:search_site_id]
+    @cat = params[:cid]
+    @loc = params[:loc] if params[:loc]
   end
 
   # specify default search location based on user location
   def get_location
-    @lat, @lng = request.location.latitude, request.location.longitude 
+    @lat, @lng = request.location.try(:latitude), request.location.try(:longitude) 
   end
 
   # dynamically define search options based on selections

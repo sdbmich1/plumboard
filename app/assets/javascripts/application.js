@@ -17,7 +17,7 @@
 //= require jquery.remotipart
 //= require jquery.bxslider.min.js
 //= require jquery.masonry.min.js
-//= require jquery.infinitescroll.js
+//= require jquery.infinitescroll.min.js
 //= require jquery.placeholder.min.js
 //= require bootstrap-datepicker.js
 //= require datepicker.js
@@ -259,37 +259,6 @@ $(document).on("click", ".pixi-cat", function(showElem){
   processUrl(url);
 });
 
-// clear next page scroll data
-function clearScroll(showElem, nav, nxt, item) {
-  var $container = $('#px-container');
-  var currentUrl = url + param;
-
-  // reload board
-  reload_board(showElem);
-
-  //call the method to destroy the current infinitescroll session.
-  $container.infinitescroll('destroy');
-
-  // reset data
-  $container.data('px-nav', null);
-
-  //reinstantiate the container
-  $container.infinitescroll({                      
-    state: {                                              
-      isDuringAjax: false,
-      isInvalidPage: false,
-      isDestroyed: false,
-      isDone: false                           
-    }
-  });
-
-  // initialize infinite scroll
-  initScroll('#px-container', nav, nxt, item);
-
-  // Re-initialize
-  $container.infinitescroll({path: [$("div#px-nav").find("span.page:last").find("a:first").attr('href')+'?page='], state:{currPage:1} });
-}
-
 // reload board
 function reload_board(element) {
   var $container = $('#px-container');
@@ -307,12 +276,13 @@ function initScroll(cntr, nav, nxt, item) {
       navSelector  : nav, 		// selector for the paged navigation (it will be hidden)
       nextSelector : nxt,  		// selector for the NEXT link (ie. page 2)  
       itemSelector : item,          // selector for all items that's retrieve
-      animate: true,
-      extraScrollPx: 50,
-      bufferPx : 250,
+      animate: false,
+      extraScrollPx: 150,
+      bufferPx : 100,
+      localMode    : true,
       loading: {
-	msgText: "<em>Loading the next set of pixis...</em>",
-	speed: 'fast'
+        img:  'http://i.imgur.com/6RMhx.gif',
+	msgText: "<em>Loading...</em>"
       }
     },
 
@@ -322,7 +292,6 @@ function initScroll(cntr, nav, nxt, item) {
 
       // ensure that images load before adding to masonry layout
       $newElems.imagesLoaded(function(){
-        // show elems now they're ready
         $newElems.animate({ opacity: 1 });
         $container.masonry( 'appended', $newElems, true ); 
       });
@@ -515,21 +484,21 @@ function resetBoard() {
   var cid = $('#category_id').val(); // grab the selected category 
 
   // set search form fields
-  $('#search_category_id').val(cid);
-  $('#search_site_id').val(loc);
+  $('#cid').val(cid);
+  $('#loc').val(loc);
 
   // check location
   if (loc > 0) {
     if (cid > 0) {
-      var url = '/listings/category?loc=' + loc + '&cid=' + cid; 
+      var url = '/listings/category?' + 'loc=' + loc + '&cid=' + cid; 
     }
     else {
-      var url = '/listings/location?loc=' + loc; 
+      var url = '/listings/location?' + 'loc=' + loc;
     }
   }
   else {
     if (cid > 0) {
-      var url = '/listings/category?loc=' + loc + '&cid=' + cid; 
+      var url = '/listings/category?' + 'cid=' + cid; 
     }
     else {
       var url = '/listings.js';
@@ -537,8 +506,8 @@ function resetBoard() {
   }
 
   // refresh the page
-  processUrl(url);
-  // resetScroll(url);
+  // processUrl(url);
+  resetScroll(url);
 
   // toggle menu
   var $this = $("#li_home");
@@ -558,9 +527,12 @@ $(document).on('click', '.post-menu', function(e) {
 });
 
 // toggle menu post menu item
-$(document).on('click', '.home-link', function(e) {
+$(document).on('click', '#home-link', function(e) {
   $('#site_id').val('').prop('selectedIndex',0);
   $('#category_id').val('').prop('selectedIndex',0);
+
+  // reset board
+  resetBoard();
 
   // toggle menu
   var $this = $("#li_home");
@@ -577,28 +549,28 @@ $(document).on('click', '#mark-posts', function(e) {
 function resetScroll(url) {
   var $container = $('#px-container');
 
+  // call the method to destroy the current infinitescroll session.
+  $container.infinitescroll('destroy');
+  $container.infinitescroll('unbind');
+
+  // clear current infinitescroll session.
+  $.removeData($container.get(0), 'infinitescroll')
+  $container.data('infinitescroll', null);
+
   $.ajax({
     url: url,
     dataType: 'script',
+    beforeSend: function() {
+      toggleLoading();
+    },
     success: function(data){
 
-      //call the method to destroy the current infinitescroll session.
-      $container.infinitescroll('destroy');
-
-      //reinstantiate the container
-      $container.infinitescroll({                      
-        state: {                                              
-          isDestroyed: false,
-          isDone: false                           
-        }
+      $('#myContainer').infinitescroll({                      
+          state: {                                              
+	    isDestroyed: false,
+	    isDone: false                           
+	  }
       });
-
-      // initialize infinite scroll
-      initScroll('#px-container', '#px-nav', '#px-nav a', '#pxboard .item');
-
-      // rebind
-      $container.infinitescroll('bind');
     }
   });
-
 }

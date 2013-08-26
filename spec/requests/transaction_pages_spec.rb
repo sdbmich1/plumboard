@@ -188,6 +188,20 @@ feature "Transactions" do
         page.should have_content("Purchase Complete")
       }.to change(Transaction, :count).by(1)
     end
+
+    it "creates a balanced transaction with valid mc card", :js=>true do
+      expect { 
+        credit_card_data '5105105105105100'
+        page.should have_content("Purchase Complete")
+      }.to change(Transaction, :count).by(1)
+    end
+
+    it "creates a balanced transaction with valid amex card", :js=>true do
+      expect { 
+        credit_card_data '341111111111111', '1234'
+        page.should have_content("Purchase Complete")
+      }.to change(Transaction, :count).by(1)
+    end
   end
 
   describe 'pay invoice from post page' do
@@ -198,14 +212,14 @@ feature "Transactions" do
 
     it { should have_button('Pay') }
 
-    it "creates a balanced transaction with valid visa card", :js=>true do
+    it "creates a balanced transaction with valid card", :js=>true do
       click_on 'Pay'
       page.should have_content 'Pay Invoice'
       page.should have_content 'Total Due'
 
       expect { 
         user_data_with_state
-        credit_card_data '4111111111111111'
+        credit_card_data '5105105105105100'
         page.should have_content("Purchase Complete")
       }.to change(Transaction, :count).by(1)
     end
@@ -221,7 +235,13 @@ feature "Transactions" do
       expect { 
 	  credit_card_data '', '123', true
 	  click_ok }.not_to change(Transaction, :count)
+      page.should have_content 'invalid'
+    end
 
+    it "should not create a transaction with invalid card #", :js=>true do
+      expect { 
+	  credit_card_data '4444444444444448', '123', true
+	  click_ok }.not_to change(Transaction, :count)
       page.should have_content 'invalid'
     end
 
@@ -229,7 +249,6 @@ feature "Transactions" do
       expect { 
 	  credit_card_data '6666666666666666', '123', true
 	  click_ok }.not_to change(Transaction, :count)
-
       page.should have_content 'invalid'
     end
 
@@ -237,7 +256,6 @@ feature "Transactions" do
       expect { 
 	  credit_card_data '4242424242424242', '', true
 	  click_ok }.not_to change(Transaction, :count)
-
       page.should have_content 'invalid'
     end
 
@@ -245,7 +263,6 @@ feature "Transactions" do
       expect { 
 	  credit_card_data '4242424242424242', '123', false
 	  click_ok }.not_to change(Transaction, :count)
-
       page.should have_content 'invalid'
     end
 
@@ -253,7 +270,6 @@ feature "Transactions" do
       expect { 
 	  credit_card_data '4242424242424242', '123', false
 	  click_ok }.not_to change(Transaction, :count)
-
       page.should have_content 'invalid'
 
       expect { 

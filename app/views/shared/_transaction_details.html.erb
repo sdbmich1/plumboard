@@ -19,10 +19,10 @@
        <%= transaction.country %><br />	  
     </address>
   </td></tr>
-  <tr><td class='width240'>Home Phone: </td><td><%= transaction.home_phone %></span><br /></td></tr>
-  <tr><td class='width240'>Email: </td><td><%= transaction.email %></span><br /></td></tr>
-  <tr><td class='width240'>Description: </td><td><%= transaction.description %></span><br /></td></tr>
+  <tr><td class='width240'>Home Phone: </td><td><%= transaction.home_phone %><br /></td></tr>
+  <tr><td class='width240'>Email: </td><td><%= transaction.email %><br /></td></tr>
+  <tr><td class='width240'>Description: </td><td><%= txn_details(transaction) %><br /></td></tr>
   <% if showAmt %>
-    <tr><td class='width240'>Amount: </td><td><%= number_to_currency transaction.amt %></span><br /></td></tr>
+    <tr><td class='width240'>Amount: </td><td><%= number_to_currency transaction.amt %><br /></td></tr>
   <% end %>		
 </table>

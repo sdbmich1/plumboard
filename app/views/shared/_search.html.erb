@@ -1,6 +1,6 @@
   <%= form_tag get_search_path, :method => :get, :remote=>true, id: 'search_btn', class: 'navbar-search' do %>
-    <%= hidden_field_tag 'search_category_id', '' %>
-    <%= hidden_field_tag 'search_site_id', '' %>
+    <%= hidden_field_tag 'cid', '' %>
+    <%= hidden_field_tag 'loc', '' %>
     <div class="controls">
       <div class="input-append">
         <%= autocomplete_field_tag 'search', nil, get_autocomplete_path, :id_element => '', :update_elements => {}, 

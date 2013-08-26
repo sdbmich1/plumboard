@@ -1,4 +1,5 @@
 Geocoder.configure(
   # geocoding service (see below for supported options):
-  :lookup => :yandex
+  :lookup => :yandex, 
+  :timeout => 20
 )

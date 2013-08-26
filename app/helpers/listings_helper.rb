@@ -32,6 +32,6 @@ module ListingsHelper
 
   # check if page needs refreshing
   def refresh_page?(axn)
-    (%w(show category).detect { |x| x == axn })
+    (%w(show).detect { |x| x == axn })
   end
 end

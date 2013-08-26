@@ -49,7 +49,7 @@ module TransactionsHelper
 
   # reset time display format
   def get_local_time(tm)
-    tm.utc.getlocal.strftime('%m/%d/%Y %I:%M%p')
+    tm.strftime('%m/%d/%Y %I:%M%p')
   end
 
   # return page title based on transaction type
@@ -75,5 +75,10 @@ module TransactionsHelper
   # set prev btn based on txn type
   def set_prev_btn
     @transaction.pixi? ? @listing : @invoice
+  end
+
+  # set details based on transaction type
+  def txn_details txn
+    txn.pixi? ? txn.description : "#{txn.description} from #{txn.seller_name}" 
   end
 end

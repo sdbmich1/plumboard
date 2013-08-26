@@ -1,11 +1,19 @@
-$("#pxboard").html("<%= escape_javascript(render(partial: 'shared/listings')) %>");
+<% if params[:page] %>
+  $("#pxboard").append("<%= escape_javascript(render(partial: 'shared/listings')) %>");
+  $('a.nxt-pg').attr('href', '#{location_listings_path page: @listings.next_page, loc: params[:loc]}');
+<% else %>  
+  $("#pxboard").html("<%= escape_javascript(render(partial: 'shared/listings')) %>");
+  $("#px-nav").html("<%= escape_javascript(render(partial: 'shared/loc_list_next_page')) %>");
+<% end %>  
+
+var parms = "&loc=" + "<%= params[:loc] %>"
+$('#px-container').infinitescroll({pathParse:["/listings/location?page=", parms]});
+
+// initialize infinite scroll
+load_masonry('#px-nav', '#px-nav a.nxt-pg', '#pxboard .item');
 
 // reload board
 reload_board(this);
-
-<% unless @listings.next_page %>
-  $('a.nxt-pg').remove();
-<% end %>
 
 $('#nearby-map').hide('fast');
 $('#spinner').hide(300);

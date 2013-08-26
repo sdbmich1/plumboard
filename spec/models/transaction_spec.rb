@@ -220,17 +220,19 @@ describe Transaction do
       @invoice = @seller.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id)
     end
 
-    it "should not get invoice pixi" do
+    it "does not get invoice pixi" do
       @transaction.get_invoice_listing.should_not be_true
       @transaction.get_invoice.should_not be_true
+      @transaction.seller_name.should_not be_true
     end
 
-    it "should get invoice pixi" do
+    it "gets invoice pixi" do
       @txn = @user.transactions.create FactoryGirl.attributes_for(:transaction, transaction_type: 'invoice')
       @invoice.transaction_id, @invoice.status = @txn.id, 'pending'
       @invoice.save!
       @invoice.transaction.get_invoice_listing.should be_true
       @invoice.transaction.get_invoice.should be_true
+      @invoice.transaction.seller_name.should == @seller.name
     end
   end
 

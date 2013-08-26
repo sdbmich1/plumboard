@@ -134,6 +134,11 @@ class Transaction < ActiveRecord::Base
   def get_invoice
     invoices.first rescue nil
   end
+
+  # get invoice seller
+  def seller_name
+    get_invoice.seller_name rescue nil
+  end
   
   # process transaction
   def process_transaction

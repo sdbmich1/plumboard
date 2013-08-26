@@ -41,15 +41,15 @@ class ListingsController < ApplicationController
     @listings = Listing.get_by_site @loc, @page
   end
 
+  def load_data
+    @page = params[:page] || 1
+    @cat, @loc = params[:cid], params[:loc]
+  end
+
   protected
 
   def page_layout
     %w(index category location).detect {|x| action_name == x} ? 'listings' : 'application'
-  end
-
-  def load_data
-    @page = params[:page] || 1
-    @cat, @loc = params[:cid], params[:loc]
   end
 
   def add_points

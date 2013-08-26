@@ -106,8 +106,10 @@ function callbackHandler(response) {
 
       // submit to the server
       $formID.trigger("submit.rails");    	  
-      return true
+      break;
+    default:
+      console.log(response.error);
+      processError(response, 'Request invalid. Please try again.');
+      break;
   }
-    
-  return false;
 }

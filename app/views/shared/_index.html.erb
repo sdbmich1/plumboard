@@ -8,9 +8,11 @@
     <%= render 'shared/listings' %>
   </div> 
 
-  <div id="px-nav" class='center-wrapper nxt-pg-spinner'>
+  <nav id="px-nav">
     <%= render 'shared/listing_next_page' %>
-  </div>
+  </nav>
 
-  <%= link_to 'Scroll', '#', class: 'scrollup' %>
+  <div class='span1'>
+    <%= link_to 'Scroll', '#', class: 'scrollup' %>
+  </div>
 <% end %>

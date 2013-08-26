@@ -373,8 +373,9 @@ h3 { padding: 10px }
 .nxt-pg { display:none; }
 .nxt-pg-spinner { 
   position:fixed;
+  width: 60px;
   bottom:50px;
-  right:100px;
+  right:10%;
   text-indent:-9999px;
   z-index: 9999!important }
 
@@ -737,10 +738,10 @@ hr.vertical
   width: 28px!important;
 }
 
-a.home-link {
+a#home-link, a.home-link {
   &:hover {
-    background-color: transparent;
     text-decoration: none;
+    background: transparent!important;
   }
 }
 
