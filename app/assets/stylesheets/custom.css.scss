@@ -13,6 +13,8 @@ body {
   padding-top: 60px;
   }
 
+@import "bootstrap-responsive";
+
 section {
   overflow: auto;
   }
@@ -635,7 +637,7 @@ a.btn-mask {
  
 #reply_content {
   height: 30px!important;
-  width: 625px!important;
+  width: 80%!important;
   margin-bottom: 0!important;
   @extend #post_content;
 }
@@ -693,7 +695,7 @@ a.btn-mask {
 
 #post-frm {
   float: left;
-  width: 860px!important;
+//  width: 860px!important;
 }
 
 #post_form {

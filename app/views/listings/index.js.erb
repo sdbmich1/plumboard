@@ -4,13 +4,13 @@
 <% else %>  
   $("#pxboard").html("<%= escape_javascript(render(partial: 'shared/listings')) %>");
   $("#px-nav").html("<%= escape_javascript(render(partial: 'shared/listing_next_page')) %>");
+
+  // set next page path
+  $('#px-container').infinitescroll({pathParse:["/listings?page=", ""]});
+
+  // initialize infinite scroll
+  load_masonry('#px-nav', '#px-nav a.nxt-pg', '#pxboard .item');
 <% end %>  
-
-// set next page path
-$('#px-container').infinitescroll({pathParse:["/listings?page=", ""]});
-
-// initialize infinite scroll
-load_masonry('#px-nav', '#px-nav a.nxt-pg', '#pxboard .item');
 
 // reload board
 reload_board(this);

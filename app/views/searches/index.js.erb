@@ -4,14 +4,14 @@
 <% else %>  
   $("#pxboard").html("<%= escape_javascript(render(partial: 'shared/listings')) %>");
   $("#px-nav").html("<%= escape_javascript(render(partial: 'shared/search_next_page')) %>");
+
+  // set next page path
+  var parms = "&loc=" + "<%= params[:loc] %>" + "&search=" + "<%= params[:search] %>" + "&cid=" + "<%= params[:cid] %>"
+  $('#px-container').infinitescroll({pathParse:["/searches?page=", parms]});
+
+  // initialize infinite scroll
+  load_masonry('#px-nav', '#px-nav a.nxt-pg', '#pxboard .item');
 <% end %>  
-
-// set next page path
-var parms = "&loc=" + "<%= params[:loc] %>" + "&search=" + "<%= params[:search] %>" + "&cid=" + "<%= params[:cid] %>"
-$('#px-container').infinitescroll({pathParse:["/searches?page=", parms]});
-
-// initialize infinite scroll
-load_masonry('#px-nav', '#px-nav a.nxt-pg', '#pxboard .item');
 
 // reload board
 reload_board(this);

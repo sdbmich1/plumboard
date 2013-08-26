@@ -3,8 +3,8 @@
     <%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: invoice.listing} %>
   </td>
   <td class='width80'><div class='price'><%= link_to invoice.id, invoice, remote: true %></div></td>
-  <td class='width180'><%= invoice.buyer.name %></td>
-  <td class='width280'><%= link_to invoice.listing.title, invoice.listing, class: 'pending_title' %></td>
+  <td class='width180'><%= invoice.buyer_name %></td>
+  <td class='width360'><%= link_to invoice.pixi_title, invoice.listing, class: 'pending_title' %></td>
   <td class='width120'><div class='price'><%= number_to_currency(invoice.amount) %></div></td>
-  <td><%= invoice.status.titleize %></td>
+  <td class='width120'><%= invoice.status.titleize %></td>
 </tr>
