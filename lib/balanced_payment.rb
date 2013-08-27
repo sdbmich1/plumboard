@@ -77,12 +77,16 @@ module BalancedPayment
   def self.charge_card token, amt, descr, txn 
     initialize
 
+    #unless buyer = Balanced::Account.where(email: txn.user.email).first
+    #  buyer = @marketplace.create_buyer(email_address: txn.user.email, card_uri: token)
+    #  buyer = Balanced::Customer.new(email_address: txn.user.email).save
+    # else
+    #  buyer
+    #end
+
     # set buyer
-    unless buyer = Balanced::Account.where(email: txn.user.email).first
-      buyer = @marketplace.create_buyer(email_address: txn.user.email, card_uri: token)
-    else
-      buyer
-    end
+    buyer = Balanced::Customer.new.save
+    response = buyer.add_card token
 
     # charge card
     result = buyer.debit(amount: (amt * 100).to_i.to_s)

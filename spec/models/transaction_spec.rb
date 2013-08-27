@@ -239,11 +239,16 @@ describe Transaction do
   describe "process transaction - Balanced" do
     before do
       CREDIT_CARD_API = 'balanced'
-      @buyer = FactoryGirl.create(:pixi_user, email: 'joedblow@pixitest.com') 
-      @bal_charge = mock('Balanced::Marketplace', id: 1, card: {card_type: 'visa', last_four: '0000'}) 
-      @bal_charge.stub!(:create_buyer).with(email_address: @buyer.email, card_uri: @transaction.token).and_return(@bal_charge)
-      @bal_charge.stub!(:debit).with(amount: 10000).and_return(@bal_charge)
-      Balanced::Marketplace.stub!(:my_marketplace).and_return(@bal_charge)
+     # @buyer = FactoryGirl.create(:pixi_user, email: 'joedblow@pixitest.com') 
+     # @bal_charge = mock('Balanced::Marketplace', id: 1, card: {card_type: 'visa', last_four: '0000'}) 
+     # @bal_charge.stub!(:create_buyer).with(email_address: @buyer.email, card_uri: @transaction.token).and_return(@bal_charge)
+     # @bal_charge.stub!(:debit).with(amount: 10000).and_return(@bal_charge)
+     # Balanced::Marketplace.stub!(:my_marketplace).and_return(@bal_charge)
+
+      @customer = mock('Balanced::Customer')
+      Balanced::Customer.stub!(:new).and_return(@customer)
+      Balanced::Customer.stub!(:save).and_return(@customer)
+      @customer.stub!(:debit).with(amount: 10000).and_return(true)
     end
 
     it "does not process" do

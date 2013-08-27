@@ -10,5 +10,5 @@ ThinkingSphinx::Index.define :listing, :with => :active_record do
   has price
   has compensation
   has lat, lng
-  where "(listings.status = 'active')" 
+  where "(listings.status = 'active') AND (listings.end_date >= curdate()) " 
 end

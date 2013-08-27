@@ -22,7 +22,7 @@ class UserMailer < ActionMailer::Base
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     # set message details
-    mail(:to => "#{@invoice.seller.email}", :subject => "Your Payment Receipt: #{@payment.id} ") 
+    mail(:to => "#{@invoice.seller_email}", :subject => "Your Payment Receipt: #{@payment.id} ") 
   end
 
   # send post notices to members
@@ -34,6 +34,17 @@ class UserMailer < ActionMailer::Base
 
     # set message details
     mail(:to => "#{post.recipient.email}", :subject => "Pixiboard Post: #{post.pixi_title} ") 
+  end
+
+  # send approval notices to members
+  def send_approval listing
+    @listing = listing
+
+    # set logo
+    attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
+    # set message details
+    mail(:to => "#{listing.user.email}", :subject => "Pixi Approved: #{listing.title} ") 
   end
 
   # send confirm message to new members

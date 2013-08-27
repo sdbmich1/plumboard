@@ -94,6 +94,11 @@ class Invoice < ActiveRecord::Base
     seller.name rescue nil
   end
 
+  # get seller email
+  def seller_email
+    seller.email rescue nil
+  end
+
   # get title
   def pixi_title
     listing.title rescue nil

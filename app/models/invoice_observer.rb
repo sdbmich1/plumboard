@@ -32,7 +32,8 @@ class InvoiceObserver < ActiveRecord::Observer
 	  PixiPayment.add_transaction model, fee, result.uri, result.id 
 
           # send receipt upon approval
-          UserMailer.delay.send_payment_receipt(model, result)
+          # UserMailer.delay.send_payment_receipt(model, result)
+          UserMailer.send_payment_receipt(model, result).deliver
 	end
       end
     end

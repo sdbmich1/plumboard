@@ -1,11 +1,11 @@
 <table>
-  <tr><td class='width240'>Confirmation #:</td><td><%= payment.id %></td></tr>
+  <tr><td class='width240'>Confirmation #:</td><td></td><td><%= payment.id %></td></tr>
 
-  <tr><td class='width240'>Bank Name: </td><td><%= payment.bank_account.bank_name %></td></tr>
-  <tr><td class='width240'>Account #:</td><td>******<%= payment.bank_account.account_number %></td></tr>
-  <tr><td class='width240'>Deposit Amount:</td><td><%= number_to_currency((payment.amount/100).to_f) %></td></tr>
+  <tr><td class='width240'>Bank Name: </td><td></td><td><%= payment.bank_account.bank_name %></td></tr>
+  <tr><td class='width240'>Account #:</td><td></td><td>******<%= payment.bank_account.account_number %></td></tr>
+  <tr><td class='width240'>Amount:</td><td></td><td><%= number_to_currency(payment.amount.to_f/100) %></td></tr>
 
-  <tr><td class='width240'>Date & Time: </td><td><%= get_local_time(payment.created_at.to_datetime) %></td></tr>
-  <tr><td class='width240'>From: </td><td><%= invoice.buyer_name %></td></tr>
-  <tr><td class='width240'>Description: </td><td><%= invoice.pixi_title %></span><br /></td></tr>
+  <tr><td class='width240'>Date & Time: </td><td></td><td><%= get_local_time(payment.created_at.to_datetime) %></td></tr>
+  <tr><td class='width240'>From: </td><td></td><td><%= invoice.buyer_name %></td></tr>
+  <tr><td class='width240'>Description: </td><td></td><td><%= invoice.pixi_title %></span><br /></td></tr>
 </table>

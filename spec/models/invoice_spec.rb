@@ -234,10 +234,16 @@ describe Invoice do
 
   describe "seller" do 
     it { @invoice.seller_name.should_not be_empty } 
+    it { @invoice.seller_email.should_not be_empty } 
 
     it "should not find correct seller name" do 
       @invoice.seller_id = 100 
       @invoice.seller_name.should be_nil 
+    end
+
+    it "should not find correct seller email" do 
+      @invoice.seller_id = 100 
+      @invoice.seller_email.should be_nil 
     end
   end
 

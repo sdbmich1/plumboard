@@ -9,6 +9,13 @@ describe ListingObserver do
     @observer.stub(:delete_temp_pixi).with(@model).and_return(true)
   end
 
+  def send_mailer
+    @mailer = mock(UserMailer)
+    @observer = ListingObserver.instance
+    @observer.stub(:delay).with(@mailer).and_return(@mailer)
+    @observer.stub(:send_approval).with(@model).and_return(@mailer)
+  end
+
   describe 'after_create' do
     let(:category) { FactoryGirl.create :category }
 
@@ -26,6 +33,10 @@ describe ListingObserver do
     it 'deletes temp pixi' do
       listing = FactoryGirl.create(:listing, seller_id: user.id)
       delete_pixi listing
+    end
+
+    it 'should deliver approval message' do
+      send_mailer
     end
   end
 

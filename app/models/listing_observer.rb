@@ -9,6 +9,9 @@ class ListingObserver < ActiveRecord::Observer
 
     # remove temp pixi
     delete_temp_pixi model
+
+    # send approval message
+    UserMailer.delay.send_approval(model)
   end
 
   # remove temp pixi
