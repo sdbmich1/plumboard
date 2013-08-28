@@ -40,6 +40,8 @@ describe User do
     it { should respond_to(:paid_invoices) } 
     it { should respond_to(:bank_accounts) } 
     it { should respond_to(:comments) }
+    it { should respond_to(:ratings) }
+    it { should respond_to(:seller_ratings) }
   end
 
   describe "when first_name is empty" do

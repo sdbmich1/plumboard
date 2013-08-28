@@ -254,5 +254,19 @@ FactoryGirl.define do
     token		"/v1/marketplaces/TEST-MP2ORkhLY8htilmM6AlLwBDp/cards/CC3lncKU8HDchttA692Vyyw8"
     invoice
   end
+
+  factory :inquiry do
+    first_name		"Jane"
+    last_name		"Doe"
+    email		"jane.doe@pixitest.com"
+    inquiry_type	"Bug"
+    comments 		"SFSU"
+    status 		"active"
+  end
+
+  factory :rating do
+    comments 		"SFSU"
+    value 		4
+  end
 end
 		 

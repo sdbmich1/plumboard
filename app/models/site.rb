@@ -5,7 +5,9 @@ class Site < ActiveRecord::Base
   has_many :users, :through => :site_users
 
   has_many :listings, :dependent => :destroy
-  has_many :active_listings, class_name: 'Listing', conditions: { :status => 'active' }
+  has_many :active_listings, class_name: 'Listing', 
+        conditions: proc { "'#{Date.today.to_s(:db)}' BETWEEN start_date AND end_date AND status = 'active'" }
+
   scope :with_pixis, :include    => :listings, 
                      :conditions => "listings.id IS NOT NULL"
 

@@ -1,6 +1,6 @@
 class Listing < ListingParent
   self.table_name = "listings"
-  include ThinkingSphinx::Scopes
+  include NearbyPixi, ThinkingSphinx::Scopes
 
   before_create :activate
   attr_accessor :parent_pixi_id
@@ -14,6 +14,8 @@ class Listing < ListingParent
 
   has_many :pictures, :as => :imageable, :dependent => :destroy
   accepts_nested_attributes_for :pictures, :allow_destroy => true
+
+  default_scope :order => "updated_at DESC"
 
   # set active status
   def activate
@@ -30,8 +32,8 @@ class Listing < ListingParent
   end
 
   # paginate
-  def self.active_page pg=1
-    active.paginate page: pg
+  def self.active_page pg=1, ip="127.0.0.1"
+    NearbyPixi::find_by_location(ip).paginate(page: pg)
   end
 
   # get pixis by category id

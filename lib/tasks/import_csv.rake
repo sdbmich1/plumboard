@@ -1,7 +1,7 @@
 require 'csv'
 
 desc "Import data from csv file"
-task :import => :environment do
+task :import_sites => :environment do
 
    CSV.foreach(Rails.root.join('db', 'Accreditation_2011_12.csv'), :headers => true) do |row|
     
@@ -54,6 +54,118 @@ task :import => :environment do
 
     # set prev id
     prev_id = row[0]
+  end
+end
+
+task :load_bay_area_cities => :environment do
+
+   CSV.foreach(Rails.root.join('db', 'bay_area_cities_082713.csv'), :headers => true) do |row|
+    
+   attrs = {
+	      	:name              => row[0],
+		:status		   => 'active',
+		:org_type	   => 'city'
+      }
+
+    # add site
+    unless site = Site.where(:name => row[0]).first
+      new_site = Site.new(attrs)
+
+      # set location/contact attributes
+      loc_attrs = { 
+	     	:city            => row[0],
+		:county		 => row[1],
+          	:state           => 'CA'
+		}
+
+      # add contact info for site
+      new_site.contacts.build(loc_attrs)
+
+      # save site
+      if new_site.save 
+        puts "Saved site #{attrs.inspect}"
+      else
+        puts new_site.errors
+      end
+    end
+  end
+end
+
+task :load_sf_neighborhoods => :environment do
+
+   CSV.foreach(Rails.root.join('db', 'sf_neighborhoods_082713.csv'), :headers => true) do |row|
+    
+   # get area name
+   area = row[0].split(' ', 2)[1]
+
+   # set site attributes
+   attrs = {
+	      	:name              => ['San Francisco', area].join(' - '),
+		:status		   => 'active',
+		:org_type	   => 'area'
+      }
+
+    # add site
+    unless site = Site.where(:name => row[0]).first
+      new_site = Site.new(attrs)
+
+      # set location/contact attributes
+      loc_attrs = { 
+	     	:address         => area,
+	     	:city            => 'San Francisco',
+		:county		 => 'San Francisco',
+          	:state           => 'CA'
+		}
+
+      # add contact info for site
+      new_site.contacts.build(loc_attrs)
+
+      # save site
+      if new_site.save 
+        puts "Saved site #{attrs.inspect}"
+      else
+        puts new_site.errors
+      end
+    end
+  end
+end
+
+task :load_neighborhoods, [:file, :city, :county] => [:environment] do |t, args|
+
+   CSV.foreach(Rails.root.join('db', args.file), :headers => true) do |row|
+    
+   # get area name
+   area = row[0]
+
+   # set site attributes
+   attrs = {
+	      	:name              => [args.city, area].join(' - '),
+		:status		   => 'active',
+		:org_type	   => 'area'
+      }
+
+    # add site
+    unless site = Site.where(:name => row[0]).first
+      new_site = Site.new(attrs)
+
+      # set location/contact attributes
+      loc_attrs = { 
+	     	:address         => area,
+	     	:city            => args.city,
+		:county		 => args.county,
+          	:state           => 'CA'
+		}
+
+      # add contact info for site
+      new_site.contacts.build(loc_attrs)
+
+      # save site
+      if new_site.save 
+        puts "Saved site #{attrs.inspect}"
+      else
+        puts new_site.errors
+      end
+    end
   end
 end
 

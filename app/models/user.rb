@@ -39,6 +39,9 @@ class User < ActiveRecord::Base
   has_many :transactions, dependent: :destroy
   has_many :comments, dependent: :destroy
 
+  has_many :ratings, dependent: :destroy
+  has_many :seller_ratings, :foreign_key => "seller_id", :class_name => "Rating"
+
   has_many :user_pixi_points, dependent: :destroy
 
   has_many :pictures, :as => :imageable, :dependent => :destroy

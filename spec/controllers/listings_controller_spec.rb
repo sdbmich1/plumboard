@@ -37,7 +37,7 @@ describe ListingsController do
     before(:each) do
       @listings = mock("listings")
       Listing.stub!(:active_page).and_return(@listings)
-      controller.stub!(:load_data).and_return(:success)
+      controller.stub_chain(:load_data, :get_location).and_return(:success)
       do_get
     end
 
@@ -62,7 +62,7 @@ describe ListingsController do
     before(:each) do
       @listings = mock("listings")
       Listing.stub!(:active_page).and_return(@listings)
-      controller.stub!(:load_data).and_return(:success)
+      controller.stub_chain(:load_data, :get_location).and_return(:success)
       do_get
     end
 

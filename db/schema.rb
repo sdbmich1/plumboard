@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130826204001) do
+ActiveRecord::Schema.define(:version => 20130828162932) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -93,9 +93,11 @@ ActiveRecord::Schema.define(:version => 20130826204001) do
     t.string   "country"
     t.float    "lng"
     t.float    "lat"
+    t.string   "county"
   end
 
   add_index "contacts", ["contactable_id"], :name => "index_contacts_on_contactable_id"
+  add_index "contacts", ["contactable_type"], :name => "index_contacts_on_contactable_type"
   add_index "contacts", ["lng", "lat"], :name => "index_contacts_on_long_and_lat"
 
   create_table "delayed_jobs", :force => true do |t|
@@ -123,6 +125,7 @@ ActiveRecord::Schema.define(:version => 20130826204001) do
     t.string   "email"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
+    t.string   "status"
   end
 
   add_index "inquiries", ["email"], :name => "index_inquiries_on_email"
@@ -285,6 +288,19 @@ ActiveRecord::Schema.define(:version => 20130826204001) do
   add_index "promo_codes", ["code", "status"], :name => "index_promo_codes_on_code_and_status"
   add_index "promo_codes", ["end_date", "start_date"], :name => "index_promo_codes_on_end_date_and_start_date"
   add_index "promo_codes", ["site_id"], :name => "index_promo_codes_on_site_id"
+
+  create_table "ratings", :force => true do |t|
+    t.integer  "seller_id"
+    t.integer  "user_id"
+    t.text     "comments"
+    t.integer  "value"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+    t.string   "pixi_id"
+  end
+
+  add_index "ratings", ["pixi_id"], :name => "index_ratings_on_pixi_id"
+  add_index "ratings", ["seller_id", "user_id"], :name => "index_ratings_on_seller_id_and_user_id"
 
   create_table "read_marks", :force => true do |t|
     t.integer  "readable_id"

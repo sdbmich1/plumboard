@@ -2,13 +2,14 @@ require 'will_paginate/array'
 class ListingsController < ApplicationController
   include PointManager
   before_filter :authenticate_user!
+  before_filter :get_location, only: [:index]
   before_filter :load_data, only: [:index, :seller, :category, :show, :location]
   after_filter :add_points, only: [:show]
   respond_to :html, :json, :js
   layout :page_layout
 
   def index
-    @listings = Listing.active_page @page
+    @listings = Listing.active_page @page, @ip
   end
 
   def show
@@ -61,6 +62,6 @@ class ListingsController < ApplicationController
   end
 
   def get_location
-    @lat, @lng = request.location.latitude, request.location.longitude
+    @ip = Rails.env.development? || Rails.env.test? ? request.remote_ip : request.ip
   end
 end
