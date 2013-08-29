@@ -5,10 +5,19 @@ module NearbyPixi
   def self.find_by_location ip, range=10
 
     # find nearby places by ip address
-    unless places = Contact.near(ip, range, order: :distance).get_by_type('Site').first
+    unless places = Contact.near(ip, range, order: :distance).get_by_type('Site')
       Listing.active
     else
-      places.contactable.active_listings
+      list = []
+
+      # get site ids
+      places.map {|p| list << p.contactable.id}
+
+      # reset list
+      list.flatten! 1
+
+      # get pixis
+      Listing.active.where site_id: list.uniq
     end
   end
 end
