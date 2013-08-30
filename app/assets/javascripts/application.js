@@ -19,6 +19,7 @@
 //= require jquery.masonry.min.js
 //= require jquery.infinitescroll.min.js
 //= require jquery.placeholder.min.js
+//= require bootstrap.min.js
 //= require bootstrap-datepicker.js
 //= require datepicker.js
 //= require map.js

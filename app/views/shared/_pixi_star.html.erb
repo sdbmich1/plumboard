@@ -1,3 +1,4 @@
+<% unless leader.blank? %>
 <li id="<%= leader.id %>">
   <%= render partial: 'shared/show_photo', locals: {model: leader, file_name: "myimage", psize: '60x60', display_cnt: 0 } %>
   <div class='span5'>
@@ -11,3 +12,4 @@
   </div>
   <div class='clear-all'></div>
 </li>
+<% end %>

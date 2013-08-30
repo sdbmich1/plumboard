@@ -2,10 +2,10 @@ module NearbyPixi
   # used to find nearby pixis
 
   # user ip address to find nearby sites and accompanying pixis
-  def self.find_by_location ip, range=10
+  def self.find_by_location ip, range=25
 
     # find nearby places by ip address
-    unless places = Contact.near(ip, range, order: :distance).get_by_type('Site')
+    unless places = Contact.near(ip, range, order: :distance).get_by_type('Site').includes(:contactable)
       Listing.active
     else
       list = []
@@ -21,3 +21,4 @@ module NearbyPixi
     end
   end
 end
+
