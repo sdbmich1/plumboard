@@ -5,7 +5,9 @@ module NearbyPixi
   def self.find_by_location ip, range=25
 
     # find nearby places by ip address
-    unless places = Contact.near(ip, range, order: :distance).get_by_type('Site').includes(:contactable)
+    places = Contact.near(ip, range, order: :distance).get_by_type('Site').includes(:contactable)
+
+    if places.blank?
       Listing.active
     else
       list = []

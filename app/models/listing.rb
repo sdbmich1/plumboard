@@ -1,6 +1,6 @@
 class Listing < ListingParent
   self.table_name = "listings"
-  include NearbyPixi, ThinkingSphinx::Scopes
+  include ThinkingSphinx::Scopes
 
   before_create :activate
   attr_accessor :parent_pixi_id
@@ -32,8 +32,8 @@ class Listing < ListingParent
   end
 
   # paginate
-  def self.active_page pg=1, ip="127.0.0.1"
-    NearbyPixi::find_by_location(ip).paginate(page: pg)
+  def self.active_page pg=1, ip="127.0.0.1", range=25
+    active.where(site_id: Contact.near(ip, range).get_by_type('Site').map(&:contactable_id).uniq).paginate(page: pg)
   end
 
   # get pixis by category id

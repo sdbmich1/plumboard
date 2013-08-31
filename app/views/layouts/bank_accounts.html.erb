@@ -5,7 +5,7 @@
   <title><%= full_title(yield(:title)) %></title>
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application", "http://code.jquery.com/jquery-1.10.1.min.js",  'jquery.placeholder.min.js', 'payment.js',
-  	"https://js.balancedpayments.com/v1/balanced.js" %>
+  	'bootstrap.min.js', "https://js.balancedpayments.com/v1/balanced.js" %>
   <%= tag :meta, :name => "balanced-key", :content => BALANCED_URI %>
   <%= csrf_meta_tags %>
   <%= render 'layouts/shim' %>
