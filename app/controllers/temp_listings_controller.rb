@@ -18,7 +18,7 @@ class TempListingsController < ApplicationController
   end
 
   def edit
-    @listing = Listing.find_by_pixi_id(params[:id]).dup_pixi(false)
+    @listing = TempListing.find_by_pixi_id(params[:id]) || Listing.find_by_pixi_id(params[:id]).dup_pixi(false)
     @photo = @listing.pictures.build
   end
 

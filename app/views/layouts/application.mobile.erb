@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>  
+	<div id="pg-hdr">
+  		<%= yield :title %> 
+  	</div>
+	<%= render 'layouts/jqm' %>
+    	<%= stylesheet_link_tag "mobile" %>  
+  	<%= csrf_meta_tag %>  	
+  </head>
+  <body>  
+  <div id="app" data-role="page" data-iscroll="enable" data-cache="never"> 
+    <div data-role="header" data-theme="b">
+      <%= yield :head %>
+    </div>
+    <%= yield :subhead %>
+    
+    <div class="app-content" data-role="content">
+	<%= render 'mobile/notice_alert'%>
+  	<%= yield :content %>
+  
+    	<div id="app-footer" data-role="footer">		
+      	  <%= yield :footer %>
+    	</div>
+     </div>   
+   </div>   
+     
+  </body> 
+</html>

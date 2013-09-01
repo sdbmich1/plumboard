@@ -150,6 +150,7 @@ describe TempListingsController do
 
     before :each do
       @pixi = mock(Listing)
+      TempListing.stub!(:find_by_pixi_id).and_return( @pixi )
       Listing.stub!(:find_by_pixi_id).and_return( @pixi )
       @picture = stub_model(Picture)
       @pixi.stub!(:dup_pixi).and_return(@listing)
@@ -158,6 +159,11 @@ describe TempListingsController do
 
     def do_get
       get :edit, id: '1'
+    end
+
+    it "should load the requested listing" do
+      TempListing.should_receive(:find_by_pixi_id).with('1').and_return(@pixi)
+      do_get
     end
 
     it "should load the requested listing" do

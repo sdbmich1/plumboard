@@ -1,0 +1,13 @@
+<%= content_for :title do %>
+  	<title><%= "#{get_name_or_logo}" %></title>
+<% end %>
+
+<%= content_for :subhead do %>
+  <div class="center-wrapper">
+	<p><%= image_tag("#{get_name_or_logo('logo')}", :class =>"logo") %></p><br />
+  </div> 
+<% end %>
+
+<%= content_for :content do %>
+  	<%= render :partial => "devise/shared/signin" %>
+<% end %>
