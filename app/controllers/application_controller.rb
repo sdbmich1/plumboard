@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
   before_filter :load_settings
-  before_filter :prepare_for_mobile, :except => :destroy
+  before_filter :prepare_for_mobile, if: :isDev?, except: [:destroy]
   helper_method :mobile_device?
 
   protected
@@ -9,6 +9,10 @@ class ApplicationController < ActionController::Base
   def authenticate_user!
     request.xhr? ? clear_stored_location : store_location
     super
+  end
+
+  def isDev?
+    Rails.env.development?
   end
 
   def after_sign_in_path_for(resource)
