@@ -2,14 +2,18 @@
   <div id="mform">
     <%= form_for("user", :url => user_session_path) do |f| %>
       <%= render "mobile/error_messages", :target => resource %>  
-      <div><%= f.email_field :email, placeholder: 'Email', :autofocus => true, class: 'fld' %></div>
+      <div><%= f.email_field :email, placeholder: 'Email', class: 'fld' %></div>
       <div><%= f.password_field :password, placeholder: 'Password', size: 20, class: 'fld' %></div>
-	  
-      <%= f.submit "Sign In", "data-theme"=>"b" %>
-      <%= link_to "Sign Up!", new_user_registration_path, "data-role" => 'button', class: 'signup-btn' %>
-      <%= link_to user_omniauth_authorize_path(:facebook), id: 'fb-btn' do %>
-          <%= image_tag 'icon_facebook.png', class: 'lrg-img-icon' %>
+
+      <div class="mtop">
+      <%= f.submit "Sign In", id: 'signin-btn', "data-theme"=>"d" %>
+      <%= link_to user_omniauth_authorize_path(:facebook), "data-role"=>'button', id: 'fb-btn', rel: "external" do %>
+          Sign in via <%= image_tag 'icon_facebook.png', class: 'sm-fb-icon' %>
       <% end %>
+      <div class='mtop center-wrapper'>
+        <%= link_to "Sign up for free!", new_user_registration_path %>
+      </div> 
+      </div> 
     <% end %>
   </div> 
 </div>

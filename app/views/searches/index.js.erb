@@ -1,9 +1,9 @@
 <% if params[:page] %>
-  $("#pxboard").append("<%= escape_javascript(render(partial: 'shared/listings')) %>");
+  $("#pxboard").append("<%= escape_javascript(render(partial: "#{get_partial}")) %>");
   $('a.nxt-pg').attr('href', '#{searches_path page: @listings.next_page, search: params[:search], loc: params[:loc], cid: params[:cid]}');
 <% else %>  
-  $("#pxboard").html("<%= escape_javascript(render(partial: 'shared/listings')) %>");
-  $("#px-nav").html("<%= escape_javascript(render(partial: 'shared/search_next_page')) %>");
+  $("#pxboard").html("<%= escape_javascript(render(partial: "#{get_partial}")) %>");
+  $("#px-nav").html("<%= escape_javascript(render(partial: "#{get_nxt_pg_partial}")) %>");
 
   // set next page path
   var parms = "&loc=" + "<%= params[:loc] %>" + "&search=" + "<%= params[:search] %>" + "&cid=" + "<%= params[:cid] %>"

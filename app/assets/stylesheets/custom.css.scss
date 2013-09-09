@@ -82,7 +82,7 @@ p {
   height: 100%;
 
   /* Negative indent footer by it's height */
-  margin: 0 auto -60px;
+  //margin: 0 auto -60px;
 }
 
 #home-wrap {
@@ -103,7 +103,7 @@ footer {
   position:absolute;
   bottom:0;
   margin-top: 45px;
-  padding-top: 5px;
+  padding-top: 20px;
   */
 
   border-top: 1px solid #eaeaea;
@@ -215,72 +215,11 @@ input, select, .uneditable-input {
 .notice {background:#fff6bf;color:#514721;border-color:#ffd324;}
 .success {background:#e6efc2;color:#264409;border-color:#c6d880;}
 
-/* primary listing(pixi) image */
-.pic-item { border: 1px solid #AAAAAA; box-shadow: 1px 1px 1px 1px #ccc; padding: 4px; }
-
-.item { 
-  @extend .pic-item; float: left; 
-  margin: 10px; }
-
-.pic-frame { 
-  @extend .pic-item;
-  margin-bottom: 10px; }
-
-.pixi-frame { 
-  display: block; float: left; 
-  @extend .pic-item;
-  margin: 0 10px 10px 0; 
-}
-
 /* submit button */
 .submit-btn { color: white!important; font-weight: bold; background: $pixiOrange!important; border: $pixiOrange!important; }
 .stnd-btn { color: black!important; background:#CCCCCC!important; border:1px gray!important}
 .fb-btn { 
   background: #2A528E!important; color: white!important; border: #2A528E!important;
-}
-
-/* listing image thumbnails */
-.thumb {
-  height: 100px;
-  width: 100px!important;
-  @extend .pic-item;
-  margin: 5px 10px 0 5px;
-}
-
-.pixi-photo img {
-  max-height: 125px!important;
-  width: 125px;
-  @extend .pic-item;
-  margin: 10px 5px 10px 0;
-}
-
-.inv-pic img {
-  height: 60px!important;
-  width: 60px!important;
-  @extend .pic-item;
-}
-
-.sm-thumb {
-  height: 60px;
-  width: 60px!important;
-  @extend .pic-item;
-  margin: 5px 10px 0 5px;
-}
-
-/* user image thumbnails */
-.usr-photo {
-  height: 180px;
-  width: 180px;
-  @extend .pic-item;
-  margin: 10px 5px 10px 0;
-}
-
-.usr-sm-photo img {
-  max-height: 30px!important;
-  max-width: 30px!important;
-  vertical-align: middle;
-  margin-bottom: 4px;
-  margin-top: -4px;
 }
 
 #spinner {
@@ -358,8 +297,8 @@ h3 { padding: 10px }
 
 .mtop {margin-top: 20px;}
 .mbot {margin-bottom: 20px;}
-.sm-top { margin-top: 5px!important }  
 .sm-bot { margin-bottom: 5px!important }  
+.sm-top { margin-top: 8px!important }  
 .neg-top { margin-top: -10px!important }  
 .ng-top { margin-top: -3px!important }  
 .mright { margin-right: 10px!important }
@@ -368,8 +307,6 @@ h3 { padding: 10px }
 
 .cb-label { display:inline; vertical-align:middle }
 .hdescr { font-size: 0.75em; color: #ccc; }
-.gdescr { font-size: 0.675em; color: #555555; }
-.bdescr { font-size: 0.875em; color: #000; width: 120px!important }
 .grey-text { color: #ccc; }
 
 .nxt-pg { display:none; }
@@ -418,26 +355,6 @@ h3 { padding: 10px }
 
 .bar-top { margin-top: 20px; }
 
-.SI-FILES-STYLIZED label.cabinet
-{
-  width: 79px;
-  height: 22px;
-  background: url('btn-choose-file.gif') 0 0 no-repeat;
-  margin-top: 10px;
-  display: block;
-  overflow: hidden;
-  cursor: pointer;
-  input.file
-  {
-    position: relative;
-    height: 100%;
-    width: auto;
-    opacity: 0;
-    -moz-opacity: 0;
-    filter:progid:DXImageTransform.Microsoft.Alpha(opacity=0);
-  }
-}
-
 .img-icon {
   height: 18px;
   width: 18px;
@@ -470,16 +387,6 @@ h3 { padding: 10px }
   -webkit-box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.125);  
   box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.125);  
   }
-
-.item-cat {
-  float:left;
-  padding-right:5px;
-}
-
-.item-dt {
-  float:right;
-  padding-left:5px;
-}
 
 .navbar-search {
   position: relative;
@@ -673,6 +580,14 @@ a.btn-mask {
 #more-btn {
   color: blue!important;
 }  
+
+.no-left {
+  margin-left: 0!important;
+}
+
+.no-bot {
+  margin-bottom: 0!important;
+}
 
 .reply_form {
   display: inline;

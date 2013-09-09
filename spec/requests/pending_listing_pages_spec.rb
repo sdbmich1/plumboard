@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "PendingListings", :type => :feature do
   subject { page }
-  let(:user) { FactoryGirl.create :admin, confirmed_at: Time.now }
+  let(:user) { FactoryGirl.create :editor, confirmed_at: Time.now }
   let(:listing) { FactoryGirl.create :temp_listing_with_transaction }
 
   before(:each) do

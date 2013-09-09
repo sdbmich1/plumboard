@@ -32,7 +32,7 @@ class Listing < ListingParent
   end
 
   # paginate
-  def self.active_page pg=1, ip="127.0.0.1", range=25
+  def self.active_page ip="127.0.0.1", pg=1, range=25
     active.where(site_id: Contact.near(ip, range).get_by_type('Site').map(&:contactable_id).uniq).paginate(page: pg)
   end
 
@@ -47,6 +47,29 @@ class Listing < ListingParent
       active.where('category_id = ? and site_id = ?', cid, sid).paginate page: pg
     else
       get_by_category cid, pg
+    end
+  end
+
+  # get active pixis by city
+  def self.active_by_city city, state, pg
+    stmt = "city = ? and state = ?"
+    active.where(site_id: Contact.where(stmt, city, state).get_by_type('Site').map(&:contactable_id).uniq).paginate(page: pg)
+  end
+
+  # get pixis by city
+  def self.get_by_city cid, sid, pg=1
+    # check if site is a city
+    unless loc = Site.where("id = ? and org_type = ?", sid, 'city').first
+      cid.blank? ? get_by_site(sid, pg) : get_category_by_site(cid, sid, pg)
+    else
+      # get active pixis by site's city and state
+      unless loc.contacts.blank?
+        city, state = loc.contacts[0].city, loc.contacts[0].state
+        cid.blank? ? active_by_city(city, state, pg) : where('category_id = ?', cid).active_by_city(city, state, pg) 
+      else
+        # get pixis by ids
+        cid.blank? ? get_by_site(sid, pg) : get_category_by_site(cid, sid, pg)
+      end
     end
   end
 

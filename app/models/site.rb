@@ -34,7 +34,6 @@ class Site < ActiveRecord::Base
 
   # select active sites w/ pixis
   def self.active_with_pixis
-    list = Listing.active.group(:site_id).select(:site_id)
-    Site.where(:id => list.map {|x| x.site_id})
+    where(:id => Listing.active.map(&:site_id).uniq)
   end
 end

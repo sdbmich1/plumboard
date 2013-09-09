@@ -160,21 +160,23 @@ function handleFileSelect(evt, style) {
       continue;
     }
 
-    var reader = new FileReader();
+    if (typeof FileReader !== "undefined") {
+      var reader = new FileReader();
 
-    // Closure to capture the file information.
-    reader.onload = (function(theFile) {
-      return function(e) {
-        // Render thumbnail.
-	var span = document.createElement('span');
-        span.innerHTML = ['<img class="', style, '" src="', e.target.result,
+      // Closure to capture the file information.
+      reader.onload = (function(theFile) {
+        return function(e) {
+          // Render thumbnail.
+	  var span = document.createElement('span');
+          span.innerHTML = ['<img class="', style, '" src="', e.target.result,
 		          '" title="', escape(theFile.name), '"/>'].join('');
-        document.getElementById('list').insertBefore(span, null);
-      };
-    })(f);
+          document.getElementById('list').insertBefore(span, null);
+        };
+      })(f);
 
-    // Read in the image file as a data URL.
-    reader.readAsDataURL(f);
+      // Read in the image file as a data URL.
+      reader.readAsDataURL(f);
+    }
   }
 }
 

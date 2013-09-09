@@ -6,7 +6,7 @@
   </div>
   <div class='row mbot'>
     <div class='span6 verticalLine'>
-      <div class='span1'>
+      <div class='span1 no-left'>
         <%= render partial: 'shared/show_picture', locals: {psize: 'small', model: listing.user} %>
       </div>
       <div class='span4'>
@@ -15,7 +15,7 @@
           <div id='post_form'><%= render partial: 'shared/contact', locals: { listing: listing } %></div>
 	<% end %>  
       </div>
-      <div class="span5 sm-top">
+      <div class="span5 no-left sm-top mbot">
         <%= render partial: 'shared/photos', locals: {model: listing, file_name: "", psize: '120x120'} %>
       </div>
     </div>
@@ -37,7 +37,7 @@
 
   <div class="row">
     <div class="span12 mbot">
-      <div class='span12'>
+      <div class='span12 no-left'>
         <%= simple_format(listing.summary) %><br />
 
         <% if listing.price %>
@@ -55,6 +55,7 @@
 
   <div class="row">
     <%= render partial: 'shared/show_temp_listing', locals: {listing: listing} if edit_mode %>
+    <%= check_pending_pixi listing %>
   </div>
 
   <div class="grey-text mtop row">

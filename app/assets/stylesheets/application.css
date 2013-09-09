@@ -12,6 +12,8 @@
  *= require jquery.ui.all
  *= require jquery.bxslider.css
  *= require datepicker.css
+ *= require si.files.css
+ *= require image.css.scss
  *= require_tree .
  */
 

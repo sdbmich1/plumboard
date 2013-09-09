@@ -5,11 +5,11 @@ class ListingsController < ApplicationController
   before_filter :get_location, only: [:index]
   before_filter :load_data, only: [:index, :seller, :category, :show, :location]
   after_filter :add_points, only: [:show]
-  respond_to :html, :json, :js
+  respond_to :html, :json, :js, :mobile
   layout :page_layout
 
   def index
-    @listings = Listing.active_page @page, @ip
+    @listings = Listing.active_page @ip, @page
   end
 
   def show
@@ -34,12 +34,12 @@ class ListingsController < ApplicationController
   end
 
   def category
-    @listings = Listing.get_category_by_site @cat, @loc, @page
+    @listings = Listing.get_by_city @cat, @loc, @page
     @category = Category.find @cat
   end
 
   def location
-    @listings = Listing.get_by_site @loc, @page
+    @listings = Listing.get_by_city @cat, @loc, @page
   end
 
   def load_data

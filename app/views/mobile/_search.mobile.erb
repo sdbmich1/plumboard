@@ -1,0 +1,9 @@
+<div id="search-mform">
+  <%= form_tag get_search_path, :method => :get, id: 'search-frm' do %>
+    <%= hidden_field_tag 'cid', '' %>
+    <%= hidden_field_tag 'loc', '' %>
+    <%= autocomplete_field_tag 'search', nil, get_autocomplete_path, :id_element => '', :update_elements => {}, 
+          :placeholder => 'Search', class: 'span3 search-fld', autofocus: true, 'data-mini'=>"true" %>
+    <%= submit_tag 'Search', {id: 'search-btn', "data-theme"=>"d", 'data-mini'=>"true"} %>
+  <% end %>
+</div>

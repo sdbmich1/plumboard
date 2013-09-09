@@ -1,7 +1,7 @@
 require 'will_paginate/array' 
 class PendingListingsController < ApplicationController
-  before_filter :authenticate_user!, :check_permissions
-  before_filter :load_data, only: [:index]
+  before_filter :authenticate_user!
+  before_filter :load_data, :check_permissions, only: [:index]
   respond_to :html, :json, :js
 
   def index
@@ -38,7 +38,10 @@ class PendingListingsController < ApplicationController
   end
 
   def check_permissions
-    authorize! :manage, @listing 
-    authorize! :manage, @listings
+    authorize! :access, '/pending_listings' 
+  end
+
+  def check_access
+    authorize! [:read, :update], @listing 
   end
 end

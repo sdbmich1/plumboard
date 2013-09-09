@@ -6,6 +6,7 @@ class Ability
 
     if user.has_role? :admin
       can :manage, :all
+      can :access, '/pending_listings'
       can :manage_items, User
       can :manage_orders, User
       can :manage_users, User
@@ -13,28 +14,19 @@ class Ability
     else
       can :read, :all
 
-      can :read, Transaction do |txn|
+      can [:create, :read], Transaction do |txn|
         txn.try(:user) == user
       end
 
-      can :create, Post
-      can :update, Post do |post|
-        post.try(:user) == user || user.role?(:editor)
+      can [:create, :read, :update], Post do |post|
+        post.try(:user) == user
       end
 
-      can :create, TempListing
-      can :update, TempListing do |listing|
-        listing.try(:user) == user || user.role?(:editor)
-      end
-      can :delete, TempListing do |listing|
+      can [:create, :read, :update, :delete], TempListing do |listing|
         listing.try(:user) == user
       end
 
-      can :create, Invoice
-      can :update, Invoice do |invoice|
-        invoice.try(:user) == user
-      end
-      can :delete, Invoice do |invoice|
+      can [:create, :update, :delete], Invoice do |invoice|
         invoice.try(:user) == user
       end
 
@@ -43,6 +35,8 @@ class Ability
       end
 
       if user.has_role? :editor
+        can [:read, :update], TempListing, status: 'pending'
+        can :access, '/pending_listings'
         can :manage_items, User
         can :manage_orders, User
         can :view_dashboard, User

@@ -1,0 +1,9 @@
+<% if model %>
+  <% if display_cnt < 2 %>
+    <div class="<%= display_cnt == 0 ? file_name : 'pic-frame' %>">
+      <%= image_tag(model.pictures[0].photo.url, :size => psize) if model.pictures[0] %>
+    </div>	
+  <% else %>
+    <%= render partial: 'mobile/photos', locals: {model: model, psize: psize } %>
+  <% end %>
+<% end %>

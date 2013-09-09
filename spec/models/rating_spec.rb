@@ -15,7 +15,7 @@ describe Rating do
   it { should respond_to(:pixi_id) }
   it { should respond_to(:seller_id) }
   it { should respond_to(:value) }
-
+  
   it { should respond_to(:user) }
   it { should respond_to(:listing) }
   it { should respond_to(:seller) }

@@ -140,10 +140,10 @@ end
 group :development, :test do
   gem 'wdm', '~> 0.1.0', :platforms => [:mswin, :mingw], :require => false
   # gem 'wdm', :platforms => [:mswin, :mingw], :require => false
-  gem 'rspec-rails', '2.12.0'
-  gem 'guard-rspec', '1.2.1'
-  gem 'guard-spork', '1.4.2'
-  gem 'spork', '0.9.2'
+  gem 'rspec-rails', '2.13.0'
+  gem 'guard-rspec', '3.0.2'
+  gem 'guard-spork', '1.5.1'
+  gem 'spork', '~> 1.0rc'
   gem 'faker'
   gem "vcr", "~> 2.5.0"
 end

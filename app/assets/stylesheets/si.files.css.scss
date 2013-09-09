@@ -1,0 +1,19 @@
+.SI-FILES-STYLIZED label.cabinet
+{
+  width: 79px!important;
+  height: 22px;
+  background: url('btn-choose-file.gif') 0 0 no-repeat;
+  margin-top: 10px!important;
+  display: block;
+  overflow: hidden;
+  cursor: pointer;
+  input.file
+  {
+    position: relative;
+    height: 100%;
+    width: auto;
+    opacity: 0;
+    -moz-opacity: 0;
+    filter:progid:DXImageTransform.Microsoft.Alpha(opacity=0);
+  }
+}

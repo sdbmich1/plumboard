@@ -1,0 +1,15 @@
+<div class='center-wrapper'>
+<% if model %>
+  <div class="bxslider">
+    <% for pic in model.pictures %>
+      <div>
+        <% if controller_name == 'temp_listings' %>
+          <%= image_tag pic.photo.url unless pic.photo_file_name.blank? %>
+        <% else %>
+          <%= image_tag pic.photo.url(:large) unless pic.photo_file_name.blank? %>
+        <% end %>
+     </div>
+    <% end %>
+  </div>
+<% end %>
+</div>

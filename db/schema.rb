@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130828162932) do
+ActiveRecord::Schema.define(:version => 20130909055925) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -96,6 +96,7 @@ ActiveRecord::Schema.define(:version => 20130828162932) do
     t.string   "county"
   end
 
+  add_index "contacts", ["city", "state"], :name => "index_contacts_on_city_and_state"
   add_index "contacts", ["contactable_id"], :name => "index_contacts_on_contactable_id"
   add_index "contacts", ["contactable_type"], :name => "index_contacts_on_contactable_type"
   add_index "contacts", ["lng", "lat"], :name => "index_contacts_on_long_and_lat"

@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html>
   <head>  
-	<div id="pg-hdr">
-  		<%= yield :title %> 
-  	</div>
-	<%= render 'layouts/jqm' %>
-    	<%= stylesheet_link_tag "mobile" %>  
-  	<%= csrf_meta_tag %>  	
+    <div id="pg-hdr">
+      <%= yield :title %> 
+    </div>
+    <%= render 'layouts/jqm' %>
+    <%= stylesheet_link_tag "mobile" %>  
+    <%= csrf_meta_tag %>  	
   </head>
   <body>  
   <div id="app" data-role="page" data-iscroll="enable" data-cache="never"> 
-    <div data-role="header" data-theme="b">
+    <div data-role="header" data-theme="d">
       <%= yield :head %>
+      <%= yield :srch_content %>
     </div>
     <%= yield :subhead %>
     

@@ -1,0 +1,6 @@
+<% unless @listings.blank? %>
+  <%= render partial: 'mobile/listing', collection: @listings %>
+<% else %>
+  <div class='center-wrapper'>No pixis found for the specified location and/or category.</div>
+<% end %>
+

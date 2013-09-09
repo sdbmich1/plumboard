@@ -1,11 +1,9 @@
 <%= content_for :subhead do %>
   <div class="center-wrapper">
-	<p><%= image_tag("#{get_name_or_logo('logo')}", :class =>"logo") %></p>
+    <p><%= image_tag 'rsz_px_word_logo.png', class: 'px-logo' %></p>
   </div> 
 <% end %>
 
 <%= content_for :content do %>
-  	<%= render :partial => "devise/shared/signup" %>
+  <%= render :partial => "devise/shared/signup" %>
 <% end %>
-
-	

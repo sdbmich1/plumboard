@@ -11,15 +11,8 @@
 <% end -%>
 
 <%= content_for :content do %>
-  <div class="center-wrapper">
-    <p><%= image_tag 'rsz_px_word_logo.png', class: 'px-logo' %></p>
-  </div>
+  <%= render partial: 'layouts/header', locals: { psize: 'px-logo' } %>
   <div class="mtop">
-  <%= render :partial => "devise/shared/signin" %><br />
+    <%= render :partial => "devise/shared/signin" %><br />
   </div>
 <% end -%>
-
-<%= content_for :footer do %>
-  <%= render 'layouts/footer' %>
-<% end %>
-

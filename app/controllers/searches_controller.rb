@@ -4,12 +4,17 @@ class SearchesController < ApplicationController
   after_filter :add_points, only: [:index]
   autocomplete :listing, :title, :full => true
   include PointManager
+  layout :page_layout
 
   def index
     @listings = Listing.search query, search_options unless query.blank?
   end
 
   protected
+
+  def page_layout
+    'listings' if mobile_device? 
+  end
 
   # wrap query text for special characters
   def query

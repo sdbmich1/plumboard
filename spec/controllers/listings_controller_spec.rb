@@ -82,7 +82,7 @@ describe ListingsController do
   describe 'GET category' do
     before(:each) do
       @listings = mock("listings")
-      Listing.stub!(:get_category_by_site).and_return(@listings)
+      Listing.stub!(:get_by_city).and_return(@listings)
       controller.stub!(:load_data).and_return(:success)
       do_get
     end
@@ -103,7 +103,7 @@ describe ListingsController do
   describe 'GET location' do
     before(:each) do
       @listings = mock("listings")
-      Listing.stub!(:get_by_site).and_return(@listings)
+      Listing.stub!(:get_by_city).and_return(@listings)
       controller.stub!(:load_data).and_return(:success)
       do_get
     end

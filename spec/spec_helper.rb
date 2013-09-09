@@ -41,16 +41,17 @@ Spork.prefork do
     config.include Capybara::RSpecMatchers
     config.include Capybara::DSL, :type => :request
     config.fixture_path = "#{::Rails.root}/spec/fixtures"
-    config.use_transactional_fixtures = false
 
     config.extend ControllerMacros, :type => :controller
     config.infer_base_class_for_anonymous_controllers = false
     config.include Rails.application.routes.url_helpers
     config.include(MailerMacros)  
     config.include IntegrationSpecHelper, :type => :request
+    config.use_transactional_fixtures = false
 
     config.before(:suite) do
-      DatabaseCleaner.strategy = :truncation
+      DatabaseCleaner.clean_with(:truncation)
+      # DatabaseCleaner.strategy = :truncation
     end
 
     config.before(:each) do

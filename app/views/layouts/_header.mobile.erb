@@ -1,0 +1,7 @@
+<div class="center-wrapper">
+  <%= image_tag 'rsz_px_word_logo.png', class: psize %>
+</div>
+<% if user_signed_in? %>
+  <%= link_to 'Change', '#', :id=>"chgflg", "data-icon"=>"info", :class => "ui-btn-left", 'data-iconpos'=>'notext' %>
+  <%= link_to 'Signout', destroy_user_session_path, "data-icon"=>"gear", :class => "ui-btn-right", 'data-iconpos'=>'notext' %>
+<% end %>

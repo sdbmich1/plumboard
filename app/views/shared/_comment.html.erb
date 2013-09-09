@@ -1,6 +1,5 @@
 <li id="<%= comment.id %>">
-  <%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: comment.user} %>
-  <div class='span4'>
+  <div class='span3 no-left'>
     <div class='sender'>
       <%= comment.sender_name %>
       <span class="timestamp">
@@ -9,6 +8,9 @@
     </div>
     <span class="content"><%= comment.summary %><%= link_to ' more...', '#', class: 'moreBtn' if comment.long_content? %></span>
     <span class='fcontent' style="display: none"><%= comment.full_content %></span>
+  </div>
+  <div class='pull-right'>
+    <%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: comment.user} %>
   </div>
   <div class='clear-all'></div>
 </li>

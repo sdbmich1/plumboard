@@ -29,4 +29,9 @@ module TempListingsHelper
   def get_year_ary
     (Date.today.year-99..Date.today.year).inject([]){|x,y| x << y}.reverse
   end
+
+  # check if pending listing
+  def check_pending_pixi listing
+    render partial: 'shared/pending_listing', locals: {listing: listing} if controller_name == 'pending_listings'
+  end
 end
