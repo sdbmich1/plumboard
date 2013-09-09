@@ -282,7 +282,7 @@ input, select, .uneditable-input {
 .tbl-hdr { text-align:left!important; font-weight: normal!important }
 
 .pixi-color { 
-  color:$pixiOrange; 
+  color: $pixiOrange; 
 }
 .pixi-bkgnd { background-color: $pixiOrange }
 .pixi-lt-bkgnd { background-color: #fde9d9 }
@@ -383,7 +383,7 @@ h3 { padding: 10px }
 #submenu .navbar-inner > .container { width:940px; }
 #submenu .nav > li > a:hover {color: $pixiOrange;}
 #submenu .nav .active > a, .menu .active > a:hover {
-  color:$pixiOrange;
+  color: $pixiOrange;
   -webkit-box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.125);  
   box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.125);  
   }
@@ -432,15 +432,15 @@ h3 { padding: 10px }
 a#add-pixi, a#add-inv {
   @extend .menubar-item;
   width: 50px;
-  background:$pixiOrange;
-  &:hover { background:$pixiOrange; text-decoration: none }
+  background: $pixiOrange;
+  &:hover { background: $pixiOrange; text-decoration: none }
 }   
 
 a#bill-pixi {
   @extend .menubar-item;
   width: 50px;
-  background:$pixiBlue;
-  &:hover { background:$pixiBlue; text-decoration: none }
+  background: $pixiBlue;
+  &:hover { background: $pixiBlue; text-decoration: none }
 }
 
 a#notice-btn {
