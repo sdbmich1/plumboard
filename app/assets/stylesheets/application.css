@@ -10,13 +10,13 @@
  *
  *= require_self
  *= require jquery.ui.all
- *= require jquery.bxslider.css
- *= require datepicker.css
- *= require si.files.css
+ *= require jquery.bxslider
+ *= require datepicker
+ *= require si.files
  *= require image
- *= require_tree .
  */
 
 .field_with_errors {
   @extend .control-group.error;
 }
+

@@ -13,7 +13,6 @@ describe Site do
   it { should respond_to(:org_type) }
   it { should respond_to(:status) }
   it { should respond_to(:institution_id) }
-
   it { should respond_to(:users) }
   it { should respond_to(:site_users) }
   it { should respond_to(:site_listings) }

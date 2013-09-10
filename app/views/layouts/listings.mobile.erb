@@ -2,8 +2,8 @@
 <html>
   <head> 
     <%= yield :title %> 
+    <%= stylesheet_link_tag "mobile", "image", :media => 'all' %>  
     <%= render 'layouts/jqm' %>
-    <%= stylesheet_link_tag "mobile", "image" %>  
     <%= csrf_meta_tag %>  	
   </head>
   <body>  
