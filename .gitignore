@@ -22,8 +22,9 @@
 /db/sphinx
 /log/*.pid
 
-# Ignore all picture files
+# Ignore all public files
 /public/system/pictures
+/public/assets
 
 # ignore yml files
 /config/*.yml
