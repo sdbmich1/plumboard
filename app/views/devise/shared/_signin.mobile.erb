@@ -2,12 +2,12 @@
   <div id="mform">
     <%= form_for("user", :url => user_session_path) do |f| %>
       <%= render "mobile/error_messages", :target => resource %>  
-      <div><%= f.email_field :email, placeholder: 'Email', class: 'fld' %></div>
-      <div><%= f.password_field :password, placeholder: 'Password', size: 20, class: 'fld' %></div>
+      <div><%= f.email_field :email, placeholder: 'Email', "data-theme"=>"a", class: 'fld' %></div>
+      <div><%= f.password_field :password, placeholder: 'Password', size: 20, "data-theme"=>"a", class: 'fld' %></div>
 
       <div class="mtop">
-      <%= f.submit "Sign In", id: 'signin-btn', "data-theme"=>"d" %>
-      <%= link_to user_omniauth_authorize_path(:facebook), "data-role"=>'button', id: 'fb-btn', rel: "external" do %>
+      <%= f.submit "Sign In", id: 'signin-btn' %>
+      <%= link_to user_omniauth_authorize_path(:facebook), "data-role"=>'button', "data-theme"=>"a", id: 'fb-btn', rel: "external" do %>
           Sign in via <%= image_tag 'icon_facebook.png', class: 'sm-fb-icon' %>
       <% end %>
       <div class='mtop center-wrapper'>

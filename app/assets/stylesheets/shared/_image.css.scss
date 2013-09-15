@@ -1,0 +1,94 @@
+/* primary listing(pixi) image */
+.pic-item { border: 1px solid #AAAAAA; box-shadow: 1px 1px 1px 1px #ccc; padding: 3px; }
+.bot-descr { font-size: 0.675em; color: #555555; }
+.item-descr { color: #000; }
+
+.bdescr {
+  @extend .item-descr;
+  width: 120px!important; 
+  font-size: 0.75em; line-height: 16px!important; 
+}
+
+.mbdescr {
+  @extend .item-descr;
+  width: 110px!important; 
+  font-size: 0.7em!important; line-height: 14px!important; 
+}
+
+.gdescr {
+  @extend .bot-descr;
+  font-size: 0.675em;
+}
+
+.mgdescr {
+  @extend .bot-descr;
+  font-size: 0.65em;
+}
+
+.item { 
+  @extend .pic-item; float: left; 
+  margin: 5px; }
+
+.pic-frame { 
+  @extend .pic-item;
+  margin-bottom: 10px; }
+
+.pixi-frame { 
+  display: block; float: left; 
+  @extend .pic-item;
+  margin: 0 10px 10px 0; 
+}
+
+.item-cat {
+  float:left;
+  padding-right:5px;
+}
+
+.item-dt {
+  float:right;
+  padding-left:5px;
+}
+
+/* listing image thumbnails */
+.thumb {
+  height: 100px;
+  width: 100px!important;
+  @extend .pic-item;
+  margin: 5px 10px 0 5px;
+}
+
+.pixi-photo img {
+  max-height: 125px!important;
+  width: 125px;
+  @extend .pic-item;
+  margin: 10px 5px 10px 0;
+}
+
+.inv-pic img {
+  height: 60px!important;
+  width: 60px!important;
+  @extend .pic-item;
+}
+
+.sm-thumb {
+  height: 60px;
+  width: 60px!important;
+  @extend .pic-item;
+  margin: 5px 10px 0 5px;
+}
+
+/* user image thumbnails */
+.usr-photo {
+  height: 180px;
+  width: 180px;
+  @extend .pic-item;
+  margin: 10px 5px 10px 0;
+}
+
+.usr-sm-photo img {
+  max-height: 30px!important;
+  max-width: 30px!important;
+  vertical-align: middle;
+  margin-bottom: 4px;
+  margin-top: -4px;
+}

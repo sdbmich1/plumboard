@@ -7,22 +7,22 @@ FactoryGirl.define do
     password_confirmation "setup#123"
     gender          	  "Male"
     birth_date            Time.parse("1967-04-23")
+  end
 
-    factory :admin do
+    factory :admin, :class => "User", :parent => :user do
       before(:create) {|user| user.pictures.build FactoryGirl.attributes_for(:picture)}
       after(:create) {|user| user.add_role(:admin)}
     end
 
-    factory :editor do
+    factory :editor, :class => "User", :parent => :user do
       before(:create) {|user| user.pictures.build FactoryGirl.attributes_for(:picture)}
       after(:create) {|user| user.add_role(:editor)}
     end
 
-    factory :subscriber do
+    factory :subscriber, :class => "User", :parent => :user do
       before(:create) {|user| user.pictures.build FactoryGirl.attributes_for(:picture)}
       after(:create) {|user| user.add_role(:subscriber)}
     end
-  end
 
   factory :pixi_user, :class => "User", :parent => :user do
     before(:create) {|user| user.pictures.build FactoryGirl.attributes_for(:picture)}
@@ -259,13 +259,13 @@ FactoryGirl.define do
     first_name		"Jane"
     last_name		"Doe"
     email		"jane.doe@pixitest.com"
-    inquiry_type	"Bug"
+    inquiry_type	"bug"
     comments 		"SFSU"
     status 		"active"
   end
 
   factory :rating do
-    comments 		"SFSU"
+    comments 		"A+ rating"
     value 		4
   end
 end

@@ -12,9 +12,11 @@
  *= require jquery.bxslider
  *= require datepicker
  *= require si.files
- *= require image
+ *= require custom
+ *= require pages
+ *= require scaffolds
+ *= require listings
  *= require_self
- *= require_tree .
  */
 
 .field_with_errors {

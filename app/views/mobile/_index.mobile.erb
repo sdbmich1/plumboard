@@ -3,9 +3,18 @@
 <% end %>
 
 <%= content_for :srch_content do %>
-  <div class="px-search">
-    <%= render partial: 'mobile/search' %>
+  <div class="px-search sm-top">
+    <%= render 'mobile/search' %>
   </div>
+<% end %>
+
+<%= content_for :subhead do %>
+  <div class="board-top">
+    <%= render 'mobile/category_list' %>
+    <div id='pixi-loc' style='display:none'>
+      <%= render partial: 'mobile/sites', locals: { ptype: false } %>
+    </div>
+  </div> 
 <% end %>
 
 <%= content_for :content do %>

@@ -4,8 +4,10 @@ class PagesController < ApplicationController
   layout :page_layout
 
   def home
-    @listings = Listing.active.paginate(page: @page, per_page: @per_page)
-    @leaders = PointManager::daily_leaderboard 
+    unless mobile_device?
+      @listings = Listing.active.paginate(page: @page, per_page: @per_page)
+      @leaders = PointManager::daily_leaderboard 
+    end
   end
 
   def index

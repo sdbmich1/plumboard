@@ -5,7 +5,7 @@
       <%= yield :title %> 
     </div>
     <%= render 'layouts/jqm' %>
-    <%= stylesheet_link_tag "mobile" %>  
+    <%= stylesheet_link_tag "mobile", :media => 'all' %>  
     <%= csrf_meta_tag %>  	
   </head>
   <body>  

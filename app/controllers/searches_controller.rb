@@ -8,6 +8,12 @@ class SearchesController < ApplicationController
 
   def index
     @listings = Listing.search query, search_options unless query.blank?
+
+    respond_to do |format|
+      format.mobile { render :nothing => true }
+      format.html { render :nothing => true }
+      format.js 
+    end
   end
 
   protected
@@ -21,10 +27,6 @@ class SearchesController < ApplicationController
     @query = Riddle::Query.escape params[:search]
   end  
 
-  def page
-    @page = params[:page] || 1
-  end
-
   def add_points
     PointManager::add_points @user, 'fpx'
   end
@@ -37,6 +39,7 @@ class SearchesController < ApplicationController
   def load_data
     @cat = params[:cid]
     @loc = params[:loc] if params[:loc]
+    @page = params[:page] || 1
   end
 
   # specify default search location based on user location

@@ -15,16 +15,4 @@ module SearchesHelper
       else autocomplete_listing_title_searches_path
     end
   end
-
-  # get partial based on mime type
-  def get_partial
-    # mobile_device? ? 'mobile/listings' : 'shared/listings'
-    'shared/listings'
-  end
-
-  # get partial based on mime type
-  def get_nxt_pg_partial
-    # mobile_device? ? 'mobile/search_next_page' : 'shared/search_next_page'
-    'shared/search_next_page'
-  end
 end

@@ -36,10 +36,22 @@ class ListingsController < ApplicationController
   def category
     @listings = Listing.get_by_city @cat, @loc, @page
     @category = Category.find @cat
+
+    respond_to do |format|
+      format.mobile { render :nothing => true }
+      format.html { render :nothing => true }
+      format.js 
+    end
   end
 
   def location
     @listings = Listing.get_by_city @cat, @loc, @page
+
+    respond_to do |format|
+      format.mobile { render :nothing => true }
+      format.html { render :nothing => true }
+      format.js 
+    end
   end
 
   def load_data

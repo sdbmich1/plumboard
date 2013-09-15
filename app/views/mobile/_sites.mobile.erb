@@ -1,0 +1,3 @@
+<div data-role="fieldcontain"> 
+  <%= collection_select :site, :id, get_sites(ptype), :id, :name, {selected: @loc, prompt: 'Select Location'}, {'data-mini'=>"true"} %>
+</div>  

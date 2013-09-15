@@ -1,4 +1,6 @@
+@import "bootstrap";
 @import "shared/form";
+@import "shared/image";
 #app {} 
  
 [data-role=page]{ position:relative !important;}
@@ -54,23 +56,42 @@ a.signup-btn {
 #signin-btn .ui-submit .ui-btn { width: 50%; }
 .ui-btn-hidden#signin-btn { background: $pixiOrange }
 
+.icon-gray > i {
+  opacity: 0.25;
+}
+
+.input-append button.add-on {
+    height: inherit !important;
+}
+
 #mapPage {height: 100%;}
 
 #app-footer {bottom:5%; position:fixed !important; top: auto !important; width:100%; z-index: 999; }  
 #app-header {position:fixed !important; top:0 !important; width:100%; z-index: 999;}  
 
 .ui-header, .ui-navbar { width: 100%!important; }
-.scrollable, .scroller, .listpg, .pixiPg, .home-pg, .form-top, .subhead, .reg-top, .channel-pg, .nearby-pg, .nearby-top, .channelList {
+.board-top, .scrollable, .scroller, .listpg, .pixiPg, .home-pg, .form-top, .subhead, .reg-top, .channel-pg, .nearby-pg, .nearby-top, .channelList {
 	position: absolute;
       left: 0;
       right: 0;
       padding: 0;     
-      width: 100%;           
+      width: 100%!important;           
 }
+
+.head-image {
+  float:left; display:inline; 
+}
+
+/* page settings */
+.board-top { top: 70px; height: auto; }
 
 .subhead, .listpg, .pixiPg {top: 10%; height: auto; }
 .form-top {top: 15%; height: auto; }
-.nearby-top {top: 44px; height: auto; min-height:175%}
+.nearby-top {
+  top: 90px!important; height: auto; 
+  min-height:175%
+}
+
 .reg-top {top: 5px; height: auto; min-height: 150%;}
 .scroller {top: 44px; height: auto; min-height: 175%;}
 .evscroller {top:0; height: auto; min-height: 175%;}
@@ -78,7 +99,7 @@ a.signup-btn {
 .channel-pg, .channelList {top:65px!important;} 
 .nearby-pg {top:200px;}
 .scrollable {top: 43px!important;}
-.px-search, .evsearch {margin: 0 0 3px 0}
+.px-search, .evsearch {margin: 0 0 3px 0; height: 30px!important; border: none!important;}
 
 .ui-btn-inner.ui-li { max-height: 80px;}
 /*.ui-btn-inner, .ui-li {width: 100%!important;} */
@@ -87,6 +108,50 @@ a.signup-btn {
 .ui-btn-icon-right {padding-right: 5px;}
 .ui-collapsible-set {margin-top: 0!important; }
 .ui-page-footer-fixed {padding-top: 4.5em;}
+
+/* custom theme */
+a[data-theme="app-bar"], a[data-theme="app-loc"] {
+  border: none;
+  top: 0.5px!important;
+  box-shadow: none; -moz-box-shadow: none; -webkit-box-shadow: none;
+  background-clip: none; -webkit-background-clip: none; -moz-background-clip: none;
+  .ui-btn-inner {
+    border-top: 0!important;
+  }
+  .bar-tip {
+    float: left;
+    top: 4px;
+    position: absolute;
+    -webkit-transform: scale(.7, 1.0);
+  }
+  .bar-tip span {
+    display: block;
+    width: 18px;
+    height: 18px;
+    border-right: 0;
+    border-top: 0;
+    border-radius: 1px; -webkit-border-radius: 1px; -moz-border-radius: 1px;
+    -webkit-transform: rotate(45deg) scale(.9, .9);
+  }
+}
+
+a[data-theme="app-bar"].ui-btn-left {
+  left: -7px!important;
+  .ui-btn-corner-all {
+    padding-left: 5px !important;
+  }
+}
+
+a[data-theme="app-loc"].ui-btn-right {
+  right: -7px!important;
+  .ui-btn-corner-all {
+    padding-right: 5px !important;
+  }
+}
+
+#pixi-loc {
+  margin-top: 1px;
+}
 
 #pg-hdr .ui-dialog > .ui-header { display : none } /*hide the whole header*/
 #nearby-map {width:100%; height:200px!important;}
@@ -150,8 +215,17 @@ a.signup-btn {
    border-radius:0px;
 }
 
-#search-mform .ui-btn {width: 25%; float: right}
-#search-mform {margin: 5px 0 2px 0; height: 30px;}
+.px-logo { 
+  width: 200px!important;
+  margin-bottom: 5px;
+  height: auto; }
+
+#search-mform { display: inline; }
+#search-mform .ui-btn {width: 26px; height: 26px; float: left; margin-top: -1.05px!important; margin-right: 5px!important;} 
+#search-mform {margin: 5px 0 2px 0; height: 24px!important; border: none!important;}
+#search-mform input.ui-mini { font-size: 12px!important; }
+#search-mform .ui-shadow-inset { font-size: 12px!important; }
+#search-mform .ui-btn-inner { padding: 0.25em 6px .5em; }
 
 .mtop { margin-top: 12px;}
 .ptop { margin-top: 8px; }
@@ -172,7 +246,7 @@ a.signup-btn {
 
 .sess-time, .stime {position: absolute; top: 0.25em; right: 1em; font-size: 0.65em; font-weight: bold;  }
 .list-hdr h6 {font-size:0.875em; color: blue; }
-.loc, .sdescr {font-weight: normal; font-size: 0.75em; margin: 0; }
+.loc, .sdescr {font-weight: normal; font-size: 0.65em; margin: 0; }
 
 /*  session presenter list */
 .plist { width: 100%; }
@@ -270,13 +344,19 @@ label, label.ui-input-text { font-size:12px!important; margin-top:5px!important;
 }
 
 h3 { margin-top: 0px; }
-.sm-top { margin-top: 8px!important }  
+.sm-top { margin-top: 3px!important }  
 .pixi-grey-bkgnd { background-color: #eaeaea; }
 
 .round {
   -moz-border-radius:    10px;
   -webkit-border-radius: 10px;
   border-radius:         10px;  
+}
+
+.sm-round {
+  -moz-border-radius:    2px;
+  -webkit-border-radius: 2px;
+  border-radius:         2px;  
 }
 
 .mborder {
@@ -294,9 +374,8 @@ a:hover, a:visited {
   text-decoration: none;
   }
   
-#search-mform { display: inline; margin-bottom: 5px;}
-
-.search-fld {width: 65%!important; color:#000; background-color:#FFFFFF!important; display:inline!important; float: left;}
+.search-fld {width: 91%!important; color:#000; background-color:#FFFFFF!important; display:inline!important; float: left;
+  font-size: 12px!important; }
 .search_button {width: 24px; height: 24px; }
 
 .ui-bar-a { border: none; text-shadow: none; }
@@ -309,24 +388,6 @@ footer.mbl-footer { height: 1.5em; width: 100%; color:#0C6FCB; font-weight: norm
 #login-form label { font-weight: bold; font-size: 0.75em; color: white;}
 .item-detail { position: absolute; left: 5.25em; font-size: 0.75em; margin-top: 0.25em; }
 .item-descr {font-size: 0.75em}
-
-.nav-glyphish .ui-btn .ui-btn-inner { padding-top: 40px !important; }
-.nav-glyphish .ui-btn .ui-icon { width: 30px!important; height: 30px!important; margin-left: -15px !important; box-shadow: none!important; -moz-box-shadow: none!important; -webkit-box-shadow: none!important; -webkit-border-radius: none !important; border-radius: none !important; }
-#notify .ui-icon { background:  url("../images/ev-notify.png") 50% 50% no-repeat; size: 24px 22px;  }
-#like .ui-icon { background:  url("../images/ev-like.png") 50% 50% no-repeat; size: 24px 16px;  }
-#move .ui-icon { background:  url("../images/ev-move.png") 50% 50% no-repeat; size: 12px 26px; }
-#share .ui-icon { background:  url("../images/ev-share.png") 50% 50% no-repeat; size: 22px 27px; }
-#delete .ui-icon { background:  url("../images/ev-delete.png") 50% 50% no-repeat; size: 22px 27px; }
-#rsvp .ui-icon { background:  url("../images/ev-rsvp.png") 50% 50% no-repeat; size: 22px 27px; }
-#edit .ui-icon { background:  url("../images/ev-gear.png") 50% 50% no-repeat; size: 22px 27px; }
-#clone .ui-icon { background:  url("../images/ev-copy.png") 50% 50% no-repeat; size: 24px 24px; }
-#map .ui-icon { background:  url("../images/map_icon.png") 50% 50% no-repeat; size: 24px 24px; }
-#website .ui-icon { background:  url("../images/website.png") 50% 50% no-repeat; size: 24px 24px; }
-#msg .ui-icon { background:  url("../images/icon_mail.png") 50% 50% no-repeat; size: 24px 24px; }
-#cal .ui-icon { background:  url("../images/cal.png") 50% 50% no-repeat; size: 24px 24px; }
-#buy .ui-icon { background:  url("../images/ev-shop.png") 50% 50% no-repeat; size: 22px 27px; }
-
-.progressBar { font-size: 14px; }
 .pb-offset { font-size: 14px; margin-top: 5px; }
 
 .circle-name { font-size:12px; color:#CCCCCC;}

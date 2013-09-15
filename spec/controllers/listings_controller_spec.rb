@@ -82,13 +82,25 @@ describe ListingsController do
   describe 'GET category' do
     before(:each) do
       @listings = mock("listings")
+      @category = stub_model Category
       Listing.stub!(:get_by_city).and_return(@listings)
+      Category.stub!(:find).and_return(@category)
       controller.stub!(:load_data).and_return(:success)
       do_get
     end
 
     def do_get
-      xhr :get, :category, cid: '1', sid: '1'
+      xhr :get, :category, cid: '1', loc: '1'
+    end
+
+    it "should load the requested category" do
+      Category.stub(:find).with('1').and_return(@category)
+      do_get
+    end     
+			                   
+    it "should assign @category" do
+      do_get
+      assigns(:category).should_not be_nil
     end
 
     it "renders the :category view" do
@@ -109,7 +121,7 @@ describe ListingsController do
     end
 
     def do_get
-      xhr :get, :location, sid: '1'
+      xhr :get, :location, loc: '1'
     end
 
     it "renders the :location view" do

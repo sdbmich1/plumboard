@@ -33,7 +33,11 @@ class Listing < ListingParent
 
   # paginate
   def self.active_page ip="127.0.0.1", pg=1, range=25
-    active.where(site_id: Contact.near(ip, range).get_by_type('Site').map(&:contactable_id).uniq).paginate(page: pg)
+    if Rails.env.development?
+      active.paginate page: pg
+    else
+      active.where(site_id: Contact.near(ip, range).get_by_type('Site').map(&:contactable_id).uniq).paginate(page: pg)
+    end
   end
 
   # get pixis by category id

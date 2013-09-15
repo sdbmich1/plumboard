@@ -63,6 +63,7 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  # check if mobile device based on user_agent 
   def mobile_device?
     if session[:mobile_param]  
       session[:mobile_param] == "1"  
@@ -72,6 +73,8 @@ class ApplicationController < ActionController::Base
   end
 
   def prepare_for_mobile  
+    # prepend_view_path "app/views/mobile" if mobile_device?
+
     session[:mobile_param] = params[:mobile] if params[:mobile]  
     # request.format = :mobile if mobile_device? && !request.xhr?
 

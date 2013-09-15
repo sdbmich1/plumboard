@@ -5,7 +5,7 @@ describe Rating do
     @user = FactoryGirl.create :pixi_user
     @seller = FactoryGirl.create :pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tom.davis@pixitest.com'
     @listing = FactoryGirl.create :listing, seller_id: @user.id, title: 'Big Guitar'
-    @rating = @user.ratings.build user_id: @user.id, seller_id: @seller.id
+    @rating = @user.ratings.build seller_id: @seller.id
   end
    
   subject { @rating }

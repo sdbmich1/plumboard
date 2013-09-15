@@ -136,8 +136,6 @@ function reset_menu_state($this, hFlg) {
 $(document).on("click", "#profile-menu .nav li a", function(e){
   var $this = $(this);
   reset_menu_state($this, false);
-
-  //e.preventDefault();
 });
 
 // set page title
@@ -201,11 +199,17 @@ $(document).ajaxError( function(e, xhr, options){
 
 $(document).ready(function(){
 
-  // enable placeholder text for input fields
   if( $('#px-container').length == 0 ) {
+    // enable placeholder text for input fields
     $('input, textarea').placeholder();
   }
-  
+  else {
+    // load board on doc ready
+    if( $('.pixiPg').length == 0) {
+      load_masonry('#px-nav', '#px-nav a', '#pxboard .item', 180); 
+    }
+  }
+
   // picture slider
   if( $('.bxslider').length > 0 ) {
     $('.bxslider').bxSlider({
@@ -248,18 +252,20 @@ $(document).ready(function(){
 
 });
 
-$(document).ready(function(){
-  load_masonry('#px-nav', '#px-nav a', '#pxboard .item');
-});
-
 // reload masonry on ajax calls to swap data
 $(document).on("click", ".pixi-cat", function(showElem){
   var cid = $(this).attr("data-cat-id");
-  var loc = $('#site_id').val(); // grab the selected location 
-  var url = '/listings/category.js?cid=' + cid + '&loc=' + loc;
+
+  // toggle value
+  $('#category_id').val(cid);
+
+  // toggle menu
+  if($('.pixiPg').length > 0) {
+    $('#category_id').selectmenu("refresh", true);
+  }
 
   // process ajax call
-  processUrl(url);
+  resetBoard();
 });
 
 // reload board
@@ -302,7 +308,7 @@ function initScroll(cntr, nav, nxt, item) {
 }
 
 // use masonry to layout landing page display
-function load_masonry(nav, nxt, item){
+function load_masonry(nav, nxt, item, sz){
 
   if( $('#px-container').length > 0 ) {
     var $container = $('#px-container');
@@ -310,7 +316,9 @@ function load_masonry(nav, nxt, item){
     $container.imagesLoaded( function(){
       $container.masonry({
         itemSelector : '.item',
-        columnWidth : 180
+	gutter : 1,
+	isFitWidth: true,
+        columnWidth : sz
       });
     });
 
@@ -421,7 +429,7 @@ $(document).on("keypress", "#comment_content", function(e){
   }
 });
 
-// submit comment form on enter key
+// submit search form on enter key
 $(document).on("keypress", "#search", function(e){
   if (e.keyCode == 13 && !e.shiftKey && !keyPress) {
     keyPress = true;
@@ -429,6 +437,11 @@ $(document).on("keypress", "#search", function(e){
     if($(this).val().length > 0)
       $('#submit-btn').click();
   }
+});
+
+// set autocomplete selection value
+$(document).on("railsAutocomplete.select", "#search", function(event, data){
+  $('#submit-btn').click();
 });
 
 var time_id;
@@ -509,12 +522,10 @@ function resetBoard() {
   }
 
   // refresh the page
-  // processUrl(url);
   resetScroll(url);
 
   // toggle menu
-  var $this = $("#li_home");
-  reset_menu_state($this, true);
+  reset_menu_state($("#li_home"), true);
 }
 
 $(function() {
@@ -538,14 +549,18 @@ $(document).on('click', '#home-link', function(e) {
   resetBoard();
 
   // toggle menu
-  var $this = $("#li_home");
-  reset_menu_state($this, true);
+  if($('.pixiPg').length == 0) {
+    reset_menu_state($("#li_home"), true);
+  }
+  else {
+    $('#category_id').selectmenu("refresh", true);
+    $('#site_id').selectmenu("refresh", true);
+  }
 });
 
 // toggle menu state
 $(document).on('click', '#mark-posts', function(e) {
-  var $this = $("#li_home");
-  reset_menu_state($this, true);
+  reset_menu_state($("#li_home"), true);
 });
 
 // reset next page scroll data
@@ -564,11 +579,14 @@ function resetScroll(url) {
     url: url,
     dataType: 'script',
     beforeSend: function() {
-      toggleLoading();
+      if($('.pixiPg') > 0)
+        toggleLoading();
+      else
+        uiLoading(true);
     },
     success: function(data){
 
-      $('#myContainer').infinitescroll({                      
+      $container.infinitescroll({                      
           state: {                                              
 	    isDestroyed: false,
 	    isDone: false                           
@@ -576,4 +594,14 @@ function resetScroll(url) {
       });
     }
   });
+}
+
+// return masonry item size
+function get_item_size() {
+  if($('.board-top').length > 0) {
+    var sz = 1; }
+  else {
+    var sz = 180; }
+
+  return sz;
 }

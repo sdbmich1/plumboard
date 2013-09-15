@@ -2,26 +2,22 @@
 <html>
   <head> 
     <%= yield :title %> 
-    <%= stylesheet_link_tag "mobile", "image", :media => 'all' %>  
+    <%= stylesheet_link_tag "mobile", :media => 'all' %>  
     <%= render 'layouts/jqm' %>
     <%= csrf_meta_tag %>  	
   </head>
   <body>  
-    <div id="app" data-role="page" data-iscroll="enable" data-cache="never" class='pixiPg'> 
+    <div id="app" data-role="page" data-iscroll="enable" data-theme="a" data-cache="never" class='pixiPg'> 
       <div data-role="header" data-theme="d" id="app-header">
       	<%= yield :head %>
       	<%= yield :srch_content %>
       </div>
     
-      <div class="app-content" data-role="content">   			
+      <div class="app-content" data-theme="a" data-role="content">   			
 	<%= yield :subhead %>
- 	<div data-iscroll="scroller" class="pixiPg" id="px-container">
+ 	<div data-iscroll="scroller" class="nearby-top" id="px-container">
       	  <%= yield :content %>
         </div>
-      </div>
-    
-      <div id="app-footer" data-role="footer" class='home-pg'>		
-      	<%= yield :footer %>
       </div>
     </div>  
   </body> 

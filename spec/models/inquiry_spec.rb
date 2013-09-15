@@ -14,7 +14,6 @@ describe Inquiry do
   it { should respond_to(:email) }
   it { should respond_to(:inquiry_type) }
   it { should respond_to(:status) }
-
   it { should respond_to(:user) }
 
   describe "when comments is empty" do

@@ -59,7 +59,15 @@ module ApplicationHelper
 
   # set pixi logo home path
   def pixi_home
-    link_to image_tag('px_word_logo.png'), get_home_path, class: "pixi-logo"
+    if mobile_device?
+      if controller_name == 'listings' && !refresh_page?(action_name)
+        link_to image_tag('sm_px_word_logo.png'), '#', id: 'home-link', class: "px-logo"
+      else
+        link_to image_tag('sm_px_word_logo.png'), get_home_path, class: "px-logo"
+      end
+    else
+      link_to image_tag('px_word_logo.png'), get_home_path, class: "pixi-logo"
+    end
   end
 
   # set home path
