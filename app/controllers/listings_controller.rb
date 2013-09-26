@@ -62,7 +62,7 @@ class ListingsController < ApplicationController
   protected
 
   def page_layout
-    %w(index category location).detect {|x| action_name == x} ? 'listings' : 'application'
+    %w(index category location).detect {|x| action_name == x} ? 'listings' : mobile_device? ? 'form' : 'application'
   end
 
   def add_points

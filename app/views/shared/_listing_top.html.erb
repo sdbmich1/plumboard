@@ -1,0 +1,10 @@
+<div class='span1 no-left'>
+  <%= render partial: 'shared/show_picture', locals: {psize: 'small', model: listing.user} %>
+</div>
+<div class='span4'>
+  Posted By: <%= listing.seller_name %> 
+  <% unless !listing.active? || listing.seller?(@user) %>
+    <div id='post_form'><%= render partial: 'shared/contact', locals: { listing: listing } %></div>
+  <% end %>  
+</div>
+

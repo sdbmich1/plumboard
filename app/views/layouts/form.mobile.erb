@@ -9,18 +9,21 @@
     <%= csrf_meta_tag %>  	
   </head>
   <body>  
-    <div id="app" data-role="page" data-iscroll="enable" data-cache="never"> 
+    <div id="formapp" data-role="page" data-cache="never" data-theme='a'> 
       <%= yield :panel %>
       <div data-role="header" data-theme="d">
         <%= yield :head %>
-        <%= yield :srch_content %>
       </div>
     
-      <div class="app-content" data-theme="a" data-role="content">   			
-        <%= yield :subhead %>
-        <%= render 'mobile/notice_alert'%>
-        <%= yield :content %>
-      </div>   
+      <div class="app-content" data-role="content" data-theme='a'>
+  	<%= yield :subhead %>
+	<%= render 'mobile/notice_alert'%>
+      	<%= yield :content %>
+      </div>
+    
+      <div id="app-footer" data-role="footer" data-theme='a' style='display:none'>		
+        <%= yield :footer %>
+      </div>
     </div>   
   </body> 
 </html>

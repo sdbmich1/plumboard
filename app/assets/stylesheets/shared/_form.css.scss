@@ -6,3 +6,44 @@ $pixiBlue: #026FB7;
 //$pixiBlue: #0C6FCB;
 //$pixiOrange: #F15A25;
 
+/* posts */
+
+.posts {
+  list-style: none;
+  font-size: 10px!important;
+  margin: 5px 0 0 0;
+
+  li {
+     padding: 10px 0;
+     border-top: 1px solid #e8e8e8;
+  }
+
+  a {
+    &:hover { background:none; text-decoration: underline; }
+  }  
+}
+
+.sender {
+  font-weight: bold;
+  display: inline;
+  vertical-align: middle;
+  line-height: 20px;
+  margin-right: 5px;
+}
+
+.content, #fcontent {
+  display: block;
+  margin-top: -5px!important;
+}
+
+.gray-content {
+  @extend .content;
+  color: $grayLight;
+  float: left;
+}
+
+.timestamp {
+  color: $grayLight;
+  margin-top: 5px!important;
+  margin-bottom: 10px;
+}

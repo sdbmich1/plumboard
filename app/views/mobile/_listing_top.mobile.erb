@@ -1,0 +1,8 @@
+  <h4 class='mbot major_evnt'><%= listing.title %></h4>
+  <div class='span1 no-left'>
+    <%= render partial: 'mobile/show_picture', locals: {psize: 'tiny', model: listing.user} %>
+  </div>
+  <div class='float-left mbot'>
+    <span class='sdescr'>Posted By: <%= listing.seller_name %></span>
+  </div>
+

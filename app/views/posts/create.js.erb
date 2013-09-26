@@ -1,11 +1,12 @@
 <% if @post.errors.any? %>
-  $("#notice").hide(300);
   $("#form_errors").html("<%= escape_javascript( render(partial: 'shared/error_messages', locals: {target: @post})) %>");
 <% else %>
-  $("#notice").html("<%= escape_javascript(render(partial: 'layouts/notices')) %>");
-  $("#notice").show(300);
   $("#post_form").html("<%= escape_javascript( raw render(partial: 'shared/contact', locals: {listing: @listing})) %>");
 <% end %>
 
-$('#spinner').hide(300);
+if($('.show-pixi-bar').length > 0) {
+    uiLoading(false);
+  }
+else
+  $('#spinner').hide(300);
 

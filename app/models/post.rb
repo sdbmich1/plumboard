@@ -71,7 +71,7 @@ class Post < ActiveRecord::Base
 
   # get count of unread messages
   def self.unread_count usr
-    get_unread(usr).count
+    get_unread(usr).count rescue 0
   end
 
   # add post for invoice creation or payment

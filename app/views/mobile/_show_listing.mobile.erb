@@ -1,0 +1,19 @@
+<div id='post_form'>
+  <%= render partial: 'mobile/contact', locals: { listing: listing } %>
+</div>
+
+<div id='px-pix' class='mtop mbot'>
+  <%= render partial: 'mobile/photos', locals: {model: listing, file_name: "", psize: '120x120'} %>
+</div>
+
+<div id='comment_form' class='sdescr' data-theme='a' style='display:none'>
+  <%= render partial: 'mobile/comments' %>
+</div>
+
+<div class='mtop item-descr'>
+  <%= render partial: 'mobile/listing_details', locals: {listing: listing} %>
+</div>
+
+<div class='list-ftr sdescr'>
+  <%= render partial: 'mobile/listing_footer', locals: {listing: listing} %>
+</div>

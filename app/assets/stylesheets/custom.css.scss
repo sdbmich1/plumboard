@@ -291,8 +291,6 @@ input, select, .uneditable-input {
 
 h3 { padding: 10px }
 
-.mtop {margin-top: 20px;}
-.mbot {margin-bottom: 20px;}
 .sm-bot { margin-bottom: 5px!important }  
 .sm-top { margin-top: 8px!important }  
 .neg-top { margin-top: -10px!important }  
@@ -303,7 +301,6 @@ h3 { padding: 10px }
 
 .cb-label { display:inline; vertical-align:middle }
 .hdescr { font-size: 0.75em; color: #ccc; }
-.grey-text { color: #ccc; }
 
 .nxt-pg { display:none; }
 .nxt-pg-spinner { 
@@ -467,31 +464,6 @@ a.btn-mask {
   height: 30px!important;
 }
 
-/* posts */
-
-.posts {
-  list-style: none;
-  font-size: 10px!important;
-  margin: 5px 0 0 0;
-
-  li {
-     padding: 10px 0;
-     border-top: 1px solid #e8e8e8;
-  }
-
-  a {
-    &:hover { background:none; text-decoration: underline; }
-  }  
-}
-
-.sender {
-  font-weight: bold;
-  display: inline;
-  vertical-align: middle;
-  line-height: 20px;
-  margin-right: 5px;
-}
-
 .recent {
   font-size: 14px;
   display: inline;
@@ -501,23 +473,6 @@ a.btn-mask {
   a {
     &:hover { color: #000000!important; text-decoration: underline; }
   }  
-}
-
-.content, #fcontent {
-  display: block;
-  margin-top: -5px!important;
-}
-
-.gray-content {
-  @extend .content;
-  color: $grayLight;
-  float: left;
-}
-
-.timestamp {
-  color: $grayLight;
-  margin-top: 5px!important;
-  margin-bottom: 10px;
 }
 
 .myimage img {
@@ -577,10 +532,6 @@ a.btn-mask {
   color: blue!important;
 }  
 
-.no-left {
-  margin-left: 0!important;
-}
-
 .no-bot {
   margin-bottom: 0!important;
 }
@@ -620,8 +571,8 @@ a.btn-mask {
   height: 325px!important;
 }
 
-.float-left {
-  float: left;
+#contact-btn, #comment-btn {
+  visibility: hidden;
 }
 
 .img-valign {
@@ -637,10 +588,6 @@ hr.vertical
 .verticalLine {
   border-right: 1px solid #e8e8e8;
   margin-right: 20px;
-}
-
-#contact-btn, #comment-btn {
-  visibility: hidden;
 }
 
 .home-img {

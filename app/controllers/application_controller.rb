@@ -4,6 +4,20 @@ class ApplicationController < ActionController::Base
   before_filter :prepare_for_mobile, if: :isDev?, except: [:destroy]
   helper_method :mobile_device?
 
+  # check if mobile device based on user_agent 
+  def mobile_device?
+    if session[:mobile_param]  
+      session[:mobile_param] == "1"  
+    else  
+      request.user_agent =~ /iPhone;|Android Mobile|BlackBerry|Symbian|Windows Phone/  
+    end  
+  end
+
+  # attempt to render mobile version of page first
+  def check_for_mobile
+    prepend_view_path "app/views/mobile" if mobile_device?
+  end
+
   protected
 
   def authenticate_user!
@@ -63,18 +77,7 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  # check if mobile device based on user_agent 
-  def mobile_device?
-    if session[:mobile_param]  
-      session[:mobile_param] == "1"  
-    else  
-      request.user_agent =~ /iPhone;|Android Mobile|BlackBerry|Symbian|Windows Phone/  
-    end  
-  end
-
   def prepare_for_mobile  
-    # prepend_view_path "app/views/mobile" if mobile_device?
-
     session[:mobile_param] = params[:mobile] if params[:mobile]  
     # request.format = :mobile if mobile_device? && !request.xhr?
 

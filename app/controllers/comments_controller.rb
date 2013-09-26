@@ -9,6 +9,13 @@ class CommentsController < ApplicationController
     if @comment.save
       reload_data
     end
+
+    respond_to do |format|
+      format.mobile { render :nothing => true }
+      format.html { render :nothing => true }
+      format.js 
+      format.mjs 
+    end
   end
 
   private

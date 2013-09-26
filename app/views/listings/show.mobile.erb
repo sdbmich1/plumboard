@@ -1,0 +1,33 @@
+<%= content_for :panel do %>
+  <%= render 'mobile/left_panel' %>
+<% end %>
+
+<%= content_for :head do %>
+  <%= render partial: 'layouts/header', locals: { psize: 'hdr-logo' } %>
+  <div class='show-pixi-bar' data-role="navbar">
+    <ul>
+	<li><%= link_to 'Details', '#', id: 'show-pixi', "data-theme"=>'d', 'data-mini'=>'true' %></li>
+	<li><%= link_to "Comments (#{@listing.comments.count})", '#', id: 'show-cmt', "data-theme"=>'d', 'data-mini'=>'true' %></li>
+    </ul>
+  </div>
+<% end %>
+
+<%= content_for :subhead do %>
+  <%= render partial: 'mobile/listing_top', locals: {listing: @listing} %>
+<% end %>
+
+<%= content_for :content do %>
+  <%= render partial: 'mobile/show_listing', locals: {listing: @listing, edit_mode: false} %>
+<% end %>
+
+<%= content_for :footer do %>
+  <% if @listing.seller? @user %>
+    <div data-role="navbar">
+      <ul>
+	<li><%= link_to 'Home', listings_path, "data-icon"=>"home" %></li>
+        <li><%= link_to 'Remove', @listing, method: :delete, confirm: 'Are you sure?', "data-icon"=>'delete' %></li>
+        <li><%= link_to 'Edit', edit_temp_listing_path(@listing), "data-icon"=>'edit' %></li>
+      </ul>
+    </div>
+  <% end %>  
+<% end %>

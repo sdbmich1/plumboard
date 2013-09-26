@@ -6,7 +6,7 @@
 [data-role=page]{ position:relative !important;}
 
 /*
-.app-content {min-width: 100%; min-height: 175%;}
+.app-content {min-width: 100%; min-height: 175%; margin-bottom: 60px;}
 .ui-page, .ui-content { min-height: 175%!important; padding: 0!important; height: auto;}
 */
 
@@ -17,6 +17,7 @@
 .home-pg, .listpg {
 	background: #000!important;
 }  
+.clear-all { clear: both }
 
 .ui-content { overflow-x: visible!important }
 .ui-listview-filter {margin-top:0px!important; margin-bottom:0px!important; margin-left:0px!important; margin-right: 0!important} 
@@ -66,8 +67,35 @@ a.signup-btn {
 
 #mapPage {height: 100%;}
 
-#app-footer {bottom:5%; position:fixed !important; top: auto !important; width:100%; z-index: 999; }  
+/* footer */
+
+#app-footer {
+  bottom:5%; position:fixed !important; top: auto !important; width:100%; z-index: 999; 
+
+  .ui-bar-a { 
+    border: 0!important; 
+  }
+}
+
+#push {
+  height: 60px;
+}
+
 #app-header {position:fixed !important; top:0 !important; width:100%; z-index: 999;}  
+
+.ui-panel-inner {
+  padding:0px!important; /*make the buttons flush edge to edge*/
+}
+
+.ui-page-active.ui-page-panel { overflow-x: visible!important; }
+
+.slide-menu .ui-controlgroup {
+  margin:0; /*make the buttons flush to the top*/
+}
+.slide-menu { font-size: 10px!important; line-height: 14px!important;}
+textarea { width: 99%!important; height: 32px!important; }
+
+.show-pixi-bar li { line-height: 10px!important; font-size: 10px!important; font-weight: normal; }
 
 .ui-header, .ui-navbar { width: 100%!important; }
 .board-top, .scrollable, .scroller, .listpg, .pixiPg, .home-pg, .form-top, .subhead, .reg-top, .channel-pg, .nearby-pg, .nearby-top, .channelList {
@@ -88,9 +116,13 @@ a.signup-btn {
 .subhead, .listpg, .pixiPg {top: 10%; height: auto; }
 .form-top {top: 15%; height: auto; }
 .nearby-top {
-  top: 90px!important; height: auto; 
+  top: 60px!important; height: auto!important; 
   min-height:175%
 }
+
+.page-btn { color: white!important; font-weight: bold; }
+.neg-top { margin-top: -5px!important; }
+.pg-ftr .ui-bar-a { border: 0!important; }
 
 .reg-top {top: 5px; height: auto; min-height: 150%;}
 .scroller {top: 44px; height: auto; min-height: 175%;}
@@ -108,30 +140,18 @@ a.signup-btn {
 .ui-btn-icon-right {padding-right: 5px;}
 .ui-collapsible-set {margin-top: 0!important; }
 .ui-page-footer-fixed {padding-top: 4.5em;}
+.ui-li-count { right: 10px!important; margin-top: -1.25em!important; }
+#home-nav .ui-mini { margin: 0 0; }
 
-/* custom theme */
-a[data-theme="app-bar"], a[data-theme="app-loc"] {
+/* custom theme for header buttons */
+a[data-theme="app-bar"], a[data-theme="app-loc"], a[data-theme="app-search"] {
   border: none;
-  top: 0.5px!important;
+  top: 0.25px!important;
+  padding-bottom: 5px!important;
   box-shadow: none; -moz-box-shadow: none; -webkit-box-shadow: none;
   background-clip: none; -webkit-background-clip: none; -moz-background-clip: none;
   .ui-btn-inner {
     border-top: 0!important;
-  }
-  .bar-tip {
-    float: left;
-    top: 4px;
-    position: absolute;
-    -webkit-transform: scale(.7, 1.0);
-  }
-  .bar-tip span {
-    display: block;
-    width: 18px;
-    height: 18px;
-    border-right: 0;
-    border-top: 0;
-    border-radius: 1px; -webkit-border-radius: 1px; -moz-border-radius: 1px;
-    -webkit-transform: rotate(45deg) scale(.9, .9);
   }
 }
 
@@ -143,7 +163,15 @@ a[data-theme="app-bar"].ui-btn-left {
 }
 
 a[data-theme="app-loc"].ui-btn-right {
+  float: left;
   right: -7px!important;
+  .ui-btn-corner-all {
+    padding-right: 5px !important;
+  }
+}
+
+a[data-theme="app-search"].ui-btn-right {
+  right: 25px!important;
   .ui-btn-corner-all {
     padding-right: 5px !important;
   }
@@ -217,7 +245,7 @@ a[data-theme="app-loc"].ui-btn-right {
 
 .px-logo { 
   width: 200px!important;
-  margin-bottom: 5px;
+  margin-bottom: 5px!important;
   height: auto; }
 
 #search-mform { display: inline; }
@@ -250,7 +278,7 @@ a[data-theme="app-loc"].ui-btn-right {
 
 /*  session presenter list */
 .plist { width: 100%; }
-.pstr { font-size: 0.875em; color: blue; }
+.pstr { font-size: 1.75em; font-weight: bold; color: blue; }
 
 .ppic {    
 	left: 1px;
@@ -287,13 +315,13 @@ label, label.ui-input-text { font-size:12px!important; margin-top:5px!important;
 
 .stitle h6 {font-size: 0.8em; }
 .sgrp { line-height: 1em; }
-.sdescr { font-size: 0.625em!important; width: 75%; font-weight: normal; height: 30px; }
+.sdescr { font-size: 0.725em!important; font-weight: normal; height: 30px; margin-right: 5px;}
 .fm-link { font-size: 0.825em!important; width: 75%; font-weight: normal; height: 30px; }
 
-.sponsor-type { font-size: 0.75em;  }
+.seller-name { font-size: 0.725em; margin-right: 5px; float: left;}
 .sponsor-msg { color: blue; font-weight: bold; }
 .close-lnk, .suggestions { font-size: 0.75em; }
-.hdescr { font-size: 0.875em; }
+.hdescr { font-size: 1.25em; line-height: 12px;}
 .version {font-size: 0.625em; color: blue;}
 
 /* add event styling */
@@ -374,7 +402,7 @@ a:hover, a:visited {
   text-decoration: none;
   }
   
-.search-fld {width: 91%!important; color:#000; background-color:#FFFFFF!important; display:inline!important; float: left;
+.search-fld {width: 90%!important; color:#000; background-color:#FFFFFF!important; display:inline!important; float: left;
   font-size: 12px!important; }
 .search_button {width: 24px; height: 24px; }
 
@@ -391,15 +419,17 @@ footer.mbl-footer { height: 1.5em; width: 100%; color:#0C6FCB; font-weight: norm
 .pb-offset { font-size: 14px; margin-top: 5px; }
 
 .circle-name { font-size:12px; color:#CCCCCC;}
+ul.list-menu li { padding-top: 5px; }
 
 .auth_provr {margin-top: 10px}
 
-a.notice-btn {
+.notice-btn {
   background: #990000!important;
   line-height: 18px;
   font-weight: bold;
+  color: white;
   height: 18px;
-  width: 24px;
+  width: 18px;
   margin-left: 15px;	
 }
 
@@ -659,7 +689,6 @@ a.close-btn, a.change-btn {
 }
 
 .nxt-pg { display:none; }
-.mbot { margin-bottom: 15px; }
 
 /* user image thumbnails */
 .usr-photo {

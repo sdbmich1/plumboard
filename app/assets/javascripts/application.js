@@ -197,24 +197,15 @@ $(document).ajaxError( function(e, xhr, options){
       window.location.replace('/users/sign_in');
 });	
 
-$(document).ready(function(){
-
-  if( $('#px-container').length == 0 ) {
-    // enable placeholder text for input fields
-    $('input, textarea').placeholder();
-  }
-  else {
-    // load board on doc ready
-    if( $('.pixiPg').length == 0) {
-      load_masonry('#px-nav', '#px-nav a', '#pxboard .item', 180); 
-    }
-  }
+// process slider
+function load_slider(cntl) {
 
   // picture slider
   if( $('.bxslider').length > 0 ) {
     $('.bxslider').bxSlider({
       slideMargin: 10,
-      auto: true,
+      auto: cntl,
+      controls: cntl,
       autoControls: true,
       mode: 'fade'
     });
@@ -229,6 +220,20 @@ $(document).ready(function(){
       $(this).html('<div style="height: ' + top_margin + 'px; width: 100%;"></div>' + $(this).html());
     });
   }
+}
+
+$(document).ready(function(){
+
+  if( $('#px-container').length == 0 ) {
+    // enable placeholder text for input fields
+    $('input, textarea').placeholder();
+  }
+  else {
+    // load board on doc ready
+    if( $('.pixiPg').length == 0) {
+      load_masonry('#px-nav', '#px-nav a', '#pxboard .item', 180); 
+    }
+  }
 
   // used to scroll up page
   $(window).scroll(function(){
@@ -239,6 +244,9 @@ $(document).ready(function(){
       $('.scrollup').fadeOut();
     }
   }); 
+
+  // initialize slider
+  load_slider(true);
 
   $('.scrollup').click(function(){
     $("html, body").animate({ scrollTop: 0 }, 600);
@@ -410,15 +418,16 @@ $(document).on("railsAutocomplete.select", "#buyer_name", function(event, data){
   $('#buyer_name').val(bname);
 });
 
+var keyPress = false; 
+
 // submit contact form on enter key
 $(document).on("keypress", "#contact_content", function(e){
-  if (e.keyCode == 13 && !e.shiftKey) {
+  if (e.keyCode == 13 && !e.shiftKey && !keyPress) {
+    keyPress = true;
     e.preventDefault();
     $('#contact-btn').click();
   }
 });
-
-var keyPress = false; 
 
 // submit comment form on enter key
 $(document).on("keypress", "#comment_content", function(e){
@@ -544,6 +553,7 @@ $(document).on('click', '.post-menu', function(e) {
 $(document).on('click', '#home-link', function(e) {
   $('#site_id').val('').prop('selectedIndex',0);
   $('#category_id').val('').prop('selectedIndex',0);
+  $('#search').val('');
 
   // reset board
   resetBoard();
@@ -580,9 +590,9 @@ function resetScroll(url) {
     dataType: 'script',
     beforeSend: function() {
       if($('.pixiPg') > 0)
-        toggleLoading();
-      else
         uiLoading(true);
+      else
+        toggleLoading();
     },
     success: function(data){
 

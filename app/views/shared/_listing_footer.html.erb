@@ -1,0 +1,11 @@
+  <div class="grey-text mtop row">
+    <div class="span4">
+      ID: <%= listing.pixi_id %>
+    </div>
+    <div class="span4 center-wrapper">
+      Posted: <%= get_local_time listing.start_date %>
+    </div>
+    <div class="span4 mbot">
+      <span class='pull-right'>Updated: <%= get_local_time listing.updated_at %></span>
+    </div>
+  </div>

@@ -1,18 +1,25 @@
+<%= content_for :panel do %>
+  <%= render 'mobile/left_panel' %>
+<% end %>
+
 <%= content_for :head do %>
   <%= render partial: 'layouts/header', locals: { psize: 'hdr-logo' } %>
+  <%= render partial: 'mobile/index_panel' %>
 <% end %>
 
 <%= content_for :srch_content do %>
-  <div class="px-search sm-top">
+  <div id="px-search" style='display:none'>
     <%= render 'mobile/search' %>
-  </div>
+  </div> 
 <% end %>
 
 <%= content_for :subhead do %>
   <div class="board-top">
-    <%= render 'mobile/category_list' %>
     <div id='pixi-loc' style='display:none'>
       <%= render partial: 'mobile/sites', locals: { ptype: false } %>
+    </div>
+    <div id='cat-top' style='display:none'>
+      <%= render 'mobile/category_list' %>
     </div>
   </div> 
 <% end %>

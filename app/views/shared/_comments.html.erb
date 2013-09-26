@@ -1,9 +1,9 @@
 <% if @listing.active? %>
-<div id='comment-entry'>
-  Comments (<%= @listing.comments.count %>)
-  <%= render partial: 'shared/comment_form' unless !@listing.active? || @listing.seller?(@user) %>
-</div> 
-<div id='comment-item'>
-  <%= render partial: 'shared/comment_list' %>
-</div> 
+  <div id='comment-entry'>
+    <div id='comment-hdr'><%= get_comment_header %></div>
+    <%= render partial: "#{get_comment_form}" unless !@listing.active? || @listing.seller?(@user) %>
+  </div> 
+  <div id='comment-item'>
+    <%= render 'shared/comment_list' %>
+  </div> 
 <% end %>

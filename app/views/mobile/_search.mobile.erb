@@ -5,7 +5,7 @@
       <div class="input-append">
         <%= autocomplete_field_tag 'search', params[:search], get_autocomplete_path, :id_element => '', :update_elements => {}, 
           :placeholder => 'Search...', class: 'search-fld', 'data-mini'=>"true", 'data-theme'=>'a' %>
-        <button type='submit' id='submit-btn' class="btn btn-primary" type="button">
+        <button type='submit' id='submit-btn' class="btn btn-primary" type="button" data-theme='b'>
 	  <i class="icon-search icon-white"></i>
         </button>
       </div>  

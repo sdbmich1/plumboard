@@ -1,0 +1,30 @@
+  <div class="mtop row">
+      <div class='span12 mtop'>
+        <% if listing.event? %>
+          <div class='span3'>Start Date: <%= short_date listing.event_start_date %></div>
+          <div class='span3'>End Date: <%= short_date listing.event_end_date %></div>
+          <div class='span2'>Start Time: <%= short_time listing.event_start_time %></div>
+          <div class='offset1 span2'>End Time: <%= short_time listing.event_end_time %></div>
+        <% end %>
+      </div>
+  </div>
+
+  <div class="row">
+    <div class="span12 mbot">
+      <div class='span12 no-left'>
+        <%= simple_format(listing.summary) %><br />
+
+        <% if listing.price %>
+          Price: <%= number_to_currency listing.price %>
+        <% end %>
+        <% if listing.job? %>
+          Compensation: <%= listing.compensation %>
+        <% end %>
+        <% if listing.has_year? && listing.year_built %>
+          Year: <%= listing.year_built %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+

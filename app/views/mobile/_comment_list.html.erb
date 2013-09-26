@@ -1,0 +1,12 @@
+<% unless @comments.blank? %>
+  <ol class="posts">
+    <%= render partial: 'mobile/comment', collection: @comments %>
+  </ol>
+<% else %>
+  <div class='center-wrapper'>No comments found.</div>
+<% end %>
+
+<div id='comment-list' class="nav pull-right">
+  <%= will_paginate @comments, page_links: false if @comments.respond_to?(:total_pages) %>
+</div> 
+
