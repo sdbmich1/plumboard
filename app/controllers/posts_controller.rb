@@ -3,6 +3,8 @@ class PostsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :load_data, only: [:index, :unread, :sent, :reply, :show]
   before_filter :mark_post, only: [:reply]
+  respond_to :html, :js, :json, :mobile
+  layout :page_layout
 
   def index
     @posts = @user.incoming_posts.paginate(page: @page, per_page: @per_page)
@@ -42,6 +44,11 @@ class PostsController < ApplicationController
   end
    
   private
+
+  def page_layout
+    # mobile_device? && %w(index sent).detect{|x| action_name == x} ? 'lists' : 'application'
+    mobile_device? && action_name == 'index' ? 'form' : 'application'
+  end
 
   def mark_post
     @old_post = Post.find params[:id]

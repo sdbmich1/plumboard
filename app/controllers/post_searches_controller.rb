@@ -1,9 +1,10 @@
 require 'will_paginate/array' 
 class PostSearchesController < ApplicationController
+  include PointManager
   before_filter :authenticate_user!
   after_filter :add_points, only: [:index]
   autocomplete :post, :content, :full => true
-  include PointManager
+  respond_to :html, :js, :json
 
   def index
     @posts = Post.search query, star: true, page: page unless query.blank?

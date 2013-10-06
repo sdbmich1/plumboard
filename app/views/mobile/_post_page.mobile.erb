@@ -1,0 +1,19 @@
+<%= content_for :panel do %>
+  <%= render 'mobile/left_panel' %>
+<% end %>
+
+<%= content_for :head do %>
+  <%= render partial: 'layouts/header', locals: { psize: 'hdr-logo' } %>
+  <%= render 'mobile/post_panel' %>
+<% end %>
+
+<%= content_for :content do %>
+  <div id="pxboard">
+    <%= render partial: 'mobile/posts', locals: { sentFlg: sentFlg } %>
+  </div> 
+
+  <nav id="px-nav">
+    <%= render 'mobile/post_next_page' %>
+  </nav>
+<% end %>
+

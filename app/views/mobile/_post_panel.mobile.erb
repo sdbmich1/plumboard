@@ -1,0 +1,10 @@
+<div id='post-nav' data-role='navbar' data-theme='c' class: 'show-pixi-bar'>
+  <ul>
+    <li id='li_recv'><%= link_to "Received", posts_path, 'data-mini'=>'true', 'data-theme'=>get_theme(1) %></li>
+    <li id='li_sent'><%= link_to "Sent", sent_posts_path, 'data-mini'=>'true', 'data-theme'=>get_theme(2) %></li>
+    <% if get_unread_count(@user) > 0 %>
+      <li><%= link_to "Mark All", mark_posts_path, id: 'mark-posts', remote: true, 'data-mini'=>'true' %></li>
+    <% end %>
+  </ul>
+</div>
+

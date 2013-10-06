@@ -1,7 +1,10 @@
 <div data-role="panel" id="navpanel" data-theme="d" data-display="overlay" data-position="left">
   <div data-role="controlgroup" data-corners="false">
     <ul data-role='listview' data-icon="false" data-theme='e'>
-      <li data-role="list-divider" data-mini='true'>Menu</li>
+      <li data-role="list-divider" data-mini='true' data-theme='c'>Menu</li>
+      <% if @user.has_pixis? %>
+    	<li data-mini='true'><%= link_to "Bill", get_invoice_path, id: 'bill-pixi' %></li>
+      <% end %>
       <li data-mini='true'><%= link_to "My Pixis", seller_listings_path %></li>
       <li data-mini='true'>
         <%= link_to posts_path do %>
@@ -10,7 +13,7 @@
       </li>
       <li data-mini='true'><%= link_to "My Invoices", invoices_path %></li>
       <li data-mini='true'><%= link_to "My Accounts", get_account_path %></li>
-      <li data-role="list-divider" data-mini='true'>Accounts</li>
+      <li data-role="list-divider" data-mini='true' data-theme='c'>Accounts</li>
       <li data-mini='true'><%= link_to "Settings", settings_path %></li>
       <li data-mini='true'><%= link_to "Sign out", destroy_user_session_path %></li>
     </ul>

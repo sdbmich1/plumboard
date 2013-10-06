@@ -169,7 +169,7 @@ class ListingParent < ActiveRecord::Base
 
   # short title
   def short_title
-    nice_title.length < 14 ? nice_title.html_safe : nice_title.html_safe[0..14] + '...' rescue nil
+    nice_title.length < 19 ? nice_title.html_safe : nice_title.html_safe[0..19] + '...' rescue nil
   end
 
   # set end date to x days after start to denote when listing is no longer displayed on network

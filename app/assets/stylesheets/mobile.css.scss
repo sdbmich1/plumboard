@@ -83,6 +83,7 @@ a.signup-btn {
 
 #app-header {position:fixed !important; top:0 !important; width:100%; z-index: 999;}  
 
+/* panel */
 .ui-panel-inner {
   padding:0px!important; /*make the buttons flush edge to edge*/
 }
@@ -111,7 +112,8 @@ textarea { width: 99%!important; height: 32px!important; }
 }
 
 /* page settings */
-.board-top { top: 70px; height: auto; }
+#mxboard, .posts { margin-top: -14px; }
+.board-top { top: 75px; height: auto; }
 
 .subhead, .listpg, .pixiPg {top: 10%; height: auto; }
 .form-top {top: 15%; height: auto; }
@@ -133,7 +135,7 @@ textarea { width: 99%!important; height: 32px!important; }
 .scrollable {top: 43px!important;}
 .px-search, .evsearch {margin: 0 0 3px 0; height: 30px!important; border: none!important;}
 
-.ui-btn-inner.ui-li { max-height: 80px;}
+.ui-btn-inner.ui-li { max-height: 60px;}
 /*.ui-btn-inner, .ui-li {width: 100%!important;} */
 .ui-br { border-bottom-style:none; }
 .ui-collapsible-content {padding: 0px 10px!important;}
@@ -226,6 +228,10 @@ a[data-theme="app-search"].ui-btn-right {
 .pad-left {padding-left: 10px}
 .slider-etime { position: absolute; top: 4em!important; margin: 0; height: 2.5em; }
 
+.reply-btn, #comment-btn {
+  visibility: hidden;
+}
+
 .ui-li-thumb, .ui-li-icon {
     left: 1px;
     max-height: 80px; 
@@ -277,14 +283,16 @@ a[data-theme="app-search"].ui-btn-right {
 .loc, .sdescr {font-weight: normal; font-size: 0.65em; margin: 0; }
 
 /*  session presenter list */
-.plist { width: 100%; }
+.plist {
+  .ui-li-heading {margin: -0.5em 0 0.2em -0.2em!important; white-space: normal; font-size: 14px!important;}
+}
+
 .pstr { font-size: 1.75em; font-weight: bold; color: blue; }
 
 .ppic {    
-	left: 1px;
+    left: 1px;
     height: 80px; 
-    width: 80px; 
-    border: 1px solid #000000;
+    width: 80px !important; 
     }
 
 .cpic {    
@@ -355,7 +363,6 @@ label, label.ui-input-text { font-size:12px!important; margin-top:5px!important;
 .ui-controlgroup .ui-checkbox label {font-size: 14px;}
 .ui-field-contain, fieldset.ui-field-contain {padding: 5px 0 5px 0!important; overflow-x: visible!important;}
 .ui-bar, .ui-body {padding: 0 0!important;}
-#plist .ui-li-heading {margin: 0.4em 0 0.2em -0.2em!important;}
 
 .mobile-slider { margin-bottom: 10px; padding: 0; margin-left:auto; margin-right: auto;  }
 .img-btm { position:absolute; bottom: 0.75em; width: 100%;  left: 4em; }

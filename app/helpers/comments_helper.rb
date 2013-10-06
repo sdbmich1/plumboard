@@ -2,7 +2,7 @@ module CommentsHelper
 
   # set form header txt unless mobile device
   def get_comment_header
-    "Comments (#{@listing.comments.count})" if mobile_device?
+    "Comments (#{@listing.comments.count})"
   end
 
   # set form based on if mobile device

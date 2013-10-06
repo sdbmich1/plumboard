@@ -1,0 +1,19 @@
+<li id="<%= post.id %>">
+  <%= render partial: 'mobile/show_picture', locals: {psize: 'tiny', model: set_poster(post, sentFlg)} %>
+  <div class='sender'>
+    <%= set_poster(post, sentFlg).name %>
+  </div>
+  <div class='clear-all'></div>
+  <div class=''>
+    <div>
+      RE: <%= link_to post.pixi_title, post.listing, class: 'pixi-link' %>
+    </div>
+    <span class="content"><%= post.summary %><%= link_to ' more...', '#', :id=>'more-btn' if post.long_content? %></span>
+    <span id='fcontent' style="display: none"><%= post.full_content %></span>
+    <span class="timestamp">
+      Posted <%= ts_in_words(post.created_at) %>.
+    </span>
+    <%= render partial: 'mobile/reply', locals: { post: post, sentFlg: sentFlg } unless post.sender? @user %>
+  </div>
+  <div class='clear-all'></div>
+</li>

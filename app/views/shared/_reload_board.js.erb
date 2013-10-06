@@ -2,13 +2,15 @@
 var parms = "&loc=" + "<%= params[:loc] %>" + "&search=" + "<%= params[:search] %>" + "&cid=" + "<%= params[:cid] %>"
 var pathName = "<%= set_path_parse %>"
 
-<% if @page > 1 %>
+<% if params[:page].to_i > 1 %>
   $("#pxboard").append('<%= escape_javascript(render(partial: "#{set_partial_name}")) %>');
-  $("#px-nav").html('<%= escape_javascript(render(partial: "#{set_next_page_path}")) %>');
 <% else %>  
+  $(".item").remove();
   $("#pxboard").html('<%= escape_javascript(render(partial: "#{set_partial_name}")) %>');
-  $("#px-nav").html("<%= escape_javascript(render(partial: "#{set_init_next_page_path}")) %>");
 <% end %>  
+
+// update next page link
+$("#px-nav").html("<%= escape_javascript(render(partial: "#{set_init_next_page_path}")) %>");
 
 // set next page infinite scroll path
 $('#px-container').infinitescroll({pathParse:[pathName, parms]});
@@ -22,7 +24,7 @@ reload_board(this);
 // hide elements
 $('#nearby-map').hide('fast');
 
-if($('.pixiPg') > 0)
+if($('.pixiPg').length > 0)
   uiLoading(false);
 else
   $('#spinner').hide(300);

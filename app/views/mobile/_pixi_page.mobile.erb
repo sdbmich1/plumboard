@@ -1,0 +1,25 @@
+<%= content_for :panel do %>
+  <%= render 'mobile/left_panel' %>
+<% end %>
+
+<%= content_for :head do %>
+  <%= render partial: 'layouts/header', locals: { psize: 'hdr-logo' } %>
+  <%= render 'mobile/pixi_panel' %>
+<% end %>
+
+<%= content_for :content do %>
+  <div id="mxboard">
+    <ul id='pixi-list' data-role="listview">
+      <% unless @listings.blank? %>
+        <%= render partial: 'mobile/listing_row', collection: @listings, as: :listing %>
+      <% else %>
+        <div class='center-wrapper'>No pixis found.</div>
+      <% end %>
+    </ul>
+  </div> 
+
+  <div id="px-div" class='mtop center-wrapper'>
+    <%= will_paginate @listings, page_links: false, remote: true if @listings.respond_to?(:total_pages) %>
+  </div>
+<% end %>
+

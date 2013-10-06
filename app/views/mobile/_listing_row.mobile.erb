@@ -1,0 +1,11 @@
+<li class='plist'>
+  <%= link_to set_pixi_path(listing), class: 'pending_title' do %>
+    <%= render partial: 'mobile/show_picture', locals: {psize: 'thumb', model: listing} %>
+
+    <div class="pstr">
+      <h6><%= listing.short_title %></h6>
+    </div>
+
+    <p><%= listing.site_name %></p>
+  <% end %>
+</li>

@@ -1,4 +1,4 @@
-$(document).on('pageshow', '#app, #formapp', function() {
+$(document).on('pageinit', '#app', function() {
   if ($('.fld').length > 0){ 
     $(".fld").css('background-color', '#FFF');
   }
@@ -7,10 +7,26 @@ $(document).on('pageshow', '#app, #formapp', function() {
   if( $('.cabinet').length > 0 ) {
     SI.Files.stylizeAll();
   }
+});
+
+$(document).on('pageshow', '#app', function() {
 
   // load board on doc ready
   if( $('#px-container').length > 0 ) {
+    // uiLoading(true);
     resetBoard();
+  }
+});
+
+function goToUrl(url, rFlg) {
+  $.mobile.changePage( url, { transition: "none", reverse: false, reloadPage: rFlg, changeHash: false });
+}
+
+$(document).on('pageinit', '#listapp', function() {
+
+  // initialize infinite scroll
+  if( $('#px-container').length > 0 ) {
+    initScroll('#px-container', '#px-nav', '#px-nav a', '#pxboard .item', null); 
   }
 });
 
@@ -64,6 +80,11 @@ $(document).on('click', '#cat-nav', function(e) {
 // toggle menu state
 $(document).on('click', '#search-nav', function(e) {
   reset_top('#px-search', '#pixi-loc, #cat-top');
+});
+
+// toggle menu state
+$(document).on('click', '#home-link', function(e) {
+  reset_top('#px-search', '#pixi-loc, #cat-top, #px-search');
 });
 
 function reset_top(tag, str) {

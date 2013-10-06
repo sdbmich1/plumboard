@@ -312,7 +312,8 @@ function initScroll(cntr, nav, nxt, item) {
         $newElems.animate({ opacity: 1 });
         $container.masonry( 'appended', $newElems, true ); 
       });
-    });
+    }
+  );
 }
 
 // use masonry to layout landing page display
@@ -422,30 +423,22 @@ var keyPress = false;
 
 // submit contact form on enter key
 $(document).on("keypress", "#contact_content", function(e){
-  if (e.keyCode == 13 && !e.shiftKey && !keyPress) {
-    keyPress = true;
-    e.preventDefault();
-    $('#contact-btn').click();
-  }
+  keyEnter(e, $(this), '#contact-btn');
 });
 
 // submit comment form on enter key
 $(document).on("keypress", "#comment_content", function(e){
-  if (e.keyCode == 13 && !e.shiftKey && !keyPress) {
-    keyPress = true;
-    e.preventDefault();
-    $('#comment-btn').click();
-  }
+  keyEnter(e, $(this), '#comment-btn');
 });
 
 // submit search form on enter key
 $(document).on("keypress", "#search", function(e){
-  if (e.keyCode == 13 && !e.shiftKey && !keyPress) {
-    keyPress = true;
-    e.preventDefault();
-    if($(this).val().length > 0)
-      $('#submit-btn').click();
-  }
+  keyEnter(e, $(this), '#submit-btn');
+});
+
+// submit reply form on enter key
+$(document).on("keypress", ".reply_content", function(e){
+  keyEnter(e, $(this), '.reply-btn');
 });
 
 // set autocomplete selection value
@@ -589,7 +582,7 @@ function resetScroll(url) {
     url: url,
     dataType: 'script',
     beforeSend: function() {
-      if($('.pixiPg') > 0)
+      if($('.pixiPg').length > 0)
         uiLoading(true);
       else
         toggleLoading();
@@ -615,3 +608,43 @@ function get_item_size() {
 
   return sz;
 }
+
+// process Enter key
+function keyEnter(e, $this, str) {
+  if (e.keyCode == 13 && !e.shiftKey && !keyPress) {
+    keyPress = true;
+    e.preventDefault();
+
+    if($this.val().length > 0)
+      $(str).click();
+  }
+}
+
+var processFlg = false;
+
+$(window).scroll(function(e) {
+
+  if ($('#px-container').length > 0) {
+    var url = $('a.nxt-pg').attr('href');
+
+    if (!processFlg && $(window).scrollTop() > ($(document).height() - $(window).height() - 50)) {
+      processFlg = true;
+
+      $.ajax({
+        url: url,
+        dataType: 'script',
+        'beforeSend': function (xhr) {
+  	   var token = $("meta[name='csrf-token']").attr("content");
+	   xhr.setRequestHeader("X-CSRF-Token", token);
+  	   toggleLoading();
+        },
+        success: function(data){
+	  processFlg = false;
+	},
+        complete: function(data){
+	  processFlg = false;
+	}
+      })
+    }
+  }
+});

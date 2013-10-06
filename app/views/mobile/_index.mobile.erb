@@ -4,7 +4,7 @@
 
 <%= content_for :head do %>
   <%= render partial: 'layouts/header', locals: { psize: 'hdr-logo' } %>
-  <%= render partial: 'mobile/index_panel' %>
+  <%= render 'mobile/index_panel' %>
 <% end %>
 
 <%= content_for :srch_content do %>
@@ -15,10 +15,10 @@
 
 <%= content_for :subhead do %>
   <div class="board-top">
-    <div id='pixi-loc' style='display:none'>
+    <div id='pixi-loc' class='center-wrapper' style='display:none'>
       <%= render partial: 'mobile/sites', locals: { ptype: false } %>
     </div>
-    <div id='cat-top' style='display:none'>
+    <div id='cat-top' class='center-wrapper' style='display:none'>
       <%= render 'mobile/category_list' %>
     </div>
   </div> 
