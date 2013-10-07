@@ -1,0 +1,24 @@
+  <table class="mtop inv-descr table table-bordered">
+  <%= render 'mobile/inv_header' %>
+  <tr>
+    <td class="width120"><div class='price'><%= @invoice.quantity %></div></td>
+    <td class="width360">
+      <%= @invoice.listing.title %></td>
+    <td class="width120"><div class='price'><%= number_to_currency @invoice.price %></div></td>
+    <td class="width120"><div class='price'><%= number_to_currency @invoice.subtotal %></div></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><div class='price'>Sales Tax</div></td>
+    <td class="width120"><div class='price'><%= get_sales_tax %>%</div></td>
+    <td class="width120"><div class='price'><%= number_to_currency(@invoice.tax_total) %></div></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><div class='price'>Amount Due</div></td>
+    <td></td>
+    <td class="width120"><div class='order-total price'><%= number_to_currency @invoice.amount %></div></td>
+  </tr>
+  </table>
+</div>
+

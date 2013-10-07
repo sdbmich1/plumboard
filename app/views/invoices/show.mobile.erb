@@ -1,0 +1,15 @@
+<%= content_for :panel do %>
+  <%= render 'mobile/left_panel' %>
+<% end %>
+
+<%= content_for :head do %>
+  <%= render partial: 'layouts/header', locals: { psize: 'hdr-logo' } %>
+  <%= render 'mobile/inv_panel' %>
+<% end %>
+
+<%= content_for :content do %>
+  <div id='inv_mform'>
+    <%= render :partial => 'mobile/show_invoice' %>
+  </div>
+<% end %>
+

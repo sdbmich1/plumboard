@@ -1,0 +1,37 @@
+<div class="row">
+  <div class="mleft15">
+    <div class='stitle center-wrapper'><h6>INVOICE</h6></div>
+  </div>
+</div>
+<div class="row">
+  <div class="mleft15">
+    <table class='inv-descr'>
+      <tr><td>Invoice #: </td><td><%= @invoice.id %></td></tr>
+      <tr><td>Bill To: </td>
+        <td><%= render partial: 'mobile/show_picture', locals: {psize: 'tiny', model: @invoice.buyer} %>
+        <%= @invoice.buyer.name %></td></tr>
+      <tr><td>Date: </td><td><%= get_local_date(@invoice.inv_date) %></td></tr>
+      <tr><td>Status: </td><td><%= @invoice.status.titleize %></td></tr>
+    </table>
+  </div>
+</div>
+<div class="row">
+    <div class="sm-top mleft15">
+	<div class="control-group">
+          <%= render partial: 'mobile/invoice_details' %>
+	  <% unless @invoice.comment.blank? %>
+	    <label class="sm-top control-label">Comments: <%= @invoice.comment %></label>
+	  <% end %>
+        </div>
+	<div class="pull-right">
+          <% if @invoice.owner?(@user) && @invoice.unpaid? %>
+	    <table><tr>
+              <td><%= link_to 'Edit', edit_invoice_path(@invoice), 'data-role'=>'button', 'data-theme'=>'b' %></td>
+      	      <td><%= link_to 'Remove', @invoice, method: :delete, confirm: 'Delete this invoice?', 'data-role'=>'button', remote: true %></td>
+	    <tr></table>
+    	  <% else %>
+            <%= render partial: 'mobile/pay_invoice', locals: { invoice: @invoice } if @invoice.unpaid? %>
+    	  <% end %>
+        </div>
+    </div>
+</div>

@@ -92,7 +92,7 @@ function reset_top(tag, str) {
   $(str).hide(300);
 
   if ($('#pixi-loc').is(':visible') || $('#cat-top').is(':visible') || $('#px-search').is(':visible')) {
-    $(".nearby-top").css('margin-top', '40px'); }
+    $(".nearby-top").css('margin-top', '50px'); }
   else {
     $(".nearby-top").css('margin-top', '0'); 	
   }
@@ -115,3 +115,4 @@ $(document).on('click', "#comment-btn, #contact-btn", function (e) {
   uiLoading(true);
   $(this).parent().attr('disabled', 'disabled');
 });
+

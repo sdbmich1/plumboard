@@ -211,13 +211,6 @@ input, select, .uneditable-input {
 .notice {background:#fff6bf;color:#514721;border-color:#ffd324;}
 .success {background:#e6efc2;color:#264409;border-color:#c6d880;}
 
-/* submit button */
-.submit-btn { color: white!important; font-weight: bold; background: $pixiOrange!important; border: $pixiOrange!important; }
-.stnd-btn { color: black!important; background:#CCCCCC!important; border:1px gray!important}
-.fb-btn { 
-  background: #2A528E!important; color: white!important; border: #2A528E!important;
-}
-
 #spinner {
   margin-top: 300px;
   margin-left: 400px;
@@ -262,12 +255,6 @@ input, select, .uneditable-input {
 .height360 {height: 360px!important}
 .height480 {height: 480px!important}
 
-.clear-all { clear:both }
-.clear-right { clear:right }
-.price { text-align: right }
-.order-total { font-weight: bolder; font-size: medium }
-.v-align { vertical-align: middle }
-
 .hdr { font-weight: bolder; font-size: medium; 
   .top-hdr { color: white; }
   .item-hdr { color: black; }
@@ -276,15 +263,6 @@ input, select, .uneditable-input {
 }
 
 .tbl-hdr { text-align:left!important; font-weight: normal!important }
-
-.pixi-color { 
-  color: $pixiOrange; 
-}
-.pixi-bkgnd { background-color: $pixiOrange }
-.pixi-lt-bkgnd { background-color: #fde9d9 }
-.pixi-blue-bkgnd { background-color: $pixiBlue }
-.pixi-blk-bkgnd { background-color: black }
-.pixi-grey-bkgnd { background-color: $grayMediumLight }
 
 .div-border {  
   border: 1px solid #eaeaea; padding: 10px; margin-bottom: 10px; }
@@ -575,10 +553,6 @@ a.btn-mask {
   visibility: hidden;
 }
 
-.img-valign {
-  vertical-align: middle;
-}
-
 hr.vertical
 {
    width: 0px;
@@ -650,10 +624,6 @@ a.pixi-link {
  
 .pad10 {
   padding: 10px!important;
-}
-
-.mleft10 {
-  margin-left: 10px!important;
 }
 
 .ui-autocomplete {

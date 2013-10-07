@@ -14,4 +14,9 @@ module InvoicesHelper
   def get_invoice_path
     @user.has_bank_account? ? new_invoice_path : new_bank_account_path(target: 'shared/invoice_form')
   end
+
+  # set page title based on action
+  def get_inv_title
+    action_name == 'new' ? 'Create Invoice' : 'Edit Invoice'
+  end
 end

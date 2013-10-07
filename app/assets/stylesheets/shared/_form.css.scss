@@ -6,6 +6,15 @@ $pixiBlue: #026FB7;
 //$pixiBlue: #0C6FCB;
 //$pixiOrange: #F15A25;
 
+.pixi-color { 
+  color: $pixiOrange; 
+}
+.pixi-bkgnd { background-color: $pixiOrange }
+.pixi-lt-bkgnd { background-color: #fde9d9 }
+.pixi-blue-bkgnd { background-color: $pixiBlue }
+.pixi-blk-bkgnd { background-color: black }
+.pixi-grey-bkgnd { background-color: $grayMediumLight }
+
 /* posts */
 
 .posts {
@@ -49,3 +58,25 @@ $pixiBlue: #026FB7;
 }
 
 form {margin-bottom: 5px!important;}
+
+.clear-all { clear:both }
+.clear-right { clear:right }
+.price { text-align: right }
+.order-total { font-weight: bolder; font-size: medium }
+.v-align { vertical-align: middle }
+
+.mleft10 {
+  margin-left: 10px!important;
+}
+
+.mleft15 {
+  margin-left: 15px!important;
+}
+
+/* submit button */
+.submit-btn { color: white!important; font-weight: bold; background: $pixiOrange!important; border: $pixiOrange!important; }
+.basic-btn { color: white!important; font-weight: normal;}
+.stnd-btn { color: black!important; background:#CCCCCC!important; border:1px gray!important; font-weight: normal;}
+.fb-btn { 
+  background: #2A528E!important; color: white!important; border: #2A528E!important;
+}

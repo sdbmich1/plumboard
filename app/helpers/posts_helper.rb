@@ -23,6 +23,10 @@ module PostsHelper
        val == 2 ? 'b' : 'd'
      when 'sold'
        val == 3 ? 'b' : 'd'
+     when 'received'
+       val == 2 ? 'b' : 'd'
+     when 'new'
+       val == 3 ? 'b' : 'd'
     end
   end
 end

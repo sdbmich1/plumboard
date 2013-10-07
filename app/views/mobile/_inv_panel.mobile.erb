@@ -1,0 +1,10 @@
+<div id='inv-nav' data-role='navbar' data-theme='c' class: 'show-pixi-bar'>
+  <ul>
+    <li><%= link_to "Sent", invoices_path, 'data-mini'=>'true', 'data-theme'=>get_theme(1) %></li>
+    <li><%= link_to "Received", received_invoices_path, 'data-mini'=>'true', 'data-theme'=>get_theme(2) %></li>
+    <% if @user.has_pixis? %>
+      <li><%= link_to "Create", get_invoice_path, 'data-mini'=>'true', 'data-theme'=>get_theme(3) %></li>
+    <% end %>
+  </ul>
+</div>
+

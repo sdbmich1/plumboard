@@ -3,7 +3,8 @@ class InvoicesController < ApplicationController
   before_filter :authenticate_user!
   before_filter :load_data, only: [:index, :incoming, :paid, :create]
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name
-  respond_to :html, :js
+  respond_to :html, :js, :json, :mobile
+  layout :page_layout
 
   def new
     @invoice = @user.invoices.build
@@ -28,23 +29,26 @@ class InvoicesController < ApplicationController
   def update
     @invoice = Invoice.find params[:id]
     if @invoice.update_attributes(params[:invoice])
-      flash[:notice] = "Successfully updated invoice." 
       @invoices = Invoice.get_invoices(@user).paginate(page: @page)
+    end
+    respond_with(@invoice) do |format|
+      format.html { redirect_to invoices_url }
     end
   end
 
   def create
     @invoice = @user.invoices.build params[:invoice]
     if @invoice.save
-      flash.now[:notice] = "Successfully created invoice." 
       @invoices = Invoice.get_invoices(@user).paginate(page: @page)
     end  
+    respond_with(@invoice) do |format|
+      format.html { redirect_to invoices_url }
+    end
   end
 
   def destroy
     @invoice = Invoice.find params[:id]
     if @invoice.destroy
-      flash[:notice] = "Successfully removed invoice." 
       @invoices = Invoice.get_invoices(@user).paginate(page: @page)
     end  
   end
@@ -55,6 +59,10 @@ class InvoicesController < ApplicationController
   end
 
   private
+
+  def page_layout
+    mobile_device? && %w(index received).detect{|x| action_name == x} ? 'form' : 'application'
+  end
 
   def load_data
     @page = params[:page] || 1

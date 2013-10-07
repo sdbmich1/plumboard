@@ -46,8 +46,8 @@ class PostsController < ApplicationController
   private
 
   def page_layout
-    # mobile_device? && %w(index sent).detect{|x| action_name == x} ? 'lists' : 'application'
-    mobile_device? && action_name == 'index' ? 'form' : 'application'
+    mobile_device? && %w(index sent).detect{|x| action_name == x} ? 'form' : 'application'
+    # mobile_device? && action_name == 'index' ? 'form' : 'application'
   end
 
   def mark_post

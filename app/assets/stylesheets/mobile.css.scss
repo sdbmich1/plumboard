@@ -56,6 +56,7 @@ a.signup-btn {
 
 #signin-btn .ui-submit .ui-btn { width: 50%; }
 .ui-btn-hidden#signin-btn { background: $pixiOrange }
+#inv_amt, #inv_tax_total, #inv_total {background: $grayMediumLight;}
 
 .icon-gray > i {
   opacity: 0.25;
@@ -234,8 +235,8 @@ a[data-theme="app-search"].ui-btn-right {
 
 .ui-li-thumb, .ui-li-icon {
     left: 1px;
-    max-height: 80px; 
-    max-width: 80px; 
+    height: 60px; 
+    width: 60px; 
     position: absolute;
     top: 0;
 }
@@ -280,7 +281,7 @@ a[data-theme="app-search"].ui-btn-right {
 
 .sess-time, .stime {position: absolute; top: 0.25em; right: 1em; font-size: 0.65em; font-weight: bold;  }
 .list-hdr h6 {font-size:0.875em; color: blue; }
-.loc, .sdescr {font-weight: normal; font-size: 0.65em; margin: 0; }
+.loc {font-weight: normal; font-size: 0.65em; margin: 0; }
 
 /*  session presenter list */
 .plist {
@@ -321,9 +322,10 @@ a[data-theme="app-search"].ui-btn-right {
 			
 label, label.ui-input-text { font-size:12px!important; margin-top:5px!important; line-height: 0.8em!important}
 
-.stitle h6 {font-size: 0.8em; }
+.stitle h6 {font-size: 1.25em; font-weight: bold; }
 .sgrp { line-height: 1em; }
 .sdescr { font-size: 0.725em!important; font-weight: normal; height: 30px; margin-right: 5px;}
+.inv-descr { font-size: 0.875em!important; }
 .fm-link { font-size: 0.825em!important; width: 75%; font-weight: normal; height: 30px; }
 
 .seller-name { font-size: 0.725em; margin-right: 5px; float: left;}

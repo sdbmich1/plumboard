@@ -582,10 +582,7 @@ function resetScroll(url) {
     url: url,
     dataType: 'script',
     beforeSend: function() {
-      if($('.pixiPg').length > 0)
-        uiLoading(true);
-      else
-        toggleLoading();
+      switchToggle(true);
     },
     success: function(data){
 
@@ -627,7 +624,7 @@ $(window).scroll(function(e) {
   if ($('#px-container').length > 0) {
     var url = $('a.nxt-pg').attr('href');
 
-    if (!processFlg && $(window).scrollTop() > ($(document).height() - $(window).height() - 50)) {
+    if (url.length > 0 && !processFlg && $(window).scrollTop() > ($(document).height() - $(window).height() - 50)) {
       processFlg = true;
 
       $.ajax({
@@ -636,7 +633,7 @@ $(window).scroll(function(e) {
         'beforeSend': function (xhr) {
   	   var token = $("meta[name='csrf-token']").attr("content");
 	   xhr.setRequestHeader("X-CSRF-Token", token);
-  	   toggleLoading();
+	   switchToggle(true);
         },
         success: function(data){
 	  processFlg = false;
@@ -648,3 +645,11 @@ $(window).scroll(function(e) {
     }
   }
 });
+
+// show spinner
+function switchToggle(flg) {
+  if($('.pixiPg').length > 0)
+    uiLoading(flg);
+  else
+    toggleLoading();
+}

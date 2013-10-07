@@ -1,0 +1,11 @@
+<li class='plist'>
+  <%= link_to invoice, class: 'pending_title' do %>
+    <%= render partial: 'mobile/show_picture', locals: {psize: 'thumb', model: invoice.listing} %>
+
+    <div class="pstr">
+      <h6><%= invoice.pixi_title %></h6>
+    </div>
+
+    <p><%= "Invoice ##{invoice.id} - #{number_to_currency(invoice.amount)}" %></p>
+  <% end %>
+</li>

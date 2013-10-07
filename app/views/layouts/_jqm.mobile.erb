@@ -5,7 +5,12 @@
 <%= stylesheet_link_tag 'css/themes/pixi-theme.min' %>
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile.structure-1.3.2.min.css" />
 <%= javascript_include_tag "application", "http://code.jquery.com/jquery-1.9.1.min.js",'jquery.masonry.min.js','jquery.infinitescroll.min.js' %>
-<script type="text/javascript">$(document).bind("mobileinit", function () { $.mobile.defaultPageTransition = "none"; });</script>
+<script type="text/javascript">
+  $(document).on("mobileinit", function () { 
+    $.mobile.defaultPageTransition = "none"; 
+    $.mobile.defaultDialogTransition = "none";
+  });
+</script>
 <script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
 <%= javascript_include_tag 'application.mobile.js','jquery.placeholder.min.js', "autocomplete-rails.js", "jquery.ui.autocomplete.html.js",  
 	'iscroll-lite.js', 'payment.js', 'transaction.js', 'jquery.bxslider.min.js' %>
