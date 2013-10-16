@@ -15,7 +15,7 @@ class ListingsController < ApplicationController
   def show
     @listing = Listing.find_by_pixi_id params[:id]
     @post = Post.new 
-    @comment = @listing.comments.build
+    @comment = @listing.comments.build if @listing
     load_comments
   end
 
@@ -70,7 +70,7 @@ class ListingsController < ApplicationController
   end
 
   def load_comments
-    @comments = @listing.comments.paginate(page: @page, per_page: params[:per_page] || 4)
+    @comments = @listing.comments.paginate(page: @page, per_page: params[:per_page] || 4) if @listing
   end
 
   def get_location

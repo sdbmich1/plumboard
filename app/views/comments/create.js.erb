@@ -1,14 +1,17 @@
 <% if @comment.errors.any? %>
-  $("#comment_notice").hide(300);
   $("#comment_errors").html("<%= escape_javascript( render(partial: 'shared/error_messages', locals: {target: @comment})) %>");
 <% else %>
+  var url = '/listings/' + "<%= params[:comment][:pixi_id] %>"
+
+  // check for mobile
+  if($('#seller-comment').length) {
+    goToUrl(url, true);
+  }
+  else {
     $("#comment_form").html("<%= escape_javascript( render(partial: 'shared/comments') ) %>");
+  }
 <% end %>
 
-if($('.show-pixi-bar').length > 0) {
-    uiLoading(false);
-    $('#comment-hdr').hide(300);
-  }
-else
-  $('#spinner').hide(300);
+uiLoading(false);
+$('#spinner').hide(300);
 

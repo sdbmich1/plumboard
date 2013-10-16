@@ -376,6 +376,7 @@ function calc_amt(){
     // set & update invoice total
     var inv_total = amt + tax_total;
     $('#inv_total').val(inv_total.toFixed(2)); 
+    $('#inv_price').val(parseFloat(price).toFixed(2)); 
   }
 }
 
@@ -617,6 +618,7 @@ function keyEnter(e, $this, str) {
   }
 }
 
+// process window scroll for main image board
 var processFlg = false;
 
 $(window).scroll(function(e) {

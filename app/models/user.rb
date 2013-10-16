@@ -34,6 +34,7 @@ class User < ActiveRecord::Base
   has_many :unpaid_invoices, foreign_key: :seller_id, class_name: 'Invoice', conditions: { :status => 'unpaid' }
   has_many :paid_invoices, foreign_key: :seller_id, class_name: 'Invoice', conditions: { :status => 'paid' }
   has_many :received_invoices, :foreign_key => "buyer_id", :class_name => "Invoice"
+  has_many :unpaid_received_invoices, foreign_key: :buyer_id, :class_name => "Invoice", conditions: { :status => 'unpaid' }
 
   has_many :bank_accounts, dependent: :destroy
   has_many :transactions, dependent: :destroy
@@ -187,6 +188,16 @@ class User < ActiveRecord::Base
   def pic_with_name
     pic = self.pictures[0].photo(:tiny) rescue nil
     pic ? "<img src='#{pic}' class='inv-pic' /> #{self.name}" : nil
+  end
+
+  # return any unpaid invoices count 
+  def unpaid_invoice_count
+    unpaid_received_invoices.size
+  end
+
+  # return whether user has any unpaid invoices 
+  def has_unpaid_invoices?
+    unpaid_invoice_count > 0 rescue nil
   end
 
   # set sphinx scopes

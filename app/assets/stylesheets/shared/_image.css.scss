@@ -86,8 +86,8 @@
 }
 
 .usr-sm-photo img {
-  max-height: 30px!important;
-  max-width: 30px!important;
+  height: 30px!important;
+  width: 30px!important;
   vertical-align: middle;
   margin-bottom: 4px;
   margin-top: -4px;
@@ -115,4 +115,8 @@
 
 .img-valign {
   vertical-align: middle!important;
+}
+
+img.tiny {
+  @extend .usr-sm-photo;
 }

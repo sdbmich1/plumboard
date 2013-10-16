@@ -1,14 +1,14 @@
 <% if @comment %>  
   <%= form_for @comment, remote: true, id: 'comment-doc', :html =>{"data-ajax" => false} do |f| %> 
-    <div id="comment_notice" style="display:none"></div>
-    <div id="comment_errors">
+    <div id="notice" style="display:none"></div>
+    <div id="form_errors">
       <%= render partial: 'mobile/error_messages', :locals => { :target => f.object } %>
     </div>
 
     <%= f.hidden_field 'pixi_id', value: @listing.pixi_id %>
     <%= f.hidden_field 'user_id', value: @user.id %>
 
-    <div class='clear-all'>
+    <div id='seller-comment' class='clear-all mbot'>
       <table>
         <tr>
           <td><%= f.text_area 'content', placeholder: 'Post a comment on item...', class: 'slide-menu', 'data-mini'=>'true' %></td>

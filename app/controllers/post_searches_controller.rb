@@ -4,7 +4,7 @@ class PostSearchesController < ApplicationController
   before_filter :authenticate_user!
   after_filter :add_points, only: [:index]
   autocomplete :post, :content, :full => true
-  respond_to :html, :js, :json
+  respond_to :html, :js, :mobile
 
   def index
     @posts = Post.search query, star: true, page: page unless query.blank?

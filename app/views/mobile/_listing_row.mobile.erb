@@ -6,6 +6,6 @@
       <h6><%= listing.short_title %></h6>
     </div>
 
-    <p><%= listing.site_name %></p>
+    <p><%= listing.site_name %><br /><%= "#{listing.category_name} | #{ts_in_words(listing.updated_at)}" %></p>
   <% end %>
 </li>

@@ -1,0 +1,26 @@
+<%= render :partial => 'mobile/show_discount' %> 
+
+<% if @order[:sales_tax].to_f > 0.0 %>
+  <tr><td></td><td>Sales Tax</td>
+  	<td class="price"><%= number_to_currency(@order[:sales_tax].to_f) %></td>
+  </tr>
+<% end %>
+
+<% if @transaction %>
+  <% unless @transaction.processing_fee.blank? %>
+    <tr><td></td>
+        <td>Processing Fee</td>
+  	<td class="price"><%= number_to_currency(@transaction.processing_fee) %></td>
+    </tr>
+  <% end %>
+  <% unless @transaction.convenience_fee.blank? %>
+    <tr><td></td>
+  	<td>Convenience Fee</td>
+  	<td class="price"><%= number_to_currency(@transaction.convenience_fee)%></td>
+    </tr>
+  <% end %>
+  <tr><td></td>
+    <td class='order-total'><%= show_title(paid) %></td>
+    <td class='order-total pstr price'><%= number_to_currency(@transaction.amt) %></td>
+  </tr>
+<% end %>

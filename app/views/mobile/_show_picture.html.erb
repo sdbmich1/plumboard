@@ -1,3 +1,3 @@
 <% if model %>
-  <%= image_tag(model.pictures[0].photo.url(psize.to_sym)) if model.pictures[0] %>
+  <%= image_tag(model.pictures[0].photo.url(psize.to_sym), class: psize) if model.pictures[0] %>
 <% end %>

@@ -23,6 +23,8 @@ class Invoice < ActiveRecord::Base
   validates :quantity, presence: true, :numericality => { greater_than: 0, less_than_or_equal_to: MAX_INV_QTY.to_i }    
   validates :sales_tax, allow_blank: true, :numericality => { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }    
 
+  default_scope order: 'invoices.created_at DESC'
+
   # set flds
   def set_flds
     self.status = 'unpaid' if status.nil?
@@ -102,5 +104,10 @@ class Invoice < ActiveRecord::Base
   # get title
   def pixi_title
     listing.title rescue nil
+  end
+
+  # titleize status
+  def nice_status
+    status.titleize rescue nil
   end
 end

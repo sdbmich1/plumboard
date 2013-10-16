@@ -30,7 +30,7 @@ function BalancedCard() {
 
   // disable form
   $('#payForm').attr('disabled', true);
-
+   
   // initialize object
   balanced.init(marketplaceUri);
 
@@ -92,20 +92,36 @@ function callbackHandler(response) {
       processError(response, 'Payment token is invalid');
       break;
     case 500:
+      console.log(response.error);
       processError(response, 'Network request invalid. Please try again.');
       break;
     case 201:
       toggleLoading();
       $balancedError.hide(300);
-
+       
       // insert the data into the form 
       $('#pay_token').val(response.data.uri);
 
       if($('#bank_account_acct_no').length > 0) {
         $('#bank_account_acct_no').val(response.data.account_number); }
 
+      var sdata = $formID.serialize();
+      //alert('data=' + sdata);
+
       // submit to the server
       $formID.trigger("submit.rails");    	  
+
+      /*
+      $.ajax({
+         url: '/transactions',
+	 'beforeSend': function (xhr) {
+	    var token = $("meta[name='csrf-token']").attr("content");
+	    xhr.setRequestHeader("X-CSRF-Token", token);
+	 },
+	 type: 'POST',
+	 data: sdata
+      });
+      */
       break;
     default:
       console.log(response.error);

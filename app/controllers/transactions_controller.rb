@@ -1,8 +1,9 @@
 class TransactionsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :load_vars, :except => [:index, :refund]
-  respond_to :html, :js, :json
+  respond_to :html, :js, :json, :mobile
   include CalcTotal
+  layout :page_layout
 
   def new
     @listing = Listing.find_by_pixi_id(params[:id]) || TempListing.find_by_pixi_id(params[:id])
@@ -26,6 +27,10 @@ class TransactionsController < ApplicationController
   end
 
   protected
+
+  def page_layout
+    mobile_device? ? 'form' : 'transactions'
+  end
 
   def load_vars    
     @order = action_name == 'new' ? params : params[:order] ? params[:order] : params

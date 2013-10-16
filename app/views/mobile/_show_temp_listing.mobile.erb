@@ -1,0 +1,12 @@
+<div class="mtop pull-right">
+  <%= render partial: 'mobile/review_nav', locals: { listing: listing } %>
+  <% if listing.new_status? %>
+    <% unless listing.free? %>
+      <%= render :partial => 'mobile/item_purchase', locals: {:listing=>listing} if listing.seller?(@user) %>
+    <% else %>
+      <%= link_to "Done!", submit_temp_listing_path(listing), method: :put, 'data-inline'=>'true', 'data-theme'=>'d', 'data-role'=>'button' %>
+    <% end %>
+  <% else %>
+      <%= link_to "Done!", resubmit_temp_listing_path(listing), method: :put, 'data-inline'=>'true', 'data-theme'=>'d', 'data-role'=>'button' %>
+  <% end %>
+</div>

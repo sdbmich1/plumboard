@@ -145,4 +145,16 @@ module ApplicationHelper
          flash_type.to_s
      end
   end
+
+  # set path based on invoice count
+  def get_unpaid_path
+    # @user.unpaid_invoice_count > 1 ? received_invoices_path : @user.unpaid_received_invoices.first
+    @user.unpaid_received_invoices.first if @user.unpaid_invoice_count > 1 
+  end
+
+  # toggle header if str matches
+  def toggle_header? title
+    str = 'Pixi|Invoice|Account|Post'  # set match string
+    !(title.downcase =~ /^.*\b(#{str.downcase})(s){0,1}\b.*$/i).nil?
+  end
 end

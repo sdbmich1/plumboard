@@ -1,0 +1,17 @@
+<div class="mleft15">
+  <div id="data_error" style="display:none" class="error"></div>
+
+  <div class="sm-top">
+    <table class='inv-descr'>
+      <tr><td>Bank Name: </td><td class='width30'></td><td><%= @account.bank_name %></td></tr> 
+      <tr><td>Account #: </td><td class='width30'></td><td><%= @account.acct_no %></td></tr>
+      <tr><td>Account Name: </td><td class='width30'></td><td><%= @account.acct_name %></td></tr> 
+      <tr><td>Description: </td><td class='width30'></td><td><%= @account.description %></td></tr> 
+      <tr><td>Account Type: </td><td class='width30'></td><td><%= @account.acct_type %></td></tr> 
+    </table>
+  </div>
+  <div class="mtop center-wrapper">
+    <%= link_to 'Remove', @account, method: :delete, confirm: 'Are you sure?', 'data-role'=>'button', 'data-inline'=>'true' %>
+  </div>
+</div>
+

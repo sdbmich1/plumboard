@@ -1,8 +1,0 @@
-<% if @listing.active? %>
-<div id='comment-entry'>
-  <%= render partial: 'mobile/comment_form' unless !@listing.active? || @listing.seller?(@user) %>
-</div> 
-<div id='comment-item'>
-  <%= render partial: 'mobile/comment_list' %>
-</div> 
-<% end %>

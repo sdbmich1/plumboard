@@ -1,0 +1,12 @@
+<%= form_tag new_transaction_path, :method => :get, :id => 'purchase_btn' do %> 
+  <%= hidden_field_tag 'id', listing.pixi_id %>
+  <%= hidden_field_tag 'title', listing.title %>
+  <%= hidden_field_tag 'item1', 'New Pixi Post' %>
+  <%= hidden_field_tag 'promo_code', set_promo_code(listing.site_id) %>
+  <%= hidden_field_tag 'cnt', 1 %>
+  <%= hidden_field_tag 'qtyCnt', 1 %>
+  <%= hidden_field_tag 'quantity1', listing.get_site_count %>
+  <%= hidden_field_tag 'price1', get_price %>
+  <%= hidden_field_tag 'transaction_type', 'pixi' %>
+  <%= submit_tag('Next', "data-inline"=>'true', 'data-theme'=>'d', id: 'order-btn') %>
+<% end %>  

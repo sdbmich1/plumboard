@@ -1,0 +1,25 @@
+<div id="pmtForm">
+  <%= form_for @transaction, url: transactions_url(:id=>@listing, order: @order), id: 'payment_form' do |f| %>
+    <%= render partial: 'mobile/error_messages', locals: { :target => @transaction } %>
+    <div id="data_error" style="display:none" class="error"></div>
+    <%= render 'mobile/purchase_summary' %>
+    <%= render partial: 'mobile/buyer_info', locals: { f: f } %>
+    <%= render partial: 'mobile/credit_card_info' if @transaction.amt > 0.0 %>
+	
+    <%= f.hidden_field :token, id: 'pay_token' %>
+    <%= f.hidden_field :promo_code, :value=>get_promo_code %>
+    <%= f.hidden_field :user_id, :value=>@transaction.user_id %>
+    <%= f.hidden_field :transaction_type, :value=>@transaction.transaction_type %>
+    <%= f.hidden_field :amt, :value => @transaction.amt, :id=>'amt' %>
+    <%= f.hidden_field :processing_fee, :value => @transaction.processing_fee, :id=>'processing_fee' %>
+    <%= f.hidden_field :convenience_fee, :value => @transaction.convenience_fee, :id=>'convenience_fee' %>
+    <%= f.hidden_field :description, :value => @order[:title] %>
+
+    <%= link_to 'Prev', set_prev_btn, 'data-role'=>'button', 'data-inline'=>'true' %>
+
+    <div class="nav pull-right">
+      <%= link_to 'Cancel', @listing, method: :delete, confirm: cancel_msg, 'data-role'=>'button', 'data-inline'=>'true' if @transaction.pixi? %>
+      <%= f.submit "Done!", :id => 'payForm', 'data-inline'=>'true', 'data-theme'=>'d' %>
+    </div>
+  <% end %>
+</div>

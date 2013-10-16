@@ -1,0 +1,14 @@
+<%= content_for :panel do %>
+  <%= render 'mobile/left_panel' %>
+<% end %>
+
+<%= content_for :head do %>
+  <%= render partial: 'layouts/header', locals: { psize: "#{@order[:title]}" } %>
+<% end %>
+
+<%= content_for :content do %>
+  <div id='txn_mform'>
+    <%= render partial: "mobile/payment_form", locals: { step_name: get_page_title } %>
+  </div>
+<% end %>
+

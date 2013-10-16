@@ -3,9 +3,9 @@
     <%= render partial: 'mobile/show_picture', locals: {psize: 'thumb', model: invoice.listing} %>
 
     <div class="pstr">
-      <h6><%= invoice.pixi_title %></h6>
+      <h6><%= invoice.listing.short_title %><span class='pull-right'><%= number_to_currency(invoice.amount) %></span></h6>
     </div>
 
-    <p><%= "Invoice ##{invoice.id} - #{number_to_currency(invoice.amount)}" %></p>
+    <p><%= "Invoice ##{invoice.id} - #{get_invoice_name(invoice)}" %><br /><%= "#{get_local_date(invoice.inv_date)} | #{invoice.nice_status}" %></p>
   <% end %>
 </li>

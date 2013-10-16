@@ -61,7 +61,7 @@ class InvoicesController < ApplicationController
   private
 
   def page_layout
-    mobile_device? && %w(index received).detect{|x| action_name == x} ? 'form' : 'application'
+    mobile_device? ? 'form' : 'application'
   end
 
   def load_data

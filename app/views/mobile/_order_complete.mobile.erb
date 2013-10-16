@@ -1,0 +1,14 @@
+<div id="pmtForm">
+  <%= render partial: 'mobile/pixi_submit', locals: {model: @transaction.temp_listings[0], step_name: step_name} %>
+
+  <div class="mtop center-wrapper">
+    Subject to approval, your pixi will be posted within the next hour. 
+    <%= 'Your credit card will be charged upon approval.' if @transaction.amt > 0.0 %>
+    <div class="mtop">Thank you for your business.</div>
+  </div>
+  <div class="mtop mbot">
+    <center>
+	<%= link_to "Done", listings_path, 'data-role'=>'button', :id => 'cancel-btn' %>
+    </center>
+  </div>
+</div>

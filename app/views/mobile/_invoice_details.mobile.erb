@@ -7,7 +7,7 @@
     <td class="width120"><div class='price'><%= number_to_currency @invoice.price %></div></td>
     <td class="width120"><div class='price'><%= number_to_currency @invoice.subtotal %></div></td>
   </tr>
-  <tr>
+  <tr class='sls-tax' style='display:none'>
     <td></td>
     <td><div class='price'>Sales Tax</div></td>
     <td class="width120"><div class='price'><%= get_sales_tax %>%</div></td>
@@ -17,7 +17,7 @@
     <td></td>
     <td><div class='price'>Amount Due</div></td>
     <td></td>
-    <td class="width120"><div class='order-total price'><%= number_to_currency @invoice.amount %></div></td>
+    <td class="width120"><div class='order-total pstr price'><%= number_to_currency @invoice.amount %></div></td>
   </tr>
   </table>
 </div>

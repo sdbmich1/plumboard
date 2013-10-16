@@ -256,4 +256,16 @@ describe Invoice do
     end
   end
 
+  describe "nice status" do 
+
+    it "should return a nice status" do 
+      @invoice.nice_status.should be_true 
+    end
+
+    it "should not return a nice status" do 
+      @invoice.status = nil
+      @invoice.nice_status.should_not be_true 
+    end
+  end
+
 end

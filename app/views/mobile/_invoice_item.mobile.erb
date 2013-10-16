@@ -1,31 +1,26 @@
-  <table class="mtop inv-descr table table-bordered">
   <tr>
     <td class='img-valign'>Qty</td>
-    <td class='width120'>
-      <%= f.select 'quantity', options_for_select(get_ary, :selected => set_quantity), {}, {id: 'inv_qty', 'data-mini'=>'true', class: 'pixi-select'} %></td>
+    <td><%= f.select 'quantity', options_for_select(get_ary, :selected => set_quantity), {}, {id: 'inv_qty', 'data-mini'=>'true', class: 'mtop'} %></td>
   </tr>
   <tr>
     <td class='img-valign'>Price</td>
     <td><%= f.text_field :price, id: 'inv_price', value: num_display(f.object, "price"), class: 'price', placeholder: 'Enter price' %></td>
   </tr>
-  <tr>
+  <tr class='sls-tax' style='display:none'>
     <td class='img-valign'>Subtotal</td>
-    <td class="width120"><%= f.text_field :subtotal, id: 'inv_amt', value: num_display(f.object, "subtotal"), readonly: true, class: 'price' %></td>
+    <td><%= f.text_field :subtotal, id: 'inv_amt', value: num_display(f.object, "subtotal"), readonly: true, class: 'price' %></td>
   </tr>
-  <tr>
+  <tr class='sls-tax' style='display:none'>
     <td class='img-valign'>Sales Tax</td>
     <td><%= f.text_field :sales_tax, id: 'inv_tax', class: 'price', placeholder: 'Enter tax (if any)' %></td>
   </tr>
-  <tr>
+  <tr class='sls-tax' style='display:none'>
     <td class='img-valign'>Tax</td>
-    <td class="width120">
-      <%= f.text_field :tax_total, readonly: true, id: 'inv_tax_total', value: num_display(f.object, "tax_total"), class: 'price' %></td>
+    <td><%= f.text_field :tax_total, readonly: true, id: 'inv_tax_total', value: num_display(f.object, "tax_total"), class: 'price' %></td>
   </tr>
   <tr>
-    <td><div class='order-total price'>Amount Due</div></td>
-    <td class="width120">
-      <%= f.text_field :amount, readonly: true, id: 'inv_total', value: num_display(f.object, "amount"), class: 'pstr price' %></td>
+    <td><div class='valign'>Amount Due</div></td>
+    <td class="pstr">
+      <%= f.text_field :amount, readonly: true, id: 'inv_total', value: num_display(f.object, "amount"), class: 'price' %></td>
   </tr>
-  </table>
-</div>
 

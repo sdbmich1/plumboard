@@ -32,6 +32,7 @@ module TempListingsHelper
 
   # check if pending listing
   def check_pending_pixi listing
-    render partial: 'shared/pending_listing', locals: {listing: listing} if controller_name == 'pending_listings'
+    path = (mobile_device? ? 'mobile' : 'shared') + '/pending_listing' 
+    render partial: path, locals: {listing: listing} if controller_name == 'pending_listings'
   end
 end

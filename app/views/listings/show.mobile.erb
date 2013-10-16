@@ -18,16 +18,9 @@
 
 <%= content_for :content do %>
   <%= render partial: 'mobile/show_listing', locals: {listing: @listing, edit_mode: false} %>
-<% end %>
 
-<%= content_for :footer do %>
   <% if @listing.seller? @user %>
-    <div data-role="navbar">
-      <ul>
-	<li><%= link_to 'Home', listings_path, "data-icon"=>"home" %></li>
-        <li><%= link_to 'Remove', @listing, method: :delete, confirm: 'Are you sure?', "data-icon"=>'delete' %></li>
-        <li><%= link_to 'Edit', edit_temp_listing_path(@listing), "data-icon"=>'edit' %></li>
-      </ul>
-    </div>
+    <%= link_to 'Remove', @listing, method: :delete, confirm: 'Are you sure?', "data-role"=>'button', 'data-inline'=>'true' %>
+    <%= link_to 'Edit', edit_temp_listing_path(@listing), "data-role"=>'button', 'data-inline'=>'true', 'data-theme'=>'b' %>
   <% end %>  
 <% end %>

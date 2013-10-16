@@ -1,0 +1,15 @@
+<%= content_for :panel do %>
+  <%= render 'mobile/left_panel' %>
+<% end %>
+
+<%= content_for :head do %>
+  <%= render partial: 'layouts/header', locals: { psize: 'hdr-logo' } %>
+<% end %>
+
+<%= content_for :subhead do %>
+  <%= render partial: 'mobile/listing_top', locals: {listing: @listing} %>
+<% end %>
+
+<%= content_for :content do %>
+  <%= render partial: 'mobile/show_listing', locals: {listing: @listing, edit_mode: true} %>
+<% end %>

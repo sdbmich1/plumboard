@@ -1,5 +1,9 @@
-<div class="center-wrapper">
-  <%= pixi_home %>
+<div class="stitle center-wrapper">
+  <% if toggle_header?(psize) %>
+    <h6><%= psize %></h6>
+  <% else %>
+    <%= pixi_home %>
+  <% end %>
 </div>
 
 <% if user_signed_in? %>

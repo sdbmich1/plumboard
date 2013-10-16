@@ -15,6 +15,11 @@
   <%= render partial: 'mobile/listing_details', locals: {listing: listing} %>
 </div>
 
+<div id='edit-pixi-btn' class="row">
+  <%= render partial: 'mobile/show_temp_listing', locals: {listing: listing} if edit_mode %>
+  <%= check_pending_pixi listing %>
+</div>
+
 <div class='list-ftr sdescr'>
   <%= render partial: 'mobile/listing_footer', locals: {listing: listing} %>
 </div>

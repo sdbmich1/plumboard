@@ -1,0 +1,35 @@
+  <div class="mleft15">
+    <%= form_for(@account, url: set_account_path, html: { id: 'bank-acct-form' }, :remote=>true) do |f| %>
+      <div id="form_errors"><%= render partial: 'mobile/error_messages', locals: { :target => f.object } %></div>
+      <div id="data_error" style="display:none" class="error"></div>
+
+      <div class="sm-top">
+        <table class='inv-descr'>
+	  <tr><td>Routing #</td>
+	      <td><%= f.text_field :routing_number, :size => 16, placeholder: 'Routing Number', id: 'routing_number' %></td>
+	  </tr>
+	  <tr><td>Account #</td>
+	      <td><%= f.text_field :acct_number, :size => 16, placeholder: 'Account Number', id: 'acct_number' %></td>
+	  </tr>
+	  <tr><td>Account Name</td>
+	      <td><%= f.text_field :acct_name, :size => 30, placeholder: 'Account Name' %></td>
+	  </tr>
+	  <tr><td>Description</td>
+	      <td><%= f.text_field :description, :size => 60, placeholder: 'Description' %></td>
+	  </tr>
+	  <tr><td>Account Type</td>
+	      <td><%= f.select :acct_type, options_for_select(['checking', 'savings'], selected: @account.acct_type ), {},
+	      		{placeholder: 'Account Type'} %></td>
+	  </tr>
+	</table>
+      </div>
+
+      <%= f.hidden_field :user_id, value: @user.id %>
+      <%= f.hidden_field :token, id: 'pay_token' %>
+      <%= f.hidden_field :acct_no %>
+
+      <div class="center-wrapper mbot"><%= f.submit set_btn_name, 'data-theme'=>'d', 'data-inline'=>'true' %></div>
+    <% end %>
+
+    <div class="center-wrapper mbot"><%= image_tag "rsz_check_sample.gif" %></div>
+  </div>

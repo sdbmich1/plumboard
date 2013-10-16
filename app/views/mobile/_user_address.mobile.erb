@@ -1,0 +1,17 @@
+<tr>
+  <td><label>Address 1* </label><%= form.text_field :address %></td>	
+  <td></td>
+  <td><label>City* </label><%= form.text_field :city %></td>
+</tr>
+<tr>
+  <td><label>State/Province*</label>
+	<%= form.collection_select :state, State.all, :code, :code, {prompt: 'State'}, {class: 'ng-top', 'data-mini'=>'true'} %></td>
+  <td></td>
+  <td><label>Zip* </label><%= form.text_field :zip, :size => 10 %></td>
+</tr>
+<tr>
+  <td><label>Country </label><%= country_select "transaction", "country", ["United States"], {}, {class: 'country ng-top', 
+     'data-mini'=>'true'} %></td>
+  <td></td>
+  <td><label>Home Phone* </label><%= form.text_field :home_phone %></td>
+</tr>

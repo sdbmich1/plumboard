@@ -3,13 +3,12 @@
 <% end %>
 
 <%= content_for :head do %>
-  <%= render partial: 'layouts/header', locals: { psize: 'hdr-logo' } %>
-  <%= render 'mobile/inv_panel' %>
+  <%= render partial: 'layouts/header', locals: { psize: "Invoice ##{@invoice.id}" } %>
 <% end %>
 
 <%= content_for :content do %>
   <div id='inv_mform'>
-    <%= render :partial => 'mobile/show_invoice' %>
+    <%= render 'mobile/show_invoice' %>
   </div>
 <% end %>
 

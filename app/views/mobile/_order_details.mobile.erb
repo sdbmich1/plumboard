@@ -1,0 +1,10 @@
+  <% (1..order[:cnt].to_i).each do |i| %>
+  	<% if order['quantity'+i.to_s].to_i > 0 %>
+  	  <tr>
+  		<td class="price"><%= order['quantity'+i.to_s] %></td>
+  		<td class='cal-size'><%= order['item'+i.to_s] %></td>
+  		<td class="price"><%= number_to_currency(order['price'+i.to_s].to_f * order['quantity'+i.to_s].to_i) %></td>
+  	  </tr>
+  	<% end %>
+  <% end %>
+  <%= render :partial => 'mobile/order_total', :locals=>{:paid=>paid} %>

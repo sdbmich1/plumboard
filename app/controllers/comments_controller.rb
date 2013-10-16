@@ -2,6 +2,8 @@ require 'will_paginate/array'
 class CommentsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :load_data, only: [:create]
+  respond_to :html, :js, :mobile
+  layout :page_layout
 
   def create
     @listing = Listing.find_by_pixi_id params[:comment][:pixi_id]
@@ -9,16 +11,13 @@ class CommentsController < ApplicationController
     if @comment.save
       reload_data
     end
-
-    respond_to do |format|
-      format.mobile { render :nothing => true }
-      format.html { render :nothing => true }
-      format.js 
-      format.mjs 
-    end
   end
 
   private
+
+  def page_layout
+    mobile_device? ? 'form' : 'application'
+  end
 
   def load_data
     @page = params[:page] || 1

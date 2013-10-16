@@ -1,46 +1,28 @@
 <div class="row">
-  <div class="mleft15">
-    <div class='stitle center-wrapper'><h6><%= get_inv_title() %></h6></div>
-  </div>
-</div>
-<div class="row mtop">
   <%= form_for @invoice, id: 'invoice-doc', :html =>{"data-ajax" => false} do |f| %> 
     <div id="form_errors"><%= render partial: 'mobile/error_messages', locals: { target: f.object } %></div>
 
-    <div class="sm-top">
       <div class='mleft15'>
-	<div class="control-group">
-	  <label class='control-label'>From: <%= @user.name %></label>
-	  <label class='control-label'>Date: <%= get_local_date(Time.now) %></label>
-	  <label class="sm-top control-label">Bill To:</label>
-	  <div class='width360'>
-	    <%= autocomplete_field_tag 'buyer_name', @invoice.buyer_name, autocomplete_user_first_name_invoices_path,
-	        :update_elements => { :id => '#invoice_buyer_id', class: 'inv-descr' }, :placeholder => 'Enter Buyer Name' %> 
-          </div>
-        </div>
-        <%= render 'mobile/active_listings' %>
+	<table class='inv-descr'>
+	    <tr><td>Date:</td><td><%= get_local_date(Time.now) %></td></tr>
+	    <tr><td>Bill To:</td>
+	      <td><%= autocomplete_field_tag 'buyer_name', @invoice.buyer_name, autocomplete_user_first_name_invoices_path,
+	        :update_elements => { :id => '#invoice_buyer_id' }, :placeholder => 'Enter Buyer Name' %></td></tr> 
+	    <tr>
+	      <td>Item:</td><td><%= render 'mobile/active_listings' %></td></tr>
+            <%= render partial: 'mobile/invoice_item', locals: { f: f } %>
+	    <tr style='display:none'><td>Comments:</td>
+            <td><%= f.text_area :comment, placeholder: 'Enter comments here...' %></td></tr>
+	</table>
+        
         <%= f.hidden_field :buyer_id %>
         <%= f.hidden_field :inv_date, value: Time.now  %>
         <%= f.hidden_field :seller_id, value: @user.id %>
-        <%= render partial: 'mobile/invoice_item', locals: { f: f } %>
-
-        <div class='sm-top mleft15'>
-	  <table class='inv-descr'>
-	    <tr><td>Comments:</td>
-            <td><%= f.text_area :comment, placeholder: 'Type comments here...', class: 'inv-descr' %></td></tr>
-	  </table>
-        </div>
 
         <div class='mtop pull-right'>
-	  <table><tr>
-          <td><%= f.submit 'Save', id: 'send-btn', 'data-theme'=>'b' %></td>
-          <td><%= link_to 'Cancel', invoices_path, 'data-role'=>'button' %></td>
-	  </tr></table>
+          <%= f.submit 'Save', id: 'send-btn', 'data-theme'=>'b', 'data-inline'=>'true' %>
+          <%= link_to 'Cancel', invoices_path, 'data-role'=>'button', 'data-inline'=>'true' %>
         </div>
-      </div>
     </div>
   <% end %>
 </div>
-
-
-

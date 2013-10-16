@@ -1,21 +1,25 @@
 <div data-role="panel" id="navpanel" data-theme="d" data-display="overlay" data-position="left">
   <div data-role="controlgroup" data-corners="false">
     <ul data-role='listview' data-icon="false" data-theme='e'>
-      <li data-role="list-divider" data-mini='true' data-theme='c'>Menu</li>
-      <% if @user.has_pixis? %>
-    	<li data-mini='true'><%= link_to "Bill", get_invoice_path, id: 'bill-pixi' %></li>
-      <% end %>
-      <li data-mini='true'><%= link_to "My Pixis", seller_listings_path %></li>
+      <%= render partial: 'mobile/panel_item', locals: {path: get_home_path, itemID: 'home-pixi', title: 'Home', ifile: 'home_button_blue.png'} %>
+      <%= render partial: 'mobile/panel_item', locals: {path: get_invoice_path, itemID: 'bill-pixi', title: 'Send Bill', 
+	     ifile: '162-receipt.png'} if @user.has_pixis? %>
+      <%= render partial: 'mobile/panel_item', locals: {path: get_unpaid_path, itemID: 'pay-pixi', title: 'Pay Bill', 
+	     ifile: 'rsz_money-bag-hi_blue-icon.png'} if @user.has_unpaid_invoices? %>
+      <li data-role="list-divider" data-mini='true' data-theme='b'>MY STUFF</li>
+      <%= render partial: 'mobile/panel_item', locals: {path: seller_listings_path, itemID: 'my-pixi', title: 'My Pixis', 
+             ifile: 'pixi_wings_blue.png'} %>
       <li data-mini='true'>
         <%= link_to posts_path do %>
+	  <%= image_tag '09-chat-2.png', class: 'ui-li-icon' %>
           My Posts <span class="ui-li-count"><%= get_unread_count(@user) %></span>
 	<% end %>
       </li>
-      <li data-mini='true'><%= link_to "My Invoices", invoices_path %></li>
-      <li data-mini='true'><%= link_to "My Accounts", get_account_path %></li>
-      <li data-role="list-divider" data-mini='true' data-theme='c'>Accounts</li>
-      <li data-mini='true'><%= link_to "Settings", settings_path %></li>
-      <li data-mini='true'><%= link_to "Sign out", destroy_user_session_path %></li>
+      <%= render partial: 'mobile/panel_item', locals: {path: invoices_path, itemID: 'inv-pixi', title: 'My Invoices', ifile: 'bill.png'} %>
+      <%= render partial: 'mobile/panel_item', locals: {path: get_account_path, itemID: 'acct-pixi', title: 'My Accounts', ifile: '190-bank.png'} %>
+      <%= render partial: 'mobile/panel_item', locals: {path: settings_path, itemID: 'setting-pixi', title: 'Settings', ifile: '19-gear.png'} %>
+      <%= render partial: 'mobile/panel_item', locals: {path: destroy_user_session_path, itemID: 'signout-pixi', title: 'Sign out', 
+             ifile: 'logout.png'} %>
     </ul>
   </div>
 </div>

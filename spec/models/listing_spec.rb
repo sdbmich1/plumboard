@@ -285,6 +285,18 @@ describe Listing do
     @listing.summary.should_not be_true 
   end
 
+  describe "nice title" do 
+
+    it "should return a nice title" do 
+      @listing.nice_title.should be_true 
+    end
+
+    it "should not return a nice title" do 
+      @listing.title = nil
+      @listing.nice_title.should_not be_true 
+    end
+  end
+
   describe "must have pictures" do 
     let(:listing) { FactoryGirl.build :invalid_listing }
     it "should not save w/o at least one picture" do 

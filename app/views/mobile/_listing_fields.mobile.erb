@@ -1,0 +1,58 @@
+<%= render partial: 'mobile/edit_photo_form', locals: {model: @listing, psize: 'sm-thumb', form: f, remove_photo: true } %>
+<div class='row'>
+  <div class='span1'>Add photo(s)</div>
+  <div id='add-pixi-photo' class='span10'>
+    <output id='list'><%= image_tag 'photo-camera.png', class: 'sm-thumb' %></output>
+    <%= render partial: 'mobile/photo', locals: { f: f } %>
+  </div>
+</div>
+<div class='row' id='input-form'>
+  <div class='span7'>
+    <%= f.label :title %><%= f.text_field :title, :autofocus => true, :placeholder => 'Pixi Title' %>
+  </div>
+  <div class='span2' id='price-fld' style="<%= @listing.job? ? 'display:none' : '' %>"><%= f.label :price %>
+    <%= f.text_field :price, :size => 10, value: num_display(f.object, "price"), class: 'width120', placeholder: 'Price' %>
+  </div>
+  <div class='span2' id='yr-fld' style="<%= !@listing.has_year? ? 'display:none' : '' %>"><%= f.label 'Year' %>
+    <%= f.select 'year_built', options_for_select(get_year_ary, :selected => @listing.year_built), {:prompt => 'Select'}, 
+          {id: 'yr_built', class: 'pixi-select'} %></div>
+  <div class='span4' id='comp-fld' style="<%= !@listing.job? ? 'display:none' : '' %>"><%= f.label :compensation %>
+    <%= f.text_field :compensation, id: 'salary' %></div>
+</div>
+<div class='row'>
+  <div class='span7'>
+    <%= f.label :site_id, 'Location' %>
+    <%= autocomplete_field_tag 'site_name', @listing.site_name, autocomplete_site_name_temp_listings_path,
+	        :update_elements => { :id => '#site_id' }, :placeholder => 'Pixi Location' %> 
+    <%= f.hidden_field :site_id, id: 'site_id' %>
+  </div>
+  <div class='span4'>
+    <%= f.label :category_id, 'Category' %>
+    <%= f.collection_select :category_id, Category.active, :id, :name_title, {:prompt => 'Select'}, {class: 'pixi-select'} %>
+  </div>
+</div>
+<div class='row' id='event-fields' style="<%= !@listing.event? ? 'display:none' : '' %>">
+  <div class='span2'> 
+    <%= f.label :event_start_date, 'Start Date', class: 'med-top' %>
+    <%= f.text_field :event_start_date, value: @listing.event_start_date, id: "start-date" %>
+  </div>
+  <div class='offset1 span2'>
+    <%= f.label :event_end_date, 'End Date', class: 'med-top' %>
+    <%= f.text_field :event_end_date, :value => @listing.event_end_date, :size => 10, :id => "end-date" %>
+  </div>
+  <div class='offset1 span2'>
+    <%= f.label :event_start_time, 'Start Time', class: 'med-top' %>
+    <%= f.time_select :event_start_time, { :combined => true, :default => Time.now.change(:hour => 12), 
+    	  :minute_interval => 15, :time_separator => "" }, :id=>'start-time', :class=>'pixi-select' %>
+  </div>
+  <div class='offset1 span2'>
+    <%= f.label :event_end_time, 'End Time', class: 'med-top' %>
+    <%= f.time_select :event_end_time, { :combined => true, :default => Time.now.change(:hour => 12), 
+    	  :minute_interval => 15, :time_separator => "" }, :id=>'end-time', :class=>'pixi-select' %>
+  </div>
+</div>
+<div class='row'>
+  <div class='span11'>
+    <%= f.label :description, class: 'med-top' %><%= f.text_area :description, :placeholder => 'Describe Your Pixi' %>
+  </div>
+</div>

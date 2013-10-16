@@ -1,0 +1,7 @@
+<%= link_to 'Edit', edit_temp_listing_path(listing), 'data-role'=>'button', 'data-theme'=>'b', 'data-inline'=>'true' %>
+<% if listing.edit? %>
+  <%= link_to 'Cancel', listings_path, confirm: msg, 'data-role'=>'button', 'data-inline'=>'true' %>
+<% else %>
+  <%= link_to 'Remove', listing, method: :delete, confirm: msg, 'data-role'=>'button', 'data-theme'=>'b', 'data-inline'=>'true' %>
+<% end %>
+

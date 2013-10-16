@@ -5,7 +5,8 @@ class TempListingsController < ApplicationController
   before_filter :set_params, only: [:create, :update]
   autocomplete :site, :name, :full => true
   include ResetDate
-  respond_to :html, :json, :js
+  respond_to :html, :json, :js, :mobile
+  layout :page_layout
 
   def new
     @listing = TempListing.new
@@ -64,6 +65,10 @@ class TempListingsController < ApplicationController
   end
   
   private
+
+  def page_layout
+    mobile_device? ? 'form' : 'application'
+  end
 
   def load_data
     @page = params[:page] || 1

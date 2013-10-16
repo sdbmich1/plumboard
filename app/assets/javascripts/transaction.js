@@ -18,6 +18,7 @@ $(document).on('click', '#payForm', function () {
     var amt = parseFloat($('#amt').val());	
     if (amt == 0.0)
        	$("#payment_form").trigger("submit.rails");
+
     return true
   }
 });  

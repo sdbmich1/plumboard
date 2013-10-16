@@ -9,7 +9,7 @@
     <%= f.hidden_field 'recipient_id', value: listing.seller_id %>
     <%= f.hidden_field 'user_id', value: @user.id %>
 
-    <div class='clear-all'>
+    <div id='seller-post' class='clear-all'>
       <table>
         <tr>
           <td><%= f.text_area 'content', placeholder: 'Type message to seller...', class: 'slide-menu', 'data-mini'=>'true' %></td>

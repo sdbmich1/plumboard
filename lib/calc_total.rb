@@ -86,6 +86,7 @@ module CalcTotal
 
   def self.get_processing_fee 
     @pfee ||= (@amt + calc_discount) * (PIXI_PERCENT.to_f / 100)
+    @pfee.round(2)
   end
   
   # calculate pixi convenience fee based on amount and min transaction threshold

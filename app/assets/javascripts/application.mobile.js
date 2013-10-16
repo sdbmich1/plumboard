@@ -9,11 +9,10 @@ $(document).on('pageinit', '#app', function() {
   }
 });
 
-$(document).on('pageshow', '#app', function() {
+$(document).on('pagebeforeshow', '#list', function() {
 
   // load board on doc ready
   if( $('#px-container').length > 0 ) {
-    // uiLoading(true);
     resetBoard();
   }
 });
@@ -54,12 +53,8 @@ function hide_btn() {
 }
 
 // force pages to be refresh
-$(document).on('pagehide', 'div', function(event, ui) {
-  var page = $(event.target);
-
-  if(page.attr('data-cache') == 'never'){
-    page.remove();
-  };
+$(document).on('pagehide', 'div[data-role="page"]', function(event, ui) {
+  $(event.currentTarget).remove();
 });
 
 // remove header icons
@@ -100,7 +95,7 @@ function reset_top(tag, str) {
 
 // toggle menu state
 $(document).on('click', '#show-pixi, #show-cmt', function(e) {
-  $('.item-descr, .list-ftr, #px-pix, #comment_form, #post_form').toggle();
+  $('.item-descr, .list-ftr, #px-pix, #comment_form, #post_form, #edit-pixi-btn').toggle();
 });
 
 // toggle spinner

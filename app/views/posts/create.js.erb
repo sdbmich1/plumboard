@@ -1,12 +1,17 @@
 <% if @post.errors.any? %>
   $("#form_errors").html("<%= escape_javascript( render(partial: 'shared/error_messages', locals: {target: @post})) %>");
 <% else %>
-  $("#post_form").html("<%= escape_javascript( raw render(partial: 'shared/contact', locals: {listing: @listing})) %>");
-<% end %>
+  var url = '/listings/' + "<%= params[:post][:pixi_id] %>"
 
-if($('.show-pixi-bar').length > 0) {
+  // check for mobile
+  if($('#seller-post').length > 0) {
+    goToUrl(url, true);
     uiLoading(false);
   }
-else
-  $('#spinner').hide(300);
+  else {
+    $("#post_form").html("<%= escape_javascript( raw render(partial: 'shared/contact', locals: {listing: @listing})) %>");
+  }
+<% end %>
+
+$('#spinner').hide(300);
 

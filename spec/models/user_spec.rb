@@ -36,6 +36,7 @@ describe User do
     it { should respond_to(:incoming_posts) } 
     it { should respond_to(:invoices) } 
     it { should respond_to(:received_invoices) } 
+    it { should respond_to(:unpaid_received_invoices) } 
     it { should respond_to(:unpaid_invoices) } 
     it { should respond_to(:paid_invoices) } 
     it { should respond_to(:bank_accounts) } 

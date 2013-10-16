@@ -1,0 +1,21 @@
+var formError = getFormID('#data_error');
+var pmtForm = getFormID('#pmtForm');
+
+<% if @transaction.errors.any? %>
+    form_error.html("<%= escape_javascript( render(partial: 'mobile/error_messages', locals: {target: @transaction})) %>"); }
+    formError.show(300);
+    getFormID('#payForm').attr('disabled', false);
+<% else %>
+	$("#spinner").show(300);
+	formError.hide(300);
+	pmtForm.html("<%= escape_javascript( raw render(:partial => 'shared/payment_success_form') ) %>"); 
+<% end %>
+
+<% if mobile_device? %>
+	uiLoading(false);
+<% else %>
+	$("#spinner").hide(300);
+<% end %>
+
+// scroll to top of page
+$('html, body').animate({scrollTop:0}, 100);

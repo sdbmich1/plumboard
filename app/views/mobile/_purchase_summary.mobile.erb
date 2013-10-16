@@ -1,0 +1,9 @@
+<div class="div-border">  
+  <h4 class="grp-hdr"><%= "1. #{get_page_header} Details" %></h4>
+  <div class="pay-tbl mtop">  
+    <table class="inv-descr">
+      <%= render :partial=>'mobile/order_details', :locals=>{:order=>@order, :paid=>false} %>
+      <tr></tr>
+    </table>
+  </div>
+</div>
