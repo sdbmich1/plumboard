@@ -1,0 +1,12 @@
+<%= form_for(@user, url: user_path(@user, target: 'mobile/user_contact'), html: { method: :put, 'data-ajax'=>'false' }, remote: true ) do |f| %>
+  <div id="form_errors"><%= render partial: 'mobile/error_messages', :locals => { :target => @user } %></div>
+  <div id='usr-prof' class="mleft10">
+    <%= f.fields_for :contacts do |form| %>
+      <table class='inv-descr'>
+	<%= render partial: 'mobile/user_address', locals: { form: form, showAll: true } %>
+      </table>
+    <% end %>
+  </div>
+
+  <div class="mtop center-wrapper"><%= f.submit "Save Changes", 'data-theme'=>'d', 'data-inline'=>'true' %></div>
+<% end %>

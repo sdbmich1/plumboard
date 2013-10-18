@@ -291,7 +291,8 @@ a[data-theme="app-search"].ui-btn-right {
 
 li.plist { line-height: 14px!important; }
 
-.pstr { font-size: 1.75em; font-weight: bold; color: blue; }
+.pstr { font-size: 1.75em; font-weight: bold; color: $pixiBlue; }
+.title-str { font-size: 1.25em; font-weight: bold; color: $pixiBlue; }
 
 .ppic {    
     left: 1px;

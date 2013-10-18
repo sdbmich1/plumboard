@@ -27,6 +27,10 @@ module PostsHelper
        val == 2 ? 'b' : 'd'
      when 'new'
        val == 3 ? 'b' : 'd'
+     when 'contact'
+       val == 2 ? 'b' : 'd'
+     when 'password'
+       val == 3 ? 'b' : 'd'
     end
   end
 end

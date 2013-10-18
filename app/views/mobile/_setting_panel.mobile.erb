@@ -1,0 +1,10 @@
+<div id='inv-nav' data-role='navbar' data-theme='c' class: 'show-pixi-bar'>
+  <ul>
+    <li><%= link_to "Profile", settings_path, 'data-mini'=>'true', 'data-theme'=>get_theme(1) %></li>
+    <li><%= link_to "Contact", settings_contact_path, 'data-mini'=>'true', 'data-theme'=>get_theme(2) %></li>
+    <% unless @user.fb_user? %>
+      <li><%= link_to "Prefs", settings_password_path, 'data-mini'=>'true', 'data-theme'=>get_theme(3) %></li>
+    <% end %>
+  </ul>
+</div>
+

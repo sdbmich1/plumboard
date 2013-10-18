@@ -4,20 +4,13 @@
     <div class='mtop'>
       <%= render partial: 'mobile/show_user_photo', locals: { f: f, model: resource, file_name: 'person_icon.jpg' } %>
     </div>
-    <div><%= f.text_field :first_name, placeholder: 'First Name', class: 'fld' %></div>
-    <div><%= f.text_field :last_name, placeholder: 'Last Name', class: 'fld' %></div>
-    <div><%= f.email_field :email, placeholder: 'Email', class: 'fld' %></div>
-    <div><%= f.password_field :password, placeholder: 'Password', size: 20, class: 'fld' %></div>
-    <div><%= f.password_field :password_confirmation, placeholder: 'Re-enter password' %></div>
-    <div><%= f.select :gender, options_for_select( ['Male', 'Female'] ), :prompt => 'Gender' %></div>
-    <table><tr>
-      <td>Birth Date</td><td>
-      <div data-role="fieldcontain" class="fld-size">
-	<fieldset data-role="controlgroup" data-type="horizontal">
-    	  <%= f.date_select :birth_date, {:as => :date, :start_year => Date.today.year - 13, :end_year => Date.today.year - 90, 
-                       order: [:month, :day, :year], required: true, use_month_numbers: true}, {class: ''} %>
-       	</fieldset>
-      </div></td></tr>
+    <table>
+      <%= render partial: 'mobile/user_name_email', locals: {f: f} %>
+      <tr>
+        <td><%= f.password_field :password, placeholder: 'Password', size: 20 %></td>
+        <td><%= f.password_field :password_confirmation, placeholder: 'Re-enter password' %></td>
+      </tr>
+      <%= render partial: 'mobile/user_profile', locals: {f: f} %>
     </table>
 		
     <p><%= f.submit "Register", "data-theme"=>"b" %></p>

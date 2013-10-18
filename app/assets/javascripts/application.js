@@ -655,3 +655,7 @@ function switchToggle(flg) {
   else
     toggleLoading();
 }
+
+// fix bootstrap mobile dropdown issue
+$('body').on('touchstart.dropdown', '.dropdown-menu', function (e) { e.stopPropagation(); })
+         .on('touchstart.dropdown', '.dropdown-submenu', function (e) { e.stopPropagation(); });

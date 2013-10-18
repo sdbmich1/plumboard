@@ -1,0 +1,28 @@
+<div class='neg-top'>
+<%= form_for [@user, @user.with_picture], url: user_path(@user, target: 'mobile/user_form'), html: { 'data-ajax'=>'false' }, remote: true do |f| %>
+  <div id="form_errors"><%= render partial: 'mobile/error_messages', locals: { target: f.object } %></div>
+  <div id='usr-prof' class="mleft10">
+    <table>
+      <tr>
+	<td>
+          <%= render :partial => 'mobile/show_photo', :locals => {model: @user, psize: '80x80', file_name:'usr-med-photo', display_cnt: 0} %>
+	</td>
+	<td><span class='mleft10 title-str'><%= @user.name %></span><br /><span class='mleft10'><%= @user.email %></span><br />
+	  <%= link_to 'Edit', '#', class: 'mleft10 edit-prof-btn', 'data-mini'=>'true', 'data-role'=>'button', 'data-inline'=>'true', 
+	      'data-theme'=>'b' %>
+	</td>
+      </tr>
+    </table>
+  </div>
+
+  <div id='edit-profile' class="mleft10" style='display:none'>
+    <table class='inv-descr'>
+      <%= render partial: 'mobile/user_name_email', locals: {f: f} %>
+      <%= render partial: 'mobile/user_profile', locals: { f: f } %>
+    </table>
+    <div class="mtop center-wrapper">
+      <%= f.submit "Save Changes", 'data-theme'=>'d', 'data-inline'=>'true' %>
+    </div>
+  </div>
+<% end %>
+</div>

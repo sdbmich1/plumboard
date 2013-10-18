@@ -1,4 +1,4 @@
-$(document).on('pageinit', '#app', function() {
+$(document).on('pageshow', '#app, #formapp', function() {
   if ($('.fld').length > 0){ 
     $(".fld").css('background-color', '#FFF');
   }
@@ -96,6 +96,11 @@ function reset_top(tag, str) {
 // toggle menu state
 $(document).on('click', '#show-pixi, #show-cmt', function(e) {
   $('.item-descr, .list-ftr, #px-pix, #comment_form, #post_form, #edit-pixi-btn').toggle();
+});
+
+// toggle profile state
+$(document).on('click', '.edit-prof-btn', function(e) {
+  $('#edit-profile').toggle();
 });
 
 // toggle spinner
