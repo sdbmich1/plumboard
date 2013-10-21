@@ -1,7 +1,8 @@
 class BankAccountsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :load_target, only: [:new, :create, :edit, :update]
-  respond_to :html, :json, :js
+  respond_to :html, :json, :js, :mobile
+  layout :page_layout
 
   def new
     @account = @user.bank_accounts.build
@@ -34,6 +35,10 @@ class BankAccountsController < ApplicationController
   end
 
   private
+
+  def page_layout
+    mobile_device? ? 'form' : 'application'
+  end
 
   # load target partial form
   def load_target

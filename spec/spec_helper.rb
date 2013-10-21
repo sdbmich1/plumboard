@@ -21,17 +21,6 @@ Spork.prefork do
   # in spec/support/ and its subdirectories.
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
-  host = ENV['BALANCED_HOST'] or nil
-  options = {}
-
-  if !host.nil? then
-    options[:scheme] = 'http'
-    options[:host] = host
-    options[:port] = 5000
-    options[:ssl_verify] = false
-    Balanced.configure(nil, options)
-  end
-
   RSpec.configure do |config|
     config.treat_symbols_as_metadata_keys_with_true_values = true
     config.include(EmailSpec::Helpers)

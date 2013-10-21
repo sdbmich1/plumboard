@@ -7,22 +7,8 @@
     <tr><td class='width240'>Amount:</td><td><%= number_to_currency(transaction.amt) %></td></tr>
   <% end %>
 
-  <tr><td class='width240'>Date & Time: </td><td><%= get_local_time(transaction.created_at) %></td></tr>
+  <tr><td class='width240'>Date: </td><td><%= get_local_date(transaction.created_at) %></td></tr>
   <tr><td class='width240'>Name: </td><td><%= "#{transaction.first_name} #{transaction.last_name}" %></td></tr>
-  <tr><td class='width240'></td><td>
-    <address>
-      <%= transaction.address %><br />
-      <% unless transaction.address2.blank? %>
-        <%= transaction.address2 %><br />
-      <% end %>
-       <%= "#{transaction.city}, #{transaction.state} #{transaction.zip}" %><br />
-       <%= transaction.country %><br />	  
-    </address>
-  </td></tr>
-  <tr><td class='width240'>Home Phone: </td><td><%= transaction.home_phone %><br /></td></tr>
   <tr><td class='width240'>Email: </td><td><%= transaction.email %><br /></td></tr>
   <tr><td class='width240'>Description: </td><td><%= txn_details(transaction) %><br /></td></tr>
-  <% if showAmt %>
-    <tr><td class='width240'>Amount: </td><td><%= number_to_currency transaction.amt %><br /></td></tr>
-  <% end %>		
 </table>

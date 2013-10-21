@@ -81,4 +81,10 @@ module TransactionsHelper
   def txn_details txn
     txn.pixi? ? txn.description : "#{txn.description} from #{txn.seller_name}" 
   end
+
+  # set partial based on txn type
+  def set_txn_partial
+    path = mobile_device? ? 'mobile' : 'shared'
+    pname = path + (@transaction.pixi? ? '/order_complete' : '/purchase_complete')
+  end
 end

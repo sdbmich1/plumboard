@@ -6,7 +6,7 @@
     </span>
     <div class="offset3">
       <% if @order[:transaction_type] == 'invoice' %>
-        <h5><%= @order[:title] %> from <%= @order[:seller] %></h5>
+        <h5><%= @order[:title] %> from <%= @invoice.seller_name %></h5>
       <% else %>
         <h5><%= @listing.title %></h5>
       <% end %>

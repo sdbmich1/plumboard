@@ -1,4 +1,4 @@
-  <div class="mleft15">
+  <div class="mleft10">
     <%= form_for(@account, url: set_account_path, html: { id: 'bank-acct-form' }, :remote=>true) do |f| %>
       <div id="form_errors"><%= render partial: 'mobile/error_messages', locals: { :target => f.object } %></div>
       <div id="data_error" style="display:none" class="error"></div>
@@ -19,7 +19,7 @@
 	  </tr>
 	  <tr><td>Account Type</td>
 	      <td><%= f.select :acct_type, options_for_select(['checking', 'savings'], selected: @account.acct_type ), {},
-	      		{placeholder: 'Account Type'} %></td>
+	      		{placeholder: 'Account Type', 'data-mini'=>'true'} %></td>
 	  </tr>
 	</table>
       </div>
@@ -28,8 +28,8 @@
       <%= f.hidden_field :token, id: 'pay_token' %>
       <%= f.hidden_field :acct_no %>
 
-      <div class="center-wrapper mbot"><%= f.submit set_btn_name, 'data-theme'=>'d', 'data-inline'=>'true' %></div>
+      <div class="mtop center-wrapper mbot"><%= f.submit set_btn_name, 'data-theme'=>'d', 'data-inline'=>'true' %></div>
     <% end %>
 
-    <div class="center-wrapper mbot"><%= image_tag "rsz_check_sample.gif" %></div>
+    <div class="center-wrapper"><%= image_tag "rsz_check_sample.gif" %></div>
   </div>

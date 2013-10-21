@@ -1,0 +1,26 @@
+<table id='event-fields' style="<%= !@listing.event? ? 'display:none' : '' %>">
+  <tr>
+    <td> 
+      <%= f.label :event_start_date, 'Start Date', class: 'med-top' %>
+      <%= f.text_field :event_start_date, value: @listing.event_start_date, id: "start-date" %>
+    </td>
+    <td></td>
+    <td> 
+      <%= f.label :event_end_date, 'End Date', class: 'med-top' %>
+      <%= f.text_field :event_end_date, :value => @listing.event_end_date, :id => "end-date" %>
+    </td>
+  </tr>
+  <tr>
+    <td> 
+      <%= f.label :event_start_time, 'Start Time', class: 'med-top' %>
+      <%= f.time_select :event_start_time, { :combined => true, :default => Time.now.change(:hour => 12), 
+    	  :minute_interval => 15, :time_separator => "" }, :id=>'start-time', 'data-mini'=>'true' %>
+    </td>
+    <td></td>
+    <td> 
+      <%= f.label :event_end_time, 'End Time', class: 'med-top' %>
+      <%= f.time_select :event_end_time, { :combined => true, :default => Time.now.change(:hour => 12), 
+    	  :minute_interval => 15, :time_separator => "" }, :id=>'end-time', 'data-mini'=>'true' %>
+    </td>
+  </tr>
+</table>

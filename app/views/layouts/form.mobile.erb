@@ -9,13 +9,13 @@
     <%= csrf_meta_tag %>  	
   </head>
   <body>  
-    <div id="formapp" data-role="page" data-cache="never" data-theme='a'> 
+    <div id="formapp" data-role="page" data-cache="never" data-theme='a' class='home-pg'> 
       <%= yield :panel %>
       <div data-role="header" data-theme="d">
         <%= yield :head %>
       </div>
     
-      <div class="app-content" data-role="content" data-theme='a'>
+      <div class="app-content" data-role="content" data-theme='a' class='listpg'>
   	<%= yield :subhead %>
 	<%= render 'mobile/notice_alert'%>
       	<%= yield :content %>

@@ -1,18 +1,18 @@
 <div id="pmtForm">
-  <div class='center hdr mbot'><h1 class='grp-hdr'><%= step_name %></h1></div>
+  <div class='center hdr mbot'><h3 class='grp-hdr'><%= step_name %></h3></div>
   <div class='row'>
     <span class="span2 offset1">
-      <%= render partial: 'shared/show_photo', :locals => {model: @transaction.get_invoice_listing, psize: '180x180', file_name:'pixi-photo', display_cnt: 0} %>
+      <%= render partial: 'shared/show_photo', locals: {model: @transaction.get_invoice_listing, psize: '180x180', file_name:'pixi-photo', 
+          display_cnt: 0} %>
     </span>
     <span class="span7">
-      <div class="mtop hdr">Your purchase <span class='grp-hdr'><%= @transaction.get_invoice_listing.title %></span> has been processed.</div>
+      <div class="mtop hdr"><span class='grp-hdr'><%= @transaction.get_invoice_listing.title %></span></div>
     </span>
   </div>
   <div class="offset3">
     <%= render :partial=>'shared/transaction_details', :locals=>{:transaction=>@transaction, :showAmt=>false} %>
   </div>
   <div class="clear-all"></div>
-  <div class="mtop center">Thank you for your business.</div>
   <div class="mtop">
   <center>
 	<%= link_to "Done", listings_path, :class => "btn btn-large btn-primary submit-btn mbot", :id => 'done-btn' %>

@@ -1,0 +1,14 @@
+<table class='inv-descr'>
+  <tr><td class='width240'>Confirmation #:</td><td></td><td><%= transaction.confirmation_no %></td></tr>
+
+  <% if transaction.amt > 0.0 %>
+    <tr><td class='width240'>Payment Type: </td><td></td><td><%= transaction.payment_type.titleize %></td></tr>
+    <tr><td class='width240'>Card #:</td><td></td><td>************<%= transaction.credit_card_no %></td></tr>
+    <tr><td class='width240'>Amount:</td><td></td><td><%= number_to_currency(transaction.amt) %></td></tr>
+  <% end %>
+
+  <tr><td class='width240'>Date: </td><td></td><td><%= get_local_date(transaction.created_at) %></td></tr>
+  <tr><td class='width240'>Name: </td><td></td><td><%= "#{transaction.first_name} #{transaction.last_name}" %></td></tr>
+  <tr><td class='width240'>Email: </td><td></td><td><%= transaction.email %><br /></td></tr>
+  <tr><td class='width240'>Description: </td><td></td><td><%= txn_details(transaction) %><br /></td></tr>
+</table>

@@ -105,26 +105,11 @@ function callbackHandler(response) {
       if($('#bank_account_acct_no').length > 0) {
         $('#bank_account_acct_no').val(response.data.account_number); }
 
-      var sdata = $formID.serialize();
-      //alert('data=' + sdata);
-
       // submit to the server
       $formID.trigger("submit.rails");    	  
-
-      /*
-      $.ajax({
-         url: '/transactions',
-	 'beforeSend': function (xhr) {
-	    var token = $("meta[name='csrf-token']").attr("content");
-	    xhr.setRequestHeader("X-CSRF-Token", token);
-	 },
-	 type: 'POST',
-	 data: sdata
-      });
-      */
       break;
     default:
-      console.log(response.error);
+      console.log(response);
       processError(response, 'Request invalid. Please try again.');
       break;
   }

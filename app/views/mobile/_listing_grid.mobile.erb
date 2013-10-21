@@ -1,0 +1,20 @@
+<div class='ui-grid-a' id='event-fields' style="<%= !@listing.event? ? 'display:none' : '' %>">
+  <div class='ui-block-a'> 
+      <%= f.label :event_start_date, 'Start Date', class: 'med-top' %>
+      <%= f.text_field :event_start_date, value: @listing.event_start_date, id: "start-date" %>
+  </div>
+  <div class='ui-block-b'> 
+      <%= f.label :event_end_date, 'End Date', class: 'med-top' %>
+      <%= f.text_field :event_end_date, :value => @listing.event_end_date, :size => 10, :id => "end-date" %>
+  </div>
+  <div class='ui-block-a'> 
+      <%= f.label :event_start_time, 'Start Time', class: 'med-top' %>
+      <%= f.time_select :event_start_time, { :combined => true, :default => Time.now.change(:hour => 12), 
+    	  :minute_interval => 15, :time_separator => "" }, :id=>'start-time', :class=>'pixi-select', 'data-mini'=>'true' %>
+  </div>
+  <div class='ui-block-b'> 
+      <%= f.label :event_end_time, 'End Time', class: 'med-top' %>
+      <%= f.time_select :event_end_time, { :combined => true, :default => Time.now.change(:hour => 12), 
+    	  :minute_interval => 15, :time_separator => "" }, :id=>'end-time', :class=>'pixi-select', 'data-mini'=>'true' %>
+  </div>
+</div>

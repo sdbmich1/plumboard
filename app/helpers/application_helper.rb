@@ -154,7 +154,7 @@ module ApplicationHelper
 
   # toggle header if str matches
   def toggle_header? title
-    str = 'Pixi|Invoice|Account|Post|Setting'  # set match string
+    str = 'Pixi|Invoice|Account|Post|Setting|Order|Purchase'  # set match string
     !(title.downcase =~ /^.*\b(#{str.downcase})(s){0,1}\b.*$/i).nil?
   end
 end
