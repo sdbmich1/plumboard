@@ -103,6 +103,11 @@ $(document).on('click', '.edit-prof-btn', function(e) {
   $('#edit-profile').toggle();
 });
 
+// toggle profile state
+$(document).on('click', '#edit-txn-addr', function(e) {
+  $('.user-tbl, .addr-tbl').toggle();
+});
+
 // toggle spinner
 function uiLoading(bool) {
   if (bool)

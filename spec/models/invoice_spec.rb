@@ -197,6 +197,17 @@ describe Invoice do
     end
   end
 
+  describe 'get_fee' do
+    it "should get fee" do 
+      @invoice.get_fee.should be_true
+    end
+
+    it "should not get fee" do 
+      @invoice.amount = nil
+      @invoice.get_fee.should_not be_true 
+    end
+  end
+
   describe "transactions" do
     let(:transaction) { FactoryGirl.create :transaction }
 

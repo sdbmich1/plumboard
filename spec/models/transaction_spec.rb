@@ -200,6 +200,17 @@ describe Transaction do
     end
   end
 
+  describe 'has_address?' do
+    it 'should return true' do
+      @transaction.has_address?.should be_true
+    end
+
+    it 'should not return true' do
+      @transaction.address = nil
+      @transaction.has_address?.should_not be_true
+    end
+  end
+
   describe 'pixi?' do
     it 'should return true' do
       @transaction.transaction_type = 'pixi'

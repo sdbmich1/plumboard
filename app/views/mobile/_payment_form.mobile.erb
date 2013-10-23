@@ -4,7 +4,6 @@
     <div id="data_error" style="display:none" class="error"></div>
     <%= render 'mobile/purchase_summary' %>
     <%= render partial: 'mobile/buyer_info', locals: { f: f } %>
-    <%= render partial: 'mobile/credit_card_info' if @transaction.amt > 0.0 %>
 	
     <%= f.hidden_field :token, id: 'pay_token' %>
     <%= f.hidden_field :promo_code, :value=>get_promo_code %>

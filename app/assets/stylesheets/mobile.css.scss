@@ -198,6 +198,9 @@ a[data-theme="app-search"].ui-btn-right {
   width: 24px;
 }
 
+#photo { display: none; border: none; }
+label .ui-body-a, .ui-overlay-a { border: none; }
+
 /* full calendar settings */
 .ui-body-c, .ui-overlay-c { text-shadow: none; }
 .fc-header-title { margin-top: 7px; }
@@ -328,8 +331,9 @@ li.plist { line-height: 14px!important; }
 /* margin : .1em 0 .1em .2em */
 			
 label, label.ui-input-text { font-size:12px!important; margin-top:5px!important; line-height: 0.8em!important}
+#card_month, #card_year { line-height: 16px!important; }
 
-.stitle h6 {font-size: 1.25em; font-weight: normal; padding: 5px 0 5px 0; }
+.stitle h3, h4, h5, h6 {font-size: 1.35em; padding: 5px 0 7px 0; }
 .sgrp { line-height: 1em; }
 .sdescr { font-size: 0.725em!important; font-weight: normal; height: 30px; margin-right: 5px;}
 .inv-descr { font-size: 0.875em!important; }

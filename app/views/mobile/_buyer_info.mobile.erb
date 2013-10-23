@@ -1,9 +1,18 @@
 <div class="div-border">
-  <h4 class="grp-hdr">2. Enter Your Address</h4>
-  <center>
-    <table class="mtop">
-      <%= render :partial => 'mobile/user_address', :locals => { :form => f, :showAll => false } %>
+    <table class='inv-descr addr-tbl' style="<%= !@transaction.has_address? ? 'display:none' : '' %>">
+      <tr><td><strong><%= @transaction.buyer_name %></strong><br>
+        <%= @transaction.address %><br>
+        <%= "#{@transaction.city}, #{@transaction.state} #{@transaction.zip}" %></td>
+        <td class='v-align price'>
+        <%= link_to 'Edit', '#', id: 'edit-txn-addr', 'data-role'=>'button', 'data-mini'=>'true', 'data-theme'=>'b', 'data-inline'=>'true' %></td>
+      </tr>
     </table>
-  </center>
+    <center>
+      <table class='inv-descr user-tbl' style="<%= @transaction.has_address? ? 'display:none' : '' %>">
+        <%= render partial: 'mobile/user_name', locals: { f: f } %>
+        <%= render partial: 'mobile/user_address', locals: { form: f, showAll: false } %>
+      </table>
+    </center>
+  <%= render partial: 'mobile/credit_card_info' if @transaction.amt > 0.0 %>
 </div>
 

@@ -5,7 +5,7 @@
       <%= render partial: 'mobile/show_user_photo', locals: { f: f, model: resource, file_name: 'person_icon.jpg' } %>
     </div>
     <table>
-      <%= render partial: 'mobile/user_name_email', locals: {f: f} %>
+      <%= render partial: 'mobile/user_name_email', locals: {f: f, showAll: true} %>
       <tr>
         <td><%= f.password_field :password, placeholder: 'Password', size: 20 %></td>
         <td><%= f.password_field :password_confirmation, placeholder: 'Re-enter password' %></td>

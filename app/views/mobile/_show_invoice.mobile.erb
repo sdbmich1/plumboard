@@ -2,12 +2,15 @@
   <div class="mleft15">
     <table class='inv-descr'>
       <tr><td>Date: </td><td><%= get_local_date(@invoice.inv_date) %></td></tr>
-      <tr><td>From: </td>
-        <td><%= render partial: 'mobile/show_picture', locals: {psize: 'tiny', model: @invoice.seller} %>
-        <%= @invoice.seller_name %></td></tr>
-      <tr><td>Bill To: </td>
-        <td><%= render partial: 'mobile/show_picture', locals: {psize: 'tiny', model: @invoice.buyer} %>
-        <%= @invoice.buyer_name %></td></tr>
+      <tr>
+      <% unless @invoice.owner? @user %>
+        <td>From: </td>
+        <td><%= render partial: 'mobile/show_picture', locals: {psize: 'tiny', model: @invoice.seller} %> <%= @invoice.seller_name %></td>
+      <% else %>
+        <td>Bill To: </td>
+        <td><%= render partial: 'mobile/show_picture', locals: {psize: 'tiny', model: @invoice.buyer} %> <%= @invoice.buyer_name %></td>
+      <% end %>
+      </tr>
     </table>
   </div>
 </div>

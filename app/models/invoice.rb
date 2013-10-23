@@ -86,6 +86,17 @@ class Invoice < ActiveRecord::Base
     end
   end
 
+  # get txn fee
+  def get_fee
+    if amount
+      # calculate fee
+      fee = CalcTotal::get_convenience_fee(amount) + CalcTotal::get_processing_fee
+      fee.round(2)
+    else
+      0.0
+    end
+  end
+
   # get buyer name
   def buyer_name
     buyer.name rescue nil

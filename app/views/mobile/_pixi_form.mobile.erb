@@ -1,4 +1,4 @@
-  <%= form_for(@listing, :html => { id: 'pixi-form' }) do |f| %>
+  <%= form_for(@listing, :html => { id: 'pixi-form', multipart: true, 'data-ajax'=>false }) do |f| %>
       <div id="form_errors">
         <%= render partial: 'mobile/error_messages', :locals => { :target => @listing } %>
       </div>

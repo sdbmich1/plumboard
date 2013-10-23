@@ -6,13 +6,13 @@
       <div><%= f.password_field :password, placeholder: 'Password', size: 20, "data-theme"=>"a", class: 'fld' %></div>
 
       <div class="mtop">
-      <%= f.submit "Sign In", id: 'signin-btn' %>
-      <%= link_to user_omniauth_authorize_path(:facebook), "data-role"=>'button', "data-theme"=>"a", id: 'fb-btn', rel: "external" do %>
-          Sign in via <%= image_tag 'icon_facebook.png', class: 'sm-fb-icon' %>
-      <% end %>
-      <div class='mtop center-wrapper'>
-        <%= link_to "Sign up for free!", new_user_registration_path %>
-      </div> 
+        <%= f.submit "Sign In", id: 'signin-btn' %>
+        <%= link_to user_omniauth_authorize_path(:facebook), "data-role"=>'button', "data-theme"=>"a", id: 'fb-btn', rel: "external" do %>
+            Sign in via <%= image_tag 'icon_facebook.png', class: 'sm-fb-icon' %>
+        <% end %>
+        <div class='mtop center-wrapper'>
+          <%= link_to "Sign up for free!", new_user_registration_path %>
+        </div> 
       </div> 
     <% end %>
   </div> 

@@ -144,6 +144,11 @@ class Transaction < ActiveRecord::Base
   def buyer_name
     first_name + ' ' + last_name rescue nil
   end
+
+  # check if address is populated
+  def has_address?
+    !(address.blank? && city.blank? && state.blank? && zip.blank?)
+  end
   
   # process transaction
   def process_transaction

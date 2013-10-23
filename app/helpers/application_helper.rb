@@ -157,4 +157,9 @@ module ApplicationHelper
     str = 'Pixi|Invoice|Account|Post|Setting|Order|Purchase'  # set match string
     !(title.downcase =~ /^.*\b(#{str.downcase})(s){0,1}\b.*$/i).nil?
   end
+
+  # convert to currency
+  def ntc val
+    number_to_currency val
+  end
 end

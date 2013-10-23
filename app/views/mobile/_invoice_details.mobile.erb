@@ -4,20 +4,26 @@
     <td class="width120"><div class='price'><%= @invoice.quantity %></div></td>
     <td class="width360">
       <%= @invoice.listing.title %></td>
-    <td class="width120"><div class='price'><%= number_to_currency @invoice.price %></div></td>
-    <td class="width120"><div class='price'><%= number_to_currency @invoice.subtotal %></div></td>
+    <td class="width120"><div class='price'><%= ntc @invoice.price %></div></td>
+    <td class="width120"><div class='price'><%= ntc @invoice.subtotal %></div></td>
   </tr>
   <tr class='sls-tax' style='display:none'>
     <td></td>
     <td><div class='price'>Sales Tax</div></td>
     <td class="width120"><div class='price'><%= get_sales_tax %>%</div></td>
-    <td class="width120"><div class='price'><%= number_to_currency(@invoice.tax_total) %></div></td>
+    <td class="width120"><div class='price'><%= ntc(@invoice.tax_total) %></div></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td class='img-valign price'>Fee</td>
+    <td><%= render 'mobile/inv_tooltip' %></td>
+    <td class='img-valign price'><%= ntc(@invoice.get_fee) %></td>
   </tr>
   <tr>
     <td></td>
     <td><div class='price'>Amount Due</div></td>
     <td></td>
-    <td class="width120"><div class='order-total pstr price'><%= number_to_currency @invoice.amount %></div></td>
+    <td class="width120"><div class='order-total pstr price'><%= ntc @invoice.amount + @invoice.get_fee %></div></td>
   </tr>
   </table>
 </div>

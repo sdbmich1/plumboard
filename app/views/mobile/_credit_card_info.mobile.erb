@@ -1,20 +1,17 @@
-<div class="div-border">
-  <h4 class="grp-hdr">3. Enter Payment Information</h4>
-  <table class='mtop inv-descr'>
+<table class='mtop inv-descr'>
   <tr>
-    <td>Card #* </td><td class='cal-size'><%= text_field_tag :card_number, nil, name: nil, :size => 16 %></td>
+    <td class='cal-size'>Card #* <%= image_tag('cc_logos.jpeg', :class=>'cc-logo') %>
+    <%= text_field_tag :card_number, nil, name: nil, :size => 16 %></td>
   </tr>
   <tr>
-    <td>CVV* </td><td><%= text_field_tag :card_code, nil, name: nil, :maxlength => 4, :size => 4, :class=>'card-code' %></td>
-  </tr>
-  <tr>
-    <td>Exp Date*</td>
     <td>
-      <table><tr>
-        <td><%= select_month nil, {use_short_month: true}, {name: nil, id: "card_month", 'data-mini'=>'true'} %></td>
-        <td><%= select_year nil, {start_year: Date.today.year, end_year: Date.today.year+15}, {name: nil, id: "card_year", 'data-mini'=>'true'} %></td>
+      <table>
+      <tr>
+        <td><div class='sm-top'>CVV*</div><%= text_field_tag :card_code, nil, name: nil, :maxlength => 4, :size => 4, :class=>'card-code' %></td>
+	<td></td>
+        <td>Exp Mo*<%= select_month nil, {use_short_month: true}, {name: nil, id: "card_month", 'data-mini'=>'true'} %></td>
+        <td>Exp Yr*<%= select_year nil, {start_year: Date.today.year+1, end_year: Date.today.year+15}, {name: nil, id: "card_year", 'data-mini'=>'true'} %></td>
       </tr></table>
     </td>
   </tr>
-  </table>
-</div> 
+</table>

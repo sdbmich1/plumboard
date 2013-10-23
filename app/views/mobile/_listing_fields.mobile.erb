@@ -3,6 +3,7 @@
   <tr>
     <td id='add-pixi-photo'>
       <output id='list'><%= image_tag 'photo-camera.png', class: 'sm-thumb' %></output>
+      <%= render partial: 'mobile/photo', locals: { f: f } %>
     </td>
  </tr>
 </table>
