@@ -67,6 +67,7 @@ a.signup-btn {
 
 .cal-size { width: 80%!important; }
 #inv_amt, #inv_tax_total, #inv_total {background: $grayMediumLight;}
+#home-nav { margin-left: 1px!important; width: 110%!important; }
 
 .icon-gray > i {
   opacity: 0.25;
@@ -256,7 +257,7 @@ label .ui-body-a, .ui-overlay-a { border: none; }
 
 .px-logo { 
   width: 200px!important;
-  margin-bottom: 5px!important;
+  margin-bottom: 7px!important;
   height: auto; }
 
 #search-mform { display: inline; }
@@ -289,7 +290,7 @@ label .ui-body-a, .ui-overlay-a { border: none; }
 
 /*  session presenter list */
 .plist {
-  .ui-li-heading {margin: -0.5em 0 0.2em -0.2em!important; white-space: normal; font-size: 14px!important;}
+  .ui-li-heading {margin: -1em 0 0.2em -0.2em!important; white-space: normal; font-size: 14px!important;}
 }
 
 li.plist { line-height: 14px!important; }

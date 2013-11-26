@@ -1,6 +1,6 @@
 require 'will_paginate/array' 
 class CategoriesController < ApplicationController
-  before_filter :check_permissions, except: [:index]
+  before_filter :check_permissions, except: [:show, :index]
   before_filter :authenticate_user!
   before_filter :load_data, only: [:index]
   before_filter :get_page, only: [:index, :inactive, :manage, :create, :update]
@@ -8,11 +8,11 @@ class CategoriesController < ApplicationController
   layout :page_layout
 
   def index
-    @categories = Category.active.paginate page: @page, per_page: 50
+    respond_with(@categories = Category.active.paginate(page: @page, per_page: 50))
   end
 
   def manage
-    @categories = Category.active.paginate page: @page, per_page: 50
+    respond_with(@categories = Category.active.paginate(page: @page, per_page: 50))
   end
 
   def new
@@ -22,6 +22,10 @@ class CategoriesController < ApplicationController
 
   def edit
     @category = Category.find params[:id]
+  end
+
+  def show
+    respond_with(@category = Category.find(params[:id]))
   end
 
   def create

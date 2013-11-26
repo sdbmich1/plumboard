@@ -1,6 +1,1 @@
-$("#pxboard").html("<%= escape_javascript( raw render(partial: 'shared/listing', collection: @listings) ) %>");
-
-// reload board
-clearScroll(this, '#px-nav', '#px-nav a', '#pxboard .item'); 
-
-$("#spinner").hide(300); 
+<%= render 'shared/reload_board' %>

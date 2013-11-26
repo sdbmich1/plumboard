@@ -82,13 +82,23 @@ class ListingParent < ActiveRecord::Base
     pictures.detect { |x| x && !x.photo_file_name.nil? }
   end
 
+  # define where clause based on rails env
+  def self.where_stmt
+    if Rails.env.development? || Rails.env.test?
+      "listings.status = 'active'"
+    else
+      "listings.status = 'active' AND listings.end_date >= curdate()"
+    end
+  end
+
   # select active listings
   def self.active
-    if Rails.env.development? || Rails.env.test?
-      where(:status=>'active').order('updated_at DESC')
-    else
-      where("status = 'active' AND end_date >= curdate()").order('updated_at DESC')
-    end
+    select('listings.id, listings.pixi_id, listings.title, listings.category_id, categories.name AS category_name, listings.updated_at,
+      listings.status, listings.created_at, listings.seller_id, listings.site_id')
+    .joins(:category)
+    .includes(:pictures)
+    .where(where_stmt)
+    .reorder('listings.updated_at DESC')
   end
 
   # find listings by status
@@ -149,6 +159,11 @@ class ListingParent < ActiveRecord::Base
   # get seller name for a listing
   def seller_name
     alias? ? alias_name : user.name rescue nil
+  end
+
+  # get seller first name for a listing
+  def seller_first_name
+    user.first_name rescue nil
   end
 
   # short description
@@ -227,5 +242,22 @@ class ListingParent < ActiveRecord::Base
 
     # add dup
     listing.save ? listing : false
+  end
+
+  # seller pic
+  def seller_photo
+    user.photo rescue nil
+  end
+
+  # format start date
+  def start_dt
+    start_date.utc.getlocal.strftime('%m/%d/%Y') rescue nil
+  end
+
+  # set json string
+  def as_json(options={})
+    super(methods: [:seller_name, :seller_photo, :active?, :job?, :has_year?, :event?, :summary, :short_title, 
+        :category_name, :site_name, :start_dt, :seller_first_name], 
+      include: {pictures: { only: [:photo_file_name], methods: [:photo_url] }})
   end
 end

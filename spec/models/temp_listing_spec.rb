@@ -175,13 +175,23 @@ describe TempListing do
   describe "should find correct seller name" do 
     let(:user) { FactoryGirl.create(:pixi_user) }
     let(:temp_listing) { FactoryGirl.create(:temp_listing, seller_id: user.id) }
-
     it { temp_listing.seller_name.should == user.name } 
   end
 
   describe "should not find correct seller name" do 
     temp_listing = FactoryGirl.create :temp_listing, seller_id: 100
     it { temp_listing.seller_name.should be_nil } 
+  end
+
+  describe "should find correct seller photo" do 
+    let(:user) { FactoryGirl.create(:pixi_user) }
+    let(:temp_listing) { FactoryGirl.create(:temp_listing, seller_id: user.id) }
+    it { temp_listing.seller_photo.should_not be_nil } 
+  end
+
+  describe "should not find correct seller photo" do 
+    temp_listing = FactoryGirl.create :temp_listing, seller_id: 100
+    it { temp_listing.seller_photo.should be_nil } 
   end
 
   describe "should have a transaction" do 

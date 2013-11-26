@@ -23,7 +23,7 @@ $pixiBlue: #026FB7;
   margin: 5px 0 0 0;
 
   li {
-     padding: 10px 0;
+     padding: 7px 0;
      border-top: 1px solid #e8e8e8;
   }
 
@@ -57,7 +57,8 @@ $pixiBlue: #026FB7;
   margin-bottom: 10px;
 }
 
-form {margin-bottom: 5px!important;}
+form#search_btn {margin-bottom: -5px!important;}
+form#new_post {margin-bottom: -0px!important;}
 
 .clear-all { clear:both }
 .clear-right { clear:right }

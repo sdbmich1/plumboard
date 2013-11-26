@@ -1,5 +1,6 @@
 class PicturesController < ApplicationController
-  before_filter :authenticate_user!, only: [:destroy]
+  before_filter :authenticate_user!, only: [:create, :destroy]
+  respond_to :html, :json
 
   def asset
     @picture = Picture.find(params[:id])
@@ -11,6 +12,17 @@ class PicturesController < ApplicationController
   def display
     @picture = Picture.find(params[:id])
     redirect_to @picture.photo.url if Rails.env.development? || Rails.env.test?
+  end
+
+  def show
+    respond_with @picture = Picture.find(params[:id])
+  end
+
+  def create
+    p params
+    respond_to do |format|
+      format.json { render nothing: true }
+    end
   end
 
   def destroy

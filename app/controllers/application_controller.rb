@@ -1,7 +1,9 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
   before_filter :load_settings
-  before_filter :prepare_for_mobile, if: :isDev?, except: [:destroy]
+  before_filter :prepare_for_mobile #, if: :isDev?, except: [:destroy]
+  # skip_before_filter :prepare_for_mobile
+  after_filter :set_access_control_headers
   helper_method :mobile_device?
 
   # check if mobile device based on user_agent 
@@ -9,7 +11,7 @@ class ApplicationController < ActionController::Base
     if session[:mobile_param]  
       session[:mobile_param] == "1"  
     else  
-      request.user_agent =~ /iPhone;|Android Mobile|BlackBerry|Symbian|Windows Phone/  
+      request.user_agent =~ /iPhone;|Android|BlackBerry|Symbian|Windows Phone/  
     end  
   end
 
@@ -27,6 +29,14 @@ class ApplicationController < ActionController::Base
 
   def isDev?
     Rails.env.development?
+  end
+
+  def set_access_control_headers
+    headers['Access-Control-Allow-Origin'] = '*'
+    headers['Access-Control-Request-Method'] = '*'
+    headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE, OPTIONS'
+    headers["Access-Control-Allow-Headers"] = %w{Origin Accept Content-Type X-Requested-With X-CSRF-Token}.join(",")
+    head(:ok) if request.request_method == "OPTIONS"
   end
 
   def after_sign_in_path_for(resource)
@@ -87,4 +97,10 @@ class ApplicationController < ActionController::Base
       request.format = :js
     end
   end 
+
+  def protect_against_forgery?
+    unless request.format.json?
+      super
+    end
+  end
 end

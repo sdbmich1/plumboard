@@ -5,20 +5,20 @@
     <td class="width360">
       <%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: @invoice.listing} %>
       <%= @invoice.listing.title %></td>
-    <td class="width120"><div class='price'><%= number_to_currency @invoice.price %></div></td>
-    <td class="width120"><div class='price'><%= number_to_currency @invoice.subtotal %></div></td>
+    <td class="width120"><div class='price'><%= ntc @invoice.price %></div></td>
+    <td class="width120"><div class='price'><%= ntc @invoice.subtotal %></div></td>
   </tr>
   <tr>
     <td></td>
     <td><div class='price'>Sales Tax</div></td>
     <td class="width120"><div class='price'><%= get_sales_tax %>%</div></td>
-    <td class="width120"><div class='price'><%= number_to_currency(@invoice.tax_total) %></div></td>
+    <td class="width120"><div class='price'><%= ntc(@invoice.tax_total) %></div></td>
   </tr>
   <tr>
     <td></td>
     <td></td>
     <td><div class='order-total price'>Amount Due</div></td>
-    <td class="width120"><div class='order-total price'><%= number_to_currency @invoice.amount %></div></td>
+    <td class="width120"><div class='order-total price'><%= ntc @invoice.amount %></div></td>
   </tr>
   </table>
 </div>

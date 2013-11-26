@@ -1,6 +1,23 @@
 class SessionsController < Devise::SessionsController
   layout :page_layout
 
+  def create
+    resource = warden.authenticate!(scope: resource_name, recall: "#{controller_path}#new")
+    sign_in(resource_name, resource)
+
+    respond_to do |format|
+      format.html do
+        super
+      end
+      format.mobile do
+        super
+      end
+      format.json do
+	render json: { response: 'ok', auth_token: current_user.authentication_token }.to_json, status: :ok
+      end
+    end
+  end
+
   def destroy
     Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name)
     redirect_to root_url

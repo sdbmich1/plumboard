@@ -38,7 +38,7 @@ Plumboard::Application.routes.draw do
   resources :users, except: [:new]
   resources :bank_accounts
 
-  resources :pictures, only: [:destroy] do
+  resources :pictures, only: [:show, :create, :destroy] do
     member do
       get 'display'
     end
@@ -73,7 +73,7 @@ Plumboard::Application.routes.draw do
     end
   end
 
-  resources :categories, except: [:show] do
+  resources :categories do
     collection do
       get 'inactive', 'manage'
     end
@@ -89,6 +89,12 @@ Plumboard::Application.routes.draw do
     get 'refund', :on => :member
   end
 
+  namespace :api do
+    namespace :v1  do
+      resources :sessions, only: [:create, :destroy]
+    end
+  end
+
   resources :pages, only: [:index]
 
   # custom routes
@@ -100,6 +106,7 @@ Plumboard::Application.routes.draw do
   get '/system/:class/:attachment/:id/:style/:filename', :to => 'pictures#asset'
   # get '/photos/:attachment/:id/:style/:filename', :to => 'pictures#display'
   # post "/listings/preview", to: "listings#preview", :via => :post, :as => :preview 
+  get '/loc_name', to: "listings#loc_name"
 
   # custom user routes to edit member info
   get "/settings/contact", to: "settings#contact" 

@@ -36,4 +36,9 @@ class Site < ActiveRecord::Base
   def self.active_with_pixis
     where(:id => Listing.active.map(&:site_id).uniq)
   end
+
+  # set json string
+  def as_json(options={})
+    super(only: [:id, :name])
+  end
 end

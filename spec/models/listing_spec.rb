@@ -230,6 +230,15 @@ describe Listing do
     it { @listing.seller_name.should be_nil } 
   end
 
+  describe "should find correct seller photo" do 
+    it { @listing.seller_photo.should_not be_nil } 
+  end
+
+  describe "should not find correct seller photo" do 
+    before { @listing.seller_id = 100 }
+    it { @listing.seller_photo.should be_nil } 
+  end
+
   describe "should have a transaction" do 
     it { @listing.has_transaction?.should be_true }
   end

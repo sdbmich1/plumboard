@@ -8,6 +8,10 @@
 
 <% if user_signed_in? %>
   <%= link_to image_tag('rsz_list-view_blue.png'), "#navpanel", id: 'list', "data-theme"=>"app-bar" %>
-  <%= link_to image_tag('rsz_camera-icon_blue.png'), new_temp_listing_path, id: 'add-pixi', "data-theme"=>"app-loc" %>
+  <%= link_to '#popupPix', "data-theme"=>"app-loc", 'data-rel'=>"popup", 'data-position-to'=>"window", 'data-transition'=>"pop" do %>
+    <%= image_tag('rsz_camera-icon_blue.png') %>
+  <% end %>
 <% end %>
+
+<%= render 'mobile/get_pix' %>
 

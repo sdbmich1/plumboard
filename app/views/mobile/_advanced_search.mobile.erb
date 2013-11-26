@@ -1,0 +1,36 @@
+<div data-role="popup" id="popupMenu" data-theme="b">
+  <div data-role="popup" id="popupSearch" data-overlay-theme="d" data-theme="b" class="ui-corner-all">
+    <a href="#" data-rel="back" data-role="button" data-theme="b" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+    <div data-role="content" data-theme="b" class="ui-corner-bottom ui-content">
+    <%= form_tag advanced_searches_path, :method => :get, :remote=>true, html: {id: 'search_btn', 'data-ajax'=>false} do %>
+        <div class='mtop mleft'>
+          <div><%= autocomplete_field_tag 'search', nil, autocomplete_listing_title_advanced_searches_path, :id_element => '', :update_elements => {}, 
+            :placeholder => 'Search', class: 'search-text', autofocus: true %></div>
+          <div class='mtop'>
+            <%= autocomplete_field_tag 'location', nil, autocomplete_site_name_advanced_searches_path, :id_element => '#site_id', 
+              :placeholder => 'Location', class: 'search-text' %></div>
+	    <%= hidden_field_tag 'site_id', nil, id: 'site_id' %>
+          <div class='mtop'>
+            <%= select_tag 'category', options_for_select(Category.active.map{ |u| [u.name_title, u.id] }), {prompt: 'Select Category', 
+	      id: 'cat_id', 'data-mini'=>'true'} %>
+          </div>
+          <%= render partial: 'mobile/search_form_fld', locals: {idFld: 'price-fld', minFld: 'min_price', maxFld: 'max_price', minPlc: 'Min Price', 
+            maxPlc: 'Max Price', dType: ''} %>
+          <%= render partial: 'mobile/search_form_fld', locals: {idFld: 'comp-fld', minFld: 'min_salary', maxFld: 'max_salary', minPlc: 'Min Salary', 
+            maxPlc: 'Max Salary', dType: 'display:none'} %>
+          <table id='yr-fld' class='sm-top form-inline' style='display:none'>
+            <tr><td><%= select_tag 'min_year', options_for_select(get_year_ary), {:prompt => 'Min Year', id: 'min_yr', 'data-mini'=>'true'} %></td>
+	      <td><label class='width60 pad10'>to</label></td>
+              <td><%= select_tag 'max_year', options_for_select(get_year_ary), {:prompt => 'Min Year', id: 'max_yr', 'data-mini'=>'true'} %></td>
+	    </tr>
+          </table>
+        </div>
+        <div class='mtop mleft'>
+          <button type='submit' class="btn btn-large btn-search round" type="button">
+            <i class="icon-search icon-white"></i>
+          </button>
+        </div>
+    <% end %>
+    </div>
+  </div>
+</div>

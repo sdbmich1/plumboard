@@ -121,4 +121,9 @@ class Invoice < ActiveRecord::Base
   def nice_status
     status.titleize rescue nil
   end
+
+  # set json string
+  def as_json(options={})
+    super(except: [:created_at, :updated_at]) 
+  end
 end

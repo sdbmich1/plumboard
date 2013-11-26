@@ -32,4 +32,9 @@ class Comment < ActiveRecord::Base
   def sender_name
     user.name if user
   end
+
+  # set json string
+  def as_json(options={})
+    super(only: [:user_id, :content], methods: [:sender_name, :long_content?, :summary])
+  end
 end

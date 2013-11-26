@@ -105,4 +105,29 @@ describe PicturesController do
       end
     end
   end
+
+  describe 'GET show/:id' do
+    before :each do
+      Picture.stub!(:find).and_return( @picture )
+    end
+
+    def do_get
+      get :show, :id => '1'
+    end
+
+    it "should show the requested picture" do
+      do_get
+      response.should be_success
+    end
+
+    it "should load the requested picture" do
+      Picture.stub(:find).with('1').and_return(@picture)
+      do_get
+    end
+
+    it "should assign @picture" do
+      do_get
+      assigns(:picture).should_not be_nil
+    end
+  end
 end

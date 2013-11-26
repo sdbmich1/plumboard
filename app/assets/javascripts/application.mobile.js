@@ -13,6 +13,7 @@ $(document).on('pagebeforeshow', '#list', function() {
 
   // load board on doc ready
   if( $('#px-container').length > 0 ) {
+    console.log('list - pagebeforeshow');
     resetBoard();
   }
 });
@@ -21,10 +22,11 @@ function goToUrl(url, rFlg) {
   $.mobile.changePage( url, { transition: "none", reverse: false, reloadPage: rFlg, changeHash: false });
 }
 
-$(document).on('pageinit', '#listapp', function() {
+$(document).on('pageinit', '#list', function() {
 
   // initialize infinite scroll
   if( $('#px-container').length > 0 ) {
+    console.log('listapp - pageinit');
     initScroll('#px-container', '#px-nav', '#px-nav a', '#pxboard .item', null); 
   }
 });
@@ -116,8 +118,8 @@ function uiLoading(bool) {
     $('body').removeClass('ui-loading');
 }
 
+// toggle comment & comment buttons
 $(document).on('click', "#comment-btn, #contact-btn", function (e) {
   uiLoading(true);
   $(this).parent().attr('disabled', 'disabled');
 });
-

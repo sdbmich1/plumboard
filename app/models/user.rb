@@ -16,9 +16,11 @@ class User < ActiveRecord::Base
   attr_accessible :first_name, :last_name, :email, :password, :password_confirmation, :remember_me, :birth_date, :gender, :pictures_attributes,
     :fb_user, :provider, :uid, :contacts_attributes, :status
 
+  before_save :ensure_authentication_token
+
   # define relationships
   has_many :listings, foreign_key: :seller_id
-  has_many :active_listings, foreign_key: :seller_id, class_name: 'Listing', conditions: { :status => 'active' }
+  has_many :active_listings, foreign_key: :seller_id, class_name: 'Listing', :conditions => "status = 'active' AND end_date >= curdate()"
   has_many :temp_listings, foreign_key: :seller_id, dependent: :destroy
 
   has_many :site_users, :dependent => :destroy
@@ -185,8 +187,12 @@ class User < ActiveRecord::Base
   end
 
   # display image with name for autocomplete
+  def photo
+    self.pictures[0].photo.url(:tiny) rescue nil
+  end
+
   def pic_with_name
-    pic = self.pictures[0].photo(:tiny) rescue nil
+    pic = self.photo rescue nil
     pic ? "<img src='#{pic}' class='inv-pic' /> #{self.name}" : nil
   end
 
@@ -200,9 +206,15 @@ class User < ActiveRecord::Base
     unpaid_invoice_count > 0 rescue nil
   end
 
+  # set json string
+  def as_json(options={})
+    super(only: [:id, :birth_date, :gender, :current_sign_in_ip], 
+          methods: [:name, :photo, :has_pixis?, :has_bank_account?, :has_unpaid_invoices?, :unpaid_invoice_count], 
+          include: {:pictures => { :only => [:photo_file_name], :methods => [:photo_url] }, :unpaid_received_invoices => {}})
+  end
+
   # set sphinx scopes
   sphinx_scope(:by_email) { |email|
     {:conditions => {:email => email}}
   }
-
 end

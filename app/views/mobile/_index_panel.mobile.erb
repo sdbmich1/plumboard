@@ -1,17 +1,22 @@
-    <div id='home-nav' data-role='navbar' data-theme='c'>
-      <ul>
-        <li><%= link_to '#', 'data-mini'=>'true', id: 'home-link' do %>
+<div id='home-nav' data-role='navbar' data-theme='c'>
+  <ul>
+    <li><%= link_to '#', 'data-mini'=>'true', id: 'home-link' do %>
 	  <%= image_tag 'home_button_blue.png' %>
-	<% end %></li>
-        <li><%= link_to '#', 'data-mini'=>'true', id: 'loc-nav' do %>
+	<% end %>
+    </li>
+    <li><%= link_to '#', 'data-mini'=>'true', id: 'loc-nav' do %>
 	  <%= image_tag 'blue-white-globe.png' %>
-	<% end %></li>
-        <li><%= link_to '#', 'data-mini'=>'true', id: 'cat-nav' do %>
+	<% end %>
+    </li>
+    <li><%= link_to '#', 'data-mini'=>'true', id: 'cat-nav' do %>
 	  <%= image_tag 'grid_categories.png' %>
-	<% end %></li>
-        <li><%= link_to '#', 'data-mini'=>'true', id: 'search-nav' do %>
+	<% end %>
+    </li>
+    <li><%= link_to '#popupSearch', 'data-mini'=>'true', 'data-rel'=>"popup", 'data-position-to'=>"window", 'data-transition'=>"pop" do %>
 	  <%= image_tag 'rsz_search_icon1_blue.png' %>
-	<% end %></li>
-      </ul>
-    </div>
-
+	<% end %>
+    </li>
+  </ul>
+</div>
+    
+<%= render 'mobile/advanced_search' %>

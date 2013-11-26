@@ -56,4 +56,13 @@ class Picture < ActiveRecord::Base
     self.processing = false   
     self.save(validations: false)
   end
+
+  # get url for json
+  def photo_url
+    photo.url
+  end 
+
+  def as_json(options={})
+    { :id=>self.id, :imageable_id=>self.imageable_id, :photo_file_name=>self.photo_file_name, :photo_url=>photo_url } 
+  end
 end

@@ -5,14 +5,17 @@
 <%= content_for :head do %>
   <% if user_signed_in? %>
     <h1><%= "#{full_title('')}" %></h1>
-    <%= link_to 'Account', '#', "class" => "ui-btn-right", "data-icon"=>"gear", "data-iconpos"=>"notext" %>
+    <%= link_to 'Sign out', destroy_user_session_path, "class" => "ui-btn-right", "data-icon"=>"gear", "data-iconpos"=>"notext" %>
   <% end %>
 <% end -%>
 
-<%= content_for :content do %>
+<%= content_for :subhead do %>
   <div class='center-wrapper'>
     <%= image_tag('rsz_px_word_logo.png', class: "px-logo") %>
   </div>
+<% end -%>
+
+<%= content_for :content do %>
   <div class="mtop">
     <%= render "devise/shared/signin" %><br />
   </div>

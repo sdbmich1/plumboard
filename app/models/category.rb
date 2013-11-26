@@ -59,15 +59,16 @@ class Category < ActiveRecord::Base
 
   # active listings by site
   def active_pixis_by_site loc
-    unless loc.blank? 
-      active_listings.where("site_id = ?", loc)
-    else
-      active_listings
-    end
+    loc.blank? ? active_listings : active_listings.where("site_id = ?", loc)
   end
 
   # check for subcategories
   def subcats?
     !subcategories.empty?
+  end
+
+  # set json string
+  def as_json(options={})
+    super(only: [:id, :name], methods: [:name_title])
   end
 end
