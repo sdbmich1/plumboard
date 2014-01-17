@@ -208,6 +208,28 @@ describe Invoice do
     end
   end
 
+  describe 'get_processing_fee' do
+    it "should get fee" do 
+      @invoice.get_processing_fee.should be_true
+    end
+
+    it "should not get fee" do 
+      @invoice.amount = nil
+      @invoice.get_processing_fee.should_not be_true 
+    end
+  end
+
+  describe 'get_convenience_fee' do
+    it "should get fee" do 
+      @invoice.get_convenience_fee.should be_true
+    end
+
+    it "should not get fee" do 
+      @invoice.amount = nil
+      @invoice.get_convenience_fee.should_not be_true 
+    end
+  end
+
   describe "transactions" do
     let(:transaction) { FactoryGirl.create :transaction }
 
@@ -264,6 +286,15 @@ describe Invoice do
     it "should not find correct pixi_title" do 
       @invoice.pixi_id = '100' 
       @invoice.pixi_title.should be_nil 
+    end
+  end
+
+  describe "short_title" do 
+    it { @invoice.short_title.should_not be_empty } 
+
+    it "should not find correct short_title" do 
+      @invoice.pixi_id = '100' 
+      @invoice.short_title.should be_nil 
     end
   end
 

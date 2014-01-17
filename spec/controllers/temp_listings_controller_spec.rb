@@ -55,6 +55,12 @@ describe TempListingsController do
       do_get
       response.should render_template(:show)
     end
+
+    it "responds to JSON" do
+      @expected = { :listing  => @listing }.to_json
+      get  :show, :id => '1', format: :json
+      response.body.should == @expected
+    end
   end
 
   describe "GET 'new'" do
@@ -109,6 +115,11 @@ describe TempListingsController do
         do_create
         response.should render_template(:new)
       end
+
+      it "responds to JSON" do
+        post :create, :format=>:json
+	response.status.should_not eq(200)
+      end
     end
 
     context 'success' do
@@ -143,40 +154,41 @@ describe TempListingsController do
           should change(TempListing, :count).by(1)
         end
       end
+
+      it "responds to JSON" do
+        post :create, :temp_listing => { 'title'=>'test', 'description'=>'test' }, format: :json
+	response.status.should_not eq(0)
+      end
     end
   end
 
   describe "GET 'edit/:id'" do
 
     before :each do
-      @pixi = mock(Listing)
-      TempListing.stub!(:find_by_pixi_id).and_return( @pixi )
+      @listing = stub_model(TempListing)
+      @pixi = stub_model(Listing)
+      TempListing.stub!(:find_by_pixi_id).and_return( @listing )
       Listing.stub!(:find_by_pixi_id).and_return( @pixi )
-      @picture = stub_model(Picture)
-      @pixi.stub!(:dup_pixi).and_return(@listing)
-      @listing.stub_chain(:pictures, :build).and_return(@picture)
+      @pixi.stub!(:dup_pixi).and_return( @listing )
+      @photo = stub_model(Picture)
+      @listing.stub_chain(:pictures, :build).and_return(@photo)
     end
 
     def do_get
       get :edit, id: '1'
     end
 
-    it "should load the requested listing" do
-      TempListing.should_receive(:find_by_pixi_id).with('1').and_return(@pixi)
+    it "loads the requested listing" do
+      TempListing.should_receive(:find_by_pixi_id).with('1').and_return(@listing)
       do_get
     end
 
-    it "should load the requested listing" do
-      Listing.should_receive(:find_by_pixi_id).with('1').and_return(@pixi)
-      do_get
-    end
-
-    it "should assign @listing" do
+    it "assigns @listing" do
       do_get
       assigns(:listing).should_not be_nil 
     end
 
-    it "should load the requested listing" do
+    it "loads the requested active listing" do
       do_get
       response.should be_success
     end
@@ -218,6 +230,12 @@ describe TempListingsController do
         do_update
         response.should redirect_to @listing
       end
+
+      it "responds to JSON" do
+        @expected = { :listing  => @listing }.to_json
+        put :update, :id => "1", :temp_listing => {'title'=>'test', 'description' => 'test'}, format: :json
+        response.body.should == @expected
+      end
     end
 
     context "with invalid params" do
@@ -241,6 +259,11 @@ describe TempListingsController do
         TempListing.stub(:find_by_pixi_id) { mock_listing(:update_attributes => false) }
         do_update
 	response.should render_template(:edit)
+      end
+
+      it "responds to JSON" do
+        put :update, :id => "1", :temp_listing => {'title'=>'test', 'description' => 'test'}, :format=>:json
+	response.status.should_not eq(200)
       end
     end
   end
@@ -317,6 +340,12 @@ describe TempListingsController do
         do_resubmit
 	response.should be_redirect
       end
+
+      it "responds to JSON" do
+        @expected = { :listing  => @listing }.to_json
+        put :resubmit, :id => "1", format: :json
+        response.body.should == @expected
+      end
     end
 
     context 'failure' do
@@ -332,6 +361,11 @@ describe TempListingsController do
       it "should render show template" do
         do_resubmit
         response.should render_template(:show)
+      end
+
+      it "responds to JSON" do
+        put :resubmit, :id => "1", format: :json
+	response.status.should eq(422)
       end
     end
   end
@@ -367,9 +401,15 @@ describe TempListingsController do
         assigns(:listing).should_not be_nil 
       end
 
-      it "renders the page" do
+      it "redirects the page" do
         do_submit
-        response.should render_template(:submit)
+	response.should be_redirect
+      end
+
+      it "responds to JSON" do
+        @expected = { :listing  => @listing }.to_json
+        put :submit, :id => "1", format: :json
+        response.body.should == @expected
       end
     end
 
@@ -387,12 +427,17 @@ describe TempListingsController do
         do_submit
         response.should render_template(:show)
       end
+
+      it "responds to JSON" do
+        put :submit, :id => "1", format: :json
+	response.status.should eq(422)
+      end
     end
   end
 
-  describe "GET /unposted" do
+  describe "xhr GET /unposted" do
     before :each do
-      @listings = mock("temp_listings")
+      @listings = stub_model(TempListing)
       controller.stub!(:current_user).and_return(@user)
       @user.stub_chain(:new_pixis, :paginate).and_return( @listings )
       do_get
@@ -406,12 +451,17 @@ describe TempListingsController do
       response.should render_template :unposted
     end
 
-    it "should assign @listings" do
+    it "assigns @listings" do
       assigns(:listings).should_not be_nil
     end
 
-    it "should show the requested listings" do
+    it "shows the requested listings" do
       response.should be_success
+    end
+
+    it "responds to JSON" do
+      get :unposted, format: :json
+      expect(response).to be_success
     end
   end
 end

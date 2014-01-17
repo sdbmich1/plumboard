@@ -4,15 +4,16 @@ class BankAccount < ActiveRecord::Base
   before_create :set_flds, :must_have_token
 
   attr_accessor :acct_number, :routing_number
-  attr_accessible :acct_name, :acct_no, :acct_type, :status, :token, :user_id, :description, :acct_number, :routing_number, :bank_name
+  attr_accessible :acct_name, :acct_no, :acct_type, :status, :token, :user_id, :description, :acct_number, :routing_number, :bank_name,
+    :default_flg
 
   belongs_to :user
   has_many :invoices
 
   validates :user_id, presence: true
   validates :acct_name, presence: true
-#  validate :must_be_numeric
   validate :must_have_token
+#  validate :must_be_numeric
 
   # verify token exists before creating record
   def must_have_token
@@ -84,7 +85,7 @@ class BankAccount < ActiveRecord::Base
     if result 
       self.errors.any? ? false : result 
     else
-      errors.add :base, "Error: There was a problem with your Balanced account."
+      errors.add :base, "Error: There was a problem with your bank account."
       false
     end
   end
@@ -97,7 +98,7 @@ class BankAccount < ActiveRecord::Base
     if result 
       self.errors.any? ? false : self.destroy 
     else
-      errors.add :base, "Error: There was a problem with your Balanced account."
+      errors.add :base, "Error: There was a problem with your bank account."
       false
     end
   end

@@ -21,6 +21,17 @@ Spork.prefork do
   # in spec/support/ and its subdirectories.
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
+  host = ENV['BALANCED_HOST'] or nil
+  options = {}
+
+  if !host.nil? then
+    options[:scheme] = 'http'
+    options[:host] = host
+    options[:port] = 5000
+    options[:ssl_verify] = false
+    Balanced.configure(nil, options)
+  end
+
   RSpec.configure do |config|
     config.treat_symbols_as_metadata_keys_with_true_values = true
     config.include(EmailSpec::Helpers)
@@ -30,17 +41,16 @@ Spork.prefork do
     config.include Capybara::RSpecMatchers
     config.include Capybara::DSL, :type => :request
     config.fixture_path = "#{::Rails.root}/spec/fixtures"
+    config.use_transactional_fixtures = false
 
     config.extend ControllerMacros, :type => :controller
     config.infer_base_class_for_anonymous_controllers = false
     config.include Rails.application.routes.url_helpers
     config.include(MailerMacros)  
     config.include IntegrationSpecHelper, :type => :request
-    config.use_transactional_fixtures = false
 
     config.before(:suite) do
-      DatabaseCleaner.clean_with(:truncation)
-      # DatabaseCleaner.strategy = :truncation
+      DatabaseCleaner.strategy = :truncation
     end
 
     config.before(:each) do
@@ -53,9 +63,6 @@ Spork.prefork do
 
     config.before(:each) do
       reset_email
-      Contact.any_instance.stub(:geocode) { [1,1] }
-      TempListing.any_instance.stub(:geocode) { [1,1] }
-      Listing.any_instance.stub(:geocode) { [1,1] }
       DatabaseCleaner.start
     end
 

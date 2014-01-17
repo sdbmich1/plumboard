@@ -28,6 +28,7 @@ class Invoice < ActiveRecord::Base
   # set flds
   def set_flds
     self.status = 'unpaid' if status.nil?
+    self.inv_date = Time.now if inv_date.blank?
     self.bank_account_id = seller.bank_accounts.first.id if seller.has_bank_account?
   end
 
@@ -90,7 +91,27 @@ class Invoice < ActiveRecord::Base
   def get_fee
     if amount
       # calculate fee
-      fee = CalcTotal::get_convenience_fee(amount) + CalcTotal::get_processing_fee
+      fee = CalcTotal::get_convenience_fee(amount) + CalcTotal::get_processing_fee(amount)
+      fee.round(2)
+    else
+      0.0
+    end
+  end
+
+  # get txn processing fee
+  def get_processing_fee
+    if amount
+      fee = CalcTotal::get_processing_fee amount
+      fee.round(2)
+    else
+      0.0
+    end
+  end
+
+  # get txn convenience fee
+  def get_convenience_fee
+    if amount
+      fee = CalcTotal::get_convenience_fee(amount)
       fee.round(2)
     else
       0.0
@@ -117,13 +138,27 @@ class Invoice < ActiveRecord::Base
     listing.title rescue nil
   end
 
+  # get short pixi title
+  def short_title
+    listing.short_title rescue nil
+  end
+
   # titleize status
   def nice_status
     status.titleize rescue nil
   end
 
+  # format inv date
+  def inv_dt
+    inv_date.utc.getlocal.strftime('%m/%d/%Y') rescue nil
+  end
+
   # set json string
   def as_json(options={})
-    super(except: [:created_at, :updated_at]) 
+    super(except: [:updated_at], 
+      methods: [:pixi_title, :buyer_name, :seller_name, :short_title, :nice_status, :inv_dt, :get_fee, :get_processing_fee, :get_convenience_fee], 
+      include: {seller: { only: [:first_name], methods: [:photo] }, 
+                buyer: { only: [:first_name], methods: [:photo] },
+                listing: { only: [:description], methods: [:photo_url] }})
   end
 end

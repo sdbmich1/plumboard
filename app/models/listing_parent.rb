@@ -187,6 +187,11 @@ class ListingParent < ActiveRecord::Base
     nice_title.length < 14 ? nice_title.html_safe : nice_title.html_safe[0..14] + '...' rescue nil
   end
 
+  # med title
+  def med_title
+    nice_title.length < 25 ? nice_title.html_safe : nice_title.html_safe[0..25] + '...' rescue nil
+  end
+
   # set end date to x days after start to denote when listing is no longer displayed on network
   def set_end_date
     self.end_date = self.start_date + PIXI_DAYS.days
@@ -249,6 +254,11 @@ class ListingParent < ActiveRecord::Base
     user.photo rescue nil
   end
 
+  # display first image
+  def photo_url
+    pictures[0].photo.url rescue nil
+  end
+
   # format start date
   def start_dt
     start_date.utc.getlocal.strftime('%m/%d/%Y') rescue nil
@@ -256,8 +266,8 @@ class ListingParent < ActiveRecord::Base
 
   # set json string
   def as_json(options={})
-    super(methods: [:seller_name, :seller_photo, :active?, :job?, :has_year?, :event?, :summary, :short_title, 
-        :category_name, :site_name, :start_dt, :seller_first_name], 
+    super(methods: [:seller_name, :seller_photo, :active?, :job?, :has_year?, :event?, :summary, :short_title, :edit?, :new_status?, :free?,
+        :pending?, :category_name, :site_name, :start_dt, :seller_first_name, :med_title], 
       include: {pictures: { only: [:photo_file_name], methods: [:photo_url] }})
   end
 end

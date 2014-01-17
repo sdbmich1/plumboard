@@ -364,7 +364,7 @@ $(document).on("change", "#inv_qty, #inv_price, #inv_tax", function(){
 // get pixi price based selection of pixi ID
 $(document).on("change", "select[id*=pixi_id]", function() {
   var pid = $(this).val();
-  var url = '/invoices/get_pixi_price?pixi_id=' + pid;
+  var url = '/listings/get_pixi_price?pixi_id=' + pid;
 
   // process script
   processUrl(url);

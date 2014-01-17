@@ -18,13 +18,13 @@ describe CommentsController do
   before(:each) do
     log_in_test_user
     @user = mock_user
-    @listing = mock_model Listing
-    Listing.stub!(:find_by_pixi_id).with('1').and_return(@listing)
+    @listing = stub_model(Listing, :id=>1, site_id: 1, seller_id: 1, pixi_id: '1', title: "Guitar for Sale", description: "Guitar for Sale")
+    @comment = mock_model Comment
   end
 
   describe "POST create" do
     before :each do
-      @comment = mock_model Comment
+      Listing.stub!(:find_by_pixi_id).with('1').and_return(@listing)
       @listing.stub_chain(:comments, :build).and_return( @comment )
       controller.stub!(:load_data).and_return(true)
     end
@@ -48,6 +48,11 @@ describe CommentsController do
         do_create
 	controller.stub!(:render)
       end
+
+      it "responds to JSON" do
+        post :create, :comment => { pixi_id: '1', 'content'=>'test' }, format: :json
+	response.status.should_not eq(200)
+      end
     end
 
     context 'success' do
@@ -58,6 +63,12 @@ describe CommentsController do
         @comment.stub!(:save).and_return(true)
         controller.stub!(:load_data).and_return(true)
         controller.stub!(:reload_data).and_return(true)
+      end
+
+      after (:each) do
+        @comments = stub_model(Comment)
+        Listing.stub!(:find_by_pixi_id).with('1').and_return(@listing)
+        @listing.stub_chain(:comments, :paginate, :build).and_return( @comments )
       end
        
       it "should load the requested listing" do
@@ -81,10 +92,8 @@ describe CommentsController do
       end
 
       it "should assign @comments" do
-	@listing.stub_chain(:comments, :build).and_return(@comments)
-        @comments.stub!(:save).and_return(true)
         do_create
-        assigns(:comments).should eq(@comments)
+        assigns(:comments).should == @comments
       end
 
       it "should change comment count" do
@@ -92,6 +101,11 @@ describe CommentsController do
           do_create
           should change(Comment, :count).by(1)
         end
+      end
+
+      it "responds to JSON" do
+        post :create, :comment => { pixi_id: '1', 'content'=>'test' }, format: :json
+	response.status.should_not eq(0)
       end
     end
   end

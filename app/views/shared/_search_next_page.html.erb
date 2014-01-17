@@ -1,1 +1,3 @@
-<%= link_to 'Next', searches_path(page: @listings.next_page, search: params[:search], cid: params[:cid], loc: params[:loc] ), class: 'nxt-pg', remote: true %>
+<% if @listings.next_page %>
+  <%= link_to 'Next', searches_path(page: @listings.next_page, search: params[:search], cid: params[:cid], loc: params[:loc] ), class: 'nxt-pg', remote: true %>
+<% end %>

@@ -158,4 +158,68 @@ describe UsersController do
       end
     end
   end
+
+  describe 'GET /buyer_name' do
+    before :each do
+      @users = stub_model(User)
+      User.stub!(:search).and_return( @users )
+      controller.stub_chain(:query).and_return(:success)
+    end
+
+    def do_get
+      xhr :get, :buyer_name, search: 'test'
+    end
+
+    it "should load the requested user" do
+      User.stub(:search).with('test').and_return(@users)
+      do_get
+    end
+
+    it "assigns @users" do
+      do_get
+      assigns(:users).should == @users
+    end
+
+    it "renders nothing" do
+      do_get
+      controller.stub!(:render)
+    end
+
+    it "responds to JSON" do
+      get :buyer_name, search: 'test', format: :json
+      expect(response).to be_success
+    end
+  end
+
+  describe 'GET states' do
+    before(:each) do
+      @states = stub_model(State)
+      State.stub!(:all).and_return(@states)
+    end
+
+    def do_get
+      xhr :get, :states
+    end
+
+    it "loads the requested data" do
+      State.stub(:all).and_return(@users)
+      do_get
+    end
+
+    it "renders nothing" do
+      do_get
+      controller.stub!(:render)
+    end
+
+    it "assigns @states" do
+      do_get 
+      assigns(:states).should_not be_nil
+    end
+
+    it "responds to JSON" do
+      get :states, format: :json
+      expect(response).to be_success
+    end
+  end
+
 end

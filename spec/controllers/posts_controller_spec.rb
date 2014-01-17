@@ -52,6 +52,11 @@ describe PostsController do
         do_create
 	controller.stub!(:render)
       end
+
+      it "responds to JSON" do
+        post :create, :post => { pixi_id: '1', 'content'=>'test' }, format: :json
+	response.status.should_not eq(0)
+      end
     end
 
     context 'success' do
@@ -87,13 +92,18 @@ describe PostsController do
           should change(Post, :count).by(1)
         end
       end
+
+      it "responds to JSON" do
+        post :create, :post => { pixi_id: '1', 'content'=>'test' }, format: :json
+	response.status.should_not eq(0)
+      end
     end
   end
 
   describe 'GET sent' do
 
     before :each do
-      @posts = mock("posts")
+      @posts = stub_model(Post)
       @user.stub!(:posts).and_return( @posts )
       @posts.stub!(:paginate).and_return( @posts )
     end
@@ -111,6 +121,11 @@ describe PostsController do
     it "should render nothing" do
       do_get
       controller.stub!(:render)
+    end
+
+    it "responds to JSON" do
+      get :sent, format: :json
+      expect(response).to be_success
     end
   end
 
@@ -156,7 +171,7 @@ describe PostsController do
   describe 'xhr GET index' do
 
     before :each do
-      @posts = mock("posts")
+      @posts = stub_model(Post)
       @user.stub!(:incoming_posts).and_return( @posts )
       @posts.stub!(:paginate).and_return( @posts )
     end
@@ -175,12 +190,17 @@ describe PostsController do
       do_get
       response.should render_template(:index)
     end
+
+    it "responds to JSON" do
+      get :index, format: :json
+      expect(response).to be_success
+    end
   end
 
   describe 'GET index' do
 
     before :each do
-      @posts = mock("posts")
+      @posts = stub_model(Post)
       @user.stub!(:incoming_posts).and_return( @posts )
       @posts.stub!(:paginate).and_return( @posts )
     end
@@ -225,6 +245,11 @@ describe PostsController do
       it "should render nothing" do
 	controller.stub!(:render)
       end
+
+      it "responds to JSON" do
+        post :reply, :format=>:json
+	response.status.should_not eq(200)
+      end
     end
 
     context 'success' do
@@ -256,6 +281,11 @@ describe PostsController do
           do_reply
           should change(Post, :count).by(1)
         end
+      end
+
+      it "responds to JSON" do
+        post :reply, id: '1', post: { pixi_id: '1', 'content'=>'test' }, format: :json
+	response.status.should_not eq(0)
       end
     end
   end

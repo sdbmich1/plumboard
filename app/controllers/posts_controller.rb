@@ -8,18 +8,28 @@ class PostsController < ApplicationController
 
   def index
     @posts = @user.incoming_posts.paginate(page: @page, per_page: @per_page)
+    respond_with(@posts) do |format|
+      format.json { render json: {posts: @posts} }
+    end
   end
 
   def reply
     @post = Post.new params[:post]
-    if @post.save
-      flash.now[:notice] = "Successfully sent post."
-      @posts = @user.reload.incoming_posts.paginate(page: @page, per_page: @per_page)
+    respond_with(@post) do |format|
+      if @post.save
+        @posts = @user.reload.incoming_posts.paginate(page: @page, per_page: @per_page) 
+        format.json { render json: {posts: @posts} }
+      else
+        format.json { render json: { errors: @post.errors.full_messages }, status: 422 }
+      end
     end
   end
 
   def show
     @posts = @user.incoming_posts.paginate(page: @page, per_page: @per_page)
+    respond_with(@posts) do |format|
+      format.json { render json: {posts: @posts} }
+    end
   end
 
   def mark
@@ -29,25 +39,34 @@ class PostsController < ApplicationController
 
   def sent
     @posts = @user.posts.paginate(page: @page, per_page: @per_page)
+    respond_with(@posts) do |format|
+      format.json { render json: {posts: @posts} }
+    end
   end
 
   def create
     @listing = Listing.find_by_pixi_id params[:post][:pixi_id]
     @post = Post.new params[:post]
-    if @post.save
-      @post = Post.load_new @listing
+    respond_with(@post) do |format|
+      if @post.save
+        @post = Post.load_new @listing 
+        format.json { render json: {post: @post} }
+      else
+        format.json { render json: { errors: @post.errors.full_messages }, status: 422 }
+      end
     end
   end
 
   def destroy
     @post = Post.find params[:id]
+    @post.destroy  
+    respond_with(@post)
   end
    
   private
 
   def page_layout
     mobile_device? && %w(index sent).detect{|x| action_name == x} ? 'form' : 'application'
-    # mobile_device? && action_name == 'index' ? 'form' : 'application'
   end
 
   def mark_post

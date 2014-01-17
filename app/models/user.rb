@@ -14,7 +14,7 @@ class User < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :first_name, :last_name, :email, :password, :password_confirmation, :remember_me, :birth_date, :gender, :pictures_attributes,
-    :fb_user, :provider, :uid, :contacts_attributes, :status
+    :fb_user, :provider, :uid, :contacts_attributes, :status, :card_token
 
   before_save :ensure_authentication_token
 
@@ -39,6 +39,7 @@ class User < ActiveRecord::Base
   has_many :unpaid_received_invoices, foreign_key: :buyer_id, :class_name => "Invoice", conditions: { :status => 'unpaid' }
 
   has_many :bank_accounts, dependent: :destroy
+  has_many :card_accounts, dependent: :destroy
   has_many :transactions, dependent: :destroy
   has_many :comments, dependent: :destroy
 
@@ -102,7 +103,12 @@ class User < ActiveRecord::Base
 
   # return all pixis for user
   def pixis
-    self.listings.active
+    self.active_listings
+  end
+
+  # get pixi count
+  def pixi_count
+    pixis.size rescue 0
   end
 
   # return whether user has pixis
@@ -206,14 +212,23 @@ class User < ActiveRecord::Base
     unpaid_invoice_count > 0 rescue nil
   end
 
+  # get number of unread messages for user
+  def unread_count
+    Post.unread_count self
+  end
+
   # set json string
   def as_json(options={})
-    super(only: [:id, :birth_date, :gender, :current_sign_in_ip], 
-          methods: [:name, :photo, :has_pixis?, :has_bank_account?, :has_unpaid_invoices?, :unpaid_invoice_count], 
-          include: {:pictures => { :only => [:photo_file_name], :methods => [:photo_url] }, :unpaid_received_invoices => {}})
+    super(only: [:id, :first_name, :last_name, :email, :birth_date, :gender, :current_sign_in_ip, :fb_user], 
+          methods: [:name, :photo, :unpaid_invoice_count, :pixi_count, :unread_count, :birth_dt], 
+          include: {active_listings: {}, unpaid_received_invoices: {}, bank_accounts: {}, contacts: {}, card_accounts: {}})
   end
 
   # set sphinx scopes
+   sphinx_scope(:first_name) { 
+     {:order => 'first_name, last_name ASC'}
+  }  
+
   sphinx_scope(:by_email) { |email|
     {:conditions => {:email => email}}
   }

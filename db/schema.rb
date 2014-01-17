@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130909055925) do
+ActiveRecord::Schema.define(:version => 20140115055659) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -53,9 +53,28 @@ ActiveRecord::Schema.define(:version => 20130909055925) do
     t.datetime "updated_at",  :null => false
     t.string   "description"
     t.string   "bank_name"
+    t.string   "default_flg"
   end
 
   add_index "bank_accounts", ["user_id"], :name => "index_bank_accounts_on_user_id"
+
+  create_table "card_accounts", :force => true do |t|
+    t.string   "token"
+    t.string   "card_no"
+    t.string   "card_type"
+    t.integer  "expiration_month"
+    t.integer  "expiration_year"
+    t.string   "status"
+    t.integer  "user_id"
+    t.string   "description"
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
+    t.string   "zip"
+    t.string   "default_flg"
+  end
+
+  add_index "card_accounts", ["card_no"], :name => "index_card_accounts_on_card_no"
+  add_index "card_accounts", ["user_id"], :name => "index_card_accounts_on_user_id"
 
   create_table "categories", :force => true do |t|
     t.string   "name"
@@ -511,6 +530,7 @@ ActiveRecord::Schema.define(:version => 20130909055925) do
     t.string   "provider"
     t.string   "uid"
     t.string   "status"
+    t.string   "card_token"
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true

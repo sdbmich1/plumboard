@@ -1,4 +1,4 @@
-<div class="row">
+<div class="neg-top row">
   <div class="mleft15">
     <table class='inv-descr'>
       <tr><td>Date: </td><td><%= get_local_date(@invoice.inv_date) %></td></tr>
@@ -22,7 +22,7 @@
 	    <label class="sm-top control-label">Comments: <%= @invoice.comment %></label>
 	  <% end %>
         </div>
-	<div class="pull-right">
+	<div class="neg-top pull-right">
           <% if @invoice.owner?(@user) && @invoice.unpaid? %>
 	    <table><tr>
               <td><%= link_to 'Edit', edit_invoice_path(@invoice), 'data-role'=>'button', 'data-theme'=>'b' %></td>

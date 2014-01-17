@@ -12,12 +12,12 @@
       <li data-mini='true'>
         <%= link_to posts_path do %>
 	  <%= image_tag '09-chat-2.png', class: 'ui-li-icon' %>
-          My Posts <span class="ui-li-count"><%= get_unread_count(@user) %></span>
+          My Posts <span class="ui-li-count"><%= @user.unread_count %></span>
 	<% end %>
       </li>
       <%= render partial: 'mobile/panel_item', locals: {path: invoices_path, itemID: 'inv-pixi', title: 'My Invoices', ifile: 'bill.png'} %>
       <%= render partial: 'mobile/panel_item', locals: {path: get_account_path, itemID: 'acct-pixi', title: 'My Accounts', ifile: '190-bank.png'} %>
-      <%= render partial: 'mobile/panel_item', locals: {path: settings_path, itemID: 'setting-pixi', title: 'Settings', ifile: '19-gear.png'} %>
+      <%= render partial: 'mobile/panel_item', locals: {path: settings_path, itemID: 'setting-pixi', title: 'My Settings', ifile: '19-gear.png'} %>
       <%= render partial: 'mobile/panel_item', locals: {path: destroy_user_session_path, itemID: 'signout-pixi', title: 'Sign out', 
              ifile: 'logout.png'} %>
     </ul>

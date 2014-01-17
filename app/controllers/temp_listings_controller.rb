@@ -15,53 +15,83 @@ class TempListingsController < ApplicationController
 
   def show
     @listing = TempListing.find_by_pixi_id params[:id]
-    @photo = @listing.pictures
+    @photo = @listing.pictures if @listing
+    respond_with(@listing) do |format|
+      format.json { render json: {listing: @listing} }
+    end
   end
 
   def edit
     @listing = TempListing.find_by_pixi_id(params[:id]) || Listing.find_by_pixi_id(params[:id]).dup_pixi(false)
-    @photo = @listing.pictures.build
+    @photo = @listing.pictures.build if @listing
+    respond_with(@listing) do |format|
+      format.json { render json: {listing: @listing} }
+    end
   end
 
   def update
     @listing = TempListing.find_by_pixi_id params[:id]
-    @listing.update_attributes params[:temp_listing]
-    respond_with(@listing)
+    respond_with(@listing) do |format|
+      if @listing.update_attributes(params[:temp_listing])
+        format.json { render json: {listing: @listing} }
+      else
+        format.json { render json: { errors: @listing.errors.full_messages }, status: 422 }
+      end
+    end
   end
 
   def create
     @listing = TempListing.new params[:temp_listing]
-    @listing.save 
-    respond_with(@listing)
+    if params[:file]
+      @pic = @listing.pictures.build
+      @pic.photo = File.new params[:file].tempfile 
+    end
+    respond_with(@listing) do |format|
+      if @listing.save
+        format.json { render json: {listing: @listing} }
+      else
+        format.json { render json: { errors: @listing.errors.full_messages }, status: 422 }
+      end
+    end
   end
 
   def submit
     @listing = TempListing.find_by_pixi_id params[:id]
-    unless @listing.resubmit_order 
-      render action: :show, error: "Pixi was not submitted."
+    respond_with(@listing) do |format|
+      if @listing.resubmit_order
+        format.html { redirect_to listings_path }
+        format.json { render json: {listing: @listing} }
+      else
+        format.html { render action: :show, error: "Pixi was not submitted. Please try again." }
+        format.json { render json: { errors: @listing.errors.full_messages }, status: 422 }
+      end
     end
   end
 
   def resubmit
     @listing = TempListing.find_by_pixi_id params[:id]
-    if @listing.resubmit_order
-      redirect_to listings_path
-    else
-      render action: :show, error: "Pixi was not resubmitted."
+    respond_with(@listing) do |format|
+      if @listing.resubmit_order
+        format.html { redirect_to listings_path }
+        format.json { render json: {listing: @listing} }
+      else
+        format.html { render action: :show, error: "Pixi was not submitted. Please try again." }
+        format.json { render json: { errors: @listing.errors.full_messages }, status: 422 }
+      end
     end
   end
 
   def destroy
     @listing = TempListing.find_by_pixi_id params[:id]
-    if @listing.destroy  
-      redirect_to listings_path
-    else
-      respond_with @listing
-    end
+    @listing.destroy  
+    respond_with(@listing)
   end
 
   def unposted
     @listings = @user.new_pixis.paginate(page: @page)
+    respond_with(@listings) do |format|
+      format.json { render json: {listings: @listings} }
+    end
   end
   
   private
@@ -75,7 +105,10 @@ class TempListingsController < ApplicationController
   end
 
   def set_params
-    params[:temp_listing] = ResetDate::reset_dates(params[:temp_listing])
+    respond_to do |format|
+      format.html { params[:temp_listing] = ResetDate::reset_dates(params[:temp_listing]) }
+      format.json { params[:temp_listing] = JSON.parse(params[:temp_listing]) }
+    end
   end
 
   def get_autocomplete_items(parameters)

@@ -33,6 +33,14 @@ module Payment
     end
   end
 
+  # create credit card
+  def self.create_card card_no, exp_month, exp_yr, cvv, zip
+    case CREDIT_CARD_API
+    when 'balanced' 
+      result = BalancedPayment::create_card card_no, exp_month, exp_yr, cvv, zip
+    end
+  end
+
   # charge credit card
   def self.charge_card token, amt, descr, txn
     case CREDIT_CARD_API

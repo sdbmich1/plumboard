@@ -115,5 +115,10 @@ describe SettingsController do
     it "should load nothing" do
       controller.stub!(:render)
     end
+
+    it "responds to JSON" do
+      get :contact, id: '1', format: :json
+      expect(response).to be_success
+    end
   end
 end

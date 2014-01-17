@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
   before_filter :load_settings
-  before_filter :prepare_for_mobile #, if: :isDev?, except: [:destroy]
+  before_filter :prepare_for_mobile, if: :isDev?, except: [:destroy]
   # skip_before_filter :prepare_for_mobile
   after_filter :set_access_control_headers
   helper_method :mobile_device?

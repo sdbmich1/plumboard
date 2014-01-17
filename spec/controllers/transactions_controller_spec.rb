@@ -29,7 +29,7 @@ describe TransactionsController do
 
   describe 'GET index' do
     before(:each) do
-      @transactions = mock("transactions")
+      @transactions = stub_model(Transaction)
       Transaction.stub!(:all).and_return(@transactions)
     end
 
@@ -46,6 +46,11 @@ describe TransactionsController do
       Transaction.should_receive(:all).and_return(@transactions)
       do_get 
       assigns(:transactions).should_not be_nil
+    end
+
+    it "responds to JSON" do
+      get :index, format: :json
+      expect(response).to be_success
     end
   end
 
@@ -89,6 +94,7 @@ describe TransactionsController do
 
   describe 'GET show/:id' do
     before :each do
+      @user = stub_model(User)
       Transaction.stub!(:find).and_return( @transaction )
     end
 
@@ -115,6 +121,11 @@ describe TransactionsController do
       do_get
       response.should render_template(:show)
     end
+
+    it "responds to JSON" do
+      get  :show, :id => '1', format: :json
+      response.status.should eq(200)
+    end
   end
 
   describe "POST create" do
@@ -126,6 +137,7 @@ describe TransactionsController do
     context 'failure' do
       
       before :each do
+	User.stub_chain(:find, :transactions, :build).and_return(@user)
         Transaction.stub!(:save_transaction).and_return(false)
       end
 
@@ -145,22 +157,31 @@ describe TransactionsController do
 
       it "create action should render new action" do
         do_create
-        response.should render_template(:new)
+        response.should be_redirect
+      end
+
+      it "responds to JSON" do
+        post :create, id: '1', :format=>:json
+	response.status.should_not eq(0)
       end
     end
 
     context 'success' do
 
       before :each do
+	@my_model = stub_model(Transaction,:save=>true)
+	User.stub_chain(:find, :transactions, :build).and_return(@user)
         Transaction.stub!(:save_transaction).and_return(true)
       end
 
       def do_create
-        post :create, id: '1', transaction: { 'first_name'=>'test', 'description'=>'test' }, order: { "item_name" => 'New Pixi', "quantity" => 1, "price" => 5.00 }
+        post :create, id: '1', transaction: { 'first_name'=>'test', 'description'=>'test' }, order: { "item_name" => 'New Pixi', "quantity" => 1, 
+	   "price" => 5.00 }
       end
 
       it "should load the requested transaction" do
-        Transaction.stub(:new).with({'first_name'=>'test', 'description'=>'test' }) { mock_transaction(:save_transaction => true) }
+        # Transaction.stub(:new).with({'first_name'=>'test', 'description'=>'test' }) { mock_transaction(:save_transaction => true) }
+        Transaction.stub(:new).with({'first_name'=>'test', 'description'=>'test' }) { @my_model }
         do_create
       end
 
@@ -185,6 +206,12 @@ describe TransactionsController do
           do_create
           should change(Transaction, :count).by(1)
         end
+      end
+
+      it "responds to JSON" do
+        post :create, id: '1', transaction: { 'first_name'=>'test', 'description'=>'test' }, order: { "item_name" => 'New Pixi', "quantity" => 1, 
+	   "price" => 5.00 }, format: :json
+	response.status.should_not eq(0)
       end
     end
   end

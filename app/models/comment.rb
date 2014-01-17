@@ -35,6 +35,7 @@ class Comment < ActiveRecord::Base
 
   # set json string
   def as_json(options={})
-    super(only: [:user_id, :content], methods: [:sender_name, :long_content?, :summary])
+    super(only: [:id, :user_id, :content, :created_at], methods: [:sender_name, :long_content?, :summary],
+      include: {user: { only: [:first_name], methods: [:name, :photo] }})
   end
 end

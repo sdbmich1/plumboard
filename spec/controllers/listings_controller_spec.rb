@@ -35,7 +35,7 @@ describe ListingsController do
 
   describe 'GET index' do
     before(:each) do
-      @listings = mock("listings")
+      @listings = stub_model(Listing)
       Listing.stub!(:active_page).and_return(@listings)
       controller.stub_chain(:load_data, :get_location).and_return(:success)
       do_get
@@ -55,6 +55,11 @@ describe ListingsController do
 
     it "should render the correct layout" do
       response.should render_template("layouts/listings")
+    end
+
+    it "responds to JSON" do
+      get :index, :format => 'json'
+      expect(response).to be_success
     end
   end
 
@@ -81,7 +86,7 @@ describe ListingsController do
 
   describe 'GET category' do
     before(:each) do
-      @listings = mock("listings")
+      @listings = stub_model(Listing)
       @category = stub_model Category
       Listing.stub!(:get_by_city).and_return(@listings)
       Category.stub!(:find).and_return(@category)
@@ -110,11 +115,16 @@ describe ListingsController do
     it "assigns @listings" do
       assigns(:listings).should == @listings
     end
+
+    it "responds to JSON" do
+      get :category, cid: '1', loc: '1', format: :json
+      expect(response).to be_success
+    end
   end
 
   describe 'GET location' do
     before(:each) do
-      @listings = mock("listings")
+      @listings = stub_model(Listing)
       Listing.stub!(:get_by_city).and_return(@listings)
       controller.stub!(:load_data).and_return(:success)
       do_get
@@ -131,11 +141,16 @@ describe ListingsController do
     it "assigns @listings" do
       assigns(:listings).should == @listings
     end
+
+    it "responds to JSON" do
+      get :location, loc: '1', format: :json
+      expect(response).to be_success
+    end
   end
 
   describe 'GET seller' do
     before :each do
-      @listings = mock("listings")
+      @listings = stub_model(Listing)
       controller.stub!(:current_user).and_return(@user)
       @user.stub_chain(:pixis, :paginate).and_return( @listings )
       do_get
@@ -160,11 +175,18 @@ describe ListingsController do
     it "should show the requested listings" do
       response.should be_success
     end
+
+    it "responds to JSON" do
+      @expected = { :listings  => @listings }.to_json
+      get :seller, format: :json
+      expect(response).to be_success
+      response.body.should == @expected
+    end
   end
 
   describe 'GET sold' do
     before :each do
-      @listings = mock("listings")
+      @listings = stub_model(Listing)
       controller.stub!(:current_user).and_return(@user)
       @user.stub_chain(:sold_pixis, :paginate).and_return( @listings )
       do_get
@@ -189,16 +211,22 @@ describe ListingsController do
     it "should show the requested listings" do
       response.should be_success
     end
+
+    it "responds to JSON" do
+      get :sold, format: :json
+      expect(response).to be_success
+    end
   end
 
   describe 'GET show/:id' do
     before :each do
       @post = stub_model(Post)
       @comment = stub_model(Comment)
+      @comments = mock('comments')
       Listing.stub!(:find_by_pixi_id).and_return( @listing )
       Post.stub!(:new).and_return( @post )
       @listing.stub_chain(:comments, :build).and_return( @comment )
-      controller.stub!(:load_comments).and_return(:success)
+      controller.stub!(:load_comments).and_return(@comments)
       controller.stub!(:add_points).and_return(:success)
     end
 
@@ -239,6 +267,11 @@ describe ListingsController do
     it "show action should render show template" do
       do_get
       response.should render_template(:show)
+    end
+
+    it "responds to JSON" do
+      get :show, :id => '1', :format => :json
+      expect(response).to be_success
     end
   end
 
@@ -327,6 +360,36 @@ describe ListingsController do
           should change(Listing, :count).by(-1)
         end
       end
+    end
+  end
+
+  describe 'xhr GET get_pixi_price' do
+    before :each do
+      @listing = mock_listing
+      Listing.stub_chain(:find_by_pixi_id, :price).and_return( @listing )
+      @listing.stub(:price) {'500.00'}
+      do_get
+    end
+
+    def do_get
+      xhr :get, :get_pixi_price, pixi_id: '1'
+    end
+
+    it "should load nothing" do
+      controller.stub!(:render)
+    end
+
+    it "should assign @price" do
+      assigns(:price).should_not be_nil
+    end
+
+    it "should show the requested listing price" do
+      response.should be_success
+    end
+
+    it "responds to JSON" do
+      get :get_pixi_price, :pixi_id => '1', :format => :json
+      expect(response).to be_success
     end
   end
 

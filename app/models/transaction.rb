@@ -1,16 +1,16 @@
 class Transaction < ActiveRecord::Base
   include CalcTotal, Payment
 
-  attr_accessor :cvv
+  attr_accessor :cvv, :card_number, :card_month, :card_year
   attr_accessible :address, :address2, :amt, :city, :code, :country, :credit_card_no, :description, :email, :first_name, 
   	:home_phone, :last_name, :payment_type, :promo_code, :state, :work_phone, :zip, :user_id, :confirmation_no, :token, :status,
-	:convenience_fee, :processing_fee, :transaction_type, :debit_token
+	:convenience_fee, :processing_fee, :transaction_type, :debit_token, :cvv, :card_number, :card_month, :card_year
 
   belongs_to :user
+  has_many :invoices
   has_many :listings, through: :invoices
   has_many :temp_listings
   has_many :transaction_details
-  has_many :invoices
 
   name_regex =  /^[A-Z]'?['-., a-zA-Z]+$/i
   text_regex = /^[-\w\,. _\/&@]+$/i
@@ -35,7 +35,6 @@ class Transaction < ActiveRecord::Base
   validates :zip,   :presence => true,
                     :length   => { :maximum => 12 }
 
-  validates :country, :presence => true
   validates :home_phone, :presence => true
   validates :amt, :presence => true,
   		  :numericality => true
@@ -86,9 +85,24 @@ class Transaction < ActiveRecord::Base
     transaction_type == 'pixi'
   end
 
+  # check for token
+  def has_token?
+    if token.blank?
+      card_num = card_number[card_number.length-4..card_number.length]
+      unless card = user.card_accounts.where(:card_no => card_num).first
+	card = user.card_accounts.build card_number: self.card_number, expiration_month: self.card_month,
+	         expiration_year: self.card_year, card_code: self.cvv, zip: self.zip 
+	card.save_account 
+      end
+      self.token = card.token
+    else
+      true 
+    end
+  end
+
   # save transaction
   def save_transaction order, listing
-    if valid?
+    if has_token? && valid?
       # add transaction details      
       (1..order[:cnt].to_i).each do |i| 
         if order['quantity'+i.to_s].to_i > 0 
@@ -104,7 +118,6 @@ class Transaction < ActiveRecord::Base
  	# submit order
         listing.submit_order(self.id) unless self.errors.any?
       else
-
         # process credit card
         if process_transaction
 	  inv = listing.get_invoice(order["invoice_id"])
@@ -182,5 +195,16 @@ class Transaction < ActiveRecord::Base
     else
       false
     end
+  end
+
+  # format txn date
+  def txn_dt
+    created_at.utc.getlocal.strftime('%m/%d/%Y') rescue nil
+  end
+
+  # set json string
+  def as_json(options={})
+    super(except: [:updated_at], 
+      methods: [:pixi_title, :buyer_name, :seller_name, :txn_dt, :get_invoice, :get_invoice_listing]) 
   end
 end

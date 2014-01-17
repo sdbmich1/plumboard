@@ -10,27 +10,42 @@ class BankAccountsController < ApplicationController
 
   def index
     @accounts = @user.bank_accounts
+    respond_with(@accounts) do |format|
+      format.json { render json: {accounts: @accounts} }
+    end
+  end
+
+  def show
+    @account = @user.bank_accounts.first
+    respond_with(@account) do |format|
+      format.json { render json: {account: @account} }
+    end
   end
 
   def create
     @account = BankAccount.new params[:bank_account]
-    if @account.save_account 
-      flash.now[:notice] = 'Successfully created account.' 
-      respond_to do |format|
+    respond_with(@account) do |format|
+      if @account.save_account
+        flash.now[:notice] = 'Successfully created account.'
         format.js { reload_data }
-        format.html { redirect_path }
+	format.html { redirect_path }
+        format.json { render json: {account: @account} }
+      else
+        flash.now[:error] = 'Error occurred creating account. Please try again.'
+        format.js { render nothing: true }
+	format.json { render :json => { :errors => @account.errors.full_messages }, :status => 422 }
       end
     end
   end
 
   def destroy
     @account = BankAccount.find params[:id]
-    if @account.delete_account 
-      flash.now[:notice] = 'Successfully removed account.' 
-      redirect_to listings_path
+    if @account.delete_account
+      flash.now[:notice] = 'Successfully removed account.'
+      redirect_to listings_path 
     else
       flash.now[:error] = @account.errors
-      render :nothing => true
+      render nothing: true 
     end
   end
 

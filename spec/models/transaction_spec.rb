@@ -33,6 +33,9 @@ describe Transaction do
   it { should respond_to(:processing_fee) }
   it { should respond_to(:convenience_fee) }
   it { should respond_to(:debit_token) }
+  it { should respond_to(:card_number) }
+  it { should respond_to(:card_month) }
+  it { should respond_to(:card_year) }
 
   it { should respond_to(:user) }
   it { should respond_to(:listings) }
@@ -111,11 +114,6 @@ describe Transaction do
 
   describe "when zip is empty" do
     before { @transaction.zip = "" }
-    it { should_not be_valid }
-  end
-
-  describe "when country is empty" do
-    before { @transaction.country = "" }
     it { should_not be_valid }
   end
 
@@ -208,6 +206,17 @@ describe Transaction do
     it 'should not return true' do
       @transaction.address = nil
       @transaction.has_address?.should_not be_true
+    end
+  end
+
+  describe 'has_token?' do
+    it 'should return true' do
+      @transaction.has_token?.should be_true
+    end
+
+    it 'should not return true' do
+      @transaction.token = nil
+      @transaction.has_token?.should_not be_true
     end
   end
 

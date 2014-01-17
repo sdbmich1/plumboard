@@ -1,7 +1,8 @@
 class UsersController < ApplicationController
+  before_filter :check_permissions, only: [:index]
   before_filter :authenticate_user!
   before_filter :load_target, only: [:update]
-  respond_to :html, :js
+  respond_to :html, :js, :json, :mobile
 
   def index
     @users = User.all
@@ -27,6 +28,15 @@ class UsersController < ApplicationController
     end
   end
 
+  def states
+    respond_with(@states = State.all)
+  end
+
+  def buyer_name
+    @users = User.search query, star: true, :page => params[:page], :per_page => 10
+    respond_with(@users)
+  end
+
   private
 
   def load_target
@@ -37,5 +47,13 @@ class UsersController < ApplicationController
   def flash_msg chg_email
     (chg_email && @user.pending_reconfirmation?) ?
         t("devise.registrations.update_needs_confirmation") : t("devise.registrations.updated")
+  end
+
+  def query
+    @query = Riddle::Query.escape params[:search]
+  end 
+
+  def check_permissions
+    authorize! :manage, @users
   end
 end

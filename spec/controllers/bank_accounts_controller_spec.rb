@@ -18,14 +18,15 @@ describe BankAccountsController do
   before(:each) do
     log_in_test_user
     @user = mock_user
-    @account = stub_model(BankAccount, user_id: 1, acct_name: 'Joe Blow Checking', acct_type: 'Checking', status: 'active')
+    @account = stub_model(BankAccount, user_id: 1, account_number: '9900000002', routing_number: '321174851', acct_name: 'Joe Blow Checking', 
+      acct_type: 'Checking', status: 'active')
   end
 
   describe 'xhr GET index' do
     before :each do
       @accounts = mock("accounts")
       controller.stub!(:current_user).and_return(@user)
-      @user.stub!(:accounts).and_return( @accounts )
+      @user.stub!(:bank_accounts).and_return( @accounts )
       do_get
     end
 
@@ -54,7 +55,7 @@ describe BankAccountsController do
 
     before :each do
       controller.stub_chain(:load_target, :current_user).and_return(@user)
-      @user.stub_chain(:accounts, :build).and_return( @account )
+      @user.stub_chain(:bank_accounts, :build).and_return( @account )
       do_get
     end
 
@@ -75,7 +76,7 @@ describe BankAccountsController do
 
     before :each do
       controller.stub_chain(:load_target, :current_user).and_return(@user)
-      @user.stub_chain(:accounts, :build).and_return( @account )
+      @user.stub_chain(:bank_accounts, :build).and_return( @account )
       do_get
     end
 
@@ -89,6 +90,37 @@ describe BankAccountsController do
 
     it "loads nothing" do
       controller.stub!(:render)
+    end
+  end
+
+  describe 'GET show/:id' do
+    before :each do
+      @user.stub_chain(:bank_accounts, :first).and_return( @account )
+    end
+
+    def do_get
+      get :show, :id => '1'
+    end
+
+    it "should show the requested account" do
+      do_get
+      response.should be_success
+    end
+
+    it "should assign @account" do
+      do_get
+      assigns(:account).should_not be_nil
+    end
+
+    it "show action should render show template" do
+      do_get
+      response.should render_template(:show)
+    end
+
+    it "responds to JSON" do
+      @expected = { :account  => @account }.to_json
+      get  :show, :id => '1', format: :json
+      response.body.should == @expected
     end
   end
 
@@ -113,18 +145,24 @@ describe BankAccountsController do
         do_create
         controller.stub!(:render)
       end
+
+      it "responds to JSON" do
+        post :create, :bank_account => { 'user_id'=>'test', 'acct_type'=>'test' }, :format=>:json
+	response.status.should eq(422)
+      end
     end
 
     context 'success' do
 
       before :each do
+        @my_model = stub_model(BankAccount,:save=>true)
         BankAccount.stub!(:save_account).and_return(true)
 	User.stub_chain(:find, :bank_accounts, :first).and_return(@user)
         controller.stub_chain(:load_target, :reload_data, :redirect_path).and_return(:success)
       end
 
       it "loads the requested account" do
-        BankAccount.stub(:new).with({'user_id'=>'test', 'acct_type'=>'test' }) { mock_account(:save => true) }
+        BankAccount.stub(:new).with({'user_id'=>'test', 'acct_type'=>'test' }) { @my_model }
         do_create
       end
 
@@ -138,6 +176,11 @@ describe BankAccountsController do
           do_create
           should change(BankAccount, :count).by(1)
         end
+      end
+
+      it "responds to JSON" do
+        post :create, :bank_account => { 'user_id'=>'test', 'acct_type'=>'test' }, :format=>:json
+	response.body.should_not be_nil 
       end
     end
   end

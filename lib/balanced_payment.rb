@@ -60,14 +60,15 @@ module BalancedPayment
   end
 
   # create card account
-  def self.create_card card_no, exp_month, exp_yr, cvv
+  def self.create_card card_no, exp_month, exp_yr, cvv, zip
     initialize
 
-    card = Balanced::Card.create(
+    card = Balanced::Card.new(
       card_number: card_no, 
       expiration_month: exp_month,
       expiration_year: exp_yr, 
-      security_code: cvv).save
+      security_code: cvv, 
+      postal_code: zip).save
 
     rescue => ex
       process_error ex
@@ -77,22 +78,34 @@ module BalancedPayment
   def self.charge_card token, amt, descr, txn 
     initialize
 
-    #unless buyer = Balanced::Account.where(email: txn.user.email).first
-    #  buyer = @marketplace.create_buyer(email_address: txn.user.email, card_uri: token)
-    #  buyer = Balanced::Customer.new(email_address: txn.user.email).save
-    # else
-    #  buyer
-    #end
+    # get buyer token
+    uri = txn.user.card_token
 
-    # set buyer
-    buyer = Balanced::Customer.new.save
-    response = buyer.add_card token
+    if uri
+      unless buyer = Balanced::Customer.where(uri: uri).first
+        buyer = set_token txn
+      end
+    else
+      buyer = set_token txn
+      response = buyer.add_card token
+    end
 
     # charge card
     result = buyer.debit(amount: (amt * 100).to_i.to_s)
 
     rescue => ex
       process_error ex
+  end
+
+  # set buyer uri
+  def self.set_token txn
+    buyer = Balanced::Customer.new.save
+
+    # set user token
+    txn.user.card_token = buyer.uri
+    txn.user.save
+
+    return buyer
   end
 
   # process result data

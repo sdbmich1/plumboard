@@ -17,6 +17,7 @@ describe BankAccount do
   it { should respond_to(:status) }
   it { should respond_to(:token) }
   it { should respond_to(:description) }
+  it { should respond_to(:default_flg) }
 
   it { should respond_to(:user) }
   it { should respond_to(:invoices) }

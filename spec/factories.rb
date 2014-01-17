@@ -237,8 +237,20 @@ FactoryGirl.define do
     acct_name	"Joe's Checking"
     status		'active'
     acct_type	'checking'
-    acct_number	90009000
+    acct_number	'90009000'
     token	"/v1/marketplaces/TEST-MP2Q4OaIanQuIDJIixHGmhQA/bank_accounts/BA7ehO1oDwPUBAR9cz71sd2g"
+    before(:create) do |acct|
+      acct.create_user FactoryGirl.attributes_for(:pixi_user)
+    end
+  end
+
+  factory :card_account do
+    status		'active'
+    card_type	'visa'
+    card_number	'90009000'
+    expiration_month   6
+    expiration_year    2018
+    token	"/v1/marketplaces/TEST-MP2Q4OaIanQuIDJIixHGmhQA/cards/CC5N1hxpIVfWCcYtPkS3nHy8"
     before(:create) do |acct|
       acct.create_user FactoryGirl.attributes_for(:pixi_user)
     end
@@ -246,13 +258,11 @@ FactoryGirl.define do
 
   factory :comment do
     content 		"I love this"
-    listing
   end
 
   factory :pixi_payment do
     pixi_fee		0.99
     token		"/v1/marketplaces/TEST-MP2ORkhLY8htilmM6AlLwBDp/cards/CC3lncKU8HDchttA692Vyyw8"
-    invoice
   end
 
   factory :inquiry do
@@ -269,4 +279,3 @@ FactoryGirl.define do
     value 		4
   end
 end
-		 

@@ -14,13 +14,13 @@ Plumboard::Application.routes.draw do
   # resource defs
   resources :listings, except: [:new, :edit, :update, :create] do
     collection do
-      get 'seller', 'follower', 'sold', 'category', 'location'
+      get 'get_pixi_price', 'seller', 'follower', 'sold', 'category', 'location'
     end
   end
 
   resources :invoices do
     collection do
-      get 'sent', 'received', 'get_pixi_price', 'autocomplete_user_first_name'
+      get 'sent', 'received', 'autocomplete_user_first_name'
     end
     member do
       get 'pay'
@@ -36,7 +36,8 @@ Plumboard::Application.routes.draw do
 
   resources :settings, except: [:new, :show, :create, :edit, :destroy, :update]
   resources :users, except: [:new]
-  resources :bank_accounts
+  resources :bank_accounts, :card_accounts
+  resources :sites, only: [:index]
 
   resources :pictures, only: [:show, :create, :destroy] do
     member do
@@ -104,9 +105,14 @@ Plumboard::Application.routes.draw do
   get "/contact", to: "pages#contact" 
   get "/welcome", to: "pages#welcome" 
   get '/system/:class/:attachment/:id/:style/:filename', :to => 'pictures#asset'
+  get '/loc_name', to: "sites#loc_name"
+  get '/buyer_name', to: "users#buyer_name"
+  get '/states', to: "users#states"
+  # get '/editpixi', to: "temp_listings#edit"
   # get '/photos/:attachment/:id/:style/:filename', :to => 'pictures#display'
-  # post "/listings/preview", to: "listings#preview", :via => :post, :as => :preview 
-  get '/loc_name', to: "listings#loc_name"
+  # post "/temp_listings/manage", to: "temp_listings#manage", :via => :post, :as => :manage 
+  put '/submit', to: "temp_listings#submit"
+  put '/resubmit', to: "temp_listings#resubmit"
 
   # custom user routes to edit member info
   get "/settings/contact", to: "settings#contact" 

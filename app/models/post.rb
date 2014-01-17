@@ -135,4 +135,11 @@ class Post < ActiveRecord::Base
       false
     end
   end
+
+  # set json string
+  def as_json(options={})
+    super(except: [:updated_at], methods: [:pixi_title, :recipient_name, :sender_name], 
+      include: {recipient: { only: [:first_name], methods: [:photo] }, 
+                user: { only: [:first_name], methods: [:photo] }})
+  end
 end

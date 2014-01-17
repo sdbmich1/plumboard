@@ -2,14 +2,19 @@ require 'will_paginate/array'
 class CommentsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :load_data, only: [:create]
-  respond_to :html, :js, :mobile
+  respond_to :html, :js, :mobile, :json
   layout :page_layout
 
   def create
     @listing = Listing.find_by_pixi_id params[:comment][:pixi_id]
-    @comment = @listing.comments.build params[:comment]
-    if @comment.save
-      reload_data
+    @comment = @listing.comments.build params[:comment] if @listing
+    respond_with(@comment) do |format|
+      if @comment.save
+        reload_data
+        format.json { render json: {comments: @comments} }
+      else
+        format.json { render json: { errors: @comment.errors.full_messages }, status: 422 }
+      end
     end
   end
 

@@ -21,6 +21,7 @@ describe User do
     it { should respond_to(:fb_user) }
     it { should respond_to(:pictures) }
     it { should respond_to(:status) }
+    it { should respond_to(:card_token) }
 
     it { should respond_to(:interests) }
     it { should respond_to(:contacts) }
@@ -40,6 +41,7 @@ describe User do
     it { should respond_to(:unpaid_invoices) } 
     it { should respond_to(:paid_invoices) } 
     it { should respond_to(:bank_accounts) } 
+    it { should respond_to(:card_accounts) } 
     it { should respond_to(:comments) }
     it { should respond_to(:ratings) }
     it { should respond_to(:seller_ratings) }
@@ -343,6 +345,7 @@ describe User do
       @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id)
       @user.unpaid_invoices.should_not be_empty
       @user.paid_invoices.should be_empty
+      @user.has_unpaid_invoices?.should be_true 
     end
 
     it 'should have paid invoices' do
@@ -351,6 +354,7 @@ describe User do
       @invoice.save
       @user.paid_invoices.should_not be_empty
       @user.unpaid_invoices.should be_empty
+      @user.has_unpaid_invoices?.should_not be_true 
     end
   end
 

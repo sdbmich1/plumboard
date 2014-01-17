@@ -148,8 +148,8 @@ module ApplicationHelper
 
   # set path based on invoice count
   def get_unpaid_path
-    # @user.unpaid_invoice_count > 1 ? received_invoices_path : @user.unpaid_received_invoices.first
-    @user.unpaid_received_invoices.first if @user.unpaid_invoice_count > 1 
+    @invoice = @user.unpaid_received_invoices.first
+    @user.unpaid_invoice_count > 1 ? received_invoices_path : invoice_path(@invoice)
   end
 
   # toggle header if str matches

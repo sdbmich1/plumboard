@@ -30,7 +30,7 @@ describe InvoicesController do
   describe 'GET index' do
 
     before :each do
-      @invoices = mock("invoices")
+      @invoices = stub_model(Invoice)
       controller.stub!(:current_user).and_return(@user)
       @user.stub_chain(:invoices, :paginate).and_return( @invoices )
       do_get
@@ -58,6 +58,12 @@ describe InvoicesController do
 
     it "should show the requested invoices" do
       response.should be_success
+    end
+
+    it "responds to JSON" do
+      @expected = { :invoices  => @invoices }.to_json
+      get  :index, format: :json
+      response.body.should == @expected
     end
   end
 
@@ -240,6 +246,12 @@ describe InvoicesController do
         do_update
         assigns(:invoices).should_not be_nil 
       end
+
+      it "responds to JSON" do
+        @expected = { :invoice  => @invoice }.to_json
+        put :update, :id => "1", :invoice => {'pixi_id'=>'test', 'comment' => 'test'}, format: :json
+        response.body.should == @expected
+      end
     end
 
     context "with invalid params" do
@@ -264,6 +276,11 @@ describe InvoicesController do
         do_update
         controller.stub!(:render)
       end
+
+      it "responds to JSON" do
+        put :update, :id => "1", :invoice => {'pixi_id'=>'test', 'comment' => 'test'}, format: :json
+	response.status.should eq(422)
+      end
     end
   end
 
@@ -279,14 +296,19 @@ describe InvoicesController do
         Invoice.stub!(:save).and_return(false)
       end
 
-      it "should assign @invoice" do
+      it "assigns @invoice" do
         do_create
         assigns(:invoice).should_not be_nil 
       end
 
-      it "should render the new template" do
+      it "renders the new template" do
         do_create
         controller.stub!(:render)
+      end
+
+      it "responds to JSON" do
+        post :create, format: :json
+	response.status.should_not eq(0)
       end
     end
 
@@ -302,12 +324,12 @@ describe InvoicesController do
         @user.stub_chain(:invoices, :paginate).and_return( @invoices )
       end
 
-      it "should load the requested invoice" do
+      it "loads the requested invoice" do
         Invoice.stub(:new).with({'pixi_id'=>'test', 'comment'=>'test' }) { mock_invoice(:save => true) }
         do_create
       end
 
-      it "should assign @invoice" do
+      it "assigns @invoice" do
         do_create
         assigns(:invoice).should_not be_nil 
       end
@@ -317,16 +339,21 @@ describe InvoicesController do
         do_create
       end
 
-      it "should assign @invoices" do
+      it "assigns @invoices" do
         do_create
         assigns(:invoices).should_not be_nil 
       end
 
-      it "should change invoice count" do
+      it "changes invoice count" do
         lambda do
           do_create
           should change(Invoice, :count).by(1)
         end
+      end
+
+      it "responds to JSON" do
+        post :create, :invoice => { 'pixi_id'=>'test', 'comment'=>'test' }, format: :json
+        expect(response).to be_success
       end
     end
   end
@@ -371,31 +398,6 @@ describe InvoicesController do
           should change(Invoice, :count).by(-1)
         end
       end
-    end
-  end
-
-  describe 'xhr GET get_pixi_price' do
-    before :each do
-      @listing = mock_listing
-      Listing.stub_chain(:find_by_pixi_id, :price).and_return( @listing )
-      @listing.stub(:price) {'500.00'}
-      do_get
-    end
-
-    def do_get
-      xhr :get, :get_pixi_price, pixi_id: '1'
-    end
-
-    it "should load nothing" do
-      controller.stub!(:render)
-    end
-
-    it "should assign @price" do
-      assigns(:price).should_not be_nil
-    end
-
-    it "should show the requested listing price" do
-      response.should be_success
     end
   end
 end

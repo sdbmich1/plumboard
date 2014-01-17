@@ -22,7 +22,8 @@ feature "UserRegistrations" do
 
       it "should not create a empty user" do
         expect{ 
-		click_button submit 
+          fill_in "user_first_name", with: ''
+	  click_button submit 
 	}.not_to change(User, :count)
 
         page.should have_content "can't be blank"

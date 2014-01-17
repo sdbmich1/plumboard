@@ -9,21 +9,33 @@ class TransactionsController < ApplicationController
     @listing = Listing.find_by_pixi_id(params[:id]) || TempListing.find_by_pixi_id(params[:id])
     @transaction = Transaction.load_new(@user, @listing, @order)
     @invoice = Invoice.find_invoice(@order) unless @transaction.pixi?
+    respond_with(@transaction)
   end
 
   def create
     @listing = Listing.find_by_pixi_id(params[:id]) || TempListing.find_by_pixi_id(params[:id])
-    @transaction = Transaction.new params[:transaction] 
-    @transaction.save_transaction(params[:order], @listing)
-    respond_with @transaction
+    @transaction = @user.transactions.build params[:transaction] 
+    respond_with(@transaction) do |format|
+      if @transaction.save_transaction(params[:order], @listing)
+        format.json { render json: {user: @user, transaction: @transaction} }
+      else
+        format.json { render json: { "errors" => @transaction.errors }, :status => 422 }
+      end
+    end
   end
 
   def show
     @transaction = Transaction.find params[:id]
+    respond_with(@transaction) do |format|
+      format.json { render json: {user: @user, transaction: @transaction} }
+    end
   end
 
   def index
     @transactions = Transaction.all
+    respond_with(@transactions) do |format|
+      format.json { render json: {user: @user, transactions: @transactions} }
+    end
   end
 
   protected

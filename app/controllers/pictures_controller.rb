@@ -19,7 +19,6 @@ class PicturesController < ApplicationController
   end
 
   def create
-    p params
     respond_to do |format|
       format.json { render nothing: true }
     end
