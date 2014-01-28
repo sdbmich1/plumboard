@@ -13,7 +13,7 @@ class ListingParent < ActiveRecord::Base
   MAX_PIXI_PIX = PIXI_KEYS['pixi']['max_pixi_pix']
 
   attr_accessible :buyer_id, :category_id, :description, :title, :seller_id, :status, :price, :show_alias_flg, :show_phone_flg, :alias_name,
-  	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id, :year_built,
+  	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id, :year_built, :pixan_id,
 	:edited_by, :edited_dt, :post_ip, :lng, :lat, :event_start_date, :event_end_date, :compensation, :event_start_time, :event_end_time
 
   belongs_to :user, :foreign_key => :seller_id
@@ -94,7 +94,7 @@ class ListingParent < ActiveRecord::Base
   # select active listings
   def self.active
     select('listings.id, listings.pixi_id, listings.title, listings.category_id, categories.name AS category_name, listings.updated_at,
-      listings.status, listings.created_at, listings.seller_id, listings.site_id')
+      listings.status, listings.created_at, listings.seller_id, listings.site_id, listings.price')
     .joins(:category)
     .includes(:pictures)
     .where(where_stmt)
@@ -146,6 +146,11 @@ class ListingParent < ActiveRecord::Base
     seller_id == usr.id rescue nil
   end
 
+  # verify if pixi posted by PXB
+  def pixi_post?
+    !pixan_id.blank?
+  end
+
   # get category name for a listing
   def category_name
     category.name.titleize rescue nil
@@ -179,7 +184,12 @@ class ListingParent < ActiveRecord::Base
 
   # titleize title
   def nice_title
-    title.titleize rescue nil
+    unless title.blank?
+      str = price.blank? ? '' : ' - $' + price.to_i.to_s
+      title.index('$') ? title.titleize : title.titleize + str 
+    else
+      nil
+    end
   end
 
   # short title
@@ -266,8 +276,8 @@ class ListingParent < ActiveRecord::Base
 
   # set json string
   def as_json(options={})
-    super(methods: [:seller_name, :seller_photo, :active?, :job?, :has_year?, :event?, :summary, :short_title, :edit?, :new_status?, :free?,
-        :pending?, :category_name, :site_name, :start_dt, :seller_first_name, :med_title], 
+    super(methods: [:seller_name, :seller_photo, :summary, :short_title, :nice_title,
+        :category_name, :site_name, :start_dt, :seller_first_name, :med_title], 
       include: {pictures: { only: [:photo_file_name], methods: [:photo_url] }})
   end
 end

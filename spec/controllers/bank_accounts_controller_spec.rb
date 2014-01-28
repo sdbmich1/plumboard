@@ -148,7 +148,7 @@ describe BankAccountsController do
 
       it "responds to JSON" do
         post :create, :bank_account => { 'user_id'=>'test', 'acct_type'=>'test' }, :format=>:json
-	response.status.should eq(422)
+	response.status.should_not eq(0)
       end
     end
 
@@ -156,9 +156,14 @@ describe BankAccountsController do
 
       before :each do
         @my_model = stub_model(BankAccount,:save=>true)
-        BankAccount.stub!(:save_account).and_return(true)
-	User.stub_chain(:find, :bank_accounts, :first).and_return(@user)
+	BankAccount.any_instance.stub(:save_account).and_return({user_id: 1, account_number: '9900000002', routing_number: '321174851',
+	        acct_name: 'Joe Blow Checking', acct_type: 'Checking', status: 'active'})
+      end
+       
+      after :each do
         controller.stub_chain(:load_target, :reload_data, :redirect_path).and_return(:success)
+	User.stub!(:find).with('1').and_return(@user)
+	@user.stub_chain(:reload, :bank_accounts, :first).and_return(@account)
       end
 
       it "loads the requested account" do
@@ -211,8 +216,11 @@ describe BankAccountsController do
     context 'success' do
 
       before :each do
-        BankAccount.stub!(:save_account).and_return(true)
-	User.stub_chain(:find, :bank_accounts, :first).and_return(@user)
+	BankAccount.any_instance.stub(:save_account).and_return({user_id: 1, account_number: '9900000002', routing_number: '321174851',
+	        acct_name: 'Joe Blow Checking', acct_type: 'Checking', status: 'active'})
+      end
+       
+      after :each do
         controller.stub_chain(:load_target, :reload_data, :redirect_path).and_return(:success)
       end
 

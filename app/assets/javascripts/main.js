@@ -196,8 +196,11 @@ function load_slider(cntl) {
 
 $(document).ready(function(){
 
+  // enable tooltip
+  $('a').tooltip();
+
+  // enable placeholder text for input fields
   if( $('#px-container').length == 0 ) {
-    // enable placeholder text for input fields
     $('input, textarea').placeholder();
   }
   else {
@@ -230,6 +233,21 @@ $(document).ready(function(){
     SI.Files.stylizeAll();
   }
 
+  // set autocomplete to accept images
+  if ($('input#buyer_name').length > 0) {  
+    $("input#buyer_name").autocomplete({ html: true });
+  }
+
+  if ($('input#slr_name').length > 0) {  
+    $("input#slr_name").autocomplete({ html: true });
+  }
+
+  if ($('#rateit5').length > 0) {  
+     $('#done-btn').attr('disabled', true);
+     $("#rateit5").bind("rated", function (event, value)  { $('#value5').val(value); $('#done-btn').removeAttr('disabled'); });
+     $("#rateit5").bind('reset', function () { $('#value5').val(0); $('#done-btn').attr('disabled', true); });
+   //  $("#rateit5").bind('over', function (event, value) { $('#hover5').text('Hovering over: ' + value); });
+  }
 });
 
 // reload masonry on ajax calls to swap data
@@ -253,7 +271,6 @@ function reload_board(element) {
   var $container = $('#px-container');
 
   console.log('reload_board');
-
   $container.imagesLoaded( function(){
     $container.masonry('reload');
   });
@@ -264,7 +281,6 @@ function initScroll(cntr, nav, nxt, item) {
   var $container = $(cntr);
 
   console.log('initScroll');
-
   $container.infinitescroll({
       navSelector  : nav, 		// selector for the paged navigation (it will be hidden)
       nextSelector : nxt,  		// selector for the NEXT link (ie. page 2)  
@@ -387,15 +403,21 @@ function processUrl(url) {
   });
 }
 
-// set autocomplete to accept images
-if ($('input#buyer_name').length > 0) {  
-  $("input#buyer_name").autocomplete({ html: true });
-}
-
 // set autocomplete selection value
-$(document).on("railsAutocomplete.select", "#buyer_name", function(event, data){
+$(document).on("railsAutocomplete.select", "#buyer_name, #slr_name", function(event, data){
   var bname = data.item.first_name + ' ' + data.item.last_name;
   $('#buyer_name').val(bname);
+  $('#slr_name').val(bname);
+});
+
+// toggle profile state
+$(document).on('click', '#edit-txn-addr', function(e) {
+  $('.user-tbl, .addr-tbl').toggle();
+});
+
+// toggle credit card edit view
+$(document).on('click', '#edit-card-btn', function(e) {
+  $('.card-tbl, .card-dpl').toggle();
 });
 
 var keyPress = false; 
@@ -492,7 +514,7 @@ function resetBoard() {
       var url = '/listings/category?' + 'loc=' + loc + '&cid=' + cid; 
     }
     else {
-      var url = '/listings/location?' + 'loc=' + loc;
+      var url = '/listings/local?' + 'loc=' + loc;
     }
   }
   else {
@@ -521,6 +543,15 @@ $(function() {
 // toggle menu post menu item
 $(document).on('click', '.post-menu', function(e) {
   $('#mark-posts').toggle();
+});
+
+// toggle seller comments
+$(document).on('click', '#seller-cmt-btn', function(e) {
+  $('#cmt-fld').toggle();
+
+  $(this).text(function(i, text){
+    return text === "Add Comment" ? "Hide Comment" : "Add Comment";
+  });
 });
 
 // toggle menu post menu item

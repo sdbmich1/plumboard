@@ -122,7 +122,7 @@ describe ListingsController do
     end
   end
 
-  describe 'GET location' do
+  describe 'GET local' do
     before(:each) do
       @listings = stub_model(Listing)
       Listing.stub!(:get_by_city).and_return(@listings)
@@ -131,11 +131,11 @@ describe ListingsController do
     end
 
     def do_get
-      xhr :get, :location, loc: '1'
+      xhr :get, :local, loc: '1'
     end
 
-    it "renders the :location view" do
-      response.should render_template :location
+    it "renders the :local view" do
+      response.should render_template :local
     end
 
     it "assigns @listings" do
@@ -143,7 +143,7 @@ describe ListingsController do
     end
 
     it "responds to JSON" do
-      get :location, loc: '1', format: :json
+      get :local, loc: '1', format: :json
       expect(response).to be_success
     end
   end

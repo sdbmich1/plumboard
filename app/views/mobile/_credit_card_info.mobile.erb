@@ -1,16 +1,27 @@
-<table class='mtop inv-descr'>
+<table class='inv-descr card-dpl' style="<%= @user.has_card_account? ? '' : 'display:none' %>">
+  <% if @user.has_card_account? %>
+    <tr><td class='cal-size mbot'>Card Info:<br>
+      <br><%= "************#{@user.card_account.first.card_no}" %>
+      <br><%= "Exp: #{@user.card_account.first.expiration_month}/#{@user.card_account.first.expiration_year}" %></td>
+      <td class='v-align price'>
+        <%= link_to 'Change', id: 'edit-card-btn', 'data-role'=>'button', 'data-mini'=>'true', 'data-theme'=>'b', 'data-inline'=>'true' %></td>
+    </tr>
+  <% end %>
+</table>
+<table class='mtop inv-descr card-tbl' style="<%= !@user.has_card_account? ? '' : 'display:none' %>">
   <tr>
-    <td class='cal-size'>Card #* <%= image_tag('cc_logos.jpeg', :class=>'cc-logo') %>
-    <%= text_field_tag :card_number, nil, name: nil, :size => 16 %></td>
+    <td class='cal-size'>Card #* <%= image_tag('rsz_cc_logos.jpg') %>
+      <%= text_field_tag :card_number, nil, name: nil, :size => 16 %>
+    </td>
   </tr>
   <tr>
     <td>
-      <table>
-      <tr>
+      <table><tr>
         <td><div class='sm-top'>CVV*</div><%= text_field_tag :card_code, nil, name: nil, :maxlength => 4, :size => 4, :class=>'card-code' %></td>
 	<td></td>
         <td>Exp Mo*<%= select_month nil, {use_short_month: true}, {name: nil, id: "card_month", 'data-mini'=>'true'} %></td>
-        <td>Exp Yr*<%= select_year nil, {start_year: Date.today.year+1, end_year: Date.today.year+15}, {name: nil, id: "card_year", 'data-mini'=>'true'} %></td>
+        <td>Exp Yr*<%= select_year nil, {start_year: Date.today.year+1, end_year: Date.today.year+15}, {name: nil, id: "card_year", 'data-mini'=>'true'} %>
+	</td>
       </tr></table>
     </td>
   </tr>

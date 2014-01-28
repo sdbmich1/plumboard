@@ -16,6 +16,7 @@
  *= require pages
  *= require scaffolds
  *= require listings
+ *= require rateit
  *= require_self
  */
 

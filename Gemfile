@@ -160,6 +160,7 @@ group :test do
   gem "database_cleaner"
   gem 'connection_pool'
   gem 'selenium-webdriver'
+  gem 'shoulda-matchers'
   # gem "webmock", "~> 1.11.0"
   gem "fakeweb", "~> 1.3"
 end

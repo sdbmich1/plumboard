@@ -133,10 +133,10 @@ GEM
     excon (0.21.0)
     execjs (1.4.0)
       multi_json (~> 1.0)
-    factory_girl (4.2.0)
+    factory_girl (4.3.0)
       activesupport (>= 3.0.0)
-    factory_girl_rails (4.2.0)
-      factory_girl (~> 4.2.0)
+    factory_girl_rails (4.3.0)
+      factory_girl (~> 4.3.0)
       railties (>= 3.0.0)
     faker (1.1.2)
       i18n (~> 0.5)
@@ -188,7 +188,7 @@ GEM
       multi_xml (>= 0.5.2)
     httpauth (0.2.0)
     httpclient (2.3.2)
-    i18n (0.6.5)
+    i18n (0.6.9)
     innertube (1.1.0)
     journey (1.0.4)
     jquery-rails (2.2.1)
@@ -199,7 +199,7 @@ GEM
       railties (>= 3.1.0)
     jquery-ui-themes (0.0.8)
       httparty
-    json (1.8.0)
+    json (1.8.1)
     jwt (0.1.5)
       multi_json (>= 1.0)
     launchy (2.1.2)
@@ -219,7 +219,7 @@ GEM
     money (5.1.0)
       i18n (~> 0.6.0)
     mono_logger (1.1.0)
-    multi_json (1.7.9)
+    multi_json (1.8.4)
     multi_xml (0.5.3)
     multipart-post (1.2.0)
     mysql2 (0.3.12)
@@ -316,7 +316,7 @@ GEM
       rake (>= 0.8.7)
       rdoc (~> 3.4)
       thor (>= 0.14.6, < 2.0)
-    rake (10.0.3)
+    rake (10.1.1)
     rb-fchange (0.0.5)
       ffi
     rb-fsevent (0.9.3)
@@ -381,6 +381,8 @@ GEM
       multi_json (~> 1.0)
       rubyzip
       websocket (~> 1.0.4)
+    shoulda-matchers (2.5.0)
+      activesupport (>= 3.0.0)
     sinatra (1.4.3)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -405,7 +407,7 @@ GEM
       innertube (>= 1.0.2)
       middleware (>= 0.1.0)
       riddle (>= 1.5.7)
-    thor (0.17.0)
+    thor (0.18.1)
     tilt (1.4.1)
     timeliness (0.3.7)
     treetop (1.4.14)
@@ -506,6 +508,7 @@ DEPENDENCIES
   rvm-capistrano
   sass-rails (= 3.2.5)
   selenium-webdriver
+  shoulda-matchers
   spork (~> 1.0rc)
   stripe
   therubyracer

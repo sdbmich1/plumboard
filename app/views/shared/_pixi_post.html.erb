@@ -1,0 +1,36 @@
+<div><%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: @user} %>
+  <%= @user.name %>
+</div>      
+<div class='row'>
+  <div class='span2'> 
+    <%= f.label :preferred_date, 'Preferred Date', class: 'med-top' %>
+    <%= f.text_field :preferred_date, value: @post.preferred_date, id: "start-date" %>
+  </div>
+  <div class='offset1 span2'>
+    <%= f.label :preferred_time, 'Preferred Time', class: 'med-top' %>
+    <%= f.time_select :preferred_time, { :combined => true, :default => Time.now.change(:hour => 12), 
+    	  :minute_interval => 30, :time_separator => "" }, :id=>'start-time', :class=>'pixi-select' %>
+  </div>
+  <div class='offset1 span2'>
+    <%= f.label :alt_date, 'Alt Date', class: 'med-top' %>
+    <%= f.text_field :alt_date, :value => @post.alt_date, :size => 10, :id => "end-date" %>
+  </div>
+  <div class='offset1 span2'>
+    <%= f.label :alt_time, 'Alt Time', class: 'med-top' %>
+    <%= f.time_select :alt_time, { :combined => true, :default => Time.now.change(:hour => 12), 
+    	  :minute_interval => 30, :time_separator => "" }, :id=>'end-time', :class=>'pixi-select' %>
+  </div>
+</div>
+<div class='row'>
+  <div class='span2'>
+    <%= f.label :quantity %>
+    <%= f.text_field :quantity, :size => 10, value: num_display(f.object, "quantity"), class: 'width120', placeholder: 'Qty' %>
+  </div>
+  <div class='span2'>
+    <%= f.label :value %>
+    <%= f.text_field :value, :size => 10, value: num_display(f.object, "value"), class: 'width120', placeholder: 'Value' %>
+  </div>
+  <div class='span7'>
+    <%= f.label :description, class: 'med-top' %><%= f.text_area :description, :placeholder => 'Describe Your Pixi' %>
+  </div>
+</div>

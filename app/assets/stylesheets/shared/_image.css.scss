@@ -1,5 +1,8 @@
 /* primary listing(pixi) image */
-.pic-item { border: 1px solid #AAAAAA; box-shadow: 1px 1px 1px 1px #ccc; padding: 3px; }
+.pic-item { border: 1px solid #AAAAAA; padding: 3px; 
+  box-shadow: 1px 1px 1px 1px #ccc;
+}
+
 .bot-descr { font-size: 0.675em; color: #555555; }
 .item-descr { color: #000; }
 
@@ -58,10 +61,10 @@
 }
 
 .pixi-photo img {
-  max-height: 125px!important;
-  width: 125px;
+  max-height: 100px!important;
+  width: 100px;
   @extend .pic-item;
-  margin: 10px 5px 10px 0;
+  margin: 0 5px 10px 0;
 }
 
 .inv-pic img {
@@ -75,6 +78,11 @@
   width: 60px!important;
   @extend .pic-item;
   margin: 5px 10px 0 5px;
+}
+
+.browse-img {
+  height: 180px;
+  width: 180px;
 }
 
 /* user image thumbnails */
@@ -117,8 +125,8 @@ img.usr-med-photo {
 }
 
 .grey-text { color: #ccc; }
-.mtop {margin-top: 20px;}
-.mbot {margin-bottom: 15px;}
+.mtop {margin-top: 20px!important;}
+.mbot {margin-bottom: 15px!important;}
 
 .img-valign {
   vertical-align: middle!important;

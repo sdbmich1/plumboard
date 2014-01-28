@@ -4,12 +4,13 @@ class TempListingsController < ApplicationController
   before_filter :load_data, only: [:unposted]
   before_filter :set_params, only: [:create, :update]
   autocomplete :site, :name, :full => true
+  autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name
   include ResetDate
   respond_to :html, :json, :js, :mobile
   layout :page_layout
 
   def new
-    @listing = TempListing.new
+    @listing = TempListing.new pixan_id: params[:pixan_id]
     @photo = @listing.pictures.build
   end
 
@@ -59,7 +60,7 @@ class TempListingsController < ApplicationController
     @listing = TempListing.find_by_pixi_id params[:id]
     respond_with(@listing) do |format|
       if @listing.resubmit_order
-        format.html { redirect_to listings_path }
+        format.html { redirect_to root_path }
         format.json { render json: {listing: @listing} }
       else
         format.html { render action: :show, error: "Pixi was not submitted. Please try again." }
@@ -72,7 +73,7 @@ class TempListingsController < ApplicationController
     @listing = TempListing.find_by_pixi_id params[:id]
     respond_with(@listing) do |format|
       if @listing.resubmit_order
-        format.html { redirect_to listings_path }
+        format.html { redirect_to root_path }
         format.json { render json: {listing: @listing} }
       else
         format.html { render action: :show, error: "Pixi was not submitted. Please try again." }
@@ -83,8 +84,17 @@ class TempListingsController < ApplicationController
 
   def destroy
     @listing = TempListing.find_by_pixi_id params[:id]
-    @listing.destroy  
-    respond_with(@listing)
+    respond_with(@listing) do |format|
+      if @listing.destroy  
+        format.html { redirect_to root_path }
+        format.mobile { redirect_to root_path }
+	format.json { head :ok }
+      else
+        format.html { render action: :show, error: "Pixi was not removed. Please try again." }
+        format.mobile { render action: :show, error: "Pixi was not removed. Please try again." }
+        format.json { render json: { errors: @listing.errors.full_messages }, status: 422 }
+      end
+    end
   end
 
   def unposted
@@ -113,7 +123,7 @@ class TempListingsController < ApplicationController
 
   def get_autocomplete_items(parameters)
     items = super(parameters)
-    items = items.active
+    items = items.active rescue items
   end
 
 end

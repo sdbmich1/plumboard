@@ -16,7 +16,7 @@ class User < ActiveRecord::Base
   attr_accessible :first_name, :last_name, :email, :password, :password_confirmation, :remember_me, :birth_date, :gender, :pictures_attributes,
     :fb_user, :provider, :uid, :contacts_attributes, :status, :card_token
 
-  before_save :ensure_authentication_token
+  before_save :ensure_authentication_token unless Rails.env.test?
 
   # define relationships
   has_many :listings, foreign_key: :seller_id
@@ -129,6 +129,11 @@ class User < ActiveRecord::Base
   # return whether user has any bank accounts
   def has_bank_account?
     bank_accounts.count > 0 rescue nil
+  end
+
+  # return whether user has any card accounts
+  def has_card_account?
+    card_accounts.count > 0 rescue nil
   end
 
   # converts date format

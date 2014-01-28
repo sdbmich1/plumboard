@@ -59,20 +59,18 @@ module ApplicationHelper
 
   # set pixi logo home path
   def pixi_home
+    cls = mobile_device? ? 'px-logo' : controller_name == 'transactions' ? 'ppay-logo' : 'pixi-logo'
     if mobile_device?
-      if controller_name == 'listings' && !refresh_page?(action_name)
-        link_to image_tag('sm_px_word_logo.png'), '#', id: 'home-link', class: "px-logo"
-      else
-        link_to image_tag('sm_px_word_logo.png'), get_home_path, class: "px-logo"
-      end
+      logo = controller_name == 'transactions' ? 'sm_pixipay.png' : 'sm_px_word_logo.png'
     else
-      link_to image_tag('px_word_logo.png'), get_home_path, class: "pixi-logo"
+      logo = controller_name == 'transactions' ? 'rsz_pixipay.png' : 'px_word_logo.png'
     end
+    link_to image_tag(logo, class: cls), root_path
   end
 
   # set home path
   def get_home_path
-    signed_in? ? listings_path : root_path 
+    signed_in? ? categories_path : root_path 
   end
 
   # set image
@@ -94,18 +92,24 @@ module ApplicationHelper
     tm.utc.getlocal.strftime('%m/%d/%Y') if tm
   end
 
+  # parse navbar menu
+  def parse_item val, item
+    (val.is_a? String) ? val : val[item.to_sym]
+  end
+
   # set appropriate submenu nav bar
   def set_submenu *args
-    case args[0]
-      when 'Invoices'; render partial: 'shared/navbar_invoices', locals: { active: 'sent' }
-      when 'My Invoices'; render partial: 'shared/navbar_invoices', locals: { active: 'create' }
+    case parse_item(args[0], 'name')
+      when 'Invoices'; render partial: 'shared/navbar_invoices', locals: { active: parse_item(args[0], 'action') || 'sent' }
       when 'Categories'; render 'shared/navbar_categories'
       when 'Pixis'; render 'shared/navbar_pixis'
       when 'Pixi'; render 'shared/navbar_show_pixi'
       when 'My Pixis'; render 'shared/navbar_mypixis'
       when 'My Accounts'; render 'shared/navbar_accounts'
       when 'Pending Orders'; render 'shared/navbar_pending'
-      when 'Posts'; render 'shared/navbar_posts'
+      when 'Messages'; render 'shared/navbar_posts'
+      when 'Home'; render 'shared/navbar_home'
+      when 'PixiPost'; render 'shared/navbar_pixi_post'
       else render 'shared/navbar_main'
     end
   end
@@ -148,8 +152,10 @@ module ApplicationHelper
 
   # set path based on invoice count
   def get_unpaid_path
-    @invoice = @user.unpaid_received_invoices.first
-    @user.unpaid_invoice_count > 1 ? received_invoices_path : invoice_path(@invoice)
+    if @user.unpaid_invoice_count > 1 
+      @invoice = @user.unpaid_received_invoices.first
+      invoice_path(@invoice)
+    end
   end
 
   # toggle header if str matches

@@ -5,7 +5,8 @@ class Rating < ActiveRecord::Base
   belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id"
   belongs_to :seller, class_name: 'User', foreign_key: :seller_id
 
-  validates :comments, :presence => true 
   validates :user_id, :presence => true
+  validates :pixi_id, :presence => true
+  validates :seller_id, :presence => true
   validates :value, :presence => true
 end

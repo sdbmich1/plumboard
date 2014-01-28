@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature "Posts" do
+feature "Messages" do
   subject { page }
   let(:user) { FactoryGirl.create(:pixi_user) }
 
@@ -32,7 +32,7 @@ feature "Posts" do
     }.to change(Post,:count).by(1)
   end
 
-  describe 'Received posts w no posts' do
+  describe 'Received messages w no messages' do
     before :each do
       visit listings_path 
       click_on 'notice-btn'
@@ -41,12 +41,12 @@ feature "Posts" do
     it { should have_link('Sent', href: sent_posts_path) }
     it { should have_link('Received', href: posts_path) }
     it { should_not have_link('Mark All Read', href: mark_posts_path) }
-    it { should have_content 'No posts found.' }
+    it { should have_content 'No messages found.' }
     it { should_not have_button('Pay') }
     it { should_not have_button('Reply') }
   end
 
-  describe 'Received posts' do
+  describe 'Received messages' do
     before :each do
       add_post
       visit listings_path 
@@ -60,11 +60,11 @@ feature "Posts" do
     it { should have_link('Mark All Read', href: mark_posts_path) }
     it { should_not have_button('Pay') }
 
-    it "replies to a post", js: true do
+    it "replies to a message", js: true do
       send_reply
     end
      
-    it "does not reply to a post", js: true do
+    it "does not reply to a message", js: true do
       expect{
 	  fill_in 'reply_content', with: nil
           click_reply
@@ -95,7 +95,7 @@ feature "Posts" do
     end
   end
      
-  describe 'Received posts - ajax', js: true do
+  describe 'Received messages - ajax', js: true do
     before :each do
       add_post
       add_invoice
@@ -111,11 +111,11 @@ feature "Posts" do
     it { should have_button('Reply') }
     it { should have_button('Pay') }
 
-    it "should reply to a post" do
+    it "replies to a message" do
       send_reply
     end
      
-    it "should not reply to a post" do
+    it "does not reply to a message" do
       expect{
 	  fill_in 'reply_content', with: nil
           click_reply
@@ -124,32 +124,32 @@ feature "Posts" do
       page.should have_content "Content can't be blank"
     end
 
-    it "should pay an invoice" do
+    it "pays an invoice" do
       click_on 'Pay'
       page.should have_selector('title', text: 'Pay Invoice')
       page.should have_content 'Total Due'
     end
   end
      
-  describe 'sent posts w/o posts' do
+  describe 'No sent messages' do
     before :each do 
       visit posts_path 
     end
 
-    it 'shows no sent posts', js: true do
+    it 'shows no sent messages', js: true do
       click_on 'Sent'
       page.should_not have_link('Mark All Read', href: mark_posts_path) 
-      page.should have_content 'No posts found' 
+      page.should have_content 'No messages found' 
     end
   end
      
-  describe 'sent posts' do
+  describe 'sent messages' do
     before :each do 
       @reply_post = FactoryGirl.create :post, user: @user, recipient: @sender, listing: @listing, pixi_id: @listing.pixi_id
       visit posts_path 
     end
 
-    it 'shows sent posts', js: true do
+    it 'shows sent messages', js: true do
       click_on 'Sent'
       page.should_not have_link('Mark All Read', href: mark_posts_path) 
       page.should have_content @reply_post.recipient.name 

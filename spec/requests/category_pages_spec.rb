@@ -34,6 +34,21 @@ feature "Categories" do
     it { should_not have_link(@category.name, href: edit_category_path(@category))}
   end
 
+  describe "Home Page w/ Login" do 
+    let(:user) { FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Snow', email: 'jack.snow@pixitest.com', confirmed_at: Time.now }
+
+    before do
+      user_login
+      visit root_path 
+    end
+
+    it { should have_content('Home') }
+    it { should have_content(@category.name_title) }
+    it { should have_content('Computer') }
+    it { should_not have_content('Stuff') }
+    it { should_not have_link(@category.name, href: edit_category_path(@category))}
+  end
+
   describe "Show Categories - listings" do 
     let(:user) { FactoryGirl.create(:pixi_user, first_name: 'Jack', last_name: 'Snow', email: 'jack.snow@pixitest.com') }
 

@@ -1,8 +1,7 @@
-<div class="div-border">  
-  <h4 class="grp-hdr"><%= "1. Review Your #{get_page_header}" %></h4>
+<div class="sm-top div-border">  
   <div class="mtop">  
-    <span class="span2">
-      <%= render :partial => 'shared/show_photo', :locals => {model: @listing, psize: '180x180', file_name:'pixi-photo', display_cnt: 0} %>
+    <span class="offset1 span2">
+      <%= render :partial => 'shared/show_photo', :locals => {model: @listing, psize: '100x100', file_name:'pixi-photo', display_cnt: 0} %>
     </span>
     <div class="offset3">
       <% if @order[:transaction_type] == 'invoice' %>
@@ -11,7 +10,7 @@
         <h5><%= @listing.title %></h5>
       <% end %>
     </div>
-    <table class="offset3">
+    <table class="offset3 mtop mbot">
       <%= render :partial=>'shared/order_details', :locals=>{:order=>@order, :paid=>false} %>
       <tr></tr>
     </table>

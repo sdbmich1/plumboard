@@ -3,6 +3,7 @@
 </div>
 <div class='span4'>
   Posted By: <%= listing.seller_name %> 
+  <div class="rateit smpixis" data-rateit-value="<%= get_rating listing.user %>" data-rateit-ispreset="true" data-rateit-readonly="true"></div>
   <% unless !listing.active? || listing.seller?(@user) %>
     <div id='post_form'><%= render partial: 'shared/contact', locals: { listing: listing } %></div>
   <% end %>  

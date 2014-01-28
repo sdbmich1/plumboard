@@ -173,19 +173,12 @@ feature "Transactions" do
       page.should have_content "INVOICE" 
     end
 
-    it "creates a stripe transaction with valid visa card", :js=>true do
-      CREDIT_CARD_API = 'stripe'
-      expect { 
-        credit_card_data
-	}.to change(Transaction, :count).by(1)
-
-      page.should have_content("Purchase Complete")
-    end
-
     it "creates a balanced transaction with valid visa card", :js=>true do
       expect { 
         credit_card_data '4111111111111111'
         page.should have_content("Purchase Complete")
+        page.should have_content("Please Rate Your Seller")
+        page.should have_button('Add Comment') 
       }.to change(Transaction, :count).by(1)
     end
 
@@ -193,6 +186,8 @@ feature "Transactions" do
       expect { 
         credit_card_data '5105105105105100'
         page.should have_content("Purchase Complete")
+        page.should have_content("Please Rate Your Seller")
+        page.should have_button('Add Comment') 
       }.to change(Transaction, :count).by(1)
     end
 
@@ -200,6 +195,8 @@ feature "Transactions" do
       expect { 
         credit_card_data '341111111111111', '1234'
         page.should have_content("Purchase Complete")
+        page.should have_content("Please Rate Your Seller")
+        page.should have_button('Add Comment') 
       }.to change(Transaction, :count).by(1)
     end
   end

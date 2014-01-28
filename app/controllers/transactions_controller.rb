@@ -17,24 +17,26 @@ class TransactionsController < ApplicationController
     @transaction = @user.transactions.build params[:transaction] 
     respond_with(@transaction) do |format|
       if @transaction.save_transaction(params[:order], @listing)
-        format.json { render json: {user: @user, transaction: @transaction} }
+        format.json { render json: {transaction: @transaction} }
       else
-        format.json { render json: { "errors" => @transaction.errors }, :status => 422 }
+        format.html { redirect_to new_transaction_path(order: @order, id: params[:id]), error: @transaction.errors.full_messages }
+        format.json { render json: { errors: @transaction.errors.full_messages }, status: 422 }
       end
     end
   end
 
   def show
     @transaction = Transaction.find params[:id]
+    @rating = @user.ratings.build
     respond_with(@transaction) do |format|
-      format.json { render json: {user: @user, transaction: @transaction} }
+      format.json { render json: {transaction: @transaction} }
     end
   end
 
   def index
     @transactions = Transaction.all
     respond_with(@transactions) do |format|
-      format.json { render json: {user: @user, transactions: @transactions} }
+      format.json { render json: {transactions: @transactions} }
     end
   end
 

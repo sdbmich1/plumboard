@@ -1,3 +1,1 @@
-<% if @categories %>
-  <%= link_to_if @categories.next_page, "Next", categories_path(page: @categories.next_page), class: 'nxt-pg', remote: true %>
-<% end %>
+<%= link_to "Next", categories_path(page: @categories.next_page), class: 'nxt-pg', remote: true if @categories.next_page %>

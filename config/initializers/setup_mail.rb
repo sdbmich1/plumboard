@@ -1,5 +1,3 @@
-ActionMailer::Base.delivery_method = :smtp
-
 # set user and password
 yml = YAML::load_file("#{Rails.root}/config/sendmail.yml")[Rails.env]
 uname, pwd, domain, host_url, smtp_addr = yml['user_name'], yml['password'], yml['domain'], yml['host'], yml['smtp_addr']

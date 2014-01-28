@@ -1,4 +1,5 @@
 module ListingsHelper
+  include RatingManager
 
   # format time
   def get_local_time(tm)
@@ -94,5 +95,9 @@ module ListingsHelper
       else
         '/listings?page='
     end
+  end
+
+  def get_rating usr
+    RatingManager::avg_rating usr
   end
 end

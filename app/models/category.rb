@@ -62,9 +62,19 @@ class Category < ActiveRecord::Base
     loc.blank? ? active_listings : active_listings.where("site_id = ?", loc)
   end
 
+  # active pixi categories
+  def self.active_pixi_categories
+    select('categories.id, categories.name').joins(:listings).group('categories.id')
+  end
+
   # check for subcategories
   def subcats?
     !subcategories.empty?
+  end
+
+  # get category pixi count
+  def pixi_count loc
+    active_pixis_by_site(loc).size rescue 0
   end
 
   # set json string

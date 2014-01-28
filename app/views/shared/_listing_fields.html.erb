@@ -1,14 +1,34 @@
 <%= render partial: 'shared/edit_photo_form', locals: {model: @listing, psize: 'sm-thumb', form: f, remove_photo: true } %>
 <div class='row'>
-  <div class='span1'>Add photo(s)</div>
+  <div class='span2'>Add photo(s)</div>
   <div id='add-pixi-photo' class='span10'>
     <output id='list'><%= image_tag 'photo-camera.png', class: 'sm-thumb' %></output>
     <%= render partial: 'shared/photo', locals: { f: f } %>
   </div>
 </div>
+<div class='row'>
+  <div class='span7' style="<%= !@listing.pixi_post? ? 'display:none' : '' %>">
+    <%= f.label :seller_id, 'Seller' %>
+    <%= autocomplete_field_tag 'slr_name', @listing.slr_name, autocomplete_user_first_name_temp_listings_path,
+	        :update_elements => { :id => '#seller_id' }, :placeholder => 'Seller Name', :autofocus => true %> 
+    <%= f.hidden_field :seller_id, id: 'seller_id' %>
+  </div>
+</div>
+<div class='row'>
+  <div class='span7'>
+    <%= f.label :site_id, 'Location' %>
+    <%= autocomplete_field_tag 'site_name', @listing.site_name, autocomplete_site_name_temp_listings_path,
+	        :update_elements => { :id => '#site_id' }, :placeholder => 'Pixi Location', :autofocus => true %> 
+    <%= f.hidden_field :site_id, id: 'site_id' %>
+  </div>
+  <div class='span4'>
+    <%= f.label :category_id, 'Category' %>
+    <%= f.collection_select :category_id, Category.active, :id, :name_title, {:prompt => 'Select'}, {class: 'pixi-select'} %>
+  </div>
+</div>
 <div class='row' id='input-form'>
   <div class='span7'>
-    <%= f.label :title %><%= f.text_field :title, :autofocus => true, :placeholder => 'Pixi Title' %>
+    <%= f.label :title %><%= f.text_field :title, :placeholder => 'Pixi Title' %>
   </div>
   <div class='span2' id='price-fld' style="<%= @listing.job? ? 'display:none' : '' %>"><%= f.label :price %>
     <%= f.text_field :price, :size => 10, value: num_display(f.object, "price"), class: 'width120', placeholder: 'Price' %>
@@ -18,18 +38,6 @@
           {id: 'yr_built', class: 'pixi-select'} %></div>
   <div class='span4' id='comp-fld' style="<%= !@listing.job? ? 'display:none' : '' %>"><%= f.label :compensation %>
     <%= f.text_field :compensation, id: 'salary' %></div>
-</div>
-<div class='row'>
-  <div class='span7'>
-    <%= f.label :site_id, 'Location' %>
-    <%= autocomplete_field_tag 'site_name', @listing.site_name, autocomplete_site_name_temp_listings_path,
-	        :update_elements => { :id => '#site_id' }, :placeholder => 'Pixi Location' %> 
-    <%= f.hidden_field :site_id, id: 'site_id' %>
-  </div>
-  <div class='span4'>
-    <%= f.label :category_id, 'Category' %>
-    <%= f.collection_select :category_id, Category.active, :id, :name_title, {:prompt => 'Select'}, {class: 'pixi-select'} %>
-  </div>
 </div>
 <div class='row' id='event-fields' style="<%= !@listing.event? ? 'display:none' : '' %>">
   <div class='span2'> 

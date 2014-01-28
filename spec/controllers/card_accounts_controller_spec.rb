@@ -158,7 +158,8 @@ describe CardAccountsController do
     context 'success' do
 
       before :each do
-        CardAccount.stub!(:save_account).and_return(true)
+        CardAccount.any_instance.stub(:save_account).and_return({user_id: 1, card_number: '4111111111111111', status: 'active', card_code: '123',
+            expiration_month: 6, expiration_year: 2019, zip: '94108'})
       end
 
       it "loads the requested account" do
@@ -212,9 +213,8 @@ describe CardAccountsController do
     context 'success' do
 
       before :each do
-        CardAccount.stub!(:save_account).and_return(true)
-	User.stub_chain(:find, :card_accounts, :first).and_return(@user)
-        controller.stub_chain(:load_target, :reload_data, :redirect_path).and_return(:success)
+        CardAccount.any_instance.stub(:save_account).and_return({user_id: 1, card_number: '4111111111111111', status: 'active', card_code: '123',
+            expiration_month: 6, expiration_year: 2019, zip: '94108'})
       end
 
       it "loads the requested account" do

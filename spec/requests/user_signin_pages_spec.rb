@@ -90,7 +90,7 @@ feature "UserSignins" do
       it { should have_link('My Posts', href: posts_path) }
       it { should have_link('My Invoices', href: invoices_path) }
       it { should have_link('My Accounts', href: new_bank_account_path) }
-      it { should have_link('Settings', href: settings_path) }
+      it { should have_link('My Settings', href: settings_path) }
       it { should_not have_link('Users', href: users_path) }
       it { should_not have_link('Sign in', href: new_user_session_path) }
 
@@ -118,7 +118,7 @@ feature "UserSignins" do
       it { should have_link('My Posts', href: posts_path) }
       it { should have_link('My Invoices', href: invoices_path) }
       it { should have_link('My Accounts', href: new_bank_account_path) }
-      it { should have_link('Settings', href: settings_path) }
+      it { should have_link('My Settings', href: settings_path) }
       it { should have_link('Sign out', href: destroy_user_session_path) }
       it { should_not have_link('Sign in', href: new_user_session_path) }
 
@@ -146,7 +146,7 @@ feature "UserSignins" do
       it { should have_link('My Posts', href: posts_path) }
       it { should have_link('My Invoices', href: invoices_path) }
       it { should have_link('My Accounts', href: new_bank_account_path) }
-      it { should have_link('Settings', href: settings_path) }
+      it { should have_link('My Settings', href: settings_path) }
       it { should have_link('Sign out', href: destroy_user_session_path) }
       it { should_not have_link('Sign in', href: new_user_session_path) }
 
@@ -187,7 +187,7 @@ feature "UserSignins" do
       it { should have_link('My Pixis', href: seller_listings_path) }
       it { should have_link('My Posts', href: posts_path) }
       it { should have_link('My Invoices', href: invoices_path) }
-      it { should have_link('Settings', href: settings_path) }
+      it { should have_link('My Settings', href: settings_path) }
       it { should have_link('Sign out', href: destroy_user_session_path) }
       it { should_not have_link('Sign in', href: new_user_session_path) }
 

@@ -42,27 +42,27 @@ class Transaction < ActiveRecord::Base
   # pre-load new transaction for given user
   def self.load_new usr, listing, order
     if usr && listing
-      new_transaction = listing.build_transaction
+      txn = listing.build_transaction
 
       # set transaction amounts
-      new_transaction.amt = CalcTotal::process_order order
-      new_transaction.processing_fee = CalcTotal::get_processing_fee
-      new_transaction.convenience_fee = CalcTotal::get_convenience_fee
-      new_transaction.transaction_type = order[:transaction_type]
+      txn.amt = CalcTotal::process_order order
+      txn.processing_fee = CalcTotal::get_processing_fee order[:inv_total]
+      txn.convenience_fee = CalcTotal::get_convenience_fee order[:inv_total]
+      txn.transaction_type = order[:transaction_type]
 
       # load user info
-      new_transaction.user_id = usr.id
-      new_transaction.first_name, new_transaction.last_name, new_transaction.email = usr.first_name, usr.last_name, usr.email
+      txn.user_id = usr.id
+      txn.first_name, txn.last_name, txn.email = usr.first_name, usr.last_name, usr.email
       
       # load user contact info
       if usr.contacts[0]
-        new_transaction.address, new_transaction.address2 = usr.contacts[0].address, usr.contacts[0].address2
-        new_transaction.city, new_transaction.state = usr.contacts[0].city, usr.contacts[0].state
-        new_transaction.zip, new_transaction.home_phone = usr.contacts[0].zip, usr.contacts[0].home_phone
-        new_transaction.country = usr.contacts[0].country
+        txn.address, txn.address2 = usr.contacts[0].address, usr.contacts[0].address2
+        txn.city, txn.state = usr.contacts[0].city, usr.contacts[0].state
+        txn.zip, txn.home_phone = usr.contacts[0].zip, usr.contacts[0].home_phone
+        txn.country = usr.contacts[0].country
       end
     end
-    new_transaction
+    txn
   end
 
   # add each transaction item
@@ -85,24 +85,24 @@ class Transaction < ActiveRecord::Base
     transaction_type == 'pixi'
   end
 
+  def valid_card?
+    card_number.blank? || cvv.blank? || (card_month < Date.today.month && card_year <= Date.today.year) ? false : true
+  end
+
   # check for token
   def has_token?
+    Rails.logger.info 'Token = ' + self.token
     if token.blank?
-      card_num = card_number[card_number.length-4..card_number.length]
-      unless card = user.card_accounts.where(:card_no => card_num).first
-	card = user.card_accounts.build card_number: self.card_number, expiration_month: self.card_month,
-	         expiration_year: self.card_year, card_code: self.cvv, zip: self.zip 
-	card.save_account 
-      end
-      self.token = card.token
+      errors.add :base, "Card info is missing or invalid. Please re-enter."
+      false
     else
-      true 
+      user.has_card_account? ? true : CardAccount.add_card(self, self.token)
     end
   end
 
   # save transaction
   def save_transaction order, listing
-    if has_token? && valid?
+    if valid?
       # add transaction details      
       (1..order[:cnt].to_i).each do |i| 
         if order['quantity'+i.to_s].to_i > 0 
@@ -119,11 +119,16 @@ class Transaction < ActiveRecord::Base
         listing.submit_order(self.id) unless self.errors.any?
       else
         # process credit card
-        if process_transaction
-	  inv = listing.get_invoice(order["invoice_id"])
+	if has_token? 
+          if process_transaction
+	    inv = listing.get_invoice(order["invoice_id"])
 
-	  # submit payment
-	  inv.submit_payment(self.id) if inv
+	    # submit payment
+	    inv.submit_payment(self.id) if inv
+	  else
+            errors.add :base, "Transaction processing failed. Please re-enter."
+	    false
+	  end
 	else
 	  false
 	end
@@ -158,14 +163,26 @@ class Transaction < ActiveRecord::Base
     first_name + ' ' + last_name rescue nil
   end
 
+  # get invoice pixi id
+  def pixi_id
+    get_invoice.pixi_id rescue nil
+  end
+
+  # get invoice seller id
+  def seller_id
+    get_invoice.seller_id rescue nil
+  end
+
   # check if address is populated
   def has_address?
-    !(address.blank? && city.blank? && state.blank? && zip.blank?)
+    !address.blank? && !city.blank? && !state.blank? && !zip.blank?
   end
   
   # process transaction
   def process_transaction
     if valid? 
+      Rails.logger.info 'Processing fee = ' + self.processing_fee.to_s
+
       # charge the credit card
       result = Payment::charge_card(token, amt, description, self) if amt > 0.0
 
@@ -200,6 +217,11 @@ class Transaction < ActiveRecord::Base
   # format txn date
   def txn_dt
     created_at.utc.getlocal.strftime('%m/%d/%Y') rescue nil
+  end
+
+  # get txn fees
+  def get_fee
+    convenience_fee + processing_fee rescue nil
   end
 
   # set json string

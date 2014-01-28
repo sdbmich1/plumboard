@@ -32,6 +32,7 @@ class CardAccount < ActiveRecord::Base
   # set flds
   def set_flds
     self.status = 'active'
+    self.default_flg = 'Y' unless self.user.has_card_account?
   end
 
   # add new card
@@ -51,6 +52,26 @@ class CardAccount < ActiveRecord::Base
     end
 
     # save new account
-    save
+    save!
+  end
+
+  # add card 
+  def self.add_card model, token=nil
+    card_num = model.card_number[model.card_number.length-4..model.card_number.length] 
+
+    # check if card exists
+    unless card = model.user.card_accounts.where(:card_no => card_num).first
+      card = model.user.card_accounts.build card_number: model.card_number, expiration_month: model.card_month,
+	         expiration_year: model.card_year, card_code: model.cvv, zip: model.zip 
+
+      # check if token was already created
+      if token
+        card.token = token
+	card.save
+      else
+        card.save_account 
+      end
+    end
+    card.errors.any? ? false : self.token = card.token 
   end
 end

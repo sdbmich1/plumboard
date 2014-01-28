@@ -1,7 +1,5 @@
 <div class="stitle center-wrapper">
-  <% if controller_name == 'transactions' %>
-    <%= link_to image_tag('sm_pixipay.png'), '#', class: "px-logo" %>
-  <% elsif toggle_header?(psize) %>
+  <% if toggle_header?(psize) %>
     <h6><%= psize %></h6>
   <% else %>
     <%= pixi_home %>

@@ -1,6 +1,6 @@
 class InvoiceObserver < ActiveRecord::Observer
   observe Invoice
-  include PointManager
+  include PointManager, CalcTotal
 
   # update points
   def after_create model
@@ -22,7 +22,7 @@ class InvoiceObserver < ActiveRecord::Observer
       if model.amount > 0
 
         # get txn amount & fee
-        fee = model.transaction.convenience_fee
+        fee = CalcTotal::get_convenience_fee model.amount
 
         # process payment
         result = model.bank_account.credit_account(model.amount - fee)

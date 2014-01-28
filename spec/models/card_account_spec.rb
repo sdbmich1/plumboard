@@ -3,7 +3,7 @@ require 'spec_helper'
 describe CardAccount do
   before(:each) do
     @user = FactoryGirl.create(:pixi_user, email: "jblow123@pixitest.com") 
-    @account = @user.bank_accounts.build FactoryGirl.attributes_for :bank_account
+    @account = @user.card_accounts.build FactoryGirl.attributes_for :card_account
   end
 
   subject { @account }
@@ -22,6 +22,12 @@ describe CardAccount do
 
   it { should respond_to(:user) }
   it { should respond_to(:set_flds) }
+
+  it { should belong_to(:user) }
+  it { should validate_presence_of(:user_id) }
+  it { should validate_presence_of(:expiration_year) }
+  it { should validate_presence_of(:expiration_month) }
+  it { should validate_presence_of(:card_type) }
   
   describe "when user_id is empty" do
     before { @account.user_id = "" }
@@ -89,22 +95,27 @@ describe CardAccount do
 
   describe 'save_account' do
     before do
-      @card_acct = mock('Balanced::Card', uri: 'abcdef', last_four: '0001', card_type: 'visa', expiration_month: 6, expiration_year: 2018)
-      @card_acct.stub_chain(:new, :save).and_return(true)
-      @card_acct.stub_chain(:uri, :last_four, :card_type, :expiration_month, :expiration_year).and_return(@card_acct)
+      CardAccount.any_instance.stub(:save_account).and_return({user_id: 1, card_number: '4111111111111111', status: 'active', card_code: '123',
+                  expiration_month: 6, expiration_year: 2019, zip: '94108'})
+    end
+
+    it 'saves account' do
+      @account.save_account.should be_true
+    end
+  end
+
+  describe 'save_account w/ bad data' do
+    before do
+      @card_acct = mock('Balanced::Card', uri: '', last_four: '0001', card_type: 'visa', expiration_month: 6, expiration_year: 2013)
+      @card_acct.stub_chain(:new, :save).and_return(false)
       Balanced::Card.stub_chain(:new, :save).and_return(@card_acct)
-      Balanced::Card.stub_chain(:uri, :last_four, :card_type, :expiration_month, :expiration_year).and_return(@card_acct)
     end
 
-    it 'should save account' do
-      @account.save_account
-      @account.errors.any?.should_not be_true
-    end
-
-    it 'should not save account' do
-      @account.token = nil
+    it 'does not save account' do
       @account.save_account.should_not be_true
     end
   end
 
+  describe 'add_card' do
+  end
 end

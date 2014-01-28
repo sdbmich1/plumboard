@@ -54,12 +54,12 @@ module TransactionsHelper
 
   # return page title based on transaction type
   def get_page_title *args
-    @transaction.pixi? ? 'Submit Your Pixi' : 'Pay Invoice'
+    @transaction.pixi? ? 'Submit Your Pixi' : 'PixiPay'
   end
 
   # return page header based on transaction type
   def get_header
-    @transaction.pixi? ? "Step 3 of 3: Submit Your Pixi" : "PixiPay | Pay Invoice"
+    @transaction.pixi? ? "Step 3 of 3: Submit Your Pixi" : "PixiPay"
   end
 
   # return page header based on transaction type
@@ -86,5 +86,10 @@ module TransactionsHelper
   def set_txn_partial
     path = mobile_device? ? 'mobile' : 'shared'
     pname = path + (@transaction.pixi? ? '/order_complete' : '/purchase_complete')
+  end
+
+  # get card token for user if exists
+  def get_card_token
+    @user.has_card_account? ? @user.card_accounts.first.token : ''
   end
 end

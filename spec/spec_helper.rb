@@ -40,6 +40,7 @@ Spork.prefork do
     config.include Paperclip::Shoulda::Matchers
     config.include Capybara::RSpecMatchers
     config.include Capybara::DSL, :type => :request
+    config.include FactoryGirl::Syntax::Methods
     config.fixture_path = "#{::Rails.root}/spec/fixtures"
     config.use_transactional_fixtures = false
 
@@ -55,15 +56,14 @@ Spork.prefork do
 
     config.before(:each) do
       DatabaseCleaner.strategy = :transaction
+      reset_email
+      DatabaseCleaner.start
+      Contact.any_instance.stub(:geocode) { [1,1] }
+      Listing.any_instance.stub(:geocode) { [1,1] }
     end
 
     config.before(:each, :js => true) do
       DatabaseCleaner.strategy = :truncation
-    end
-
-    config.before(:each) do
-      reset_email
-      DatabaseCleaner.start
     end
 
     config.after(:each) do

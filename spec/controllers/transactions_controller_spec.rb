@@ -95,7 +95,9 @@ describe TransactionsController do
   describe 'GET show/:id' do
     before :each do
       @user = stub_model(User)
+      @rating = stub_model(Rating)
       Transaction.stub!(:find).and_return( @transaction )
+      @user.stub_chain(:ratings, :build).and_return(@rating)
     end
 
     def do_get

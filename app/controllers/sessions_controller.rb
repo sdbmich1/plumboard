@@ -30,7 +30,7 @@ class SessionsController < Devise::SessionsController
   protected
 
   def page_layout
-    action_name == 'new' ? 'pages' : 'application'
+    'application'
   end
 
 end

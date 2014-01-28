@@ -1,8 +1,9 @@
 FactoryGirl.define do
-  factory :user, aliases: [:recipient, :seller]  do
+  sequence(:email) {|n| "person#{n}@example.com" }
+  factory :user, aliases: [:recipient, :seller] do
     first_name            "Joe"
     last_name             "Blow" 
-    sequence(:email) {|n| "person#{n}@example.com" }
+    email		  
     password              "setup#123"
     password_confirmation "setup#123"
     gender          	  "Male"
@@ -10,31 +11,33 @@ FactoryGirl.define do
   end
 
     factory :admin, :class => "User", :parent => :user do
-      before(:create) {|user| user.pictures.build FactoryGirl.attributes_for(:picture)}
-      after(:create) {|user| user.add_role(:admin)}
+      before(:create) {|usr| usr.pictures.build FactoryGirl.attributes_for(:picture)}
+      after(:create) {|usr| usr.add_role(:admin)}
     end
 
     factory :editor, :class => "User", :parent => :user do
-      before(:create) {|user| user.pictures.build FactoryGirl.attributes_for(:picture)}
-      after(:create) {|user| user.add_role(:editor)}
+      before(:create) {|usr| usr.pictures.build FactoryGirl.attributes_for(:picture)}
+      after(:create) {|usr| usr.add_role(:editor)}
     end
 
     factory :subscriber, :class => "User", :parent => :user do
-      before(:create) {|user| user.pictures.build FactoryGirl.attributes_for(:picture)}
-      after(:create) {|user| user.add_role(:subscriber)}
+      before(:create) {|usr| usr.pictures.build FactoryGirl.attributes_for(:picture)}
+      after(:create) {|usr| usr.add_role(:subscriber)}
     end
 
   factory :pixi_user, :class => "User", :parent => :user do
-    before(:create) {|user| user.pictures.build FactoryGirl.attributes_for(:picture)}
-    after(:create) do |user|
-      user.confirm!
-      user.confirmed_at		{ Time.now }
+    after(:build) do |usr| 
+      usr.pictures.build FactoryGirl.attributes_for(:picture)
+    end
+    after(:create) do |usr|
+      usr.confirm!
+      usr.confirmed_at		{ Time.now }
     end
   end
 
   factory :contact_user, :class => "User", :parent => :pixi_user do
-    before(:create) do |user|
-      user.contacts.build FactoryGirl.attributes_for(:contact)
+    before(:create) do |usr|
+      usr.contacts.build FactoryGirl.attributes_for(:contact)
     end
   end
 
@@ -48,11 +51,23 @@ FactoryGirl.define do
     status		"active"
   end
 
+  factory :picture do
+    photo { File.new Rails.root.join("spec", "fixtures", "photo.jpg") }
+  end
+
   factory :category do
     name 		"Foo bar"
     category_type	"Gigs"
     status 		"active"
     before(:create) {|category| category.pictures.build FactoryGirl.attributes_for(:picture)}
+  end
+
+  factory :contact do
+    address          "123 Elm"
+    city            "LA"
+    state           "CA"
+    zip             "90201"
+    home_phone	    "4155551212"
   end
 
   factory :subcategory do
@@ -78,14 +93,6 @@ FactoryGirl.define do
     start_time		nil
     end_time		nil
     currency		"US"
-  end
-
-  factory :contact do
-    address          "123 Elm"
-    city            "LA"
-    state           "CA"
-    zip             "90201"
-    home_phone	    "4155551212"
   end
 
   factory :listing_parent do
@@ -157,6 +164,12 @@ FactoryGirl.define do
   factory :invalid_temp_listing, :class => "TempListing", :parent => :listing_parent do
   end
 
+  factory :old_listing, :class => "OldListing", :parent => :listing_parent do
+    before(:create) do |listing|
+      listing.pictures.build FactoryGirl.attributes_for(:picture)
+    end
+  end
+
   factory :interest do
     name 		"furniture"
     status		"active"
@@ -183,10 +196,6 @@ FactoryGirl.define do
   factory :site_listing do
     site
     listing
-  end
-
-  factory :picture do
-    photo { File.new Rails.root.join("spec", "fixtures", "photo.jpg") }
   end
 
   factory :transaction do
@@ -239,21 +248,16 @@ FactoryGirl.define do
     acct_type	'checking'
     acct_number	'90009000'
     token	"/v1/marketplaces/TEST-MP2Q4OaIanQuIDJIixHGmhQA/bank_accounts/BA7ehO1oDwPUBAR9cz71sd2g"
-    before(:create) do |acct|
-      acct.create_user FactoryGirl.attributes_for(:pixi_user)
-    end
   end
 
   factory :card_account do
     status		'active'
     card_type	'visa'
     card_number	'90009000'
+    card_no	9000
     expiration_month   6
     expiration_year    2018
     token	"/v1/marketplaces/TEST-MP2Q4OaIanQuIDJIixHGmhQA/cards/CC5N1hxpIVfWCcYtPkS3nHy8"
-    before(:create) do |acct|
-      acct.create_user FactoryGirl.attributes_for(:pixi_user)
-    end
   end
 
   factory :comment do

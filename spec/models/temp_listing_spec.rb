@@ -33,6 +33,8 @@ describe TempListing do
   it { should respond_to(:event_start_time) }
   it { should respond_to(:event_end_time) }
   it { should respond_to(:year_built) }
+  it { should respond_to(:pixan_id) }
+  it { should respond_to(:job_type) }
 
   it { should respond_to(:user) }
   it { should respond_to(:site) }
@@ -561,6 +563,18 @@ describe TempListing do
     it "is free" do
       @temp_listing.free?.should be_true 
     end
+  end
+
+  describe "is not pixi_post" do 
+    it { @temp_listing.pixi_post?.should_not be_true }
+  end
+
+  describe "is a pixi_post" do 
+    before do 
+      @pixan = FactoryGirl.create(:contact_user) 
+      @temp_listing.pixan_id = @pixan.id 
+    end
+    it { @temp_listing.has_pixi_post?.should be_true }
   end
 
   describe '.start_date?' do

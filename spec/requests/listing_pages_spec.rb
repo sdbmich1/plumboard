@@ -19,10 +19,10 @@ describe "Listings", :type => :feature do
       visit listing_path(listing) 
     end
      
-    it { should have_content listing.title }
+    it { should have_content listing.nice_title }
     it { should have_content "Posted By: #{listing.seller_name}" }
     it { should have_link 'Follow', href: '#' }
-    it { should have_link listing.site_name, href: location_listings_path(loc: listing.site_id) }
+    it { should have_link listing.site_name, href: local_listings_path(loc: listing.site_id) }
     it { should have_link listing.category_name, href: category_listings_path(cid: listing.category_id, loc: listing.site_id) }
     it { should_not have_link 'Back', href: listings_path }
     it { should_not have_link 'Remove', href: listing_path(listing) }
@@ -43,7 +43,7 @@ describe "Listings", :type => :feature do
 	  sleep 3
       }.to change(Post,:count).by(1)
 
-      page.should have_content listing.title
+      page.should have_content listing.nice_title
     end
      
     it "does not contact a seller", js: true do
@@ -57,13 +57,13 @@ describe "Listings", :type => :feature do
     it "clicks on site" do
       click_link listing.site_name
       page.should have_content 'Pixis'
-      page.should have_content listing.title
+      page.should have_content listing.nice_title
     end
 
     it "clicks on category by site" do
       click_link listing.category_name
       page.should have_content 'Pixis'
-      page.should have_content listing.title
+      page.should have_content listing.nice_title
     end
   end
 
@@ -91,14 +91,14 @@ describe "Listings", :type => :feature do
       click_link listing.site_name
 
       page.should have_content "Pixis" 
-      page.should have_content listing.title
+      page.should have_content listing.nice_title
     end
 
     it "clicks on a category" do
       click_link listing.category_name
 
       page.should have_content "Pixis" 
-      page.should have_content listing.title
+      page.should have_content listing.nice_title
       page.should have_content listing.category_name
     end
 

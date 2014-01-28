@@ -58,6 +58,7 @@ Plumboard::Application.configure do
   config.assets.precompile += ['.css', '.js', '.png', '.jpg', '.bmp', '.gif', '.ico']
 
   # Disable delivery errors, bad email addresses will be ignored
+  ActionMailer::Base.delivery_method = :smtp
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.default_url_options = { :host => 'www.pixiboard.com' }
 

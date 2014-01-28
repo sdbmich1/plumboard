@@ -1,7 +1,19 @@
 <div class="div-border">
-  <h4 class="grp-hdr">3. Enter Payment Information</h4>
+  <% if @user.has_card_account? %>
+    <div class='offset3 card-dpl' style="<%= @user.has_card_account? ? '' : 'display:none' %>">
+      <h5 class="grp-hdr">Payment Information</h5>
+      <table>
+      <tr><td class='span3 mbot'><%= @user.card_accounts.first.card_type %>
+        <br><%= "************#{@user.card_accounts.first.card_no}" %>
+        <br><%= "Exp: #{@user.card_accounts.first.expiration_month}/#{@user.card_accounts.first.expiration_year}" %></td>
+        <td class='v-align price'>
+	<%= link_to 'Change', '#', id: 'edit-card-btn', class: 'offset2 btn btn-primary stnd-btn' %></td>
+      </tr>
+      </table>
+    </div>
+  <% end %>
   <center>
-  <table class="mtop">
+  <table class='sm-top card-tbl' style="<%= @user.has_card_account? ? 'display:none' : '' %>">
   <th class='tbl-hdr'>Credit Card #* </th>
   <th></th>
   <th class='tbl-hdr'>Code (CVV)*</th>
@@ -10,16 +22,17 @@
   <th></th>
   <th class='tbl-hdr'>Exp Year*</th>
   <tr>
-    <td class="width240"><%= text_field_tag :card_number, nil, name: nil, :size => 16 %></td>
+    <td class="width240"><%= number_field_tag :card_number, nil, name: 'card_number', :size => 16 %></td>
     <td class="width30"></td>
-    <td class="width120"><%= text_field_tag :card_code, nil, name: nil, :maxlength => 4, :size => 4 %> 
+    <td class="width120"><%= number_field_tag :cvv, nil, name: 'cvv', :maxlength => 4, :size => 4 %> 
     <td class="width30"></td>
     <td class="width180">
-        <%= select_month nil, {add_month_numbers_true: true}, {name: nil, id: "card_month", class: "neg-top pixi-select" } %>
+        <%= select_month nil, {add_month_numbers_true: true}, {name: 'card_month', id: "card_month", class: "neg-top pixi-select" } %>
     </td>
     <td class="width30"></td>
     <td class="width120">
-        <%= select_year nil, {start_year: Date.today.year+1, end_year: Date.today.year+15}, {name: nil, id: "card_year", class: "neg-top pixi-select"} %>
+        <%= select_year nil, {start_year: Date.today.year, end_year: Date.today.year+15}, {name: 'card_year', id: "card_year", 
+	  class: "neg-top pixi-select"} %>
     </td>
   </tr>
   <tr>

@@ -86,17 +86,17 @@ describe Category do
       picture = @category.pictures.build
       picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
       @category.save!
-    end
-
-    it 'returns true' do
-      @user = FactoryGirl.create(:pixi_user)
       @site = FactoryGirl.create(:site)
-      FactoryGirl.create(:listing, seller_id: @user.id, category_id: @category.id, site_id: @site.id)
-      @category.active_pixis_by_site(@site.id).should_not be_empty
     end
 
     it 'does not return true' do
       @category.active_pixis_by_site(nil).should be_empty
+    end
+
+    it 'returns true' do
+      @user = FactoryGirl.create(:pixi_user)
+      FactoryGirl.create(:listing, seller_id: @user.id, category_id: @category.id, site_id: @site.id)
+      @category.active_pixis_by_site(@site.id).should_not be_empty
     end
   end
 

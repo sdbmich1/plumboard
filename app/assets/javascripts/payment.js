@@ -1,4 +1,4 @@
-var $formID, marketplaceUri;
+var $formID, marketplaceUri, token;
 var $balancedError = $('#card_error'); 
 
 // process Balanced bank account form for ACH payments
@@ -25,22 +25,29 @@ $(document).on('click', '#acctForm', function () {
  
 // process card
 function BalancedCard() {
+  token = $('#pay_token').val(); 
   $formID = $('#payment_form');
   marketplaceUri = $('meta[name="balanced-key"]').attr('content');  // get balanced key		
 
   // disable form
   $('#payForm').attr('disabled', true);
-   
-  // initialize object
-  balanced.init(marketplaceUri);
+  
+  if (token.length > 0)  {
+    console.log('token = ' + token);
+    $formID.trigger("submit.rails");    	  
+  }
+  else {
+    // initialize object
+    balanced.init(marketplaceUri);
 
-  // create token	
-  balanced.card.create({
-    card_number: $('#card_number').val(),
-    security_code: $('#card_code').val(),
-    expiration_month: $('#card_month').val(),
-    expiration_year: $('#card_year').val()    
-  }, callbackHandler);
+    // create token	
+    balanced.card.create({
+      card_number: $('#card_number').val(),
+      security_code: $('#card_code').val(),
+      expiration_month: $('#card_month').val(),
+      expiration_year: $('#card_year').val()    
+    }, callbackHandler);
+  }
 
   // prevent the form from submitting with the default action
   return false;

@@ -1,0 +1,12 @@
+<li>
+  <div class="btn-group">
+    <button type="button" class="btn btn-warning dropdown-toggle post-btn" data-toggle="dropdown">
+      Post <span class="caret icon-white"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+      <li><%= link_to "By You", new_temp_listing_path %></li>
+      <li><%= link_to "By Us", '#', id: 'pixi-post-appt' %></li>
+      <li><%= link_to "For Seller", new_temp_listing_path(pixan_id: @user), id: 'pixi-post' if can? :manage_items, @user %></li>
+    </ul>
+  </div>
+</li>

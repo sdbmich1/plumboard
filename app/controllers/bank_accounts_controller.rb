@@ -65,7 +65,7 @@ class BankAccountsController < ApplicationController
     if !(@target =~ /invoice/i).nil?
       @invoice = @user.invoices.build
     else
-      @account = User.find(@user).bank_accounts.first
+      @account = @user.reload.bank_accounts.first if @user
     end
   end
 

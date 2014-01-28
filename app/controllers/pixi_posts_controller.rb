@@ -1,0 +1,2 @@
+class PixiPostsController < ApplicationController
+end

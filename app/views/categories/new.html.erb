@@ -1,0 +1,11 @@
+<% provide(:title, 'Categories') %>
+<%= content_for :subhead do %>
+  <%= render partial: 'shared/navbar', locals: { menu_name: 'Categories' } %>
+<% end %>
+
+<%= content_for :content do %>
+  <div id="cat-form">
+    <%= render 'shared/category_form' %>
+  </div> 
+<% end %>
+

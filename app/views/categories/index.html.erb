@@ -1,0 +1,14 @@
+<% provide(:title, 'Home') %>
+<%= content_for :subhead do %>
+  <%= render partial: 'shared/navbar', locals: { menu_name: 'Home' } %>
+<% end %>
+
+<%= content_for :content do %>
+  <div id="pxboard">
+    <%= render partial: 'shared/category', collection: @categories %>
+  </div> 
+
+  <nav id="px-nav">
+    <%= render 'shared/category_next_page' %>
+  </nav>
+<% end %>

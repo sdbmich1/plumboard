@@ -87,7 +87,7 @@ module CalcTotal
   # calculate txn processing fee 
   def self.get_processing_fee *val
     # set amount if empty
-    @amt = !val.blank? ? val[0] : @amt || 0.0
+    @amt = !val.blank? ? val[0].to_f : @amt || 0.0
 
     @pfee = (@amt + calc_discount) * (PIXI_PERCENT.to_f / 100)
     @pfee.round(2)
@@ -96,7 +96,7 @@ module CalcTotal
   # calculate txn convenience fee based on amount and min transaction threshold
   def self.get_convenience_fee *val
     # set amount if empty
-    @amt = !val.blank? ? val[0] : @amt || 0.0
+    @amt = !val.blank? ? val[0].to_f : @amt || 0.0
 
     # check if fee needs to be applied
     if @amt + calc_discount > 0.0 

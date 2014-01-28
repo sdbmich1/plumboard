@@ -7,7 +7,9 @@ module PointManager
 
   # calc points for given user
   def self.calc_total_points usr
-    usr.user_pixi_points.map {|p| p.pixi_point.value}.inject(0, :+)
+    val = User.select("sum(`pixi_points`.`value`) AS total").joins(:user_pixi_points => :pixi_point).where('users.id' => usr.id)
+       .group("`users`.`id`").first
+    val.total
   end
 
   # returns top pixi users for given timeframe

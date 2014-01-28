@@ -2,14 +2,10 @@
   <div class="navbar">
     <div class="navbar-inner">
       <div class="container">
-        <span class="brand"><%= menu_name %></span>
+        <span class="brand"><%= parse_item menu_name, 'name' %></span>
         <div id="profile-menu">
 	  <nav>
-	    <% if controller_name == 'listings' && !refresh_page?(action_name) %>
-	      <%= link_to image_tag('home-4-xxl.png', class: 'home-img'), '#', id: 'home-link' %>
-	    <% else %>
-	      <%= link_to image_tag('home-4-xxl.png', class: 'home-img'), listings_path, class: 'home-link' %>
-	    <% end %>
+	    <%= link_to image_tag('home-4-xxl.png', class: 'home-img'), root_path, class: 'home-link' %>
 	    <%= set_submenu menu_name %>
 	  </nav>
         </div>

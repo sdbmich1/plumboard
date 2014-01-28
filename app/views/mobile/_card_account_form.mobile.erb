@@ -1,0 +1,32 @@
+  <div class="mleft10">
+    <%= form_for(@account, html: { id: 'card-acct-form' }, :remote=>true) do |f| %>
+      <div id="form_errors"><%= render partial: 'mobile/error_messages', locals: { :target => f.object } %></div>
+      <div id="data_error" style="display:none" class="error"></div>
+
+      <div class="sm-top">
+        <table class='inv-descr'>
+	  <tr><td>Card #</td>
+	      <td><%= f.number_field :card_number, :size => 16, placeholder: 'Card Number', id: 'card_number' %></td>
+	  </tr>
+	  <tr><td>Card Code`</td>
+	      <td><%= f.number_field :card_code, :size => 4, placeholder: 'Card Code', id: 'card_code' %></td>
+	  </tr>
+	  <tr><td>Exp Month</td>
+              <td><%= select_month nil, {use_short_month: true}, {name: nil, id: "card_month", 'data-mini'=>'true'} %></td>
+	  </tr>
+	  <tr><td>Exp Year</td>
+              <td><%= select_year nil, {start_year: Date.today.year+1, end_year: Date.today.year+15}, 
+	        {name: nil, id: "card_year", 'data-mini'=>'true'} %></td>
+	  </tr>
+	</table>
+      </div>
+
+      <%= f.hidden_field :user_id, value: @user.id %>
+      <%= f.hidden_field :token, id: 'card_token' %>
+      <%= f.hidden_field :card_no %>
+
+      <div class="mtop center-wrapper mbot"><%= f.submit 'Save', 'data-theme'=>'d', 'data-inline'=>'true' %></div>
+    <% end %>
+
+    <div class="center-wrapper"><%= image_tag "rsz_check_sample.gif" %></div>
+  </div>

@@ -4,7 +4,11 @@
 <% end %>
 
 <%= content_for :content do %>
-  <div id="cat-form">
+  <div id="pxboard">
     <%= render partial: 'shared/category', collection: @categories %>
   </div> 
+
+  <nav id="px-nav">
+    <%= render 'shared/category_next_page' %>
+  </nav>
 <% end %>

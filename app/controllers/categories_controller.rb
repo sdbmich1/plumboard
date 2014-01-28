@@ -1,10 +1,10 @@
 require 'will_paginate/array' 
 class CategoriesController < ApplicationController
   before_filter :check_permissions, except: [:show, :index]
-  before_filter :authenticate_user!
+  before_filter :authenticate_user!, except: [:index]
   before_filter :load_data, only: [:index]
   before_filter :get_page, only: [:index, :inactive, :manage, :create, :update]
-  respond_to :html, :json, :js
+  respond_to :html, :json, :js, :mobile
   layout :page_layout
 
   def index
@@ -51,7 +51,7 @@ class CategoriesController < ApplicationController
   protected
 
   def page_layout
-    (%w(new edit inactive).detect { |x| x == action_name }).nil? ? 'application' : 'listings'
+    %w(index manage inactive).detect {|x| action_name == x} ? 'listings' : 'application'
   end
 
   def get_page

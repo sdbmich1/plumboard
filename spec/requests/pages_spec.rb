@@ -6,14 +6,6 @@ describe "Pages" do
   describe "Home page" do
 
     before do
-      FactoryGirl.create :pixi_point, code: 'act'
-      FactoryGirl.create :pixi_point, code: 'lb'
-      @user = FactoryGirl.create(:contact_user) 
-      @pixi_user = FactoryGirl.create(:contact_user, first_name: 'Les', last_name: 'Flynn', email: 'lflynn@pixitest.com') 
-      @temp_listing = FactoryGirl.create(:temp_listing, title: "Guitar", description: "Lessons", seller_id: @user.id ) 
-      @listing = FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: @user.id, pixi_id: @temp_listing.pixi_id) 
-      FactoryGirl.create(:listing, title: "Wicker Chair", description: "cool chair for sale", seller_id: @user.id) 
-      FactoryGirl.create(:listing, title: "Wood Coffee Table", description: "cool table for sale", seller_id: @pixi_user.id) 
       visit root_path 
     end
 
@@ -23,36 +15,56 @@ describe "Pages" do
     it { should have_link 'Help', href: '#' }
     it { should have_button 'Sign in' }
     it { should have_link 'Sign up for free!', href: new_user_registration_path }
-    it { should have_link '', href: user_omniauth_authorize_path(:facebook) }
-    it { should have_selector('h4', :text => 'Recent Pixis') }
-    it { should have_content(@listing.title) }
-    it { should have_content('Wicker Chair') }
-    it { should have_content('Wood Coffee Table') }
-    it { should have_selector('h4', :text => "Today's Leaderboard") }
+    it { should have_link 'Sign in with', href: user_omniauth_authorize_path(:facebook) }
+    it { should have_link '', href: categories_path }
+    it { should have_link 'About', href: '#' }
+    it { should have_link 'Privacy', href: '#' }
+    it { should have_link 'Contact', href: '#' }
+  end
+
+  describe "Browse Stuff" do
+
+    before do
+      @user = FactoryGirl.create(:contact_user) 
+      @pixi_user = FactoryGirl.create(:contact_user, first_name: 'Les', last_name: 'Flynn', email: 'lflynn@pixitest.com') 
+      @category = FactoryGirl.create :category
+      FactoryGirl.create :category, name: 'Computer', category_type: 'sales', status: 'active'
+      FactoryGirl.create :category, name: 'Stuff', category_type: 'sales', status: 'inactive'
+      FactoryGirl.create(:listing, title: "Wicker Chair", description: "cool chair for sale", seller_id: @user.id, category_id: @category.id) 
+      FactoryGirl.create(:listing, title: "Wood Coffee Table", description: "cool table for sale", seller_id: @pixi_user.id) 
+      visit root_path 
+    end
+
+    it 'browses categories' do
+      find("#browse-link").click
+      page.should have_content('Home') 
+      page.should have_content(@category.name_title) 
+      page.should have_content('Computer') 
+    end
 
     def user_login
       fill_in "user_email", :with => @user.email
       fill_in "user_password", :with => @user.password
       click_button 'Sign in'
+      sleep 2;
     end
 
-    it 'add user to leaderboard' do
-      user_login
-      sleep 2;
-      page.should have_link('Sign out', href: destroy_user_session_path)
-
-      click_link 'Sign out'
-      page.should have_content(@user.name) 
-      page.should have_content('points') 
+    it "clicks on a category" do
+      find("#browse-link").click
+      click_link @category.name_title
+      page.should have_content 'Pixis'
+      page.should have_content @listing.nice_title
+      page.should have_content @listing.seller_name
     end
 
     it "clicks on a pixi" do
-      click_link @listing.title
+      find("#browse-link").click
+      click_link @category.name_title
+      click_link @listing.nice_title
       page.should have_content "Sign in" 
-
       user_login
-      page.should have_content @listing.title
-      page.should have_content @listing.seller_name
+      page.should have_content @listing.nice_title
+      page.should have_content 'Comments'
     end
   end
 

@@ -1,18 +1,10 @@
 <div class="item">
   <div class="center-wrapper">
-    <%= link_to category_listings_path(cid: category, loc: @loc) do %>
+    <%= link_to category_listings_path(cid: category, loc: @loc), class: 'pixi-link' do %>
       <%= render partial: 'shared/show_picture', locals: {psize: 'thumb', model: category} %>
     <% end %>
     <div class='sm-top bdescr'>
       <%= show_category_title(category) %>
-    </div>
-    <div class='sm-top gdescr'>
-      <div class='item-cat pixi-grey-bkgnd'>
-        <%= pixi_link(category, @loc) %>
-      </div>
-      <div class='item-dt pixi-grey-bkgnd'>
-        <%= link_to "More...", "#", id: 'more-btn' if category.subcats? %>
-      </div>
     </div>
   </div>
 </div>

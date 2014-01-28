@@ -34,6 +34,8 @@ describe Listing do
   it { should respond_to(:event_start_time) }
   it { should respond_to(:event_end_time) }
   it { should respond_to(:year_built) }
+  it { should respond_to(:pixan_id) }
+  it { should respond_to(:job_type) }
 
   it { should respond_to(:user) }
   it { should respond_to(:site) }
@@ -304,6 +306,18 @@ describe Listing do
       @listing.title = nil
       @listing.nice_title.should_not be_true 
     end
+  end
+
+  describe "is not pixi_post" do 
+    it { @listing.pixi_post?.should_not be_true }
+  end
+
+  describe "is a pixi_post" do 
+    before do 
+      @pixan = FactoryGirl.create(:contact_user) 
+      @listing.pixan_id = @pixan.id 
+    end
+    it { @listing.has_pixi_post?.should be_true }
   end
 
   describe "must have pictures" do 

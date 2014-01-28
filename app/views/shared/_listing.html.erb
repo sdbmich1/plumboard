@@ -1,10 +1,10 @@
 <div class="item">
   <div class="center-wrapper">
     <%= link_to listing_path(listing) do %>
-      <%= render partial: 'shared/show_photo', locals: {model: listing, file_name: "star.jpg", psize: get_item_width, display_cnt: 0 } %>
+      <%= render partial: 'shared/show_picture', locals: {model: listing, psize: 'medium'} %>
     <% end %>
     <div class='sm-top bdescr'>
-      <%= listing.title %>
+      <%= listing.nice_title %>
     </div>
     <div class='sm-top gdescr'>
       <div class='item-cat pixi-grey-bkgnd' data-cat-id="<%= listing.category_id %>">

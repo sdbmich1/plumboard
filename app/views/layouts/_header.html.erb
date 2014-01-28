@@ -14,9 +14,12 @@
           <%= link_to get_unread_count(@user), posts_path, id: "notice-btn", title: 'Messages' %>
 
           <ul class="nav pull-right">
-            <li><%= link_to "Post", new_temp_listing_path, id: 'add-pixi' %></li>
+	    <%= render 'layouts/post_menu' %>
             <% if @user.has_pixis? %>
     	      <li><%= link_to "Bill", get_invoice_path, id: 'bill-pixi' %></li>
+  	    <% end %>
+	    <% if @user.has_unpaid_invoices? %>
+    	      <li><%= link_to "Pay", get_unpaid_path, id: 'pay-pixi' %></li>
   	    <% end %>
 
 	    <%= render 'layouts/manage' if can? :manage_items, @user %>

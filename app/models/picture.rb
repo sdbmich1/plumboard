@@ -17,7 +17,7 @@ class Picture < ActiveRecord::Base
 
   # ...and perform after save in background
   after_save do |picture| 
-    if picture.processing
+    if picture.processing && !Rails.env.test?
       processPhotoJob(picture)
     end
   end

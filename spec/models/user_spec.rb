@@ -45,6 +45,11 @@ describe User do
     it { should respond_to(:comments) }
     it { should respond_to(:ratings) }
     it { should respond_to(:seller_ratings) }
+
+    it { should validate_presence_of(:first_name) }
+    it { should validate_presence_of(:last_name) }
+    it { should validate_presence_of(:gender) }
+    it { should validate_presence_of(:birth_date) }
   end
 
   describe "when first_name is empty" do
@@ -102,11 +107,6 @@ describe User do
     it { should_not be_valid }
   end
 
-  it "should not be valid when password confirmation is nil" do
-    user = FactoryGirl.build :pixi_user, password_confirmation: nil 
-    user.should_not be_valid
-  end
-
   it "returns a user's full name as a string" do
     user = FactoryGirl.build(:user, first_name: "John", last_name: "Doe", email: "jdoe@test.com")
     user.name.should == "John Doe"
@@ -121,6 +121,26 @@ describe User do
     user = FactoryGirl.build(:user, first_name: "John", last_name: "Doe", email: "jdoe@test.com")
     user.abbr_name.should == "John D"
     user.abbr_name.should_not == "John Doe"
+  end
+
+  describe "when email format is invalid" do
+    it "should be invalid" do
+      addresses = %w[user@foo,com user_at_foo.org example.user@foo.]
+      addresses.each do |invalid_address|
+        @user.email = invalid_address
+	@user.should_not be_valid
+      end
+    end
+  end
+
+  describe "when email format is valid" do
+    it "should be valid" do
+      addresses = %w[user@foo.COM A_US-ER@f.b.org frst.lst@foo.jp a+b@baz.cn]
+      addresses.each do |valid_address|
+        @user.email = valid_address
+	@user.should be_valid
+      end
+    end
   end
 
   describe 'contacts' do
@@ -161,11 +181,11 @@ describe User do
     let(:user) { FactoryGirl.build :user }
     let(:pixi_user) { FactoryGirl.build :pixi_user }
 
-    it "should add a picture" do
+    it "adds a picture" do
       user.with_picture.pictures.size.should == 1
     end
 
-    it "should not add a picture" do
+    it "does not add a picture" do
       pixi_user.with_picture.pictures.size.should == 1
     end
   end  
@@ -179,7 +199,7 @@ describe User do
       @user.pictures.should include(@sr)
     end
 
-    it "should destroy associated pictures" do
+    it "destroys associated pictures" do
       @user.destroy
       [@sr].each do |s|
          Picture.find_by_id(s.id).should be_nil
@@ -190,13 +210,13 @@ describe User do
   describe "must have pictures" do
     let(:user) { FactoryGirl.build :user }
 
-    it "should not save w/o at least one picture" do
+    it "does not save w/o at least one picture" do
       picture = user.pictures.build
       user.save
       user.should_not be_valid
     end
 
-    it "should save with at least one picture" do
+    it "saves with at least one picture" do
       picture = user.pictures.build
       picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
       user.save
@@ -205,14 +225,14 @@ describe User do
   end
 
   describe 'pixis' do
-    it "should return pixis" do
+    it "returns pixis" do
       @listing = FactoryGirl.create(:listing, seller_id: @user.id)
       @user.listings.create FactoryGirl.attributes_for(:listing, status: 'active')
       @user.pixis.should_not be_empty
       @user.has_pixis?.should be_true
     end
 
-    it "should not return pixis" do
+    it "does not return pixis" do
       usr = FactoryGirl.create :contact_user
       usr.pixis.should be_empty
       @user.has_pixis?.should_not be_true
@@ -220,37 +240,48 @@ describe User do
   end
 
   describe 'sold pixis' do
-    it "should return pixis" do
+    it "returns pixis" do
       @listing = FactoryGirl.create(:listing, seller_id: @user.id, status: 'sold')
       @user.sold_pixis.should_not be_empty
     end
 
-    it "should not return pixis" do
+    it "does not return pixis" do
       usr = FactoryGirl.create :contact_user
       usr.sold_pixis.should be_empty
     end
   end
 
   describe 'new pixis' do
-    it "should return new pixis" do
+    it "returns new pixis" do
       @temp_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id)
       @user.new_pixis.should_not be_empty
     end
 
-    it "should not return new pixis" do
+    it "does not return new pixis" do
       usr = FactoryGirl.create :contact_user
       usr.new_pixis.should be_empty
     end
   end
 
   describe 'bank_account' do
-    it "should have account" do
-      @user.bank_accounts.build FactoryGirl.attributes_for(:bank_account, status: 'active')
+    it "has account" do
+      @user.bank_accounts.create FactoryGirl.attributes_for(:bank_account, status: 'active')
       @user.has_bank_account?.should be_true
     end
 
-    it "should not have account" do
+    it "does not have account" do
       @user.has_bank_account?.should_not be_true
+    end
+  end
+
+  describe 'card_account' do
+    it "has account" do
+      @user.card_accounts.create FactoryGirl.attributes_for(:card_account, status: 'active')
+      @user.has_card_account?.should be_true
+    end
+
+    it "does not have account" do
+      @user.has_card_account?.should_not be_true
     end
   end
 
@@ -342,19 +373,19 @@ describe User do
     end
 
     it 'should have only unpaid invoices' do
-      @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id)
+      @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id, status: 'unpaid')
       @user.unpaid_invoices.should_not be_empty
-      @user.paid_invoices.should be_empty
-      @user.has_unpaid_invoices?.should be_true 
+      @buyer.paid_invoices.should be_empty
+      @buyer.has_unpaid_invoices?.should be_true 
     end
 
     it 'should have paid invoices' do
-      @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id)
-      @invoice.status = 'paid'
-      @invoice.save
+      @account = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account
+      @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id, 
+        bank_account_id: @account.id, status: 'paid')
       @user.paid_invoices.should_not be_empty
       @user.unpaid_invoices.should be_empty
-      @user.has_unpaid_invoices?.should_not be_true 
+      @buyer.has_unpaid_invoices?.should_not be_true 
     end
   end
 

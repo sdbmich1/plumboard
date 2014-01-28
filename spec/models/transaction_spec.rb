@@ -204,19 +204,31 @@ describe Transaction do
     end
 
     it 'should not return true' do
-      @transaction.address = nil
-      @transaction.has_address?.should_not be_true
+      transaction = FactoryGirl.build :transaction, address: '', city: ''
+      transaction.has_address?.should_not be_true
     end
   end
 
   describe 'has_token?' do
-    it 'should return true' do
+    it 'returns true' do
       @transaction.has_token?.should be_true
     end
 
+    it 'does not return true' do
+      transaction = FactoryGirl.build :transaction, token: ''
+      transaction.has_token?.should_not be_true
+    end
+  end
+
+  describe 'valid_card?' do
+    it 'should return true' do
+      @transaction.card_number, @transaction.cvv = '4111111111111111', '123'
+      @transaction.card_month, @transaction.card_year = 6, 2018
+      @transaction.valid_card?.should be_true
+    end
+
     it 'should not return true' do
-      @transaction.token = nil
-      @transaction.has_token?.should_not be_true
+      @transaction.valid_card?.should_not be_true
     end
   end
 
@@ -244,6 +256,8 @@ describe Transaction do
       @transaction.get_invoice_listing.should_not be_true
       @transaction.get_invoice.should_not be_true
       @transaction.seller_name.should_not be_true
+      @transaction.seller_id.should_not be_true
+      @transaction.pixi_id.should_not be_true
     end
 
     it "gets invoice pixi" do
@@ -253,6 +267,8 @@ describe Transaction do
       @invoice.transaction.get_invoice_listing.should be_true
       @invoice.transaction.get_invoice.should be_true
       @invoice.transaction.seller_name.should == @seller.name
+      @invoice.transaction.seller_id.should == @seller.id
+      @invoice.transaction.pixi_id.should == @invoice.pixi_id
     end
   end
 
@@ -266,8 +282,8 @@ describe Transaction do
      # Balanced::Marketplace.stub!(:my_marketplace).and_return(@bal_charge)
 
       @customer = mock('Balanced::Customer')
-      Balanced::Customer.stub!(:new).and_return(@customer)
-      Balanced::Customer.stub!(:save).and_return(@customer)
+      Balanced::Customer.stub_chain(:new, :save, :uri).and_return(@customer)
+      @customer.stub!(:uri).and_return(true)
       @customer.stub!(:debit).with(amount: 10000).and_return(true)
     end
 
@@ -282,6 +298,7 @@ describe Transaction do
     end
 
     it "processes txn" do
+      Transaction.any_instance.stub(:process_transaction).and_return(true)
       @transaction.process_transaction.should be_true
     end
   end
@@ -328,7 +345,20 @@ describe Transaction do
     end
 
     it "should save payment" do
+      Transaction.any_instance.stub(:save_transaction).and_return(true)
       @txn.save_transaction(@order, @listing).should be_true
+    end
+  end
+
+  describe 'get_fee' do
+    it "should get fee" do 
+      transaction = FactoryGirl.build :transaction, convenience_fee: 3.00, processing_fee: 0.99
+      transaction.get_fee.should be_true
+    end
+
+    it "should not get fee" do 
+      transaction = FactoryGirl.build :transaction, convenience_fee: '', processing_fee: ''
+      transaction.get_fee.should_not be_true 
     end
   end
 end

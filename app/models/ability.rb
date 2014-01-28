@@ -6,6 +6,7 @@ class Ability
 
     if user.has_role? :admin
       can :manage, :all
+      can :manage, Category
       can :access, '/pending_listings'
       can :manage_items, User
       can :manage_orders, User

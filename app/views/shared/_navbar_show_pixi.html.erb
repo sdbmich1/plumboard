@@ -1,4 +1,4 @@
 <ul class="nav">
-  <li><%= link_to @listing.site_name, location_listings_path(loc: @listing.site_id) %></li> <span class="divider">|</span>
+  <li><%= link_to @listing.site_name, local_listings_path(loc: @listing.site_id) %></li> <span class="divider">|</span>
   <li><%= link_to @listing.category_name, category_listings_path(cid: @listing.category_id, loc: @listing.site_id) %></li>
 </ul>

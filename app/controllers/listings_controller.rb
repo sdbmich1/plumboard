@@ -1,9 +1,9 @@
 require 'will_paginate/array' 
 class ListingsController < ApplicationController
   include PointManager
-  before_filter :authenticate_user!
+  before_filter :authenticate_user!, except: [:category]
   before_filter :get_location, only: [:index]
-  before_filter :load_data, only: [:index, :seller, :category, :show, :location]
+  before_filter :load_data, only: [:index, :seller, :category, :show, :local]
   after_filter :add_points, only: [:show]
   respond_to :html, :json, :js, :mobile
   layout :page_layout
@@ -30,10 +30,12 @@ class ListingsController < ApplicationController
     @listing = Listing.find_by_pixi_id params[:id]
     respond_with(@listing) do |format|
       if @listing.destroy
-        format.html { redirect_to listings_path, notice: 'Successfully removed pixi.' }
+        format.html { redirect_to root_path, notice: 'Successfully removed pixi.' }
+        format.mobile { redirect_to root_path, notice: 'Successfully removed pixi.' }
 	format.json { head :ok }
       else
         format.html { render action: :show, error: "Pixi was not removed." }
+        format.mobile { render action: :show, error: "Pixi was not removed." }
         format.json { render json: { errors: @listing.errors.full_messages }, status: 422 }
       end
     end
@@ -61,12 +63,9 @@ class ListingsController < ApplicationController
     end
   end
 
-  def location
+  def local
     @listings = Listing.get_by_city @cat, @loc, @page
-    respond_to do |format|
-      format.html {}
-      format.mobile {}
-      format.js {}
+    respond_with(@listings) do |format|
       format.json { render json: {listings: @listings} }
     end
   end
@@ -85,7 +84,7 @@ class ListingsController < ApplicationController
   end
 
   def page_layout
-    %w(index category location).detect {|x| action_name == x} ? 'listings' : mobile_device? ? 'form' : 'application'
+    %w(index category local).detect {|x| action_name == x} ? 'listings' : mobile_device? ? 'form' : 'application'
   end
 
   def add_points

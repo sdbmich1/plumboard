@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140115055659) do
+ActiveRecord::Schema.define(:version => 20140128181253) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -222,15 +222,60 @@ ActiveRecord::Schema.define(:version => 20140115055659) do
     t.datetime "event_start_time"
     t.datetime "event_end_time"
     t.integer  "year_built"
+    t.integer  "pixan_id"
+    t.string   "job_type"
   end
 
+  add_index "listings", ["category_id"], :name => "index_listings_on_category_id"
   add_index "listings", ["end_date", "start_date"], :name => "index_listings_on_end_date_and_start_date"
   add_index "listings", ["event_start_date", "event_end_date"], :name => "index_listings_on_event_start_date_and_event_end_date"
+  add_index "listings", ["job_type"], :name => "index_listings_on_job_type"
   add_index "listings", ["lng", "lat"], :name => "index_listings_on_lng_and_lat"
+  add_index "listings", ["pixan_id"], :name => "index_listings_on_pixan_id"
   add_index "listings", ["pixi_id"], :name => "index_listings_on_pixi_id", :unique => true
   add_index "listings", ["site_id", "seller_id", "start_date"], :name => "index_listings_on_org_id_and_seller_id_and_start_date"
   add_index "listings", ["status"], :name => "index_listings_on_status"
   add_index "listings", ["transaction_id"], :name => "index_listings_on_transaction_id"
+
+  create_table "old_listings", :force => true do |t|
+    t.string   "title"
+    t.integer  "user_id"
+    t.string   "pixi_id"
+    t.integer  "category_id"
+    t.text     "description"
+    t.string   "status"
+    t.integer  "seller_id"
+    t.integer  "buyer_id"
+    t.float    "price"
+    t.string   "show_alias_flg"
+    t.string   "show_phone_flg"
+    t.string   "alias_name"
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.integer  "site_id"
+    t.integer  "transaction_id"
+    t.string   "edited_by"
+    t.datetime "edited_dt"
+    t.string   "post_ip"
+    t.string   "compensation"
+    t.float    "lng"
+    t.float    "lat"
+    t.datetime "event_start_date"
+    t.datetime "event_end_date"
+    t.datetime "event_start_time"
+    t.datetime "event_end_time"
+    t.integer  "year_built"
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
+    t.integer  "pixan_id"
+    t.string   "job_type"
+  end
+
+  add_index "old_listings", ["category_id"], :name => "index_old_listings_on_category_id"
+  add_index "old_listings", ["pixan_id"], :name => "index_old_listings_on_pixan_id"
+  add_index "old_listings", ["pixi_id"], :name => "index_old_listings_on_pixi_id"
+  add_index "old_listings", ["title"], :name => "index_old_listings_on_title"
+  add_index "old_listings", ["user_id"], :name => "index_old_listings_on_user_id"
 
   create_table "pictures", :force => true do |t|
     t.string   "delete_flg"
@@ -273,6 +318,34 @@ ActiveRecord::Schema.define(:version => 20140115055659) do
   end
 
   add_index "pixi_points", ["code"], :name => "index_pixi_points_on_code"
+
+  create_table "pixi_posts", :force => true do |t|
+    t.integer  "user_id"
+    t.datetime "preferred_date"
+    t.datetime "preferred_time"
+    t.datetime "alt_date"
+    t.datetime "alt_time"
+    t.datetime "appt_date"
+    t.datetime "appt_time"
+    t.datetime "completed_date"
+    t.datetime "completed_time"
+    t.string   "pixi_id"
+    t.integer  "pixan_id"
+    t.integer  "quantity"
+    t.string   "description"
+    t.float    "value"
+    t.string   "address"
+    t.string   "city"
+    t.string   "state"
+    t.string   "zip"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+    t.string   "status"
+  end
+
+  add_index "pixi_posts", ["pixan_id"], :name => "index_pixi_posts_on_pixan_id"
+  add_index "pixi_posts", ["pixi_id"], :name => "index_pixi_posts_on_pixi_id"
+  add_index "pixi_posts", ["user_id"], :name => "index_pixi_posts_on_user_id"
 
   create_table "posts", :force => true do |t|
     t.integer  "user_id"
@@ -431,9 +504,12 @@ ActiveRecord::Schema.define(:version => 20140115055659) do
     t.datetime "event_start_time"
     t.datetime "event_end_time"
     t.integer  "year_built"
+    t.integer  "pixan_id"
+    t.string   "job_type"
   end
 
   add_index "temp_listings", ["parent_pixi_id"], :name => "index_temp_listings_on_parent_pixi_id"
+  add_index "temp_listings", ["pixan_id"], :name => "index_temp_listings_on_pixan_id"
   add_index "temp_listings", ["pixi_id"], :name => "index_temp_listings_on_pixi_id", :unique => true
   add_index "temp_listings", ["status"], :name => "index_temp_listings_on_status"
 
