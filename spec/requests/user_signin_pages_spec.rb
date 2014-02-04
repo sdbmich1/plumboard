@@ -86,11 +86,16 @@ feature "UserSignins" do
       it { should_not have_link('Orders', href: pending_listings_path) }
       it { should_not have_link('Transactions', href: transactions_path) }
       it { should_not have_content('Dashboard') }
+      it { should have_button('Post') }
+      it { should have_link('By You', href: new_temp_listing_path) }
+      it { should have_link('By Us', href: new_pixi_post_path) }
+      it { should_not have_link('For Seller', href: new_temp_listing_path(pixan_id: @user)) }
       it { should have_link('My Pixis', href: seller_listings_path) }
-      it { should have_link('My Posts', href: posts_path) }
+      it { should have_link('My Messages', href: posts_path) }
       it { should have_link('My Invoices', href: invoices_path) }
       it { should have_link('My Accounts', href: new_bank_account_path) }
       it { should have_link('My Settings', href: settings_path) }
+      it { should have_link('My PixiPosts', href: seller_pixi_posts_path) }
       it { should_not have_link('Users', href: users_path) }
       it { should_not have_link('Sign in', href: new_user_session_path) }
 
@@ -110,15 +115,21 @@ feature "UserSignins" do
       it { should have_content(user.first_name) }
       it { should have_content('Manage') }
       it { should have_link('Pending Orders', href: pending_listings_path) }
-      it { should have_link('Categories', href: categories_path) }
+      it { should have_link('PixiPosts', href: pixi_posts_path) }
+      it { should have_link('Categories', href: manage_categories_path) }
       it { should have_link('Transactions', href: transactions_path) }
       it { should have_link('Users', href: users_path) }
       it { should have_content('Dashboard') }
+      it { should have_button('Post') }
+      it { should have_link('By You', href: new_temp_listing_path) }
+      it { should have_link('By Us', href: new_pixi_post_path) }
+      it { should have_link('For Seller', href: new_temp_listing_path(pixan_id: @user)) }
       it { should have_link('My Pixis', href: seller_listings_path) }
-      it { should have_link('My Posts', href: posts_path) }
+      it { should have_link('My Messages', href: posts_path) }
       it { should have_link('My Invoices', href: invoices_path) }
       it { should have_link('My Accounts', href: new_bank_account_path) }
       it { should have_link('My Settings', href: settings_path) }
+      it { should have_link('My PixiPosts', href: seller_pixi_posts_path) }
       it { should have_link('Sign out', href: destroy_user_session_path) }
       it { should_not have_link('Sign in', href: new_user_session_path) }
 
@@ -138,15 +149,18 @@ feature "UserSignins" do
       it { should have_content(user.first_name) }
       it { should have_content('Manage') }
       it { should have_link('Pending Orders', href: pending_listings_path) }
+      it { should have_link('PixiPosts', href: pixi_posts_path) }
       it { should_not have_link('Categories', href: manage_categories_path) }
       it { should_not have_link('Transactions', href: transactions_path) }
       it { should_not have_link('Users', href: users_path) }
+      it { should have_link('For Seller', href: new_temp_listing_path(pixan_id: @user)) }
       it { should have_link('Dashboard', href: '#') }
       it { should have_link('My Pixis', href: seller_listings_path) }
-      it { should have_link('My Posts', href: posts_path) }
+      it { should have_link('My Messages', href: posts_path) }
       it { should have_link('My Invoices', href: invoices_path) }
       it { should have_link('My Accounts', href: new_bank_account_path) }
       it { should have_link('My Settings', href: settings_path) }
+      it { should have_link('My PixiPosts', href: seller_pixi_posts_path) }
       it { should have_link('Sign out', href: destroy_user_session_path) }
       it { should_not have_link('Sign in', href: new_user_session_path) }
 
@@ -163,7 +177,7 @@ feature "UserSignins" do
         @user = user
         FactoryGirl.create(:listing, seller_id: @user.id)
 	@account = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
-	visit listings_path
+	visit root_path
       end
 
       it { should have_content('My Accounts') }
@@ -171,7 +185,7 @@ feature "UserSignins" do
     end
 
     describe 'registered subscriber users' do
-      let(:user) { FactoryGirl.create :subscriber, confirmed_at: Time.now }
+      let(:user) { FactoryGirl.create :subscriber, email: 'htest@pixitext.com', confirmed_at: Time.now }
       before(:each) do
         user_login
         @user = user
@@ -179,15 +193,17 @@ feature "UserSignins" do
 
       it { should have_content(user.first_name) }
       it { should_not have_content('Manage') }
+      it { should_not have_link('PixiPosts', href: pixi_posts_path) }
       it { should_not have_link('Pending Orders', href: pending_listings_path) }
       it { should_not have_link('Categories', href: manage_categories_path) }
       it { should_not have_link('Transactions', href: transactions_path) }
       it { should_not have_link('Users', href: users_path) }
       it { should have_content('Dashboard') }
       it { should have_link('My Pixis', href: seller_listings_path) }
-      it { should have_link('My Posts', href: posts_path) }
+      it { should have_link('My Messages', href: posts_path) }
       it { should have_link('My Invoices', href: invoices_path) }
       it { should have_link('My Settings', href: settings_path) }
+      it { should have_link('My PixiPosts', href: seller_pixi_posts_path) }
       it { should have_link('Sign out', href: destroy_user_session_path) }
       it { should_not have_link('Sign in', href: new_user_session_path) }
 

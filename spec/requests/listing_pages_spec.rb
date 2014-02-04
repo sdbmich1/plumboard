@@ -21,15 +21,16 @@ describe "Listings", :type => :feature do
      
     it { should have_content listing.nice_title }
     it { should have_content "Posted By: #{listing.seller_name}" }
-    it { should have_link 'Follow', href: '#' }
+    it { should have_selector('.rateit') }
+    it { should_not have_link 'Follow', href: '#' }
     it { should have_link listing.site_name, href: local_listings_path(loc: listing.site_id) }
     it { should have_link listing.category_name, href: category_listings_path(cid: listing.category_id, loc: listing.site_id) }
     it { should_not have_link 'Back', href: listings_path }
     it { should_not have_link 'Remove', href: listing_path(listing) }
     it { should_not have_link 'Edit', href: edit_temp_listing_path(listing) }
     it { should have_content "ID: #{listing.pixi_id}" }
-    it { should have_content "Posted: #{get_local_time(listing.start_date)}" }
-    it { should have_content "Updated: #{get_local_time(listing.updated_at)}" }
+    it { should have_content "Posted: #{listing.get_local_time(listing.start_date)}" }
+    it { should have_content "Updated: #{listing.get_local_time(listing.updated_at)}" }
     it { should_not have_content "Start Date: #{short_date(listing.event_start_date)}" }
     it { should_not have_content "End Date: #{short_date(listing.event_end_date)}" }
     it { should_not have_content "Start Time: #{short_time(listing.event_start_time)}" }
@@ -176,9 +177,9 @@ describe "Listings", :type => :feature do
 
   describe "pagination" do
     let(:pixi_user) { FactoryGirl.create(:pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tdavis@pixitext.com') }
-    before(:all) { 10.times { listing.comments.create FactoryGirl.attributes_for(:comment, user_id: pixi_user.id) } }
 
     before(:each) do
+      10.times { listing.comments.create FactoryGirl.attributes_for(:comment, user_id: pixi_user.id) } }
       login_as(pixi_user, :scope => :user, :run_callbacks => false)
       @user = pixi_user
       visit listing_path(listing) 
@@ -240,11 +241,25 @@ describe "Listings", :type => :feature do
       end
     end
 
+    describe "GET /category" do  
+      let(:category) { FactoryGirl.create :category }
+      let(:temp_listing) { FactoryGirl.create(:temp_listing, title: "Guitar", description: "Lessons", seller_id: @user.id) }
+      let(:listings) { 30.times { FactoryGirl.create(:listing, seller_id: @user.id, category_id: category.id) } }
+
+      before(:each) do
+        visit category_listings_path(category.id) 
+      end
+      
+      it { should have_content('Pixis') }
+      it { should have_content 'Guitar' }
+      it { should have_content category.nice_title }
+    end  
+
     describe "GET /listings" do  
       let(:temp_listing) { FactoryGirl.create(:temp_listing, title: "Guitar", description: "Lessons", seller_id: @user.id ) }
       let(:listings) { 30.times { FactoryGirl.create(:listing, seller_id: @user.id) } }
 
-      before do
+      before(:each) do
         @site = FactoryGirl.create :site, name: 'Pixi Tech'
 	@category = FactoryGirl.create :category
         FactoryGirl.create(:listing, title: "HP Printer J4580", description: "printer", seller_id: @user.id, site_id: @site.id, 
@@ -277,7 +292,7 @@ describe "Listings", :type => :feature do
         fill_in 'search', with: 'guitar'
 	click_on 'submit-btn'
         page.should_not have_content 'HP Printer J4580'
-        page.should have_content @listing.title
+        page.should have_content @listing.nice_title
       end
 
       it "selects a site", js: true do
@@ -285,15 +300,15 @@ describe "Listings", :type => :feature do
         page.should have_content 'HP Printer J4580'
 
 	click_link 'Recent'
-        page.should have_content @listing.title
+        page.should have_content @listing.nice_title
       end
 
       it "selects categories", js: true do
         select(@category.name_title, :from => 'category_id')
         page.should have_content @category.name_title
         page.should have_content 'HP Printer J4580'
-        page.should_not have_content @listing1.title
-        page.should have_content @listing.title
+        page.should_not have_content @listing1.nice_title
+        page.should have_content @listing.nice_title
 	# click_link 'Categories'
         # page.should have_content @category.name_title
         # page.should have_content "(#{@category.active_pixis_by_site(@site.id).size})" 

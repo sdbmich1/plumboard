@@ -1,6 +1,7 @@
   <tr>
     <td class='img-valign'>Qty</td>
-    <td><%= f.select 'quantity', options_for_select(get_ary, :selected => set_quantity), {}, {id: 'inv_qty', 'data-mini'=>'true', class: 'mtop'} %></td>
+    <td><%= f.select 'quantity', options_for_select(get_ary, :selected => set_quantity(@invoice)), {}, {id: 'inv_qty', 'data-mini'=>'true', 
+      class: 'mtop'} %></td>
   </tr>
   <tr>
     <td class='img-valign'>Price</td>

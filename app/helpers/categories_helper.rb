@@ -10,7 +10,7 @@ module CategoriesHelper
     if can?(:manage_users, @user)  
       link_to category.name_title, edit_category_path(category)
     else 
-      link_to category.name_title, category_path(category), class: 'pixi-link'
+      link_to category.name_title, category_listings_path(cid: category, loc: @loc), class: 'pixi-link'
     end 
   end
 end

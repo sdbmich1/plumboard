@@ -12,7 +12,9 @@ class Contact < ActiveRecord::Base
   after_validation :geocode  
 
   def full_address
-    [address, city, state, country].compact.join(', ')
+    addr = [self.address, self.city, self.state].compact.join(', ')
+    addr += addr + ', ' + self.country unless self.country.blank?
+    addr
   end
 
   # get by type

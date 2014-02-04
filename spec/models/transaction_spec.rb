@@ -36,6 +36,8 @@ describe Transaction do
   it { should respond_to(:card_number) }
   it { should respond_to(:card_month) }
   it { should respond_to(:card_year) }
+  it { should ensure_length_of(:zip).is_at_least(5).is_at_most(12) }
+  it { should validate_numericality_of(:amt).is_greater_than_or_equal_to(0) }
 
   it { should respond_to(:user) }
   it { should respond_to(:listings) }

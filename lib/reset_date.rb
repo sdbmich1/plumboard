@@ -10,13 +10,23 @@ module ResetDate
     Date.strptime(old_dt, '%m/%d/%Y') if old_dt    
   end   
 
-  def self.reset_dates(val)
-    val.parse_time_select! :event_start_time
-    val.parse_time_select! :event_end_time 
-
-    # convert dates to rails format
-    val[:event_start_date] = parse_date(val[:event_start_date]) if val[:event_start_date] 
-    val[:event_end_date] = parse_date(val[:event_end_date]) if val[:event_end_date]
+  # convert dates to rails format
+  def self.reset_dates(val, cType='TempListing')
+    if cType == 'TempListing'
+      val.parse_time_select! :event_start_time
+      val.parse_time_select! :event_end_time 
+      val[:event_start_date] = parse_date(val[:event_start_date]) if val[:event_start_date] 
+      val[:event_end_date] = parse_date(val[:event_end_date]) if val[:event_end_date]
+    else
+      val.parse_time_select! :preferred_time
+      val.parse_time_select! :alt_time 
+      val.parse_time_select! :appt_time 
+      val.parse_time_select! :completed_time 
+      val[:preferred_date] = parse_date(val[:preferred_date]) if val[:preferred_date] 
+      val[:alt_date] = parse_date(val[:alt_date]) if val[:alt_date]
+      val[:appt_date] = parse_date(val[:appt_date]) if val[:appt_date]
+      val[:completed_date] = parse_date(val[:completed_date]) if val[:completed_date]
+    end
     val
   end
 end

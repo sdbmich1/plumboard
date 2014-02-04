@@ -88,7 +88,7 @@ feature "Invoices" do
 
   describe "Check menu invoice link" do
     before do
-      visit listings_path 
+      visit root_path 
     end
 
     describe 'user has no pixis' do
@@ -99,7 +99,7 @@ feature "Invoices" do
   describe 'user has pixis w/o bank acct' do
     before do
       FactoryGirl.create(:listing, seller_id: @user.id) 
-      visit listings_path 
+      visit root_path 
     end
 
     it { should have_link('Bill', href: new_bank_account_path(target: 'shared/invoice_form')) }
@@ -110,7 +110,7 @@ feature "Invoices" do
     before do
       FactoryGirl.create(:listing, seller_id: @user.id) 
       @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
-      visit listings_path 
+      visit root_path 
     end
 
     it { should_not have_link('Bill', href: new_bank_account_path(target: 'shared/invoice_form')) }
@@ -119,7 +119,7 @@ feature "Invoices" do
 
   describe "Visit Invoices" do
     before do
-      visit listings_path 
+      visit root_path 
       click_link 'My Invoices'
     end
 
@@ -137,7 +137,7 @@ feature "Invoices" do
   describe 'user has pixis w/o bank acct' do
     before do
       FactoryGirl.create(:listing, seller_id: @user.id) 
-      visit listings_path 
+      visit root_path 
       click_link 'My Invoices'
     end
 
@@ -154,7 +154,7 @@ feature "Invoices" do
     before do
       FactoryGirl.create(:listing, seller_id: @user.id) 
       @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
-      visit listings_path 
+      visit root_path 
       click_link 'My Invoices'
     end
 
@@ -185,7 +185,7 @@ feature "Invoices" do
     
       click_on "#{@invoice.id}"
       page.should have_content @invoice.buyer.name
-      page.should have_content @invoice.listing.title
+      page.should have_content @invoice.pixi_title
       page.should have_content "Amount Due" 
       page.should have_link('Edit', href: edit_invoice_path(@invoice)) 
       page.should have_link('Remove', href: invoice_path(@invoice)) 

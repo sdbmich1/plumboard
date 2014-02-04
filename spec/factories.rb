@@ -1,8 +1,8 @@
 FactoryGirl.define do
   sequence(:email) {|n| "person#{n}@example.com" }
   factory :user, aliases: [:recipient, :seller] do
-    first_name            "Joe"
-    last_name             "Blow" 
+    first_name            { Faker::Name.first_name }
+    last_name             { Faker::Name.last_name }
     email		  
     password              "setup#123"
     password_confirmation "setup#123"
@@ -281,5 +281,20 @@ FactoryGirl.define do
   factory :rating do
     comments 		"A+ rating"
     value 		4
+  end
+
+  factory :pixi_post do
+    preferred_date	{ Time.now+2.days }
+    alt_date		{ Time.now+7.days }
+    preferred_time	{ Time.now+2.days }
+    alt_time		{ Time.now+7.days }
+    address          "123 Elm"
+    city            "LA"
+    state           "CA"
+    zip             "90201"
+    description 	"Black leather sofa"
+    quantity		1
+    value 		100
+    status 		"active"
   end
 end

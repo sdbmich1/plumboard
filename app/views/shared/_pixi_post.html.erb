@@ -1,36 +1,30 @@
-<div><%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: @user} %>
-  <%= @user.name %>
-</div>      
-<div class='row'>
-  <div class='span2'> 
-    <%= f.label :preferred_date, 'Preferred Date', class: 'med-top' %>
-    <%= f.text_field :preferred_date, value: @post.preferred_date, id: "start-date" %>
+<%= content_for :subhead do %>
+  <%= render :partial => 'shared/navbar', locals: { menu_name: 'PixiPost' } %>
+<% end %>
+<%= content_for :content do %>
+  <%= form_for @post do |f| %>
+  <div id='inv_form'>
+    <div class="div-border">
+      <div id="form_errors">
+        <%= render partial: 'shared/error_messages', :locals => { :target => @post } %>
+      </div>
+
+      <div style="<%= @post.owner?(@user) ? 'display:none' : '' %>">
+        <%= render partial: 'shared/pixi_post_details', locals: {post: @post, showAddrFlg: false} %>
+      </div>
+      <div style="<%= !@post.owner?(@user) ? 'display:none' : '' %>">
+        <%= render partial: 'shared/pixi_post_item', locals: { f: f } %>
+      </div>
+    </div>
+    <%= render partial: 'shared/pixi_post_address', locals: { f: f } %>
+
+    <% if !@post.owner?(@user) %>
+      <%= render partial: 'shared/manage_pixi_post', locals: { f: f } %>
+    <% end %>
+    <div class="nav pull-right">
+      <%= link_to 'Cancel', root_path, confirm: msg, class: "btn btn-large btn-primary stnd-btn" %>
+      <%= f.submit "Save", class: "btn btn-large btn-primary submit-btn" %>
+    </div>
   </div>
-  <div class='offset1 span2'>
-    <%= f.label :preferred_time, 'Preferred Time', class: 'med-top' %>
-    <%= f.time_select :preferred_time, { :combined => true, :default => Time.now.change(:hour => 12), 
-    	  :minute_interval => 30, :time_separator => "" }, :id=>'start-time', :class=>'pixi-select' %>
-  </div>
-  <div class='offset1 span2'>
-    <%= f.label :alt_date, 'Alt Date', class: 'med-top' %>
-    <%= f.text_field :alt_date, :value => @post.alt_date, :size => 10, :id => "end-date" %>
-  </div>
-  <div class='offset1 span2'>
-    <%= f.label :alt_time, 'Alt Time', class: 'med-top' %>
-    <%= f.time_select :alt_time, { :combined => true, :default => Time.now.change(:hour => 12), 
-    	  :minute_interval => 30, :time_separator => "" }, :id=>'end-time', :class=>'pixi-select' %>
-  </div>
-</div>
-<div class='row'>
-  <div class='span2'>
-    <%= f.label :quantity %>
-    <%= f.text_field :quantity, :size => 10, value: num_display(f.object, "quantity"), class: 'width120', placeholder: 'Qty' %>
-  </div>
-  <div class='span2'>
-    <%= f.label :value %>
-    <%= f.text_field :value, :size => 10, value: num_display(f.object, "value"), class: 'width120', placeholder: 'Value' %>
-  </div>
-  <div class='span7'>
-    <%= f.label :description, class: 'med-top' %><%= f.text_area :description, :placeholder => 'Describe Your Pixi' %>
-  </div>
-</div>
+  <% end %>
+<% end %>

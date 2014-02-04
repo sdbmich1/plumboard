@@ -1,0 +1,10 @@
+<tr>
+  <td><div class='price'><%= link_to post.id, post %></div></td>
+  <td><%= post.seller_name %></td>
+  <td class='center-wrapper'><%= get_local_date(post.preferred_date) %></td>
+  <td class='center-wrapper'><%= post.preferred_time.strftime("%l:%M %p") %></td>
+  <td><div class='price'><%= post.quantity %></div></td>
+  <td><div class='price'><%= number_to_currency(post.value) %></div></td>
+  <td><%= post.description %></td>
+  <td class='center-wrapper'><%= post.status.titleize %></td>
+</tr>

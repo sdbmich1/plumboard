@@ -1,7 +1,7 @@
 require 'will_paginate/array' 
 class ListingsController < ApplicationController
   include PointManager
-  before_filter :authenticate_user!, except: [:category]
+  before_filter :authenticate_user!
   before_filter :get_location, only: [:index]
   before_filter :load_data, only: [:index, :seller, :category, :show, :local]
   after_filter :add_points, only: [:show]

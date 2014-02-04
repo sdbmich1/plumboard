@@ -82,7 +82,7 @@ $(function (){
 }); 
 
 // paginate on click
-$(document).on("click", "#pendingOrder .pagination a, #post_form .pagination a, #comment-list .pagination a, #post-list .pagination a", function(){
+$(document).on("click", ".pg-list .pagination a, #pendingOrder .pagination a, #post_form .pagination a, #comment-list .pagination a, #post-list .pagination a", function(){
   toggleLoading();
   $.getScript(this.href);
   return false;
@@ -238,15 +238,20 @@ $(document).ready(function(){
     $("input#buyer_name").autocomplete({ html: true });
   }
 
-  if ($('input#slr_name').length > 0) {  
-    $("input#slr_name").autocomplete({ html: true });
+  if($('input#slr_name').is(':visible')) {
+    if ($('input#slr_name').length > 0) {  
+      $("input#slr_name").autocomplete({ html: true });
+    }
+  }
+
+  if ($('input#pixan_name').length > 0) {  
+    $("input#pixan_name").autocomplete({ html: true });
   }
 
   if ($('#rateit5').length > 0) {  
      $('#done-btn').attr('disabled', true);
      $("#rateit5").bind("rated", function (event, value)  { $('#value5').val(value); $('#done-btn').removeAttr('disabled'); });
      $("#rateit5").bind('reset', function () { $('#value5').val(0); $('#done-btn').attr('disabled', true); });
-   //  $("#rateit5").bind('over', function (event, value) { $('#hover5').text('Hovering over: ' + value); });
   }
 });
 
@@ -404,14 +409,15 @@ function processUrl(url) {
 }
 
 // set autocomplete selection value
-$(document).on("railsAutocomplete.select", "#buyer_name, #slr_name", function(event, data){
+$(document).on("railsAutocomplete.select", "#buyer_name, #slr_name, #pixan_name", function(event, data){
   var bname = data.item.first_name + ' ' + data.item.last_name;
   $('#buyer_name').val(bname);
   $('#slr_name').val(bname);
+  $('#pixan_name').val(bname);
 });
 
 // toggle profile state
-$(document).on('click', '#edit-txn-addr', function(e) {
+$(document).on('click', '#edit-txn-addr, #edit-addr-btn', function(e) {
   $('.user-tbl, .addr-tbl').toggle();
 });
 

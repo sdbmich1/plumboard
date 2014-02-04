@@ -92,6 +92,11 @@ module ApplicationHelper
     tm.utc.getlocal.strftime('%m/%d/%Y') if tm
   end
 
+  # set display time 
+  def get_local_time(tm)
+    tm.strftime("%l:%M %p") unless tm.blank?
+  end
+
   # parse navbar menu
   def parse_item val, item
     (val.is_a? String) ? val : val[item.to_sym]

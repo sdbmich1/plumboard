@@ -55,15 +55,16 @@ Spork.prefork do
     end
 
     config.before(:each) do
-      DatabaseCleaner.strategy = :transaction
+      if example.metadata[:js]
+        DatabaseCleaner.strategy = :truncation
+      else
+	DatabaseCleaner.strategy = :transaction
+      end
+
       reset_email
       DatabaseCleaner.start
       Contact.any_instance.stub(:geocode) { [1,1] }
       Listing.any_instance.stub(:geocode) { [1,1] }
-    end
-
-    config.before(:each, :js => true) do
-      DatabaseCleaner.strategy = :truncation
     end
 
     config.after(:each) do

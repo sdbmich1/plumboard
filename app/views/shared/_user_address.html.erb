@@ -1,5 +1,11 @@
 <tr>
-  <td><label>Email* </label><%= form.text_field :email %></td>
+  <td>
+    <% if toggle %>
+      <label>Email* </label><%= form.text_field :email %>
+    <% else %>
+      <label>Mobile Phone* </label><%= form.text_field :mobile_phone %>
+    <% end %>
+  </td>
   <td></td>
   <td><label>Home Phone* </label><%= form.text_field :home_phone %></td>
 </tr>

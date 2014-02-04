@@ -9,7 +9,7 @@
 	      <td><%= autocomplete_field_tag 'buyer_name', @invoice.buyer_name, autocomplete_user_first_name_invoices_path,
 	        :update_elements => { :id => '#invoice_buyer_id' }, :placeholder => 'Enter Buyer Name' %></td></tr> 
 	    <tr>
-	      <td>Item:</td><td><%= render 'mobile/active_listings' %></td></tr>
+	      <td>Item:</td><td><%= render partial: 'mobile/active_listings', locals: {model: @user} %></td></tr>
             <%= render partial: 'mobile/invoice_item', locals: { f: f } %>
 	    <tr style='display:none'><td>Comments:</td>
             <td><%= f.text_area :comment, placeholder: 'Enter comments here...' %></td></tr>

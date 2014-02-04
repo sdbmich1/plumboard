@@ -20,6 +20,22 @@ class ApplicationController < ActionController::Base
     prepend_view_path "app/views/mobile" if mobile_device?
   end
 
+  # Handle authorization exceptions
+  rescue_from CanCan::AccessDenied do |exception|
+    if request.xhr?
+      if signed_in?
+	render json: {status: :error, message: "You have no permission to #{exception.action} #{exception.subject.class.to_s.pluralize}"}, status: 403
+      else
+        render json: {:status => :error, :message => "You must be logged in to do that!"}, :status => 401
+      end
+    else
+      redirect_to root_url, alert: exception.message
+    end
+  end
+
+  # handle forbidden routes
+  rescue_from ActionController::RoutingError, :with => :render_forbidden_error
+
   protected
 
   def authenticate_user!
@@ -59,20 +75,6 @@ class ApplicationController < ActionController::Base
     session[:return_to] = nil
   end
 
-  # Handle authorization exceptions
-  rescue_from CanCan::AccessDenied do |exception|
-    if request.xhr?
-      if signed_in?
-	render json: {status: :error, message: "You have no permission to #{exception.action} #{exception.subject.class.to_s.pluralize}"}, status: 403
-      else
-        render json: {:status => :error, :message => "You must be logged in to do that!"}, :status => 401
-      end
-    else
-      flash[:error] = exception.message
-      redirect_to root_url
-    end
-  end
-
   # exception handling
   def rescue_with_handler(exception)
     if Rails.env.production? || Rails.env.staging?
@@ -84,6 +86,14 @@ class ApplicationController < ActionController::Base
   def action_missing(id, *args)
     if Rails.env.production? || Rails.env.staging?
       redirect_to '/404.html'
+    end
+  end
+
+  def render_forbidden_error
+    respond_to do |format|
+      format.html { redirect_to root_url, alert: "You cannot access that part of the website." }
+      format.xml { head :forbidden }
+      format.json { head :forbidden }
     end
   end
 

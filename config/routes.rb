@@ -38,7 +38,12 @@ Plumboard::Application.routes.draw do
   resources :users, except: [:new]
   resources :bank_accounts, :card_accounts, except: [:edit, :update]
   resources :sites, only: [:index]
-  resources :pixi_posts
+
+  resources :pixi_posts do
+    collection do
+      get 'seller', :autocomplete_user_first_name
+    end
+  end
 
   resources :pictures, only: [:show, :create, :destroy] do
     member do
@@ -69,7 +74,7 @@ Plumboard::Application.routes.draw do
 
   resources :temp_listings, except: [:index] do
     collection do
-      get :autocomplete_site_name, 'unposted', 'autocomplete_user_first_name'
+      get :autocomplete_site_name, :autocomplete_user_first_name, 'unposted'
     end
     member do
       put 'resubmit', 'submit'

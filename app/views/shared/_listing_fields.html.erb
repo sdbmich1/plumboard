@@ -50,12 +50,12 @@
   </div>
   <div class='offset1 span2'>
     <%= f.label :event_start_time, 'Start Time', class: 'med-top' %>
-    <%= f.time_select :event_start_time, { :combined => true, :default => Time.now.change(:hour => 12), 
+    <%= f.time_select :event_start_time, { :combined => true, :default => Time.now.change(:hour => 12), ampm: true, 
     	  :minute_interval => 15, :time_separator => "" }, :id=>'start-time', :class=>'pixi-select' %>
   </div>
   <div class='offset1 span2'>
     <%= f.label :event_end_time, 'End Time', class: 'med-top' %>
-    <%= f.time_select :event_end_time, { :combined => true, :default => Time.now.change(:hour => 12), 
+    <%= f.time_select :event_end_time, { :combined => true, :default => Time.now.change(:hour => 12), ampm: true, 
     	  :minute_interval => 15, :time_separator => "" }, :id=>'end-time', :class=>'pixi-select' %>
   </div>
 </div>

@@ -1,8 +1,8 @@
 module InvoicesHelper
 
   # set default quantity
-  def set_quantity
-    @invoice.quantity || 1
+  def set_quantity model
+    model.quantity || 1
   end
 
   # set default sales tax

@@ -48,6 +48,10 @@ class User < ActiveRecord::Base
 
   has_many :user_pixi_points, dependent: :destroy
 
+  has_many :pixi_posts, dependent: :destroy
+  has_many :active_pixi_posts, class_name: 'PixiPost', :conditions => "status IN ('active', 'scheduled')"
+  has_many :pixan_pixi_posts, :foreign_key => "pixan_id", :class_name => "PixiPost"
+
   has_many :pictures, :as => :imageable, :dependent => :destroy
   accepts_nested_attributes_for :pictures, :allow_destroy => true, :reject_if => :all_blank
 
@@ -200,6 +204,15 @@ class User < ActiveRecord::Base
   # display image with name for autocomplete
   def photo
     self.pictures[0].photo.url(:tiny) rescue nil
+  end
+
+  # check if address is populated
+  def has_address?
+    if contacts[0]
+      !contacts[0].address.blank? && !contacts[0].city.blank? && !contacts[0].state.blank? && !contacts[0].zip.blank?
+    else
+      false
+    end
   end
 
   def pic_with_name

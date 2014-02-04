@@ -32,12 +32,9 @@ class Transaction < ActiveRecord::Base
                     :format => { :with => name_regex }  
 
   validates :state, :presence => true
-  validates :zip,   :presence => true,
-                    :length   => { :maximum => 12 }
-
+  validates :zip, presence: true, length: {minimum: 5, maximum: 12}
   validates :home_phone, :presence => true
-  validates :amt, :presence => true,
-  		  :numericality => true
+  validates :amt, presence: true, numericality: { greater_than_or_equal_to: 0 }
 
   # pre-load new transaction for given user
   def self.load_new usr, listing, order

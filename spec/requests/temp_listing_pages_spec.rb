@@ -259,10 +259,10 @@ feature "TempListings" do
                 select('Event', :from => 'temp_listing_category_id')
                 fill_in 'start-date', with: Date.today().strftime('%m/%d/%Y')
                 fill_in 'end-date', with: Date.today().strftime('%m/%d/%Y')
-		select('15:00', :from => 'start-time')
-		select('20:00', :from => 'end-time')
+		select('5:00 PM', :from => 'start-time')
+		select('10:00 PM', :from => 'end-time')
 	        click_button submit
-	      }.to change(TempListing,:count).by(1)
+	}.to change(TempListing,:count).by(1)
       
         page.should have_content "Guitar for Sale" 
         page.should have_content 'Review Your Pixi'

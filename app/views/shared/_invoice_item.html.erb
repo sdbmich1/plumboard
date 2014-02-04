@@ -2,8 +2,8 @@
   <%= render 'shared/inv_header' %>
   <tr>
     <td class='width120'>
-      <%= f.select 'quantity', options_for_select(get_ary, :selected => set_quantity), {}, {id: 'inv_qty', class: 'pixi-select'} %></td>
-    <td class="width360"><%= render partial: 'shared/active_listings' %></td>
+      <%= f.select 'quantity', options_for_select(get_ary, :selected => set_quantity(@invoice)), {}, {id: 'inv_qty', class: 'pixi-select'} %></td>
+    <td class="width360"><%= render partial: 'shared/active_listings', locals: {model: @user} %></td>
     <td class="width120"><%= f.text_field :price, id: 'inv_price', value: num_display(f.object, "price"), class: 'price' %></td>
     <td class="width120"><%= f.text_field :subtotal, id: 'inv_amt', value: num_display(f.object, "subtotal"), readonly: true, class: 'price' %></td>
   </tr>

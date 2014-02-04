@@ -1,3 +1,3 @@
-<%= collection_select(:invoice, :pixi_id, @user.active_listings, :pixi_id, :title, {:prompt => 'Select Pixi'}, 
+<%= collection_select(:invoice, :pixi_id, model.active_listings, :pixi_id, :title, {:prompt => 'Select Pixi'}, 
   { class: 'pixi-select', 'data-mini'=>'true' }) %>
 

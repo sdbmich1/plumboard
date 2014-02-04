@@ -45,6 +45,11 @@ describe User do
     it { should respond_to(:comments) }
     it { should respond_to(:ratings) }
     it { should respond_to(:seller_ratings) }
+    it { should respond_to(:pixi_posts) }
+    it { should respond_to(:active_pixi_posts) }
+    it { should respond_to(:pixan_pixi_posts) }
+    it { should have_many(:active_pixi_posts).class_name('PixiPost').conditions("status IN ('active', 'scheduled')") }
+    it { should have_many(:pixan_pixi_posts).class_name('PixiPost').with_foreign_key('pixan_id') }
 
     it { should validate_presence_of(:first_name) }
     it { should validate_presence_of(:last_name) }
@@ -349,6 +354,17 @@ describe User do
 
     it 'should be inactive' do
       @user.deactivate.status.should == 'inactive'
+    end
+  end
+
+  describe 'has_address?' do
+    it 'should return true' do
+      @user.has_address?.should be_true
+    end
+
+    it 'should not return true' do
+      user = FactoryGirl.build :user
+      user.has_address?.should_not be_true
     end
   end
 
