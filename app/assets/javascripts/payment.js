@@ -45,7 +45,8 @@ function BalancedCard() {
       card_number: $('#card_number').val(),
       security_code: $('#card_code').val(),
       expiration_month: $('#card_month').val(),
-      expiration_year: $('#card_year').val()    
+      expiration_year: $('#card_year').val(),
+      postal_code: $('#postal_code').val()
     }, callbackHandler);
   }
 
@@ -108,6 +109,9 @@ function callbackHandler(response) {
        
       // insert the data into the form 
       $('#pay_token').val(response.data.uri);
+      $('#pay_type').val(response.data.card_type);
+      $('#exp_month').val(response.data.expiration_month);
+      $('#exp_year').val(response.data.expiration_year);
 
       if($('#bank_account_acct_no').length > 0) {
         $('#bank_account_acct_no').val(response.data.account_number); }

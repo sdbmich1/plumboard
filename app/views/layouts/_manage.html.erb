@@ -3,6 +3,7 @@
   <ul class="dropdown-menu">
     <li><%= link_to "Pending Orders", pending_listings_path %></li>
     <li><%= link_to "PixiPosts", pixi_posts_path %></li>
+    <li><%= link_to "Inquiries", inquiries_path %></li>
     <% if can? :manage_users, @user %>
       <li><%= link_to "Categories", manage_categories_path %></li>
       <li><%= link_to "Transactions", transactions_path %></li>

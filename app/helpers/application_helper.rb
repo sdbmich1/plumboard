@@ -114,7 +114,8 @@ module ApplicationHelper
       when 'Pending Orders'; render 'shared/navbar_pending'
       when 'Messages'; render 'shared/navbar_posts'
       when 'Home'; render 'shared/navbar_home'
-      when 'PixiPost'; render 'shared/navbar_pixi_post'
+      when 'PixiPosts'; render 'shared/navbar_pixi_post'
+      when 'Inquiries'; render 'shared/navbar_inquiry'
       else render 'shared/navbar_main'
     end
   end

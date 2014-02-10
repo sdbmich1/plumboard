@@ -92,6 +92,7 @@ class ApplicationController < ActionController::Base
   def render_forbidden_error
     respond_to do |format|
       format.html { redirect_to root_url, alert: "You cannot access that part of the website." }
+      format.mobile { redirect_to root_url, alert: "You cannot access that part of the website." }
       format.xml { head :forbidden }
       format.json { head :forbidden }
     end

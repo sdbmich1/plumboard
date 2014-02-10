@@ -3,17 +3,22 @@ require 'spec_helper'
 feature "Transactions" do
   subject { page }
   let(:user) { FactoryGirl.create(:pixi_user) }
+  let(:contact_user) { FactoryGirl.create(:contact_user) }
   let(:submit) { "Done!" }
 
   before(:each) do
-    login_as(user, :scope => :user, :run_callbacks => false)
     FactoryGirl.create :state
-    @user = user
+    FactoryGirl.create :promo_code
+  end
+
+  def init_setup usr
+    login_as(usr, :scope => :user, :run_callbacks => false)
+    @user = usr
     @listing = FactoryGirl.create :temp_listing, seller_id: @user.id
   end
 
   def add_invoice
-    @seller = FactoryGirl.create(:pixi_user, first_name: 'Kim', last_name: 'Harris', email: 'kharris@pixitest.com')
+    @seller = FactoryGirl.create(:pixi_user)
     @listing2 = FactoryGirl.create(:listing, seller_id: @seller.id)
     @account = @seller.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
     @invoice = @seller.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing2.pixi_id, buyer_id: @user.id, 
@@ -49,7 +54,7 @@ feature "Transactions" do
   def user_data_with_state
     user_data
     select("California", :from => "transaction_state")
-    fill_in 'transaction_zip', with: '94103'
+    fill_in 'postal_code', with: '94103'
   end
 
   def invalid_card_dates
@@ -62,11 +67,11 @@ feature "Transactions" do
     select (Date.today.year+2).to_s, from: "card_year"
   end
 
-  def credit_card val="4242424242424242"
+  def credit_card val="4111111111111111"
     fill_in "card_number", with: val
   end
 
-  def credit_card_data cid="4242424242424242", cvv="123", valid=true
+  def credit_card_data cid="4111111111111111", cvv="123", valid=true
     credit_card cid
     fill_in "card_code",  with: cvv
     valid ? valid_card_dates : invalid_card_dates
@@ -107,7 +112,7 @@ feature "Transactions" do
 
   describe "Manage Free Valid Transactions" do
     before(:each) do 
-      FactoryGirl.create :promo_code
+      init_setup user
       visit_free_txn_path 
     end
 
@@ -151,15 +156,21 @@ feature "Transactions" do
     end
   end
 
-  describe "Manage Valid Invoice Transactions" do
+  describe "Manage Valid Invoice Transactions - new card" do
     before(:each) do
+      init_setup user
       visit_inv_txn_path 
       user_data_with_state
     end
 
-    it { should have_selector('title', text: 'Pay Invoice') }
+    it { should have_selector('title', text: 'PixiPay') }
     it { should have_content "Invoice # #{@invoice.id} from #{@seller.name}" }
     it { should have_content @invoice.pixi_title }
+    it { should have_content "Total Due" }
+    it { should_not have_content "Buyer Information" }
+    it { should have_selector('#edit-txn-addr', visible: false) }
+    it { should_not have_content "Payment Information" }
+    it { should_not have_selector('#edit-card-btn', visible: false) }
     it { should have_link('Prev', href: invoice_path(@invoice)) }
     it { should_not have_link('Cancel', href: temp_listing_path(@listing)) }
     it { should have_button('Done!') }
@@ -178,7 +189,7 @@ feature "Transactions" do
         credit_card_data '4111111111111111'
         page.should have_content("Purchase Complete")
         page.should have_content("Please Rate Your Seller")
-        page.should have_button('Add Comment') 
+        page.should have_link('Add Comment', href: '#') 
       }.to change(Transaction, :count).by(1)
     end
 
@@ -187,7 +198,7 @@ feature "Transactions" do
         credit_card_data '5105105105105100'
         page.should have_content("Purchase Complete")
         page.should have_content("Please Rate Your Seller")
-        page.should have_button('Add Comment') 
+        page.should have_link('Add Comment', href: '#') 
       }.to change(Transaction, :count).by(1)
     end
 
@@ -195,14 +206,105 @@ feature "Transactions" do
       expect { 
         credit_card_data '341111111111111', '1234'
         page.should have_content("Purchase Complete")
-        page.should have_content("Please Rate Your Seller")
-        page.should have_button('Add Comment') 
+        page.should have_link('Add Comment', href: '#') 
       }.to change(Transaction, :count).by(1)
     end
   end
 
-  describe 'pay invoice from post page' do
+  describe "Valid Invoice Transactions w/ existing card" do
+    before(:each) do
+      init_setup contact_user
+      @acct = @user.card_accounts.create FactoryGirl.attributes_for :card_account, card_no: '1111'
+      visit_inv_txn_path 
+    end
+
+    it { should have_selector('title', text: 'PixiPay') }
+    it { should have_content "Invoice # #{@invoice.id} from #{@seller.name}" }
+    it { should have_content @invoice.pixi_title }
+    it { should have_content "Total Due" }
+    it { should have_content "Buyer Information" }
+    it { should have_content @user.contacts[0].address }
+    it { should have_content @user.contacts[0].city }
+    it { should have_content @user.contacts[0].state }
+    it { should have_content @user.contacts[0].zip }
+    it { should have_selector('#edit-txn-addr', visible: false) }
+    it { should have_content "Payment Information" }
+    it { should have_selector('#edit-card-btn', visible: true) }
+    it { should have_link('Prev', href: invoice_path(@invoice)) }
+    it { should have_button('Done!') }
+
+    it "edits the buyer info" do
+      expect { 
+        page.find('#edit-txn-addr').click
+        fill_in 'transaction_home_phone', with: '4152415555'
+        page.should have_content("Address")
+        page.should have_content("City")
+        page.should have_content("Zip")
+      }.to change(Transaction, :count).by(0)
+    end
+
+    it "edits the payment info" do
+      expect { 
+        page.find('#edit-card-btn').click
+        fill_in "card_number", with: '5105105105105100'
+        page.should have_content("Credit Card #")
+        page.should have_content("Code")
+      }.to change(Transaction, :count).by(0)
+    end
+
+    it "submits payment", js: true do
+      expect { 
+        click_valid_ok
+        page.should have_content("Purchase Complete")
+        page.should have_link('Add Comment', href: '#') 
+      }.to change(Transaction, :count).by(1)
+    end
+  end
+
+  describe "Valid Invoice Transactions - change existing card" do
+    before(:each) do
+      init_setup contact_user
+      @acct = @user.card_accounts.create FactoryGirl.attributes_for :card_account, card_no: '1111'
+      visit_inv_txn_path 
+    end
+
+    it "edits and submits the payment info", js: true do
+      expect { 
+        page.should have_content "Payment Information" 
+        page.should have_selector('#edit-card-btn', visible: true) 
+        page.find('#edit-card-btn').click
+        credit_card_data '5105105105105100'
+        page.should have_content("Purchase Complete")
+        page.should have_link('Add Comment', href: '#') 
+      }.to change(Transaction, :count).by(1)
+    end
+  end
+
+  describe 'Pay invoice from any page' do
     before :each do
+      add_invoice
+      init_setup user
+      visit root_path
+    end
+
+    it { should have_link('Pay', href: invoice_path(@invoice)) }
+
+    it "creates a balanced transaction with valid card", :js=>true do
+      click_on 'Pay'
+      page.should have_content 'Pay Invoice'
+      page.should have_content 'Total Due'
+
+      expect { 
+        user_data_with_state
+        credit_card_data '5105105105105100'
+        page.should have_content("Purchase Complete")
+      }.to change(Transaction, :count).by(1)
+    end
+  end
+
+  describe 'Pay invoice from post page' do
+    before :each do
+      init_setup user
       add_invoice
       visit posts_path
     end
@@ -222,8 +324,9 @@ feature "Transactions" do
     end
   end
 
-  describe "Manage Invalid Invoice Transactions" do
+  describe "Invalid Invoice Transactions" do
     before(:each) do
+      init_setup user
       visit_inv_txn_path 
       user_data_with_state
     end
@@ -231,14 +334,14 @@ feature "Transactions" do
     it "should not create a transaction with no card #", :js=>true do
       expect { 
 	  credit_card_data '', '123', true
-	  click_ok }.not_to change(Transaction, :count)
+      }.not_to change(Transaction, :count)
       page.should have_content 'invalid'
     end
 
     it "should not create a transaction with invalid card #", :js=>true do
       expect { 
 	  credit_card_data '4444444444444448', '123', true
-	  click_ok }.not_to change(Transaction, :count)
+      }.not_to change(Transaction, :count)
       page.should have_content 'invalid'
     end
 
@@ -276,8 +379,9 @@ feature "Transactions" do
     end
   end
 
-  describe "Manage Valid Pixi Transactions" do
+  describe "Valid Pixi Transactions" do
     before(:each) do
+      init_setup user
       visit_txn_path 
       user_data_with_state
     end
@@ -288,52 +392,13 @@ feature "Transactions" do
       }.not_to change(Transaction, :count)
       page.should have_content "Submit Your Pixi" 
     end
-
-    it "should create a transaction with valid visa card", :js=>true do
-      expect { 
-        credit_card_data 
-      }.to change(Transaction, :count).by(1)
-      page.should have_content("your pixi will be posted")
-    end
-
-    it "should create a transaction with valid mc card", :js=>true do
-      expect { 
-        credit_card_data "5555555555554444"
-	}.to change(Transaction, :count).by(1)
-      page.should have_content("your pixi will be posted")
-    end
-
-    it "should create a transaction with valid ax card", :js=>true do
-      expect { 
-        credit_card_data "378282246310005"
-	}.to change(Transaction, :count).by(1)
-      page.should have_content("your pixi will be posted")
-    end
-
-    it "should create a transaction with valid discover card", :js=>true do
-      expect { 
-        credit_card_data "6011000990139424"
-	}.to change(Transaction, :count).by(1)
-      page.should have_content("your pixi will be posted")
-    end
-
-    it "should create a transaction with valid diners card", :js=>true do
-      expect { 
-        credit_card_data "6011000990139424"
-	}.to change(Transaction, :count).by(1)
-      page.should have_content("your pixi will be posted")
-    end
-
-    it "should create a transaction with valid jcb card", :js=>true do
-      expect { 
-        credit_card_data "3530111333300000"
-	}.to change(Transaction, :count).by(1)
-      page.should have_content("your pixi will be posted")
-    end
   end
 
   describe "Manage Invalid Transactions", :js=>true do
-    before { visit_txn_path }
+    before(:each) do
+      init_setup user
+      visit_txn_path 
+    end
 
     describe "Create with invalid address information" do
       it "should not create a transaction with invalid first name" do
@@ -433,7 +498,7 @@ feature "Transactions" do
       it "should not create a transaction with no zip" do
         expect { 
 	  user_data_with_state
-          fill_in 'transaction_zip', with: ""
+          fill_in 'postal_code', with: ""
           credit_card_data
 	  click_ok }.not_to change(Transaction, :count)
 
@@ -455,140 +520,6 @@ feature "Transactions" do
       it "should not create a transaction with no cvv" do
         expect { 
 	  credit_card_data '4242424242424242', nil, true
-	  click_ok }.not_to change(Transaction, :count)
-
-        page.should have_content 'invalid'
-      end
-
-      it "should not create a transaction with expired card" do
-        expect { 
-	  credit_card_data '4000000000000069', '123', true
-	  click_ok }.not_to change(Transaction, :count)
-      end
-
-      it "should not create a transaction with declined card" do
-        expect { 
-	  credit_card_data '4000000000000002', '123', true
-	  click_ok }.not_to change(Transaction, :count)
-      end
-
-      it "should not create a transaction with bad_cvv card" do
-        expect { 
-	  credit_card_data '4242424242424242', '12', true
-	  click_ok }.not_to change(Transaction, :count)
-
-        page.should have_content 'invalid'
-      end
-
-      it "should not create a transaction with bad_dates card" do
-        expect { 
-	  credit_card_data '4242424242424242', '123', false
-	  click_ok }.not_to change(Transaction, :count)
-
-        page.should have_content 'invalid'
-      end
-
-      it "should not create a transaction with error card" do
-        expect { 
-	  credit_card_data '4000000000000119', '123', false
-	  click_ok }.not_to change(Transaction, :count)
-      end
-    end
-
-    describe "Create with invalid Mastercard information" do
-      before { user_data_with_state }
-
-      it "should not create a transaction with bad_cvv card" do
-        expect { 
-          credit_card_data "5555555555554444", '12', true
-	  click_ok }.not_to change(Transaction, :count)
-
-        page.should have_content 'invalid'
-      end
-
-      it "should not create a transaction with bad_dates card" do
-        expect { 
-          credit_card_data "5555555555554444", '123', false
-	  click_ok }.not_to change(Transaction, :count)
-
-        page.should have_content 'invalid'
-      end
-    end
-
-    describe "Create with invalid amex information" do
-      before { user_data_with_state }
-
-      it "should not create a transaction with bad_cvv card" do
-        expect { 
-          credit_card_data "378282246310005", '12', true
-	  click_ok }.not_to change(Transaction, :count)
-
-        page.should have_content 'invalid'
-      end
-
-      it "should not create a transaction with bad_dates card" do
-        expect { 
-          credit_card_data "378282246310005", '123', false
-	  click_ok }.not_to change(Transaction, :count)
-
-        page.should have_content 'invalid'
-      end
-    end
-
-    describe "Create with invalid Discover information" do
-      before { user_data_with_state }
-
-      it "should not create a transaction with bad_cvv card" do
-        expect { 
-          credit_card_data "6011000990139424", '12', true
-	  click_ok }.not_to change(Transaction, :count)
-
-        page.should have_content 'invalid'
-      end
-
-      it "should not create a transaction with bad_dates card" do
-        expect { 
-          credit_card_data "6011000990139424", '123', false
-	  click_ok }.not_to change(Transaction, :count)
-
-        page.should have_content 'invalid'
-      end
-    end
-
-    describe "Create with invalid Diners information" do
-      before { user_data_with_state }
-
-      it "should not create a transaction with bad_cvv card" do
-        expect { 
-          credit_card_data "6011000990139424", '12', true
-	  click_ok }.not_to change(Transaction, :count)
-
-        page.should have_content 'invalid'
-      end
-
-      it "should not create a transaction with bad_dates card" do
-        expect { 
-          credit_card_data "6011000990139424", '123', false
-	  click_ok }.not_to change(Transaction, :count)
-
-        page.should have_content 'invalid'
-      end
-    end
-
-    describe "Create with invalid JCB information" do
-      before { user_data_with_state }
-
-      it "should not create a transaction with bad_cvv card" do
-        expect { 
-          credit_card_data "3530111333300000", '12', true
-	  click_ok }.not_to change(Transaction, :count)
-
-        page.should have_content 'invalid'
-      end
-
-      it "should not create a transaction with bad_dates card" do
-        expect { 
-          credit_card_data "3530111333300000", '123', false
 	  click_ok }.not_to change(Transaction, :count)
 
         page.should have_content 'invalid'

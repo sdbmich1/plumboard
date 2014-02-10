@@ -97,6 +97,10 @@ Plumboard::Application.routes.draw do
     get 'refund', :on => :member
   end
 
+  resources :inquiries do
+    post 'request', :on => :member
+  end
+
   namespace :api do
     namespace :v1  do
       resources :sessions, only: [:create, :destroy]
@@ -108,8 +112,8 @@ Plumboard::Application.routes.draw do
   # custom routes
   get "/about", to: "pages#about" 
   get "/privacy", to: "pages#privacy" 
-  get "/help", to: "pages#help" 
-  get "/contact", to: "pages#contact" 
+  get "/help", to: "inquiries#help" 
+  get "/contact", to: "inquiries#new" 
   get "/welcome", to: "pages#welcome" 
   get '/system/:class/:attachment/:id/:style/:filename', :to => 'pictures#asset'
   get '/loc_name', to: "sites#loc_name"

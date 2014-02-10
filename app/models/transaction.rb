@@ -1,10 +1,10 @@
 class Transaction < ActiveRecord::Base
   include CalcTotal, Payment
 
-  attr_accessor :cvv, :card_number, :card_month, :card_year
+  attr_accessor :cvv, :card_number, :exp_month, :exp_year, :mobile_phone
   attr_accessible :address, :address2, :amt, :city, :code, :country, :credit_card_no, :description, :email, :first_name, 
   	:home_phone, :last_name, :payment_type, :promo_code, :state, :work_phone, :zip, :user_id, :confirmation_no, :token, :status,
-	:convenience_fee, :processing_fee, :transaction_type, :debit_token, :cvv, :card_number, :card_month, :card_year
+	:convenience_fee, :processing_fee, :transaction_type, :debit_token, :cvv, :card_number, :exp_month, :exp_year, :mobile_phone
 
   belongs_to :user
   has_many :invoices
@@ -82,18 +82,23 @@ class Transaction < ActiveRecord::Base
     transaction_type == 'pixi'
   end
 
+  # check for valid card
   def valid_card?
-    card_number.blank? || cvv.blank? || (card_month < Date.today.month && card_year <= Date.today.year) ? false : true
+    card_number.blank? || cvv.blank? || (exp_month < Date.today.month && exp_year <= Date.today.year) ? false : true
   end
 
   # check for token
   def has_token?
-    Rails.logger.info 'Token = ' + self.token
     if token.blank?
       errors.add :base, "Card info is missing or invalid. Please re-enter."
       false
     else
-      user.has_card_account? ? true : CardAccount.add_card(self, self.token)
+      Rails.logger.info "Txn card data: #{self.exp_month} / #{self.exp_year}"
+      if card_number.blank?  
+        user.has_card_account? ? true : false
+      else
+	CardAccount.add_card(self, self.token)
+      end
     end
   end
 
@@ -178,13 +183,13 @@ class Transaction < ActiveRecord::Base
   # process transaction
   def process_transaction
     if valid? 
-      Rails.logger.info 'Processing fee = ' + self.processing_fee.to_s
-
       # charge the credit card
       result = Payment::charge_card(token, amt, description, self) if amt > 0.0
 
       # check for errors
-      return false if self.errors.any?
+      if self.errors.any?
+        return false 
+      end
 
       # check result - update confirmation # if nil (free transactions) use timestamp instead
       if result
@@ -196,6 +201,7 @@ class Transaction < ActiveRecord::Base
 	  self.payment_type, self.credit_card_no = result.card[:type], result.card[:last4]
 	end
       else
+        Rails.logger.info 'Txn result invalid = ' + self.errors.full_messages.to_s
         if amt > 0.0
 	  return false
 	else
@@ -207,6 +213,7 @@ class Transaction < ActiveRecord::Base
       self.status = 'approved'
       save!  
     else
+      Rails.logger.info 'Txn invalid no result = ' + self.errors.full_messages.to_s
       false
     end
   end

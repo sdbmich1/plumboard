@@ -55,23 +55,30 @@ class CardAccount < ActiveRecord::Base
     save!
   end
 
+  # check if card has expired
+  def has_expired?
+    expiration_year == Date.today.year ? expiration_month < Date.today.month ? true : false : expiration_year < Date.today.year ? true : false
+  end
+
   # add card 
   def self.add_card model, token=nil
-    card_num = model.card_number[model.card_number.length-4..model.card_number.length] 
+    # get last 4 of card
+    card_num = model.card_number[model.card_number.length-4..model.card_number.length] rescue nil
 
     # check if card exists
     unless card = model.user.card_accounts.where(:card_no => card_num).first
-      card = model.user.card_accounts.build card_number: model.card_number, expiration_month: model.card_month,
-	         expiration_year: model.card_year, card_code: model.cvv, zip: model.zip 
+      card = model.user.card_accounts.build card_number: model.card_number, expiration_month: model.exp_month,
+	         expiration_year: model.exp_year, card_code: model.cvv, zip: model.zip, card_type: model.payment_type 
 
       # check if token was already created
       if token
         card.token = token
-	card.save
+	card.save!
       else
         card.save_account 
       end
     end
-    card.errors.any? ? false : self.token = card.token 
+    Rails.logger.info 'Card errors = ' + card.errors.full_messages.to_s
+    card.errors.any? ? false : card 
   end
 end

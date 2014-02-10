@@ -51,6 +51,16 @@ module Payment
     end
   end
 
+  # delete credit card
+  def self.delete_card token, acct
+    case CREDIT_CARD_API
+    when 'balanced' 
+      result = BalancedPayment::delete_card token, acct
+    when 'stripe'
+      result = StripePayment::delete_card token, acct
+    end
+  end
+
   # process credit card result
   def self.process_result result, txn
     case CREDIT_CARD_API

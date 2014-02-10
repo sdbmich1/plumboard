@@ -1,0 +1,53 @@
+  <%= form_for @inquiry do |f| %>
+    <div id="form_errors">
+      <%= render partial: 'shared/error_messages', :locals => { :target => @inquiry } %>
+    </div>
+    <div class='row'>
+      <div class='offset2 span6'><label>To:<span class='mleft10'><%= show_recipient svcFlg %></label></span></div>
+    </div>
+    <div class='row'>
+      <div style="<%= signed_in? ? '' : 'display:none' %>">
+        <div class='offset2 span6 sm-bot frm-name'><label>From:<span class='mleft10'><%= @user.name %></label></span></div>
+      </div>
+    </div>
+    <div class='sm-top user-tbl' style="<%= signed_in? ? 'display:none' : '' %>">
+      <div class='row'>
+        <div class='offset2 span4'>
+          <label>First Name*</label><%= f.text_field :first_name, value: get_info('first_name'), id: "inq_first_name", placeholder: 'First Name' %>
+        </div>
+      </div>
+      <div class='row'>
+        <div class='offset2 span4'>
+          <label>Last Name*</label><%= f.text_field :last_name, value: get_info('last_name'), id: "inq_last_name", placeholder: 'Last Name' %>
+        </div>
+      </div>
+      <div class='row'>
+        <div class='offset2 span4'>
+          <label>Email*</label><%= f.text_field :email, id: "inq_email", value: get_info('email'), placeholder: "Email Address" %>
+        </div>
+      </div>
+    </div>
+    <div class='row'>
+      <div class='offset2 span2'><label>Subject*</label>
+        <%= f.collection_select :code, get_inquiry_type(svcFlg), :code, :subject, {:prompt => 'Please Select'}, {id: 'inq_subject', 
+	   class: 'pixi-select'} %>
+      </div>
+    </div>
+    <div class='user-tbl' style="<%= action_name == 'new' ? 'display:none' : '' %>">
+      <div class='row'>
+        <div class='offset2 span2 sm-top'><label>Status*</label>
+	  <%= f.select :status, options_for_select( ['active', 'closed'], :selected=>@inquiry.status ), {:prompt => 'Status'},
+	     {id: 'inq_status', class: 'pixi-select'} %>
+        </div>
+      </div>
+    </div>
+    <div class='row'>
+      <div class='sm-top offset2 span8'>
+        <label>Description*</label><%= f.text_area :comments, id: 'inq_comments', :placeholder => 'Type Your Question, Suggestion or Comment' %>
+        <div class="nav pull-right">
+          <%= f.submit "Submit", class: "btn btn-large btn-primary submit-btn", id: 'inq-done-btn' %>
+          <%= link_to 'Cancel', :back, confirm: msg, class: "btn btn-large btn-primary stnd-btn" %>
+        </div>
+      </div>
+    </div>
+  <% end %>

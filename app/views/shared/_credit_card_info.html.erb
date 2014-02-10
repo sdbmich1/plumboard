@@ -12,8 +12,8 @@
       </table>
     </div>
   <% end %>
-  <center>
-  <table class='sm-top card-tbl' style="<%= @user.has_card_account? ? 'display:none' : '' %>">
+  <div class='sm-top center-wrapper card-tbl' style="<%= @user.has_card_account? ? 'display:none' : '' %>">
+  <table>
   <th class='tbl-hdr'>Credit Card #* </th>
   <th></th>
   <th class='tbl-hdr'>Code (CVV)*</th>
@@ -22,9 +22,9 @@
   <th></th>
   <th class='tbl-hdr'>Exp Year*</th>
   <tr>
-    <td class="width240"><%= number_field_tag :card_number, nil, name: 'card_number', :size => 16 %></td>
+    <td class="width240"><%= f.number_field :card_number, id: 'card_number', :size => 16 %></td>
     <td class="width30"></td>
-    <td class="width120"><%= number_field_tag :cvv, nil, name: 'cvv', :maxlength => 4, :size => 4 %> 
+    <td class="width120"><%= f.number_field :cvv, id: 'card_code', :maxlength => 4, :size => 4 %></td> 
     <td class="width30"></td>
     <td class="width180">
         <%= select_month nil, {add_month_numbers_true: true}, {name: 'card_month', id: "card_month", class: "neg-top pixi-select" } %>
@@ -40,5 +40,5 @@
     <td></td>
     <td><%= image_tag('cvv.png', :class=>'cvv-logo') %></td>
   </tr>
-  </table></center>
+  </table></div>
 </div>

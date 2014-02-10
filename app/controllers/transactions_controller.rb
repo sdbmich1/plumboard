@@ -15,11 +15,12 @@ class TransactionsController < ApplicationController
   def create
     @listing = Listing.find_by_pixi_id(params[:id]) || TempListing.find_by_pixi_id(params[:id])
     @transaction = @user.transactions.build params[:transaction] 
+    @invoice = Invoice.find_invoice(@order) unless @transaction.pixi?
     respond_with(@transaction) do |format|
       if @transaction.save_transaction(params[:order], @listing)
         format.json { render json: {transaction: @transaction} }
       else
-        format.html { redirect_to new_transaction_path(order: @order, id: params[:id]), error: @transaction.errors.full_messages }
+        Rails.logger.info 'Txn errors = ' + @transaction.errors.full_messages.to_s
         format.json { render json: { errors: @transaction.errors.full_messages }, status: 422 }
       end
     end

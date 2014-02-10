@@ -10,7 +10,7 @@ describe InvoicesController do
   end
 
   def mock_listing(stubs={})
-    (@mock_listing ||= mock_model(Invoice, stubs).as_null_object).tap do |listing|
+    (@mock_listing ||= mock_model(Listing, stubs).as_null_object).tap do |listing|
       listing.stub(stubs) unless stubs.empty?
     end
   end

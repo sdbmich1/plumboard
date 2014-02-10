@@ -311,7 +311,7 @@ feature "PixiPosts" do
       visit edit_pixi_post_path(@pixi_post)
     end
 
-    it "clicks to open a pixipost" do
+    it "opens pixipost edit page" do
       page.should have_selector('title', text: 'Edit PixiPost') 
       page.should have_content "Request Information"
       page.should have_content "Address Information"

@@ -197,7 +197,9 @@ function load_slider(cntl) {
 $(document).ready(function(){
 
   // enable tooltip
-  $('a').tooltip();
+  if( $('#ttip').length > 0 ) {
+    $('a').tooltip();
+  }
 
   // enable placeholder text for input fields
   if( $('#px-container').length == 0 ) {
@@ -248,12 +250,45 @@ $(document).ready(function(){
     $("input#pixan_name").autocomplete({ html: true });
   }
 
+  // set rating elements
   if ($('#rateit5').length > 0) {  
-     $('#done-btn').attr('disabled', true);
-     $("#rateit5").bind("rated", function (event, value)  { $('#value5').val(value); $('#done-btn').removeAttr('disabled'); });
-     $("#rateit5").bind('reset', function () { $('#value5').val(0); $('#done-btn').attr('disabled', true); });
+    $('#done-btn').attr('disabled', true);
+    $("#rateit5").bind("rated", function (event, value)  { $('#value5').val(value); $('#done-btn').removeAttr('disabled'); });
+    $("#rateit5").bind('reset', function () { $('#value5').val(0); $('#done-btn').attr('disabled', true); });
+  }
+
+  // set inquiry form elements
+  if ($('#inquiry_frm').length > 0) {  
+    if($('#inq_status').is(':visible')) {
+      $('#inq-done-btn').removeAttr('disabled');
+    } else {
+      $('#inq-done-btn').attr('disabled', true);
+    }
   }
 });
+
+// check for empty flds on form when fld changes
+var inq_flds = '#inq_first_name, #inq_last_name, #inq_comments, #inq_subject, #inq_email';
+$(document).on('keyup change', inq_flds, function() {
+  if(allFilled(inq_flds)) {
+    $('#inq-done-btn').removeAttr('disabled');
+  } else {
+    $('#inq-done-btn').attr('disabled', true);
+  }
+});
+
+// check form for blank fields
+function allFilled(list) {
+  var filled = true;
+  var flds = list.split(', ');
+
+  $.each(flds, function(index, item) {
+    if($(item).val() == '') {
+      filled = false; 
+    }
+  });
+  return filled;
+}
 
 // reload masonry on ajax calls to swap data
 $(document).on("click", ".pixi-cat", function(showElem){

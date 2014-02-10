@@ -1,0 +1,9 @@
+<% provide(:title, 'Inquiries') %>
+<%= content_for :subhead do %>
+  <%= render :partial => 'shared/navbar', locals: { menu_name: 'Inquiries' } %>
+<% end %>
+<%= content_for :content do %>
+  <div id='inv_form'>
+    <%= render :partial => 'shared/inquiry_list' %>
+  </div>
+<% end %>

@@ -1,0 +1,8 @@
+<tr>
+  <td><div class='center-wrapper'><%= link_to inquiry.id, inquiry %></div></td>
+  <td class='center-wrapper'><%= get_local_date(inquiry.created_at) %></td>
+  <td><div class='center-wrapper'><%= inquiry.user_name %></div></td>
+  <td><div class='center-wrapper'><%= inquiry.subject %></div></td>
+  <td><%= inquiry.comments %></td>
+  <td class='center-wrapper'><%= inquiry.status.titleize %></td>
+</tr>

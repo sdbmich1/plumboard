@@ -266,6 +266,8 @@ input, select, .uneditable-input {
 
 .cb-label { display:inline; vertical-align:middle }
 .hdescr { font-size: 0.75em; color: #ccc; }
+.pg-text { font-size: 14px; }
+.section-hdr { font-weight: bolder; font-size: 1.5em; color: $pixiBlue; padding-bottom: 5px; }
 
 h3 { padding: 10px }
 
@@ -565,8 +567,8 @@ hr.vertical
 .ftr-img {
   margin-left: 10px!important;
   vertical-align: middle;
-  height: 28px!important;
-  width: 28px!important;
+  height: 30px!important;
+  width: 30px!important;
 }
 
 a#home-link, a.home-link {

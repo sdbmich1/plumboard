@@ -1,5 +1,21 @@
 <% provide(:title, 'About Us') %>
+<%= render partial: 'shared/pg_header', locals: { linkFlg: true } %>
 <%= content_for :content do %>
-  <h1>About Us</h1>
-  <p>Find me in app/views/pages/about.html.erb</p>
+  <div class='row mtop'>
+    <div class='offset1 span8'><div class='section-hdr'>About Us</div></div>
+  </div>
+  <div class='row mbot'>
+    <div class='offset1 span10 pg-text'>
+    Pixiboard is an online and mobile visual marketplace designed for local buying, selling, and bartering.  We started Pixiboard because we could not 
+    believe that there was not a better way to share items, ads, and services than to post them on messy bulletin boards on college campuses, pin them 
+    to back wall corkboards in cafes, or bury them in overcrowded classified advertisement websites.<br><br>
+    Pixiboard empowers people to connect with others locally.  Users are able to build rapport and check out buyers and sellers through features like 
+    commenting on items, browsing user profiles, rating experiences, and messaging private communiques to set-up item exchanges.  More importantly, 
+    with Pixiboard's secure PixiPay&#0153; payment engine the days of carrying cash into dark meeting spots are gone forever.<br><br>
+    At Pixiboard, we envision a frictionless system that fixes the process of local buying, selling, and bartering from the ground up.  Beyond just 
+    another fancy user interface, we are fundamentally rethinking how the experience of exchanging local goods and services works.<br><br>
+    Share.  Connect.  Magic.<br>
+    </div>
+  </div>
+  <%= render 'shared/team' %>
 <% end %>

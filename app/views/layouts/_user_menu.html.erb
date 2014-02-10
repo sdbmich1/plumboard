@@ -7,9 +7,6 @@
     <b class="caret"></b>
   <% end %>
   <ul class="dropdown-menu">
-    <% if can? :view_dashboard, @user %>
-      <li><%= link_to "Dashboard", '#' %></li>
-    <% end %>
     <li><%= link_to "My Pixis", seller_listings_path %></li>
     <li><%= link_to "My Messages", posts_path %></li>
     <li><%= link_to "My Invoices", invoices_path %></li>

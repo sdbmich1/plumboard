@@ -12,14 +12,15 @@ describe "Pages" do
     it { should have_selector('title', text: full_title('')) }
     it { should_not have_selector('title', text: '| Home') }
     it { should have_link 'How It Works', href: '#' }
-    it { should have_link 'Help', href: '#' }
+    it { should have_link 'Help', href: help_path }
     it { should have_button 'Sign in' }
     it { should have_link 'Sign up for free!', href: new_user_registration_path }
     it { should have_link 'Sign in via', href: user_omniauth_authorize_path(:facebook) }
-    it { should have_link '', href: categories_path }
-    it { should have_link 'About', href: '#' }
-    it { should have_link 'Privacy', href: '#' }
-    it { should have_link 'Contact', href: '#' }
+    it { should have_selector '#browse-link', href: categories_path }
+    it { should have_link 'About', href: about_path }
+    it { should have_link 'Privacy', href: privacy_path }
+    it { should have_link 'Terms of Service', href: '#' }
+    it { should have_link 'Contact', href: contact_path }
     it { should have_selector('#fb-link', href: 'https://www.facebook.com/pages/Pixiboard/628604560511266') }
     it { should have_selector('#tw-link', href: 'https://twitter.com/doyoupixi') }
     it { should have_selector('#pi-link', href: 'http://www.pinterest.com/pixiboardmagic/') }
@@ -56,7 +57,7 @@ describe "Pages" do
     it "clicks on a category and prompts to sign up" do
       find("#browse-link").click
       click_link @category.name_title
-      page.should have_content "ou need to sign in or sign up before continuing." 
+      page.should have_content "You need to sign in or sign up before continuing." 
     end
 
     it "clicks on a category and logs in" do
@@ -78,13 +79,16 @@ describe "Pages" do
 
   describe "About page" do
     before { visit about_path }
-    it { should have_selector('h1',    text: 'About Us') }
+    it { should have_selector('.section-hdr',    text: 'About Us') }
     it { should have_selector('title', text: full_title('About Us')) }
+    it { should have_link 'How It Works', href: '#' }
+    it { should have_link 'Help', href: help_path }
+    it { should have_selector('.site-logo', href: root_path) }
   end
 
   describe "Contact page" do
     before { visit contact_path }
-    it { should have_selector('h1',    text: 'Contact') }
+    it { should have_selector('.section-hdr',    text: 'Contact') }
     it { should have_selector('title', text: full_title('Contact')) }
   end
 

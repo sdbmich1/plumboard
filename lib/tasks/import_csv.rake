@@ -222,3 +222,50 @@ task :import_point_system => :environment do
     end
   end
 end
+
+task :import_job_type => :environment do
+
+  JobType.delete_all
+  CSV.foreach(Rails.root.join('db', 'JobType_020614.csv'), :headers => true) do |row|
+
+    attrs = {
+		:code	   => row[0],
+      		:job_name  => row[1],
+		:status	   => 'active'
+    }
+
+    # add job_type
+    new_job_type = JobType.new(attrs)
+
+    # save job_type
+    if new_job_type.save 
+      puts "Saved job_type #{attrs.inspect}"
+    else
+      puts new_job_type.errors
+    end
+  end
+end
+
+task :import_inquiry_type => :environment do
+
+  InquiryType.delete_all
+  CSV.foreach(Rails.root.join('db', 'InquiryType_020614.csv'), :headers => true) do |row|
+
+    attrs = {
+		:code	       => row[0],
+      		:inquiry_name  => row[1],
+      		:contact_type  => row[2],
+		:status	       => 'active'
+    }
+
+    # add inquiry_type
+    new_inquiry_type = InquiryType.new(attrs)
+
+    # save inquiry_type
+    if new_inquiry_type.save 
+      puts "Saved inquiry_type #{attrs.inspect}"
+    else
+      puts new_inquiry_type.errors
+    end
+  end
+end

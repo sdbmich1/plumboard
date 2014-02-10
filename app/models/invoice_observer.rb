@@ -29,11 +29,11 @@ class InvoiceObserver < ActiveRecord::Observer
 
         # record payment
 	if result
-	  PixiPayment.add_transaction model, fee, result.uri, result.id 
+	  PixiPayment.add_transaction(model, fee, result.uri, result.id) rescue nil
 
           # send receipt upon approval
           # UserMailer.delay.send_payment_receipt(model, result)
-          UserMailer.send_payment_receipt(model, result).deliver
+          UserMailer.send_payment_receipt(model, result).deliver rescue nil
 	end
       end
     end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140201204825) do
+ActiveRecord::Schema.define(:version => 20140209181142) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -136,20 +136,40 @@ ActiveRecord::Schema.define(:version => 20140201204825) do
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
 
+  create_table "faqs", :force => true do |t|
+    t.string   "subject"
+    t.text     "description"
+    t.string   "status"
+    t.string   "question_type"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
+
   create_table "inquiries", :force => true do |t|
     t.integer  "user_id"
     t.string   "first_name"
     t.string   "last_name"
     t.text     "comments"
-    t.string   "inquiry_type"
+    t.string   "code"
     t.string   "email"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
     t.string   "status"
   end
 
   add_index "inquiries", ["email"], :name => "index_inquiries_on_email"
   add_index "inquiries", ["user_id"], :name => "index_inquiries_on_user_id"
+
+  create_table "inquiry_types", :force => true do |t|
+    t.string   "code"
+    t.string   "subject"
+    t.string   "status"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+    t.string   "contact_type"
+  end
+
+  add_index "inquiry_types", ["code"], :name => "index_inquiry_types_on_code"
 
   create_table "interests", :force => true do |t|
     t.string   "name"
@@ -183,6 +203,16 @@ ActiveRecord::Schema.define(:version => 20140201204825) do
   add_index "invoices", ["pixi_id", "buyer_id", "seller_id"], :name => "index_invoices_on_pixi_id_and_buyer_id_and_seller_id"
   add_index "invoices", ["status"], :name => "index_invoices_on_status"
   add_index "invoices", ["transaction_id"], :name => "index_invoices_on_transaction_id"
+
+  create_table "job_types", :force => true do |t|
+    t.string   "code"
+    t.string   "job_name"
+    t.string   "status"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "job_types", ["code"], :name => "index_job_types_on_code"
 
   create_table "listing_categories", :force => true do |t|
     t.integer  "category_id"

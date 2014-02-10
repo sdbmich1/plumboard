@@ -34,8 +34,8 @@ describe Transaction do
   it { should respond_to(:convenience_fee) }
   it { should respond_to(:debit_token) }
   it { should respond_to(:card_number) }
-  it { should respond_to(:card_month) }
-  it { should respond_to(:card_year) }
+  it { should respond_to(:exp_month) }
+  it { should respond_to(:exp_year) }
   it { should ensure_length_of(:zip).is_at_least(5).is_at_most(12) }
   it { should validate_numericality_of(:amt).is_greater_than_or_equal_to(0) }
 
@@ -225,7 +225,7 @@ describe Transaction do
   describe 'valid_card?' do
     it 'should return true' do
       @transaction.card_number, @transaction.cvv = '4111111111111111', '123'
-      @transaction.card_month, @transaction.card_year = 6, 2018
+      @transaction.exp_month, @transaction.exp_year = 6, 2018
       @transaction.valid_card?.should be_true
     end
 

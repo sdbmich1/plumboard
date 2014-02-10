@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe Inquiry do
   before(:each) do
-    @inquiry = FactoryGirl.build(:inquiry) 
+    @user = FactoryGirl.create :pixi_user
+    @inquiry = @user.inquiries.build FactoryGirl.attributes_for(:inquiry) 
   end
    
   subject { @inquiry } 
@@ -12,9 +13,10 @@ describe Inquiry do
   it { should respond_to(:first_name) }
   it { should respond_to(:last_name) }
   it { should respond_to(:email) }
-  it { should respond_to(:inquiry_type) }
+  it { should respond_to(:code) }
   it { should respond_to(:status) }
   it { should respond_to(:user) }
+  it { should belong_to(:inquiry_type).with_foreign_key('code') }
 
   describe "when comments is empty" do
     before { @inquiry.comments = "" }
@@ -83,22 +85,65 @@ describe Inquiry do
     it { should be_valid }
   end
 
-  describe "when inquiry_type is empty" do
-    before { @inquiry.inquiry_type = "" }
+  describe "when code is empty" do
+    before { @inquiry.code = "" }
     it { should_not be_valid }
   end
 
-  describe "when inquiry_type is not empty" do
+  describe "when code is not empty" do
     it { should be_valid }
   end
 
-  describe "should include active inquirys" do
+  describe "should include active inquiries" do
     it { Inquiry.active.should_not be_nil }
   end
 
-  describe "should not include inactive inquirys" do
+  describe "should not include inactive inquiries" do
     inquiry = FactoryGirl.create(:inquiry, :status=>'inactive')
     it { Inquiry.active.should_not include (inquiry) } 
+  end
+
+  describe ".list" do
+    it { Inquiry.list.should be_empty }
+
+    it "includes active inquiries" do
+      FactoryGirl.create(:inquiry_type)
+      inquiry = FactoryGirl.create(:inquiry)
+      Inquiry.list.should_not be_empty 
+    end
+  end
+
+  describe "should find correct user name" do 
+    it { @inquiry.user_name.should_not be_nil } 
+  end
+
+  describe "should not find correct user name" do 
+    before { @inquiry = @user.inquiries.build FactoryGirl.attributes_for :inquiry, first_name: nil }
+    it { @inquiry.user_name.should be_nil } 
+  end
+
+  describe ".subject" do 
+    it "finds correct subject" do
+      FactoryGirl.create(:inquiry_type)
+      inquiry = FactoryGirl.build(:inquiry)
+      inquiry.subject.should == "Website"  
+    end
+
+    it { @inquiry.subject.should be_nil } 
+  end
+
+  describe 'set_flds' do
+    it "sets status to active" do
+      @inquiry = @user.inquiries.build FactoryGirl.attributes_for :inquiry, status: nil
+      @inquiry.save
+      @inquiry.status.should == 'active'
+    end
+
+    it "does not set status to active" do
+      @inquiry = @user.inquiries.build FactoryGirl.attributes_for :inquiry, status: 'inactive'
+      @inquiry.save
+      @inquiry.status.should_not == 'active'
+    end
   end
 
 end

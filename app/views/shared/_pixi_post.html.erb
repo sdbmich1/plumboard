@@ -8,7 +8,6 @@
       <div id="form_errors">
         <%= render partial: 'shared/error_messages', :locals => { :target => @post } %>
       </div>
-
       <div style="<%= @post.owner?(@user) ? 'display:none' : '' %>">
         <%= render partial: 'shared/pixi_post_details', locals: {post: @post, showAddrFlg: false} %>
       </div>

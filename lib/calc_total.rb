@@ -98,9 +98,12 @@ module CalcTotal
     # set amount if empty
     @amt = !val.blank? ? val[0].to_f : @amt || 0.0
 
+    # set appropriate txn percent 
+    fee = !val.blank? && !val[1].blank? ? (@amt * PXB_TXN_PERCENT) : (@amt * PIXI_TXN_PERCENT)/2
+
     # check if fee needs to be applied
     if @amt + calc_discount > 0.0 
-      @amt > MIN_TXN_AMT ? (@amt * PIXI_TXN_PERCENT)/2 : PIXI_FEE.to_f 
+      fee > PIXI_FEE.to_f ? fee.to_f : PIXI_FEE.to_f 
     else
       0.0
     end

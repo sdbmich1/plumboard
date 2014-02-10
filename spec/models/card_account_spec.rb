@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe CardAccount do
   before(:each) do
-    @user = FactoryGirl.create(:pixi_user, email: "jblow123@pixitest.com") 
+    @user = FactoryGirl.create(:pixi_user)
     @account = @user.card_accounts.build FactoryGirl.attributes_for :card_account
   end
 
@@ -106,9 +106,7 @@ describe CardAccount do
 
   describe 'save_account w/ bad data' do
     before do
-      @card_acct = mock('Balanced::Card', uri: '', last_four: '0001', card_type: 'visa', expiration_month: 6, expiration_year: 2013)
-      @card_acct.stub_chain(:new, :save).and_return(false)
-      Balanced::Card.stub_chain(:new, :save).and_return(@card_acct)
+      CardAccount.any_instance.stub(:save_account).and_return(false)
     end
 
     it 'does not save account' do
@@ -116,6 +114,55 @@ describe CardAccount do
     end
   end
 
+  describe 'set_flds' do
+    it "sets default flag" do
+      account = @user.card_accounts.build FactoryGirl.attributes_for :card_account, status: nil
+      account.save
+      account.status.should == 'active'
+      account.default_flg.should == 'Y'
+    end
+
+    it "does not set default flag" do
+      @user.card_accounts.create FactoryGirl.attributes_for :card_account
+      account = @user.card_accounts.build FactoryGirl.attributes_for :card_account, status: nil
+      account.save
+      account.status.should == 'active'
+      account.default_flg.should_not == 'Y'
+    end
+  end
+
+  describe 'has_expired?' do
+    it 'does not return true' do
+      @account.has_expired?.should_not be_true
+    end
+
+    it 'has past expiration year' do
+      account = FactoryGirl.build :card_account, expiration_year: Date.today.year-1
+      account.has_expired?.should be_true
+    end
+
+    it 'has past expiration month' do
+      account = FactoryGirl.build :card_account, expiration_year: Date.today.year, expiration_month: Date.today.month-1
+      account.has_expired?.should be_true
+    end
+  end
+
   describe 'add_card' do
+    it 'has an existing token' do
+      @txn = @user.transactions.build FactoryGirl.attributes_for(:transaction, card_number: '9000900090009000', exp_month: Date.today.month+1,
+        exp_year: Date.today.year+1, cvv: '123', zip: '11111', payment_type: 'visa')
+      CardAccount.add_card(@txn, @txn.token).should be_true
+    end
+
+    it 'has an existing card' do
+      acct = @user.card_accounts.create FactoryGirl.attributes_for :card_account
+      @txn = @user.transactions.build FactoryGirl.attributes_for(:transaction, card_number: '9000900090009000')
+      CardAccount.add_card(@txn, @txn.token).should be_true
+    end
+
+    it 'has no card number' do
+      @txn = @user.transactions.build FactoryGirl.attributes_for(:transaction, card_number: nil)
+      CardAccount.add_card(@txn, @txn.token).should_not be_true
+    end
   end
 end

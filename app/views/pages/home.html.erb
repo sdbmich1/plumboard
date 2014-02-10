@@ -1,14 +1,4 @@
-<%= content_for :subhead do %>
-  <div class='row'>
-    <div class='float-left width360 sm-bot'>
-      <%= image_tag 'px_word_logo.png', class: 'px-logo' %>
-    </div>
-    <div class='mtop nav pull-right'>
-      <%= link_to 'How It Works', '#', class: 'width120 browse-link' %>
-      <%= link_to 'Help', '#', class: 'left-margin browse-link' %>
-    </div>
-  </div>
-<% end %>
+<%= render partial: 'shared/pg_header', locals: { linkFlg: false } %>
 <%= content_for :topcontent do %>
   <div class='container'>
     <div class='row mtop'>

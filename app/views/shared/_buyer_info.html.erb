@@ -10,14 +10,14 @@
       </tr>
     </table>
   </div>
-  <center>
-    <table class='sm-top user-tbl' style="<%= @transaction.has_address? ? 'display:none' : '' %>">
+  <div class='sm-top center-wrapper user-tbl' style="<%= @transaction.has_address? ? 'display:none' : '' %>">
+    <table>
       <tr>
 	<td class="width360"><label>First Name*</label><%= f.text_field :first_name, id: "first_name" %></td>
 	<td class="width80"></td>
 	<td><label>Last Name*</label><%= f.text_field :last_name, id: "last_name" %></td>
       </tr>
-      <%= render :partial => 'shared/user_address', :locals => { :form => f, :toggle => false } %>
+      <%= render :partial => 'shared/user_address', :locals => { :form => f, :toggle => true } %>
     </table>
-  </center>
+  </div>
 </div>

@@ -11,7 +11,8 @@
 <% if @transaction %>
   <% unless @transaction.get_fee.blank? %>
     <tr>
-  	<td>Convenience Fee<%= link_to '?', '#', class: 'mleft10', 'data-placement'=>'top', title: 'Fee is 2.9% + up to 1%.', rel: 'tooltip' %></td>
+  	<td>Convenience Fee
+	  <%= link_to '?', '#', class: 'ttip mleft10', 'data-placement'=>'top', title: 'Fee is 2.9% + up to 1%.', rel: 'tooltip' %></td>
 	<td></td>
   	<td class="price"><%= number_to_currency(@transaction.get_fee)%></td>
     </tr>

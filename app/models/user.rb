@@ -42,6 +42,7 @@ class User < ActiveRecord::Base
   has_many :card_accounts, dependent: :destroy
   has_many :transactions, dependent: :destroy
   has_many :comments, dependent: :destroy
+  has_many :inquiries, dependent: :destroy
 
   has_many :ratings, dependent: :destroy
   has_many :seller_ratings, :foreign_key => "seller_id", :class_name => "Rating"

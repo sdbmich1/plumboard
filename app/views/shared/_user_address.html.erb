@@ -21,7 +21,7 @@
 	<%= form.collection_select :state, State.all, :code, :state_name, {prompt: 'Select State'}, {class: 'pixi-select'} %></td>
 </tr>
 <tr>
-  <td><label>Zip* </label><%= form.text_field :zip, :size => 10 %></td>
+  <td><label>Zip* </label><%= form.text_field :zip, :size => 10, id: 'postal_code' %></td>
   <td></td>
   <td><label class='neg-top'>Country </label><%= country_select "transaction", "country", ["United States"], {}, {class: 'country pixi-select'} %></td>	  
 </tr>

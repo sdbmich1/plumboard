@@ -24,7 +24,7 @@ module BalancedPayment
       type: 		acct.acct_type).save
 
     rescue => ex
-      process_error ex
+      process_error acct, ex
   end
 
   # get account
@@ -34,7 +34,7 @@ module BalancedPayment
     @bank_account ||= Balanced::BankAccount.find token
 
     rescue => ex
-      process_error ex
+      process_error acct, ex
   end
 
   # credit bank account
@@ -45,7 +45,7 @@ module BalancedPayment
     result = get_bank_account(token, acct).credit(amount: (amt * 100).to_i) if amt > 0.0
 
     rescue => ex
-      process_error ex
+      process_error acct, ex
   end
 
   # delete bank account
@@ -56,7 +56,7 @@ module BalancedPayment
     result = get_bank_account(token, acct).unstore
 
     rescue => ex
-      process_error ex
+      process_error acct, ex
   end
 
   # create card account
@@ -69,9 +69,6 @@ module BalancedPayment
       expiration_year: exp_yr, 
       security_code: cvv, 
       postal_code: zip).save
-
-    rescue => ex
-      process_error ex
   end
 
   # create card account
@@ -87,14 +84,25 @@ module BalancedPayment
       end
     else
       buyer = set_token txn
-      response = buyer.add_card token
     end
+
+    response = buyer.add_card token
 
     # charge card
     result = buyer.debit(amount: (amt * 100).to_i.to_s)
 
     rescue => ex
-      process_error ex
+      process_error txn, ex
+  end
+
+  def self.delete_card token, acct
+    initialize false
+
+    card = Balanced::Card.find token
+    card.unstore
+
+    rescue => ex
+      process_error acct, ex
   end
 
   # set buyer uri
@@ -106,6 +114,9 @@ module BalancedPayment
     txn.user.save
 
     return buyer
+
+    rescue => ex
+      process_error txn, ex
   end
 
   # process result data
@@ -115,7 +126,8 @@ module BalancedPayment
   end
 
   # process credit card messages
-  def self.process_error e
-    @acct.errors.add :base, "There was a problem with your account. #{e.message}" rescue nil
+  def self.process_error acct, e
+    acct.errors.add :base, "Account declined or invalid. Please re-submit. #{e.message}"
+    acct
   end
 end

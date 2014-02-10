@@ -4,12 +4,13 @@
   </small>
   <nav>
     <ul class='sm-top'>
-      <li><%= link_to "About", '#', class: 'pixi-link' %></li>
-      <li><%= link_to "Privacy", '#', class: 'pixi-link' %></li>
+      <li><%= link_to "About", about_path, class: 'pixi-link' %></li>
+      <li><%= link_to "Privacy", privacy_path, class: 'pixi-link' %></li>
+      <li><%= link_to "Terms of Service", '#', class: 'pixi-link' %></li>
       <% unless action_name == 'home' %>
-        <li><%= link_to "Help", '#', class: 'pixi-link' %></li>
+        <li><%= link_to "Help", help_path, class: 'pixi-link' %></li>
       <% end %>
-      <li><%= link_to "Contact", '#', class: 'pixi-link' %></li>
+      <li><%= link_to "Contact", contact_path, class: 'pixi-link' %></li>
       <% if action_name == 'home' %>
         <li><%= link_to image_tag('facebook_icon.png', class: 'ftr-img'), 'https://www.facebook.com/pages/Pixiboard/628604560511266', 
 	  class: 'pixi-link', id: 'fb-link' %></li>

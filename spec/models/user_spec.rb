@@ -44,6 +44,7 @@ describe User do
     it { should respond_to(:card_accounts) } 
     it { should respond_to(:comments) }
     it { should respond_to(:ratings) }
+    it { should respond_to(:inquiries) }
     it { should respond_to(:seller_ratings) }
     it { should respond_to(:pixi_posts) }
     it { should respond_to(:active_pixi_posts) }
