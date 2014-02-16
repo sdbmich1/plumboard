@@ -289,6 +289,33 @@ describe User do
     it "does not have account" do
       @user.has_card_account?.should_not be_true
     end
+
+    it "has valid card" do
+      @user.card_accounts.create FactoryGirl.attributes_for(:card_account, status: 'active')
+      @user.get_valid_card.should be_true
+    end
+
+    it "has valid card & expired card" do
+      @user.card_accounts.create FactoryGirl.attributes_for(:card_account, status: 'active')
+      @user.card_accounts.create FactoryGirl.attributes_for(:card_account, status: 'active', expiration_year: Date.today.year, 
+        expiration_month: Date.today.month-1)
+      @user.get_valid_card.should be_true
+    end
+
+    it "has invalid card - old year" do
+      @user.card_accounts.create FactoryGirl.attributes_for(:card_account, status: 'active', expiration_year: Date.today.year-1)
+      @user.get_valid_card.should_not be_true
+    end
+
+    it "has invalid card - same year, old month" do
+      @user.card_accounts.create FactoryGirl.attributes_for(:card_account, status: 'active', expiration_year: Date.today.year, 
+        expiration_month: Date.today.month-1)
+      @user.get_valid_card.should_not be_true
+    end
+
+    it "does not have valid card" do
+      @user.get_valid_card.should_not be_true
+    end
   end
 
   describe 'facebook' do

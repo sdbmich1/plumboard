@@ -13,4 +13,4 @@ MAX_INV_QTY = PIXI_KEYS['pixi']['max_inv_qty']
 PAYMENT_API = PIXI_KEYS['pixi']['payment_api']
 CREDIT_CARD_API = PIXI_KEYS['pixi']['credit_card_api']
 PIXIBOARD_INFO = PIXI_KEYS['pixi']['company_info']
-
+PIXI_WEB_SITE = PIXI_KEYS['pixi']['host_address']

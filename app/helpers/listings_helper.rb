@@ -75,7 +75,7 @@ module ListingsHelper
 
   # set partial name
   def set_partial_name
-    ['shared', 'listings'].join('/')
+    ['shared', controller_name].join('/')
   end
 
   # set init next page path for ajax infinite scroll call based on action name
@@ -97,7 +97,21 @@ module ListingsHelper
     end
   end
 
+  # returns rating for seller
   def get_rating usr
     RatingManager::avg_rating usr
+  end
+
+  # get host
+  def get_host
+    host_name = Rails.env.test? || Rails.env.development? ? "localhost.com:3000" : PIXI_WEB_SITE
+  end
+
+  # set string to share content on facebook
+  def fb_share
+    url = 'https://www.facebook.com/dialog/feed?app_id=' + API_KEYS['facebook']['api_key'] + '&display=popup&caption=Check it out on Pixiboard' +
+      '&link=https://developers.facebook.com/docs/reference/dialogs/&redirect_uri=' + 
+      Rails.application.routes.url_helpers.listing_url(@listing, :host => get_host) + '&picture=http://' + get_host + 
+      @listing.photo_url + '&name=' + @listing.nice_title + '&description=' + @listing.description
   end
 end

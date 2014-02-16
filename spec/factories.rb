@@ -311,4 +311,11 @@ FactoryGirl.define do
     subject		"Website"
     status		"active"
   end
+
+  factory :faq do
+    question_type	"Payment"
+    subject		"How do I pay?"
+    description		"You can use your PixiPay account."
+    status		"active"
+  end
 end

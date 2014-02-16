@@ -20,6 +20,9 @@ feature "UserRegistrations" do
     describe "with invalid information" do
       before { visit new_user_registration_path }
 
+      it { should have_link 'Pixiboard's Terms of Service', href: terms_path }
+      it { should have_link 'Privacy Policy', href: privacy_path }
+
       it "should not create a empty user" do
         expect{ 
           fill_in "user_first_name", with: ''

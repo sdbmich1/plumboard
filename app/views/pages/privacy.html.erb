@@ -1,5 +1,8 @@
 <% provide(:title, 'Privacy') %>
+<%= render partial: 'shared/pg_header', locals: { linkFlg: true } %>
 <%= content_for :content do %>
-  <h1>Privacy</h1>
-  <p>Find me in app/views/pages/privacy.html.erb</p>
+  <%= render partial: 'shared/pg_sub_header', locals: { stitle: 'Privacy' } %>
+  <div class='row sm-top mbot'>
+    <p class='offset1 span10'>Find me in app/views/pages/privacy.html.erb</p>
+  </div>
 <% end %>

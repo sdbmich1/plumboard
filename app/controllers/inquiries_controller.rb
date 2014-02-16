@@ -5,6 +5,7 @@ class InquiriesController < ApplicationController
   
   def new
     @inquiry = signed_in? ? @user.inquiries.build : Inquiry.new
+    @source = params[:source]
   end
 
   def show

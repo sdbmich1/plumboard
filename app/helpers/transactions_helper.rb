@@ -88,8 +88,13 @@ module TransactionsHelper
     pname = path + (@transaction.pixi? ? '/order_complete' : '/purchase_complete')
   end
 
-  # get card token for user if exists
-  def get_card_token
-    @user.has_card_account? ? @user.card_accounts.first.token : ''
+  # get card element for user if exists
+  def get_card_data method
+    get_card.send(method) rescue nil
+  end
+
+  # get valid card for user
+  def get_card
+    @card ||= @user.get_valid_card
   end
 end

@@ -201,6 +201,11 @@ $(document).ready(function(){
     $('a').tooltip();
   }
 
+  // enable video clip
+  if( $('.vimeo-thumb').length > 0 ) {
+    $('.vimeo-thumb').smartVimeoEmbed();
+  }
+
   // enable placeholder text for input fields
   if( $('#px-container').length == 0 ) {
     $('input, textarea').placeholder();
@@ -233,21 +238,6 @@ $(document).ready(function(){
   // repaint file fields
   if( $('.cabinet').length > 0 ) {
     SI.Files.stylizeAll();
-  }
-
-  // set autocomplete to accept images
-  if ($('input#buyer_name').length > 0) {  
-    $("input#buyer_name").autocomplete({ html: true });
-  }
-
-  if($('input#slr_name').is(':visible')) {
-    if ($('input#slr_name').length > 0) {  
-      $("input#slr_name").autocomplete({ html: true });
-    }
-  }
-
-  if ($('input#pixan_name').length > 0) {  
-    $("input#pixan_name").autocomplete({ html: true });
   }
 
   // set rating elements
@@ -310,10 +300,11 @@ $(document).on("click", ".pixi-cat", function(showElem){
 function reload_board(element) {
   var $container = $('#px-container');
 
-  console.log('reload_board');
   $container.imagesLoaded( function(){
     $container.masonry('reload');
   });
+
+  switchToggle(false);
 }
 
 // initialize infinite scroll
@@ -458,6 +449,7 @@ $(document).on('click', '#edit-txn-addr, #edit-addr-btn', function(e) {
 
 // toggle credit card edit view
 $(document).on('click', '#edit-card-btn', function(e) {
+  $('#pay_token').val('');
   $('.card-tbl, .card-dpl').toggle();
 });
 
@@ -516,6 +508,35 @@ function updatePixis() {
   set_timer();
 }  
 
+// populate board based on category 
+$(document).on("click", ".pixi-cat-link", function() {
+  var loc = $('#site_id').val(); // grab the selected location 
+  var url, cid = $(this).attr("data-cat-id");
+
+  // refresh menu
+  $('#nav-home-menu').html('');
+
+  console.log('pixi-link');
+  console.log('site id = ' + loc);
+  console.log('cat id = ' + cid);
+
+  // set url
+  if (cid > 0) {
+    url = '/listings/category?' + 'cid=' + cid; 
+  }
+
+  // add location
+  if (loc > 0) {
+    url += '&loc=' + loc;
+  }
+
+  // refresh the page
+  resetScroll(url);
+  
+  //prevent the default behavior of the click event
+  return false;
+});
+
 // check for location changes
 $(document).on("change", "#site_id, #category_id", function() {
 
@@ -542,8 +563,6 @@ $(document).on("click", "#recent-link", function() {
 function resetBoard() {
   var loc = $('#site_id').val(); // grab the selected location 
   var cid = $('#category_id').val(); // grab the selected category 
-
-  console.log('resetBoard');
 
   // set search form fields
   $('#cid').val(cid);
@@ -679,7 +698,7 @@ $(window).scroll(function(e) {
   if ($('#px-container').length > 0) {
     var url = $('a.nxt-pg').attr('href');
 
-    if (url.length > 0 && !processFlg && $(window).scrollTop() > ($(document).height() - $(window).height() - 50)) {
+    if (url != undefined && url.length > 0 && !processFlg && $(window).scrollTop() > ($(document).height() - $(window).height() - 50)) {
       processFlg = true;
 
       $.ajax({

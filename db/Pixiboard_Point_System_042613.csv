@@ -20,3 +20,4 @@ Value,Action,Category,Code
 250,Platinum Subscription,Subscribe,psub
 10,Add Pixi Site,Profile,apx
 10,Add Contact Info,Profile,act
+50,Add PixiPost,Post,ppx

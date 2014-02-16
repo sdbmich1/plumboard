@@ -4,7 +4,7 @@ class TempListingsController < ApplicationController
   before_filter :load_data, only: [:unposted]
   before_filter :set_params, only: [:create, :update]
   autocomplete :site, :name, :full => true
-  autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name
+  autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name, if: :has_pixan?
   include ResetDate
   respond_to :html, :json, :js, :mobile
   layout :page_layout
@@ -114,6 +114,7 @@ class TempListingsController < ApplicationController
     @page = params[:page] || 1
   end
 
+  # parse fields to adjust formatting
   def set_params
     respond_to do |format|
       format.html { params[:temp_listing] = ResetDate::reset_dates(params[:temp_listing]) }
@@ -121,9 +122,15 @@ class TempListingsController < ApplicationController
     end
   end
 
+  # parse results for active items only
   def get_autocomplete_items(parameters)
     items = super(parameters)
     items = items.active rescue items
+  end
+
+  # check if pixipost to enable buyer autocomplete
+  def has_pixan?
+    !params[:pixan_id].blank?
   end
 
 end

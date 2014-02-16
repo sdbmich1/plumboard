@@ -1,10 +1,9 @@
 class PagesController < ApplicationController
+  respond_to :html, :json, :js, :mobile
   layout :page_layout
-
-  def home
-  end
-
-  def index
+  
+  def help
+    @faqs = Faq.active
   end
 
   protected

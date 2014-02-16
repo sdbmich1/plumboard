@@ -44,6 +44,11 @@ class Inquiry < ActiveRecord::Base
     inquiry_type.subject rescue nil
   end
 
+  # check category for inquiry
+  def is_support?
+    inquiry_type.contact_type == 'support'
+  end
+
   def self.list
     active.select('inquiries.id, inquiries.user_id, inquiries.first_name, inquiries.last_name, inquiry_types.subject, inquiries.comments, inquiries.status,
       inquiries.email, inquiries.created_at').joins(:inquiry_type)

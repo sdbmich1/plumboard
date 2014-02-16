@@ -81,8 +81,24 @@
 }
 
 .browse-img {
-  height: 180px;
-  width: 180px;
+  height: 215px!important;
+  width: 215px!important;
+}
+
+.img-hgt img {
+  height: 300px!important;
+}
+
+.pxb-img {
+  border: 1px solid #ccc;
+  max-width: 99.8%!important;
+  }
+
+.page-text {
+  font-family: Arial;
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 24px;
 }
 
 .team-img {

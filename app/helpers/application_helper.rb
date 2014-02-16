@@ -40,6 +40,7 @@ module ApplicationHelper
   # used do determine if search form is displayed
   def display_search
     case controller_name
+      when 'categories'; render 'shared/search' if action_name != 'show'
       when 'listings'; render 'shared/search' if action_name != 'show'
       when 'posts'; render 'shared/search_posts'
       when 'users'; render 'shared/search_users'
@@ -173,5 +174,10 @@ module ApplicationHelper
   # convert to currency
   def ntc val
     number_to_currency val
+  end
+
+  # check page count for infinite scroll display
+  def valid_next_page? model
+    model.next_page <= model.total_pages rescue nil
   end
 end

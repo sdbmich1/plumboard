@@ -1,18 +1,18 @@
 <div class="div-border">
-  <% if @user.has_card_account? %>
-    <div class='offset3 card-dpl' style="<%= @user.has_card_account? ? '' : 'display:none' %>">
+  <% if get_card %>
+    <div class='offset3 card-dpl'>
       <h5 class="grp-hdr">Payment Information</h5>
       <table>
-      <tr><td class='span3 mbot'><%= @user.card_accounts.first.card_type %>
-        <br><%= "************#{@user.card_accounts.first.card_no}" %>
-        <br><%= "Exp: #{@user.card_accounts.first.expiration_month}/#{@user.card_accounts.first.expiration_year}" %></td>
+      <tr><td class='span3 mbot'><%= get_card_data('card_type') %>
+        <br><%= "************#{get_card_data('card_no')}" %>
+        <br><%= "Exp: #{get_card_data('expiration_month')}/#{get_card_data('expiration_year')}" %></td>
         <td class='v-align price'>
 	<%= link_to 'Change', '#', id: 'edit-card-btn', class: 'offset2 btn btn-primary stnd-btn' %></td>
       </tr>
       </table>
     </div>
   <% end %>
-  <div class='sm-top center-wrapper card-tbl' style="<%= @user.has_card_account? ? 'display:none' : '' %>">
+  <div class='sm-top center-wrapper card-tbl' style="<%= get_card ? 'display:none' : '' %>">
   <table>
   <th class='tbl-hdr'>Credit Card #* </th>
   <th></th>

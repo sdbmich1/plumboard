@@ -1,1 +1,3 @@
+$("#nav-home-menu").html("<%= escape_javascript( raw render(:partial => 'shared/navbar', :locals => { menu_name: 'Pixis' }) ) %>");
+$('#pg-title').html('Pixiboard | Pixis');
 <%= render 'shared/reload_board' %>

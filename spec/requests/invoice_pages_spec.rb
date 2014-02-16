@@ -71,8 +71,11 @@ feature "Invoices" do
     @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id)
     @listing2 = FactoryGirl.create(:listing, title: 'Leather Bookbag', seller_id: @buyer.id) 
     @listing3 = FactoryGirl.create(:listing, title: 'Xbox 360', seller_id: @person.id) 
+    @listing4 = FactoryGirl.create(:listing, title: 'Trek Bike', seller_id: @buyer.id) 
     @invoice2 = @buyer.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing2.pixi_id, buyer_id: @user.id, status: 'paid')  
     @invoice3 = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing3.pixi_id, buyer_id: @person.id)
+    sleep 3
+    @invoice4 = @buyer.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing4.pixi_id, buyer_id: @user.id)
   end
 
   def unknown_buyer
@@ -273,22 +276,30 @@ feature "Invoices" do
       visit invoices_path 
     end
 
-    it "shows received invoices", js: true do
+    it "shows paid received invoices", js: true do
       page.should have_link('Received', href: received_invoices_path) 
       click_link 'Received'
     
       page.should have_content "Status" 
       page.should have_content @user.name
-      page.should have_link("#{@invoice.id}", href: invoice_path(@invoice)) 
+      page.should have_link("#{@invoice2.id}", href: invoice_path(@invoice2)) 
 
-      click_on "#{@invoice.id}"
-      page.should have_button 'Pay'
+      click_on "#{@invoice2.id}"
       page.should have_content "Bookbag" 
+      page.should have_selector('#pay-btn', visible: false) 
+    end
 
-      click_on 'Pay'
-      page.should have_selector('title', text: 'Pay Invoice') 
-      page.should have_content "Review Your Purchase"
-      page.should have_content "Bookbag" 
+    it "shows unpaid received invoices", js: true do
+      page.should have_link('Received', href: received_invoices_path) 
+      click_link 'Received'
+      page.should have_link("#{@invoice4.id}", href: invoice_path(@invoice4)) 
+
+      click_on "#{@invoice4.id}"
+      page.should have_content "Trek Bike" 
+      page.should have_selector('#pay-btn', visible: true) 
+
+      page.find('#pay-btn').click
+      page.should have_content "Trek Bike" 
       page.should have_content "Total Due"
     end
   end
@@ -353,6 +364,7 @@ feature "Invoices" do
 	  select_buyer
 	  select_pixi
 	  set_buyer_id
+          fill_in 'inv_price', with: "40"
           fill_in 'inv_tax', with: "R0"
 	  click_button 'Send'
           page.should have_content "is not a number" 
@@ -362,6 +374,7 @@ feature "Invoices" do
 	  select_buyer
 	  select_pixi
 	  set_buyer_id
+          fill_in 'inv_price', with: "40"
           fill_in 'inv_tax', with: 5000
 	  click_button 'Send'
           page.should have_content "Sales tax must be less than or equal to 100" 
@@ -383,6 +396,7 @@ feature "Invoices" do
 	  select_buyer
 	  select_pixi
 	  set_buyer_id
+          fill_in 'inv_price', with: "40"
 	  expect { 
 	    click_button 'Send'; sleep 3
 	  }.to change(Invoice, :count).by(1)

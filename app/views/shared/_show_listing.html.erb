@@ -7,10 +7,10 @@
   <div class='row mbot'>
     <div class='span6 verticalLine'>
       <%= render partial: 'shared/listing_top', locals: {listing: listing} %>
-
       <div class="span5 no-left sm-top mbot">
         <%= render partial: 'shared/photos', locals: {model: listing, file_name: "", psize: '120x120'} %>
       </div>
+      <%= render partial: 'shared/social_links' %>
     </div>
     <div class="span5">
       <div id='comment_form'><%= render partial: 'shared/comments' %></div>

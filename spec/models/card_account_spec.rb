@@ -124,9 +124,9 @@ describe CardAccount do
 
     it "does not set default flag" do
       @user.card_accounts.create FactoryGirl.attributes_for :card_account
-      account = @user.card_accounts.build FactoryGirl.attributes_for :card_account, status: nil
+      account = @user.card_accounts.build FactoryGirl.attributes_for :card_account, status: 'inactive'
       account.save
-      account.status.should == 'active'
+      account.status.should_not == 'active'
       account.default_flg.should_not == 'Y'
     end
   end

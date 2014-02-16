@@ -1,6 +1,1 @@
-$("#pxboard").html("<%= escape_javascript(render(partial: 'shared/categories')) %>");
-
-// reload board
-reload_board(this);
-
-$('#spinner').hide(300);
+<%= render 'shared/reload_board' %>

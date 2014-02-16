@@ -3,7 +3,7 @@
       <%= render partial: 'shared/error_messages', :locals => { :target => @inquiry } %>
     </div>
     <div class='row'>
-      <div class='offset2 span6'><label>To:<span class='mleft10'><%= show_recipient svcFlg %></label></span></div>
+      <div class='offset2 span6'><label>To:<span class='mleft10'><%= show_recipient %></label></span></div>
     </div>
     <div class='row'>
       <div style="<%= signed_in? ? '' : 'display:none' %>">
@@ -29,7 +29,7 @@
     </div>
     <div class='row'>
       <div class='offset2 span2'><label>Subject*</label>
-        <%= f.collection_select :code, get_inquiry_type(svcFlg), :code, :subject, {:prompt => 'Please Select'}, {id: 'inq_subject', 
+        <%= f.collection_select :code, get_inquiry_type, :code, :subject, {:prompt => 'Please Select'}, {id: 'inq_subject', 
 	   class: 'pixi-select'} %>
       </div>
     </div>

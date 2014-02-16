@@ -17,6 +17,7 @@
  *= require scaffolds
  *= require listings
  *= require rateit
+ *= require jquery-smartvimeoembed
  *= require_self
  */
 

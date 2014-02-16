@@ -8,7 +8,7 @@
       <%= render partial: 'shared/credit_card_info', locals: { f: f } %>
     <% end %>
 	
-    <%= f.hidden_field :token, id: 'pay_token', :value=>get_card_token %>
+    <%= f.hidden_field :token, id: 'pay_token', value: get_card_data('token') %>
     <%= f.hidden_field :payment_type, id: 'pay_type' %>
     <%= f.hidden_field :exp_month, id: 'exp_month' %>
     <%= f.hidden_field :exp_year, id: 'exp_year' %>

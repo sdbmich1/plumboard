@@ -9,9 +9,13 @@
       <%= pixi_home %>
       <div class="nav-collapse">
       <nav>
+	<div id='search'><%= display_search %></div>
 	<% if signed_in? %>
-	  <div id='search'><%= display_search %></div>
-          <%= link_to get_unread_count(@user), posts_path, id: "notice-btn", title: 'Messages' %>
+	  <div id="msg_Container">
+	    <div class="msg_bubble">
+              <%= link_to get_unread_count(@user), posts_path, id: "notice-btn", title: 'Messages' %>
+	    </div>
+	  </div>
 
           <ul class="nav pull-right">
 	    <%= render 'layouts/post_menu' %>

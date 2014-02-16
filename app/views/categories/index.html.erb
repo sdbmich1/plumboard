@@ -1,6 +1,8 @@
 <% provide(:title, 'Home') %>
 <%= content_for :subhead do %>
-  <%= render partial: 'shared/navbar', locals: { menu_name: 'Home' } %>
+  <div id='nav-home-menu'>
+    <%= render partial: 'shared/navbar', locals: { menu_name: 'Home' } %>
+  </div>
 <% end %>
 
 <%= content_for :content do %>

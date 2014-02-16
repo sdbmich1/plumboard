@@ -83,7 +83,7 @@ Plumboard::Application.routes.draw do
 
   resources :categories do
     collection do
-      get 'inactive', 'manage'
+      get 'inactive', 'manage', :autocomplete_site_name
     end
   end
 
@@ -97,9 +97,7 @@ Plumboard::Application.routes.draw do
     get 'refund', :on => :member
   end
 
-  resources :inquiries do
-    post 'request', :on => :member
-  end
+  resources :inquiries
 
   namespace :api do
     namespace :v1  do
@@ -112,14 +110,16 @@ Plumboard::Application.routes.draw do
   # custom routes
   get "/about", to: "pages#about" 
   get "/privacy", to: "pages#privacy" 
-  get "/help", to: "inquiries#help" 
+  get "/help", to: "pages#help" 
+  get "/terms", to: "pages#terms" 
+  get "/howitworks", to: "pages#howitworks" 
+  get "/support", to: "inquiries#support" 
   get "/contact", to: "inquiries#new" 
   get "/welcome", to: "pages#welcome" 
   get '/system/:class/:attachment/:id/:style/:filename', :to => 'pictures#asset'
   get '/loc_name', to: "sites#loc_name"
   get '/buyer_name', to: "users#buyer_name"
   get '/states', to: "users#states"
-  # get '/editpixi', to: "temp_listings#edit"
   # get '/photos/:attachment/:id/:style/:filename', :to => 'pictures#display'
   # post "/temp_listings/manage", to: "temp_listings#manage", :via => :post, :as => :manage 
   put '/submit', to: "temp_listings#submit"

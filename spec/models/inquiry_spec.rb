@@ -3,7 +3,8 @@ require 'spec_helper'
 describe Inquiry do
   before(:each) do
     @user = FactoryGirl.create :pixi_user
-    @inquiry = @user.inquiries.build FactoryGirl.attributes_for(:inquiry) 
+    @inq_type = FactoryGirl.create :inquiry_type, contact_type: 'inquiry'
+    @inquiry = @user.inquiries.build FactoryGirl.attributes_for(:inquiry, code: @inq_type.code) 
   end
    
   subject { @inquiry } 
@@ -143,6 +144,18 @@ describe Inquiry do
       @inquiry = @user.inquiries.build FactoryGirl.attributes_for :inquiry, status: 'inactive'
       @inquiry.save
       @inquiry.status.should_not == 'active'
+    end
+  end
+
+  describe 'is_support?' do
+    it 'should not return true' do
+      @inquiry.is_support?.should_not be_true
+    end
+
+    it 'should return true' do
+      inq_type = FactoryGirl.create :inquiry_type, contact_type: 'support', code: 'CD'
+      inquiry = FactoryGirl.create :inquiry, code: inq_type.code
+      inquiry.is_support?.should be_true
     end
   end
 

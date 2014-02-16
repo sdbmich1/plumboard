@@ -1,1 +1,3 @@
-<%= collection_select(:site, :id, get_sites(ptype), :id, :name, {selected: @loc, prompt: 'Select Location'}, {class: 'sm-top width240 pixi-select'}) %>
+<%= autocomplete_field_tag 'location', @loc_name, autocomplete_site_name_categories_path, :id_element => '#site_id', 
+          :placeholder => 'Enter Location', class: 'sm-top width280 search-text' %></div>
+<%= hidden_field_tag 'site_id', @loc, id: 'site_id' %>

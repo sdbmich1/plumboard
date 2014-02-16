@@ -1,5 +1,21 @@
 <% provide(:title, 'Help') %>
+<%= render partial: 'shared/pg_header', locals: { linkFlg: true } %>
 <%= content_for :content do %>
-  <h1>Help</h1>
-  <p>Find me in app/views/pages/help.html.erb</p>
+  <%= render partial: 'shared/pg_sub_header', locals: { stitle: 'PixiPonders' } %>
+  <div class='row mtop mbot'>
+    <div class='offset1 span10 pg-text'>
+    Because eventually everyone has a question, please check out our frequently asked questions.  If you are unable find your answer here, 
+    drop us a line at the link below.<br><br>
+    </div>
+  </div>
+  <div class='row mtop'>
+    <div class='offset1 span10 pg-text'>
+      <%= render 'shared/faq_list' %>
+    </div>
+  </div>
+  <div class='row mtop'>
+    <div class='offset1 span10 pg-text mbot'>
+      Did not find the answer to your question?  Send us a note <%= link_to "here!", contact_path(source: 'support'), class: 'terms-link' %>
+    </div>
+  </div>
 <% end %>

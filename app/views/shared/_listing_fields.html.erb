@@ -10,7 +10,7 @@
   <div class='span7' style="<%= !@listing.pixi_post? ? 'display:none' : '' %>">
     <%= f.label :seller_id, 'Seller' %>
     <%= autocomplete_field_tag 'slr_name', @listing.slr_name, autocomplete_user_first_name_temp_listings_path,
-	        :update_elements => { :id => '#seller_id' }, :placeholder => 'Seller Name', :autofocus => true %> 
+	        :update_elements => { :id => '#seller_id' }, :placeholder => 'Seller Name', :autofocus => true, id: 'slr_name' %> 
     <%= f.hidden_field :seller_id, id: 'seller_id' %>
   </div>
 </div>

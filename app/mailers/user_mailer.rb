@@ -14,6 +14,29 @@ class UserMailer < ActionMailer::Base
     mail(:to => "#{transaction.email}", :subject => "Your Purchase Receipt: #{transaction.confirmation_no} ") 
   end
 
+  # send pixi post request to sellers
+  def send_pixipost_request post 
+    @post = post
+
+    # set logo
+    attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
+    # set message details
+    mail(:to => "#{post.user.email}", :subject => "PixiPost Request Submitted") 
+  end
+
+  # send pixi post appt to sellers
+  def send_inquiry inquiry 
+    @inquiry = inquiry
+
+    # set logo
+    attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
+    # set message details
+    email = inquiry.is_support? ? 'support@pixiboard.com' : 'info@pixiboard.com'
+    mail(:to => "#{email}", :subject => "User Inquiry")
+  end
+
   # send payment receipts to sellers
   def send_payment_receipt inv, payment
     @payment, @invoice = payment, inv

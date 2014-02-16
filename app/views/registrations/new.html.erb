@@ -17,6 +17,8 @@
         </div>
 
     	<div class='mtop mbot'><%= f.submit "Register", class: "btn btn-large btn-primary submit-btn" %></div>
+        <div class='mtop sdescr'>By registering, I accept <%= link_to "Pixiboard's Terms of Service", terms_path, class: 'terms-link' %> and  
+	   <%= link_to "Privacy Policy", privacy_path, class: 'terms-link' %>. We don't share your personal info.</div>
       </div>
     <% end %>
   </div>

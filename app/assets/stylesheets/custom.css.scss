@@ -17,6 +17,11 @@ body {
 @import "shared/form";
 @import "shared/image";
 
+*{
+  margin:0;
+  padding:0;
+}
+
 section {
   overflow: auto;
   }
@@ -79,16 +84,25 @@ p {
 /* Wrapper for page content to push down footer */
 #wrap {
   margin-top: 20px!important;
-  min-height: 100%;
-  height: auto !important;
-  height: 100%;
+  @extend .item-hgt;
 
   /* Negative indent footer by it's height */
   //margin: 0 auto -60px;
 }
 
+#px-container {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  padding-bottom: 60px;
+}
+
 #home-wrap {
   min-height: 100%;
+  @extend .item-hgt;
+}
+
+.item-hgt {
   height: auto !important;
   height: 100%;
 }
@@ -212,8 +226,8 @@ input, select, .uneditable-input {
 .success {background:#e6efc2;color:#264409;border-color:#c6d880;}
 
 #spinner {
-  margin-top: 300px;
-  margin-left: 400px;
+  margin-top: 45%;
+  margin-left: 45%;
   position:fixed;
   height: 10%;
   z-index:9999;
@@ -406,15 +420,34 @@ a#bill-pixi, a#pay-pixi {
 }
 
 a#notice-btn {
-  @extend .menubar-item;
   font-weight: bold;
-  width: 30px;
-  position: fixed;
-  top: 0.1%;
-  right: 42%;
-  background:#990000;
-  &:hover { background:#990000; text-decoration: none }
+  color: #ffffff!important;
+  &:hover { background: transparent; text-decoration: none }
 }   
+
+#msg_Container {
+  width: 25px;
+  height: 25px;
+  padding: 0;
+  position:fixed;
+  top: 2%;
+  right: 42%;
+  background: transparent url(message_icon60.png) no-repeat center center;
+  display: inline;
+}
+
+.msg_bubble {
+  position:absolute;
+  top: -6px;
+  right:-6px;
+  padding:1px 3px 1px 3px;
+  background-color:red;
+  color:white;
+  font-weight:bold;
+  font-size:0.7em;
+  border-radius:30px;
+  box-shadow:1px 1px 1px gray;
+}
 
 a.btn-mask {
   color: #ffffff!important;
@@ -520,6 +553,13 @@ a.btn-mask {
   font-size: 14px!important;
 }
 
+.cat-select {
+  margin-bottom: 0px!important;
+  height: 28px!important;
+  font-size: 14px!important;
+  margin-top: -3px!important;
+}
+
 #purchase_btn {
   float: right;
   width: 60px!important;
@@ -566,6 +606,20 @@ hr.vertical
 
 .ftr-img {
   margin-left: 10px!important;
+  vertical-align: middle;
+  height: 30px!important;
+  width: 30px!important;
+}
+
+ul#social-links {
+  margin-left: -10px!important;
+  list-style: none;
+  li {
+    margin-top: 10px!important;
+  }
+}
+
+.social-img {
   vertical-align: middle;
   height: 30px!important;
   width: 30px!important;
@@ -627,14 +681,6 @@ a#browse-link {
   &:hover {
     color: black;
     background-color: transparent;
-    text-decoration: underline;
-  }
-}
-
-a.pixi-link {
-  vertical-align: middle;
-  &:hover {
-    background: none;
     text-decoration: underline;
   }
 }

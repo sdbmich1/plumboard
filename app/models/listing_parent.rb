@@ -13,7 +13,7 @@ class ListingParent < ActiveRecord::Base
   MAX_PIXI_PIX = PIXI_KEYS['pixi']['max_pixi_pix']
 
   attr_accessible :buyer_id, :category_id, :description, :title, :seller_id, :status, :price, :show_alias_flg, :show_phone_flg, :alias_name,
-  	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id, :year_built, :pixan_id,
+  	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id, :year_built, :pixan_id, :job_type,
 	:edited_by, :edited_dt, :post_ip, :lng, :lat, :event_start_date, :event_end_date, :compensation, :event_start_time, :event_end_time
 
   belongs_to :user, :foreign_key => :seller_id
@@ -266,7 +266,7 @@ class ListingParent < ActiveRecord::Base
 
   # display first image
   def photo_url
-    pictures[0].photo.url rescue nil
+    pictures[0].photo.url(:large) rescue nil
   end
 
   # format start date

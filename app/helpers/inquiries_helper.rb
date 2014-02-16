@@ -1,13 +1,13 @@
 module InquiriesHelper
 
   # toggle inquiry recipient
-  def show_recipient svcFlg
-    svcFlg ? "Pixiboard Support" : "Pixiboard Relations"
+  def show_recipient 
+    @source == 'support' && signed_in? ? "Pixiboard Support" : "Pixiboard Relations"
   end
 
   # toggle dropdown list based on type of inquiries
-  def get_inquiry_type svcFlg
-    svcFlg ? InquiryType.support : InquiryType.general
+  def get_inquiry_type 
+    @source == 'support' && signed_in? ? InquiryType.support : InquiryType.general
   end
 
   # set user info

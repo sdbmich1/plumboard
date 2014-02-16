@@ -78,6 +78,7 @@ module BalancedPayment
     # get buyer token
     uri = txn.user.card_token
 
+    # determine buyer
     if uri
       unless buyer = Balanced::Customer.where(uri: uri).first
         buyer = set_token txn
@@ -86,7 +87,13 @@ module BalancedPayment
       buyer = set_token txn
     end
 
-    response = buyer.add_card token
+    # add card if not found
+    response = buyer.add_card(token) rescue nil
+
+    # check if card exists for buyer
+    if response.nil?
+      response = buyer.find token
+    end
 
     # charge card
     result = buyer.debit(amount: (amt * 100).to_i.to_s)

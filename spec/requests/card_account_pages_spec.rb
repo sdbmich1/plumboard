@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-feature "BankAccounts" do
+feature "CardAccounts" do
   subject { page }
-  let(:user) { FactoryGirl.create(:pixi_user, first_name: 'Jack', last_name: 'Snow', email: 'jack.snow@pixitest.com') }
+  let(:user) { FactoryGirl.create(:pixi_user) }
 
   before(:each) do
     login_as(user, :scope => :user, :run_callbacks => false)

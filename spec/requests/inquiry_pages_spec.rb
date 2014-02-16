@@ -151,6 +151,39 @@ feature "Inquiries" do
     end
   end
 
+  describe 'Visit Contact Us Page - support users' do
+    before(:each) do
+      login_as(user, :scope => :user, :run_callbacks => false)
+      @user = user
+      add_inquiry_type
+      visit contact_path(source: 'support')
+    end
+
+    it { should have_content 'Pixiboard Support' }
+    it { should have_selector('title', text: 'Contact Us') }
+    it { should have_selector('#inq_first_name', visible: false) }
+    it { should have_selector('#inq_last_name', visible: false) }
+    it { should have_selector('#inq_email', visible: false) }
+    it { should have_selector('#inq_status', visible: false) }
+    it { should have_content 'Subject' }
+    it { should have_content 'From:' }
+    it { should have_content @user.name }
+    it { should have_link('Cancel') }
+    it { should have_button('Submit') }
+
+    it "adds a support inquiry", js: true do
+      expect {
+        # set_user
+        select("Other Questions", :from => "inq_subject")
+        fill_in 'inq_comments', with: 'How do I add friends?'
+	click_button submit 
+      }.to change(Inquiry, :count).by(1)
+
+      page.should_not have_content("Contact Us")
+    end
+  end
+
+
   describe "Editor views an Inquiry" do 
     before do
       login_as(editor, :scope => :user, :run_callbacks => false)

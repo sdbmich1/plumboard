@@ -1,14 +1,15 @@
 require 'will_paginate/array' 
 class CategoriesController < ApplicationController
-  before_filter :check_permissions, except: [:show, :index]
-  before_filter :authenticate_user!, except: [:index]
+  before_filter :check_permissions, only: [:new, :edit, :manage, :create, :destroy, :update]
+  before_filter :authenticate_user!, only: [:new, :edit, :manage, :create, :destroy, :update]
   before_filter :load_data, only: [:index]
   before_filter :get_page, only: [:index, :inactive, :manage, :create, :update]
+  autocomplete :site, :name, :full => true
   respond_to :html, :json, :js, :mobile
   layout :page_layout
 
   def index
-    respond_with(@categories = Category.active.paginate(page: @page, per_page: 50))
+    respond_with(@categories = Category.active.paginate(page: @page))
   end
 
   def manage
@@ -61,6 +62,13 @@ class CategoriesController < ApplicationController
   # set location var
   def load_data
     @loc = params[:loc]
+    @loc_name = Site.find @loc rescue nil
+  end
+
+  # parse results for active items only
+  def get_autocomplete_items(parameters)
+    items = super(parameters)
+    items = items.active rescue items
   end
 
   def check_permissions

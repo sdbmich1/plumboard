@@ -93,7 +93,6 @@ class Transaction < ActiveRecord::Base
       errors.add :base, "Card info is missing or invalid. Please re-enter."
       false
     else
-      Rails.logger.info "Txn card data: #{self.exp_month} / #{self.exp_year}"
       if card_number.blank?  
         user.has_card_account? ? true : false
       else
@@ -201,7 +200,6 @@ class Transaction < ActiveRecord::Base
 	  self.payment_type, self.credit_card_no = result.card[:type], result.card[:last4]
 	end
       else
-        Rails.logger.info 'Txn result invalid = ' + self.errors.full_messages.to_s
         if amt > 0.0
 	  return false
 	else

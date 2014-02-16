@@ -14,7 +14,7 @@ feature "Transactions" do
   def init_setup usr
     login_as(usr, :scope => :user, :run_callbacks => false)
     @user = usr
-    @listing = FactoryGirl.create :temp_listing, seller_id: @user.id
+    @listing = FactoryGirl.create :temp_listing, seller_id: @user.id, status: nil
   end
 
   def add_invoice
@@ -47,7 +47,7 @@ feature "Transactions" do
     fill_in 'last_name', with: @user.last_name
     fill_in 'transaction_email', with: @user.email
     fill_in 'transaction_home_phone', with: '4152419755'
-    fill_in 'transaction_address', with: '251 Connecticut'
+    fill_in 'transaction_address', with: '251 Connecticut St'
     fill_in 'transaction_city', with: 'San Francisco'
   end
 
@@ -128,14 +128,14 @@ feature "Transactions" do
       page.should have_content "Review Your Pixi" 
     end
 
-    describe "Manage Free Valid Transactions", js: true do
+    describe "Cancel Free Valid Transactions", js: true do
 
       it "Cancel transaction cancel" do
         expect { 
           click_cancel_cancel
 	}.not_to change(Transaction, :count)
 
-        page.should have_content "Submit Your Order" 
+        page.should have_content "Total Due" 
       end
  
       it "should create a transaction with 100% discount" do
@@ -144,14 +144,14 @@ feature "Transactions" do
           click_ok; sleep 2
 	}.to change(Transaction, :count).by(1)
 
-        page.should have_content "Order Complete"
+        page.should have_content "has been submitted"
       end
 
       it "Cancel transaction" do
         click_cancel_ok
 
         page.should_not have_content "Total Due"
-        page.should have_content "Successfully removed pixi" 
+        page.should have_content "Home" 
       end
     end
   end
@@ -167,7 +167,7 @@ feature "Transactions" do
     it { should have_content "Invoice # #{@invoice.id} from #{@seller.name}" }
     it { should have_content @invoice.pixi_title }
     it { should have_content "Total Due" }
-    it { should_not have_content "Buyer Information" }
+    it { should have_selector('.addr-tbl', visible: false) }
     it { should have_selector('#edit-txn-addr', visible: false) }
     it { should_not have_content "Payment Information" }
     it { should_not have_selector('#edit-card-btn', visible: false) }
@@ -209,11 +209,51 @@ feature "Transactions" do
         page.should have_link('Add Comment', href: '#') 
       }.to change(Transaction, :count).by(1)
     end
+
+    it "sets seller rating", js: true do
+      expect { 
+        credit_card_data '341111111111111', '1234'
+        page.should have_content("Purchase Complete")
+        page.should have_link('Add Comment', href: '#') 
+        page.should have_selector('#rateit5', visible: true) 
+        page.should have_selector('.cmt-descr', visible: false) 
+        page.find('#rateit5').click
+        page.find('#done-btn').click; sleep 3
+      }.to change(Transaction, :count).by(1)
+    end
+  end
+
+  describe "Valid Invoice Transactions w/ invalid card" do
+    before(:each) do
+      init_setup user
+      @acct = @user.card_accounts.create FactoryGirl.attributes_for(:card_account, status: 'active', expiration_year: Date.today.year-1)
+      visit_inv_txn_path 
+      user_data_with_state
+    end
+
+    it { should have_content "Total Due" }
+    it { should have_selector('.addr-tbl', visible: false) }
+    it { should have_selector('#edit-txn-addr', visible: false) }
+    it { should_not have_content "Payment Information" }
+    it { should_not have_selector('#edit-card-btn', visible: false) }
+    it { should have_link('Prev', href: invoice_path(@invoice)) }
+    it { should_not have_link('Cancel', href: temp_listing_path(@listing)) }
+    it { should have_button('Done!') }
+
+    it "creates a balanced transaction with valid mc card", :js=>true do
+      expect { 
+        credit_card_data '5105105105105100'
+        page.should have_content("Purchase Complete")
+        page.should have_content("Please Rate Your Seller")
+        page.should have_link('Add Comment', href: '#') 
+      }.to change(Transaction, :count).by(1)
+    end
   end
 
   describe "Valid Invoice Transactions w/ existing card" do
     before(:each) do
-      init_setup contact_user
+      usr = FactoryGirl.create(:contact_user) 
+      init_setup usr
       @acct = @user.card_accounts.create FactoryGirl.attributes_for :card_account, card_no: '1111'
       visit_inv_txn_path 
     end
@@ -245,7 +285,7 @@ feature "Transactions" do
 
     it "edits the payment info" do
       expect { 
-        page.find('#edit-card-btn').click
+        page.find('#edit-card-btn').click; sleep 1
         fill_in "card_number", with: '5105105105105100'
         page.should have_content("Credit Card #")
         page.should have_content("Code")
@@ -257,76 +297,17 @@ feature "Transactions" do
         click_valid_ok
         page.should have_content("Purchase Complete")
         page.should have_link('Add Comment', href: '#') 
-      }.to change(Transaction, :count).by(1)
-    end
-  end
+        page.should have_selector('#rateit5', visible: true) 
+        page.should have_selector('.cmt-descr', visible: false) 
 
-  describe "Valid Invoice Transactions - change existing card" do
-    before(:each) do
-      init_setup contact_user
-      @acct = @user.card_accounts.create FactoryGirl.attributes_for :card_account, card_no: '1111'
-      visit_inv_txn_path 
-    end
-
-    it "edits and submits the payment info", js: true do
-      expect { 
-        page.should have_content "Payment Information" 
-        page.should have_selector('#edit-card-btn', visible: true) 
-        page.find('#edit-card-btn').click
-        credit_card_data '5105105105105100'
-        page.should have_content("Purchase Complete")
-        page.should have_link('Add Comment', href: '#') 
-      }.to change(Transaction, :count).by(1)
-    end
-  end
-
-  describe 'Pay invoice from any page' do
-    before :each do
-      add_invoice
-      init_setup user
-      visit root_path
-    end
-
-    it { should have_link('Pay', href: invoice_path(@invoice)) }
-
-    it "creates a balanced transaction with valid card", :js=>true do
-      click_on 'Pay'
-      page.should have_content 'Pay Invoice'
-      page.should have_content 'Total Due'
-
-      expect { 
-        user_data_with_state
-        credit_card_data '5105105105105100'
-        page.should have_content("Purchase Complete")
-      }.to change(Transaction, :count).by(1)
-    end
-  end
-
-  describe 'Pay invoice from post page' do
-    before :each do
-      init_setup user
-      add_invoice
-      visit posts_path
-    end
-
-    it { should have_button('Pay') }
-
-    it "creates a balanced transaction with valid card", :js=>true do
-      click_on 'Pay'
-      page.should have_content 'Pay Invoice'
-      page.should have_content 'Total Due'
-
-      expect { 
-        user_data_with_state
-        credit_card_data '5105105105105100'
-        page.should have_content("Purchase Complete")
       }.to change(Transaction, :count).by(1)
     end
   end
 
   describe "Invalid Invoice Transactions" do
     before(:each) do
-      init_setup user
+      usr = FactoryGirl.create(:pixi_user) 
+      init_setup usr
       visit_inv_txn_path 
       user_data_with_state
     end
@@ -381,7 +362,8 @@ feature "Transactions" do
 
   describe "Valid Pixi Transactions" do
     before(:each) do
-      init_setup user
+      usr = FactoryGirl.create(:pixi_user) 
+      init_setup usr
       visit_txn_path 
       user_data_with_state
     end
@@ -396,7 +378,8 @@ feature "Transactions" do
 
   describe "Manage Invalid Transactions", :js=>true do
     before(:each) do
-      init_setup user
+      usr = FactoryGirl.create(:pixi_user) 
+      init_setup usr
       visit_txn_path 
     end
 

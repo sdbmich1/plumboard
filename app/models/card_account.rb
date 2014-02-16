@@ -31,8 +31,7 @@ class CardAccount < ActiveRecord::Base
 
   # set flds
   def set_flds
-    self.status = 'active'
-    self.default_flg = 'Y' unless self.user.has_card_account?
+    self.status, self.default_flg = 'active', 'Y' unless self.user.has_card_account?
   end
 
   # add new card
@@ -78,7 +77,15 @@ class CardAccount < ActiveRecord::Base
         card.save_account 
       end
     end
-    Rails.logger.info 'Card errors = ' + card.errors.full_messages.to_s
     card.errors.any? ? false : card 
+
+    rescue => ex
+      process_error ex
+  end
+
+  # process messages
+  def process_error e
+    self.errors.add :base, "Card declined or invalid. Please re-submit. #{e.message}"
+    self
   end
 end

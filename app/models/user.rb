@@ -141,6 +141,12 @@ class User < ActiveRecord::Base
     card_accounts.count > 0 rescue nil
   end
 
+  # return any valid card 
+  def get_valid_card
+    mo, yr = Date.today.month, Date.today.year
+    card_accounts.detect { |x| x.expiration_year > yr || (x.expiration_year == yr && x.expiration_month >= mo) }
+  end
+
   # converts date format
   def self.convert_date(old_dt)
     Date.strptime(old_dt, '%m/%d/%Y') if old_dt    

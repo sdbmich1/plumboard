@@ -66,11 +66,15 @@ describe InquiriesController do
     it "renders the :new view" do
       response.should render_template :new
     end
+
+    it "should render the correct layout" do
+      response.should render_template("layouts/about")
+    end
   end
 
   describe 'GET show' do
     before :each do
-      Invoice.stub!(:find).and_return( @invoice )
+      Inquiry.stub!(:find).and_return( @inquiry )
       do_get
     end
 

@@ -92,10 +92,13 @@ form#new_post {margin-bottom: -0px!important;}
 }
 
 .div-border {  
-  border: 1px solid #eaeaea; padding: 10px; margin-bottom: 10px; }
+  border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+
+.div-border-blue {  
+  border: 1px solid $pixiBlue; }
 
 .sm-bot { margin-bottom: 5px!important }  
-.sm-top { margin-top: 8px!important }  
+.sm-top { margin-top: 5px!important }  
 .neg-top { margin-top: -10px!important }  
 .ng-top { margin-top: -5px!important }  
 .mright { margin-right: 10px!important }
@@ -105,3 +108,43 @@ form#new_post {margin-bottom: -0px!important;}
 .no-btop {
   border-top: none; 
 }
+
+.pg-bkgnd-aqua {
+  background: #C2E1EF;
+}
+
+.pg-bkgnd-white {
+  background: white;
+}
+
+.pg-bkgnd-blue {
+  background: $pixiBlue;
+}
+
+.pg-bkgnd-gray {
+  background: $grayMediumLight;
+}
+
+a.terms-link {
+  color: $pixiBlue; 
+  &:hover { background: $pixiBlue; text-decoration: none }
+}
+
+a.pixi-link {
+  vertical-align: middle;
+  &:hover {
+    background: none;
+    text-decoration: underline;
+  }
+}
+
+a.pixi-cat-link {
+  &:hover, &:active {
+    background: none;
+    text-decoration: none;
+  }
+}
+ 
+
+ 
+
