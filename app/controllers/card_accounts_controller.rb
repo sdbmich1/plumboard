@@ -26,11 +26,10 @@ class CardAccountsController < ApplicationController
     respond_with(@account) do |format|
       if @account.save_account
         flash.now[:notice] = 'Successfully created account.'
-        format.html { redirect_to listings_path }
+        format.html { redirect_to root_path }
         format.json { render json: @account }
       else
         flash.now[:error] = 'Error occurred creating account. Please try again.'
-        format.js { render nothing: true }
 	format.json { render :json => { :errors => @account.errors.full_messages }, :status => 422 }
       end
     end
@@ -38,9 +37,9 @@ class CardAccountsController < ApplicationController
 
   def destroy
     @account = CardAccount.find params[:id]
-    if @account.destroy
+    if @account.delete_card
       flash.now[:notice] = 'Successfully removed account.'
-      redirect_to listings_path 
+      redirect_to root_path 
     else
       flash.now[:error] = @account.errors
       render nothing: true 

@@ -63,7 +63,7 @@ describe PostsController do
 
       before :each do
         Post.stub!(:save).and_return(true)
-        Post.stub!(:load_new).with(@listing).and_return(:success)
+        controller.stub!(:reload_data).and_return(true)
       end
        
       it "should load the requested listing" do
@@ -254,7 +254,7 @@ describe PostsController do
 
     context 'success' do
 
-      before :each do
+      before do
         Post.stub!(:save).and_return(true)
         @user.stub_chain(:reload, :incoming_posts).and_return( @posts )
         @posts.stub!(:paginate).and_return( @posts )

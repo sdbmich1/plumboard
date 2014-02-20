@@ -8,6 +8,8 @@ class Listing < ListingParent
   has_many :posts, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :invoices, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :comments, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
+  has_many :pixi_likes, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
+  has_many :saved_listings, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
 
   has_many :site_listings, :dependent => :destroy
   #has_many :sites, :through => :site_listings, :dependent => :destroy
@@ -80,6 +82,11 @@ class Listing < ListingParent
   # get active pixis by site id
   def self.get_by_site sid, pg=1
     active.where(:site_id => sid).paginate page: pg
+  end
+
+  # get saved list by user
+  def self.saved_list usr, pg=1
+    active.joins(:saved_listings).where("saved_listings.user_id = ?", usr.id).paginate page: pg
   end
 
   # get invoice

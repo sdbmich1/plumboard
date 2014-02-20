@@ -41,7 +41,7 @@ feature "BankAccounts" do
 
   def submit_invalid_acct
     expect {
-      click_on 'Next'; sleep 3;
+      find('#bank-btn').click; sleep 3;
     }.to change(BankAccount, :count).by(0)
 
     page.should_not have_content 'Bill To'

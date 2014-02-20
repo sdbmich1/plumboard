@@ -49,7 +49,8 @@ class PostsController < ApplicationController
     @post = Post.new params[:post]
     respond_with(@post) do |format|
       if @post.save
-        @post = Post.load_new @listing 
+        # @post = Post.load_new @listing 
+	reload_data params[:post][:pixi_id]
         format.json { render json: {post: @post} }
       else
         format.json { render json: { errors: @post.errors.full_messages }, status: 422 }
@@ -77,5 +78,12 @@ class PostsController < ApplicationController
   def load_data
     @page = params[:page] || 1
     @per_page = params[:per_page] || 5
+  end
+
+  def reload_data pid
+    @listing = Listing.find_by_pixi_id pid
+    @like = @user.pixi_likes.find_by_pixi_id pid rescue nil
+    @saved = @user.saved_listings.find_by_pixi_id pid rescue nil
+    @contact = @user.posts.find_by_pixi_id pid rescue nil
   end
 end

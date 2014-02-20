@@ -46,6 +46,10 @@ describe Listing do
   it { should respond_to(:pictures) }
   it { should respond_to(:category) }
   it { should respond_to(:comments) }
+  it { should respond_to(:pixi_likes) }
+  it { should have_many(:pixi_likes).with_foreign_key('pixi_id') }
+  it { should respond_to(:saved_listings) }
+  it { should have_many(:saved_listings).with_foreign_key('pixi_id') }
 
   describe "when site_id is empty" do
     before { @listing.site_id = "" }
@@ -521,6 +525,16 @@ describe Listing do
       @listing.event_start_date = Time.now
       @listing.start_date?.should be_true
     end
+  end
+
+  describe "saved list" do 
+    before(:each) do
+      @usr = FactoryGirl.create :pixi_user
+      @saved_listing = @user.saved_listings.create FactoryGirl.attributes_for :saved_listing, pixi_id: @listing.pixi_id
+    end
+
+    it { Listing.saved_list(@usr).should_not include @listing } 
+    it { Listing.saved_list(@user).should_not be_empty }
   end
 
   describe "dup pixi" do

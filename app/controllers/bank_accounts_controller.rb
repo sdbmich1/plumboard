@@ -32,7 +32,6 @@ class BankAccountsController < ApplicationController
         format.json { render json: {account: @account} }
       else
         flash.now[:error] = 'Error occurred creating account. Please try again.'
-        format.js { render nothing: true }
 	format.json { render :json => { :errors => @account.errors.full_messages }, :status => 422 }
       end
     end
@@ -42,7 +41,7 @@ class BankAccountsController < ApplicationController
     @account = BankAccount.find params[:id]
     if @account.delete_account
       flash.now[:notice] = 'Successfully removed account.'
-      redirect_to listings_path 
+      redirect_to root_path 
     else
       flash.now[:error] = @account.errors
       render nothing: true 

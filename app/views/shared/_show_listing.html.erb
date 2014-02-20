@@ -1,16 +1,15 @@
-<div class='height360'>
   <div class='row'>
     <div class="span12">
-      <h4 class='mbot'><%= listing.nice_title %></h4>
+      <h4 class='ng-top mbot'><%= listing.nice_title %></h4>
     </div>
   </div>
   <div class='row mbot'>
     <div class='span6 verticalLine'>
       <%= render partial: 'shared/listing_top', locals: {listing: listing} %>
-      <div class="span5 no-left sm-top mbot">
+      <div class="span5 no-left mtop mbot">
         <%= render partial: 'shared/photos', locals: {model: listing, file_name: "", psize: '120x120'} %>
       </div>
-      <%= render partial: 'shared/social_links' %>
+      <%= render partial: 'shared/social_links' unless !listing.active? || listing.seller?(@user) %>
     </div>
     <div class="span5">
       <div id='comment_form'><%= render partial: 'shared/comments' %></div>
@@ -20,7 +19,7 @@
   <%= render partial: 'shared/listing_details', locals: {listing: listing} %>
 
   <div class="row">
-    <%= render partial: 'shared/show_temp_listing', locals: {listing: listing} if edit_mode %>
+    <%= render partial: 'shared/show_temp_listing', locals: {listing: listing} %>
     <%= check_pending_pixi listing %>
   </div>
 

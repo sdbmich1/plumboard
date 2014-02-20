@@ -7,5 +7,4 @@
   <td class='span3'><%= link_to invoice.pixi_title, invoice.listing, class: 'pending_title' %></td>
   <td class='span2'><div class='price'><%= number_to_currency(invoice.amount) %></div></td>
   <td class='span1'><%= invoice.status.titleize %></td>
-  <td class='span1'><%= link_to 'View', invoice, class: 'btn btn-primary btn-mask', remote: true %></td>
 </tr>

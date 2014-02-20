@@ -10,7 +10,8 @@
     <%= f.hidden_field 'user_id', value: @user.id %>
 
     <div class="reply_form">
-      <%= f.text_area 'content', placeholder: 'Send message to seller. Press Enter to send...', id: 'contact_content' %>  
+      <%= f.text_area 'content', value: PIXI_POST, placeholder: 'Send message to seller.', id: 'contact_content' %>  
+      <div class='contact-str'>Press Enter to send</div>
       <%= f.submit 'Contact', :class=>'btn btn-warning', id: 'contact-btn' %>
     </div>
   <% end %>

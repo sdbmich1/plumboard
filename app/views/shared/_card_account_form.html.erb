@@ -14,15 +14,17 @@
 	      <label class="control-label">Card Code</label>
 	      <div class='controls'><%= f.number_field :card_code, :size => 4, placeholder: 'Card Code', id: 'card_code' %></div>
 	      <div class='neg-top'>
-	      <label class="control-label">Exp Month</label>
-	      <div class='controls'>
-                <%= select_month nil, {add_month_numbers_true: true}, {name: 'expiration_month', id: "card_month", class: "sm-top span2"} %></div> 
+	        <label class="control-label">Exp Month</label>
+	        <div class='controls'>
+                  <%= select_month nil, {add_month_numbers_true: true}, {name: 'expiration_month', id: "card_month", class: "sm-top span2"} %></div> 
 	      </div>
 	      <div class='clear-all'></div>
 	      <label class="control-label">Exp Year</label>
 	      <div class='controls'>
-                <%= select_year nil, {start_year: Date.today.year+1, end_year: Date.today.year+15}, 
+                <%= select_year nil, {start_year: Date.today.year, end_year: Date.today.year+15}, 
 	           {name: 'expiration_year', id: "card_year", class: "sm-top span2"} %></div>
+	      <label class="control-label">Postal Code</label>
+	      <div class='controls'><%= f.number_field :zip, :size => 12, placeholder: 'Postal Code', id: 'card_zip' %></div>
 	    </div>
         </div>
       </div>

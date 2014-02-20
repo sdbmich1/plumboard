@@ -3,23 +3,34 @@ require 'spec_helper'
 feature "CardAccounts" do
   subject { page }
   let(:user) { FactoryGirl.create(:pixi_user) }
+  let(:submit) { "Save" }
 
   before(:each) do
+    FactoryGirl.create :category
+    FactoryGirl.create :category, name: 'Electronics'
     login_as(user, :scope => :user, :run_callbacks => false)
     @user = user
   end
 
-  def add_data
-    fill_in 'routing_number', with: '021000021'
-    fill_in 'acct_number', with: 9900000002
-    fill_in 'bank_account_acct_name', with: "SDB Business"
-    fill_in 'bank_account_description', with: "My business"
-    select("checking", :from => "bank_account_acct_type")
+  def invalid_card_dates
+    select "January", from: "card_month"
+    select (Date.today.year).to_s, from: "card_year"
   end
 
-  def change_data
-    fill_in 'acct_number', with: 9900000004
-    fill_in 'bank_account_acct_name', with: "Personal Business"
+  def valid_card_dates
+    select "January", from: "card_month"
+    select (Date.today.year+2).to_s, from: "card_year"
+  end
+
+  def credit_card val="4111111111111111"
+    fill_in "card_number", with: val
+  end
+
+  def credit_card_data cid="4111111111111111", cvv="123", valid=true
+    credit_card cid
+    fill_in "card_code",  with: cvv
+    valid ? valid_card_dates : invalid_card_dates
+    click_valid_ok
   end
 
   def balanced
@@ -27,140 +38,126 @@ feature "CardAccounts" do
     Balanced.configure @api_key.secret
   end
 
-  def invalid_acct
-    fill_in 'routing_number', with: '100000007'
-    fill_in 'acct_number', with: 8887776665555
-    fill_in 'bank_account_acct_name', with: "SDB Business"
-    fill_in 'bank_account_description', with: "My business"
-    select("checking", :from => "bank_account_acct_type")
-  end
-
   def set_token
     page.execute_script %Q{ $('#token').val("X98XX88X") }
   end
 
+  def click_ok
+    click_button submit 
+    page.driver.browser.switch_to.alert.accept
+  end
+
+  def click_valid_ok
+    click_button submit 
+    sleep 3
+  end
+
+  def click_cancel_ok
+    click_link 'Cancel'
+    page.driver.browser.switch_to.alert.accept
+  end
+
+  def click_cancel_cancel
+    click_link 'Cancel'
+    page.driver.browser.switch_to.alert.dismiss
+  end
+
+  def click_submit_cancel
+    click_button submit 
+    page.driver.browser.switch_to.alert.dismiss
+  end
+
+  def click_remove_ok
+    click_link 'Remove'
+    page.driver.browser.switch_to.alert.accept
+  end
+	                  
+  def click_remove_cancel
+    click_link 'Remove'
+    page.driver.browser.switch_to.alert.dismiss
+  end
+
   def submit_invalid_acct
     expect {
-      click_on 'Next'; sleep 3;
-    }.to change(BankAccount, :count).by(0)
+      click_on 'Save'; sleep 3;
+    }.to change(CardAccount, :count).by(0)
 
-    page.should_not have_content 'Bill To'
-    page.should have_content 'Account #'
+    page.should have_content 'Card #'
     page.should have_content 'invalid'
   end
 
-  describe "Create Bank Account" do 
+  describe "Create Card Account", js: true do 
     before do
-      @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
-      visit listings_path
+      visit root_path
       click_link 'My Accounts'
-      add_data
+      click_link 'Card'
     end
 
-    it { should have_selector('h2', text: 'Setup Your Payment Account') }
-    it { should have_content("Account #") }
+    it { should have_selector('h2', text: 'Setup Your Card Account') }
+    it { should have_content("Card #") }
     it { should have_button("Save") }
 
     it "creates an new account" do
       expect {
-          click_on 'Save'; sleep 3;
-      }.to change(BankAccount, :count).by(1)
+        credit_card_data
+      }.to change(CardAccount, :count).by(1)
 
-      page.should have_content 'Pixis'
-      page.should_not have_content 'Account #'
+      page.should have_content 'Home'
+      page.should_not have_content 'Card #'
     end
   end
 
-  describe "Delete Bank Account" do 
+  describe "Delete Card Account", js: true do 
     before do
-      @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
-      @account = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
-      visit listings_path
+      @account = @user.card_accounts.create FactoryGirl.attributes_for :card_account, status: 'active'
+      visit root_path
       click_link 'My Accounts'
+      click_link 'Card'
     end
 
-    it { should have_selector('h2', text: 'Your Payment Account') }
-    it { should have_content("Account #") }
-    it { should have_link("Remove", href: bank_account_path(@account)) }
+    it { should have_selector('h2', text: 'Your Card Account') }
+    it { should have_content("Card #") }
+    it { should have_link("Remove", href: card_account_path(@account)) }
 
     it "removes an account" do
-      expect {
-          click_on 'Remove'; sleep 3;
-      }.to change(BankAccount, :count).by(0)
-
-      # page.should have_content 'Pixis'
-      # page.should_not have_content 'Account #'
+      click_remove_cancel
+      page.should have_link('Remove', href: card_account_path(@account)) 
+      click_remove_ok
+      page.should_not have_link("#{@account.id}", href: card_account_path(@account)) 
+      page.should_not have_content 'Card #'
     end
   end
 
-  describe "Create Bank Account - Bill" do 
+  describe "Invalid Card Account" do 
     before do
-      @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
-      visit listings_path
-      click_link 'Bill'
-      add_data
+      visit root_path
+      click_link 'My Accounts'
+      click_link 'Card'
     end
-
-    it { should have_selector('h2', text: 'Setup Your Payment Account') }
-    it { should have_content("Account #") }
-    it { should have_button("Next") }
-
-    it "creates an new account" do
-      expect {
-          click_on 'Next'; sleep 3;
-      }.to change(BankAccount, :count).by(1)
-
-      page.should have_content 'My Invoices'
-      page.should_not have_content 'Account #'
-    end
-  end
-
-  describe "Create Invoice Bank Account" do 
-    before do
-      @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
-      visit invoices_path 
-    end
-
-    it { should have_link('Create', href: new_bank_account_path(target: 'shared/invoice_form')) }
-    it { should_not have_link('Create', href: new_invoice_path) }
 
     describe 'visit create page', js: true do
-      before do
-        click_link 'Create'
-        add_data
+      it { should have_selector('h2', text: 'Setup Your Card Account') }
+      it { should have_content("Card #") }
+      it { should have_button("Save") }
+
+      it "rejects missing card #" do
+	credit_card_data '', '123', true
       end
 
-      it { should have_selector('h2', text: 'Setup Your Payment Account') }
-      it { should have_content("Account #") }
-      it { should have_button("Next") }
-
-      it "creates an new account" do
-        expect {
-            click_on 'Next'; sleep 3;
-          }.to change(BankAccount, :count).by(1)
-
-        page.should have_content 'Bill To'
-        page.should_not have_content 'Account #'
+      it "rejects invalid card number" do
+	credit_card_data '0000', '123', true
       end
 
-      it "rejects missing acct name" do
-        fill_in 'bank_account_acct_name', with: ""
-	submit_invalid_acct
+      it "rejects missing card code" do
+	credit_card_data '4111111111111111', '', true
       end
 
-      it "rejects missing acct #" do
-        fill_in 'acct_number', with: ""
-	submit_invalid_acct
+      it "rejects invalid card code" do
+	credit_card_data '4111111111111111', '10', true
       end
 
-      it "rejects missing routing #" do
-        fill_in 'routing_number', with: ""
-	submit_invalid_acct
-      end
-
-      it "rejects invalid routing #" do
-        fill_in 'routing_number', with: "100000007"
-	submit_invalid_acct
+      it "rejects invalid exp date" do
+	credit_card_data '4111111111111111', '123', false
       end
     end
   end

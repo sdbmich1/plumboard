@@ -201,6 +201,11 @@ $(document).ready(function(){
     $('a').tooltip();
   }
 
+  // check for disabled buttons
+  $('a[disabled=disabled]').click(function(event){
+    event.preventDefault(); // Prevent link from following its href
+  });
+
   // enable video clip
   if( $('.vimeo-thumb').length > 0 ) {
     $('.vimeo-thumb').smartVimeoEmbed();
@@ -453,11 +458,16 @@ $(document).on('click', '#edit-card-btn', function(e) {
   $('.card-tbl, .card-dpl').toggle();
 });
 
+// toggle contact form for show pixi
+$(document).on('click', '#want-btn', function(e) {
+  $('#post_form').toggle();
+});
+
 var keyPress = false; 
 
 // submit contact form on enter key
 $(document).on("keypress", "#contact_content", function(e){
-  keyEnter(e, $(this), '#contact-btn');
+   keyEnter(e, $(this), '#contact-btn');
 });
 
 // submit comment form on enter key

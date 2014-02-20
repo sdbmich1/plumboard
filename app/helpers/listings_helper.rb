@@ -106,12 +106,60 @@ module ListingsHelper
   def get_host
     host_name = Rails.env.test? || Rails.env.development? ? "localhost.com:3000" : PIXI_WEB_SITE
   end
+   
+  # set absolute url for current pixi
+  def get_url
+    Rails.application.routes.url_helpers.listing_url(@listing, :host => get_host) 
+  end
+
+  def get_photo
+    'http://' + get_host + @listing.photo_url
+  end
+
+  # set string to share content on pinterest
+  def pin_share
+    url = "//www.pinterest.com/pin/create/button/?url=" + get_url + "&media=" + get_photo + "&description=Check out this pixi on Pixiboard!"
+  end
+
+  # set string to share content on twitter
+  def tweet_share
+    "https://twitter.com/share?url=https%3A%2F%2Fdev.twitter.com%2Fpages%2Ftweet-button"
+  end
 
   # set string to share content on facebook
   def fb_share
-    url = 'https://www.facebook.com/dialog/feed?app_id=' + API_KEYS['facebook']['api_key'] + '&display=popup&caption=Check it out on Pixiboard' +
-      '&link=https://developers.facebook.com/docs/reference/dialogs/&redirect_uri=' + 
-      Rails.application.routes.url_helpers.listing_url(@listing, :host => get_host) + '&picture=http://' + get_host + 
-      @listing.photo_url + '&name=' + @listing.nice_title + '&description=' + @listing.description
+    'https://www.facebook.com/dialog/feed?app_id=' + API_KEYS['facebook']['api_key'] + '&display=popup&caption=Check out this pixi on Pixiboard!' +
+    '&link=https://developers.facebook.com/docs/reference/dialogs/&redirect_uri=' + get_url + '&picture=' + get_photo + 
+    '&name=' + @listing.nice_title + '&description=' + @listing.description
+  end
+
+  # check if model is blank
+  def is_blank? model
+    model.blank?
+  end
+
+  # set path based on item existance and type 
+  def set_item_path model, val
+    pid = @listing.pixi_id
+    if val == 'like'
+      !is_blank?(model) ? pixi_like_path(model, pixi_id: pid) : pixi_likes_path(id: pid)
+    else
+      !is_blank?(model) ? saved_listing_path(model, pixi_id: pid) : saved_listings_path(id: pid)
+    end
+  end
+
+  # set method based on item existance and type 
+  def set_item_method model
+    method = is_blank?(model) ? 'post' : 'delete'
+    method.to_sym
+  end
+
+  # set item name
+  def set_item_name model, val
+    if val == 'like'
+      is_blank?(model) ? 'Cool' : 'Uncool'
+    else
+      is_blank?(model) ? 'Save' : 'Unsave'
+    end
   end
 end

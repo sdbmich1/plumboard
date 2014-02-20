@@ -106,6 +106,8 @@ Plumboard::Application.routes.draw do
   end
 
   resources :pages, only: [:index]
+  resources :pixi_likes, only: [:create, :destroy]
+  resources :saved_listings, only: [:create, :index, :destroy]
 
   # custom routes
   get "/about", to: "pages#about" 

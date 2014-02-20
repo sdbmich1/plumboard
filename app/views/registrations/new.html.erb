@@ -12,8 +12,10 @@
       <div class="span5">
         <div id='signup'>
           <%= render partial: 'shared/user_info', locals: { f: f } %>
-    	  <div><%= f.password_field :password, placeholder: 'New password' %></div>
-    	  <div><%= f.password_field :password_confirmation, placeholder: 'Re-enter password' %></div>
+	  <% if @user.password_required? %>
+    	    <div><%= f.password_field :password, placeholder: 'New password' %></div>
+    	    <div><%= f.password_field :password_confirmation, placeholder: 'Re-enter password' %></div>
+	  <% end %>
         </div>
 
     	<div class='mtop mbot'><%= f.submit "Register", class: "btn btn-large btn-primary submit-btn" %></div>

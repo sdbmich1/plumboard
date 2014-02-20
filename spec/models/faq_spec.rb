@@ -34,4 +34,15 @@ describe Faq do
       @faq.status.should_not == 'active'
     end
   end
+
+  describe 'summary' do
+    it "should return a summary" do 
+      @faq.summary.should be_true 
+    end
+
+    it "should not return a summary" do 
+      @faq.description = nil
+      @faq.summary.should_not be_true 
+    end
+  end
 end

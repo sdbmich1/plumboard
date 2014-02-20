@@ -51,6 +51,10 @@ describe User do
     it { should respond_to(:pixan_pixi_posts) }
     it { should have_many(:active_pixi_posts).class_name('PixiPost').conditions("status IN ('active', 'scheduled')") }
     it { should have_many(:pixan_pixi_posts).class_name('PixiPost').with_foreign_key('pixan_id') }
+    it { should respond_to(:pixi_likes) }
+    it { should have_many(:pixi_likes) }
+    it { should respond_to(:saved_listings) }
+    it { should have_many(:saved_listings) }
 
     it { should validate_presence_of(:first_name) }
     it { should validate_presence_of(:last_name) }

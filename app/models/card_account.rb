@@ -52,6 +52,9 @@ class CardAccount < ActiveRecord::Base
 
     # save new account
     save!
+
+    rescue => ex
+      process_error ex
   end
 
   # check if card has expired
@@ -72,12 +75,25 @@ class CardAccount < ActiveRecord::Base
       # check if token was already created
       if token
         card.token = token
-	card.save!
+	card.save
       else
         card.save_account 
       end
     end
     card.errors.any? ? false : card 
+  end
+
+  # delete card
+  def delete_card
+    result = Payment::delete_card token, self if token
+
+    # remove card
+    if result 
+      self.errors.any? ? false : self.destroy 
+    else
+      errors.add :base, "Error: There was a problem with your account."
+      false
+    end
 
     rescue => ex
       process_error ex

@@ -27,7 +27,7 @@
       <%= f.hidden_field :token, id: 'pay_token' %>
       <%= f.hidden_field :acct_no %>
 
-      <div class="span4 offset5 mbot"><%= f.submit set_btn_name, class: "btn btn-large btn-primary submit-btn" %></div>
+      <div class="span4 offset5 mbot"><%= f.submit set_btn_name, class: "btn btn-large btn-primary submit-btn", id: 'bank-btn' %></div>
     <% end %>
 
     <div class="span4 offset5 sm-top mbot"><%= image_tag "check_sample.gif" %></div>

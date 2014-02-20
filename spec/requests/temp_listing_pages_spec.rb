@@ -70,10 +70,10 @@ feature "TempListings" do
       visit new_temp_listing_path
     end
 
-    it { should have_content "Step 1 of 2" }
+    it { should have_content "Build Your Pixi" }
     it { should have_selector('.sm-thumb') }
     it { should have_selector('#photo') }
-    it { should have_link 'Cancel', href: listings_path }
+    it { should have_link 'Cancel', href: root_path }
     it { should have_button 'Next' }
 
     def add_data

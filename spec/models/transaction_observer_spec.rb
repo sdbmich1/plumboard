@@ -9,6 +9,12 @@ describe TransactionObserver do
     @observer.stub(:send_post).with(@model).and_return(@post)
   end
 
+  def update_addr
+    @user = mock(User)
+    @observer = TransactionObserver.instance
+    @observer.stub(:update_contact_info).with(@model).and_return(@user)
+  end
+
   describe 'after_update' do
     let(:transaction) { FactoryGirl.create :transaction }
     before(:each) do
@@ -28,8 +34,12 @@ describe TransactionObserver do
       @model = user.transactions.build FactoryGirl.attributes_for(:transaction, transaction_type: 'invoice')
     end
 
-    it 'should send a post' do
+    it 'sends a post' do
       process_post
+    end
+
+    it 'updates contact info' do
+      update_addr
     end
 
     it 'should add inv pixi points' do

@@ -22,6 +22,7 @@ class User < ActiveRecord::Base
   has_many :listings, foreign_key: :seller_id
   has_many :active_listings, foreign_key: :seller_id, class_name: 'Listing', :conditions => "status = 'active' AND end_date >= curdate()"
   has_many :temp_listings, foreign_key: :seller_id, dependent: :destroy
+  has_many :saved_listings, dependent: :destroy
 
   has_many :site_users, :dependent => :destroy
   has_many :sites, :through => :site_users
@@ -43,6 +44,7 @@ class User < ActiveRecord::Base
   has_many :transactions, dependent: :destroy
   has_many :comments, dependent: :destroy
   has_many :inquiries, dependent: :destroy
+  has_many :pixi_likes, dependent: :destroy
 
   has_many :ratings, dependent: :destroy
   has_many :seller_ratings, :foreign_key => "seller_id", :class_name => "Rating"
@@ -199,6 +201,10 @@ class User < ActiveRecord::Base
   end
 
   def confirmation_required?
+    super && provider.blank?
+  end
+
+  def email_required?
     super && provider.blank?
   end
 

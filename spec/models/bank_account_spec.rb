@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe BankAccount do
   before(:each) do
-    @user = FactoryGirl.create(:pixi_user, email: "jblow123@pixitest.com") 
+    @user = FactoryGirl.create(:pixi_user)
     @account = @user.bank_accounts.build FactoryGirl.attributes_for :bank_account
   end
 
@@ -94,13 +94,13 @@ describe BankAccount do
     end
 
     it 'should save account' do
-      @account.save_account
-      @account.errors.any?.should_not be_true
+      account = @user.bank_accounts.build FactoryGirl.attributes_for :bank_account, token: nil
+      account.save_account.should be_true
     end
 
     it 'should not save account' do
-      @account.token = nil
-      @account.save_account.should_not be_true
+      account = @user.bank_accounts.build FactoryGirl.attributes_for :bank_account, acct_name: nil
+      account.save_account.should_not be_true
     end
   end
 
@@ -113,8 +113,7 @@ describe BankAccount do
     end
 
     it 'should credit account' do
-      @account.credit_account(500.00)
-      @account.errors.any?.should_not be_true
+      @account.credit_account(500.00).should be_true
     end
 
     it 'should not credit account' do
@@ -126,14 +125,13 @@ describe BankAccount do
     before do
       @bank_acct = mock('Balanced::BankAccount')
       Balanced::BankAccount.stub!(:find).with(@account.token).and_return(@bank_acct)
-      Balanced::BankAccount.stub!(:unstore).and_return(true)
-      @bank_acct.stub!(:unstore).and_return(true)
+      Balanced::BankAccount.stub!(:destroy).and_return(true)
+      @bank_acct.stub!(:destroy).and_return(true)
     end
 
     it 'should delete account' do
-      @account.save!
-      @account.delete_account
-      @account.errors.any?.should_not be_true
+      account = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account
+      account.delete_account.should be_true
     end
 
     it 'should not delete account' do

@@ -1,6 +1,6 @@
 <div class="mtop pull-right">
-  <%= render partial: 'shared/review_nav', locals: { listing: listing } %>
-  <% if listing.new_status? %>
+  <%= render partial: 'shared/review_nav', locals: { listing: listing } if listing.seller?(@user) %>
+  <% if listing.new_status? && edit_mode %>
     <% unless listing.free? %>
       <%= render :partial => 'shared/item_purchase', locals: {:listing=>listing} if listing.seller?(@user) %>
     <% else %>

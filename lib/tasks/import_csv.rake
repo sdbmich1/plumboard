@@ -269,3 +269,27 @@ task :import_inquiry_type => :environment do
     end
   end
 end
+
+task :import_faq => :environment do
+
+  Faq.delete_all
+  CSV.foreach(Rails.root.join('db', 'faq_021514.csv'), "r:ISO-8859-1") do |row|
+
+    attrs = {
+      		:subject       => row[1],
+      		:description   => row[2],
+      		:question_type => 'inquiry',
+		:status	       => 'active'
+    }
+
+    # add faq
+    new_faq = Faq.new(attrs)
+
+    # save faq
+    if new_faq.save 
+      puts "Saved faq #{attrs.inspect}"
+    else
+      puts new_faq.errors
+    end
+  end
+end

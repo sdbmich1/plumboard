@@ -90,7 +90,7 @@ p {
   //margin: 0 auto -60px;
 }
 
-#px-container {
+#section-container, #px-container {
   min-height: 100%;
   height: auto !important;
   height: 100%;
@@ -356,7 +356,7 @@ h3 { padding: 10px }
   margin-top: 10px;
 }
 
-#submenu .navbar-inner > .container { padding-left: 5%; padding-right:5%; }
+#submenu .navbar-inner > .container { padding-left: 5.25%; padding-right:5%; }
 #submenu .nav > li > a:hover {color: $pixiOrange;}
 #submenu .nav .active > a, .menu .active > a:hover {
   color: $pixiOrange;
@@ -426,7 +426,7 @@ a#notice-btn {
 }   
 
 #msg_Container {
-  width: 25px;
+  width: 30px;
   height: 25px;
   padding: 0;
   position:fixed;
@@ -621,8 +621,8 @@ ul#social-links {
 
 .social-img {
   vertical-align: middle;
-  height: 30px!important;
-  width: 30px!important;
+  height: 32px!important;
+  width: 32px!important;
 }
 
 a#home-link, a.home-link {
@@ -697,4 +697,10 @@ form .clearfix:before, form .clearfix:after {
   display: inline;
 }
 
+.border-pad {
+  border-spacing: 10px;
+}
+
 .title-str { font-size: 1.25em; font-weight: bold; color: #026FB7; }
+.faq-str { font-size: 0.875em; font-weight: bold; color: #000; }
+.contact-str { font-size: 0.675em; color: black; }

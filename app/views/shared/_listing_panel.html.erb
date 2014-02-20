@@ -1,0 +1,6 @@
+<%= link_to_if is_blank?(@contact), 'Want', '#', class: 'btn btn-primary btn-mask', id: 'want-btn', disabled: !is_blank?(@contact), title: 'I want this!' %>
+<%= link_to set_item_name(@like, 'like'), set_item_path(@like, 'like'), method: set_item_method(@like), class: 'btn btn-primary btn-mask mleft10', 
+  id: 'cool-btn', remote: true, title: 'This is cool!' %>
+<%= link_to set_item_name(@saved, 'saved'), set_item_path(@saved, 'saved'), method: set_item_method(@saved), 
+  class: 'btn btn-primary btn-mask mleft10', id: 'save-btn', remote: true, title: 'Save this for later!' %>
+

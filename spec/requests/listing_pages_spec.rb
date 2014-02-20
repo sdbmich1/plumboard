@@ -10,18 +10,33 @@ describe "Listings", :type => :feature do
   let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id,
     site_id: site.id) }
 
-  describe "Contact Owner" do 
-    let(:pixi_user) { FactoryGirl.create(:pixi_user, email: 'jdoe2@pixitest.com') }
+  def init_setup usr
+    login_as(usr, :scope => :user, :run_callbacks => false)
+    @user = usr
+  end
 
+  def set_site_id
+    page.execute_script %Q{ $('#site_id').val("#{@site.id}") }
+  end
+
+  describe "Contact Owner" do 
     before(:each) do
-      login_as(pixi_user, :scope => :user, :run_callbacks => false)
-      @user = pixi_user
+      pixi_user = FactoryGirl.create(:pixi_user) 
+      init_setup pixi_user
       visit listing_path(listing) 
     end
      
     it { should have_content listing.nice_title }
     it { should have_content "Posted By: #{listing.seller_name}" }
     it { should have_selector('.rateit') }
+    it { should have_link 'Want', href: '#' }
+    it { find_link('Cool').visible? }
+    it { should_not have_link 'Uncool' }
+    it { should have_link 'Save' }
+    it { should_not have_link 'Unsave' }
+    it { should have_selector('#fb-link') }
+    it { should have_selector('#tw-link') }
+    it { should have_selector('#pin-link') }
     it { should_not have_link 'Follow', href: '#' }
     it { should have_link listing.site_name, href: local_listings_path(loc: listing.site_id) }
     it { should have_link listing.category_name, href: category_listings_path(cid: listing.category_id, loc: listing.site_id) }
@@ -40,8 +55,13 @@ describe "Listings", :type => :feature do
 
     it "Contacts a seller", js: true do
       expect{
+          page.find('#want-btn').click
+	  page.execute_script("$('#post_form').toggle();")
+          page.should have_selector('#contact_content', visible: true) 
       	  fill_in 'contact_content', with: "I'm interested in this pixi. Please contact me.\n"
 	  sleep 3
+          page.should_not have_link 'Want'
+          page.should have_content 'Want'
       }.to change(Post,:count).by(1)
 
       page.should have_content listing.nice_title
@@ -49,10 +69,35 @@ describe "Listings", :type => :feature do
      
     it "does not contact a seller", js: true do
       expect{
+          page.find('#want-btn').click
+	  page.execute_script("$('#post_form').toggle();")
+          page.should have_selector('#contact_content', visible: true) 
 	  fill_in 'contact_content', with: "\n"
+          page.should have_link 'Want'
       }.not_to change(Post,:count).by(1)
 
       page.should have_content "Content can't be blank"
+    end
+
+    it "clicks on Cool", js: true do
+      expect{
+          page.find('#cool-btn').click
+	  sleep 3
+          page.should have_link 'Uncool'
+          page.should_not have_link 'Cool'
+      }.to change(PixiLike,:count).by(1)
+
+      page.should have_content listing.nice_title
+    end
+
+    it "clicks on Save", js: true do
+      expect{
+          page.find('#save-btn').click
+	  sleep 3
+          page.should have_link 'Unsave'
+      }.to change(SavedListing,:count).by(1)
+
+      page.should have_content listing.nice_title
     end
 
     it "clicks on site" do
@@ -68,16 +113,53 @@ describe "Listings", :type => :feature do
     end
   end
 
+  describe "View Pixi w/ buyer flags set" do 
+    before(:each) do
+      pixi_user = FactoryGirl.create(:pixi_user) 
+      init_setup pixi_user
+      @user.pixi_likes.create FactoryGirl.attributes_for :pixi_like, pixi_id: listing.pixi_id
+      @user.saved_listings.create FactoryGirl.attributes_for :saved_listing, pixi_id: listing.pixi_id
+      @user.posts.create FactoryGirl.attributes_for :post, pixi_id: listing.pixi_id, recipient_id: user.id
+      visit listing_path(listing) 
+    end
+
+    it { should_not have_link 'Want', href: '#' }
+    it { should have_content 'Want' }
+    it { find_link('Uncool').visible? }
+    it { should_not have_link 'Cool' }
+    it { should have_link 'Unsave' }
+
+    it "clicks on Uncool", js: true do
+      expect{
+          page.find('#cool-btn').click
+	  sleep 3
+          page.should_not have_link 'Uncool'
+          page.should have_link 'Cool'
+      }.to change(PixiLike,:count).by(-1)
+
+      page.should have_content listing.nice_title
+    end
+
+    it "clicks on Unsave", js: true do
+      expect{
+          page.find('#save-btn').click
+	  sleep 3
+          page.should have_link 'Save'
+      }.to change(SavedListing,:count).by(-1)
+
+      page.should have_content listing.nice_title
+    end
+  end
+
   describe "View Event Pixi" do 
     let(:category) { FactoryGirl.create :category, name: 'Event' }
     let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id, 
       category_id: category.id, event_start_date: Date.tomorrow, event_end_date: Date.tomorrow, event_start_time: Time.now+2.hours, 
       event_end_time: Time.now+3.hours ) }
-    let(:pixi_user) { FactoryGirl.create(:pixi_user, email: 'jdoe2@pixitest.com') }
 
     before(:each) do
-      login_as(pixi_user, :scope => :user, :run_callbacks => false)
-      @user = pixi_user
+      pixi_user = FactoryGirl.create(:pixi_user) 
+      init_setup pixi_user
       visit listing_path(listing) 
     end
      
@@ -102,18 +184,16 @@ describe "Listings", :type => :feature do
       page.should have_content listing.nice_title
       page.should have_content listing.category_name
     end
-
   end
 
   describe "View Compensation Pixi" do 
     let(:category) { FactoryGirl.create :category, name: 'Gigs' }
     let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id, 
       category_id: category.id, compensation: 'Salary + Equity', price: nil) }
-    let(:pixi_user) { FactoryGirl.create(:pixi_user, email: 'jdoe2@pixitest.com') }
 
     before(:each) do
-      login_as(pixi_user, :scope => :user, :run_callbacks => false)
-      @user = pixi_user
+      pixi_user = FactoryGirl.create(:pixi_user) 
+      init_setup pixi_user
       visit listing_path(listing) 
     end
      
@@ -126,30 +206,31 @@ describe "Listings", :type => :feature do
   end
 
   describe "Owner-viewed Pixi" do 
-
     before(:each) do
-      login_as(user, :scope => :user, :run_callbacks => false)
-      @user = user
+      init_setup user
       visit listing_path(listing) 
     end
 
     it { should have_content "Posted By: #{listing.seller_name}" }
     it { should_not have_selector('#contact_content') }
     it { should_not have_selector('#comment_content') }
+    it { should_not have_selector('#want-btn') }
+    it { should_not have_selector('#cool-btn') }
+    it { should_not have_selector('#save-btn') }
+    it { should_not have_selector('#fb-link') }
+    it { should_not have_selector('#tw-link') }
+    it { should_not have_selector('#pin-link') }
     it { should_not have_link 'Follow', href: '#' }
-    # it { should_not have_link 'Follow', href: '#' }
     it { should have_content "Comments (#{listing.comments.size})" }
-    it { should have_link 'Back', href: listings_path }
+    it { should_not have_link 'Cancel', href: root_path }
     it { should have_link 'Remove', href: listing_path(listing) }
     it { should have_link 'Edit', href: edit_temp_listing_path(listing) }
   end
 
   describe "Add Comments" do 
-    let(:pixi_user) { FactoryGirl.create(:pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tdavis@pixitext.com') }
-
     before(:each) do
-      login_as(pixi_user, :scope => :user, :run_callbacks => false)
-      @user = pixi_user
+      pixi_user = FactoryGirl.create(:pixi_user) 
+      init_setup pixi_user
       visit listing_path(listing) 
     end
 
@@ -176,12 +257,10 @@ describe "Listings", :type => :feature do
   end
 
   describe "pagination" do
-    let(:pixi_user) { FactoryGirl.create(:pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tdavis@pixitext.com') }
-
     before(:each) do
-      10.times { listing.comments.create FactoryGirl.attributes_for(:comment, user_id: pixi_user.id) } }
-      login_as(pixi_user, :scope => :user, :run_callbacks => false)
-      @user = pixi_user
+      pixi_user = FactoryGirl.create(:pixi_user) 
+      init_setup pixi_user
+      10.times { listing.comments.create FactoryGirl.attributes_for(:comment, user_id: pixi_user.id) } 
       visit listing_path(listing) 
     end
 
@@ -195,11 +274,8 @@ describe "Listings", :type => :feature do
   end
 
   describe "Check Pixis" do 
-
     before(:each) do
-      login_as(user, :scope => :user, :run_callbacks => false)
-      user.confirm!
-      @user = user
+      init_setup user
     end
 
     describe "Review Pixis" do 
@@ -207,7 +283,7 @@ describe "Listings", :type => :feature do
 
       it "Deletes a pixi" do
         expect{
-              click_on 'Remove'
+          click_on 'Remove'
         }.to change(Listing,:count).by(-1)
 
         page.should have_content "Pixis" 
@@ -223,8 +299,8 @@ describe "Listings", :type => :feature do
 
         it "adds a pixi pic" do
           expect{
-              attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
-              click_button 'Next'; sleep 2
+            attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
+            click_button 'Next'; sleep 2
           }.to change(Picture,:count).by(1)
 
           page.should have_content 'Review Your Pixi'
@@ -235,24 +311,21 @@ describe "Listings", :type => :feature do
         click_link 'Back'
         page.should have_content("Pixis")
       end
-
-      it "Views a pixi" do
-        page.should have_selector('title', text: listing.nice_title) 
-      end
     end
 
     describe "GET /category" do  
       let(:category) { FactoryGirl.create :category }
-      let(:temp_listing) { FactoryGirl.create(:temp_listing, title: "Guitar", description: "Lessons", seller_id: @user.id) }
-      let(:listings) { 30.times { FactoryGirl.create(:listing, seller_id: @user.id, category_id: category.id) } }
+      let(:site) { FactoryGirl.create :site }
+      let(:listings) { 10.times { FactoryGirl.create(:listing, seller_id: @user.id, category_id: category.id, site_id: site.id) } }
 
       before(:each) do
-        visit category_listings_path(category.id) 
+        FactoryGirl.create(:listing, title: "Guitar", seller_id: @user.id, site_id: site.id, category_id: category.id) 
+        visit category_listings_path(cid: category, loc: site.id) 
       end
       
       it { should have_content('Pixis') }
       it { should have_content 'Guitar' }
-      it { should have_content category.nice_title }
+      it { should have_content category.name_title }
     end  
 
     describe "GET /listings" do  
@@ -278,7 +351,7 @@ describe "Listings", :type => :feature do
         visit listings_path 
       end
       
-      it { should have_link 'Recent', href: listings_path }
+      it { should have_link 'Recent' }
       # it { should have_link 'Following', href: '#' }
       # it { should have_link 'Map', href: '#' }
       # it { should have_link 'Categories', href: categories_path }
@@ -292,11 +365,11 @@ describe "Listings", :type => :feature do
         fill_in 'search', with: 'guitar'
 	click_on 'submit-btn'
         page.should_not have_content 'HP Printer J4580'
-        page.should have_content @listing.nice_title
       end
 
       it "selects a site", js: true do
-        select(@site.name, :from => 'site_id')
+        fill_in "location", :with => 'pixi'
+	set_site_id
         page.should have_content 'HP Printer J4580'
 
 	click_link 'Recent'
@@ -306,12 +379,8 @@ describe "Listings", :type => :feature do
       it "selects categories", js: true do
         select(@category.name_title, :from => 'category_id')
         page.should have_content @category.name_title
-        page.should have_content 'HP Printer J4580'
         page.should_not have_content @listing1.nice_title
         page.should have_content @listing.nice_title
-	# click_link 'Categories'
-        # page.should have_content @category.name_title
-        # page.should have_content "(#{@category.active_pixis_by_site(@site.id).size})" 
       end
     end  
 

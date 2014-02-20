@@ -6,7 +6,7 @@
         <% if controller_name == 'temp_listings' %>
           <%= image_tag pic.photo.url unless pic.photo_file_name.blank? %>
         <% else %>
-          <%= image_tag pic.photo.url(:large) unless pic.photo_file_name.blank? %>
+          <%= image_tag pic.photo.url(:large), title: 'Pin it @ Pinterest' unless pic.photo_file_name.blank? %>
         <% end %>
      </div>
     <% end %>

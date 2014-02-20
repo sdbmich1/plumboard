@@ -165,4 +165,24 @@ describe CardAccount do
       CardAccount.add_card(@txn, @txn.token).should_not be_true
     end
   end
+
+  describe 'delete_card' do
+    before do
+      @card_acct = mock('Balanced::Card')
+      Balanced::Card.stub!(:find).with(@account.token).and_return(@card_acct)
+      Balanced::Card.stub!(:unstore).and_return(true)
+      @card_acct.stub!(:unstore).and_return(true)
+    end
+
+    it 'should delete account' do
+      @account.save!
+      @account.delete_card
+      @account.errors.any?.should_not be_true
+    end
+
+    it 'should not delete account' do
+      @account.token = nil
+      @account.delete_card.should_not be_true
+    end
+  end
 end

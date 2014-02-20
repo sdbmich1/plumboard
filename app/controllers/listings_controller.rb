@@ -18,6 +18,9 @@ class ListingsController < ApplicationController
 
   def show
     @listing = Listing.find_by_pixi_id params[:id]
+    @like = @user.pixi_likes.find_by_pixi_id params[:id] rescue nil
+    @saved = @user.saved_listings.find_by_pixi_id params[:id] rescue nil
+    @contact = @user.posts.find_by_pixi_id params[:id] rescue nil
     @post = Post.new 
     @comment = @listing.comments.build if @listing
     load_comments

@@ -318,4 +318,14 @@ FactoryGirl.define do
     description		"You can use your PixiPay account."
     status		"active"
   end
+
+  factory :pixi_like do
+    user_id		1
+    pixi_id		"xxxx"
+  end
+
+  factory :saved_listing do
+    user_id		1
+    pixi_id		"xxxx"
+  end
 end

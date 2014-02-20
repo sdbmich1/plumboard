@@ -84,7 +84,7 @@ gem "aws-sdk", "~> 1.11.3"
 # add payment gateways
 gem 'activemerchant'
 gem 'stripe'
-gem 'balanced', "~> 0.7.2"
+gem 'balanced', "~> 0.7.4"
 
 # install oauth
 gem 'omniauth'

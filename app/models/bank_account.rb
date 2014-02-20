@@ -1,7 +1,7 @@
 class BankAccount < ActiveRecord::Base
   include Payment
 
-  before_create :set_flds, :must_have_token
+  before_save :set_flds, :must_have_token
 
   attr_accessor :acct_number, :routing_number
   attr_accessible :acct_name, :acct_no, :acct_type, :status, :token, :user_id, :description, :acct_number, :routing_number, :bank_name,

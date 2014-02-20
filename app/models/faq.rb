@@ -1,3 +1,4 @@
+require 'rails_rinku'
 class Faq < ActiveRecord::Base
   attr_accessible :description, :question_type, :status, :subject
 
@@ -15,5 +16,10 @@ class Faq < ActiveRecord::Base
   # select active inquiries
   def self.active
     where(:status => 'active')
+  end
+
+  # add hyperlinks to description
+  def summary
+    Rinku.auto_link(description.html_safe) rescue nil
   end
 end

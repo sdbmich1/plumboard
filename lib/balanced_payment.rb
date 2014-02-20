@@ -53,7 +53,7 @@ module BalancedPayment
     initialize
 
     # find existing account
-    result = get_bank_account(token, acct).unstore
+    result = get_bank_account(token, acct).destroy
 
     rescue => ex
       process_error acct, ex
@@ -105,6 +105,7 @@ module BalancedPayment
   def self.delete_card token, acct
     initialize false
 
+    # unstore card 
     card = Balanced::Card.find token
     card.unstore
 

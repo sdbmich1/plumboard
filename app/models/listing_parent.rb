@@ -94,7 +94,7 @@ class ListingParent < ActiveRecord::Base
   # select active listings
   def self.active
     select('listings.id, listings.pixi_id, listings.title, listings.category_id, categories.name AS category_name, listings.updated_at,
-      listings.status, listings.created_at, listings.seller_id, listings.site_id, listings.price')
+      listings.status, listings.description, listings.created_at, listings.seller_id, listings.site_id, listings.price')
     .joins(:category)
     .includes(:pictures)
     .where(where_stmt)
@@ -266,7 +266,7 @@ class ListingParent < ActiveRecord::Base
 
   # display first image
   def photo_url
-    pictures[0].photo.url(:large) rescue nil
+    pictures[0].photo.url rescue nil
   end
 
   # format start date
