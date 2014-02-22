@@ -49,24 +49,6 @@ feature "Categories" do
     it { should_not have_link(@category.name, href: edit_category_path(@category))}
   end
 
-  describe "Show Categories - listings" do 
-    let(:user) { FactoryGirl.create(:pixi_user, first_name: 'Jack', last_name: 'Snow', email: 'jack.snow@pixitest.com') }
-
-    before(:each) do
-      FactoryGirl.create :listing, seller_id: user.id
-      user_login
-      visit listings_path 
-    end
-
-    it { should have_link('Categories', href: categories_path) }
-
-    it 'visits categories page', js: true do
-      click_on 'Categories'
-      page.should have_content 'Computer'
-      page.should_not have_link(@category.name, href: edit_category_path(@category)) 
-    end
-  end
-
   describe 'Manage Categories - admin users' do
     let(:submit) { "Save Changes" }
     let(:user) { FactoryGirl.create :admin, confirmed_at: Time.now }
@@ -79,7 +61,7 @@ feature "Categories" do
     it { should have_content('Categories') }
     it { should have_link('Active', href: manage_categories_path) }
     it { should have_link('Inactive', href: inactive_categories_path) }
-    it { should have_link('Create', href: new_category_path) }
+    it { should have_link('New', href: new_category_path) }
     it { should have_content(@category.name_title) }
     it { should have_content('Computer') }
     it { should have_link(@category.name_title, href: edit_category_path(@category)) }
@@ -124,7 +106,7 @@ feature "Categories" do
 
       describe 'create - invalid category', js: true do
         before do
-          click_on 'Create'
+          click_on 'New'
 	end
         
         it { should have_button('Save Changes') }
@@ -147,7 +129,7 @@ feature "Categories" do
 
       describe 'create - valid category', js: true do
         before do
-          click_on 'Create'
+          click_on 'New'
 	end
         
         it { should have_button('Save Changes') }

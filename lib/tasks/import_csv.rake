@@ -253,7 +253,7 @@ task :import_inquiry_type => :environment do
 
     attrs = {
 		:code	       => row[0],
-      		:inquiry_name  => row[1],
+      		:subject       => row[1],
       		:contact_type  => row[2],
 		:status	       => 'active'
     }

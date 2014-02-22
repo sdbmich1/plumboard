@@ -19,7 +19,10 @@
   <%= render partial: 'shared/listing_details', locals: {listing: listing} %>
 
   <div class="row">
-    <%= render partial: 'shared/show_temp_listing', locals: {listing: listing} %>
+    <div class="mtop pull-right">
+      <%= render partial: 'shared/review_nav', locals: { listing: listing } if listing.seller?(@user) %>
+      <%= render partial: 'shared/show_temp_listing', locals: {listing: listing} if edit_mode %>
+    </div>
     <%= check_pending_pixi listing %>
   </div>
 
