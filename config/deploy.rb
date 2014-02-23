@@ -6,6 +6,8 @@ require "bundler/capistrano"
 #load "deploy/assets"
 
 set :rails_env, Rubber.env
+ssh_options[:forward_agent] = true
+default_run_options[:pty] = true
 
 on :load do
   set :application, rubber_env.app_name
@@ -21,8 +23,6 @@ set :repository, "git@github.com:sdbmich1/plumboard.git"
 set :scm, :git
 set :branch, "master"
 set :deploy_via, :remote_cache
-default_run_options[:pty] = true
-ssh_options[:forward_agent] = true
 
 # System-wide RVM installation
 set :rvm_type, :system
@@ -32,7 +32,8 @@ set :rvm_ruby_string, '1.9.3-p448'
 
 # Easier to do system level config as root - probably should do it through
 # sudo in the future.  We use ssh keys for access, so no passwd needed
-set :user, 'root'
+# ssh_options[:keys] = %w(~/.ec2/my-secret.pem)
+set :user, 'ec2-user'
 set :password, nil
 
 # Use sudo with user rails for cap deploy:[stop|start|restart]
