@@ -1,6 +1,5 @@
 class CreatePixiPayments < ActiveRecord::Migration
   def change
-    drop_table :pixi_payments
     create_table :pixi_payments do |t|
       t.string :pixi_id
       t.integer :transaction_id
