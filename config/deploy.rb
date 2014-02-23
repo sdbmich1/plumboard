@@ -37,7 +37,7 @@ set :password, nil
 
 # Use sudo with user rails for cap deploy:[stop|start|restart]
 # This way exposed services (mongrel) aren't running as a privileged user
-set :use_sudo, true
+set :use_sudo, false
 
 # How many old releases should be kept around when running "cleanup" task
 set :keep_releases, 3
