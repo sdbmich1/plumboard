@@ -33,7 +33,8 @@ set :rvm_ruby_string, '1.9.3-p448'
 # Easier to do system level config as root - probably should do it through
 # sudo in the future.  We use ssh keys for access, so no passwd needed
 # ssh_options[:keys] = %w(~/.ec2/my-secret.pem)
-set :user, 'ec2-user'
+# set :user, 'ec2-user'
+set :user, 'root'
 set :password, nil
 
 # Use sudo with user rails for cap deploy:[stop|start|restart]
