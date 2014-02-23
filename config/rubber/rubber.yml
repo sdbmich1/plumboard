@@ -10,7 +10,7 @@ admin_email: "info@#{full_host}"
 
 # OPTIONAL: If not set, you won't be able to access web_tools
 # server (graphite, graylog, monit status, haproxy status, etc)
-web_tools_user: pixiadmin
+web_tools_user: deploy
 web_tools_password: piXi#123
 
 # REQUIRED: The timezone the server should be in
@@ -18,7 +18,7 @@ timezone: US/Pacific
 
 # REQUIRED: the domain all the instances should be associated with
 #
-domain: foo.com
+domain: pixiboard.com
 
 # OPTIONAL: See rubber-dns.yml for dns configuration
 # This lets rubber update a dynamic dns service with the instance alias
@@ -55,9 +55,9 @@ cloud_providers:
     
     # REQUIRED The amazon keys and account ID (digits only, no dashes) used to access the AWS API
     #
-    access_key: YAML::load_file("#{Rails.root}/config/aws.yml")[Rails.env]['access_key_id']
-    secret_access_key: YAML::load_file("#{Rails.root}/config/aws.yml")[Rails.env]['secret_access_key']
-    account: YAML::load_file("#{Rails.root}/config/aws.yml")[Rails.env]['account']
+    access_key: AKIAJGW7X7ARW6GJQ5ZQ
+    secret_access_key: 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
+    account: '100589252522'
 
     # REQUIRED:  The name of the amazon keypair and location of its private key
     #
@@ -68,7 +68,7 @@ cloud_providers:
     #
     key_name: pixi-stag01
     # key_file: "#{Dir[(File.expand_path('~') rescue '/root') + '/.ec2/*' + cloud_providers.aws.key_name].first}"
-    key_file: "#{Dir['c:/RoRDev/.ec2/*' + cloud_providers.aws.key_name].first}"
+    key_file: "#{Dir['/c/RoRDev/.ec2/*' + cloud_providers.aws.key_name].first}"
 
     # OPTIONAL: Needed for bundling a running instance using rubber:bundle
     #
@@ -84,8 +84,9 @@ cloud_providers:
     # Ubuntu 12.04 Precise instance-store 64-bit: ami-eafa5883
     #
     # m1.small or m1.large or m1.xlarge
-    image_type: t1.micro
-    image_id: ami-3ffed17a
+    # image_type: t1.micro
+    image_type: m1.medium
+    image_id: ami-a43909e1
 
     # OPTIONAL: EC2 spot instance request support.
     #

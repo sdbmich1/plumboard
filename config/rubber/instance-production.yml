@@ -1,7 +1,37 @@
 ---
 - !ruby/object:Rubber::Configuration::InstanceItem
-  name: prod01
-  domain: foo.com
+  name: web01
+  domain: pixiboard.com
+  roles:
+  - !ruby/object:Rubber::Configuration::RoleItem
+    name: web
+    options: {}
+  - !ruby/object:Rubber::Configuration::RoleItem
+    name: haproxy
+    options: {}
+  - !ruby/object:Rubber::Configuration::RoleItem
+    name: collectd
+    options: {}
+  - !ruby/object:Rubber::Configuration::RoleItem
+    name: monit
+    options: {}
+  instance_id: i-12fc704e
+  image_type: t1.micro
+  image_id: ami-a43909e1
+  security_groups:
+  - default
+  - web
+  external_host: ec2-54-193-55-216.us-west-1.compute.amazonaws.com
+  external_ip: 54.193.55.216
+  internal_host: ip-172-31-21-120.us-west-1.compute.internal
+  internal_ip: 172.31.21.120
+  zone: us-west-1b
+  provider: aws
+  platform: linux
+  root_device_type: ebs
+- !ruby/object:Rubber::Configuration::InstanceItem
+  name: app01
+  domain: pixiboard.com
   roles:
   - !ruby/object:Rubber::Configuration::RoleItem
     name: app
@@ -13,24 +43,35 @@
     name: apache
     options: {}
   - !ruby/object:Rubber::Configuration::RoleItem
-    name: db
+    name: collectd
     options: {}
   - !ruby/object:Rubber::Configuration::RoleItem
-    name: mysql
+    name: monit
     options: {}
-  - !ruby/object:Rubber::Configuration::RoleItem
-    name: mysql_slave
-    options: {}
-  - !ruby/object:Rubber::Configuration::RoleItem
-    name: web
-    options: {}
-  - !ruby/object:Rubber::Configuration::RoleItem
-    name: haproxy
-    options: {}
+  instance_id: i-5ffc7003
+  image_type: t1.micro
+  image_id: ami-a43909e1
+  security_groups:
+  - default
+  external_host: ec2-54-193-109-109.us-west-1.compute.amazonaws.com
+  external_ip: 54.193.109.109
+  internal_host: ip-172-31-16-249.us-west-1.compute.internal
+  internal_ip: 172.31.16.249
+  zone: us-west-1b
+  provider: aws
+  platform: linux
+  root_device_type: ebs
+- !ruby/object:Rubber::Configuration::InstanceItem
+  name: db02
+  domain: pixiboard.com
+  roles:
   - !ruby/object:Rubber::Configuration::RoleItem
     name: db
     options:
       primary: true
+  - !ruby/object:Rubber::Configuration::RoleItem
+    name: mysql
+    options: {}
   - !ruby/object:Rubber::Configuration::RoleItem
     name: mysql_master
     options: {}
@@ -40,64 +81,15 @@
   - !ruby/object:Rubber::Configuration::RoleItem
     name: monit
     options: {}
-  instance_id: i-00209f5a
-  image_type: t1.micro
-  image_id: ami-3ffed17a
+  instance_id: i-f5e29caa
+  image_type: m1.medium
+  image_id: ami-a43909e1
   security_groups:
   - default
-  - web
-  external_host: ec2-54-215-147-232.us-west-1.compute.amazonaws.com
-  external_ip: 54.215.147.232
-  internal_host: ip-172-31-17-138.us-west-1.compute.internal
-  internal_ip: 172.31.17.138
-  zone: us-west-1b
-  provider: aws
-  platform: linux
-  root_device_type: ebs
-- !ruby/object:Rubber::Configuration::InstanceItem
-  name: prod02
-  domain: foo.com
-  roles:
-  - !ruby/object:Rubber::Configuration::RoleItem
-    name: app
-    options: {}
-  - !ruby/object:Rubber::Configuration::RoleItem
-    name: passenger
-    options: {}
-  - !ruby/object:Rubber::Configuration::RoleItem
-    name: apache
-    options: {}
-  - !ruby/object:Rubber::Configuration::RoleItem
-    name: db
-    options: {}
-  - !ruby/object:Rubber::Configuration::RoleItem
-    name: mysql
-    options: {}
-  - !ruby/object:Rubber::Configuration::RoleItem
-    name: mysql_slave
-    options: {}
-  - !ruby/object:Rubber::Configuration::RoleItem
-    name: web
-    options: {}
-  - !ruby/object:Rubber::Configuration::RoleItem
-    name: haproxy
-    options: {}
-  - !ruby/object:Rubber::Configuration::RoleItem
-    name: collectd
-    options: {}
-  - !ruby/object:Rubber::Configuration::RoleItem
-    name: monit
-    options: {}
-  instance_id: i-37462f6c
-  image_type: t1.micro
-  image_id: ami-3ffed17a
-  security_groups:
-  - default
-  - web
-  external_host: ec2-54-215-172-3.us-west-1.compute.amazonaws.com
-  external_ip: 54.215.172.3
-  internal_host: ip-172-31-7-7.us-west-1.compute.internal
-  internal_ip: 172.31.7.7
+  external_host: ec2-54-193-115-114.us-west-1.compute.amazonaws.com
+  external_ip: 54.193.115.114
+  internal_host: ip-172-31-3-10.us-west-1.compute.internal
+  internal_ip: 172.31.3.10
   zone: us-west-1a
   provider: aws
   platform: linux

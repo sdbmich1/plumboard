@@ -15,7 +15,7 @@ load "deploy/assets"
 # System-wide RVM installation
 set :rvm_type, :system
 
-set :stages, %w(production staging)
+set :stages, %w(test production staging)
 set :default_stage, "staging"
 
 set :application, "pixiboard"
@@ -39,7 +39,9 @@ before "deploy", "check_production"
 
 # If you are using Passenger mod_rails uncomment this:
 namespace :deploy do
-  task :start do ; end
+  task :start do
+    run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
+  end  
   task :stop do ; end
   task :restart, :roles => :app, :except => { :no_release => true } do
     run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
@@ -48,6 +50,18 @@ namespace :deploy do
   task :set_rvm_version, :roles => :app, :except => { :no_release => true } do
     run "source /etc/profile.d/rvm.sh && rvm use #{rvm_ruby_string} --default"
   end
+
+  desc "Symlink shared resources on each release"
+  task :symlink_shared, :roles => :app do
+    run "ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml"
+    run "ln -nfs #{shared_path}/config/pixi_keys.yml #{release_path}/config/pixi_keys.yml"    
+    run "ln -nfs #{shared_path}/config/api_keys.yml #{release_path}/config/api_keys.yml"    
+    run "ln -nfs #{shared_path}/config/aws.yml #{release_path}/config/aws.yml"    
+    run "ln -nfs #{shared_path}/config/gateway.yml #{release_path}/config/gateway.yml"    
+    run "ln -nfs #{shared_path}/config/sendmail.yml #{release_path}/config/sendmail.yml"    
+    run "ln -nfs #{shared_path}/config/thinking_sphinx.yml #{release_path}/config/thinking_sphinx.yml"    
+    run "ln -nfs #{shared_path}/config/memcached.yml #{release_path}/config/memcached.yml"    
+  end 
 
   # Precompile assets only when needed
   namespace :assets do

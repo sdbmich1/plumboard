@@ -87,7 +87,7 @@ GEM
     childprocess (0.4.0)
       ffi (~> 1.0, >= 1.0.11)
     chronic (0.9.1)
-    clamp (0.6.1)
+    clamp (0.6.3)
     client_side_validations (3.2.1)
     climate_control (0.0.3)
       activesupport (>= 3.0)
@@ -357,7 +357,7 @@ GEM
       rspec-core (~> 2.13.0)
       rspec-expectations (~> 2.13.0)
       rspec-mocks (~> 2.13.0)
-    rubber (2.5.3)
+    rubber (2.7.3)
       capistrano (~> 2.12)
       clamp
       fog (~> 1.6)
@@ -503,7 +503,7 @@ DEPENDENCIES
   rmagick (~> 2.13.1)
   rolify
   rspec-rails (= 2.13.0)
-  rubber
+  rubber (~> 2.7.3)
   rvm-capistrano
   sass-rails (= 3.2.5)
   selenium-webdriver

@@ -1,4 +1,9 @@
 # This is a sample Capistrano config file for rubber
+# Execute "bundle install" after deploy, but only when really needed
+require "bundler/capistrano"
+
+# Automatically precompile assets
+#load "deploy/assets"
 
 set :rails_env, Rubber.env
 
@@ -12,9 +17,18 @@ end
 
 # Use a simple directory tree copy here to make demo easier.
 # You probably want to use your own repository for a real app
-set :scm, :none
-set :repository, "."
-set :deploy_via, :copy
+set :repository, "git@github.com:sdbmich1/plumboard.git"
+set :scm, :git
+set :branch, "master"
+set :deploy_via, :remote_cache
+default_run_options[:pty] = true
+ssh_options[:forward_agent] = true
+
+# System-wide RVM installation
+set :rvm_type, :system
+
+# Target ruby version
+set :rvm_ruby_string, '1.9.3-p448'
 
 # Easier to do system level config as root - probably should do it through
 # sudo in the future.  We use ssh keys for access, so no passwd needed
@@ -32,7 +46,8 @@ set :keep_releases, 3
 # (instance*.yml + rubber*.yml) for a deploy.  This gives us the
 # convenience of not having to checkin files for staging, as well as 
 # the safety of forcing it to be checked in for production.
-set :push_instance_config, Rubber.env != 'production'
+# set :push_instance_config, Rubber.env != 'production'
+set :push_instance_config, true
 
 # don't waste time bundling gems that don't need to be there 
 set :bundle_without, [:development, :test, :staging] if Rubber.env == 'production'
@@ -57,6 +72,18 @@ namespace :deploy do
       task t.name, t.options, &t.body
     end
   end
+
+  desc "Symlink shared resources on each release"
+  task :symlink_shared, :roles => :app do
+    run "ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml"
+    run "ln -nfs #{shared_path}/config/pixi_keys.yml #{release_path}/config/pixi_keys.yml"    
+    run "ln -nfs #{shared_path}/config/api_keys.yml #{release_path}/config/api_keys.yml"    
+    run "ln -nfs #{shared_path}/config/aws.yml #{release_path}/config/aws.yml"    
+    run "ln -nfs #{shared_path}/config/gateway.yml #{release_path}/config/gateway.yml"    
+    run "ln -nfs #{shared_path}/config/sendmail.yml #{release_path}/config/sendmail.yml"    
+    run "ln -nfs #{shared_path}/config/thinking_sphinx.yml #{release_path}/config/thinking_sphinx.yml"    
+    run "ln -nfs #{shared_path}/config/memcached.yml #{release_path}/config/memcached.yml"    
+  end 
 end
 
 namespace :deploy do

@@ -179,7 +179,7 @@ group :production do
    gem 'rack-google_analytics', :require => "rack/google_analytics"
 end 
 
-gem 'rubber'
+gem 'rubber', "~> 2.7.3"
 gem 'open4'
 gem 'gelf'
 gem 'graylog2_exceptions', :git => 'git://github.com/wr0ngway/graylog2_exceptions.git'
