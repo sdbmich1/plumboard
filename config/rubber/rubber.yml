@@ -85,12 +85,7 @@ cloud_providers:
     #
     # m1.small or m1.large or m1.xlarge
     # image_type: t1.micro
-    image_type:
-      roles: 
-        db:  m1.medium
-        web: t1.micro
-        app: m1.medium
-
+    image_type: t1.micro
     image_id: ami-a43909e1
 
     # OPTIONAL: EC2 spot instance request support.
