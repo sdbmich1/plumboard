@@ -6,8 +6,8 @@ require "bundler/capistrano"
 #load "deploy/assets"
 
 set :rails_env, Rubber.env
-ssh_options[:forward_agent] = true
 default_run_options[:pty] = true
+ssh_options[:forward_agent] = false
 
 on :load do
   set :application, rubber_env.app_name
