@@ -55,9 +55,9 @@ cloud_providers:
     
     # REQUIRED The amazon keys and account ID (digits only, no dashes) used to access the AWS API
     #
-    access_key: AKIAJGW7X7ARW6GJQ5ZQ
-    secret_access_key: 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
-    account: '100589252522'
+    access_key = YAML::load_file("#{Rails.root}/config/aws.yml")[Rails.env]['access_key_id']
+    secret_access_key = YAML::load_file("#{Rails.root}/config/aws.yml")[Rails.env]['secret_access_key']
+    account = YAML::load_file("#{Rails.root}/config/aws.yml")[Rails.env]['account']
 
     # REQUIRED:  The name of the amazon keypair and location of its private key
     #
