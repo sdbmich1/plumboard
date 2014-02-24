@@ -7,6 +7,8 @@ load "deploy/assets"
 
 set :rails_env, Rubber.env
 set :ssh_options, {:forward_agent => true}
+# ssh_options[:keys] = %w(~/.ec2/my-secret.pem)
+ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "deploy")]
 default_run_options[:pty] = true
 
 on :load do
@@ -32,7 +34,6 @@ set :rvm_ruby_string, '1.9.3-p448'
 
 # Easier to do system level config as root - probably should do it through
 # sudo in the future.  We use ssh keys for access, so no passwd needed
-# ssh_options[:keys] = %w(~/.ec2/my-secret.pem)
 # set :user, 'ec2-user'
 set :user, 'root'
 set :password, nil
