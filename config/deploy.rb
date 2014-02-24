@@ -100,6 +100,22 @@ namespace :deploy do
   end
 end
 
+namespace :deploy do
+  namespace :web do
+    desc "Enable maintenance mode for apache"
+    task :disable, :roles => :web do
+      on_rollback { run "rm -f #{shared_path}/system/maintenance.html" }
+      page = File.read('public/maintenance.html')
+      put page, "#{shared_path}/system/maintenance.html", :mode => 0644
+    end
+
+    desc "Disable maintenance mode for apache"
+    task :enable, :roles => :web do
+      run "rm -f #{shared_path}/system/maintenance.html"
+    end
+  end
+end
+
 # load in the deploy scripts installed by vulcanize for each rubber module
 Dir["#{File.dirname(__FILE__)}/rubber/deploy-*.rb"].each do |deploy_file|
   load deploy_file
