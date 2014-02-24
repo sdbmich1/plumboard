@@ -24,7 +24,7 @@ end
 set :repository, "git@github.com:sdbmich1/plumboard.git"
 set :scm, :git
 set :branch, "master"
-set :deploy_via, :remote_cache
+set :deploy_via, :copy
 
 # System-wide RVM installation
 set :rvm_type, :system
