@@ -84,8 +84,8 @@ cloud_providers:
     # Ubuntu 12.04 Precise instance-store 64-bit: ami-eafa5883
     #
     # m1.small or m1.large or m1.xlarge
-    # image_type: t1.micro
-    image_type: m1.medium
+    image_type: t1.micro
+    # image_type: m1.medium
     image_id: ami-9c91acd9
 
     # OPTIONAL: EC2 spot instance request support.
@@ -237,7 +237,7 @@ prompt_for_security_group_sync: true
 # OPTIONAL: The packages to install on all instances
 # You can install a specific version of a package by using a sub-array of pkg, version
 # For example, packages: [[rake, 0.7.1], irb]
-packages: [postfix, build-essential, git-core, libxslt-dev, ntp, libxml2, libxml2-dev]
+packages: [postfix, build-essential, git-core, libxslt-dev, ntp, libxml2, libxml2-dev, imagemagick, libmagick9-dev]
 
 # OPTIONAL: gem sources to setup for rubygems
 # gemsources: ["https://rubygems.org"]
