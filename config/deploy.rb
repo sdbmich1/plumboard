@@ -18,6 +18,7 @@ load "deploy/assets"
 set :rails_env, Rubber.env
 set :application, "pixiboard"
 set :ssh_options, {:forward_agent => true}
+set :ssh_options, {:auth_methods => "publickey"}
 # ssh_options[:keys] = %w(~/.ec2/my-secret.pem)
 ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "deploy")]
 default_run_options[:pty] = true
