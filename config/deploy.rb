@@ -3,7 +3,7 @@
 require "bundler/capistrano"
 require 'thinking_sphinx/capistrano'
 require 'whenever/capistrano'
-require 'capistrano/rvm'
+require 'rvm/capistrano'
 require 'delayed/recipes'
 
 # Automatically precompile assets
