@@ -1,15 +1,25 @@
 # This is a sample Capistrano config file for rubber
 # Execute "bundle install" after deploy, but only when really needed
 require "bundler/capistrano"
+require 'thinking_sphinx/capistrano'
+require 'whenever/capistrano'
+require 'rvm/capistrano'
+require 'delayed/recipes'
+# require 'capistrano/ext/multistage'
+# require 'capistrano/maintenance'
+
+# set stages
+#set :stages, %w(production staging)
+#set :default_stage, "production"
 
 # Automatically precompile assets
 load "deploy/assets"
 
 set :rails_env, Rubber.env
-set :ssh_options, {:forward_agent => true}
-# ssh_options[:keys] = %w(~/.ec2/my-secret.pem)
-ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "deploy")]
 default_run_options[:pty] = true
+set :ssh_options, {:forward_agent => true}
+# ssh_options[:keys] = %w(~/.ec2/pixi-prod01.pem)
+ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "deploy")]
 
 on :load do
   set :application, rubber_env.app_name
@@ -30,7 +40,7 @@ set :deploy_via, :copy
 set :rvm_type, :system
 
 # Target ruby version
-set :rvm_ruby_string, '1.9.3-p448'
+set :rvm_ruby_string, '1.9.3-p484'
 
 # Easier to do system level config as root - probably should do it through
 # sudo in the future.  We use ssh keys for access, so no passwd needed
@@ -54,6 +64,10 @@ set :push_instance_config, true
 
 # don't waste time bundling gems that don't need to be there 
 set :bundle_without, [:development, :test, :staging] if Rubber.env == 'production'
+
+# set whenever command
+set :whenever_command, "bundle exec whenever"
+set :whenever_roles, :app 
 
 # Allow us to do N hosts at a time for all tasks - useful when trying
 # to figure out which host in a large set is down:
@@ -85,9 +99,42 @@ namespace :deploy do
     run "ln -nfs #{shared_path}/config/gateway.yml #{release_path}/config/gateway.yml"    
     run "ln -nfs #{shared_path}/config/sendmail.yml #{release_path}/config/sendmail.yml"    
     run "ln -nfs #{shared_path}/config/thinking_sphinx.yml #{release_path}/config/thinking_sphinx.yml"    
-    run "ln -nfs #{shared_path}/config/memcached.yml #{release_path}/config/memcached.yml"    
   end 
 end
+
+  namespace :sphinx do
+    desc 'create sphinx directory'
+    task :create_sphinx_dir, :roles => :app do
+      run "mkdir -p #{shared_path}/sphinx"
+    end
+   
+    desc "Stop the sphinx server"
+    task :stop, :roles => :app do
+      unless :previous_release
+        run "cd #{previous_release} && RAILS_ENV=#{rails_env} rake thinking_sphinx:stop"
+      end
+    end
+
+    desc "Reindex the sphinx server"
+    task :index, :roles => :app do
+      run "cd #{latest_release} && RAILS_ENV=#{rails_env} rake thinking_sphinx:index"
+    end
+
+    desc "Configure the sphinx server"
+    task :configure, :roles => :app do
+      run "cd #{latest_release} && RAILS_ENV=#{rails_env} rake thinking_sphinx:configure"
+    end
+
+    desc "Start the sphinx server"
+    task :start, :roles => :app do
+      run "cd #{latest_release} && RAILS_ENV=#{rails_env} rake thinking_sphinx:start"
+    end
+
+    desc "Rebuild the sphinx server"
+    task :rebuild, :roles => :app do
+      run "cd #{latest_release} && RAILS_ENV=#{rails_env} rake thinking_sphinx:rebuild"
+    end    
+  end
 
 namespace :deploy do
   namespace :assets do
@@ -122,8 +169,10 @@ Dir["#{File.dirname(__FILE__)}/rubber/deploy-*.rb"].each do |deploy_file|
 end
 
 # capistrano's deploy:cleanup doesn't play well with FILTER
+before 'deploy:setup', 'sphinx:create_sphinx_dir'
+after 'deploy:update_code', 'deploy:symlink_shared', 'sphinx:stop'
 after "deploy", "cleanup"
-after "deploy:migrations", "cleanup"
+after "deploy:migrations", "cleanup", "sphinx:sphinx_symlink", "sphinx:configure", "sphinx:rebuild"
 task :cleanup, :except => { :no_release => true } do
   count = fetch(:keep_releases, 5).to_i
   
@@ -146,3 +195,8 @@ if Rubber::Util.has_asset_pipeline?
   before "deploy:assets:precompile", "deploy:assets:symlink"
   after "rubber:config", "deploy:assets:precompile"
 end
+
+# Delayed Job  
+after "deploy:stop",    "delayed_job:stop"  
+after "deploy:start",   "delayed_job:start"  
+after "deploy:restart", "delayed_job:restart", "deploy:cleanup"

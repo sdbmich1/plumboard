@@ -30,4 +30,7 @@
 /config/*.yml
 /config/rubber/*.yml
 
+# ignore secrets folder
+/config/secrets/*
+
 .elasticbeanstalk/
