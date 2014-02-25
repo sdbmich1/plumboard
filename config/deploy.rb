@@ -1,6 +1,10 @@
 # This is a sample Capistrano config file for rubber
 # Execute "bundle install" after deploy, but only when really needed
 require "bundler/capistrano"
+require 'thinking_sphinx/capistrano'
+require 'whenever/capistrano'
+require 'capistrano/rvm'
+require 'delayed/recipes'
 
 # Automatically precompile assets
 load "deploy/assets"

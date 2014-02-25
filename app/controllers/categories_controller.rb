@@ -5,6 +5,7 @@ class CategoriesController < ApplicationController
   before_filter :load_data, only: [:index]
   before_filter :get_page, only: [:index, :inactive, :manage, :create, :update]
   autocomplete :site, :name, :full => true
+  caches_action :index
   respond_to :html, :json, :js, :mobile
   layout :page_layout
 
@@ -30,6 +31,7 @@ class CategoriesController < ApplicationController
   end
 
   def create
+    expire_action :action => :index
     @category = Category.new params[:category]
     if @category.save 
       flash.now[:notice] = 'Successfully created category.' 
