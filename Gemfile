@@ -123,6 +123,9 @@ gem 'bootstrap-will_paginate', '0.0.6'
 # add sass
 gem 'bootstrap-sass', '~> 2.3.2.1'
 
+# add memcached
+gem 'dalli'
+
 # development gems
 group :development do
   gem 'better_errors'
@@ -179,9 +182,9 @@ group :production do
    gem 'rack-google_analytics', :require => "rack/google_analytics"
 end 
 
-gem 'rubber', "~> 2.7.3"
 gem 'open4'
 gem 'gelf'
 gem 'graylog2_exceptions', :git => 'git://github.com/wr0ngway/graylog2_exceptions.git'
 gem 'graylog2-resque'
 gem 'excon', '~> 0.21.0'
+gem 'rubber'
