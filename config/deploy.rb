@@ -16,13 +16,13 @@ set :default_stage, "production"
 load "deploy/assets"
 
 set :rails_env, Rubber.env
+set :application, rubber_env.app_name
 set :ssh_options, {:forward_agent => true}
 # ssh_options[:keys] = %w(~/.ec2/my-secret.pem)
 ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "deploy")]
 default_run_options[:pty] = true
 
 on :load do
-  set :application, rubber_env.app_name
   set :runner,      rubber_env.app_user
   set :deploy_to,   "/mnt/#{application}-#{Rubber.env}"
   set :copy_exclude, [".git/*", ".bundle/*", "log/*", ".rvmrc", ".rbenv-version"]
