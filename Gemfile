@@ -133,6 +133,7 @@ group :development do
 
   # Deploy with Capistrano
   gem 'capistrano'
+  gem 'capistrano-maintenance'
 
   # Capistrano RVM integration
   gem 'rvm-capistrano'
