@@ -28,5 +28,6 @@
 
 # ignore yml files
 /config/*.yml
+/config/rubber/*.yml
 
 .elasticbeanstalk/
