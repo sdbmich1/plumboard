@@ -6,9 +6,11 @@
 <% end %>
 
 <%= content_for :content do %>
-  <div id="pxboard">
-    <%= render partial: 'shared/category', collection: @categories %>
-  </div> 
+  <% cache @categories do %>
+    <div id="pxboard">
+      <%= render partial: 'shared/category', collection: @categories %>
+    </div> 
+  <% end %>
 
   <nav id="px-nav">
     <%= render 'shared/category_next_page' %>
