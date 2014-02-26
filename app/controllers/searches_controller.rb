@@ -6,15 +6,11 @@ class SearchesController < ApplicationController
   autocomplete :listing, :title, :full => true
   include PointManager
   layout :page_layout
+  respond_to :json, :html, :js, :mobile
 
   def index
     @listings = Listing.search query, search_options unless query.blank?
-
-    respond_to do |format|
-      format.mobile { render :nothing => true }
-      format.html { render :nothing => true }
-      format.js 
-    end
+    respond_with(@listings)
   end
 
   protected

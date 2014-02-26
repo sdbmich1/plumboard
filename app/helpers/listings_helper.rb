@@ -75,7 +75,8 @@ module ListingsHelper
 
   # set partial name
   def set_partial_name
-    ['shared', controller_name].join('/')
+    pname = controller_name == 'searches' ? "listings" : controller_name
+    ['shared', pname].join('/')
   end
 
   # set init next page path for ajax infinite scroll call based on action name
