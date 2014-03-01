@@ -99,10 +99,8 @@ p {
 }
 
 #cat-wrap, #home-wrap {
-  min-height: 100%;
+  min-height: 150%;
   @extend .item-hgt;
-  margin: 0 auto -60px;
-  overflow: auto;
 }
 
 .item-hgt {
