@@ -4,7 +4,7 @@
 <div class='span4'>
   <div class='valign'>
     Posted By: <%= listing.seller_name %> 
-    <div class="rateit smpixis" data-rateit-value="<%= get_rating listing.user %>" data-rateit-ispreset="true" data-rateit-readonly="true"></div>
+    <div class="sm-top rateit smpixis" data-rateit-value="<%= get_rating listing.user %>" data-rateit-ispreset="true" data-rateit-readonly="true"></div>
     <%= "(#{listing.user.seller_ratings.size})" %>
   </div>
   <% unless !listing.active? || listing.seller?(@user) %>
