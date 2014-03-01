@@ -16,9 +16,16 @@ describe TransactionObserver do
   end
 
   describe 'after_update' do
-    let(:transaction) { FactoryGirl.create :transaction }
+    let(:transaction) { FactoryGirl.create :transaction, address: '1234 Main Street' }
     before(:each) do
+      transaction.address = '3456 Elm'
       transaction.status = 'approved'
+    end
+
+    it 'updates contact info' do
+      transaction.save!
+      update_addr
+      transaction.user.contacts[0].address.should == transaction.address 
     end
 
     it 'should deliver the receipt' do
@@ -31,7 +38,7 @@ describe TransactionObserver do
 
   describe 'after_create' do
     before do
-      @model = user.transactions.build FactoryGirl.attributes_for(:transaction, transaction_type: 'invoice')
+      @model = user.transactions.build FactoryGirl.attributes_for(:transaction, transaction_type: 'invoice', address: '1234 Main Street')
     end
 
     it 'sends a post' do
@@ -39,7 +46,9 @@ describe TransactionObserver do
     end
 
     it 'updates contact info' do
+      @model.save!
       update_addr
+      @model.user.contacts[0].address.should == @model.address 
     end
 
     it 'should add inv pixi points' do

@@ -1,9 +1,16 @@
 // process datepicker
 var nowTemp = new Date();
+nowTemp.setDate(nowTemp.getDate() + 1);
 var dt = nowTemp.getDate(); 
 var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), dt, 0, 0, 0, 0);
 
-$(document).on("focus", ".dt-pckr, #start-date", function(e){
+// set default date
+$(document).on("focus", ".dt-pckr", function(e){
+  var newDt = $(this).datepicker('setValue', nowTemp);
+});
+
+// manage event date
+$(document).on("focus", "#start-date", function(e){
   var sdt = $(this).datepicker({
     onRender: function(date) {
       return date.valueOf() < now.valueOf() ? 'disabled' : '';
@@ -26,7 +33,6 @@ $(document).on("focus", ".dt-pckr, #start-date", function(e){
     onRender: function(date) {
       return date.valueOf() < sdt.date.valueOf() ? 'disabled' : ''; }
     }).on('changeDate', function(ev) { edt.hide(); }).data('datepicker');
-  
 });
 
 $(document).on("focus", "#end-date", function(e){

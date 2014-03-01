@@ -176,6 +176,8 @@ function load_slider(cntl) {
   if( $('.bxslider').length > 0 ) {
     $('.bxslider').bxSlider({
       slideMargin: 10,
+      minSlides: 2,
+      autoHidePager: true,
       auto: cntl,
       controls: cntl,
       autoControls: true,
@@ -526,10 +528,6 @@ $(document).on("click", ".pixi-cat-link", function() {
   // refresh menu
   $('#nav-home-menu').html('');
 
-  console.log('pixi-link');
-  console.log('site id = ' + loc);
-  console.log('cat id = ' + cid);
-
   // set url
   if (cid > 0) {
     url = '/listings/category?' + 'cid=' + cid; 
@@ -741,3 +739,21 @@ function switchToggle(flg) {
 // fix bootstrap mobile dropdown issue
 $('body').on('touchstart.dropdown', '.dropdown-menu', function (e) { e.stopPropagation(); })
          .on('touchstart.dropdown', '.dropdown-submenu', function (e) { e.stopPropagation(); });
+
+  function positionFooter() {
+    var footerHeight = 0, footerTop = 0, $footer = $("#footer"); 
+    footerHeight = $footer.height();
+    footerTop = ($(window).scrollTop()+$(window).height()-footerHeight)+"px";
+
+    if( ($(document.body).height()+footerHeight) < $(window).height()) {
+      $footer.css({ position: "absolute"}).animate({ top: footerTop },-1)
+    } else {
+      $footer.css({ position: "static"})
+    }  
+  }
+
+// dynamically adjust footer
+$(window).bind("load", function() { 
+  positionFooter();
+  $(window).scroll(positionFooter).resize(positionFooter)
+});

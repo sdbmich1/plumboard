@@ -1,4 +1,5 @@
 class Category < ActiveRecord::Base
+  resourcify
   attr_accessible :category_type, :name, :status, :pixi_type, :pictures_attributes
 
   has_many :subcategories

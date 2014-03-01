@@ -5,22 +5,23 @@ class RegistrationsController < Devise::RegistrationsController
   # layout :page_layout
 
   def create
-    user = User.new(params[:user])
-
-    if params[:file]
+    if params[:file].blank?
+      super
+    else
+      # process json for mobile
+      user = User.new(params[:user])
       pic = user.pictures.build
       pic.photo = File.new params[:file].tempfile 
-    end
 
-    warden.custom_failure! unless user.save
-
-    respond_with(user) do |format|
-      format.json { render json: {user: [email: user.email, auth_token: user.authentication_token]}, status: :ok }
+      warden.custom_failure! unless user.save
+      respond_with(user) do |format|
+        format.json { render json: {user: [email: user.email, auth_token: user.authentication_token]}, status: :ok }
+      end
     end
   end
 
   def after_sign_up_path_for(resource)
-    listings_path
+    root_path
   end
 
   private
@@ -30,9 +31,6 @@ class RegistrationsController < Devise::RegistrationsController
   end
 
   def set_params
-    respond_to do |format|
-      format.html
-      format.json { params[:user] = JSON.parse(params[:user]) }
-    end
+    params[:user] = JSON.parse(params[:user]) unless params[:file].blank?
   end
 end

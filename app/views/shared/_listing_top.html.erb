@@ -2,8 +2,11 @@
   <%= render partial: 'shared/show_picture', locals: {psize: 'small', model: listing.user} %>
 </div>
 <div class='span4'>
-  Posted By: <%= listing.seller_name %> 
-  <div class="rateit smpixis" data-rateit-value="<%= get_rating listing.user %>" data-rateit-ispreset="true" data-rateit-readonly="true"></div>
+  <div class='valign'>
+    Posted By: <%= listing.seller_name %> 
+    <div class="rateit smpixis" data-rateit-value="<%= get_rating listing.user %>" data-rateit-ispreset="true" data-rateit-readonly="true"></div>
+    <%= "(#{listing.user.seller_ratings.size})" %>
+  </div>
   <% unless !listing.active? || listing.seller?(@user) %>
     <div class='clear-all'></div>
     <div class='panel_errors'></div>

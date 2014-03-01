@@ -63,6 +63,9 @@ module Plumboard
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.11'
 
+    # Devise view handler for user/signup
+    config.paths['app/views'] << "app/views/devise"
+
     # don't generate RSpec tests for views and helpers
     config.generators do |g|
       g.view_specs false

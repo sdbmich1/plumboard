@@ -1,6 +1,6 @@
 <ul class="nav pull-right">
-  <li id='li_home' class="active">
-    <%= link_to "Recent", '#', id: 'recent-link', class: 'submenu' %></li>
+  <li id='li_home' class="active"><%= link_to "Recent", '#', id: 'recent-link', class: 'submenu' %></li>
+  <li><%= link_to @loc_name, local_listings_path(loc: @loc) unless @loc_name.blank? %></li>
 </ul>
 <div class="pixi-select pull-right">
   <%= render partial: 'shared/category_list', locals: { ptype: false } %>

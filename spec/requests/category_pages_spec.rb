@@ -9,9 +9,10 @@ feature "Categories" do
     FactoryGirl.create :category, name: 'Stuff', category_type: 'sales', status: 'inactive'
   end
 
-  def user_login
-    login_as(user, :scope => :user, :run_callbacks => false)
-    @user = user
+  def init_setup usr
+    login_as(usr, :scope => :user, :run_callbacks => false)
+    @user = usr
+    @listing = FactoryGirl.create :temp_listing, seller_id: @user.id, status: nil
   end
 
   def add_data_w_photo
@@ -20,10 +21,9 @@ feature "Categories" do
   end
 
   describe "Show Categories" do 
-    let(:user) { FactoryGirl.create :admin, first_name: 'Jack', last_name: 'Snow', email: 'jack.snow@pixitest.com', confirmed_at: Time.now }
-
     before do
-      user_login
+      user = FactoryGirl.create :admin
+      init_setup user
       visit manage_categories_path 
     end
 
@@ -35,10 +35,9 @@ feature "Categories" do
   end
 
   describe "Home Page w/ Login" do 
-    let(:user) { FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Snow', email: 'jack.snow@pixitest.com', confirmed_at: Time.now }
-
     before do
-      user_login
+      user = FactoryGirl.create :pixi_user
+      init_setup user
       visit root_path 
     end
 
@@ -51,10 +50,10 @@ feature "Categories" do
 
   describe 'Manage Categories - admin users' do
     let(:submit) { "Save Changes" }
-    let(:user) { FactoryGirl.create :admin, confirmed_at: Time.now }
 
     before(:each) do
-      user_login
+      user = FactoryGirl.create :admin
+      init_setup user
       visit manage_categories_path 
     end
 

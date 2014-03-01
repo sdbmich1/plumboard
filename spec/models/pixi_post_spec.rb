@@ -33,6 +33,7 @@ describe PixiPost do
   it { should respond_to(:comments) }
   it { should respond_to(:editor_id) }
   it { should respond_to(:pixan_name) }
+  it { should respond_to(:country) }
 
   it { should validate_presence_of(:user_id) }
   it { should validate_presence_of(:preferred_time) }

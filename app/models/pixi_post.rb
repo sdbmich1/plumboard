@@ -1,10 +1,11 @@
 class PixiPost < ActiveRecord::Base
+  resourcify
   before_save :set_flds
 
   attr_accessor :pixan_name
   attr_accessible :address, :alt_date, :alt_time, :city, :description, :pixan_id, :preferred_date, :preferred_time, :quantity, :state, 
     :user_id, :value, :zip, :status, :appt_time, :appt_date, :completed_date, :completed_time, :home_phone, :mobile_phone, :address2, 
-    :comments, :editor_id, :pixan_name, :pixi_id
+    :comments, :editor_id, :pixan_name, :pixi_id, :country
 
   belongs_to :user
   belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id"

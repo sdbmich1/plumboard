@@ -1,7 +1,8 @@
 require 'will_paginate/array' 
 class CategoriesController < ApplicationController
-  before_filter :check_permissions, only: [:new, :edit, :manage, :create, :destroy, :update]
-  before_filter :authenticate_user!, only: [:new, :edit, :manage, :create, :destroy, :update]
+  load_and_authorize_resource
+  # before_filter :check_permissions, except: [:index]
+  before_filter :authenticate_user!, except: [:index]
   before_filter :load_data, only: [:index]
   before_filter :get_page, only: [:index, :inactive, :manage, :create, :update]
   autocomplete :site, :name, :full => true
@@ -13,7 +14,7 @@ class CategoriesController < ApplicationController
   end
 
   def manage
-    respond_with(@categories = Category.active.paginate(page: @page, per_page: 50))
+    respond_with(@categories = Category.active.paginate(page: @page, per_page: 60))
   end
 
   def new
@@ -52,7 +53,7 @@ class CategoriesController < ApplicationController
   protected
 
   def page_layout
-    %w(index manage inactive).detect {|x| action_name == x} ? 'listings' : 'application'
+    %w(index manage inactive).detect {|x| action_name == x} ? 'categories' : 'application'
   end
 
   def get_page
@@ -72,7 +73,7 @@ class CategoriesController < ApplicationController
   end
 
   def check_permissions
-    authorize! :manage, @category 
+    authorize! :update, @category 
     authorize! :manage, @categories
   end
 end

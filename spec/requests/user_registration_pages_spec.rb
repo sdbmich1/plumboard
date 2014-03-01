@@ -20,7 +20,7 @@ feature "UserRegistrations" do
     describe "with invalid information" do
       before { visit new_user_registration_path }
 
-      it { should have_link 'Pixiboard's Terms of Service', href: terms_path }
+      it { should have_link "Pixiboard's Terms of Service", href: terms_path }
       it { should have_link 'Privacy Policy', href: privacy_path }
 
       it "should not create a empty user" do
@@ -140,7 +140,7 @@ feature "UserRegistrations" do
 	  click_button submit; sleep 2 
 	 }.to change(User, :count).by(1)
 
-        page.should have_content 'Pixis'
+        page.should have_link 'How It Works', href: howitworks_path 
         page.should have_content 'A message with a confirmation link has been sent to your email address' 
       end	
     end

@@ -6,13 +6,16 @@ class Ability
 
     if user.has_role? :admin
       can :manage, :all
-      can :manage, Category
       can :manage, PixiPost
       can :access, '/pending_listings'
       can :manage_items, User
       can :manage_orders, User
       can :manage_users, User
       can :view_dashboard, User
+
+      can [:manage, :create, :edit, :read, :update, :destroy], Category do |cat|
+        cat.try(:user) == user
+      end
     else
       can :read, :all
 

@@ -2,7 +2,6 @@ require 'will_paginate/array'
 class ListingsController < ApplicationController
   include PointManager
   before_filter :authenticate_user!, except: [:local, :category]
-  before_filter :get_location, only: [:index]
   before_filter :load_data, only: [:index, :seller, :category, :show, :local]
   after_filter :add_points, only: [:show]
   respond_to :html, :json, :js, :mobile
@@ -82,9 +81,11 @@ class ListingsController < ApplicationController
   protected
 
   def load_data
-    @page = params[:page] || 1
-    @cat, @loc = params[:cid], params[:loc]
+    @ip = Rails.env.development? || Rails.env.test? ? '24.4.199.34' : request.remote_ip
+    @page, @cat, @loc = params[:page] || 1, params[:cid], params[:loc]
     @loc_name = Site.find(@loc).name rescue nil
+    @loc_name ||= Geocoder.search(@ip).first.city rescue nil
+    Rails.logger.info "IP = " + @ip.to_s
   end
 
   def page_layout
@@ -97,9 +98,5 @@ class ListingsController < ApplicationController
 
   def load_comments
     @comments = @listing.comments.paginate(page: @page, per_page: params[:per_page] || 4) if @listing
-  end
-
-  def get_location
-    @ip = Rails.env.development? || Rails.env.test? ? request.remote_ip : request.ip
   end
 end

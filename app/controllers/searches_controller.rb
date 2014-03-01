@@ -1,6 +1,5 @@
 require 'will_paginate/array' 
 class SearchesController < ApplicationController
-  # before_filter :authenticate_user!
   before_filter :load_data, :get_location
   after_filter :add_points, only: [:index]
   autocomplete :listing, :title, :full => true
@@ -25,7 +24,7 @@ class SearchesController < ApplicationController
   end  
 
   def add_points
-    PointManager::add_points @user, 'fpx'
+    PointManager::add_points @user, 'fpx' if signed_in?
   end
 
   def get_autocomplete_items(parameters)

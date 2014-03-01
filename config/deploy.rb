@@ -89,6 +89,12 @@ namespace :deploy do
       task t.name, t.options, &t.body
     end
   end
+  
+  desc "Enable rubber scripts"
+  task :enable_rubber do
+    puts "\n\n=== Enabling rubber scripts! ===\n\n"
+    run "chmod +x #{current_path}/script/rubber && chmod +x #{release_path}/script/rubber"
+  end
 
   desc "Symlink shared resources on each release"
   task :symlink_shared, :roles => :app do
@@ -170,6 +176,7 @@ end
 
 # capistrano's deploy:cleanup doesn't play well with FILTER
 before 'deploy:setup', 'sphinx:create_sphinx_dir'
+before 'deploy:update_code', 'deploy:enable_rubber'
 after 'deploy:update_code', 'deploy:symlink_shared', 'sphinx:stop'
 after "deploy", "cleanup"
 after "deploy:migrations", "cleanup", "sphinx:sphinx_symlink", "sphinx:configure", "sphinx:rebuild"

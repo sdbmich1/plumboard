@@ -14,6 +14,7 @@ Spork.prefork do
   require 'capybara/rails'
   require 'database_cleaner'
   require "paperclip/matchers"
+  require "cancan/matchers"
   require "thinking_sphinx/test"
   require 'balanced'
 

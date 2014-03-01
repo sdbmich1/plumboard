@@ -1,6 +1,6 @@
 class TransactionObserver < ActiveRecord::Observer
   observe Transaction
-  include PointManager
+  include PointManager, AddressManager
 
   def after_create txn
     unless txn.pixi?
@@ -19,8 +19,11 @@ class TransactionObserver < ActiveRecord::Observer
     UserMailer.delay.send_transaction_receipt(txn) if txn.approved?
   end
 
-  # send receipt upon approval
   def after_update txn
+    # update buyer address info
+    update_contact_info txn
+
+    # send receipt upon approval
     UserMailer.delay.send_transaction_receipt(txn) if txn.approved?
   end
 
@@ -31,18 +34,6 @@ class TransactionObserver < ActiveRecord::Observer
 
   # update user contact info if no address is already saved
   def update_contact_info txn
-    usr = txn.user
-      
-    # load user contact info
-    unless usr.has_address?
-      # if user email is nil
-      usr.email = txn.email if usr.email.blank?
-      @addr = usr.contacts.build
-
-      @addr.address, @addr.address2 = txn.address, txn.address2
-      @addr.city, @addr.state = txn.city, txn.state
-      @addr.zip, @addr.home_phone, @addr.country = txn.zip, txn.home_phone, txn.country 
-      usr.save
-    end
+    AddressManager::set_user_address txn.user, txn
   end
 end

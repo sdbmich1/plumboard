@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140218064518) do
+ActiveRecord::Schema.define(:version => 20140228050110) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -385,6 +385,7 @@ ActiveRecord::Schema.define(:version => 20140218064518) do
     t.string   "address2"
     t.text     "comments"
     t.integer  "editor_id"
+    t.string   "country"
   end
 
   add_index "pixi_posts", ["editor_id"], :name => "index_pixi_posts_on_editor_id"
