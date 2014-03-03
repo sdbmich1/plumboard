@@ -16,10 +16,7 @@
 </div>
 <div class='row'>
   <div class='span7'>
-    <%= f.label :site_id, 'Location' %>
-    <%= autocomplete_field_tag 'site_name', @listing.site_name, autocomplete_site_name_temp_listings_path,
-	        :update_elements => { :id => '#site_id' }, :placeholder => 'Pixi Location', :autofocus => true %> 
-    <%= f.hidden_field :site_id, id: 'site_id' %>
+    <%= f.label :title %><%= f.text_field :title, :placeholder => 'Pixi Title', :autofocus => true %>
   </div>
   <div class='span4'>
     <%= f.label :category_id, 'Category' %>
@@ -28,10 +25,13 @@
 </div>
 <div class='row' id='input-form'>
   <div class='span7'>
-    <%= f.label :title %><%= f.text_field :title, :placeholder => 'Pixi Title' %>
+    <%= f.label :site_id, 'Location' %>
+    <%= autocomplete_field_tag 'site_name', @listing.site_name, autocomplete_site_name_temp_listings_path,
+	        :update_elements => { :id => '#site_id' }, :placeholder => 'Pixi Location' %> 
+    <%= f.hidden_field :site_id, id: 'site_id' %>
   </div>
   <div class='span2' id='price-fld' style="<%= @listing.job? ? 'display:none' : '' %>"><%= f.label :price %>
-    <%= f.text_field :price, :size => 10, value: num_display(f.object, "price"), class: 'width120', placeholder: 'Price' %>
+    <%= f.number_field :price, :size => 10, value: num_display(f.object, "price"), class: 'width120', placeholder: 'Price' %>
   </div>
   <div class='span2' id='yr-fld' style="<%= !@listing.has_year? ? 'display:none' : '' %>"><%= f.label 'Year' %>
     <%= f.select 'year_built', options_for_select(get_year_ary, :selected => @listing.year_built), {:prompt => 'Select'}, 

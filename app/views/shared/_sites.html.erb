@@ -1,3 +1,4 @@
-<%= autocomplete_field_tag 'location', nil, autocomplete_site_name_categories_path, :id_element => '#site_id', 
+<%= autocomplete_field_tag 'location', nil, autocomplete_site_name_categories_path, 
+	  :update_elements => { :id => '#site_id' }, id: 'site_name', 
           :placeholder => 'Change Neighborhood or School', class: 'sm-top width280 search-text' %></div>
-<%= hidden_field_tag 'site_id', @loc, id: 'site_id' %>
+<%= hidden_field_tag 'site_id', id: 'site_id' %>

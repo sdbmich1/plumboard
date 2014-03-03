@@ -4,7 +4,7 @@
     <p><h1>Sign in</h1></p>
   </div>
 
-  <div class="row">
+  <div class="row mbot">
     <div class="mtop span4 offset4">
       <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
         <%= render partial: 'shared/signin_form', locals: { rmbrFlg: true } %>

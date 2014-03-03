@@ -72,7 +72,6 @@ class ListingsController < ApplicationController
     end
   end
 
-  # get pixi price
   def get_pixi_price
     @price = Listing.find_by_pixi_id(params[:pixi_id]).price
     respond_with(@price)
@@ -81,11 +80,9 @@ class ListingsController < ApplicationController
   protected
 
   def load_data
-    @ip = Rails.env.development? || Rails.env.test? ? '24.4.199.34' : request.remote_ip
-    @page, @cat, @loc = params[:page] || 1, params[:cid], params[:loc]
-    @loc_name = Site.find(@loc).name rescue nil
-    @loc_name ||= Geocoder.search(@ip).first.city rescue nil
-    Rails.logger.info "IP = " + @ip.to_s
+    @page, @cat, @loc, @loc_name = params[:page] || 1, params[:cid], params[:loc], params[:loc_name]
+    @loc ||= Site.find_by_name(@loc_name).id rescue nil
+    @loc_name ||= Site.find(@loc).name rescue nil
   end
 
   def page_layout

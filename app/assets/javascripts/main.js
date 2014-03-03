@@ -174,10 +174,15 @@ function load_slider(cntl) {
 
   // picture slider
   if( $('.bxslider').length > 0 ) {
+
+    // check slider length
+    cntl = ($('.bx-pager').length == 1) ? false : true;
+    var tmp = cntl ? 'true' : 'false';
+    console.log('cntrl = ' + tmp);
+
     $('.bxslider').bxSlider({
       slideMargin: 10,
       minSlides: 2,
-      autoHidePager: true,
       auto: cntl,
       controls: cntl,
       autoControls: true,
@@ -201,6 +206,11 @@ $(document).ready(function(){
   // enable tooltip
   if( $('#ttip').length > 0 ) {
     $('a').tooltip();
+  }
+
+  // set location
+  if( $('#home_site_name').length > 0 ) {
+    getLocation(true);
   }
 
   // check for disabled buttons
@@ -442,11 +452,23 @@ function processUrl(url) {
 }
 
 // set autocomplete selection value
+$(document).on("railsAutocomplete.select", "#site_name", function(event, data){
+ if ($('#recent-link').length > 0) {
+  resetBoard();
+ }
+});
+
+// set autocomplete selection value
 $(document).on("railsAutocomplete.select", "#buyer_name, #slr_name, #pixan_name", function(event, data){
   var bname = data.item.first_name + ' ' + data.item.last_name;
   $('#buyer_name').val(bname);
   $('#slr_name').val(bname);
   $('#pixan_name').val(bname);
+});
+
+// set autocomplete selection value
+$(document).on("railsAutocomplete.select", "#search", function(event, data){
+  $('#submit-btn').click();
 });
 
 // toggle profile state
@@ -487,11 +509,6 @@ $(document).on("keypress", ".reply_content", function(e){
   keyEnter(e, $(this), '.reply-btn');
 });
 
-// set autocomplete selection value
-$(document).on("railsAutocomplete.select", "#search", function(event, data){
-  $('#submit-btn').click();
-});
-
 var time_id;
 function set_timer() {
  time_id = setTimeout(updatePixis, 30000);  
@@ -523,6 +540,7 @@ function updatePixis() {
 // populate board based on category 
 $(document).on("click", ".pixi-cat-link", function() {
   var loc = $('#site_id').val(); // grab the selected location 
+  var loc_name = $('#home_site_name').val(); // grab the selected location 
   var url, cid = $(this).attr("data-cat-id");
 
   // refresh menu
@@ -537,8 +555,11 @@ $(document).on("click", ".pixi-cat-link", function() {
   if (loc > 0) {
     url += '&loc=' + loc;
   }
+  else {
+    url += '&loc_name=' + loc_name;
+  }
 
-  // refresh the page
+  // reset board
   resetScroll(url);
   
   //prevent the default behavior of the click event
@@ -547,6 +568,7 @@ $(document).on("click", ".pixi-cat-link", function() {
 
 // check for location changes
 $(document).on("change", "#site_id, #category_id", function() {
+ console.log('site or category changed');
 
   // reset board
   if($('#px-container').length > 0) {
@@ -657,7 +679,6 @@ function resetScroll(url) {
   // clear current infinitescroll session.
   $.removeData($container.get(0), 'infinitescroll')
   $container.data('infinitescroll', null);
-  console.log('resetScroll');
 
   $.ajax({
     url: url,
@@ -666,7 +687,6 @@ function resetScroll(url) {
       switchToggle(true);
     },
     success: function(data){
-      console.log('resetScroll - ajax');
       $container.infinitescroll({                      
           state: {                                              
 	    isDestroyed: false,
@@ -739,21 +759,3 @@ function switchToggle(flg) {
 // fix bootstrap mobile dropdown issue
 $('body').on('touchstart.dropdown', '.dropdown-menu', function (e) { e.stopPropagation(); })
          .on('touchstart.dropdown', '.dropdown-submenu', function (e) { e.stopPropagation(); });
-
-  function positionFooter() {
-    var footerHeight = 0, footerTop = 0, $footer = $("#footer"); 
-    footerHeight = $footer.height();
-    footerTop = ($(window).scrollTop()+$(window).height()-footerHeight)+"px";
-
-    if( ($(document.body).height()+footerHeight) < $(window).height()) {
-      $footer.css({ position: "absolute"}).animate({ top: footerTop },-1)
-    } else {
-      $footer.css({ position: "static"})
-    }  
-  }
-
-// dynamically adjust footer
-$(window).bind("load", function() { 
-  positionFooter();
-  $(window).scroll(positionFooter).resize(positionFooter)
-});

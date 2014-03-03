@@ -25,7 +25,7 @@
     </div>
     <div class='row'>
       <div class='span2'>
-        <%= f.label :quantity %>
+        <%= f.label :quantity, '# of Items' %>
         <%= f.select 'quantity', options_for_select(get_ary, :selected => set_quantity(@post)), {}, {id: 'post_qty', 
 	  class: 'width120 pixi-select'} %></td>
       </div>

@@ -6,6 +6,7 @@
 <% end %>
 
 <%= content_for :content do %>
+  <%= hidden_field_tag 'home_site_name' %>
   <% cache @categories do %>
     <div id="pxboard">
       <%= render partial: 'shared/category', collection: @categories %>

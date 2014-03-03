@@ -169,29 +169,28 @@ function getLatLng(showMkr) {
 	{
 		alert('Address not found.');
 	}
-	
   } 
 }
 
 function getMyLocation(dFlg, nearby) {
   // set default url for nearby events	
-  url = '/nearby_events.mobile';
+  url = '/listings.mobile';
 
   var geoOptions = {maximumAge: 60000, enableHighAccuracy: true, timeout: 30000 };  
   navigator.geolocation.getCurrentPosition(function(position){ // geoSuccess
-       myLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+    myLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
 
     // display nearby events?
     if (nearby) {
     	if (myLocation !== undefined) {    		
-  			var parts = myLocation.toString().split(')'); 
-  			var newLoc = parts[0].split('(');
-      		url = url + '?loc=' + newLoc[1];
+  	  var parts = myLocation.toString().split(')'); 
+   	  var newLoc = parts[0].split('(');
+      	  url = url + '?loc=' + newLoc[1];
       	}
        	  	 
       	// change the page              
-    	window.location.href= url; 	
-       }
+   	window.location.href= url; 	
+      }
                      
        // check for directions
        if (dFlg) {     
@@ -208,10 +207,11 @@ function getMyLocation(dFlg, nearby) {
        	}       
     }, 
     function(error){       	              
-		if (!dFlg)
-    	  goToUrl(url); // change the page
+      if (!dFlg)
+    	goToUrl(url); // change the page
     }, geoOptions);    
-     
+
+  return url;
 }
 
 function calcRoute() {
@@ -230,11 +230,43 @@ function detectBrowser() {
   var mapdiv = document.getElementById("map_canvas");
   
   if (useragent.indexOf('iPhone') != -1 || useragent.indexOf('Android') != -1 ) {
-	mapdiv.style.width = '100%';
+    mapdiv.style.width = '100%';
     mapdiv.style.height = '100%';
-	} 
+  } 
   else {
-	mapdiv.style.width = '600px';
+    mapdiv.style.width = '600px';
     mapdiv.style.height = '800px';
-	}
+  }
 };
+
+// get current user location
+function getLocation(nearby){
+  var geoOptions = {maximumAge: 60000, enableHighAccuracy: true, timeout: 30000 };  
+  navigator.geolocation.getCurrentPosition(function(position){ // geoSuccess
+
+    // get city name
+    getCity(position.coords.latitude,position.coords.longitude);
+  }, 
+  function(error){       	              
+    return false;
+  }, geoOptions);    
+}
+
+// used to find city name
+function getCity(lat, lng) {
+  url = "http://maps.googleapis.com/maps/api/geocode/json?latlng="+lat+","+lng+"&sensor=true";
+
+  $.ajax(url).done(function(data) {
+    for (var i = 0; i < data.results.length; i++) {
+      for (var j = 0; j < data.results[i].address_components.length; j++) {
+	for (var k = 0; k < data.results[i].address_components[j].types.length; k++) {
+	  if (data.results[i].address_components[j].types[k] === 'locality') {
+	    var city_name = data.results[i].address_components[j].long_name;
+            $('#home_site_name').val(city_name);
+	    console.log(' city name = ' + city_name);
+	  }
+	}
+      }
+    }
+  });
+}

@@ -14,6 +14,7 @@ describe "Pages" do
     it { should_not have_selector('title', text: '| Home') }
     it { should_not have_link 'Sign Up', href: new_user_registration_path }
     it { should have_link 'Browse', href: categories_path }
+    it { should have_link 'Forgot password?' }
     it { should have_link 'How It Works', href: howitworks_path }
     it { should have_link 'Help', href: help_path }
     it { should have_button 'Sign in' }
@@ -72,6 +73,7 @@ describe "Pages" do
   describe "Help page" do
     before { visit help_path }
     it { should have_link 'Sign Up', href: new_user_registration_path }
+    it { should_not have_link 'Forgot password?', href: new_password_path }
     it { should have_selector('title', :text => full_title('Help')) }
     it { should have_selector('.section-hdr',    text: 'PixiPonders') }
     it { should have_selector('.site-logo', href: root_path) }
@@ -82,6 +84,7 @@ describe "Pages" do
   describe "About page" do
     before { visit about_path }
     it { should have_link 'Sign Up', href: new_user_registration_path }
+    it { should_not have_link 'Forgot password?', href: new_password_path }
     it { should have_selector('.site-logo', href: root_path) }
     it { should have_selector('.section-hdr',    text: 'About Us') }
     it { should have_selector('title', text: full_title('About Us')) }
@@ -93,6 +96,7 @@ describe "Pages" do
   describe "Terms page" do
     before { visit terms_path }
     it { should have_link 'Sign Up', href: new_user_registration_path }
+    it { should_not have_link 'Forgot password?', href: new_password_path }
     it { should have_selector('.site-logo', href: root_path) }
     it { should have_selector('.section-hdr',    text: 'Terms of Service') }
     it { should have_selector('title', text: full_title('Terms')) }
@@ -102,6 +106,7 @@ describe "Pages" do
   describe "Privacy page" do
     before { visit privacy_path } 
     it { should have_link 'Sign Up', href: new_user_registration_path }
+    it { should_not have_link 'Forgot password?' }
     it { should have_selector('.site-logo', href: root_path) }
     it { should have_selector('.section-hdr',    text: 'Privacy') }
     it { should have_selector('title', text: full_title('Privacy')) }
