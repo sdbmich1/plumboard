@@ -33,7 +33,7 @@ class User < ActiveRecord::Base
   has_many :posts, dependent: :destroy
   has_many :incoming_posts, :foreign_key => "recipient_id", :class_name => "Post", :dependent => :destroy
 
-  has_many :invoices, foreign_key: :seller_id
+  has_many :invoices, foreign_key: :seller_id, dependent: :destroy
   has_many :unpaid_invoices, foreign_key: :seller_id, class_name: 'Invoice', conditions: { :status => 'unpaid' }
   has_many :paid_invoices, foreign_key: :seller_id, class_name: 'Invoice', conditions: { :status => 'paid' }
   has_many :received_invoices, :foreign_key => "buyer_id", :class_name => "Invoice"

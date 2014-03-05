@@ -1,1 +1,12 @@
+<%= content_for :subhead do %>
+  <div class="board-top">
+    <div id='pixi-loc' class='center-wrapper' style='display:none'>
+      <%= render partial: 'mobile/sites', locals: { ptype: false } %>
+    </div>
+    <div id='cat-top' class='center-wrapper' style='display:none'>
+      <%= render 'mobile/category_list' %>
+    </div>
+  </div> 
+<% end %>
+
 <%= render partial: 'mobile/index', locals: { page_title: 'Pixis', atype: 'index' } %>

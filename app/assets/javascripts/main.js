@@ -175,17 +175,14 @@ function load_slider(cntl) {
   // picture slider
   if( $('.bxslider').length > 0 ) {
 
-    // check slider length
-    cntl = ($('.bx-pager').length == 1) ? false : true;
-    var tmp = cntl ? 'true' : 'false';
-    console.log('cntrl = ' + tmp);
+    // check slider length to toggle slideshow
+    cntl = ($('.bxslider').children().length > 1) ? true : false;
 
     $('.bxslider').bxSlider({
       slideMargin: 10,
       minSlides: 2,
       auto: cntl,
-      controls: cntl,
-      autoControls: true,
+      autoControls: cntl,
       mode: 'fade'
     });
 
@@ -454,7 +451,7 @@ function processUrl(url) {
 // set autocomplete selection value
 $(document).on("railsAutocomplete.select", "#site_name", function(event, data){
  if ($('#recent-link').length > 0) {
-  resetBoard();
+  resetBoard(); // reset board display
  }
 });
 

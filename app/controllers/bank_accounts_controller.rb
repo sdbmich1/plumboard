@@ -39,13 +39,8 @@ class BankAccountsController < ApplicationController
 
   def destroy
     @account = BankAccount.find params[:id]
-    if @account.delete_account
-      flash.now[:notice] = 'Successfully removed account.'
-      redirect_to root_path 
-    else
-      flash.now[:error] = @account.errors
-      render nothing: true 
-    end
+    @account.delete_account if @account
+    respond_with(@account, location: root_path)
   end
 
   private
@@ -73,7 +68,7 @@ class BankAccountsController < ApplicationController
     if !(@target =~ /invoice/i).nil?
       redirect_to new_invoice_path
     else
-      redirect_to listings_path
+      redirect_to root_path
     end
   end
 end

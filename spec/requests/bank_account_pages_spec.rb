@@ -86,7 +86,7 @@ feature "BankAccounts" do
     it "removes an account" do
       expect {
           click_on 'Remove'; sleep 3;
-      }.to change(BankAccount, :count).by(0)
+      }.to change(BankAccount, :count).by(-1)
 
       # page.should have_content 'Pixis'
       # page.should_not have_content 'Account #'

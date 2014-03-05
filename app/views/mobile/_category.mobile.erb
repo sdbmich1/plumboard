@@ -1,12 +1,10 @@
-<% if category.pixi_count(@loc) > 0 || action_name == 'manage' %>
 <div class="item">
   <div class="center-wrapper">
     <%= link_to category_listings_path(cid: category, loc: @loc), 'data-ajax'=>"false" do %> 
-      <%= render partial: 'mobile/show_photo', locals: {model: category, file_name: "star.jpg", psize: get_item_width, display_cnt: 0 } %>
+      <%= render partial: 'mobile/show_picture', locals: {psize: 'thumb', model: category} %>
     <% end %>
     <div class='sm-top bdescr'>
       <%= show_category_title(category) %>
     </div>
   </div>
 </div>
-<% end %>

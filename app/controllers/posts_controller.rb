@@ -34,7 +34,6 @@ class PostsController < ApplicationController
 
   def mark
     Post.mark_as_read! :all, :for => @user
-    render :nothing => true
   end
 
   def sent

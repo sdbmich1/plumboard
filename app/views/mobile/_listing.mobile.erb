@@ -1,7 +1,7 @@
 <div class="item">
   <div class="center-wrapper">
     <%= link_to listing_path(listing), 'data-ajax'=>"false" do %>
-      <%= render partial: 'mobile/show_photo', locals: {model: listing, file_name: "star.jpg", psize: get_item_width, display_cnt: 0 } %>
+      <%= render partial: 'mobile/show_picture', locals: {psize: 'thumb', model: listing} %>
     <% end %>
     <div class='sm-top mbdescr'>
       <%= listing.title %>

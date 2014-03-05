@@ -10,6 +10,12 @@
   </div> 
 <% end %>
 
+<%= content_for :srch_content do %>
+  <div id="px-search" style='display:none'>
+    <%= render 'mobile/search' %>
+  </div> 
+<% end %>
+
 <%= content_for :content do %>
   <div id="pxboard">
     <%= render 'mobile/categories' %>

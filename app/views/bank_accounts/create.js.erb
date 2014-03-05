@@ -4,7 +4,7 @@
 <% else %>
   $("#notice").html("<%= escape_javascript(flash.now[:notice])%>");
   $("#notice").show(300);
-  $("#inv_form").html("<%= escape_javascript( raw render(partial: @target)) %>");
+  $("#inv_form").html("<%= escape_javascript( raw render(partial: "#{set_acct_partial_name}")) %>");
 <% end %>
 
 $('#spinner').hide(300);

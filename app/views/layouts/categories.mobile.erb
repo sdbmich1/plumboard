@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head> 
+    <%= yield :title %> 
+    <%= stylesheet_link_tag "mobile", :media => 'all' %>  
+    <%= render 'layouts/jqm' %>
+    <%= csrf_meta_tag %>  	
+  </head>
+  <body>
+    <div id="list" data-role="page" data-iscroll="enable" data-theme="a" class='pixiPg'> 
+      <%= yield :panel %>
+      <div data-role="header" data-theme="d" id="app-header">
+      	<%= yield :head %>
+      	<%= yield :srch_content %>
+      </div>
+    
+      <div class="app-content" data-theme="a" data-role="content">   			
+	<%= yield :subhead %>
+ 	<div data-iscroll="scroller" class="nearby-top" id="px-container">
+      	  <%= yield :content %>
+        </div>
+      </div>
+    </div>  
+  </body> 
+</html>

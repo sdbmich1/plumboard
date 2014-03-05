@@ -9,4 +9,9 @@ module BankAccountsHelper
   def set_btn_name
     !(@target =~ /invoice/i).nil? ? 'Next' : 'Save'
   end
+
+  # set partial name
+  def set_acct_partial_name
+    @target || 'shared/invoice_form'
+  end
 end

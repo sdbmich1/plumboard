@@ -22,6 +22,8 @@ describe PixiLikesController do
 
   describe "POST create" do
     before :each do
+      @listing = mock_model Listing
+      Listing.stub!(:find_by_pixi_id).and_return(@listing)
       @like = mock_model PixiLike
       controller.stub!(:reload_data).and_return(true)
     end
@@ -34,6 +36,11 @@ describe PixiLikesController do
       
       before :each do
         PixiLike.stub!(:save).and_return(false)
+      end
+
+      it "should assign @listing" do
+        do_create
+        assigns(:listing).should_not be_nil 
       end
 
       it "should assign @like" do
@@ -84,6 +91,8 @@ describe PixiLikesController do
 
   describe "DELETE /:id" do
     before (:each) do
+      @listing = mock_model Listing
+      Listing.stub!(:find_by_pixi_id).and_return(@listing)
       @like = mock_model PixiLike
       @user.stub_chain(:build, :pixi_likes, :find_by_pixi_id).and_return(@like)
       controller.stub!(:reload_data).and_return(true)
