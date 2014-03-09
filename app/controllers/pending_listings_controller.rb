@@ -24,7 +24,7 @@ class PendingListingsController < ApplicationController
 
   def deny
     @listing = TempListing.find_by_pixi_id params[:id]
-    if @listing.deny_order @user
+    if @listing.deny_order @user, params[:reason]
       redirect_to pending_listings_path
     else
       render action: :show, error: "Order denial was not successful."

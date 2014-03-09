@@ -1,0 +1,7 @@
+<div id='usr_fname' class='left-form'>
+  <div class='pull-left navbar-photo'>
+    <%= render partial: 'shared/show_photo', locals: {model: user, file_name: "usr-sm-photo", psize: '30x30', display_cnt: 0 } %>
+  </div>
+  <%= user.first_name %>
+  <b class="caret"></b>
+</div>

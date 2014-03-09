@@ -1,10 +1,6 @@
 <li id="fat-menu" class="dropdown">
   <%= link_to '#', class: "dropdown-toggle", "data-toggle"=>"dropdown" do %>
-    <div class='pull-left navbar-photo'>
-      <%= render partial: 'shared/show_photo', locals: {model: @user, file_name: "usr-sm-photo", psize: '30x30', display_cnt: 0 } %>
-    </div>
-    <%= @user.first_name %>
-    <b class="caret"></b>
+    <%= render partial: 'shared/menu_user_name', locals: {user: @user} %>
   <% end %>
   <ul class="dropdown-menu">
     <li><%= link_to "My Pixis", seller_listings_path %></li>

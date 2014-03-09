@@ -9,6 +9,7 @@ class Listing < ListingParent
   has_many :invoices, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :comments, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :pixi_likes, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
+  has_many :pixi_wants, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :saved_listings, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
 
   has_many :site_listings, :dependent => :destroy
@@ -87,6 +88,16 @@ class Listing < ListingParent
   # get saved list by user
   def self.saved_list usr, pg=1
     active.joins(:saved_listings).where("saved_listings.user_id = ?", usr.id).paginate page: pg
+  end
+
+  # get wanted list by user
+  def self.wanted_list usr, pg=1
+    active.joins(:pixi_wants).where("pixi_wants.user_id = ?", usr.id).paginate page: pg
+  end
+
+  # get cool list by user
+  def self.cool_list usr, pg=1
+    active.joins(:pixi_likes).where("pixi_likes.user_id = ?", usr.id).paginate page: pg
   end
 
   # get invoice

@@ -1,6 +1,6 @@
 class ListingObserver < ActiveRecord::Observer
   observe Listing
-  include PointManager
+  include PointManager, SystemMessenger
 
   # update points
   def after_create model
@@ -10,18 +10,26 @@ class ListingObserver < ActiveRecord::Observer
     # remove temp pixi
     delete_temp_pixi model
 
+    # send system message to user
+    send_system_message model
+
     # send approval message
     UserMailer.delay.send_approval(model)
   end
 
-  # remove temp pixi
   def after_update model
     delete_temp_pixi model
   end
 
+  # remove temp pixi
   def delete_temp_pixi model
     if listing = TempListing.where(:pixi_id => model.pixi_id).first
       listing.destroy
     end
+  end
+
+  # send system message to user
+  def send_system_message model
+    SystemMessenger::send_message model.user, model, 'approve'
   end
 end

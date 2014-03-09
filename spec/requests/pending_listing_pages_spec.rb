@@ -2,25 +2,32 @@ require 'spec_helper'
 
 describe "PendingListings", :type => :feature do
   subject { page }
-  let(:user) { FactoryGirl.create :editor, confirmed_at: Time.now }
-  let(:listing) { FactoryGirl.create :temp_listing_with_transaction }
+  let(:user) { FactoryGirl.create :pixi_user }
+  let(:listing) { FactoryGirl.create :temp_listing_with_transaction, seller_id: user.id }
+
+  def init_setup usr
+    login_as(usr, :scope => :user, :run_callbacks => false)
+    @user = usr
+  end
 
   before(:each) do
-    login_as(user, :scope => :user, :run_callbacks => false)
-    @user = user
+    user = FactoryGirl.create :editor, email: 'jsnow@pixitext.com', confirmed_at: Time.now 
+    init_setup user
   end
 
   describe "Review Pending Orders" do 
     before { visit pending_listing_path(listing) }
 
     it { should have_selector('title', text: 'Review Pending Order') }
-    it { should have_content listing.title }
+    it { should have_content listing.nice_title }
     it { should have_content "Posted By: #{listing.seller_name}" }
     it { should_not have_link 'Follow', href: '#' }
     it { should_not have_selector('#contact_content') }
     it { should_not have_selector('#comment_content') }
     it { should have_link 'Back', href: pending_listings_path }
-    it { should have_link 'Deny', href: deny_pending_listing_path(listing) }
+    it { should have_button('Deny') }
+    it { should have_link 'Improper Content', href: deny_pending_listing_path(listing, reason: 'Improper Content') }
+    it { should have_link 'Bad Pictures', href: deny_pending_listing_path(listing, reason: 'Bad Pictures') }
     it { should have_link 'Approve', href: approve_pending_listing_path(listing) }
     it { should have_content "ID: #{listing.pixi_id}" }
     it { should have_content "Posted: #{get_local_time(listing.start_date)}" }
@@ -33,16 +40,24 @@ describe "PendingListings", :type => :feature do
 
     it 'Approves an order' do
       expect {
-        click_link 'Approve'; sleep 3
+        click_link 'Approve'; sleep 4
 	}.to change(Listing, :count).by(1)
 
       page.should_not have_content listing.title 
       page.should have_content("Pending Orders")
     end
 
-    it 'Denies an order' do
+    it 'Denies an order for improper content' do
       expect {
-        click_link 'Deny'; sleep 2
+        click_link 'Improper Content'; sleep 2
+	}.to change(Listing, :count).by(0)
+
+      page.should have_content("Pending Orders")
+    end
+
+    it 'Denies an order for bad pictures' do
+      expect {
+        click_link 'Bad Pictures'; sleep 2
 	}.to change(Listing, :count).by(0)
 
       page.should have_content("Pending Orders")

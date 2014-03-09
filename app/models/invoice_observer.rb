@@ -36,6 +36,9 @@ class InvoiceObserver < ActiveRecord::Observer
           UserMailer.send_payment_receipt(model, result).deliver rescue nil
 	end
       end
+
+      # close out any other invoices
+      mark_as_closed model
     end
   end
 
@@ -49,5 +52,11 @@ class InvoiceObserver < ActiveRecord::Observer
   # mark pixi as sold
   def mark_pixi model
     model.listing.mark_as_sold 
+  end
+
+  # marked as closed any other invoice associated with this pixi
+  def mark_as_closed model
+    inv_list = Invoice.where("pixi_id = ? AND status != 'paid'", model.pixi_id)
+    inv_list.each { |i| i.status = 'closed'; i.save; }
   end
 end

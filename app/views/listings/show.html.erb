@@ -4,11 +4,4 @@
 <% end %>
 <%= content_for :content do %>
   <%= render partial: 'shared/show_listing', locals: {listing: @listing, edit_mode: false} %>
-  <div class="mtop nav pull-right">
-    <% if @listing.seller? @user %>
-      <%= link_to 'Back', root_path, class: 'btn btn-large btn-primary stnd-btn' %>
-      <%= link_to 'Remove', @listing, method: :delete, confirm: 'Are you sure?', class: 'btn btn-large btn-primary stnd-btn' %>
-      <%= link_to 'Edit', edit_temp_listing_path(@listing), class: 'btn btn-large btn-primary submit-btn' %>
-    <% end %>  
-  </div>
 <% end %>

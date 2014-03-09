@@ -16,15 +16,21 @@ describe ListingObserver do
     @observer.stub(:send_approval).with(@model).and_return(@mailer)
   end
 
+  def send_message 
+    @post = mock(Post)
+    @observer = ListingObserver.instance
+    @observer.stub(:send_system_message).with(@model).and_return(true)
+  end
+
   describe 'after_create' do
     let(:category) { FactoryGirl.create :category }
 
-    it 'should add abp pixi points' do
+    it 'adds abp pixi points' do
       listing = FactoryGirl.create(:listing, seller_id: user.id)
       user.user_pixi_points.find_by_code('abp').code.should == 'abp'
     end
 
-    it 'should add app pixi points' do
+    it 'adds app pixi points' do
       @category = FactoryGirl.create(:category, pixi_type: 'premium')
       listing = FactoryGirl.create(:listing, category_id: @category.id, seller_id: user.id)
       user.user_pixi_points.find_by_code('app').code.should == 'app'
@@ -35,7 +41,14 @@ describe ListingObserver do
       delete_pixi listing
     end
 
-    it 'should deliver approval message' do
+    it 'delivers system message' do
+      create :admin, email: PIXI_EMAIL
+      listing = create(:listing, seller_id: user.id)
+      send_message 
+      expect(Post.all.count).to eq(1)
+    end
+
+    it 'delivers approval email' do
       send_mailer
     end
   end

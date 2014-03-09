@@ -5,7 +5,7 @@ class CategoriesController < ApplicationController
   before_filter :authenticate_user!, only: [:edit, :show, :inactive, :manage, :create, :update]
   before_filter :load_data, only: [:index]
   before_filter :get_page, only: [:index, :inactive, :manage, :create, :update]
-  autocomplete :site, :name, :full => true
+  autocomplete :site, :name, :full => true, :limit => 20
   respond_to :html, :json, :js, :mobile
   layout :page_layout
 
@@ -63,7 +63,14 @@ class CategoriesController < ApplicationController
   # set location var
   def load_data
     @loc = params[:loc]
-    @loc_name = Site.find @loc rescue nil
+    if @loc.blank?
+      @ip = Rails.env.development? || Rails.env.test? ? '24.4.199.34' : request.remote_ip
+      @area = Geocoder.search(@ip)
+      @place = Contact.near([@area.first.latitude, @area.first.longitude]).first rescue nil
+      @loc, @loc_name = @place.id, @place.city rescue nil
+    else
+      @loc_name = Contact.find(@loc).city rescue nil
+    end
   end
 
   # parse results for active items only

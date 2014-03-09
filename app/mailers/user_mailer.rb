@@ -1,7 +1,7 @@
 class UserMailer < ActionMailer::Base
   default from: "support@pixiboard.com"
 
-  helper :application, :transactions
+  helper :application, :transactions, :listings
 
   # send receipts to customers
   def send_transaction_receipt transaction
@@ -23,6 +23,17 @@ class UserMailer < ActionMailer::Base
 
     # set message details
     mail(:to => "#{post.user.email}", :subject => "PixiPost Request Submitted") 
+  end
+
+  # send pixi post appt to sellers
+  def send_pixipost_appt post 
+    @post = post
+
+    # set logo
+    attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
+    # set message details
+    mail(:to => "#{post.user.email}", :subject => "PixiPost Appointment Scheduled") 
   end
 
   # send pixi post appt to sellers
@@ -68,6 +79,17 @@ class UserMailer < ActionMailer::Base
 
     # set message details
     mail(:to => "#{listing.user.email}", :subject => "Pixi Approved: #{listing.title} ") 
+  end
+
+  # send denial notices to members
+  def send_denial listing
+    @listing = listing
+
+    # set logo
+    attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
+    # set message details
+    mail(:to => "#{listing.user.email}", :subject => "Pixi Denied: #{listing.title} ") 
   end
 
   # send confirm message to new members

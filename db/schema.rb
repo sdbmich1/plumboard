@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140228050110) do
+ActiveRecord::Schema.define(:version => 20140308065434) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -254,6 +254,7 @@ ActiveRecord::Schema.define(:version => 20140228050110) do
     t.integer  "year_built"
     t.integer  "pixan_id"
     t.string   "job_type"
+    t.string   "explanation"
   end
 
   add_index "listings", ["category_id"], :name => "index_listings_on_category_id"
@@ -299,6 +300,7 @@ ActiveRecord::Schema.define(:version => 20140228050110) do
     t.datetime "updated_at",       :null => false
     t.integer  "pixan_id"
     t.string   "job_type"
+    t.string   "explanation"
   end
 
   add_index "old_listings", ["category_id"], :name => "index_old_listings_on_category_id"
@@ -392,6 +394,15 @@ ActiveRecord::Schema.define(:version => 20140228050110) do
   add_index "pixi_posts", ["pixan_id"], :name => "index_pixi_posts_on_pixan_id"
   add_index "pixi_posts", ["pixi_id"], :name => "index_pixi_posts_on_pixi_id"
   add_index "pixi_posts", ["user_id"], :name => "index_pixi_posts_on_user_id"
+
+  create_table "pixi_wants", :force => true do |t|
+    t.integer  "user_id"
+    t.string   "pixi_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "pixi_wants", ["user_id", "pixi_id"], :name => "index_pixi_wants_on_user_id_and_pixi_id"
 
   create_table "posts", :force => true do |t|
     t.integer  "user_id"
@@ -570,6 +581,7 @@ ActiveRecord::Schema.define(:version => 20140228050110) do
     t.integer  "year_built"
     t.integer  "pixan_id"
     t.string   "job_type"
+    t.string   "explanation"
   end
 
   add_index "temp_listings", ["parent_pixi_id"], :name => "index_temp_listings_on_parent_pixi_id"

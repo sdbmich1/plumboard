@@ -48,7 +48,6 @@ class PostsController < ApplicationController
     @post = Post.new params[:post]
     respond_with(@post) do |format|
       if @post.save
-        # @post = Post.load_new @listing 
 	reload_data params[:post][:pixi_id]
         format.json { render json: {post: @post} }
       else
@@ -81,8 +80,9 @@ class PostsController < ApplicationController
 
   def reload_data pid
     @listing = Listing.find_by_pixi_id pid
-    @like = @user.pixi_likes.find_by_pixi_id pid rescue nil
-    @saved = @user.saved_listings.find_by_pixi_id pid rescue nil
-    @contact = @user.posts.find_by_pixi_id pid rescue nil
+    @like = @user.pixi_likes.where(pixi_id: pid).first
+    @saved = @user.saved_listings.where(pixi_id: pid).first
+    @contact = @user.posts.where(pixi_id: pid).first
+    @user.pixi_wants.create(pixi_id: pid)
   end
 end

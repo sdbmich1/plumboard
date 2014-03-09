@@ -152,8 +152,7 @@ describe TempListing do
   end
 
   describe "get_by_status should not include inactive listings" do
-    temp_listing = FactoryGirl.create :listing, :description=>'stuff', :status=>'inactive'
-    it { TempListing.get_by_status('active').should_not include (temp_listing) }
+    it { TempListing.get_by_status('inactive').should_not include (@temp_listing) }
   end
 
   describe "should return correct site name" do 
@@ -586,6 +585,18 @@ describe TempListing do
       @temp_listing.event_start_date = Time.now
       @temp_listing.start_date?.should be_true
     end
+  end
+
+  describe "date display methods" do
+    let(:user) { FactoryGirl.create :pixi_user }
+    let(:listing) { FactoryGirl.create :temp_listing, seller_id: user.id }
+
+    it "does not show updated date" do
+      listing.updated_at = nil
+      listing.updated_dt.should be_nil
+    end
+
+    it { listing.updated_dt.should_not be_nil }
   end
 
   describe "date validations" do

@@ -16,9 +16,16 @@
   </tr>
   <tr>
     <td></td>
+    <td><div class='price'>Convenience Fee</div></td>
+    <td class="width120"><div class='price'>
+      <%= link_to '?', '#', class: 'ttip mleft10', 'data-placement'=>'top', title: 'Fee is 2.9% + up to 1%.', rel: 'tooltip' %></div></td>
+    <td class="width120"><div class='price'><%= ntc(@invoice.get_fee)%></div></td>
+  </tr>
+  <tr>
+    <td></td>
     <td></td>
     <td><div class='order-total price'>Amount Due</div></td>
-    <td class="width120"><div class='order-total price'><%= ntc @invoice.amount %></div></td>
+    <td class="width120"><div class='order-total price'><%= ntc @invoice.amount + @invoice.get_fee %></div></td>
   </tr>
   </table>
 </div>

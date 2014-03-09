@@ -715,6 +715,20 @@ function keyEnter(e, $this, str) {
   }
 }
 
+// process Autocomplete Enter key
+function keySelectEnter(e, $this) {
+  if (e.keyCode == 13 && !e.shiftKey && !keyPress) {
+    keyPress = true;
+    e.preventDefault();
+    console.log('in keySelectEnter');
+
+    var keyEvent = $.Event("keydown");          
+    keyEvent.which = 40;
+    $this.trigger('focus').trigger(keyEvent);
+    $this.click();
+  }
+}
+
 // process window scroll for main image board
 var processFlg = false;
 

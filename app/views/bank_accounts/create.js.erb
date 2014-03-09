@@ -1,12 +1,9 @@
+$('#spinner').hide(300);
 <% if @account.errors.any? %>
   $("#notice").hide(300);
   $("#form_errors").html("<%= escape_javascript( render(partial: 'shared/error_messages', locals: {target: @account})) %>");
 <% else %>
   $("#notice").html("<%= escape_javascript(flash.now[:notice])%>");
   $("#notice").show(300);
-  $("#inv_form").html("<%= escape_javascript( raw render(partial: "#{set_acct_partial_name}")) %>");
+  $("#inv_form").html("<%= escape_javascript( raw render(partial: '#{set_acct_partial_name}')) %>");
 <% end %>
-
-$('#spinner').hide(300);
-
-

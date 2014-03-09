@@ -19,7 +19,7 @@ class User < ActiveRecord::Base
   before_save :ensure_authentication_token unless Rails.env.test?
 
   # define relationships
-  has_many :listings, foreign_key: :seller_id
+  has_many :listings, foreign_key: :seller_id, dependent: :destroy
   has_many :active_listings, foreign_key: :seller_id, class_name: 'Listing', :conditions => "status = 'active' AND end_date >= curdate()"
   has_many :temp_listings, foreign_key: :seller_id, dependent: :destroy
   has_many :saved_listings, dependent: :destroy
@@ -45,6 +45,7 @@ class User < ActiveRecord::Base
   has_many :comments, dependent: :destroy
   has_many :inquiries, dependent: :destroy
   has_many :pixi_likes, dependent: :destroy
+  has_many :pixi_wants, dependent: :destroy
 
   has_many :ratings, dependent: :destroy
   has_many :seller_ratings, :foreign_key => "seller_id", :class_name => "Rating"
@@ -162,10 +163,10 @@ class User < ActiveRecord::Base
     # find or create user
     unless user = User.where(:email => data.email).first
       user = User.new(:first_name => data.first_name, :last_name => data.last_name, 
-	      :birth_date => convert_date(data.birthday), :provider => access_token.provider, :uid => access_token.uid,
-	      :gender => data.gender.capitalize, :email => data.email) 
+	      :birth_date => convert_date(data.birthday), :provider => access_token.provider, :uid => access_token.uid, :email => data.email) 
       user.password = user.password_confirmation = Devise.friendly_token[0,20]
       user.fb_user = true
+      user.gender = data.gender.capitalize rescue nil
 
       #add photo 
       picture_from_url user, access_token

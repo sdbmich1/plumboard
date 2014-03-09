@@ -17,9 +17,9 @@ class ListingsController < ApplicationController
 
   def show
     @listing = Listing.find_by_pixi_id params[:id]
-    @like = @user.pixi_likes.find_by_pixi_id params[:id] rescue nil
-    @saved = @user.saved_listings.find_by_pixi_id params[:id] rescue nil
-    @contact = @user.posts.find_by_pixi_id params[:id] rescue nil
+    @like = @user.pixi_likes.where(pixi_id: params[:id]).first
+    @saved = @user.saved_listings.where(pixi_id: params[:id]).first
+    @contact = @user.posts.where(pixi_id: params[:id]).first
     @post = Post.new 
     @comment = @listing.comments.build if @listing
     load_comments
@@ -57,6 +57,13 @@ class ListingsController < ApplicationController
     end
   end
 
+  def wanted
+    @listings = Listing.wanted_list @user, @page
+    respond_with(@listings) do |format|
+      format.json { render json: {listings: @listings} }
+    end
+  end
+
   def category
     @listings = Listing.get_by_city @cat, @loc, @page
     @category = Category.find @cat
@@ -81,8 +88,8 @@ class ListingsController < ApplicationController
 
   def load_data
     @page, @cat, @loc, @loc_name = params[:page] || 1, params[:cid], params[:loc], params[:loc_name]
-    @loc ||= Site.find_by_name(@loc_name).id rescue nil
-    @loc_name ||= Site.find(@loc).name rescue nil
+    @loc ||= Contact.find_by_name(@loc_name).id rescue nil
+    @loc_name ||= Contact.find(@loc).city rescue nil
   end
 
   def page_layout

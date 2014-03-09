@@ -3,7 +3,7 @@
 <% if @order %>
   <% if @order[:sales_tax].to_f > 0.0 %>
     <tr><td>Sales Tax</td><td></td>
-  	<td class="price"><%= number_to_currency(@order[:sales_tax].to_f) %></td>
+  	<td class="price"><%= ntc(@order[:sales_tax].to_f) %></td>
     </tr>
   <% end %>
 <% end %>
@@ -14,12 +14,12 @@
   	<td>Convenience Fee
 	  <%= link_to '?', '#', class: 'ttip mleft10', 'data-placement'=>'top', title: 'Fee is 2.9% + up to 1%.', rel: 'tooltip' %></td>
 	<td></td>
-  	<td class="price"><%= number_to_currency(@transaction.get_fee)%></td>
+  	<td class="price"><%= ntc(@transaction.get_fee)%></td>
     </tr>
   <% end %>
   <tr class='title-str'>
   	<td class='order-total'><%= show_title(paid) %></td>
   	<td></td>
-  	<td class='order-total price'><%= number_to_currency(@transaction.amt) %></td>
+  	<td class='order-total price'><%= ntc(@transaction.amt) %></td>
   </tr>
 <% end %>

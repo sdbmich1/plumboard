@@ -13,6 +13,7 @@
     $("#notice").html("<%= escape_javascript( raw render(partial: 'layouts/notices')) %>");
     $("#notice").show(300);
     $("#user_form").html("<%= escape_javascript( raw render(partial: @target)) %>");
+    $("#usr_fname").html("<%= escape_javascript( raw render(partial: 'shared/menu_user_name', locals: {user: @user})) %>");
   }
 <% end %>
 

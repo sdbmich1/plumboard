@@ -35,15 +35,13 @@ class TempListing < ListingParent
   end
 
   # deny order
-  def deny_order usr
-    edit_flds usr, 'denied' if usr
+  def deny_order usr, reason
+    edit_flds usr, 'denied', reason if usr
   end
 
   # edit order fields to process order
-  def edit_flds usr, val
-    self.status = val
-    self.edited_by = usr.name
-    self.edited_dt = Time.now
+  def edit_flds usr, val, reason
+    self.status, self.edited_by, self.edited_dt, self.explanation = val, usr.name, Time.now, reason
     save!
   end
 

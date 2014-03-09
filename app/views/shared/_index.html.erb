@@ -1,6 +1,6 @@
 <% provide(:title, page_title) %>
 <%= content_for :subhead do %>
-  <%= render partial: 'shared/navbar', locals: { menu_name: page_title } %>
+  <%= render partial: 'shared/navbar', locals: { menu_name: page_title, loc_name: @loc_name } %>
 <% end %>
 
 <%= content_for :content do %>

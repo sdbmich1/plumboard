@@ -35,7 +35,32 @@ describe OldListing do
   it { should respond_to(:event_end_time) }
   it { should respond_to(:year_built) }
   it { should respond_to(:pixan_id) }
+  it { should respond_to(:job_type) }
+  it { should respond_to(:explanation) }
 
   it { should respond_to(:user) }
   it { should respond_to(:pictures) }
+
+  describe "seller rating count" do 
+    it { @listing.seller_rating_count.should == 0 } 
+
+    it 'returns seller rating count' do 
+      listing = create(:listing, seller_id: @user.id) 
+      @buyer = create(:pixi_user, email: 'jsnow@ptest.com')
+      @rating = @buyer.ratings.create FactoryGirl.attributes_for :rating, seller_id: @user.id, pixi_id: listing.id
+      expect(@listing.seller_rating_count).to eq(1)
+    end
+  end
+
+  describe "date display methods" do
+    let(:user) { FactoryGirl.create :pixi_user }
+    let(:listing) { FactoryGirl.create :old_listing, seller_id: user.id }
+
+    it "does not show updated date" do
+      listing.updated_at = nil
+      listing.updated_dt.should be_nil
+    end
+
+    it { listing.updated_dt.should_not be_nil }
+  end
 end

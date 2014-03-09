@@ -20,11 +20,12 @@ class PixiPost < ActiveRecord::Base
   validates :state, presence: true
   validates :zip, presence: true, length: {minimum: 5, maximum: 12}
   validates :description, presence: true
-  validates_date :preferred_date, :presence => true, :on_or_after => :today
-  validates_date :alt_date, :allow_blank => true, :on_or_after => :today
+  validates_date :preferred_date, presence: true, on_or_after: :today, unless: :has_appt?
+  validates_date :alt_date, allow_blank: true, on_or_after: :today
   validates_date :appt_date, on_or_after: :today, presence: true, if: :has_pixan?
   validates_date :completed_date, on_or_after: :today, presence: true, if: :has_pixi?
-  validates :pixan_id, presence: true, if: :has_appt?
+  validates :pixan_id, presence: true, if: :has_appt? || :is_completed?
+  validates :pixi_id, presence: true, unless: "completed_date.nil?"
 
   default_scope :order => "preferred_date, preferred_time ASC"
 

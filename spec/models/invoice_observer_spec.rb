@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 describe InvoiceObserver do
-  let(:user) { FactoryGirl.create(:pixi_user) }
-  let(:buyer) { FactoryGirl.create(:pixi_user, first_name: 'Bob', last_name: 'Davis', email: 'bob.davis@pixitest.com') }
-  let(:listing) { FactoryGirl.create(:listing, seller_id: user.id) }
+  let(:user) { create(:pixi_user) }
+  let(:buyer) { create(:pixi_user, first_name: 'Bob', last_name: 'Davis', email: 'bob.davis@pixitest.com') }
+  let(:listing) { create(:listing, seller_id: user.id) }
 
   def process_post
     @post = mock(Post)
@@ -15,6 +15,12 @@ describe InvoiceObserver do
     @listing = mock(Listing)
     @observer = InvoiceObserver.instance
     @observer.stub(:mark_pixi).with(@model).and_return(@listing)
+  end
+
+  def mark_as_closed
+    @invoice = mock(Invoice)
+    @observer = InvoiceObserver.instance
+    @observer.stub(:mark_as_closed).with(@model).and_return(true)
   end
 
   def credit_account
@@ -61,6 +67,14 @@ describe InvoiceObserver do
     it 'should deliver the receipt' do
       credit_account
       send_mailer
+    end
+
+    it 'should mark any other invoices as closed' do
+      other_user = create :pixi_user
+      other_invoice = user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: listing.pixi_id, buyer_id: other_user.id)
+      @model.save!
+      mark_as_closed
+      expect(other_user.unpaid_invoice_count).to eq(0)
     end
   end
 

@@ -80,6 +80,14 @@ form#new_post {margin-bottom: -0px!important;}
   margin-left: 15px!important;
 }
 
+.mleft30 {
+  margin-left: 30px!important;
+}
+
+.mleft-pct {
+  margin-left: 10%!important;
+}
+
 /* submit button */
 .signin-btn { color: white!important; font-weight: bold; background: $pixiOrange!important; border: $pixiOrange!important; 
   min-height: 30px!important; text-align: center; vertical-align: middle; padding-top: 8px; padding-left: 22px; padding-right: 22px;}
@@ -145,7 +153,26 @@ a.pixi-cat-link {
     text-decoration: none;
   }
 }
- 
 
- 
-
+#login-text h4 {
+  overflow: hidden;
+  text-align: center;
+  &:before,
+  &:after {
+    background-color: #ccc;
+    content: "";
+    display: inline-block;
+    height: 1px;
+    position: relative;
+    vertical-align: middle;
+    width: 50%;
+  }
+  &:before {
+    right: 0.5em;
+    margin-left: -50%;
+  }
+  &:after {
+    left: 0.5em;
+    margin-right: -50%;
+  }
+}

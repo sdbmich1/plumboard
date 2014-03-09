@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Listings", :type => :feature do
+feature "Listings" do
   subject { page }
   
   let(:user) { FactoryGirl.create(:contact_user) }
@@ -21,7 +21,7 @@ describe "Listings", :type => :feature do
 
   describe "Contact Owner" do 
     before(:each) do
-      pixi_user = FactoryGirl.create(:pixi_user) 
+      pixi_user = FactoryGirl.create(:pixi_user, email: 'jsnow@pxtest.com') 
       init_setup pixi_user
       visit listing_path(listing) 
     end
@@ -372,7 +372,7 @@ describe "Listings", :type => :feature do
 	set_site_id
         page.should have_content 'HP Printer J4580'
 
-	click_link 'Recent'
+	click_on 'Recent'
         page.should have_content @listing.nice_title
       end
 
@@ -384,11 +384,26 @@ describe "Listings", :type => :feature do
       end
     end  
 
-    describe "seller listings page" do
-      let(:listings) { 30.times { FactoryGirl.create(:listing, seller_id: @user.id) } }
-      before { visit seller_listings_path }
+    describe "My pixis page" do
+      let(:listings) { 30.times { FactoryGirl.create(:listing, seller_id: user.id) } }
+      before do
+        px_user = FactoryGirl.create :pixi_user, email: 'jsnow@pxb.com'
+        init_setup px_user
+        @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
+        @temp_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id) 
+        @sold_listing = FactoryGirl.create(:listing, seller_id: @user.id, title: 'Leather Briefcase', status: 'sold') 
+        @user.pixi_wants.create FactoryGirl.attributes_for :pixi_like, pixi_id: listing.pixi_id
+        @user.saved_listings.create FactoryGirl.attributes_for :saved_listing, pixi_id: listing.pixi_id
+        visit seller_listings_path 
+      end
       
       it { should have_content('My Pixis') }
+      it { should_not have_content('No pixis found') }
+      it { should have_link 'Active', href: seller_listings_path }
+      it { should have_link 'Unposted', href: unposted_temp_listings_path }
+      it { should have_link 'Sold', href: sold_listings_path }
+      it { should have_link 'Saved', href: saved_listings_path }
+      it { should have_link 'Wanted', href: wanted_listings_path }
 
       describe "pagination" do
         it "should list each listing" do
@@ -396,6 +411,30 @@ describe "Listings", :type => :feature do
             page.should have_selector('td', text: listing.title)
           end
         end
+      end
+
+      it "displays sold listings", js: true do
+        page.find('#sold-pixis').click
+	page.should have_content @sold_listing.title
+	page.should_not have_content 'No pixis found.'
+      end
+
+      it "displays unposted listings", js: true do
+        page.find('#draft-pixis').click
+	page.should have_content @temp_listing.title
+	page.should_not have_content 'No pixis found.'
+      end
+
+      it "displays saved listings", js: true do
+        page.find('#saved-pixis').click
+	page.should have_content listing.title
+	page.should_not have_content 'No pixis found.'
+      end
+
+      it "display wanted listings", js: true do
+        page.find('#wanted-pixis').click
+	page.should have_content listing.title
+	page.should_not have_content 'No pixis found.'
       end
     end
   end

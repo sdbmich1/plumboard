@@ -40,7 +40,9 @@ class SearchesController < ApplicationController
 
   # specify default search location based on user location
   def get_location
-    @lat, @lng = request.location.try(:latitude), request.location.try(:longitude) 
+    @ip = Rails.env.development? || Rails.env.test? ? '24.4.199.34' : request.remote_ip
+    @area = Geocoder.search(@ip)
+    @lat, @lng = @area.first.latitude, @area.first.longitude rescue nil
   end
 
   # dynamically define search options based on selections
@@ -51,7 +53,7 @@ class SearchesController < ApplicationController
       unless @cat.blank?
         {with: {category_id: @cat}, geo: [@lat, @lng], order: "geodist ASC, @weight DESC", star: true, page: @page}
       else
-        {geo: [@lat, @lng], order: "geodist ASC, @weight DESC", star: true, page: @page}
+        @lat.blank? ? {star: true, page: @page} : {geo: [@lat, @lng], order: "geodist ASC, @weight DESC", star: true, page: @page}
       end
     end
   end

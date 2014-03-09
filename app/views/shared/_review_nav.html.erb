@@ -1,7 +1,7 @@
-<%= link_to 'Edit', edit_temp_listing_path(listing), class: 'btn btn-large btn-primary stnd-btn' %>
+<%= link_to 'Edit', edit_temp_listing_path(listing), class: 'btn btn-large' %>
 <% if listing.edit? %>
-  <%= link_to 'Cancel', root_path, confirm: msg, class: 'btn btn-large btn-primary stnd-btn' %>
+  <%= link_to 'Cancel', root_path, confirm: msg, class: 'btn btn-large' %>
 <% else %>
-  <%= link_to 'Remove', listing, method: :delete, confirm: msg, class: 'btn btn-large btn-primary stnd-btn' %>
+  <%= link_to 'Remove', listing, method: :delete, confirm: msg, class: 'btn btn-large' %>
 <% end %>
 

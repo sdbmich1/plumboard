@@ -229,7 +229,7 @@ input, select, .uneditable-input {
 
 #spinner {
   margin-top: 10%;
-  margin-left: 45%;
+  margin-left: 40%;
   position:fixed;
   height: 10%;
   z-index:9999;
@@ -278,7 +278,7 @@ input, select, .uneditable-input {
   .grp-hdr { color: $pixiBlue; }
 }
 
-.tbl-hdr { text-align:left!important; font-weight: normal!important }
+.tbl-hdr { text-align:left!important; font-size: 12px!important; font-weight: normal!important }
 
 .cb-label { display:inline; vertical-align:middle }
 .hdescr { font-size: 0.75em; color: #ccc; }
@@ -680,7 +680,7 @@ a#home-link, a.home-link {
 }
 
 a#browse-link {
-  &:hover {
+  &:hover, &:visited, &:link {
     color: black;
     background-color: transparent;
     text-decoration: underline;

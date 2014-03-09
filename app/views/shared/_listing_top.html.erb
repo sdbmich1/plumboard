@@ -5,13 +5,13 @@
   <div class='valign'>
     Posted By: <%= listing.seller_name %> 
     <div class="sm-top rateit smpixis" data-rateit-value="<%= get_rating listing.user %>" data-rateit-ispreset="true" data-rateit-readonly="true"></div>
-    <%= "(#{listing.user.seller_ratings.size})" %>
+    <%= "(#{listing.seller_rating_count})" %>
   </div>
   <% unless !listing.active? || listing.seller?(@user) %>
     <div class='clear-all'></div>
     <div class='panel_errors'></div>
     <div id='px-panel' class='sm-top sm-bot'>
-      <%= render partial: 'shared/listing_panel' %>
+      <%= render partial: 'shared/listing_panel', locals: {listing: listing} %>
     </div>
     <div id='post_form' style='display:none'><%= render partial: 'shared/contact', locals: { listing: listing } %></div>
   <% end %>  

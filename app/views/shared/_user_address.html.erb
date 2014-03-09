@@ -1,27 +1,27 @@
 <tr>
   <td>
     <% if toggle %>
-      <label>Email* </label><%= form.text_field :email %>
+      <label class='tbl-hdr'>Email* </label><%= form.text_field :email %>
     <% else %>
-      <label>Mobile Phone* </label><%= form.text_field :mobile_phone %>
+      <label class='tbl-hdr'>Mobile Phone* </label><%= form.text_field :mobile_phone %>
     <% end %>
   </td>
   <td></td>
-  <td><label>Home Phone* </label><%= form.text_field :home_phone %></td>
+  <td><label class='tbl-hdr'>Home Phone* </label><%= form.text_field :home_phone %></td>
 </tr>
 <tr>
-  <td><label>Address 1* </label><%= form.text_field :address %></td>	
+  <td><label class='tbl-hdr'>Address 1* </label><%= form.text_field :address %></td>	
   <td></td>
-  <td><label>Address 2 </label><%= form.text_field :address2 %></td>
+  <td><label class='tbl-hdr'>Address 2 </label><%= form.text_field :address2 %></td>
 </tr>
 <tr>
-  <td><label>City* </label><%= form.text_field :city %></td>
+  <td><label class='tbl-hdr'>City* </label><%= form.text_field :city %></td>
   <td></td>
-  <td><label class='neg-top'>State/Province*</label>
+  <td><label class='neg-top tbl-hdr'>State/Province*</label>
 	<%= form.collection_select :state, State.all, :code, :state_name, {prompt: 'Select State'}, {class: 'pixi-select'} %></td>
 </tr>
 <tr>
-  <td><label>Zip* </label><%= form.text_field :zip, :size => 10, id: 'postal_code' %></td>
+  <td><label class='tbl-hdr'>Zip* </label><%= form.text_field :zip, :size => 10, id: 'postal_code' %></td>
   <td></td>
-  <td><label class='neg-top'>Country </label><%= country_select "transaction", "country", ["United States"], {}, {class: 'country pixi-select'} %></td>	  
+  <td><label class='neg-top tbl-hdr'>Country </label><%= country_select "transaction", "country", ["United States"], {}, {class: 'country pixi-select'} %></td>	  
 </tr>

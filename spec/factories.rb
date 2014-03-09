@@ -1,6 +1,6 @@
 FactoryGirl.define do
   sequence(:email) {|n| "person#{n}@example.com" }
-  factory :user, aliases: [:recipient, :seller] do
+  factory :user, aliases: [:recipient, :seller] do |u|
     first_name            { Faker::Name.first_name }
     last_name             { Faker::Name.last_name }
     email		  
@@ -320,6 +320,11 @@ FactoryGirl.define do
   end
 
   factory :pixi_like do
+    user_id		1
+    pixi_id		"xxxx"
+  end
+
+  factory :pixi_want do
     user_id		1
     pixi_id		"xxxx"
   end

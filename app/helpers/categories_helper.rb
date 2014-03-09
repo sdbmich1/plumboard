@@ -13,4 +13,9 @@ module CategoriesHelper
       link_to category.name_title, category_listings_path(cid: category, loc: @loc), class: 'pixi-link'
     end 
   end
+
+  # set class for category link
+  def set_cat_link_class
+    @loc.blank? ? 'pixi-cat-link' : ''
+  end
 end

@@ -13,7 +13,7 @@ class Picture < ActiveRecord::Base
 
   validates_attachment :photo, 
     :content_type => { :content_type => ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp'] },
-    :size => { :in => 0..1.megabytes }
+    :size => { :in => 0..5.megabytes }
 
   # ...and perform after save in background
   after_save do |picture| 

@@ -139,12 +139,16 @@ module ListingsHelper
     model.blank?
   end
 
-  # set path based on item existance and type 
-  def set_item_path model, val
-    pid = @listing.pixi_id rescue nil
-    if val == 'like'
+  # set path based on like existance and type 
+  def set_like_path model, pid
+    unless pid.blank?
       !is_blank?(model) ? pixi_like_path(model, pixi_id: pid) : pixi_likes_path(id: pid)
-    else
+    end
+  end
+
+  # set path based on saved existance and type 
+  def set_saved_path model, pid
+    unless pid.blank?
       !is_blank?(model) ? saved_listing_path(model, pixi_id: pid) : saved_listings_path(id: pid)
     end
   end

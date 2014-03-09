@@ -14,7 +14,7 @@ Plumboard::Application.routes.draw do
   # resource defs
   resources :listings, except: [:new, :edit, :update, :create] do
     collection do
-      get 'get_pixi_price', 'seller', 'follower', 'sold', 'category', 'local'
+      get 'get_pixi_price', 'seller', 'follower', 'sold', 'category', 'local', 'wanted'
     end
   end
 
@@ -115,9 +115,9 @@ Plumboard::Application.routes.draw do
   get "/help", to: "pages#help" 
   get "/terms", to: "pages#terms" 
   get "/howitworks", to: "pages#howitworks" 
+  get "/welcome", to: "pages#welcome" 
   get "/support", to: "inquiries#support" 
   get "/contact", to: "inquiries#new" 
-  get "/welcome", to: "pages#welcome" 
   get '/system/:class/:attachment/:id/:style/:filename', :to => 'pictures#asset'
   get '/loc_name', to: "sites#loc_name"
   get '/buyer_name', to: "users#buyer_name"

@@ -10,9 +10,12 @@
         <%= render partial: 'shared/signin_form', locals: { rmbrFlg: true } %>
       <% end %>
 
-      <%- if devise_mapping.recoverable? && controller_name != 'passwords' %>
-        <%= link_to "Forgot password?", new_password_path(resource_name) %><br />
-      <% end -%>
+      <div class='clear-all'></div>
+      <div class='mtop'>
+        <%- if devise_mapping.recoverable? && controller_name != 'passwords' %>
+          <%= link_to "Forgot password?", new_password_path(resource_name) %><br />
+        <% end -%>
+      </div>
     </div>
   </div>
 <% end %>

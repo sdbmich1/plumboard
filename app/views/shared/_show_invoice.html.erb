@@ -25,8 +25,8 @@
         </div>
 	<div class="pull-right">
           <% if @invoice.owner?(@user) && @invoice.unpaid? %>
-      	    <%= link_to 'Remove', @invoice, method: :delete, confirm: 'Delete this invoice?', class: 'btn btn-primary stnd-btn', remote: true %>
-            <%= link_to 'Edit', edit_invoice_path(@invoice), class: 'btn btn-primary stnd-btn', remote: true %>
+      	    <%= link_to 'Remove', @invoice, method: :delete, confirm: 'Delete this invoice?', class: 'btn btn-large', remote: true %>
+            <%= link_to 'Edit', edit_invoice_path(@invoice), class: 'btn btn-large', remote: true %>
     	  <% else %>
             <%= render partial: 'shared/pay_invoice', locals: { invoice: @invoice } if @invoice.unpaid? %>
     	  <% end %>

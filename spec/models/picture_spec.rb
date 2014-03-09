@@ -31,7 +31,7 @@ describe Picture do
   it { should validate_attachment_content_type(:photo).
                       allowing('image/png', 'image/gif', 'image/jpg', 'image/jpeg', 'image/bmp').
                       rejecting('text/plain', 'text/xml') }
-  it { should validate_attachment_size(:photo).less_than(1.megabytes) }
+  it { should validate_attachment_size(:photo).less_than(5.megabytes) }
 
   describe "listing photo validations" do
     it "big pic should not be valid" do

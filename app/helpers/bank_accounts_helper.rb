@@ -12,6 +12,6 @@ module BankAccountsHelper
 
   # set partial name
   def set_acct_partial_name
-    @target || 'shared/invoice_form'
+    @target ||= 'shared/invoice_form'
   end
 end

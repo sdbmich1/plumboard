@@ -14,7 +14,8 @@ class ListingParent < ActiveRecord::Base
 
   attr_accessible :buyer_id, :category_id, :description, :title, :seller_id, :status, :price, :show_alias_flg, :show_phone_flg, :alias_name,
   	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id, :year_built, :pixan_id, :job_type,
-	:edited_by, :edited_dt, :post_ip, :lng, :lat, :event_start_date, :event_end_date, :compensation, :event_start_time, :event_end_time
+	:edited_by, :edited_dt, :post_ip, :lng, :lat, :event_start_date, :event_end_date, :compensation, :event_start_time, :event_end_time,
+	:explanation
 
   belongs_to :user, :foreign_key => :seller_id
   belongs_to :site
@@ -264,6 +265,11 @@ class ListingParent < ActiveRecord::Base
     user.photo rescue nil
   end
 
+  # seller pic
+  def seller_rating_count
+    user.seller_ratings.size rescue 0
+  end
+
   # display first image
   def photo_url
     pictures[0].photo.url rescue nil
@@ -272,6 +278,11 @@ class ListingParent < ActiveRecord::Base
   # format start date
   def start_dt
     start_date.utc.getlocal.strftime('%m/%d/%Y') rescue nil
+  end
+
+  # format updated date
+  def updated_dt
+    updated_at.utc.getlocal.strftime('%m/%d/%Y %l:%M %p') rescue nil
   end
 
   # set json string

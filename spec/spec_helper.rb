@@ -52,24 +52,29 @@ Spork.prefork do
     config.include IntegrationSpecHelper, :type => :request
 
     config.before(:suite) do
+      DatabaseCleaner.clean_with :truncation
+    end
+
+    config.before(:each) do
+      DatabaseCleaner.strategy = :transaction
+    end
+
+    config.before(:each, :js => true) do
       DatabaseCleaner.strategy = :truncation
     end
 
     config.before(:each) do
-      if example.metadata[:js]
-        DatabaseCleaner.strategy = :truncation
-      else
-	DatabaseCleaner.strategy = :transaction
-      end
-
-      reset_email
       DatabaseCleaner.start
+      reset_email
       Contact.any_instance.stub(:geocode) { [1,1] }
       Listing.any_instance.stub(:geocode) { [1,1] }
     end
 
-    config.after(:each) do
+    config.append_after(:each) do
       DatabaseCleaner.clean
+    end
+
+    config.after(:each) do
       Warden.test_reset!
     end
 

@@ -72,7 +72,7 @@ describe PixiPost do
   end
 
   describe "should not find correct seller name" do 
-    before { @pixi_post.seller_id = 100 }
+    before { @pixi_post.user_id = 100 }
     it { @pixi_post.seller_name.should be_nil } 
   end
 
@@ -259,6 +259,12 @@ describe PixiPost do
         @post.should be_valid
       end
 
+      it "has valid appt date w/ old preferred date" do
+        @post.appt_date = Date.today+3.days
+        @post.preferred_date = Date.today-3.days
+        @post.should be_valid
+      end
+
       it "rejects a bad or missing appt date" do
         @post.should_not be_valid
       end
@@ -284,6 +290,35 @@ describe PixiPost do
       it "rejects a bad or missing completed date" do
         @post.should_not be_valid
       end
+    end
+  end
+
+  describe 'pixan_id' do
+    let(:pixan) { FactoryGirl.create :pixi_user }
+    it "checks appt date" do
+      @post = @user.pixi_posts.build FactoryGirl.attributes_for :pixi_post, pixan_id: pixan.id, appt_date: Date.today+3.days 
+      @pixi_post.should be_valid
+    end
+
+    it "checks for missing appt date" do
+      @post = @user.pixi_posts.build FactoryGirl.attributes_for :pixi_post, pixan_id: pixan.id
+      @post.should_not be_valid
+    end
+  end
+
+  describe 'pixi_id' do
+    let(:pixan) { FactoryGirl.create :pixi_user }
+    let(:listing) { FactoryGirl.create :listing, seller_id: @user.id }
+
+    it "checks completed date" do
+      @post = @user.pixi_posts.build FactoryGirl.attributes_for :pixi_post, pixan_id: pixan.id, appt_date: Date.today+3.days, 
+        completed_date: Date.today+3.days, pixi_id: listing.pixi_id
+      @pixi_post.should be_valid
+    end
+
+    it "checks for missing completed date" do
+      @post = @user.pixi_posts.build FactoryGirl.attributes_for :pixi_post, pixan_id: pixan.id, pixi_id: listing.pixi_id
+      @post.should_not be_valid
     end
   end
 end

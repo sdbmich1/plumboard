@@ -1,6 +1,6 @@
 <div class="item">
   <div class="center-wrapper">
-    <%= link_to category_listings_path(cid: category, loc: @loc), class: 'pixi-cat-link', 'data-cat-id'=> category.id do %>
+    <%= link_to category_listings_path(cid: category, loc: @loc), class: '#{set_cat_link_class}', 'data-cat-id'=> category.id do %>
       <%= render partial: 'shared/show_picture', locals: {psize: 'thumb', model: category} %>
     <% end %>
     <div class='sm-top bdescr'>

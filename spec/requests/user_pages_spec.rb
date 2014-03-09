@@ -75,6 +75,7 @@ describe "Users", :type => :feature do
       expect { 
 	      fill_in 'user_first_name', with: 'Ted'
 	      click_save
+	      page.should have_content 'Ted'
 	}.not_to change(User, :count)
 
       user.reload.first_name.should  == 'Ted' 

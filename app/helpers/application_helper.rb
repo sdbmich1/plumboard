@@ -159,7 +159,7 @@ module ApplicationHelper
 
   # set path based on invoice count
   def get_unpaid_path
-    if @user.unpaid_invoice_count > 1 
+    if @user.unpaid_invoice_count > 0 
       @invoice = @user.unpaid_received_invoices.first
       invoice_path(@invoice)
     end

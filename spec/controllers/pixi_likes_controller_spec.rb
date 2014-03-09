@@ -29,7 +29,7 @@ describe PixiLikesController do
     end
     
     def do_create
-      xhr :post, :create
+      xhr :post, :create, id: '1'
     end
 
     context 'failure' do

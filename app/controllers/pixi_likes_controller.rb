@@ -32,8 +32,8 @@ class PixiLikesController < ApplicationController
 
   def reload_data pid
     @listing = Listing.find_by_pixi_id pid
-    @like = @user.pixi_likes.find_by_pixi_id pid rescue nil
-    @saved = @user.saved_listings.find_by_pixi_id pid rescue nil
-    @contact = @user.posts.find_by_pixi_id pid rescue nil
+    @like = @user.pixi_likes.where(pixi_id: pid).first
+    @saved = @user.saved_listings.where(pixi_id: pid).first
+    @contact = @user.posts.where(pixi_id: pid).first
   end
 end

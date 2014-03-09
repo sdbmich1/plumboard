@@ -89,7 +89,7 @@ function callbackHandler(response) {
   switch (response.status) {
     case 400:
       console.log(response.error);
-      processError(response, 'Card/Account number or cvv invalid');
+      processError(response, 'Card/Account number, cvv or expiration date invalid');
       break;
     case 402:
       console.log(response.error);

@@ -36,6 +36,7 @@ describe Listing do
   it { should respond_to(:year_built) }
   it { should respond_to(:pixan_id) }
   it { should respond_to(:job_type) }
+  it { should respond_to(:explanation) }
 
   it { should respond_to(:user) }
   it { should respond_to(:site) }
@@ -48,6 +49,8 @@ describe Listing do
   it { should respond_to(:comments) }
   it { should respond_to(:pixi_likes) }
   it { should have_many(:pixi_likes).with_foreign_key('pixi_id') }
+  it { should respond_to(:pixi_wants) }
+  it { should have_many(:pixi_wants).with_foreign_key('pixi_id') }
   it { should respond_to(:saved_listings) }
   it { should have_many(:saved_listings).with_foreign_key('pixi_id') }
 
@@ -236,13 +239,23 @@ describe Listing do
     it { @listing.seller_name.should be_nil } 
   end
 
-  describe "should find correct seller photo" do 
+  describe "seller photo" do 
     it { @listing.seller_photo.should_not be_nil } 
+
+    it 'does not return seller photo' do 
+      @listing.seller_id = 100 
+      @listing.seller_photo.should be_nil  
+    end
   end
 
-  describe "should not find correct seller photo" do 
-    before { @listing.seller_id = 100 }
-    it { @listing.seller_photo.should be_nil } 
+  describe "seller rating count" do 
+    it { @listing.seller_rating_count.should == 0 } 
+
+    it 'returns seller rating count' do 
+      @buyer = create(:pixi_user)
+      @rating = @buyer.ratings.create FactoryGirl.attributes_for :rating, seller_id: @user.id, pixi_id: @listing.id
+      expect(@listing.seller_rating_count).to eq(1)
+    end
   end
 
   describe "should have a transaction" do 
@@ -537,6 +550,26 @@ describe Listing do
     it { Listing.saved_list(@user).should_not be_empty }
   end
 
+  describe "wanted list" do 
+    before(:each) do
+      @usr = FactoryGirl.create :pixi_user
+      @pixi_want = @user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
+    end
+
+    it { Listing.wanted_list(@usr).should_not include @listing } 
+    it { Listing.wanted_list(@user).should_not be_empty }
+  end
+
+  describe "cool list" do 
+    before(:each) do
+      @usr = FactoryGirl.create :pixi_user
+      @pixi_like = @user.pixi_likes.create FactoryGirl.attributes_for :pixi_like, pixi_id: @listing.pixi_id
+    end
+
+    it { Listing.cool_list(@usr).should_not include @listing } 
+    it { Listing.cool_list(@user).should_not be_empty }
+  end
+
   describe "dup pixi" do
     let(:user) { FactoryGirl.create :pixi_user }
     let(:listing) { FactoryGirl.create :listing, seller_id: user.id }
@@ -549,6 +582,25 @@ describe Listing do
     it "returns new listing" do 
       listing.dup_pixi(false).should be_true
     end
+  end
+
+  describe "date display methods" do
+    let(:user) { FactoryGirl.create :pixi_user }
+    let(:listing) { FactoryGirl.create :listing, seller_id: user.id }
+
+    it "does not show start date" do
+      listing.start_date = nil
+      listing.start_date.should be_nil
+    end
+
+    it { listing.start_date.should_not be_nil }
+
+    it "does not show updated date" do
+      listing.updated_at = nil
+      listing.updated_dt.should be_nil
+    end
+
+    it { listing.updated_dt.should_not be_nil }
   end
 
   describe "date validations" do

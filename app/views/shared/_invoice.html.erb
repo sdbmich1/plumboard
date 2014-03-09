@@ -1,10 +1,10 @@
 <tr>
-  <td class='span1'>
+  <td class='span1 center-wrapper'>
     <%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: invoice.listing} %>
   </td>
-  <td class='span2'><div class='price'><%= link_to invoice.id, invoice, remote: true %></div></td>
+  <td class='span1'><div class='price'><%= link_to invoice.id, invoice, remote: true %></div></td>
   <td class='span2'><%= invoice.buyer_name %></td>
-  <td class='span3'><%= link_to invoice.pixi_title, invoice.listing, class: 'pending_title' %></td>
-  <td class='span2'><div class='price'><%= number_to_currency(invoice.amount) %></div></td>
-  <td class='span1'><%= invoice.status.titleize %></td>
+  <td class='span5'><%= link_to invoice.pixi_title, invoice.listing, class: 'pending_title' %></td>
+  <td class='span1'><div class='price'><%= ntc(invoice.amount + invoice.get_fee) %></div></td>
+  <td class='span1 center-wrapper'><%= invoice.status.titleize %></td>
 </tr>

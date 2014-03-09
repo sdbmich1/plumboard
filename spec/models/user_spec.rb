@@ -55,6 +55,8 @@ describe User do
     it { should have_many(:pixi_likes) }
     it { should respond_to(:saved_listings) }
     it { should have_many(:saved_listings) }
+    it { should respond_to(:pixi_wants) }
+    it { should have_many(:pixi_wants) }
 
     it { should validate_presence_of(:first_name) }
     it { should validate_presence_of(:last_name) }
