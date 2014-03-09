@@ -9,6 +9,6 @@
       <li><%= link_to 'Bad Pictures', deny_pending_listing_path(listing, reason: 'Bad Pictures'), method: :put %></li> 
     </ul>
   </div>
-  <%= link_to 'Approve', approve_pending_listing_path(listing), method: :put, class: 'btn btn-large btn-primary submit-btn' %>
+  <%= link_to 'Approve', approve_pending_listing_path(listing), method: :put, class: 'btn btn-large btn-primary submit-btn', id: 'approve-btn' %>
 </div>
 

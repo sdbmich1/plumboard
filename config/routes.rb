@@ -74,7 +74,7 @@ Plumboard::Application.routes.draw do
 
   resources :temp_listings, except: [:index] do
     collection do
-      get :autocomplete_site_name, :autocomplete_user_first_name, 'unposted'
+      get :autocomplete_site_name, :autocomplete_user_first_name, 'unposted', 'pending'
     end
     member do
       put 'resubmit', 'submit'

@@ -270,8 +270,20 @@ describe User do
     end
 
     it "does not return new pixis" do
-      usr = FactoryGirl.create :contact_user
-      usr.new_pixis.should be_empty
+      @temp_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id, status: 'pending')
+      @user.new_pixis.should be_empty
+    end
+  end
+
+  describe 'pending pixis' do
+    it "returns pending pixis" do
+      @temp_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id, status: 'pending')
+      @user.pending_pixis.should_not be_empty
+    end
+
+    it "does not return pending pixis" do
+      @temp_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id)
+      @user.pending_pixis.should be_empty
     end
   end
 

@@ -103,6 +103,13 @@ class TempListingsController < ApplicationController
       format.json { render json: {listings: @listings} }
     end
   end
+
+  def pending
+    @listings = @user.pending_pixis.paginate(page: @page)
+    respond_with(@listings) do |format|
+      format.json { render json: {listings: @listings} }
+    end
+  end
   
   private
 

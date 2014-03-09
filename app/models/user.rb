@@ -126,7 +126,12 @@ class User < ActiveRecord::Base
 
   # return all new pixis for user
   def new_pixis
-    self.temp_listings.where("status NOT IN ('approved')")
+    self.temp_listings.where("status NOT IN ('approved', 'pending', 'denied')")
+  end
+
+  # return all pending pixis for user
+  def pending_pixis
+    self.temp_listings.where("status IN ('pending', 'denied')")
   end
 
   # return all pixis for user

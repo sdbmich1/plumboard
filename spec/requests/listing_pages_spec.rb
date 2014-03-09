@@ -391,6 +391,8 @@ feature "Listings" do
         init_setup px_user
         @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
         @temp_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id) 
+        @pending_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id, status: 'pending', title: 'Snare Drum') 
+        @denied_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id, status: 'denied', title: 'Xbox 360') 
         @sold_listing = FactoryGirl.create(:listing, seller_id: @user.id, title: 'Leather Briefcase', status: 'sold') 
         @user.pixi_wants.create FactoryGirl.attributes_for :pixi_like, pixi_id: listing.pixi_id
         @user.saved_listings.create FactoryGirl.attributes_for :saved_listing, pixi_id: listing.pixi_id
@@ -400,7 +402,8 @@ feature "Listings" do
       it { should have_content('My Pixis') }
       it { should_not have_content('No pixis found') }
       it { should have_link 'Active', href: seller_listings_path }
-      it { should have_link 'Unposted', href: unposted_temp_listings_path }
+      it { should have_link 'Draft', href: unposted_temp_listings_path }
+      it { should have_link 'Pending', href: pending_temp_listings_path }
       it { should have_link 'Sold', href: sold_listings_path }
       it { should have_link 'Saved', href: saved_listings_path }
       it { should have_link 'Wanted', href: wanted_listings_path }
@@ -415,25 +418,39 @@ feature "Listings" do
 
       it "displays sold listings", js: true do
         page.find('#sold-pixis').click
+	page.should_not have_content listing.title
 	page.should have_content @sold_listing.title
 	page.should_not have_content 'No pixis found.'
       end
 
-      it "displays unposted listings", js: true do
+      it "displays draft listings", js: true do
         page.find('#draft-pixis').click
 	page.should have_content @temp_listing.title
+	page.should_not have_content @pending_listing.title
+	page.should_not have_content @denied_listing.title
+	page.should_not have_content 'No pixis found.'
+      end
+
+      it "displays pending listings", js: true do
+        page.find('#pending-pixis').click
+	page.should_not have_content @temp_listing.title
+	page.should have_content @pending_listing.title
+	page.should have_content @denied_listing.title
+	page.should_not have_content @sold_listing.title
 	page.should_not have_content 'No pixis found.'
       end
 
       it "displays saved listings", js: true do
         page.find('#saved-pixis').click
 	page.should have_content listing.title
+	page.should_not have_content @sold_listing.title
 	page.should_not have_content 'No pixis found.'
       end
 
       it "display wanted listings", js: true do
         page.find('#wanted-pixis').click
 	page.should have_content listing.title
+	page.should_not have_content @sold_listing.title
 	page.should_not have_content 'No pixis found.'
       end
     end

@@ -464,4 +464,34 @@ describe TempListingsController do
       expect(response).to be_success
     end
   end
+
+  describe "xhr GET /pending" do
+    before :each do
+      @listings = stub_model(TempListing)
+      controller.stub!(:current_user).and_return(@user)
+      @user.stub_chain(:pending_pixis, :paginate).and_return( @listings )
+      do_get
+    end
+
+    def do_get
+      xhr :get, :pending, page: '1'
+    end
+
+    it "renders the :pending view" do
+      response.should render_template :pending
+    end
+
+    it "assigns @listings" do
+      assigns(:listings).should_not be_nil
+    end
+
+    it "shows the requested listings" do
+      response.should be_success
+    end
+
+    it "responds to JSON" do
+      get :pending, format: :json
+      expect(response).to be_success
+    end
+  end
 end

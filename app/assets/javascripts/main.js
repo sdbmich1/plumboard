@@ -294,6 +294,12 @@ function allFilled(list) {
   return filled;
 }
 
+// disable btn to prevent double click
+$(document).on("click", "#approve-btn", function(showElem){
+  toggleLoading();
+  $('#approve-btn').attr('disabled', true);
+});
+
 // reload masonry on ajax calls to swap data
 $(document).on("click", ".pixi-cat", function(showElem){
   var cid = $(this).attr("data-cat-id");
