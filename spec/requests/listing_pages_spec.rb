@@ -334,6 +334,7 @@ feature "Listings" do
 
       before(:each) do
         @site = FactoryGirl.create :site, name: 'Pixi Tech'
+        FactoryGirl.create :site, name: 'Cal State'
 	@category = FactoryGirl.create :category
         FactoryGirl.create(:listing, title: "HP Printer J4580", description: "printer", seller_id: @user.id, site_id: @site.id, 
 	  category_id: @category.id) 
@@ -352,9 +353,6 @@ feature "Listings" do
       end
       
       it { should have_link 'Recent' }
-      # it { should have_link 'Following', href: '#' }
-      # it { should have_link 'Map', href: '#' }
-      # it { should have_link 'Categories', href: categories_path }
       it { should have_content('Pixis') }
       
       it "scrolls listings", js: true do 
@@ -368,12 +366,13 @@ feature "Listings" do
       end
 
       it "selects a site", js: true do
-        fill_in "location", :with => 'pixi'
+        fill_autocomplete('site_name', with: 'pixi')
 	set_site_id
         page.should have_content 'HP Printer J4580'
 
-	click_on 'Recent'
-        page.should have_content @listing.nice_title
+        page.should have_content @listing1.nice_title
+        page.should_not have_content @listing.nice_title
+        page.should have_content @site.name
       end
 
       it "selects categories", js: true do

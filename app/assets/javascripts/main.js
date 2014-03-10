@@ -626,8 +626,8 @@ function resetBoard() {
   reset_menu_state($("#li_home"), true);
 }
 
+// Fix input element click problem
 $(function() {
-  // Fix input element click problem
   $('.dropdown input, .dropdown label, .dropdown-menu input, .dropdown-menu select').click(function(e) {
     e.stopPropagation();
   });

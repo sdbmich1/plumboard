@@ -66,10 +66,10 @@ class CategoriesController < ApplicationController
     if @loc.blank?
       @ip = Rails.env.development? || Rails.env.test? ? '24.4.199.34' : request.remote_ip
       @area = Geocoder.search(@ip)
-      @place = Contact.near([@area.first.latitude, @area.first.longitude]).first rescue nil
-      @loc, @loc_name = @place.id, @place.city rescue nil
+      @loc_name = Contact.near([@area.first.latitude, @area.first.longitude]).first.city rescue nil
+      @loc = Site.find_by_name(@loc_name).id rescue nil
     else
-      @loc_name = Contact.find(@loc).city rescue nil
+      @loc_name = Site.find(@loc).city rescue nil
     end
   end
 

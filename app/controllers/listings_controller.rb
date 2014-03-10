@@ -67,6 +67,7 @@ class ListingsController < ApplicationController
   def category
     @listings = Listing.get_by_city @cat, @loc, @page
     @category = Category.find @cat
+    Rails.logger.info 'Location id = ' + @loc.to_s
     respond_with(@listings) do |format|
       format.json { render json: {listings: @listings} }
     end
@@ -89,7 +90,8 @@ class ListingsController < ApplicationController
   def load_data
     @page, @cat, @loc, @loc_name = params[:page] || 1, params[:cid], params[:loc], params[:loc_name]
     @loc ||= Contact.find_by_name(@loc_name).id rescue nil
-    @loc_name ||= Contact.find(@loc).city rescue nil
+    @loc_name ||= Site.find(@loc).name rescue nil
+    Rails.logger.info 'Location name = ' + @loc_name.to_s
   end
 
   def page_layout

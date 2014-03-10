@@ -1,3 +1,4 @@
-$("#nav-home-menu").html("<%= escape_javascript( raw render(partial: 'shared/navbar', locals: { menu_name: 'Pixis' }) ) %>");
+$("#nav-home-menu").html("<%= escape_javascript( raw render(partial: 'shared/site_menu', locals: { loc_name: @loc_name }) ) %>");
+$("#site_name").val('');
 $('#pg-title').html('Pixiboard | Pixis');
 <%= render 'shared/reload_board' %>

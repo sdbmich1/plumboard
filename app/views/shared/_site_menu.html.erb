@@ -1,0 +1,3 @@
+  <li id='li_home' class="active"><%= link_to "Recent", '#', id: 'recent-link', class: 'submenu' %></li>
+  <li><%= link_to loc_name, local_listings_path(loc: @loc), id: 'menu_site_name' unless loc_name.blank? %></li>
+
