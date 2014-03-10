@@ -43,6 +43,8 @@ class SearchesController < ApplicationController
     @ip = Rails.env.development? || Rails.env.test? ? '24.4.199.34' : request.remote_ip
     @area = Geocoder.search(@ip)
     @lat, @lng = @area.first.latitude, @area.first.longitude rescue nil
+    @loc_name = Site.find(@loc).name rescue nil
+      Rails.logger.info 'Search Location name = ' + @loc_name.to_s
   end
 
   # dynamically define search options based on selections

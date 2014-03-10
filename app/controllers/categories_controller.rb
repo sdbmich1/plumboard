@@ -68,9 +68,11 @@ class CategoriesController < ApplicationController
       @area = Geocoder.search(@ip)
       @loc_name = Contact.near([@area.first.latitude, @area.first.longitude]).first.city rescue nil
       @loc = Site.find_by_name(@loc_name).id rescue nil
+      Rails.logger.info 'Category Location id = ' + @loc.to_s
     else
-      @loc_name = Site.find(@loc).city rescue nil
+      @loc_name = Site.find(@loc).name rescue nil
     end
+      Rails.logger.info 'Category Location name = ' + @loc_name.to_s
   end
 
   # parse results for active items only

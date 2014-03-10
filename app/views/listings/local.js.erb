@@ -1,1 +1,3 @@
+$("#nav-site-menu").html("<%= escape_javascript( raw render(partial: 'shared/site_menu', locals: { loc_name: @loc_name }) ) %>");
+$("#site_name").val('');
 <%= render 'shared/reload_board' %>
