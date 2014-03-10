@@ -776,3 +776,25 @@ function switchToggle(flg) {
 // fix bootstrap mobile dropdown issue
 $('body').on('touchstart.dropdown', '.dropdown-menu', function (e) { e.stopPropagation(); })
          .on('touchstart.dropdown', '.dropdown-submenu', function (e) { e.stopPropagation(); });
+
+// Trap Backspace(8) and Enter(13) - 
+// Except bksp on text/textareas, enter on textarea/submit
+if (typeof window.event != 'undefined') // IE
+  document.onkeydown = function() // IE
+    {
+       var t=event.srcElement.type;
+       var kc=event.keyCode;
+       return ((kc != 8 && kc != 13) || ( t == 'text' &&  kc != 13 ) || (t == 'textarea') || ( t == 'submit' &&  kc == 13))
+    }
+else
+  document.onkeypress = function(e)  // FireFox/Others 
+    {
+       var t=e.target.type;
+       var kc=e.keyCode;
+       if ((kc != 8 && kc != 13) || ( t == 'text' &&  kc != 13 ) || (t == 'textarea') || ( t == 'submit' &&  kc == 13))
+	 return true
+       else {
+	//  alert('Sorry Backspace/Enter is not allowed here'); // Demo code
+	 return false
+       }
+    }
