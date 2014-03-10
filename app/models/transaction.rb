@@ -10,7 +10,8 @@ class Transaction < ActiveRecord::Base
   has_many :invoices
   has_many :listings, through: :invoices
   has_many :temp_listings
-  has_many :transaction_details
+  has_many :transaction_details, dependent: :destroy
+  has_many :pixi_payments, dependent: :destroy
 
   name_regex =  /^[A-Z]'?['-., a-zA-Z]+$/i
   text_regex = /^[-\w\,. _\/&@]+$/i
