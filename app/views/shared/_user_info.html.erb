@@ -1,4 +1,4 @@
-<div><%= f.text_field :first_name, :placeholder=>'First Name', :autofocus => true %></div>
+<div><%= f.text_field :first_name, :placeholder=>'First Name' %></div>
 <div><%= f.text_field :last_name, :placeholder=> 'Last Name' %></div>
 <div><%= f.email_field :email, :placeholder=>'Email Address' %></div>
 <div><%= f.select :gender, options_for_select( ['Male', 'Female'], :selected=>@user.gender ), :prompt => 'Gender' %></div>

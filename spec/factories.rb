@@ -299,6 +299,13 @@ FactoryGirl.define do
     status 		"active"
   end
 
+  factory :pixi_post_zip do
+    zip         90201
+    city        "LA"
+    state       "CA"
+    status 	"active"
+  end
+
   factory :job_type do
     code		"CT"
     job_name		"Contract"

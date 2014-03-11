@@ -494,6 +494,7 @@ var keyPress = false;
 
 // submit contact form on enter key
 $(document).on("keypress", "#contact_content", function(e){
+   console.log('in keypress');
    keyEnter(e, $(this), '#contact-btn');
 });
 
@@ -784,14 +785,15 @@ if (typeof window.event != 'undefined') // IE
     {
        var t=event.srcElement.type;
        var kc=event.keyCode;
-       return ((kc != 8 && kc != 13) || ( t == 'text' &&  kc != 13 ) || (t == 'textarea') || ( t == 'submit' &&  kc == 13))
+       return ((kc != 8) || ( t == 'text') || (t == 'textarea') || ( t == 'submit'))
     }
 else
   document.onkeypress = function(e)  // FireFox/Others 
     {
        var t=e.target.type;
        var kc=e.keyCode;
-       if ((kc != 8 && kc != 13) || ( t == 'text' &&  kc != 13 ) || (t == 'textarea') || ( t == 'submit' &&  kc == 13))
+       console.log('in onkeypress');
+       if ((kc != 8) || ( t == 'text') || (t == 'textarea') || ( t == 'submit'))
 	 return true
        else {
 	//  alert('Sorry Backspace/Enter is not allowed here'); // Demo code

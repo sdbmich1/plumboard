@@ -4,7 +4,7 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
 </head>
   <body> 	
-    	<%= render :partial=>'mail_header' %><br /><br />
+    	<%= render :partial=>'shared/mail_header' %><br /><br />
 	Hi <%= @user.first_name %>,<br />
     	<h2>Welcome to Pixiboard!</h2>
 
@@ -18,7 +18,7 @@
 
 	<span style="margin-top:20px;">Happy Pixing!</span><br /><br />
 	<span>The Pixiboard Team</span><br /><br /> 	
-    	<%= render :partial=>'mail_footer' %>
+    	<%= render :partial=>'shared/mail_footer' %>
   </body>
 </html>
 

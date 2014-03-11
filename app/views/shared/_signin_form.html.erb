@@ -1,6 +1,6 @@
   <%= form_for("user", :url => user_session_path) do |f| %>
     <div id='signup'>
-      <div><%= f.email_field :email, placeholder: 'Email', :autofocus => true %></div>
+      <div><%= f.email_field :email, placeholder: 'Email' %></div>
       <div><%= f.password_field :password, placeholder: 'Password', size: 20 %></div>
     </div>
 

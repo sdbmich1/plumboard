@@ -40,7 +40,7 @@ class TempListing < ListingParent
   end
 
   # edit order fields to process order
-  def edit_flds usr, val, reason
+  def edit_flds usr, val, reason=''
     self.status, self.edited_by, self.edited_dt, self.explanation = val, usr.name, Time.now, reason
     save!
   end

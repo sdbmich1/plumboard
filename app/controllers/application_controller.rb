@@ -98,6 +98,7 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  # used for mobile web site
   def prepare_for_mobile  
     session[:mobile_param] = params[:mobile] if params[:mobile]  
     # request.format = :mobile if mobile_device? && !request.xhr?
@@ -109,9 +110,16 @@ class ApplicationController < ActionController::Base
     end
   end 
 
+  # disable json requests for mobile
   def protect_against_forgery?
-    unless request.format == :json
-      super
+    super unless request.format == :json
+  end
+
+  # used to block CSRF attacks
+  def handle_unverified_request
+    super
+    Devise.mappings.each_key do |key|
+      cookies.delete "remember_#{key}_token"
     end
   end
 end
