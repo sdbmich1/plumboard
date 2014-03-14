@@ -550,14 +550,25 @@ describe Listing do
     it { Listing.saved_list(@user).should_not be_empty }
   end
 
-  describe "wanted list" do 
+  describe "wanted" do 
     before(:each) do
-      @usr = FactoryGirl.create :pixi_user
+      @usr = create :pixi_user
       @pixi_want = @user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
     end
 
     it { Listing.wanted_list(@usr).should_not include @listing } 
     it { Listing.wanted_list(@user).should_not be_empty }
+
+    it { expect(@listing.wanted_count).to eq(1) }
+    it { expect(@listing.is_wanted?).to eq(true) }
+    it "is not wanted" do
+      listing = create(:listing, seller_id: @user.id, title: 'Hair brush') 
+      expect(listing.wanted_count).to eq(0)
+      expect(listing.is_wanted?).to eq(false)
+    end
+
+    it { expect(Listing.wanted_users(@listing.pixi_id).first.name).to eq(@user.name) }
+    it { expect(Listing.wanted_users(@listing.pixi_id)).not_to include(@usr) }
   end
 
   describe "cool list" do 

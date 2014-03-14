@@ -23,7 +23,11 @@ class InquiriesController < ApplicationController
   end
 
   def index
-    respond_with(@inquiries = Inquiry.active.paginate(page: @page))
+    respond_with(@inquiries = Inquiry.get_by_contact_type(params[:ctype]).paginate(page: @page))
+  end
+  
+  def closed
+    respond_with(@inquiries = Inquiry.get_by_status('closed').paginate(page: @page))
   end
 
   def create

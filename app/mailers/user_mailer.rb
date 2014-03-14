@@ -44,7 +44,7 @@ class UserMailer < ActionMailer::Base
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     # set message details
-    email = inquiry.is_support? ? 'support@pixiboard.com' : 'info@pixiboard.com'
+    email = @inquiry.is_support? ? 'support@pixiboard.com' : 'info@pixiboard.com'
     mail(:to => "#{email}", :subject => "User Inquiry")
   end
 

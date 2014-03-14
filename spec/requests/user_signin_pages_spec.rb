@@ -94,7 +94,7 @@ feature "UserSignins" do
       it { should_not have_link('Transactions', href: transactions_path) }
       it { should_not have_link('PixiPosts', href: pixi_posts_path) }
       it { should_not have_link('Users', href: users_path) }
-      it { should_not have_link('Inquiries', href: inquiries_path) }
+      it { should_not have_link('Inquiries', href: inquiries_path(ctype: 'inquiry')) }
       it { should have_button('Post') }
       it { should have_link('By You', href: new_temp_listing_path) }
       it { should have_link('By Us', href: new_pixi_post_path) }
@@ -104,7 +104,7 @@ feature "UserSignins" do
       it { should have_link('My Invoices', href: invoices_path) }
       it { should have_link('My Accounts', href: new_bank_account_path) }
       it { should have_link('My Settings', href: settings_path) }
-      it { should have_link('My PixiPosts', href: seller_pixi_posts_path) }
+      it { should have_link('My PixiPosts', href: seller_pixi_posts_path(status: 'active')) }
       it { should_not have_link('Sign in', href: new_user_session_path) }
 
       it "displays sign in link after signout" do
@@ -121,9 +121,9 @@ feature "UserSignins" do
 
       it { should have_content(@user.first_name) }
       it { should have_content('Manage') }
-      it { should have_link('Pending Orders', href: pending_listings_path) }
-      it { should have_link('PixiPosts', href: pixi_posts_path) }
-      it { should have_link('Inquiries', href: inquiries_path) }
+      it { should have_link('Pending Orders', href: pending_listings_path(status: 'pending')) }
+      it { should have_link('PixiPosts', href: pixi_posts_path(status: 'active')) }
+      it { should have_link('Inquiries', href: inquiries_path(ctype: 'inquiry')) }
       it { should have_link('Categories', href: manage_categories_path) }
       it { should have_link('Transactions', href: transactions_path) }
       it { should have_link('Users', href: users_path) }
@@ -136,7 +136,7 @@ feature "UserSignins" do
       it { should have_link('My Invoices', href: invoices_path) }
       it { should have_link('My Accounts', href: new_bank_account_path) }
       it { should have_link('My Settings', href: settings_path) }
-      it { should have_link('My PixiPosts', href: seller_pixi_posts_path) }
+      it { should have_link('My PixiPosts', href: seller_pixi_posts_path(status: 'active')) }
       it { should have_link('Sign out', href: destroy_user_session_path) }
       it { should_not have_link('Sign in', href: new_user_session_path) }
 
@@ -154,9 +154,9 @@ feature "UserSignins" do
 
       it { should have_content(@user.first_name) }
       it { should have_content('Manage') }
-      it { should have_link('Pending Orders', href: pending_listings_path) }
-      it { should have_link('PixiPosts', href: pixi_posts_path) }
-      it { should have_link('Inquiries', href: inquiries_path) }
+      it { should have_link('Pending Orders', href: pending_listings_path(status: 'pending')) }
+      it { should have_link('PixiPosts', href: pixi_posts_path(status: 'active')) }
+      it { should have_link('Inquiries', href: inquiries_path(ctype: 'inquiry')) }
       it { should_not have_link('Categories', href: manage_categories_path) }
       it { should_not have_link('Transactions', href: transactions_path) }
       it { should_not have_link('Users', href: users_path) }
@@ -166,7 +166,7 @@ feature "UserSignins" do
       it { should have_link('My Invoices', href: invoices_path) }
       it { should have_link('My Accounts', href: new_bank_account_path) }
       it { should have_link('My Settings', href: settings_path) }
-      it { should have_link('My PixiPosts', href: seller_pixi_posts_path) }
+      it { should have_link('My PixiPosts', href: seller_pixi_posts_path(status: 'active')) }
       it { should have_link('Sign out', href: destroy_user_session_path) }
       it { should_not have_link('Sign in', href: new_user_session_path) }
 
@@ -198,8 +198,8 @@ feature "UserSignins" do
       it { should have_content(@user.first_name) }
       it { should_not have_content('Manage') }
       it { should_not have_link('PixiPosts', href: pixi_posts_path) }
-      it { should_not have_link('Inquiries', href: inquiries_path) }
-      it { should_not have_link('Pending Orders', href: pending_listings_path) }
+      it { should_not have_link('Inquiries', href: inquiries_path(ctype: 'inquiry')) }
+      it { should_not have_link('Pending Orders', href: pending_listings_path(status: 'pending')) }
       it { should_not have_link('Categories', href: manage_categories_path) }
       it { should_not have_link('Transactions', href: transactions_path) }
       it { should_not have_link('Users', href: users_path) }
@@ -207,7 +207,7 @@ feature "UserSignins" do
       it { should have_link('My Messages', href: posts_path) }
       it { should have_link('My Invoices', href: invoices_path) }
       it { should have_link('My Settings', href: settings_path) }
-      it { should have_link('My PixiPosts', href: seller_pixi_posts_path) }
+      it { should have_link('My PixiPosts', href: seller_pixi_posts_path(status: 'active')) }
       it { should have_link('Sign out', href: destroy_user_session_path) }
       it { should_not have_link('Sign in', href: new_user_session_path) }
 

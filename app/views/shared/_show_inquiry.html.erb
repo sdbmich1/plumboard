@@ -2,8 +2,8 @@
 <div class='div-border'>
   <%= render partial: 'shared/inquiry_details', locals: {inquiry: inquiry} %>
   <div class="mtop pull-right">
-    <%= link_to 'Remove', inquiry, method: :delete, confirm: 'Delete this inquiry?', class: 'btn btn-large btn-primary stnd-btn', id: 'rm-btn' %>
-    <%= link_to 'Edit', edit_inquiry_path(inquiry), class: 'btn btn-large btn-primary stnd-btn' %>
+    <%= link_to 'Remove', inquiry, method: :delete, confirm: 'Delete this inquiry?', class: 'btn btn-large', id: 'rm-btn' %>
+    <%= link_to 'Edit', edit_inquiry_path(inquiry), class: 'btn btn-large' %>
     <%= link_to 'Done', root_path, class: 'btn btn-large btn-primary submit-btn' %>
   </div>
 </div>

@@ -136,7 +136,7 @@ form#new_post {margin-bottom: -0px!important;}
 
 a.terms-link {
   color: $pixiBlue!important; 
-  &:hover { background: $pixiBlue; text-decoration: none }
+  &:hover { background: transparent; text-decoration: underline }
 }
 
 a.pixi-link {

@@ -36,9 +36,14 @@ class PixiPost < ActiveRecord::Base
     self.status = 'completed' if is_completed?
   end
 
-  # return active categories
+  # return active posts
   def self.active
-    where(:status => ['active', 'scheduled'])
+    where(:status => 'active')
+  end
+
+  # return posts by status
+  def self.get_by_status val
+    where(:status => val)
   end
 
   # get seller name for a listing

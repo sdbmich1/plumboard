@@ -53,7 +53,7 @@ class User < ActiveRecord::Base
   has_many :user_pixi_points, dependent: :destroy
 
   has_many :pixi_posts, dependent: :destroy
-  has_many :active_pixi_posts, class_name: 'PixiPost', :conditions => "status IN ('active', 'scheduled')"
+  has_many :active_pixi_posts, class_name: 'PixiPost', :conditions => { :status => 'active' }
   has_many :pixan_pixi_posts, :foreign_key => "pixan_id", :class_name => "PixiPost"
 
   has_many :pictures, :as => :imageable, :dependent => :destroy
@@ -111,7 +111,7 @@ class User < ActiveRecord::Base
 
   # return all pixis for user
   def pixis
-    self.active_listings
+    self.active_listings rescue nil
   end
 
   # get pixi count
@@ -121,7 +121,7 @@ class User < ActiveRecord::Base
 
   # return whether user has pixis
   def has_pixis?
-    pixis.size > 0
+    pixi_count > 0 rescue nil
   end
 
   # return all new pixis for user
@@ -241,7 +241,7 @@ class User < ActiveRecord::Base
 
   # return any unpaid invoices count 
   def unpaid_invoice_count
-    unpaid_received_invoices.size
+    unpaid_received_invoices.size rescue 0
   end
 
   # return whether user has any unpaid invoices 
@@ -251,7 +251,7 @@ class User < ActiveRecord::Base
 
   # get number of unread messages for user
   def unread_count
-    Post.unread_count self
+    Post.unread_count self rescue 0
   end
 
   # set json string

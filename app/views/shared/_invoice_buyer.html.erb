@@ -1,0 +1,4 @@
+<%= autocomplete_field_tag 'buyer_name', invoice.buyer_name, autocomplete_user_first_name_invoices_path,
+     :update_elements => { :id => '#invoice_buyer_id' }, :placeholder => 'Buyer Name' %> 
+<%= f.hidden_field :buyer_id %>
+

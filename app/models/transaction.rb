@@ -224,7 +224,12 @@ class Transaction < ActiveRecord::Base
 
   # get txn fees
   def get_fee
-    convenience_fee + processing_fee rescue nil
+    convenience_fee + processing_fee rescue 0
+  end
+
+  # check amount
+  def has_amount?
+    amt > 0 rescue nil
   end
 
   # set json string

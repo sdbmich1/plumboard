@@ -117,6 +117,7 @@ module ApplicationHelper
       when 'Messages'; render 'shared/navbar_posts'
       when 'Home'; render 'shared/navbar_home'
       when 'PixiPosts'; render 'shared/navbar_pixi_post'
+      when 'My PixiPosts'; render 'shared/navbar_pixi_post'
       when 'Inquiries'; render 'shared/navbar_inquiry'
       else render 'shared/navbar_main'
     end

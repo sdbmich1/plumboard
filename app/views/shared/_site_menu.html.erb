@@ -1,3 +1,4 @@
+<% if rFlg %>  
   <li id='li_home' class="active"><%= link_to "Recent", '#', id: 'recent-link', class: 'submenu' %></li>
-  <li><%= link_to loc_name, local_listings_path(loc: @loc), id: 'menu_site_name' unless loc_name.blank? %></li>
-
+<% end %>
+<li class='med-top mleft10'><span id='menu_site_name'><%= loc_name %></span></li>

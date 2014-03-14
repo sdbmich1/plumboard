@@ -6,4 +6,9 @@ class PixiWant < ActiveRecord::Base
 
   validates :pixi_id, :presence => true
   validates :user_id, :presence => true, :uniqueness => { :scope => :pixi_id }
+
+  # get pixi want user name
+  def user_name
+    user.name rescue nil
+  end
 end

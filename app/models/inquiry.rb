@@ -46,11 +46,17 @@ class Inquiry < ActiveRecord::Base
 
   # check category for inquiry
   def is_support?
-    inquiry_type.contact_type == 'support'
+    inquiry_type.contact_type == 'support' rescue nil
   end
 
-  def self.list
-    active.select('inquiries.id, inquiries.user_id, inquiries.first_name, inquiries.last_name, inquiry_types.subject, inquiries.comments, inquiries.status,
-      inquiries.email, inquiries.created_at').joins(:inquiry_type)
+  # find inquiries by status
+  def self.get_by_status val
+    where(:status => val).order('updated_at DESC')
+  end
+
+  # find inquiries by contact type
+  def self.get_by_contact_type val
+    active.select('inquiries.id, inquiries.user_id, inquiries.first_name, inquiries.last_name, inquiry_types.subject, inquiries.comments, 
+      inquiries.status, inquiries.email, inquiries.created_at').joins(:inquiry_type).where('inquiry_types.contact_type = ?', val)
   end
 end

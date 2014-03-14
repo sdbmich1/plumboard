@@ -60,7 +60,6 @@ class TempListingsController < ApplicationController
     @listing = TempListing.find_by_pixi_id params[:id]
     respond_with(@listing) do |format|
       if @listing.resubmit_order
-        format.html { redirect_to root_path }
         format.json { render json: {listing: @listing} }
       else
         format.html { render action: :show, error: "Pixi was not submitted. Please try again." }
@@ -73,7 +72,6 @@ class TempListingsController < ApplicationController
     @listing = TempListing.find_by_pixi_id params[:id]
     respond_with(@listing) do |format|
       if @listing.resubmit_order
-        format.html { redirect_to root_path }
         format.json { render json: {listing: @listing} }
       else
         format.html { render action: :show, error: "Pixi was not submitted. Please try again." }

@@ -30,4 +30,9 @@ module InvoicesHelper
   def get_invoice_name inv
     action_name == 'received' ? inv.seller_name : inv.buyer_name
   end
+
+  # check if selected pixi is wanted
+  def has_wanted_pixi? inv
+    inv.listing.is_wanted? rescue nil
+  end
 end

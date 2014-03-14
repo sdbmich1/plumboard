@@ -178,14 +178,14 @@ describe PixiPostsController do
   describe 'GET index' do
     before(:each) do
       @posts = stub_model(PixiPost)
-      PixiPost.stub!(:active).and_return(@posts)
+      PixiPost.stub!(:get_by_status).and_return(@posts)
       @posts.stub!(:paginate).and_return(@posts)
       controller.stub!(:load_data).and_return(:success)
       do_get
     end
 
     def do_get
-      get :index
+      get :index, status: 'active'
     end
 
     it "renders the :index view" do
@@ -202,17 +202,39 @@ describe PixiPostsController do
     end
   end
 
+  describe 'xhr GET index' do
+    before(:each) do
+      @posts = stub_model(PixiPost)
+      PixiPost.stub!(:get_by_status).and_return(@posts)
+      @posts.stub!(:paginate).and_return(@posts)
+      controller.stub!(:load_data).and_return(:success)
+      do_get
+    end
+
+    def do_get
+      xhr :get, :index, status: 'active'
+    end
+
+    it "renders the :index view" do
+      response.should render_template :index
+    end
+
+    it "should assign @posts" do
+      assigns(:posts).should == @posts
+    end
+  end
+
   describe 'GET seller' do
     before :each do
       @user = User.stub!(:find).and_return(@user)
       @posts = stub_model(PixiPost)
-      @user.stub!(:active_pixi_posts).and_return( @posts )
+      @user.stub_chain(:pixi_posts, :where).and_return( @posts )
       @posts.stub!(:paginate).and_return( @posts )
       do_get
     end
 
     def do_get
-      get :seller
+      get :seller, status: 'active'
     end
 
     it "renders the :seller view" do
@@ -236,6 +258,28 @@ describe PixiPostsController do
       expect(response).to be_success
     end
   end
+
+  describe 'xhr GET seller' do
+    before(:each) do
+      @posts = stub_model(PixiPost)
+      @user.stub_chain(:pixi_posts, :where).and_return( @posts )
+      @posts.stub!(:paginate).and_return( @posts )
+      do_get
+    end
+
+    def do_get
+      xhr :get, :seller, status: 'active'
+    end
+
+    it "renders the :seller view" do
+      response.should render_template :seller
+    end
+
+    it "should assign @posts" do
+      assigns(:posts).should_not be_nil
+    end
+  end
+
 
   describe "PUT /:id" do
     before (:each) do

@@ -97,7 +97,11 @@ Plumboard::Application.routes.draw do
     get 'refund', :on => :member
   end
 
-  resources :inquiries
+  resources :inquiries do
+    collection do
+      get 'closed'
+    end
+  end
 
   namespace :api do
     namespace :v1  do

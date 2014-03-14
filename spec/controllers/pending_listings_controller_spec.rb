@@ -23,13 +23,13 @@ describe PendingListingsController do
   describe 'GET index' do
     before(:each) do
       @listings = mock("listings")
-      TempListing.stub!(:get_by_status).with('pending').and_return(@listings)
+      TempListing.stub!(:get_by_status).and_return(@listings)
       @listings.stub!(:paginate).and_return(@listings)
       controller.stub!(:load_data).and_return(:success)
     end
 
     def do_get
-      get :index
+      get :index, status: 'pending'
     end
 
     it "renders the :index view" do
@@ -38,8 +38,30 @@ describe PendingListingsController do
     end
 
     it "should assign @listings" do
-      TempListing.should_receive(:get_by_status).with('pending').and_return(@listings)
+      TempListing.should_receive(:get_by_status).and_return(@listings)
       do_get 
+      assigns(:listings).should_not be_nil
+    end
+  end
+
+  describe 'xhr GET index' do
+    before(:each) do
+      @listings = mock("listings")
+      TempListing.stub!(:get_by_status).and_return(@listings)
+      @listings.stub!(:paginate).and_return(@listings)
+      controller.stub!(:load_data).and_return(:success)
+      do_get
+    end
+
+    def do_get
+      xhr :get, :index, status: 'active'
+    end
+
+    it "renders the :index view" do
+      response.should render_template :index
+    end
+
+    it "should assign @listings" do
       assigns(:listings).should_not be_nil
     end
   end

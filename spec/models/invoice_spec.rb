@@ -33,6 +33,21 @@ describe Invoice do
   it { should respond_to(:posts) }
   it { should respond_to(:bank_account) }
   it { should respond_to(:set_flds) }
+
+  it { should allow_value(50.00).for(:price) }
+  it { should allow_value(5000).for(:price) }
+  it { should_not allow_value('').for(:price) }
+  it { should_not allow_value(500000).for(:price) }
+  it { should_not allow_value(5000.001).for(:price) }
+  it { should_not allow_value(-5000.00).for(:price) }
+  it { should_not allow_value('$5000.0').for(:price) }
+
+  it { should allow_value(50.00).for(:sales_tax) }
+  it { should allow_value(7.25).for(:sales_tax) }
+  it { should_not allow_value(500).for(:sales_tax) }
+  it { should_not allow_value(50.001).for(:sales_tax) }
+  it { should_not allow_value(-5.00).for(:sales_tax) }
+  it { should_not allow_value('50.0%').for(:sales_tax) }
   
   describe "when seller_id is empty" do
     before { @invoice.seller_id = "" }
@@ -307,6 +322,16 @@ describe Invoice do
     it "should not return a nice status" do 
       @invoice.status = nil
       @invoice.nice_status.should_not be_true 
+    end
+  end
+  
+  describe "load invoice" do
+    it "loads new invoice" do
+      Invoice.load_new(@user).should_not be_nil
+    end
+
+    it "does not load new invoice" do
+      Invoice.load_new(nil).should be_nil
     end
   end
 

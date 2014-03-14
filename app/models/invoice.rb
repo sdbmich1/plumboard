@@ -18,10 +18,12 @@ class Invoice < ActiveRecord::Base
   validates :pixi_id, presence: true  
   validates :buyer_id, presence: true  
   validates :seller_id, presence: true  
-  validates :price, presence: true, :numericality => { greater_than: 0, less_than_or_equal_to: MAX_PIXI_AMT.to_f }    
+  validates :price, presence: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
+    		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_PIXI_AMT.to_f }
   validates :amount, presence: true, :numericality => { greater_than: 0, less_than_or_equal_to: MAX_PIXI_AMT.to_f }  
   validates :quantity, presence: true, :numericality => { greater_than: 0, less_than_or_equal_to: MAX_INV_QTY.to_i }    
-  validates :sales_tax, allow_blank: true, :numericality => { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }    
+  validates :sales_tax, allow_blank: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
+    		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }
 
   default_scope order: 'invoices.created_at DESC'
 
@@ -40,6 +42,18 @@ class Invoice < ActiveRecord::Base
   # get invoice by order id
   def self.find_invoice order
     find(order['invoice_id']) rescue nil
+  end
+
+  # load new invoice with most recent pixi data
+  def self.load_new usr
+    if usr && usr.has_pixis?
+      # get most recent pixi
+      pixi = usr.active_listings.first
+
+      # load invoice with pixi data
+      inv = usr.invoices.build pixi_id: pixi.pixi_id, price: pixi.price, subtotal: pixi.price, amount: pixi.price
+    end
+    inv
   end
 
   # get invoices for given user

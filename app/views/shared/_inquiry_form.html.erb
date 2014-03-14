@@ -46,7 +46,7 @@
         <label>Description*</label><%= f.text_area :comments, id: 'inq_comments', :placeholder => 'Type Your Question, Suggestion or Comment' %>
         <div class="nav pull-right">
           <%= f.submit "Submit", class: "btn btn-large btn-primary submit-btn", id: 'inq-done-btn' %>
-          <%= link_to 'Cancel', :back, confirm: msg, class: "btn btn-large btn-primary stnd-btn" %>
+          <%= link_to 'Cancel', :back, confirm: msg, class: "btn btn-large" %>
         </div>
       </div>
     </div>

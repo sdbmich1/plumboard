@@ -49,7 +49,7 @@ describe User do
     it { should respond_to(:pixi_posts) }
     it { should respond_to(:active_pixi_posts) }
     it { should respond_to(:pixan_pixi_posts) }
-    it { should have_many(:active_pixi_posts).class_name('PixiPost').conditions("status IN ('active', 'scheduled')") }
+    it { should have_many(:active_pixi_posts).class_name('PixiPost').conditions(status: 'active') }
     it { should have_many(:pixan_pixi_posts).class_name('PixiPost').with_foreign_key('pixan_id') }
     it { should respond_to(:pixi_likes) }
     it { should have_many(:pixi_likes) }
@@ -57,6 +57,12 @@ describe User do
     it { should have_many(:saved_listings) }
     it { should respond_to(:pixi_wants) }
     it { should have_many(:pixi_wants) }
+    it { should respond_to(:unpaid_invoice_count) } 
+    it { should respond_to(:has_unpaid_invoices?) } 
+    it { should respond_to(:has_address?) } 
+    it { should respond_to(:has_pixis?) } 
+    it { should respond_to(:has_bank_account?) } 
+    it { should respond_to(:has_card_account?) } 
 
     it { should validate_presence_of(:first_name) }
     it { should validate_presence_of(:last_name) }
@@ -232,6 +238,32 @@ describe User do
       picture = user.pictures.build
       picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
       user.save
+      user.should be_valid
+    end
+  end
+
+  describe "must have zip" do
+    let(:user) { FactoryGirl.build :user }
+    before do
+      picture = user.pictures.build
+      picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
+      @contact = user.contacts.build
+    end
+
+    it "does not save w/o zip" do
+      user.save
+      user.should_not be_valid
+    end
+
+    it "does not save w/ invalid zip" do
+      @contact.zip = '123'
+      user.save
+      user.should_not be_valid
+    end
+
+    it "saves w/ valid zip" do
+      @contact.zip = '12345'
+      user.save(validate: false)
       user.should be_valid
     end
   end

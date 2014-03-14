@@ -200,9 +200,14 @@
   margin: 0;
   padding: 0;
 }
-
+/*
 .bx-viewport {
   max-height: 250px!important;
+}
+*/
+.bx-viewport ul {
+  margin: 0;
+  padding: 0;
 }
 
 .bxslider-inner {

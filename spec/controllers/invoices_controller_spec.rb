@@ -71,7 +71,29 @@ describe InvoicesController do
 
     before :each do
       controller.stub!(:current_user).and_return(@user)
-      @user.stub_chain(:invoices, :build).and_return( @invoice )
+      Invoice.stub!(:load_new).with(@user).and_return( @invoice )
+    end
+
+    def do_get
+      get :new
+    end
+
+    it "should assign @invoice" do
+      do_get
+      assigns(:invoice).should eq(@invoice)
+    end
+
+    it "new action should render new template" do
+      do_get
+      response.should render_template(:new)
+    end
+  end
+
+  describe "GET 'new'" do
+
+    before :each do
+      controller.stub!(:current_user).and_return(@user)
+      Invoice.stub!(:load_new).with(@user).and_return( @invoice )
       do_get
     end
 

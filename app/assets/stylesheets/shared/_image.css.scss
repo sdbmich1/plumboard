@@ -170,3 +170,15 @@ img.tiny {
 .bw:hover {
   -webkit-filter: grayscale(100%);
 }
+
+.myimage img {
+  float: left;
+  width: 40px!important;
+  height: 40px!important;
+  border: 1px solid #AAAAAA; 
+}
+
+.lrg_pic_frame {
+  width: auto!important;
+  height: 300px!important;
+}

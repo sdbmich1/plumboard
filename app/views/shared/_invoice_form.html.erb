@@ -1,23 +1,24 @@
 <div class="row">
   <%= form_for(@invoice, remote: true ) do |f| %>
-    <div id="form_errors"><%= render partial: 'shared/error_messages', locals: { target: f.object } %></div>
-
     <div class="sm-top span12">
-      <div id=''>
+      <div id="form_errors"><%= render partial: 'shared/error_messages', locals: { target: f.object } %></div>
+      <div id='inv_select'>
 	<div class="control-group">
 	  <label class='control-label'>From: <%= @user.name %></label>
 	  <label class='control-label'>Date: <%= get_local_date(Time.now) %></label>
 	  <label class="sm-top control-label">Bill To:</label>
-	  <div class='width360'>
-	    <%= autocomplete_field_tag 'buyer_name', @invoice.buyer_name, autocomplete_user_first_name_invoices_path,
-	        :update_elements => { :id => '#invoice_buyer_id' }, :placeholder => 'Buyer Name' %> 
+	  <div id='inv_buyer_select' class='width360'>
+	    <% if has_wanted_pixi? @invoice %>
+              <%= render partial: 'shared/pixi_wanted_list', locals: { pid: @invoice.pixi_id } %>
+	    <% else %>
+              <%= render partial: 'shared/invoice_buyer', locals: { f: f, invoice: @invoice } %>
+	    <% end %>
           </div>
         </div>
         <%= render partial: 'shared/invoice_item', locals: { f: f } %>
         <div class='clear-all'></div>
 	<label class="sm-top control-label">Comments:</label>
         <%= f.text_area :comment, class: 'width360' %>
-        <%= f.hidden_field :buyer_id %>
         <%= f.hidden_field :inv_date, value: Time.now  %>
         <%= f.hidden_field :seller_id, value: @user.id %>
 

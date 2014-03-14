@@ -19,12 +19,12 @@ describe "PendingListings", :type => :feature do
     before { visit pending_listing_path(listing) }
 
     it { should have_selector('title', text: 'Review Pending Order') }
-    it { should have_content listing.nice_title }
+    it { should have_content 'Acoustic Guitar' }
     it { should have_content "Posted By: #{listing.seller_name}" }
     it { should_not have_link 'Follow', href: '#' }
     it { should_not have_selector('#contact_content') }
     it { should_not have_selector('#comment_content') }
-    it { should have_link 'Back', href: pending_listings_path }
+    it { should have_link 'Back', href: pending_listings_path(status: 'pending') }
     it { should have_button('Deny') }
     it { should have_link 'Improper Content', href: deny_pending_listing_path(listing, reason: 'Improper Content') }
     it { should have_link 'Bad Pictures', href: deny_pending_listing_path(listing, reason: 'Bad Pictures') }
@@ -52,6 +52,7 @@ describe "PendingListings", :type => :feature do
         click_link 'Improper Content'; sleep 2
 	}.to change(Listing, :count).by(0)
 
+      page.should_not have_content listing.title 
       page.should have_content("Pending Orders")
     end
 
@@ -60,18 +61,35 @@ describe "PendingListings", :type => :feature do
         click_link 'Bad Pictures'; sleep 2
 	}.to change(Listing, :count).by(0)
 
+      page.should_not have_content listing.title 
       page.should have_content("Pending Orders")
     end
   end
 
   describe "GET /pending_listings" do  
     let(:listings) { 30.times { FactoryGirl.create(:temp_listing_with_transaction, seller_id: @user.id) } }
-    before :each do
-      visit pending_listings_path 
+    before do
+      @px_user = create :editor, email: 'jsnow@pxb.com'
+      init_setup @px_user
+      @pending_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id, status: 'pending', title: 'Snare Drum') 
+      @denied_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id, status: 'denied', title: 'Xbox 360') 
+      visit pending_listings_path(status: 'pending') 
     end
 
-    it "should display listings" do 
-      page.should have_content("Pending Orders")
+    it { should have_content('Pending Orders') }
+    it { should_not have_content('No pixis found') }
+    it { should have_selector('#denied-pixis') }
+    it { should have_selector('#pending-pixis') }
+    it { should have_link 'Active' }
+    it { should have_link 'Denied' }
+    it { should_not have_content(@denied_listing.title) }
+    it { should have_content(@pending_listing.title) }
+
+    it "displays denied listings", js: true do
+      click_link 'Denied'
+      page.should_not have_content('No pixis found')
+      page.should have_content @denied_listing.title
+      page.should_not have_content @pending_listing.title
     end
 
     it "paginate should list each listing" do

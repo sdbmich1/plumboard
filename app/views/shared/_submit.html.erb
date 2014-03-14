@@ -1,0 +1,5 @@
+<% provide(:title, step_name) %>
+<%= content_for :content do %>
+  <%= render partial: 'shared/order_complete', locals: {model: model, step_name: step_name,  amtFlg: amtFlg} %>
+<% end %>
+

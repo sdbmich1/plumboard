@@ -4,9 +4,9 @@ feature "BankAccounts" do
   subject { page }
   let(:user) { FactoryGirl.create(:pixi_user, first_name: 'Jack', last_name: 'Snow', email: 'jack.snow@pixitest.com') }
 
-  before(:each) do
-    login_as(user, :scope => :user, :run_callbacks => false)
-    @user = user
+  def init_setup usr
+    login_as(usr, :scope => :user, :run_callbacks => false)
+    @user = usr
   end
 
   def add_data
@@ -51,8 +51,9 @@ feature "BankAccounts" do
 
   describe "Create Bank Account" do 
     before do
+      init_setup user
       @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
-      visit listings_path
+      visit root_path
       click_link 'My Accounts'
       add_data
     end
@@ -73,9 +74,10 @@ feature "BankAccounts" do
 
   describe "Delete Bank Account" do 
     before do
+      init_setup user
       @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
       @account = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
-      visit listings_path
+      visit root_path
       click_link 'My Accounts'
     end
 
@@ -95,8 +97,9 @@ feature "BankAccounts" do
 
   describe "Create Bank Account - Bill" do 
     before do
+      init_setup user
       @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
-      visit listings_path
+      visit root_path
       click_link 'Bill'
       add_data
     end
@@ -117,6 +120,7 @@ feature "BankAccounts" do
 
   describe "Create Invoice Bank Account" do 
     before do
+      init_setup user
       @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
       visit invoices_path 
     end

@@ -5,9 +5,13 @@ feature "Invoices" do
   let(:user) { FactoryGirl.create(:pixi_user) }
 
   before(:each) do
-    login_as(user, :scope => :user, :run_callbacks => false)
-    @user = user
+    init_setup user
     create_buyers
+  end
+
+  def init_setup usr
+    login_as(usr, :scope => :user, :run_callbacks => false)
+    @user = usr
   end
 
   def create_buyers
@@ -23,6 +27,10 @@ feature "Invoices" do
 
   def set_buyer_id
     page.execute_script %Q{ $('#invoice_buyer_id').val("#{@buyer1.id}") }
+  end
+   
+  def select_buyer_name
+    select(@buyer.name, :from => 'invoice_buyer_id')
   end
    
   def select_pixi
@@ -74,7 +82,6 @@ feature "Invoices" do
     @listing4 = FactoryGirl.create(:listing, title: 'Trek Bike', seller_id: @buyer.id) 
     @invoice2 = @buyer.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing2.pixi_id, buyer_id: @user.id, status: 'paid')  
     @invoice3 = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing3.pixi_id, buyer_id: @person.id)
-    sleep 3
     @invoice4 = @buyer.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing4.pixi_id, buyer_id: @user.id)
   end
 
@@ -404,6 +411,19 @@ feature "Invoices" do
 	  page.should have_content "Status" 
 	  page.should have_content "Bob Jones" 
         end
+
+	it 'accepts invoice w/ wanted buyers' do
+          @buyer.pixi_wants.create FactoryGirl.attributes_for :pixi_like, pixi_id: @listing.pixi_id
+	  select_buyer_name
+	  select_pixi
+          fill_in 'inv_price', with: "40"
+	  expect { 
+	    click_button 'Send'; sleep 3
+	  }.to change(Invoice, :count).by(1)
+
+	  page.should have_content "Status" 
+	  page.should have_content @buyer.name
+	end
       end
     end
   end

@@ -1,2 +1,2 @@
-<%= collection_select(:invoice, :pixi_id, model.active_listings, :pixi_id, :title, {:prompt => 'Select Pixi'}, { class: 'pixi-select' }) %>
+<%= collection_select(:invoice, :pixi_id, model.active_listings, :pixi_id, :title, {selected: @invoice.pixi_id}, { class: 'pixi-select' }) %>
 

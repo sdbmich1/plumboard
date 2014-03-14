@@ -6,10 +6,13 @@ feature "TempListings" do
   let(:submit) { "Next" }
 
   before(:each) do
-    login_as(user, :scope => :user, :run_callbacks => false)
-    user.confirm!
-    @user = user
+    init_setup user
     create_sites
+  end
+
+  def init_setup usr
+    login_as(usr, :scope => :user, :run_callbacks => false)
+    @user = usr
   end
 
   def create_sites
@@ -149,7 +152,7 @@ feature "TempListings" do
           fill_in 'Description', with: "Guitar for Sale"
 	  click_button submit }.not_to change(TempListing, :count)
 
-	  # page.should have_content "Start Date is not a valid date"
+	  page.should have_content "Start Date is not a valid date"
       end
 
       it "does not create a listing w/ bad start date" do
@@ -157,7 +160,7 @@ feature "TempListings" do
 	  event_data "30/30/2456", Date.today().strftime('%m/%d/%Y')
 	  click_button submit }.not_to change(TempListing, :count)
 
-	  # page.should have_content "Start Date is not a valid date"
+	  page.should have_content "Start Date is not a valid date"
       end
 
       it "does not create a listing w/ invalid start date" do
@@ -165,7 +168,7 @@ feature "TempListings" do
 	  event_data Date.yesterday.strftime('%m/%d/%Y'), Date.today().strftime('%m/%d/%Y')
 	  click_button submit }.not_to change(TempListing, :count)
 
-	  # page.should have_content "Start Date must be on or after "
+	  page.should have_content "Start Date must be on or after "
       end
 
       it "does not create a listing w/o end date" do
@@ -173,7 +176,7 @@ feature "TempListings" do
 	  event_data Date.today().strftime('%m/%d/%Y'), nil
 	  click_button submit }.not_to change(TempListing, :count)
 
-	  # page.should have_content "End Date is not a valid date"
+	  page.should have_content "End Date is not a valid date"
       end
 
       it "does not create a listing w/ bad end date" do
@@ -181,14 +184,14 @@ feature "TempListings" do
 	  event_data Date.today().strftime('%m/%d/%Y'), "30/30/2456"
 	  click_button submit }.not_to change(TempListing, :count)
 
-	  # page.should have_content "End Date is not a valid date"
+	  page.should have_content "End Date is not a valid date"
       end
 
       it "does not create a listing w/ invalid end date" do
         expect { 
 	  event_data Date.today().strftime('%m/%d/%Y'), Date.yesterday.strftime('%m/%d/%Y') 
 	  click_button submit }.not_to change(TempListing, :count)
-	  # page.should have_content "End Date must be on or after"
+	  page.should have_content "End Date must be on or after"
       end
 
       it "should not create a listing w/o photo" do
@@ -202,21 +205,21 @@ feature "TempListings" do
     describe "Create with valid information", js: true do
       it "Adds a new listing w/o price" do
         expect{
-		add_data_w_photo
-	        click_button submit
-	      }.to change(TempListing,:count).by(1)
+	  add_data_w_photo
+	  click_button submit
+	}.to change(TempListing,:count).by(1)
       
         page.should have_content "Guitar for Sale" 
         page.should have_content 'Review Your Pixi'
-        page.should_not have_content "Price:" 
+        page.should_not have_content "Price" 
       end	      
 
       it "Adds a new listing w price" do
         expect{
-		add_data_w_photo
-                fill_in 'Price', with: "150.00"
-	        click_button submit
-	      }.to change(TempListing,:count).by(1)
+	  add_data_w_photo
+          fill_in 'Price', with: "150.00"
+	  click_button submit
+	}.to change(TempListing,:count).by(1)
       
         page.should have_content "Guitar for Sale" 
         page.should have_content 'Review Your Pixi'
@@ -446,7 +449,7 @@ feature "TempListings" do
     it { should have_content "Posted: #{get_local_time(temp_listing.start_date)}" }
     it { should have_content "Updated: #{get_local_time(temp_listing.updated_at)}" }
 
-    it { should have_content temp_listing.title }
+    it { should have_content 'Acoustic Guitar' }
 
     it "cancel remove pixi", js: true do
       click_remove_cancel
@@ -469,7 +472,7 @@ feature "TempListings" do
 
       page.should have_content "Pixi Submitted" 
       page.should have_content temp_listing.title
-      page.should have_link 'Done', href: listings_path
+      page.should have_link 'Done', href: root_path
     end
 
     it "goes back to build a pixi" do

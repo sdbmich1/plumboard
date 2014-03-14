@@ -217,24 +217,55 @@ feature "PixiPosts" do
       page.should have_selector('title', text: 'My PixiPosts')
       page.should have_content "PixiPost" 
       page.should have_content "Seller Name" 
+      page.should have_link "Active"
+      page.should have_link "Scheduled"
+      page.should have_link "Completed"
       page.should have_content @pixi_post.id
       page.should have_content @pixi_post.description
       page.should have_content user.name
     end
   end
 
-  describe "Seller views a PixiPost" do 
+  describe "Seller views active PixiPosts" do 
+    let(:pixan) { FactoryGirl.create :pixi_user }
+
     before do
       login_as(user, :scope => :user, :run_callbacks => false)
       @user = user
-      @pixi_post = @user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post)
-      visit seller_pixi_posts_path 
+      @listing = FactoryGirl.create :listing, seller_id: @user.id 
+      @pixi_post = @user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post, description: 'tire rims')
+      @scheduled = @user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: pixan.id, appt_date: Date.today+3.days,
+        description: 'xbox 360'
+      @completed = @user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: pixan.id, appt_date: Date.today+3.days, 
+        completed_date: Date.today+3.days, pixi_id: @listing.pixi_id, description: 'rocking chair'
+      visit seller_pixi_posts_path(status: 'active') 
     end
 
     it { should have_link("#{@pixi_post.id}", href: pixi_post_path(@pixi_post)) }
+    it { should_not have_link("#{@scheduled.id}", href: pixi_post_path(@scheduled)) }
+    it { should_not have_link("#{@completed.id}", href: pixi_post_path(@completed)) }
     it { should have_selector('title', text: 'My PixiPosts') }
-    it { should have_content "PixiPost" }
+    it { should have_link "Active" }
+    it { should have_link "Scheduled" }
+    it { should have_link "Completed" }
+    it { should have_content "My PixiPosts" }
     it { should have_content "Seller Name" } 
+
+    it "displays scheduled posts", js: true do
+      page.find('#schd-posts').click
+      page.should_not have_content @pixi_post.description
+      page.should_not have_content @completed.description
+      page.should have_content @scheduled.description
+      page.should_not have_content 'No posts found.'
+    end
+
+    it "displays completed posts", js: true do
+      page.find('#comp-posts').click
+      page.should_not have_content @pixi_post.description
+      page.should_not have_content @scheduled.description
+      page.should have_content @completed.description
+      page.should_not have_content 'No posts found.'
+    end
 
     it "clicks to open a pixipost" do
       expect { 
@@ -264,7 +295,7 @@ feature "PixiPosts" do
         click_remove_ok; sleep 3;
       }.to change(PixiPost,:count).by(-1)
 
-      page.should have_content "PixiPosts" 
+      page.should have_content "My PixiPosts" 
       page.should have_content "No posts found." 
     end
   end

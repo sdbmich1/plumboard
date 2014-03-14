@@ -8,7 +8,7 @@
     <li><%= link_to "My Invoices", invoices_path %></li>
     <li><%= link_to "My Accounts", get_account_path %></li>
     <li><%= link_to "My Settings", settings_path %></li>
-    <li><%= link_to "My PixiPosts", seller_pixi_posts_path %></li>
+    <li><%= link_to "My PixiPosts", seller_pixi_posts_path(status: 'active') %></li>
     <li class="divider"></li>
     <li><%= link_to "Sign out", destroy_user_session_path %></li>
   </ul>

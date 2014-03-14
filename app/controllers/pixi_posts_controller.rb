@@ -51,7 +51,7 @@ class PixiPostsController < ApplicationController
   end
 
   def index
-    @posts = PixiPost.active.paginate(page: @page)
+    @posts = PixiPost.get_by_status(params[:status]).paginate(page: @page)
     respond_with(@posts) do |format|
       format.json { render json: {posts: @posts} }
     end
@@ -73,7 +73,7 @@ class PixiPostsController < ApplicationController
   end
 
   def seller
-    @posts = @user.active_pixi_posts.paginate(page: @page)
+    @posts = @user.pixi_posts.where(status: params[:status]).paginate(page: @page)
     respond_with(@posts) do |format|
       format.json { render json: {posts: @posts} }
     end

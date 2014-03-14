@@ -159,4 +159,16 @@ describe Inquiry do
     end
   end
 
+  describe "get_by_status" do
+    before { @inquiry.save }
+    it { Inquiry.get_by_status('active').should include (@inquiry) }
+    it { Inquiry.get_by_status('inactive').should_not include (@inquiry) }
+  end
+
+  describe "get_by_contact_type" do
+    before { @inquiry.save }
+    it { Inquiry.get_by_contact_type('inquiry').should include (@inquiry) }
+    it { Inquiry.get_by_contact_type('closed').should_not include (@inquiry) }
+  end
+
 end

@@ -360,7 +360,20 @@ describe Transaction do
 
     it "should not get fee" do 
       transaction = FactoryGirl.build :transaction, convenience_fee: '', processing_fee: ''
-      transaction.get_fee.should_not be_true 
+      expect(transaction.get_fee).to eq(0)
+    end
+  end
+
+  describe 'has_amount?' do
+    before do
+      @txn = FactoryGirl.build :transaction, amt: 50
+    end
+
+    it { expect(@txn.has_amount?).to eq(true) }
+
+    it 'has no amount' do
+      @txn.amt = 0
+      expect(@txn.has_amount?).to eq(false) 
     end
   end
 end

@@ -1,0 +1,1 @@
+<%= collection_select :invoice, :buyer_id, Listing.wanted_users(pid), :id, :name, {prompt: 'Select Buyer'}, {class: 'width360 pixi-select'} %>

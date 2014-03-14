@@ -6,7 +6,17 @@ var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), dt, 0, 0, 0, 0);
 
 // set default date
 $(document).on("focus", ".dt-pckr", function(e){
-  var newDt = $(this).datepicker('setValue', nowTemp);
+  var newDt = $(this).datepicker({
+    onRender: function(date) {
+      return date.valueOf() < now.valueOf() ? 'disabled' : '';
+      }
+    }).on('show', function(ev) { 
+      var newDate = new Date(ev.date);
+      newDate.setDate(newDate.getDate() + 1);
+
+      // set end date
+      $(this).datepicker('setValue', newDate);
+  });
 });
 
 // manage event date

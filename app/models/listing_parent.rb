@@ -28,7 +28,8 @@ class ListingParent < ActiveRecord::Base
   validates :site_id, :presence => true
   validates :start_date, :presence => true
   validates :category_id, :presence => true
-  validates :price, :allow_blank => true, :numericality => { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_PIXI_AMT.to_f }
+  validates :price, allow_blank: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
+    		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_PIXI_AMT.to_f }
   validate :must_have_pictures
 
   # event date and time
@@ -125,6 +126,11 @@ class ListingParent < ActiveRecord::Base
   # verify if listing is pending
   def pending?
     status == 'pending'
+  end
+
+  # check if listing is denied
+  def denied?
+    status == 'denied'
   end
 
   # verify if listing is edit

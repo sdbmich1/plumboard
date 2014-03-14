@@ -1,0 +1,6 @@
+<ul class="nav">
+  <li class="active"><%= link_to "General", inquiries_path(ctype: 'inquiry'), class: 'submenu', id: 'general-inq', remote: true %></li>
+  <li><%= link_to "Support", inquiries_path(ctype: 'support'), class: 'submenu', id: 'support-inq', remote: true %></li>
+  <li><%= link_to "Closed", closed_inquiries_path, class: 'submenu', id: 'closed-inq', remote: true %></li>
+</ul>
+

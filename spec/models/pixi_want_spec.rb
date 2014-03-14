@@ -19,4 +19,13 @@ describe PixiWant do
   it { should validate_uniqueness_of(:user_id).scoped_to(:pixi_id) }
   it { should belong_to(:listing).with_foreign_key('pixi_id') }
   it { should belong_to(:user) }
+
+  describe "user name" do 
+    it { @pixi_want.user_name.should == @user.name } 
+
+    it "does not find user name" do 
+      @pixi_want.user_id = 100
+      @pixi_want.user_name.should be_nil  
+    end
+  end
 end

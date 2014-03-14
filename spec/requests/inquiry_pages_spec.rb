@@ -12,9 +12,14 @@ feature "Inquiries" do
     fill_in 'inq_email', with: @user.email
   end
 
+  def init_setup usr
+    login_as(usr, :scope => :user, :run_callbacks => false)
+    @user = usr
+  end
+
   def add_inquiry_type
-    FactoryGirl.create :inquiry_type
-    FactoryGirl.create :inquiry_type, subject: 'Other Questions', code: 'OQ', contact_type: 'inquiry'
+    @support_type = FactoryGirl.create :inquiry_type
+    @iq_type = FactoryGirl.create :inquiry_type, subject: 'Other Questions', code: 'OQ', contact_type: 'inquiry'
   end
 
   def inquiry_data
@@ -186,17 +191,40 @@ feature "Inquiries" do
 
   describe "Editor views an Inquiry" do 
     before do
-      login_as(editor, :scope => :user, :run_callbacks => false)
-      @user = user
-      @inquiry = @user.inquiries.create FactoryGirl.attributes_for(:inquiry)
-      visit inquiries_path 
+      add_inquiry_type
+      init_setup editor
+      @inquiry = @user.inquiries.create FactoryGirl.attributes_for(:inquiry, code: 'OQ')
+      @support = @user.inquiries.create FactoryGirl.attributes_for(:inquiry, code: 'WS')
+      @closed = @user.inquiries.create FactoryGirl.attributes_for(:inquiry, status: 'closed')
+      visit inquiries_path(ctype: 'inquiry') 
     end
 
+    it { should_not have_content('No inquiries found') }
+    it { should have_link 'General', href: inquiries_path(ctype: 'inquiry') }
+    it { should have_link 'Support', href: inquiries_path(ctype: 'support') }
+    it { should have_link 'Closed', href: closed_inquiries_path }
     it { should have_link("#{@inquiry.id}", href: inquiry_path(@inquiry)) }
     it { should have_selector('title', text: 'Inquiries') }
     it { should have_content "Inquiry #" }
     it { should have_content "User Name" } 
-    it { should have_link("#{@inquiry.id}", href: inquiry_path(@inquiry)) }
+    it { should_not have_link("#{@support.id}", href: inquiry_path(@support)) }
+    it { should_not have_link("#{@closed.id}", href: inquiry_path(@closed)) }
+
+    it "displays support inquiries", js: true do
+      page.find('#support-inq').click
+      page.should_not have_content 'No inquiries found.'
+      page.should have_link("#{@support.id}", href: inquiry_path(@support)) 
+      page.should_not have_link("#{@closed.id}", href: inquiry_path(@closed)) 
+      page.should_not have_link("#{@inquiry.id}", href: inquiry_path(@inquiry)) 
+    end
+
+    it "displays closed inquiries", js: true do
+      page.find('#closed-inq').click
+      page.should_not have_content 'No inquiries found.'
+      page.should have_link("#{@closed.id}", href: inquiry_path(@closed)) 
+      page.should_not have_link("#{@support.id}", href: inquiry_path(@support)) 
+      page.should_not have_link("#{@inquiry.id}", href: inquiry_path(@inquiry)) 
+    end
 
     it "clicks to open an inquiry" do
       expect { 

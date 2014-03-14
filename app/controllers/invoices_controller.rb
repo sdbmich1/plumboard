@@ -8,7 +8,7 @@ class InvoicesController < ApplicationController
   layout :page_layout
 
   def new
-    @invoice = @user.invoices.build
+    @invoice = Invoice.load_new @user
   end
    
   def index

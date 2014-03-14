@@ -25,13 +25,13 @@ describe InquiriesController do
 
     before :each do
       @inquiries = stub_model(Inquiry)
-      Inquiry.stub!(:active).and_return(@inquiries)
+      Inquiry.stub!(:get_by_contact_type).and_return(@inquiries)
       @inquiries.stub!(:paginate).and_return( @inquiries )
       do_get
     end
 
     def do_get
-      get :index
+      get :index, ctype: 'support'
     end
 
     it "assigns @inquiries" do
@@ -40,6 +40,58 @@ describe InquiriesController do
 
     it "renders the :index view" do
       response.should render_template :index
+    end
+
+    it "shows the requested inquiries" do
+      response.should be_success
+    end
+  end
+
+  describe 'xhr GET index' do
+
+    before :each do
+      @inquiries = stub_model(Inquiry)
+      Inquiry.stub!(:get_by_contact_type).and_return(@inquiries)
+      @inquiries.stub!(:paginate).and_return( @inquiries )
+      do_get
+    end
+
+    def do_get
+      xhr :get, :index, ctype: 'support'
+    end
+
+    it "assigns @inquiries" do
+      assigns(:inquiries).should_not be_nil
+    end
+
+    it "renders the :index view" do
+      response.should render_template :index
+    end
+
+    it "shows the requested inquiries" do
+      response.should be_success
+    end
+  end
+
+  describe 'xhr GET closed' do
+
+    before :each do
+      @inquiries = stub_model(Inquiry)
+      Inquiry.stub!(:get_by_status).and_return(@inquiries)
+      @inquiries.stub!(:paginate).and_return( @inquiries )
+      do_get
+    end
+
+    def do_get
+      xhr :get, :closed
+    end
+
+    it "assigns @inquiries" do
+      assigns(:inquiries).should_not be_nil
+    end
+
+    it "renders the :closed view" do
+      response.should render_template :closed
     end
 
     it "shows the requested inquiries" do

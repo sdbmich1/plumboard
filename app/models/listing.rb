@@ -121,6 +121,22 @@ class Listing < ListingParent
     end
   end
 
+  # return wanted count 
+  def wanted_count
+    pixi_wants.size rescue 0
+  end
+
+  # return whether pixi is wanted
+  def is_wanted?
+    wanted_count > 0 rescue nil
+  end
+
+  # return wanted users 
+  def self.wanted_users pid
+    select("users.id, CONCAT(users.first_name, ' ', users.last_name) AS name, users.updated_at, users.created_at")
+      .joins(:pixi_wants => [:user]).where(pixi_id: pid).order('users.first_name')
+  end
+
   # sphinx scopes
   sphinx_scope(:latest_first) {
     {:order => 'updated_at DESC, created_at DESC'}

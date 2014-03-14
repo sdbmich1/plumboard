@@ -130,19 +130,42 @@ task :load_sf_neighborhoods => :environment do
   end
 end
 
+# load zip codes for pixi post service areas
+task :load_zip_codes => :environment do
+  CSV.foreach(Rails.root.join('db', 'ZipCodes_2014_03_11.csv'), :headers => true) do |row|
+    attrs = {
+	      	:zip               => row[0],
+      		:city	           => row[1],
+      		:state	           => row[2],
+		:status		   => 'active'
+    }
+
+    # create zip
+    new_zip = PixiPostZip.new(attrs)
+
+    # save zip
+    if new_zip.save 
+      puts "Saved zip #{attrs.inspect}"
+    else
+      puts new_zip.errors
+    end
+  end
+end
+
+
 task :load_neighborhoods, [:file, :city, :county] => [:environment] do |t, args|
 
-   CSV.foreach(Rails.root.join('db', args.file), :headers => true) do |row|
+  CSV.foreach(Rails.root.join('db', args.file), :headers => true) do |row|
     
-   # get area name
-   area = row[0]
+    # get area name
+    area = row[0]
 
-   # set site attributes
-   attrs = {
+    # set site attributes
+    attrs = {
 	      	:name              => [args.city, area].join(' - '),
 		:status		   => 'active',
 		:org_type	   => 'area'
-      }
+    }
 
     # add site
     unless site = Site.where(:name => row[0]).first
@@ -154,7 +177,7 @@ task :load_neighborhoods, [:file, :city, :county] => [:environment] do |t, args|
 	     	:city            => args.city,
 		:county		 => args.county,
           	:state           => 'CA'
-		}
+      }
 
       # add contact info for site
       new_site.contacts.build(loc_attrs)

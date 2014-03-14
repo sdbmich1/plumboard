@@ -1,0 +1,4 @@
+<ul class="nav">
+  <li class="active"><%= link_to "Active", pending_listings_path(status: 'pending'), class: 'submenu', id: 'pending-pixis', remote: true %></li>
+  <li><%= link_to "Denied", pending_listings_path(status: 'denied'), class: 'submenu', id: 'denied-pixis', remote: true %></li>
+</ul>

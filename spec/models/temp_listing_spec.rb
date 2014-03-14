@@ -45,25 +45,13 @@ describe TempListing do
   it { should respond_to(:generate_token) }
   it { should respond_to(:site_listings) }
 
-  describe "when price is not a number" do
-    before { @temp_listing.price = "$500" }
-    it { should_not be_valid }
-  end
-  
-  describe "when price is less than 0" do
-    before { @temp_listing.price = -500.00 }
-    it { should_not be_valid }
-  end
-  
-  describe "when price is greater than 1M" do
-    before { @temp_listing.price = 5000000.00 }
-    it { should_not be_valid }
-  end
-  
-  describe "when price is greater than 0 but less than 1M" do
-    before { @temp_listing.price = 500.00 }
-    it { should be_valid }
-  end
+  it { should allow_value(50.00).for(:price) }
+  it { should allow_value(5000).for(:price) }
+  it { should_not allow_value('').for(:price) }
+  it { should_not allow_value(500000).for(:price) }
+  it { should_not allow_value(5000.001).for(:price) }
+  it { should_not allow_value(-5000.00).for(:price) }
+  it { should_not allow_value('$5000.0').for(:price) }
   
   describe "when site_id is empty" do
     before { @temp_listing.site_id = "" }
@@ -490,6 +478,17 @@ describe TempListing do
     it "is pending" do
       @temp_listing.status = 'pending'
       @temp_listing.pending?.should be_true 
+    end
+  end
+
+  describe '.denied?' do
+    it "is not denied" do
+      @temp_listing.denied?.should be_false 
+    end
+
+    it "is denied" do
+      @temp_listing.status = 'denied'
+      @temp_listing.denied?.should be_true 
     end
   end
 

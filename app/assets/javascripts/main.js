@@ -572,7 +572,6 @@ $(document).on("click", ".pixi-cat-link", function() {
 
 // check for location changes
 $(document).on("change", "#site_id, #category_id", function() {
- console.log('site or category changed');
 
   // reset board
   if($('#px-container').length > 0) {

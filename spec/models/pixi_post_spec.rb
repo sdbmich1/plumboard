@@ -67,6 +67,17 @@ describe PixiPost do
     it { PixiPost.active.should be_empty } 
   end
 
+  describe "get by status" do
+    it "get_by_status should not include active posts" do
+      @user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post) 
+      PixiPost.get_by_status('active').should_not be_empty 
+    end
+
+    it "get_by_status should not include inactive posts" do
+      PixiPost.get_by_status('inactive').should_not == @pixi_post 
+    end
+  end
+
   describe "should find correct seller name" do 
     it { @pixi_post.seller_name.should == @user.name } 
   end

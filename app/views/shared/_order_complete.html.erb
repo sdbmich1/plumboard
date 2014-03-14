@@ -1,9 +1,9 @@
 <div id="pmtForm">
-  <%= render partial: 'shared/pixi_submit', locals: {model: @transaction.temp_listings[0], step_name: step_name} %>
+  <%= render partial: 'shared/pixi_submit', locals: {model: model, step_name: step_name} %>
 
   <div class="mtop center">
     Subject to approval, your pixi will be posted within the next hour. 
-    <%= 'Your credit card will be charged upon approval.' if @transaction.amt > 0.0 %>
+    <%= 'Your credit card will be charged upon approval.' if amtFlg %>
   </div>
   <div class="mtop center">Thank you for your business.</div>
   <div class="mtop mbot">

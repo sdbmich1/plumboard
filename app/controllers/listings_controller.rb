@@ -81,8 +81,8 @@ class ListingsController < ApplicationController
   end
 
   def get_pixi_price
-    @price = Listing.find_by_pixi_id(params[:pixi_id]).price
-    respond_with(@price)
+    @listing = Listing.find_by_pixi_id(params[:pixi_id])
+    respond_with(@price = @listing.price)
   end
 
   protected

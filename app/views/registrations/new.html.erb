@@ -9,18 +9,18 @@
       <%= render partial: 'shared/error_messages', :locals => { :target => f.object } %>
       <%= render partial: 'shared/show_user_photo', locals: { f: f, model: resource, file_name: 'person_icon.jpg' } %>
 
-      <div class="span5">
+      <div class="span4">
         <div id='signup'>
           <%= render partial: 'shared/user_info', locals: { f: f } %>
 	  <% if @user.password_required? %>
-    	    <div><%= f.password_field :password, placeholder: 'New password' %></div>
+    	    <div><%= f.password_field :password, placeholder: 'New password (min. 8 characters)' %></div>
     	    <div><%= f.password_field :password_confirmation, placeholder: 'Re-enter password' %></div>
 	  <% end %>
         </div>
 
     	<div class='mtop mbot'><%= f.submit "Register", class: "btn btn-large btn-primary submit-btn" %></div>
         <div class='mtop sdescr'>By registering, I accept <%= link_to "Pixiboard's Terms of Service", terms_path, class: 'terms-link' %> and  
-	   <%= link_to "Privacy Policy", privacy_path, class: 'terms-link' %>. We don't share your personal info.</div>
+	   <%= link_to "Privacy Policy", privacy_path, class: 'terms-link' %>. We do not share your personal information.</div>
       </div>
     <% end %>
   </div>
