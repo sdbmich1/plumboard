@@ -35,4 +35,9 @@ module InvoicesHelper
   def has_wanted_pixi? inv
     inv.listing.is_wanted? rescue nil
   end
+
+  # set btn class
+  def pay_btn_cls
+    controller_name == 'posts' ? 'btn btn-medium btn-primary' : 'btn btn-large btn-primary'
+  end
 end

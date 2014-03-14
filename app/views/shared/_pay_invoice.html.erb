@@ -13,6 +13,6 @@
   <%= hidden_field_tag 'price1', invoice.price %>
   <%= hidden_field_tag 'inv_total', invoice.amount %>
   <%= hidden_field_tag 'transaction_type', 'invoice' %>
-  <%= submit_tag('Pay', :class=>'btn btn-large btn-primary submit-btn', id: 'pay-btn') %>
+  <%= submit_tag('Pay', class: pay_btn_cls, id: 'pay-btn') %>
 <% end %>  
 
