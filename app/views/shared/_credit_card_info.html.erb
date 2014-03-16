@@ -27,7 +27,7 @@
     <td class="width120"><%= f.number_field :cvv, id: 'card_code', :maxlength => 4, :size => 4 %></td> 
     <td class="width30"></td>
     <td class="width180">
-        <%= select_month nil, {add_month_numbers_true: true}, {name: 'card_month', id: "card_month", class: "neg-top pixi-select" } %>
+        <%= select_month Date.today, {add_month_numbers_true: true}, {name: 'card_month', id: "card_month", class: "neg-top pixi-select" } %>
     </td>
     <td class="width30"></td>
     <td class="width120">

@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe PixiPost do
   before(:each) do
-    @user = FactoryGirl.create(:pixi_user) 
+    @user = create(:pixi_user) 
+    @pixi_post_zip = create(:pixi_post_zip)
     @pixi_post = @user.pixi_posts.build FactoryGirl.attributes_for(:pixi_post) 
   end
 
@@ -34,6 +35,7 @@ describe PixiPost do
   it { should respond_to(:editor_id) }
   it { should respond_to(:pixan_name) }
   it { should respond_to(:country) }
+  it { should respond_to(:zip_service_area) }
 
   it { should validate_presence_of(:user_id) }
   it { should validate_presence_of(:preferred_time) }
@@ -46,13 +48,25 @@ describe PixiPost do
   it { should validate_presence_of(:zip) }
   it { should ensure_length_of(:address).is_at_most(50) }
   it { should ensure_length_of(:city).is_at_most(30) }
-  it { should ensure_length_of(:zip).is_at_least(5).is_at_most(12) }
+  it { should ensure_length_of(:zip).is_equal_to(5) }
+  it { should ensure_length_of(:home_phone).is_equal_to(10) }
+  it { should ensure_length_of(:mobile_phone).is_equal_to(10) }
+  it { should allow_value(4157251111).for(:home_phone) }
+  it { should_not allow_value(7251111).for(:home_phone) }
+  it { should allow_value(4157251111).for(:mobile_phone) }
+  it { should_not allow_value(7251111).for(:mobile_phone) }
+  it { should allow_value(41572).for(:zip) }
+  it { should_not allow_value(725).for(:zip) }
 
   it { should have_db_column(:pixi_id) }
   it { should have_db_index(:pixi_id) }
 
   it { should validate_numericality_of(:quantity).is_greater_than(0) }
   it { should validate_numericality_of(:value).is_greater_than_or_equal_to(50) }
+  it { should validate_numericality_of(:value).is_less_than_or_equal_to(MAX_PIXI_AMT.to_f) }
+  it { should allow_value(400).for(:value) }
+  it { should_not allow_value(30).for(:value) }
+  it { should_not allow_value(200000).for(:value) }
   it { should belong_to(:user) }
   it { should belong_to(:listing).with_foreign_key('pixi_id') }
   it { should belong_to(:pixan).with_foreign_key('pixan_id') }
@@ -191,18 +205,20 @@ describe PixiPost do
 
     it "sets status to scheduled" do
       @pixan = FactoryGirl.create :pixi_user
-      @post = @user.pixi_posts.build FactoryGirl.attributes_for :pixi_post, pixan_id: @pixan.id, appt_date: Date.today+3.days
+      @post = @user.pixi_posts.build FactoryGirl.attributes_for :pixi_post, pixan_id: @pixan.id, appt_date: Date.today+3.days, 
+        appt_time: Time.now+3.days
       @post.save
       @post.status.should == 'scheduled'
     end
 
-    it "sets status to scheduled" do
-      @pixan = FactoryGirl.create :pixi_user
-      @post = @user.pixi_posts.build FactoryGirl.attributes_for :pixi_post, pixan_id: @pixan.id, appt_date: Date.today+3.days, 
-        completed_date: Date.today+3.days
+    it "sets status to completed" do
+      @listing = create :listing, seller_id: @user.id
+      @pixan = create :pixi_user
+      @post = @user.pixi_posts.build FactoryGirl.attributes_for :pixi_post, pixan_id: @pixan.id, appt_date: Time.now+3.days, 
+        appt_time: Time.now+3.days, completed_date: Time.now+3.days, pixi_id: @listing.pixi_id
       @post.save
       @post.status.should_not == 'scheduled'
-      @post.status.should == 'completed'
+      expect(@post.status).to eq('completed')
     end
   end
 
@@ -266,18 +282,24 @@ describe PixiPost do
       end
 
       it "has valid appt date" do
-        @post.appt_date = Date.today+3.days
+        @post.appt_date = @post.appt_time = Time.now+3.days
         @post.should be_valid
       end
 
       it "has valid appt date w/ old preferred date" do
-        @post.appt_date = Date.today+3.days
-        @post.preferred_date = Date.today-3.days
+        @post.appt_date = @post.appt_time = Time.now+3.days
+        @post.preferred_date = Time.now-3.days
         @post.should be_valid
       end
 
       it "rejects a bad or missing appt date" do
         @post.should_not be_valid
+      end
+
+      it "has invalid appt time" do
+        @pixi_post.appt_date = Date.today+3.days
+        @pixi_post.appt_time = nil
+        @pixi_post.should_not be_valid
       end
 
       it "rejects a missing pixan id" do
@@ -322,9 +344,9 @@ describe PixiPost do
     let(:listing) { FactoryGirl.create :listing, seller_id: @user.id }
 
     it "checks completed date" do
-      @post = @user.pixi_posts.build FactoryGirl.attributes_for :pixi_post, pixan_id: pixan.id, appt_date: Date.today+3.days, 
-        completed_date: Date.today+3.days, pixi_id: listing.pixi_id
-      @pixi_post.should be_valid
+      @post = @user.pixi_posts.build FactoryGirl.attributes_for :pixi_post, pixan_id: pixan.id, appt_date: Time.now+3.days, 
+        completed_date: Time.now+3.days, pixi_id: listing.pixi_id, appt_time: Time.now+3.days
+      @post.should be_valid
     end
 
     it "checks for missing completed date" do
@@ -332,4 +354,14 @@ describe PixiPost do
       @post.should_not be_valid
     end
   end
+
+  describe "zip service area" do 
+    let(:pixi_post) { FactoryGirl.build :pixi_post, zip: '94720' }
+    it { @pixi_post.should be_valid }
+
+    it "should not save w/o valid zip" do 
+      pixi_post.save
+      pixi_post.should_not be_valid 
+    end
+  end 
 end

@@ -13,6 +13,7 @@ class CardAccount < ActiveRecord::Base
   validates :expiration_month, presence: true
   validates :expiration_year, presence: true
   validates :card_type, presence: true
+  validates :zip, presence: true, length: {is: 5}
 
   # verify token exists before creating record
   def must_have_token

@@ -41,7 +41,7 @@ Plumboard::Application.routes.draw do
 
   resources :pixi_posts do
     collection do
-      get 'seller', :autocomplete_user_first_name
+      get 'seller', :autocomplete_site_name, :autocomplete_user_first_name
     end
   end
 

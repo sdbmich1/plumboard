@@ -13,13 +13,13 @@ feature "CardAccounts" do
   end
 
   def invalid_card_dates
-    select "January", from: "card_month"
-    select (Date.today.year).to_s, from: "card_year"
+    select "January", from: "cc_card_month"
+    select (Date.today.year).to_s, from: "cc_card_year"
   end
 
   def valid_card_dates
-    select "January", from: "card_month"
-    select (Date.today.year+2).to_s, from: "card_year"
+    select "January", from: "cc_card_month"
+    select (Date.today.year+2).to_s, from: "cc_card_year"
   end
 
   def credit_card val="4111111111111111"
@@ -99,11 +99,13 @@ feature "CardAccounts" do
 
     it "creates an new account" do
       expect {
-        credit_card_data
+        credit_card_data; sleep 2
       }.to change(CardAccount, :count).by(1)
 
-      page.should have_content 'Home'
-      page.should_not have_content 'Card #'
+      # page.should have_content 'Home'
+      page.should have_link 'Remove'
+      page.should have_content 'Card #'
+      page.should have_content 'Default'
     end
   end
 

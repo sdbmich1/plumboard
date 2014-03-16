@@ -1,5 +1,5 @@
 <%= content_for :subhead do %>
-  <%= render :partial => 'shared/navbar', locals: { menu_name: 'PixiPosts' } %>
+  <%= render :partial => 'shared/navbar', locals: { menu_name: set_pixi_post_menu } %>
 <% end %>
 <%= content_for :content do %>
   <%= form_for @post do |f| %>
@@ -21,7 +21,7 @@
       <%= render partial: 'shared/manage_pixi_post', locals: { f: f } %>
     <% end %>
     <div class="nav pull-right">
-      <%= link_to 'Cancel', root_path, confirm: msg, class: "btn btn-large" %>
+      <%= link_to 'Cancel', set_pixi_post_path, confirm: msg, class: "btn btn-large" %>
       <%= f.submit "Save", class: "btn btn-large btn-primary submit-btn" %>
     </div>
   </div>

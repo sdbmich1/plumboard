@@ -2,9 +2,9 @@
 <%= render partial: 'shared/pixi_post_details', locals: {post: post, showAddrFlg: true} %>
 <div class="mtop pull-right">
   <% if post.owner? @user %>
-    <%= link_to 'Remove', post, method: :delete, confirm: 'Delete this PixiPost?', class: 'btn btn-large btn-primary stnd-btn', id: 'rm-btn' %>
+    <%= link_to 'Remove', post, method: :delete, confirm: 'Delete this PixiPost?', class: 'btn btn-large', id: 'rm-btn' %>
   <% end %>
-  <%= link_to 'Edit', edit_pixi_post_path(post), class: 'btn btn-large btn-primary stnd-btn' %>
-  <%= link_to 'Done', root_path, class: 'btn btn-large btn-primary submit-btn' %>
+  <%= link_to 'Edit', edit_pixi_post_path(post), class: 'btn btn-large' %>
+  <%= link_to 'Done', set_pixi_post_path, class: 'btn btn-large btn-primary submit-btn' %>
 </div>
 

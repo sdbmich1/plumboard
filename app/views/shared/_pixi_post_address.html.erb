@@ -6,7 +6,7 @@
       <tr><td class='span3'>
         <%= @post.address %><br>
         <%= "#{@post.city}, #{@post.state} #{@post.zip}" %><br><%= @post.home_phone %></td>
-        <td class='v-align price'><%= link_to 'Change', '#', id: 'edit-addr-btn', class: 'offset1 btn' %></td>
+        <td class='v-align price'><%= link_to 'Change', '#', id: 'edit-addr-btn', class: 'btn' %></td>
       </tr>
       </table>
     </div>
@@ -22,7 +22,9 @@
     </div>
     <div class='row'>
       <div class='span4'>
-        <label>City* </label><%= f.text_field :city, placeholder: 'City', value: @post.city %> 
+        <label>City* </label>
+        <%= f.autocomplete_field :city, autocomplete_site_name_pixi_posts_path, value: @post.city, 
+	        :update_elements => { }, :placeholder => 'Enter City' %> 
       </div>
       <div class='span2'>
         <label>State/Province*</label>

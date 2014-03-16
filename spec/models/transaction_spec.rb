@@ -15,6 +15,7 @@ describe Transaction do
   it { should respond_to(:email) }
   it { should respond_to(:home_phone) }
   it { should respond_to(:work_phone) }
+  it { should respond_to(:mobile_phone) }
   it { should respond_to(:city) }
   it { should respond_to(:state) }
   it { should respond_to(:zip) }
@@ -36,8 +37,20 @@ describe Transaction do
   it { should respond_to(:card_number) }
   it { should respond_to(:exp_month) }
   it { should respond_to(:exp_year) }
-  it { should ensure_length_of(:zip).is_at_least(5).is_at_most(12) }
   it { should validate_numericality_of(:amt).is_greater_than_or_equal_to(0) }
+  it { should ensure_length_of(:zip).is_equal_to(5) }
+  it { should ensure_length_of(:home_phone).is_equal_to(10) }
+  it { should ensure_length_of(:mobile_phone).is_equal_to(10) }
+  it { should ensure_length_of(:work_phone).is_equal_to(10) }
+
+  it { should allow_value(4157251111).for(:home_phone) }
+  it { should allow_value(4157251111).for(:work_phone) }
+  it { should allow_value(4157251111).for(:mobile_phone) }
+  it { should_not allow_value(7251111).for(:home_phone) }
+  it { should_not allow_value(7251111).for(:work_phone) }
+  it { should_not allow_value(7251111).for(:mobile_phone) }
+  it { should allow_value(41572).for(:zip) }
+  it { should_not allow_value(725).for(:zip) }
 
   it { should respond_to(:user) }
   it { should respond_to(:listings) }
@@ -213,7 +226,8 @@ describe Transaction do
 
   describe 'has_token?' do
     it 'returns true' do
-      @transaction.has_token?.should be_true
+      @account = @user.card_accounts.create FactoryGirl.attributes_for :card_account
+      expect(@transaction.has_token?).to be_true
     end
 
     it 'does not return true' do

@@ -2,9 +2,9 @@
   <h2>Your Card Account</h2>
 </div>
 <div class="row">
-  <div id="notice"><%= render partial: 'layouts/notices' %></div>
+  <div id="notice"><%= render 'layouts/flash_messages', flash: flash %></div>
   <div id="data_error" style="display:none" class="error"></div>
-  <div class="sm-top span6 offset4">
+  <div class="sm-top span6 offset4 mleft15">
     <table>
       <tr><td>Card #: </td><td class='width30'></td><td><%= "************#{@account.card_no}" %></td></tr>
       <tr><td>Card Type: </td><td class='width30'></td><td><%= @account.card_type %></td></tr> 
@@ -13,7 +13,7 @@
     </table>
   </div>
   <div class="span4 offset5 mtop">
-    <%= link_to 'Remove', @account, method: :delete, confirm: 'Are you sure?', class: "btn btn-large btn-primary stnd-btn" %>
+    <%= link_to 'Remove', @account, method: :delete, confirm: 'Are you sure?', class: "btn btn-large" %>
   </div>
 </div>
 

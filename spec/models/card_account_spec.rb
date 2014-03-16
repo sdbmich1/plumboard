@@ -28,6 +28,10 @@ describe CardAccount do
   it { should validate_presence_of(:expiration_year) }
   it { should validate_presence_of(:expiration_month) }
   it { should validate_presence_of(:card_type) }
+  it { should validate_presence_of(:zip) }
+  it { should ensure_length_of(:zip).is_equal_to(5) }
+  it { should allow_value(41572).for(:zip) }
+  it { should_not allow_value(725).for(:zip) }
   
   describe "when user_id is empty" do
     before { @account.user_id = "" }

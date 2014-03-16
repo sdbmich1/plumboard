@@ -9,7 +9,7 @@
   </tr>
   <tr>
     <td></td>
-    <td><div class='price'>Sales Tax</div></td>
+    <td><div class='price'>Sales Tax (%)</div></td>
     <td class="width120"><%= f.number_field :sales_tax, step: 0.01, id: 'inv_tax', class: 'price' %></td>
     <td class="width120">
       <%= f.text_field :tax_total, readonly: true, id: 'inv_tax_total', value: num_display(f.object, "tax_total"), class: 'price' %></td>

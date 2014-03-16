@@ -33,8 +33,10 @@ class Transaction < ActiveRecord::Base
                     :format => { :with => name_regex }  
 
   validates :state, :presence => true
-  validates :zip, presence: true, length: {minimum: 5, maximum: 12}
-  validates :home_phone, :presence => true
+  validates :zip, presence: true, length: {is: 5}
+  validates :home_phone, presence: true, length: {is: 10}
+  validates :mobile_phone, allow_blank: true, length: {is: 10}
+  validates :work_phone, allow_blank: true, length: {is: 10}
   validates :amt, presence: true, numericality: { greater_than_or_equal_to: 0 }
 
   # pre-load new transaction for given user

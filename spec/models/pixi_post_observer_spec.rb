@@ -41,14 +41,4 @@ describe PixiPostObserver do
       @model.save!
     end
   end
-
-  describe 'after_update' do
-    it 'updates contact info' do
-      @model = user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post, status: 'active')
-      @model.address = '3456 Elm'
-      @model.save!
-      update_addr
-      @model.user.contacts[0].address.should == @model.address 
-    end
-  end
 end

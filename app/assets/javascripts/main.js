@@ -201,13 +201,18 @@ function load_slider(cntl) {
 $(document).ready(function(){
 
   // enable tooltip
-  if( $('#ttip').length > 0 ) {
+  if( $('.ttip').length > 0 ) {
     $('a').tooltip();
   }
 
   // set location
   if( $('#home_site_name').length > 0 ) {
     getLocation(true);
+  }
+
+  // set autocomplete to autoselect first item
+  if( $('#site_name').length > 0 ) {
+    $( "#site_name" ).autocomplete({ autoFocus: true });
   }
 
   // check for disabled buttons
@@ -776,26 +781,15 @@ function switchToggle(flg) {
 // fix bootstrap mobile dropdown issue
 $('body').on('touchstart.dropdown', '.dropdown-menu', function (e) { e.stopPropagation(); })
          .on('touchstart.dropdown', '.dropdown-submenu', function (e) { e.stopPropagation(); });
-
-// Trap Backspace(8) and Enter(13) - 
-// Except bksp on text/textareas, enter on textarea/submit
-if (typeof window.event != 'undefined') // IE
-  document.onkeydown = function() // IE
-    {
-       var t=event.srcElement.type;
-       var kc=event.keyCode;
-       return ((kc != 8) || ( t == 'text') || (t == 'textarea') || ( t == 'submit'))
-    }
-else
-  document.onkeypress = function(e)  // FireFox/Others 
-    {
-       var t=e.target.type;
-       var kc=e.keyCode;
-       console.log('in onkeypress');
-       if ((kc != 8) || ( t == 'text') || (t == 'textarea') || ( t == 'submit'))
-	 return true
-       else {
-	//  alert('Sorry Backspace/Enter is not allowed here'); // Demo code
-	 return false
-       }
-    }
+	  
+// set card month for credit card
+$(document).on("change", "#cc_card_month", function() {
+  var card_mo = $(this).val();
+  $('#exp_mo').val(card_mo);
+});
+	  
+// set card year for credit card
+$(document).on("change", "#cc_card_year", function() {
+  var card_yr = $(this).val();
+  $('#exp_yr').val(card_yr);
+});

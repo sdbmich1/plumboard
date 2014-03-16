@@ -37,6 +37,16 @@ class Site < ActiveRecord::Base
     where(:id => Listing.active.map(&:site_id).uniq)
   end
 
+  # select by type
+  def self.get_by_type val
+    where("status = 'active' AND org_type = ?", val)
+  end
+
+  # select cities
+  def self.cities
+    get_by_type 'city'
+  end
+
   # set json string
   def as_json(options={})
     super(only: [:id, :name])

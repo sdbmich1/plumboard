@@ -26,7 +26,6 @@ class CardAccountsController < ApplicationController
     respond_with(@account) do |format|
       if @account.save_account
         flash.now[:notice] = 'Successfully created account.'
-        format.html { redirect_to root_path }
         format.json { render json: @account }
       else
         flash.now[:error] = 'Error occurred creating account. Please try again.'

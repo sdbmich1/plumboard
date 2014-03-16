@@ -4,6 +4,7 @@ class PixiPostsController < ApplicationController
   before_filter :check_permissions, only: [:index]
   before_filter :set_params, only: [:create, :update]
   before_filter :load_data, only: [:index, :seller]
+  autocomplete :site, :name, full: true, scopes: [:cities]
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name
   include ResetDate
   respond_to :html, :js, :json, :mobile
@@ -61,8 +62,8 @@ class PixiPostsController < ApplicationController
     @post = PixiPost.find params[:id]
     respond_with(@post) do |format|
       if @post.destroy  
-        format.html { redirect_to seller_pixi_posts_path }
-        format.mobile { redirect_to seller_pixi_posts_path }
+        format.html { redirect_to seller_pixi_posts_path(status: 'active') }
+        format.mobile { redirect_to seller_pixi_posts_path(status: 'active') }
 	format.json { head :ok }
       else
         format.html { render action: :show, error: "PixiPost was not removed. Please try again." }
@@ -94,6 +95,12 @@ class PixiPostsController < ApplicationController
       format.html { params[:pixi_post] = ResetDate::reset_dates(params[:pixi_post], 'PixiPost') }
       format.json { params[:pixi_post] = JSON.parse(params[:pixi_post]) }
     end
+  end
+
+  # parse results for active items only
+  def get_autocomplete_items(parameters)
+    items = super(parameters)
+    items = items.active rescue items
   end
 
   def check_permissions

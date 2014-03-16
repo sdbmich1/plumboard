@@ -259,6 +259,7 @@ FactoryGirl.define do
     expiration_month   6
     expiration_year    2018
     token	"/v1/marketplaces/TEST-MP2Q4OaIanQuIDJIixHGmhQA/cards/CC5yjh7ElKiRFu5oArBZ8wmy"
+    zip   '90201'
   end
 
   factory :comment do
@@ -296,6 +297,7 @@ FactoryGirl.define do
     description 	"Black leather sofa"
     quantity		1
     value 		100
+    home_phone		'4158673143'
     status 		"active"
   end
 

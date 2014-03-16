@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe Site do
   before(:each) do
-    @listing = FactoryGirl.create(:listing) 
+    @user = create :pixi_user
+    @listing = create(:listing, seller_id: @user.id) 
     @site = @listing.site 
   end
    
@@ -18,6 +19,7 @@ describe Site do
   it { should respond_to(:site_listings) }
   it { should respond_to(:listings) }
   it { should respond_to(:contacts) }
+  it { should respond_to(:pictures) }
   it { should respond_to(:temp_listings) }
 
   describe "should include active sites" do
@@ -58,8 +60,8 @@ describe Site do
       [@sr].each do |s|
          Picture.find_by_id(s.id).should be_nil
        end
-     end  
-   end  
+    end  
+  end  
 
   describe 'contacts' do
     before(:each) do
@@ -79,6 +81,28 @@ describe Site do
       [@sr].each do |s|
          Contact.find_by_id(s.id).should be_nil
        end
-     end  
-   end  
+    end  
+  end  
+
+  describe 'get_by_type' do
+    it 'returns sites' do
+      create :site, name: 'San Francisco State', org_type: 'school'
+      expect(Site.get_by_type('school')).not_to be_empty 
+    end  
+
+    it 'does not return sites' do
+      expect(Site.get_by_type('school')).to be_empty 
+    end  
+  end
+
+  describe 'cities' do
+    it 'returns sites' do
+      create :site, name: 'San Francisco', org_type: 'city'
+      expect(Site.cities).not_to be_empty 
+    end  
+
+    it 'does not return sites' do
+      expect(Site.cities).to be_empty 
+    end  
+  end
 end

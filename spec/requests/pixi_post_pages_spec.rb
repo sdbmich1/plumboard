@@ -8,7 +8,19 @@ feature "PixiPosts" do
   let(:submit) { "Save" }
 
   before(:each) do
-    FactoryGirl.create :state
+    create :state
+    load_zips
+  end
+
+  def load_zips
+    create :pixi_post_zip
+    create :pixi_post_zip, zip: '94103'
+    create :pixi_post_zip, zip: '94108'
+  end
+
+  def init_setup usr
+    login_as(usr, :scope => :user, :run_callbacks => false)
+    @user = usr
   end
 
   def click_cancel_ok
@@ -35,16 +47,24 @@ feature "PixiPosts" do
     page.execute_script %Q{ $('#pixan_id').val("#{editor.id}") }
   end
 
+  def set_pixi
+    page.execute_script %Q{ $('#pixi_post_pixi_id').val("#{@listing.pixi_id}") }
+  end
+
   def add_data
     pref_data
     fill_in 'pixi_post_value', with: 200.00
     fill_in 'description', with: "xbox 360 box."
   end
 
-  def user_data
-    user_city_data
+  def add_phone
     fill_in 'pixi_post_home_phone', with: '4152419755'
     fill_in 'pixi_post_mobile_phone', with: '4152419733'
+  end
+
+  def user_data
+    user_city_data
+    add_phone
   end
 
   def user_city_data
@@ -117,8 +137,7 @@ feature "PixiPosts" do
 
   describe 'user w/ address adds a new pixi post' do
     before do
-      login_as(contact_user, :scope => :user, :run_callbacks => false)
-      @user = contact_user
+      init_setup contact_user
       visit new_pixi_post_path 
     end
 
@@ -145,8 +164,7 @@ feature "PixiPosts" do
 
   describe "Create with invalid information" do
     before do
-      login_as(user, :scope => :user, :run_callbacks => false)
-      @user = user
+      init_setup user
       visit new_pixi_post_path 
     end
 
@@ -199,12 +217,21 @@ feature "PixiPosts" do
       expect { click_button submit }.not_to change(PixiPost, :count)
       page.should have_content "Zip can't be blank"
     end
+
+    it "must have a valid zip" do
+      add_data
+      user_city_data
+      select("California", :from => "pixi_post_state")
+      fill_in 'pixi_post_zip', with: '94113'
+      add_phone
+      expect { click_button submit }.not_to change(PixiPost, :count)
+      page.should have_content "Zip not in current PixiPost service area"
+    end
   end
 
   describe "View PixiPosts" do 
     before do
-      login_as(user, :scope => :user, :run_callbacks => false)
-      @user = user
+      init_setup user
       @pixi_post = @user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post)
       visit root_path 
     end
@@ -230,14 +257,14 @@ feature "PixiPosts" do
     let(:pixan) { FactoryGirl.create :pixi_user }
 
     before do
-      login_as(user, :scope => :user, :run_callbacks => false)
-      @user = user
+      init_setup user
+      load_zips
       @listing = FactoryGirl.create :listing, seller_id: @user.id 
       @pixi_post = @user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post, description: 'tire rims')
-      @scheduled = @user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: pixan.id, appt_date: Date.today+3.days,
-        description: 'xbox 360'
-      @completed = @user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: pixan.id, appt_date: Date.today+3.days, 
-        completed_date: Date.today+3.days, pixi_id: @listing.pixi_id, description: 'rocking chair'
+      @scheduled = @user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: pixan.id, appt_date: Time.now+3.days,
+        appt_time: Time.now+3.days, description: 'xbox 360'
+      @completed = @user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: pixan.id, appt_date: Time.now+3.days, 
+        appt_time: Time.now+3.days, completed_date: Time.now+3.days, pixi_id: @listing.pixi_id, description: 'rocking chair'
       visit seller_pixi_posts_path(status: 'active') 
     end
 
@@ -275,7 +302,7 @@ feature "PixiPosts" do
       page.should have_content "PixiPost Request"
       page.should have_link 'Edit', href: edit_pixi_post_path(@pixi_post) 
       page.should have_link 'Remove', href: pixi_post_path(@pixi_post) 
-      page.should have_link 'Done', href: root_path 
+      page.should have_link 'Done', href: seller_pixi_posts_path(status: 'active') 
       page.should have_content @pixi_post.description
       page.should have_content user.name
     end
@@ -302,11 +329,16 @@ feature "PixiPosts" do
 
   describe "Seller edits a PixiPost" do 
     before do
-      login_as(user, :scope => :user, :run_callbacks => false)
-      @user = user
+      init_setup user
+      load_zips
       @pixi_post = @user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post)
-      visit seller_pixi_posts_path 
+      visit seller_pixi_posts_path(status: 'active') 
     end
+
+    it { should have_link "Active" }
+    it { should have_link "Scheduled" }
+    it { should have_link "Completed" }
+    it { should have_content "My PixiPosts" }
 
     it "clicks to open a pixipost" do
       expect { 
@@ -317,7 +349,7 @@ feature "PixiPosts" do
       page.should have_selector('title', text: 'Edit PixiPost') 
       page.should have_content "Address Information"
       page.should_not have_content "Appointment Date"
-      page.should have_link 'Cancel', href: root_path 
+      page.should have_link 'Cancel', href: seller_pixi_posts_path(status: 'active') 
       page.should have_button('Save') 
     end
 
@@ -336,9 +368,9 @@ feature "PixiPosts" do
 
   describe "Editor edits a PixiPost" do 
     before do
-      login_as(editor, :scope => :user, :run_callbacks => false)
-      @user = user
-      @pixi_post = @user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post)
+      load_zips
+      init_setup editor
+      @pixi_post = user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post)
       visit edit_pixi_post_path(@pixi_post)
     end
 
@@ -348,7 +380,8 @@ feature "PixiPosts" do
       page.should have_content "Address Information"
       page.should have_content "Appointment Date"
       page.should have_selector('#pixan_id', visible: true) 
-      page.should have_link 'Cancel', href: root_path 
+      page.should have_link 'Cancel', href: pixi_posts_path(status: 'active') 
+      page.should_not have_link 'Cancel', href: seller_pixi_posts_path(status: 'active') 
       page.should have_button('Save') 
     end
 
@@ -373,6 +406,16 @@ feature "PixiPosts" do
       }.to change(PixiPost,:count).by(0)
       page.should have_content "Pixan can't be blank"
     end
+  end
+
+  describe "Editor closes a PixiPost" do 
+    before do
+      load_zips
+      init_setup editor
+      @pixi_post = user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post)
+      @listing = FactoryGirl.create :listing, seller_id: user.id, status: 'active' 
+      visit edit_pixi_post_path(@pixi_post)
+    end
 
     it "does not set completed date", js: true do
       expect{
@@ -381,7 +424,7 @@ feature "PixiPosts" do
 	set_pixan
         click_button submit; sleep 2
       }.to change(PixiPost,:count).by(0)
-      page.should have_content "Appt date is not a valid date"
+      page.should have_content "Pixi can't be blank"
     end
 
     it "sets completed date", js: true do
@@ -391,6 +434,7 @@ feature "PixiPosts" do
         fill_in 'cmp-dt', with: Date.tomorrow().strftime('%m/%d/%Y')
         select('1:00 PM', :from => 'cmp-tm')
 	set_pixan
+        select(@listing.title, :from => 'pixi_post_pixi_id')
         click_button submit; sleep 2
       }.to change(PixiPost,:count).by(0)
 
@@ -402,14 +446,16 @@ feature "PixiPosts" do
 
   describe "Editor views a PixiPost" do 
     before do
-      login_as(editor, :scope => :user, :run_callbacks => false)
-      @user = user
-      @pixi_post = @user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post)
-      visit pixi_posts_path 
+      load_zips
+      init_setup editor
+      @pixi_post = user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post)
+      @listing = FactoryGirl.create(:listing, seller_id: user.id) 
+      visit pixi_posts_path(status: 'active') 
     end
 
     it { should have_link("#{@pixi_post.id}", href: pixi_post_path(@pixi_post)) }
     it { should have_selector('title', text: 'PixiPosts') }
+    it { should_not have_selector('title', text: 'My PixiPosts') }
     it { should have_content "PixiPost" }
     it { should have_content "Seller Name" } 
 
@@ -418,27 +464,28 @@ feature "PixiPosts" do
         click_on "#{@pixi_post.id}"
       }.not_to change(PixiPost, :count)
 
+      page.should have_content "PixiPosts"
       page.should have_content "PixiPost Request"
       page.should have_content @pixi_post.description
       page.should have_content user.name
       page.should have_link 'Edit', href: edit_pixi_post_path(@pixi_post) 
       page.should_not have_link 'Remove', href: pixi_post_path(@pixi_post) 
       # page.should have_selector('#rm-btn', visible: false) 
-      page.should have_link 'Done', href: root_path 
+      page.should have_link 'Done', href: pixi_posts_path(status: 'active') 
     end
   end
 
   describe "Editor cancels a PixiPost" do 
     before do
-      login_as(editor, :scope => :user, :run_callbacks => false)
-      @user = user
-      @pixi_post = @user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post)
+      load_zips
+      init_setup editor
+      @pixi_post = user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post)
       visit edit_pixi_post_path(@pixi_post) 
     end
 
     it "cancels pixipost edit", js: true do
       click_cancel_ok; sleep 2
-      page.should have_content "Home" 
+      page.should have_content "PixiPosts" 
     end
 
     it "cancels edit of pixipost", js: true do

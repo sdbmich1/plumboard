@@ -242,32 +242,6 @@ describe User do
     end
   end
 
-  describe "must have zip" do
-    let(:user) { FactoryGirl.build :user }
-    before do
-      picture = user.pictures.build
-      picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
-      @contact = user.contacts.build
-    end
-
-    it "does not save w/o zip" do
-      user.save
-      user.should_not be_valid
-    end
-
-    it "does not save w/ invalid zip" do
-      @contact.zip = '123'
-      user.save
-      user.should_not be_valid
-    end
-
-    it "saves w/ valid zip" do
-      @contact.zip = '12345'
-      user.save(validate: false)
-      user.should be_valid
-    end
-  end
-
   describe 'pixis' do
     it "returns pixis" do
       @listing = FactoryGirl.create(:listing, seller_id: @user.id)

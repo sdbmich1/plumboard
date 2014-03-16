@@ -12,26 +12,38 @@ class PixiPost < ActiveRecord::Base
   belongs_to :pixan, foreign_key: "pixan_id", class_name: "User"
 
   validates :user_id, presence: true
-  validates :preferred_time, presence: true
-  validates :value, presence: true, numericality: { greater_than_or_equal_to: 50 }
+  validates :value, presence: true, numericality: { greater_than_or_equal_to: 50, less_than_or_equal_to: MAX_PIXI_AMT.to_f }
   validates :quantity, presence: true, numericality: { greater_than: 0 }
   validates :address, presence: true, length: {maximum: 50}
   validates :city, presence: true, length: {maximum: 30}
   validates :state, presence: true
-  validates :zip, presence: true, length: {minimum: 5, maximum: 12}
+  validates :zip, presence: true, length: {is: 5}
   validates :description, presence: true
+  validates :preferred_time, presence: true
+  validates :pixan_id, presence: true, if: :has_appt? || :is_completed?
+  validates :pixi_id, presence: true, unless: "completed_date.nil?"
+  validates :home_phone, presence: true, length: {is: 10}
+  validates :mobile_phone, allow_blank: true, length: {is: 10}
+  validate :zip_service_area
   validates_date :preferred_date, presence: true, on_or_after: :today, unless: :has_appt?
   validates_date :alt_date, allow_blank: true, on_or_after: :today
   validates_date :appt_date, on_or_after: :today, presence: true, if: :has_pixan?
   validates_date :completed_date, on_or_after: :today, presence: true, if: :has_pixi?
-  validates :pixan_id, presence: true, if: :has_appt? || :is_completed?
-  validates :pixi_id, presence: true, unless: "completed_date.nil?"
+  validates_datetime :alt_time, presence: true, unless: "alt_date.nil?"
+  validates_datetime :appt_time, presence: true, unless: "appt_date.nil?"
 
   default_scope :order => "preferred_date, preferred_time ASC"
 
+  # check if zip is in current service area
+  def zip_service_area
+    if PixiPostZip.find_by_zip(zip.to_i) == nil
+       errors.add(:base, "Zip not in current PixiPost service area.")
+    end
+  end
+
   # set fields upon creation
   def set_flds
-    self.status = 'active' if self.status.blank?
+    self.status = 'active' if status.blank?
     self.status = 'scheduled' if has_appt? && !is_completed?
     self.status = 'completed' if is_completed?
   end
@@ -85,7 +97,7 @@ class PixiPost < ActiveRecord::Base
   def self.load_new usr
     if usr
       pp = usr.pixi_posts.build
-      if usr.contacts[0]
+      unless usr.contacts[0].blank?
         pp.address, pp.address2 = usr.contacts[0].address, usr.contacts[0].address2
         pp.city, pp.state = usr.contacts[0].city, usr.contacts[0].state
         pp.zip, pp.home_phone = usr.contacts[0].zip, usr.contacts[0].home_phone
