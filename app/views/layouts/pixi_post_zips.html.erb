@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="/assets/favicon.ico" rel="shortcut icon" />
+  <title><%= full_title(yield(:title)) %></title>
+  <%= stylesheet_link_tag    "application", "jquery.bxslider", "datepicker", "si.files", :media => "all" %>
+  <%= javascript_include_tag "application", "autocomplete-rails.js", "jquery.ui.autocomplete.html.js", 
+        'bootstrap.min.js', 'jquery.placeholder.min.js' %>
+  <%= csrf_meta_tags %>
+  <%= render 'layouts/shim' %>
+</head>
+<body>
+  <div id='wrap'>
+    <%= render 'layouts/header' %>
+    <%= yield :subhead %>
+    <div class="container">
+      <%= yield :topcontent %>
+      <%= render 'layouts/flash_messages', flash: flash %>
+    </div>
+  </div>
+  <div class='pg-bkgnd-gray'>
+    <div class="container" id='frame-container'>
+      <div id="spinner" class="round" style="display:none"></div>
+      <%= yield :content %>
+    </div>
+    <div class="container">
+      <%= render 'layouts/footer' %>
+    </div>
+  </div>
+</body>
+</html>

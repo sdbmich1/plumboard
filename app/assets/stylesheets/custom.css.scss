@@ -98,6 +98,13 @@ p {
   padding-bottom: 60px;
 }
 
+#frame-container {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  padding-bottom: 20px;
+}
+
 #cat-wrap, #home-wrap {
   min-height: 150%;
   @extend .item-hgt;
@@ -699,3 +706,9 @@ form .clearfix:before, form .clearfix:after {
 .title-str { font-size: 1.25em; font-weight: bold; color: #026FB7; }
 .faq-str { font-size: 0.875em; font-weight: bold; color: #000; }
 .contact-str { font-size: 0.675em; color: black; }
+.pg-title-black {
+    font-family: "Trebuchet MS";
+    color: #000000;
+    font-size: 36px;
+    font-weight: bold;
+  }

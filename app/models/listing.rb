@@ -5,6 +5,7 @@ class Listing < ListingParent
   before_create :activate
   attr_accessor :parent_pixi_id
 
+  belongs_to :buyer, foreign_key: 'buyer_id', class_name: 'User'
   has_many :posts, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :invoices, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :comments, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
@@ -111,9 +112,9 @@ class Listing < ListingParent
   end
 
   # mark pixi as sold
-  def mark_as_sold
+  def mark_as_sold buyer_id=nil
     unless sold?
-      self.status = 'sold'
+      self.status, self.buyer_id = 'sold', buyer_id
       save!
     else
       errors.add(:base, 'Pixi already marked as sold.')
@@ -129,6 +130,41 @@ class Listing < ListingParent
   # return whether pixi is wanted
   def is_wanted?
     wanted_count > 0 rescue nil
+  end
+
+  # return whether pixi is wanted by user
+  def user_wanted? usr
+    pixi_wants.where(user_id: usr.id).first
+  end
+
+  # return liked count 
+  def liked_count
+    pixi_likes.size rescue 0
+  end
+
+  # return whether pixi is liked
+  def is_liked?
+    liked_count > 0 rescue nil
+  end
+
+  # return whether pixi is liked by user
+  def user_liked? usr
+    pixi_likes.where(user_id: usr.id).first
+  end
+
+  # return saved count 
+  def saved_count
+    saved_listings.size rescue 0
+  end
+
+  # return whether pixi is saved
+  def is_saved?
+    saved_count > 0 rescue nil
+  end
+
+  # return whether pixi is saved by user
+  def user_saved? usr
+    saved_listings.where(user_id: usr.id).first
   end
 
   # return wanted users 

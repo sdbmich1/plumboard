@@ -166,7 +166,8 @@ $(document).on("ajax:complete", '#mark-posts, #post-frm, #comment-doc, #site_id,
 // handle 401 ajax error
 $(document).ajaxError( function(e, xhr, options){
   if(xhr.status == 401)
-      window.location.replace('/users/sign_in');
+      // window.location.replace('/users/sign_in');
+      window.location.reload();
 });	
 
 // process slider
@@ -205,14 +206,16 @@ $(document).ready(function(){
     $('a').tooltip();
   }
 
+  // Automatically put focus on first item in drop-down list
+  if( $('input[data-autocomplete]').length > 0 ) {
+    
+    // $('input[data-autocomplete]').autocomplete({ autoFocus: true });
+    console.log('autocomplete check');
+  }
+
   // set location
   if( $('#home_site_name').length > 0 ) {
     getLocation(true);
-  }
-
-  // set autocomplete to autoselect first item
-  if( $('#site_name').length > 0 ) {
-    $( "#site_name" ).autocomplete({ autoFocus: true });
   }
 
   // check for disabled buttons
@@ -438,8 +441,17 @@ $(document).on("change", "select[id*=pixi_id]", function() {
   var pid = $(this).val();
   var url = '/listings/get_pixi_price?pixi_id=' + pid;
 
+  // reset buyer id
+  $('#invoice_buyer_id').val('');
+
   // process script
   processUrl(url);
+});
+
+// set invoice buyer if selected buyer is changed
+$(document).on("change", "#tmp_buyer_id", function() {
+  var pid = $(this).val();
+  $('#invoice_buyer_id').val(pid);
 });
 
 // process url calls
@@ -516,6 +528,11 @@ $(document).on("keypress", "#search", function(e){
 // submit reply form on enter key
 $(document).on("keypress", ".reply_content", function(e){
   keyEnter(e, $(this), '.reply-btn');
+});
+
+// submit login form on enter key
+$(document).on("keypress", "#pwd", function(e){
+  keyEnter(e, $(this), '#login-btn');
 });
 
 var time_id;

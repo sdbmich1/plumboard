@@ -16,11 +16,10 @@ class PixiLikesController < ApplicationController
   end
 
   def destroy
-    @listing = Listing.find_by_pixi_id params[:pixi_id]
-    @like = @user.pixi_likes.find_by_pixi_id params[:pixi_id]
+    @like = @user.pixi_likes.find_by_pixi_id params[:id]
     respond_with(@like) do |format|
       if @like.destroy
-	reload_data params[:pixi_id]
+	reload_data params[:id]
         format.json { render json: {head: :ok} }
       else
         format.json { render json: { errors: @like.errors.full_messages }, status: 422 }
@@ -32,8 +31,5 @@ class PixiLikesController < ApplicationController
 
   def reload_data pid
     @listing = Listing.find_by_pixi_id pid
-    @like = @user.pixi_likes.where(pixi_id: pid).first
-    @saved = @user.saved_listings.where(pixi_id: pid).first
-    @contact = @user.posts.where(pixi_id: pid).first
   end
 end

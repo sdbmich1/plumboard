@@ -1,0 +1,13 @@
+<%= form_tag submit_pixi_post_zips_path, method: :get, id: 'check_zip_btn', class: 'navbar-search' do %>
+  <div class="mtop control-group">
+    <label class="control-label">Enter Your Zip Code:</label>
+    <div class="controls">
+      <div class="v-top input-append">
+        <%= autocomplete_field_tag 'zip', nil, autocomplete_pixi_post_zip_zip_pixi_post_zips_path, 
+	  :update_elements => { }, id: 'zip_code', :placeholder => 'Zip Code', class: 'sm-top width120 search-text' %></div>
+        <button type='submit' id='zip-submit-btn' class="sm-top btn btn-primary submit-btn" type="button">Submit</button>
+      </div>
+    </div>
+  </div>
+<% end %>
+

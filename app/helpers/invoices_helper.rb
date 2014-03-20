@@ -32,12 +32,38 @@ module InvoicesHelper
   end
 
   # check if selected pixi is wanted
-  def has_wanted_pixi? inv
-    inv.listing.is_wanted? rescue nil
+  def has_wanted_pixi? pid
+    @wantFlg ||= Listing.find_by_pixi_id(pid).is_wanted? rescue nil
   end
 
   # set btn class
   def pay_btn_cls
     controller_name == 'posts' ? 'btn btn-medium btn-primary' : 'btn btn-large btn-primary'
+  end
+
+  # set buyer name if exists
+  def load_buyer
+    @invoice.buyer_name rescue ''
+  end
+
+  # get invoice fee based on user
+  def get_invoice_fee
+    @invoice.owner?(@user) ? @invoice.get_fee(true) : @invoice.get_fee
+  end
+
+  # get conv fee message based on user
+  def get_conv_fee_msg
+    @invoice.owner?(@user) ? @invoice.listing.pixi_post? ? PXPOST_FEE_MSG : SELLER_FEE_MSG : CONV_FEE_MSG
+  end
+
+  # get invoice total based on user
+  def get_invoice_total inv
+    inv.owner?(@user) ? inv.amount : inv.amount + inv.get_fee
+  end
+
+  # get conv fee title
+  def get_conv_title
+    str = @invoice.owner?(@user) && action_name == 'show' ? 'Less ' : ''
+    str + 'Convenience Fee'
   end
 end

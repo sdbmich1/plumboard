@@ -17,7 +17,7 @@ class ListingParent < ActiveRecord::Base
 	:edited_by, :edited_dt, :post_ip, :lng, :lat, :event_start_date, :event_end_date, :compensation, :event_start_time, :event_end_time,
 	:explanation
 
-  belongs_to :user, :foreign_key => :seller_id
+  belongs_to :user, foreign_key: :seller_id
   belongs_to :site
   belongs_to :category
   belongs_to :transaction

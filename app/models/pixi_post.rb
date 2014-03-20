@@ -94,14 +94,18 @@ class PixiPost < ActiveRecord::Base
   end
 
   # load new pixi post with pre-populated fields
-  def self.load_new usr
+  def self.load_new usr, zip
     if usr
       pp = usr.pixi_posts.build
-      unless usr.contacts[0].blank?
+      if !usr.contacts[0].blank? && zip == usr.contacts[0].zip
         pp.address, pp.address2 = usr.contacts[0].address, usr.contacts[0].address2
-        pp.city, pp.state = usr.contacts[0].city, usr.contacts[0].state
-        pp.zip, pp.home_phone = usr.contacts[0].zip, usr.contacts[0].home_phone
-        pp.mobile_phone = usr.contacts[0].mobile_phone
+        pp.city, pp.state, pp.zip = usr.contacts[0].city, usr.contacts[0].state, usr.contacts[0].zip
+        pp.mobile_phone, pp.home_phone = usr.contacts[0].mobile_phone, usr.contacts[0].home_phone
+      else
+        loc = PixiPostZip.active.find_by_zip(zip.to_i) rescue nil
+	pp.city, pp.state = loc.city, loc.state unless loc.blank?
+        pp.mobile_phone, pp.home_phone = usr.contacts[0].mobile_phone, usr.contacts[0].home_phone unless usr.contacts[0].blank?
+        pp.zip = zip
       end
     end
     pp

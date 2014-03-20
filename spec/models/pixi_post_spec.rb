@@ -124,13 +124,21 @@ describe PixiPost do
   end
   
   describe "load pixipost" do
-    it "should load new pixipost" do
+    it "loads new pixipost w/ existing address" do
       contact_user = FactoryGirl.create :contact_user 
-      PixiPost.load_new(contact_user).should_not be_nil
+      pp = PixiPost.load_new(contact_user, '90201')
+      expect(pp.address).not_to be_nil
     end
 
-    it "should not load new pixipost" do
-      PixiPost.load_new(nil).should be_nil
+    it "loads new pixipost w/o existing address" do
+      create(:pixi_post_zip, zip: 90204)
+      contact_user = FactoryGirl.create :contact_user 
+      pp = PixiPost.load_new(contact_user, '90204')
+      expect(pp.address).to be_nil
+    end
+
+    it "does not load new pixipost" do
+      PixiPost.load_new(nil, '90201').should be_nil
     end
   end
 

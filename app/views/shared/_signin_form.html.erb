@@ -1,7 +1,7 @@
   <%= form_for("user", :url => user_session_path) do |f| %>
     <div id='signup'>
       <div><%= f.email_field :email, placeholder: 'Email' %></div>
-      <div><%= f.password_field :password, placeholder: 'Password', size: 20 %></div>
+      <div><%= f.password_field :password, placeholder: 'Password', size: 20, id: 'pwd' %></div>
     </div>
 
     <% if rmbrFlg && devise_mapping.rememberable? -%>
@@ -13,7 +13,7 @@
     <% end -%>
 
     <div id='login-text' class='center-wrapper'>
-      <%= f.submit "Sign in", class: "btn btn-primary signin-btn sm-top span2" %>
+      <%= f.submit "Sign in", class: "btn btn-primary signin-btn sm-top span2", id: 'login-btn' %>
       <%= link_to "Sign up for free!", new_user_registration_path, class: "btn btn-primary btn-mask sm-top width140" %>
       <h4 class='med-top'>or</h4>
       <%= link_to user_omniauth_authorize_path(:facebook), id: 'fb-btn', class: "btn btn-primary btn-mask med-top span3 mleft-pct" do %>

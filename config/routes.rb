@@ -14,7 +14,7 @@ Plumboard::Application.routes.draw do
   # resource defs
   resources :listings, except: [:new, :edit, :update, :create] do
     collection do
-      get 'get_pixi_price', 'seller', 'follower', 'sold', 'category', 'local', 'wanted'
+      get 'get_pixi_price', 'seller', 'follower', 'sold', 'category', 'local', 'wanted', 'purchased'
     end
   end
 
@@ -42,6 +42,12 @@ Plumboard::Application.routes.draw do
   resources :pixi_posts do
     collection do
       get 'seller', :autocomplete_site_name, :autocomplete_user_first_name
+    end
+  end
+
+  resources :pixi_post_zips, except: [:new, :show, :create, :edit, :destroy, :update, :index] do
+    collection do
+      get 'submit', 'check',  :autocomplete_pixi_post_zip_zip
     end
   end
 

@@ -1,4 +1,4 @@
-<% if controller_name == 'invoices' %>
+<% unless controller_name == 'pixi_posts' %>
   <%= collection_select(:invoice, :pixi_id, model.active_listings, :pixi_id, :title, {selected: @invoice.pixi_id}, { class: 'pixi-select' }) %>
 <% else %>
   <%= collection_select(:pixi_post, :pixi_id, model.active_listings, :pixi_id, :title, {prompt: 'Select'}, { class: 'pixi-select' }) %>

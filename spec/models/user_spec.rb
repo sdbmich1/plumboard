@@ -49,7 +49,8 @@ describe User do
     it { should respond_to(:pixi_posts) }
     it { should respond_to(:active_pixi_posts) }
     it { should respond_to(:pixan_pixi_posts) }
-    it { should have_many(:active_pixi_posts).class_name('PixiPost').conditions(status: 'active') }
+    it { should have_many(:purchased_listings).class_name('Listing').with_foreign_key('buyer_id').conditions(:status=>"sold") }
+    it { should have_many(:pixan_pixi_posts).class_name('PixiPost').with_foreign_key('pixan_id') }
     it { should have_many(:pixan_pixi_posts).class_name('PixiPost').with_foreign_key('pixan_id') }
     it { should respond_to(:pixi_likes) }
     it { should have_many(:pixi_likes) }

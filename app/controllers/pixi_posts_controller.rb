@@ -3,6 +3,7 @@ class PixiPostsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :check_permissions, only: [:index]
   before_filter :set_params, only: [:create, :update]
+  before_filter :set_zip, only: [:new]
   before_filter :load_data, only: [:index, :seller]
   autocomplete :site, :name, full: true, scopes: [:cities]
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name
@@ -11,7 +12,7 @@ class PixiPostsController < ApplicationController
   layout :page_layout
 
   def new
-    @post = PixiPost.load_new @user
+    @post = PixiPost.load_new @user, @zip
     respond_with(@post)
   end
 
@@ -88,6 +89,10 @@ class PixiPostsController < ApplicationController
 
   def load_data
     @page = params[:page] || 1
+  end
+
+  def set_zip
+    @zip = params[:zip]
   end
 
   def set_params

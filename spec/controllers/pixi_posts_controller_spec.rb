@@ -60,10 +60,11 @@ describe PixiPostsController do
 
     before :each do
       PixiPost.stub!(:load_new).and_return( @post )
+      controller.stub!(:set_zip).and_return(:success)
     end
 
     def do_get
-      get :new
+      get :new, zip: '90201'
     end
 
     it "should assign @post" do

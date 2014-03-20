@@ -66,7 +66,6 @@ feature "TempListings" do
     let(:temp_listing) { FactoryGirl.build(:temp_listing) }
 
     before(:each) do
-      create_sites
       FactoryGirl.create :category 
       FactoryGirl.create :category, name: 'Automotive'
       FactoryGirl.create :category, name: 'Event'

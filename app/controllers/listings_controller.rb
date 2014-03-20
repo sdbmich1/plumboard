@@ -17,9 +17,6 @@ class ListingsController < ApplicationController
 
   def show
     @listing = Listing.find_by_pixi_id params[:id]
-    @like = @user.pixi_likes.where(pixi_id: params[:id]).first
-    @saved = @user.saved_listings.where(pixi_id: params[:id]).first
-    @contact = @user.posts.where(pixi_id: params[:id]).first
     @post = Post.new 
     @comment = @listing.comments.build if @listing
     load_comments
@@ -64,10 +61,16 @@ class ListingsController < ApplicationController
     end
   end
 
+  def purchased
+    @listings = @user.purchased_listings.paginate(page: @page)
+    respond_with(@listings) do |format|
+      format.json { render json: {listings: @listings} }
+    end
+  end
+
   def category
     @listings = Listing.get_by_city @cat, @loc, @page
     @category = Category.find @cat
-    Rails.logger.info 'Location id = ' + @loc.to_s
     respond_with(@listings) do |format|
       format.json { render json: {listings: @listings} }
     end
@@ -91,7 +94,6 @@ class ListingsController < ApplicationController
     @page, @cat, @loc, @loc_name = params[:page] || 1, params[:cid], params[:loc], params[:loc_name]
     @loc ||= Contact.find_by_name(@loc_name).id rescue nil
     @loc_name ||= Site.find(@loc).name rescue nil
-    Rails.logger.info 'Location name = ' + @loc_name.to_s
   end
 
   def page_layout

@@ -178,7 +178,21 @@ img.tiny {
   border: 1px solid #AAAAAA; 
 }
 
+.tip-image img {
+  width: 30px!important;
+  height: 30px!important;
+}
+
 .lrg_pic_frame {
   width: auto!important;
   height: 300px!important;
+}
+
+.ppost_img {
+  width: auto!important;
+  height: 375px!important;
+}
+
+.big-top {
+  margin-top: 10%;
 }

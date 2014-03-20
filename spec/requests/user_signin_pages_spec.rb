@@ -6,7 +6,7 @@ feature "UserSignins" do
 
   def user_login
     fill_in "user_email", :with => @user.email
-    fill_in "user_password", :with => @user.password
+    fill_in "pwd", :with => @user.password
     click_button submit
   end
 
@@ -97,7 +97,7 @@ feature "UserSignins" do
       it { should_not have_link('Inquiries', href: inquiries_path(ctype: 'inquiry')) }
       it { should have_button('Post') }
       it { should have_link('By You', href: new_temp_listing_path) }
-      it { should have_link('By Us', href: new_pixi_post_path) }
+      it { should have_link('By Us', href: check_pixi_post_zips_path) }
       it { should_not have_link('For Seller', href: new_temp_listing_path(pixan_id: @user)) }
       it { should have_link('My Pixis', href: seller_listings_path) }
       it { should have_link('My Messages', href: posts_path) }
@@ -129,7 +129,7 @@ feature "UserSignins" do
       it { should have_link('Users', href: users_path) }
       it { should have_button('Post') }
       it { should have_link('By You', href: new_temp_listing_path) }
-      it { should have_link('By Us', href: new_pixi_post_path) }
+      it { should have_link('By Us', href: check_pixi_post_zips_path) }
       it { should have_link('For Seller', href: new_temp_listing_path(pixan_id: @user)) }
       it { should have_link('My Pixis', href: seller_listings_path) }
       it { should have_link('My Messages', href: posts_path) }

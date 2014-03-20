@@ -1,0 +1,2 @@
+module PixiPostZipsHelper
+end

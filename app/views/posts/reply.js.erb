@@ -13,6 +13,7 @@
   }
   else {
     $("#post-frm").html("<%= escape_javascript( raw render(partial: "shared/posts", locals: { sentFlg: false }) ) %>");
+    $("#msg_Container").html("<%= escape_javascript( raw render(:partial => 'shared/msg_indicator') ) %>");
   }
 <% end %>
 

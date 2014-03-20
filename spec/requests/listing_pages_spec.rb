@@ -21,37 +21,39 @@ feature "Listings" do
 
   describe "Contact Owner" do 
     before(:each) do
-      pixi_user = FactoryGirl.create(:pixi_user, email: 'jsnow@pxtest.com') 
+      pixi_user = FactoryGirl.create(:pixi_user)
       init_setup pixi_user
       visit listing_path(listing) 
     end
      
-    it { should have_content listing.nice_title }
-    it { should have_content "Posted By: #{listing.seller_name}" }
-    it { should have_selector('.rateit') }
-    it { should have_link 'Want', href: '#' }
-    it { find_link('Cool').visible? }
-    it { should_not have_link 'Uncool' }
-    it { should have_link 'Save' }
-    it { should_not have_link 'Unsave' }
-    it { should have_selector('#fb-link') }
-    it { should have_selector('#tw-link') }
-    it { should have_selector('#pin-link') }
-    it { should_not have_link 'Follow', href: '#' }
-    it { should have_link listing.site_name, href: local_listings_path(loc: listing.site_id) }
-    it { should have_link listing.category_name, href: category_listings_path(cid: listing.category_id, loc: listing.site_id) }
-    it { should_not have_link 'Back', href: listings_path }
-    it { should_not have_link 'Remove', href: listing_path(listing) }
-    it { should_not have_link 'Edit', href: edit_temp_listing_path(listing) }
-    it { should have_content "ID: #{listing.pixi_id}" }
-    it { should have_content "Posted: #{listing.get_local_time(listing.start_date)}" }
-    it { should have_content "Updated: #{listing.get_local_time(listing.updated_at)}" }
-    it { should_not have_content "Start Date: #{short_date(listing.event_start_date)}" }
-    it { should_not have_content "End Date: #{short_date(listing.event_end_date)}" }
-    it { should_not have_content "Start Time: #{short_time(listing.event_start_time)}" }
-    it { should_not have_content "End Time: #{short_time(listing.event_end_time)}" }
-    it { should have_content "Price: " }
-    it { should_not have_content "Compensation: #{(listing.compensation)}" }
+    it "views pixi page" do
+      page.should have_content listing.nice_title
+      page.should have_content "Posted By: #{listing.seller_name}"
+      page.should have_selector('.rateit')
+      page.should have_link 'Want', href: '#'
+      page.should have_link 'Cool'
+      page.should_not have_link 'Uncool'
+      page.should have_link 'Save'
+      page.should_not have_link 'Unsave'
+      page.should have_selector('#fb-link')
+      page.should have_selector('#tw-link')
+      page.should have_selector('#pin-link')
+      page.should_not have_link 'Follow', href: '#'
+      page.should_not have_link listing.site_name, href: local_listings_path(loc: listing.site_id)
+      page.should have_link listing.category_name, href: category_listings_path(cid: listing.category_id, loc: listing.site_id)
+      page.should_not have_link 'Back', href: listings_path
+      page.should_not have_link 'Remove', href: listing_path(listing)
+      page.should_not have_link 'Edit', href: edit_temp_listing_path(listing)
+      page.should have_content "ID: #{listing.pixi_id}"
+      page.should have_content "Posted: #{listing.get_local_time(listing.start_date)}"
+      page.should have_content "Updated: #{listing.get_local_time(listing.updated_at)}"
+      page.should_not have_content "Start Date: #{short_date(listing.event_start_date)}"
+      page.should_not have_content "End Date: #{short_date(listing.event_end_date)}"
+      page.should_not have_content "Start Time: #{short_time(listing.event_start_time)}"
+      page.should_not have_content "End Time: #{short_time(listing.event_end_time)}"
+      page.should have_content "Price: "
+      page.should_not have_content "Compensation: #{(listing.compensation)}"
+    end
 
     it "Contacts a seller", js: true do
       expect{
@@ -88,6 +90,7 @@ feature "Listings" do
       }.to change(PixiLike,:count).by(1)
 
       page.should have_content listing.nice_title
+      page.should have_content "(#{listing.liked_count})"
     end
 
     it "clicks on Save", js: true do
@@ -97,12 +100,6 @@ feature "Listings" do
           page.should have_link 'Unsave'
       }.to change(SavedListing,:count).by(1)
 
-      page.should have_content listing.nice_title
-    end
-
-    it "clicks on site" do
-      click_link listing.site_name
-      page.should have_content 'Pixis'
       page.should have_content listing.nice_title
     end
 
@@ -123,11 +120,13 @@ feature "Listings" do
       visit listing_path(listing) 
     end
 
-    it { should_not have_link 'Want', href: '#' }
-    it { should have_content 'Want' }
-    it { find_link('Uncool').visible? }
-    it { should_not have_link 'Cool' }
-    it { should have_link 'Unsave' }
+    it "views pixi page" do
+      page.should_not have_link 'Want', href: '#'
+      page.should have_content 'Want'
+      page.find_link('Uncool').visible?
+      page.should_not have_link 'Cool'
+      page.should have_link 'Unsave'
+    end
 
     it "clicks on Uncool", js: true do
       expect{
@@ -138,6 +137,7 @@ feature "Listings" do
       }.to change(PixiLike,:count).by(-1)
 
       page.should have_content listing.nice_title
+      page.should have_content "(#{listing.liked_count})"
     end
 
     it "clicks on Unsave", js: true do
@@ -163,23 +163,17 @@ feature "Listings" do
       visit listing_path(listing) 
     end
      
-    it { should have_content "Start Date: #{short_date(listing.event_start_date)}" }
-    it { should have_content "End Date: #{short_date(listing.event_end_date)}" }
-    it { should have_content "Start Time: #{short_time(listing.event_start_time)}" }
-    it { should have_content "End Time: #{short_time(listing.event_end_time)}" }
-    it { should have_content "Price: " }
-    it { should_not have_content "Compensation: #{(listing.compensation)}" }
-
-    it "clicks on a location" do
-      click_link listing.site_name
-
-      page.should have_content "Pixis" 
-      page.should have_content listing.nice_title
+    it "views pixi page" do
+      page.should have_content "Start Date: #{short_date(listing.event_start_date)}"
+      page.should have_content "End Date: #{short_date(listing.event_end_date)}"
+      page.should have_content "Start Time: #{short_time(listing.event_start_time)}"
+      page.should have_content "End Time: #{short_time(listing.event_end_time)}"
+      page.should have_content "Price: "
+      page.should_not have_content "Compensation: #{(listing.compensation)}"
     end
 
     it "clicks on a category" do
       click_link listing.category_name
-
       page.should have_content "Pixis" 
       page.should have_content listing.nice_title
       page.should have_content listing.category_name
@@ -197,12 +191,14 @@ feature "Listings" do
       visit listing_path(listing) 
     end
      
-    it { should_not have_content "Start Date: #{short_date(listing.event_start_date)}" }
-    it { should_not have_content "End Date: #{short_date(listing.event_end_date)}" }
-    it { should_not have_content "Start Time: #{short_time(listing.event_start_time)}" }
-    it { should_not have_content "End Time: #{short_time(listing.event_end_time)}" }
-    it { should_not have_content "Price: #{(listing.price)}" }
-    it { should have_content "Compensation: #{(listing.compensation)}" }
+    it "views pixi page" do
+      page.should_not have_content "Start Date: #{short_date(listing.event_start_date)}"
+      page.should_not have_content "End Date: #{short_date(listing.event_end_date)}"
+      page.should_not have_content "Start Time: #{short_time(listing.event_start_time)}"
+      page.should_not have_content "End Time: #{short_time(listing.event_end_time)}"
+      page.should_not have_content "Price: #{(listing.price)}"
+      page.should have_content "Compensation: #{(listing.compensation)}"
+    end
   end
 
   describe "Owner-viewed Pixi" do 
@@ -211,20 +207,25 @@ feature "Listings" do
       visit listing_path(listing) 
     end
 
-    it { should have_content "Posted By: #{listing.seller_name}" }
-    it { should_not have_selector('#contact_content') }
-    it { should_not have_selector('#comment_content') }
-    it { should_not have_selector('#want-btn') }
-    it { should_not have_selector('#cool-btn') }
-    it { should_not have_selector('#save-btn') }
-    it { should_not have_selector('#fb-link') }
-    it { should_not have_selector('#tw-link') }
-    it { should_not have_selector('#pin-link') }
-    it { should_not have_link 'Follow', href: '#' }
-    it { should have_content "Comments (#{listing.comments.size})" }
-    it { should_not have_link 'Cancel', href: root_path }
-    it { should have_link 'Remove', href: listing_path(listing) }
-    it { should have_link 'Edit', href: edit_temp_listing_path(listing) }
+    it "views pixi page" do
+      page.should have_content "Posted By: #{listing.seller_name}"
+      page.should_not have_selector('#contact_content')
+      page.should_not have_selector('#comment_content')
+      page.should_not have_selector('#want-btn')
+      page.should_not have_selector('#cool-btn')
+      page.should_not have_selector('#save-btn')
+      page.should_not have_selector('#fb-link')
+      page.should_not have_selector('#tw-link')
+      page.should_not have_selector('#pin-link')
+      page.should_not have_link 'Follow', href: '#'
+      page.should have_content "Want (#{listing.wanted_count})"
+      page.should have_content "Cool (#{listing.liked_count})"
+      page.should have_content "Saved (#{listing.saved_count})"
+      page.should have_content "Comments (#{listing.comments.size})"
+      page.should_not have_link 'Cancel', href: root_path
+      page.should have_link 'Remove', href: listing_path(listing)
+      page.should have_link 'Edit', href: edit_temp_listing_path(listing)
+    end
   end
 
   describe "Add Comments" do 
@@ -234,8 +235,10 @@ feature "Listings" do
       visit listing_path(listing) 
     end
 
-    it { should have_content "No comments found." }
-    it { should have_content "Comments (#{listing.comments.size})" }
+    it "views pixi page" do
+      page.should have_content "No comments found."
+      page.should have_content "Comments (#{listing.comments.size})"
+    end
      
     it "adds a comment", js: true do
       expect{
@@ -323,9 +326,11 @@ feature "Listings" do
         visit category_listings_path(cid: category, loc: site.id) 
       end
       
-      it { should have_content('Pixis') }
-      it { should have_content 'Guitar' }
-      it { should have_content category.name_title }
+      it "views pixi category page" do
+        page.should have_content('Pixis')
+        page.should have_content 'Guitar'
+        page.should have_content category.name_title
+      end
     end  
 
     describe "GET /listings" do  
@@ -352,8 +357,10 @@ feature "Listings" do
         visit listings_path 
       end
       
-      it { should have_link 'Recent' }
-      it { should have_content('Pixis') }
+      it "views pixis page" do
+        page.should have_link 'Recent'
+        page.should have_content('Pixis')
+      end
       
       it "scrolls listings", js: true do 
         page.execute_script "window.scrollBy(0,1000)"
@@ -386,6 +393,7 @@ feature "Listings" do
     describe "My pixis page" do
       let(:listings) { 30.times { FactoryGirl.create(:listing, seller_id: user.id) } }
       before do
+        @other_user = FactoryGirl.create :pixi_user, email: 'john.doe@pxb.com'
         px_user = FactoryGirl.create :pixi_user, email: 'jsnow@pxb.com'
         init_setup px_user
         @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
@@ -393,19 +401,23 @@ feature "Listings" do
         @pending_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id, status: 'pending', title: 'Snare Drum') 
         @denied_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id, status: 'denied', title: 'Xbox 360') 
         @sold_listing = FactoryGirl.create(:listing, seller_id: @user.id, title: 'Leather Briefcase', status: 'sold') 
+        @purchased_listing = FactoryGirl.create(:listing, seller_id: @other_user.id, buyer_id: @user.id, title: 'Comfy Green Chair', status: 'sold') 
         @user.pixi_wants.create FactoryGirl.attributes_for :pixi_like, pixi_id: listing.pixi_id
         @user.saved_listings.create FactoryGirl.attributes_for :saved_listing, pixi_id: listing.pixi_id
         visit seller_listings_path 
       end
       
-      it { should have_content('My Pixis') }
-      it { should_not have_content('No pixis found') }
-      it { should have_link 'Active', href: seller_listings_path }
-      it { should have_link 'Draft', href: unposted_temp_listings_path }
-      it { should have_link 'Pending', href: pending_temp_listings_path }
-      it { should have_link 'Sold', href: sold_listings_path }
-      it { should have_link 'Saved', href: saved_listings_path }
-      it { should have_link 'Wanted', href: wanted_listings_path }
+      it "views my pixis page" do
+        page.should have_content('My Pixis')
+        page.should_not have_content('No pixis found')
+        page.should have_link 'Active', href: seller_listings_path
+        page.should have_link 'Draft', href: unposted_temp_listings_path
+        page.should have_link 'Pending', href: pending_temp_listings_path
+        page.should have_link 'Purchased', href: purchased_temp_listings_path
+        page.should have_link 'Sold', href: sold_listings_path
+        page.should have_link 'Saved', href: saved_listings_path
+        page.should have_link 'Wanted', href: wanted_listings_path
+      end
 
       describe "pagination" do
         it "should list each listing" do
@@ -419,6 +431,7 @@ feature "Listings" do
         page.find('#sold-pixis').click
 	page.should_not have_content listing.title
 	page.should have_content @sold_listing.title
+	page.should_not have_content @purchased_listing.title
 	page.should_not have_content 'No pixis found.'
       end
 
@@ -450,6 +463,14 @@ feature "Listings" do
         page.find('#wanted-pixis').click
 	page.should have_content listing.title
 	page.should_not have_content @sold_listing.title
+	page.should_not have_content 'No pixis found.'
+      end
+
+      it "display purchased listings", js: true do
+        page.find('#purchased-pixis').click
+	page.should_not have_content listing.title
+	page.should_not have_content @sold_listing.title
+	page.should have_content @purchased_listing.title
 	page.should_not have_content 'No pixis found.'
       end
     end

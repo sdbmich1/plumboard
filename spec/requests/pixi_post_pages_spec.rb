@@ -14,8 +14,8 @@ feature "PixiPosts" do
 
   def load_zips
     create :pixi_post_zip
-    create :pixi_post_zip, zip: '94103'
     create :pixi_post_zip, zip: '94108'
+    @zip = create :pixi_post_zip, zip: '94103'
   end
 
   def init_setup usr
@@ -91,12 +91,9 @@ feature "PixiPosts" do
 
   describe 'user opens a new pixi post' do
     before do
-      login_as(user, :scope => :user, :run_callbacks => false)
-      @user = user
-      visit root_path 
+      init_setup user
+      visit new_pixi_post_path(zip: '90201')
     end
-
-    it { should have_link('By Us', href: new_pixi_post_path) }
 
     it "Opens from menu" do
       expect { 
@@ -111,17 +108,21 @@ feature "PixiPosts" do
 
   describe 'user w/o adds a new pixi post' do
     before do
-      login_as(user, :scope => :user, :run_callbacks => false)
-      @user = user
-      visit new_pixi_post_path 
+      init_setup user
+      visit new_pixi_post_path(zip: '94103') 
     end
 
-    it { should have_content "PixiPost" }
-    it { should have_content "Requested By: " }
-    it { should have_content @user.name }
-    it { should have_selector('.grp-hdr', visible: false) }
-    it { should have_link('Cancel', href: root_path) }
-    it { should have_button('Save') }
+    it 'show content' do
+      page.should have_content "PixiPost"
+      page.should have_content "Requested By: "
+      page.should have_content @user.name
+      page.should have_content @zip.city
+      page.should have_content @zip.state
+      page.should have_content @zip.zip
+      page.should have_selector('.grp-hdr', visible: false)
+      page.should have_link('Cancel', href: root_path)
+      page.should have_button('Save')
+    end
 
     it "creates a pixi post" do
       add_data
@@ -138,19 +139,21 @@ feature "PixiPosts" do
   describe 'user w/ address adds a new pixi post' do
     before do
       init_setup contact_user
-      visit new_pixi_post_path 
+      visit new_pixi_post_path(zip: '90201') 
     end
 
-    it { should have_content "PixiPost" }
-    it { should have_content "Requested By: " }
-    it { should have_content "Address Information" }
-    it { should have_content @user.contacts[0].address }
-    it { should have_content @user.contacts[0].city }
-    it { should have_content @user.contacts[0].state }
-    it { should have_content @user.contacts[0].zip }
-    it { should have_content @user.name }
-    it { should have_link('Cancel', href: root_path) }
-    it { should have_button('Save') }
+    it 'show content' do
+      page.should have_content "PixiPost"
+      page.should have_content "Requested By: "
+      page.should have_content "Address Information"
+      page.should have_content @user.contacts[0].address
+      page.should have_content @user.contacts[0].city
+      page.should have_content @user.contacts[0].state
+      page.should have_content @user.contacts[0].zip
+      page.should have_content @user.name
+      page.should have_link('Cancel', href: root_path)
+      page.should have_button('Save')
+    end
 
     it "creates a pixi post" do
       add_data
@@ -244,9 +247,9 @@ feature "PixiPosts" do
       page.should have_selector('title', text: 'My PixiPosts')
       page.should have_content "PixiPost" 
       page.should have_content "Seller Name" 
-      page.should have_link "Active"
-      page.should have_link "Scheduled"
-      page.should have_link "Completed"
+      page.should have_link "Active", href: seller_pixi_posts_path(status: 'active')
+      page.should have_link "Scheduled", href: seller_pixi_posts_path(status: 'scheduled')
+      page.should have_link "Completed", href: seller_pixi_posts_path(status: 'completed')
       page.should have_content @pixi_post.id
       page.should have_content @pixi_post.description
       page.should have_content user.name
@@ -268,15 +271,17 @@ feature "PixiPosts" do
       visit seller_pixi_posts_path(status: 'active') 
     end
 
-    it { should have_link("#{@pixi_post.id}", href: pixi_post_path(@pixi_post)) }
-    it { should_not have_link("#{@scheduled.id}", href: pixi_post_path(@scheduled)) }
-    it { should_not have_link("#{@completed.id}", href: pixi_post_path(@completed)) }
-    it { should have_selector('title', text: 'My PixiPosts') }
-    it { should have_link "Active" }
-    it { should have_link "Scheduled" }
-    it { should have_link "Completed" }
-    it { should have_content "My PixiPosts" }
-    it { should have_content "Seller Name" } 
+    it 'show content' do
+      page.should have_link("#{@pixi_post.id}", href: pixi_post_path(@pixi_post))
+      page.should_not have_link("#{@scheduled.id}", href: pixi_post_path(@scheduled))
+      page.should_not have_link("#{@completed.id}", href: pixi_post_path(@completed))
+      page.should have_selector('title', text: 'My PixiPosts')
+      page.should have_link "Active"
+      page.should have_link "Scheduled"
+      page.should have_link "Completed"
+      page.should have_content "My PixiPosts"
+      page.should have_content "Seller Name" 
+    end
 
     it "displays scheduled posts", js: true do
       page.find('#schd-posts').click
@@ -335,10 +340,12 @@ feature "PixiPosts" do
       visit seller_pixi_posts_path(status: 'active') 
     end
 
-    it { should have_link "Active" }
-    it { should have_link "Scheduled" }
-    it { should have_link "Completed" }
-    it { should have_content "My PixiPosts" }
+    it 'show content' do
+      page.should have_link "Active", href: seller_pixi_posts_path(status: 'active')
+      page.should have_link "Scheduled", href: seller_pixi_posts_path(status: 'scheduled')
+      page.should have_link "Completed", href: seller_pixi_posts_path(status: 'completed')
+      page.should have_content "My PixiPosts"
+    end
 
     it "clicks to open a pixipost" do
       expect { 
@@ -376,6 +383,12 @@ feature "PixiPosts" do
 
     it "opens pixipost edit page" do
       page.should have_selector('title', text: 'Edit PixiPost') 
+      page.should_not have_link "Active", href: seller_pixi_posts_path(status: 'active')
+      page.should_not have_link "Scheduled", href: seller_pixi_posts_path(status: 'scheduled')
+      page.should_not have_link "Completed", href: seller_pixi_posts_path(status: 'completed')
+      page.should have_link "Active", href: pixi_posts_path(status: 'active')
+      page.should have_link "Scheduled", href: pixi_posts_path(status: 'scheduled')
+      page.should have_link "Completed", href: pixi_posts_path(status: 'completed')
       page.should have_content "Request Information"
       page.should have_content "Address Information"
       page.should have_content "Appointment Date"
@@ -453,11 +466,13 @@ feature "PixiPosts" do
       visit pixi_posts_path(status: 'active') 
     end
 
-    it { should have_link("#{@pixi_post.id}", href: pixi_post_path(@pixi_post)) }
-    it { should have_selector('title', text: 'PixiPosts') }
-    it { should_not have_selector('title', text: 'My PixiPosts') }
-    it { should have_content "PixiPost" }
-    it { should have_content "Seller Name" } 
+    it 'show content' do
+      page.should have_link("#{@pixi_post.id}", href: pixi_post_path(@pixi_post))
+      page.should have_selector('title', text: 'PixiPosts')
+      page.should_not have_selector('title', text: 'My PixiPosts')
+      page.should have_content "PixiPost"
+      page.should have_content "Seller Name" 
+    end
 
     it "clicks to open a pixipost" do
       expect { 

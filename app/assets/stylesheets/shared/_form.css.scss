@@ -67,6 +67,7 @@ form#new_post {margin-bottom: -0px!important;}
 .v-align { vertical-align: middle }
 .v-top { vertical-align: top }
 .left-form {float: left;}
+.right-form {float: right;}
 
 .mleft5 {
   margin-left: 2px!important;
@@ -144,6 +145,13 @@ a.pixi-link {
   &:hover {
     background: none;
     text-decoration: underline;
+  }
+}
+
+a.img-link {
+  &:hover, &:active {
+    background: none;
+    text-decoration: none;
   }
 }
 

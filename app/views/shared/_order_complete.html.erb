@@ -1,14 +1,13 @@
 <div id="pmtForm">
   <%= render partial: 'shared/pixi_submit', locals: {model: model, step_name: step_name} %>
 
-  <div class="mtop center">
+  <div class="mtop center-wrapper">
     Subject to approval, your pixi will be posted within the next hour. 
     <%= 'Your credit card will be charged upon approval.' if amtFlg %>
-  </div>
-  <div class="mtop center">Thank you for your business.</div>
-  <div class="mtop mbot">
-    <center>
-	<%= link_to "Done", root_path, :class => "btn btn-large btn-primary submit-btn", :id => 'cancel-btn' %>
-    </center>
+
+    <div class="mtop">Keep on pixing!</div>
+    <div class="mtop mbot">
+      <%= link_to "Done", root_path, :class => "btn btn-large btn-primary submit-btn", :id => 'cancel-btn' %>
+    </div>
   </div>
 </div>

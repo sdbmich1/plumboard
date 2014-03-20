@@ -18,6 +18,15 @@ module PixiPostsHelper
 
   # set pixi post menu name
   def set_pixi_post_menu
-    @post.owner?(@user) ? 'My PixiPosts' : 'PixiPosts'
+    if @post
+      @post.owner?(@user) ? 'My PixiPosts' : 'PixiPosts'
+    else
+      'My PixiPosts'
+    end
+  end
+
+  # define menu access
+  def access_pxp_admin_menu?
+    action_name == 'index' && can?(:manage_items, @user)
   end
 end

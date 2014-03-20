@@ -213,13 +213,24 @@ describe Invoice do
   end
 
   describe 'get_fee' do
-    it "should get fee" do 
-      @invoice.get_fee.should be_true
+    it "gets seller fee" do 
+      expect(@invoice.get_fee(true)).to eq(CalcTotal::get_convenience_fee(@invoice.amount, @invoice.pixan_id).round(2))
     end
 
-    it "should not get fee" do 
+    it "gets seller pixi post fee" do 
+      @pixan = create(:pixi_user)
+      @listing.pixan_id = @pixan.id
+      @listing.save
+      expect(@invoice.get_fee(true)).to eq((@invoice.amount * PXB_TXN_PERCENT).round(2))
+    end
+
+    it "gets buyer fee" do 
+      expect(@invoice.get_fee).to eq((CalcTotal::get_convenience_fee(@invoice.amount) + CalcTotal::get_processing_fee(@invoice.amount)).round(2))
+    end
+
+    it "return zero" do 
       @invoice.amount = nil
-      @invoice.get_fee.should_not be_true 
+      expect(@invoice.get_fee).to eq(0.0)
     end
   end
 
@@ -304,12 +315,33 @@ describe Invoice do
     end
   end
 
+  describe "pixan_id" do 
+    it { @invoice.pixan_id.should be_nil } 
+
+    it "finds pixan_id" do 
+      @listing.pixan_id = 100 
+      @listing.save
+      expect(@invoice.pixan_id).to eq(100)
+    end
+  end
+
   describe "short_title" do 
     it { @invoice.short_title.should_not be_empty } 
 
     it "should not find correct short_title" do 
       @invoice.pixi_id = '100' 
       @invoice.short_title.should be_nil 
+    end
+  end
+
+  describe "pixi_post" do 
+    it { @invoice.pixi_post?.should_not be_true }
+
+    it 'has a pixi post' do 
+      @pixan = FactoryGirl.create(:contact_user) 
+      @listing.pixan_id = @pixan.id 
+      @listing.save
+      @invoice.pixi_post?.should be_true 
     end
   end
 

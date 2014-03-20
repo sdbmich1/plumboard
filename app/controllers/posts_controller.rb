@@ -80,9 +80,6 @@ class PostsController < ApplicationController
 
   def reload_data pid
     @listing = Listing.find_by_pixi_id pid
-    @like = @user.pixi_likes.where(pixi_id: pid).first
-    @saved = @user.saved_listings.where(pixi_id: pid).first
-    @contact = @user.posts.where(pixi_id: pid).first
-    @user.pixi_wants.create(pixi_id: pid)
+    @user.pixi_wants.create(pixi_id: pid) # add to user's wanted list
   end
 end

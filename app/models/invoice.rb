@@ -2,9 +2,9 @@ class Invoice < ActiveRecord::Base
   include CalcTotal
   before_create :set_flds
 
-  attr_accessor :buyer_name
+  attr_accessor :buyer_name, :tmp_buyer_id
   attr_accessible :amount, :buyer_id, :comment, :pixi_id, :price, :quantity, :seller_id, :status, :buyer_name,
-    :sales_tax, :tax_total, :subtotal, :inv_date, :transaction_id, :bank_account_id
+    :sales_tax, :tax_total, :subtotal, :inv_date, :transaction_id, :bank_account_id, :tmp_buyer_id
 
   belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id"
   belongs_to :seller, foreign_key: "seller_id", class_name: "User"
@@ -78,9 +78,8 @@ class Invoice < ActiveRecord::Base
 
   # submit payment request for review
   def submit_payment val
-
-    # set transaction id
     if val
+      # set transaction id
       self.transaction_id, self.status = val, 'paid' 
       save!
     else
@@ -92,7 +91,7 @@ class Invoice < ActiveRecord::Base
   def credit_account
     if amount
       # calculate fee
-      txn_fee = CalcTotal::get_convenience_fee amount
+      txn_fee = CalcTotal::get_convenience_fee amount, pixan_id
 
       # process payment
       result = bank_account.credit_account (amount - txn_fee)
@@ -102,10 +101,10 @@ class Invoice < ActiveRecord::Base
   end
 
   # get txn fee
-  def get_fee
+  def get_fee sellerFlg=false
     if amount
       # calculate fee
-      fee = CalcTotal::get_convenience_fee(amount) + CalcTotal::get_processing_fee(amount)
+      fee = sellerFlg ? CalcTotal::get_convenience_fee(amount, pixan_id) : CalcTotal::get_convenience_fee(amount) + CalcTotal::get_processing_fee(amount)
       fee.round(2)
     else
       0.0
@@ -148,6 +147,11 @@ class Invoice < ActiveRecord::Base
   end
 
   # get title
+  def pixan_id
+    listing.pixan_id rescue nil
+  end
+
+  # get title
   def pixi_title
     listing.title rescue nil
   end
@@ -155,6 +159,11 @@ class Invoice < ActiveRecord::Base
   # get short pixi title
   def short_title
     listing.short_title rescue nil
+  end
+
+  # check if pixi post
+  def pixi_post?
+    listing.pixi_post? rescue nil
   end
 
   # titleize status

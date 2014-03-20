@@ -1,6 +1,8 @@
-<%= link_to_if is_blank?(@contact), 'Want', '#', class: 'btn btn-primary btn-mask', id: 'want-btn', disabled: !is_blank?(@contact), title: 'I want this!' %>
-<%= link_to set_item_name(@like, 'like'), set_like_path(@like, listing.pixi_id), method: set_item_method(@like), 
+<%= link_to_if !listing.user_wanted?(@user), 'Want', '#', class: 'btn btn-primary btn-mask', id: 'want-btn', disabled: listing.user_wanted?(@user),
+  title: 'I want this!' %>
+<%= link_to set_item_name(listing, 'like'), set_like_path(listing, listing.pixi_id), method: set_item_method(listing, 'like'), 
   class: 'btn btn-primary btn-mask mleft10', id: 'cool-btn', remote: true, title: 'This is cool!' %>
-<%= link_to set_item_name(@saved, 'saved'), set_saved_path(@saved, listing.pixi_id), method: set_item_method(@saved), 
+<span id='cool-cnt'><%= "(#{listing.liked_count})" %></span>
+<%= link_to set_item_name(listing, 'saved'), set_saved_path(listing, listing.pixi_id), method: set_item_method(listing, 'saved'), 
   class: 'btn btn-primary btn-mask mleft10', id: 'save-btn', remote: true, title: 'Save this for later!' %>
 

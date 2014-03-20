@@ -60,14 +60,11 @@ module ApplicationHelper
 
   # set pixi logo home path
   def pixi_home
-    ppFlg = %w(transactions invoices bank_accounts card_accounts).detect {|cntr| cntr == controller_name}
-    cls = mobile_device? ? 'px-logo' : ppFlg.nil? ? 'pixi-logo' : 'ppay-logo'
     if mobile_device?
-      logo = ppFlg.nil? ? 'sm_px_word_logo.png' : 'sm_pixipay.png'
+      link_to image_tag('sm_px_word_logo.png'), get_home_path, class: "px-logo"
     else
-      logo = ppFlg.nil? ? 'px_word_logo.png' : 'rsz_pixipay.png'
+      link_to image_tag('px_word_logo.png'), get_home_path, class: "pixi-logo"
     end
-    link_to image_tag(logo, class: cls), root_path
   end
 
   # set home path

@@ -252,6 +252,40 @@ describe ListingsController do
     end
   end
 
+  describe 'GET purchased' do
+    before :each do
+      @listings = stub_model(Listing)
+      controller.stub!(:current_user).and_return(@user)
+      @user.stub_chain(:purchased_listings, :paginate).and_return( @listings )
+      do_get
+    end
+
+    def do_get
+      xhr :get, :purchased
+    end
+
+    it "renders the :purchased view" do
+      response.should render_template :purchased
+    end
+
+    it "should assign @user" do
+      assigns(:user).should_not be_nil
+    end
+
+    it "should assign @listings" do
+      assigns(:listings).should_not be_nil
+    end
+
+    it "should show the requested listings" do
+      response.should be_success
+    end
+
+    it "responds to JSON" do
+      get :purchased, format: :json
+      expect(response).to be_success
+    end
+  end
+
   describe 'GET show/:id' do
     before :each do
       @post = stub_model(Post)
@@ -312,15 +346,9 @@ describe ListingsController do
   describe 'xhr GET show/:id' do
     before :each do
       @post = stub_model(Post)
-      @like = stub_model(PixiLike)
-      @saved = stub_model(SavedListing)
-      @contact = stub_model(Post)
       @comment = stub_model(Comment)
       Listing.stub!(:find_by_pixi_id).and_return( @listing )
       Post.stub!(:new).and_return( @post )
-      @user.stub_chain(:pixi_likes, :where, :first).and_return( @like )
-      @user.stub_chain(:saved_listings, :where, :first).and_return( @saved )
-      @user.stub_chain(:posts, :where, :first).and_return( @contact )
       @listing.stub_chain(:comments, :build).and_return( @comment )
       controller.stub!(:load_comments).and_return(:success)
       controller.stub!(:add_points).and_return(:success)
@@ -358,21 +386,6 @@ describe ListingsController do
     it "should assign @comment" do
       do_get
       assigns(:comment).should_not be_nil
-    end
-
-    it "should assign @like" do
-      do_get
-      assigns(:like).should_not be_nil
-    end
-
-    it "should assign @contact" do
-      do_get
-      assigns(:contact).should_not be_nil
-    end
-
-    it "should assign @saved" do
-      do_get
-      assigns(:saved).should_not be_nil
     end
 
     it "show action should render show template" do

@@ -20,6 +20,10 @@ namespace :db do
   task :reset_points => :environment do
     update_points
   end
+
+  task :set_pixi_buyers => :environment do
+    update_pixi_buyers
+  end
 end
 
 def set_keys
@@ -69,4 +73,15 @@ end
 
 def update_points
   PixiPoint.all.each {|p| p.value *= 10; p.save}
+end
+
+def update_pixi_buyers
+  invoices = Invoice.where(status: 'paid')
+
+  invoices.each do |i|
+    listing = i.listing
+    puts listing.title
+    listing.buyer_id = i.buyer_id
+    listing.save
+  end
 end

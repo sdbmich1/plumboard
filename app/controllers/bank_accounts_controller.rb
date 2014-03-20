@@ -5,6 +5,7 @@ class BankAccountsController < ApplicationController
   layout :page_layout
 
   def new
+    flash.now[:notice] = 'You need to setup a bank account before creating an invoice.' unless @user.has_bank_account?
     @account = @user.bank_accounts.build
   end
 

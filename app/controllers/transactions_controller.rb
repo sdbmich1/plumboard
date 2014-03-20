@@ -20,7 +20,6 @@ class TransactionsController < ApplicationController
       if @transaction.save_transaction(params[:order], @listing)
         format.json { render json: {transaction: @transaction} }
       else
-        Rails.logger.info 'Txn errors = ' + @transaction.errors.full_messages.to_s
         format.json { render json: { errors: @transaction.errors.full_messages }, status: 422 }
       end
     end

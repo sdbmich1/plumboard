@@ -31,7 +31,7 @@
 	  <%= f.collection_select :state, State.all, :code, :state_name, {prompt: 'Select State', selected: @post.state}, {class: 'pixi-select'} %>
       </div>
       <div class='span2'>
-        <label>Zip* </label><%= f.text_field :zip, value: @post.zip, :size => 10, placeholder: 'Zip' %>
+        <label>Zip* </label><%= f.text_field :zip, value: @post.zip, :size => 5, placeholder: 'Zip' %>
       </div>
     </div>
     <div class='row'>

@@ -1,32 +1,37 @@
-<div class="row">
-  <%= form_for(@invoice, remote: true ) do |f| %>
+<%= form_for(@invoice, remote: true ) do |f| %>
+  <div class="row">
     <div class="sm-top span12">
       <div id="form_errors"><%= render partial: 'shared/error_messages', locals: { target: f.object } %></div>
-      <div id='inv_select'>
+      <div id='inv_select' class='no-left span4'>
 	<div class="control-group">
 	  <label class='control-label'>From: <%= @user.name %></label>
 	  <label class='control-label'>Date: <%= get_local_date(Time.now) %></label>
 	  <label class="sm-top control-label">Bill To:</label>
 	  <div id='inv_buyer_select' class='width360'>
-	    <% if has_wanted_pixi? @invoice %>
-              <%= render partial: 'shared/pixi_wanted_list', locals: { pid: @invoice.pixi_id } %>
-	    <% else %>
-              <%= render partial: 'shared/invoice_buyer', locals: { f: f, invoice: @invoice } %>
-	    <% end %>
+            <%= render partial: 'shared/set_invoice_buyer', locals: { pid: @invoice.pixi_id } %>
           </div>
         </div>
-        <%= render partial: 'shared/invoice_item', locals: { f: f } %>
-        <div class='clear-all'></div>
-	<label class="sm-top control-label">Comments:</label>
-        <%= f.text_area :comment, class: 'width360' %>
-        <%= f.hidden_field :inv_date, value: Time.now  %>
-        <%= f.hidden_field :seller_id, value: @user.id %>
-
-        <%= f.submit "Send", class: "btn btn-large btn-primary submit-btn pull-right", id: "send-btn" %>
+      </div>
+      <div class='pull-right'>
+	<%= image_tag('rsz_pixipay.png', class: 'ppay-logo') %>
       </div>
     </div>
-  <% end %>
-</div>
+  </div>
+  <div class="row">
+    <div class="neg-top span12">
+        <%= render partial: 'shared/invoice_item', locals: { f: f } %>
+        <div class='clear-all'></div>
+      <div class='span4'>
+	<label class="sm-top control-label">Comments:</label>
+        <%= f.text_area :comment, class: 'width360' %>
+      </div>
+        <%= f.hidden_field :buyer_id %>
+        <%= f.hidden_field :inv_date, value: Time.now  %>
+        <%= f.hidden_field :seller_id, value: @user.id %>
+        <%= f.submit "Send", class: "btn btn-large btn-primary submit-btn pull-right", id: "send-btn" %>
+    </div>
+  </div>
+<% end %>
 
 
 

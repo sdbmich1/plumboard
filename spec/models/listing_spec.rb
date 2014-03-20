@@ -53,6 +53,8 @@ describe Listing do
   it { should have_many(:pixi_wants).with_foreign_key('pixi_id') }
   it { should respond_to(:saved_listings) }
   it { should have_many(:saved_listings).with_foreign_key('pixi_id') }
+  it { should respond_to(:buyer) }
+  it { should belong_to(:buyer).with_foreign_key('buyer_id') }
 
   describe "when site_id is empty" do
     before { @listing.site_id = "" }
@@ -540,7 +542,7 @@ describe Listing do
     end
   end
 
-  describe "saved list" do 
+  describe "saved" do 
     before(:each) do
       @usr = FactoryGirl.create :pixi_user
       @saved_listing = @user.saved_listings.create FactoryGirl.attributes_for :saved_listing, pixi_id: @listing.pixi_id
@@ -548,6 +550,17 @@ describe Listing do
 
     it { Listing.saved_list(@usr).should_not include @listing } 
     it { Listing.saved_list(@user).should_not be_empty }
+    it { expect(@listing.saved_count).to eq(1) }
+    it { expect(@listing.is_saved?).to eq(true) }
+
+    it "is not saved" do
+      listing = create(:listing, seller_id: @user.id, title: 'Hair brush') 
+      expect(listing.saved_count).to eq(0)
+      expect(listing.is_saved?).to eq(false)
+    end
+
+    it { expect(@listing.user_saved?(@user)).not_to be_nil }
+    it { expect(@listing.user_saved?(@usr)).not_to eq(true) }
   end
 
   describe "wanted" do 
@@ -558,9 +571,9 @@ describe Listing do
 
     it { Listing.wanted_list(@usr).should_not include @listing } 
     it { Listing.wanted_list(@user).should_not be_empty }
-
     it { expect(@listing.wanted_count).to eq(1) }
     it { expect(@listing.is_wanted?).to eq(true) }
+
     it "is not wanted" do
       listing = create(:listing, seller_id: @user.id, title: 'Hair brush') 
       expect(listing.wanted_count).to eq(0)
@@ -569,9 +582,12 @@ describe Listing do
 
     it { expect(Listing.wanted_users(@listing.pixi_id).first.name).to eq(@user.name) }
     it { expect(Listing.wanted_users(@listing.pixi_id)).not_to include(@usr) }
+
+    it { expect(@listing.user_wanted?(@user)).not_to be_nil }
+    it { expect(@listing.user_wanted?(@usr)).not_to eq(true) }
   end
 
-  describe "cool list" do 
+  describe "cool" do 
     before(:each) do
       @usr = FactoryGirl.create :pixi_user
       @pixi_like = @user.pixi_likes.create FactoryGirl.attributes_for :pixi_like, pixi_id: @listing.pixi_id
@@ -579,6 +595,17 @@ describe Listing do
 
     it { Listing.cool_list(@usr).should_not include @listing } 
     it { Listing.cool_list(@user).should_not be_empty }
+    it { expect(@listing.liked_count).to eq(1) }
+    it { expect(@listing.is_liked?).to eq(true) }
+
+    it "is not liked" do
+      listing = create(:listing, seller_id: @user.id, title: 'Hair brush') 
+      expect(listing.liked_count).to eq(0)
+      expect(listing.is_liked?).to eq(false)
+    end
+
+    it { expect(@listing.user_liked?(@user)).not_to be_nil }
+    it { expect(@listing.user_liked?(@usr)).not_to eq(true) }
   end
 
   describe "dup pixi" do

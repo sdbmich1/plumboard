@@ -91,8 +91,6 @@ describe PixiLikesController do
 
   describe "DELETE /:id" do
     before (:each) do
-      @listing = mock_model Listing
-      Listing.stub!(:find_by_pixi_id).and_return(@listing)
       @like = mock_model PixiLike
       @user.stub_chain(:build, :pixi_likes, :find_by_pixi_id).and_return(@like)
       controller.stub!(:reload_data).and_return(true)

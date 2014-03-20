@@ -105,6 +105,7 @@ feature "BankAccounts" do
     end
 
     it { should have_selector('h2', text: 'Setup Your Payment Account') }
+    it { should have_content("You need to setup a bank account") }
     it { should have_content("Account #") }
     it { should have_button("Next") }
 

@@ -51,7 +51,7 @@ class InvoiceObserver < ActiveRecord::Observer
 
   # mark pixi as sold
   def mark_pixi model
-    model.listing.mark_as_sold 
+    model.listing.mark_as_sold model.buyer_id
   end
 
   # marked as closed any other invoice associated with this pixi

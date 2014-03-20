@@ -1,0 +1,6 @@
+<div class='want-list' style="<%= !has_wanted_pixi?(pid) ? 'display:none' : '' %>">
+  <%= render partial: 'shared/pixi_wanted_list', locals: { pid: pid } %>
+</div>
+<div class='gen-list' style="<%= has_wanted_pixi?(pid) ? 'display:none' : '' %>">
+  <%= render partial: 'shared/invoice_buyer' %>
+</div>

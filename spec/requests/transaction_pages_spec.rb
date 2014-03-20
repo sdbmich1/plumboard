@@ -116,21 +116,22 @@ feature "Transactions" do
       visit_free_txn_path 
     end
 
-    it { should have_link('Prev', href: temp_listing_path(@listing)) }
-    it { should have_link('Cancel', href: temp_listing_path(@listing)) }
-    it { should have_button('Done!') }
+    it 'shows content' do
+      page.should have_link('Prev', href: temp_listing_path(@listing))
+      page.should have_link('Cancel', href: temp_listing_path(@listing))
+      page.should have_button('Done!')
+    end
 
     it "Reviews a pixi" do
       expect { 
 	      click_link 'Prev'
 	}.not_to change(Transaction, :count)
-
       page.should have_content "Review Your Pixi" 
     end
 
     describe "Cancel Free Valid Transactions", js: true do
 
-      it "Cancel transaction cancel" do
+      it "Cancels transaction cancel" do
         expect { 
           click_cancel_cancel
 	}.not_to change(Transaction, :count)
@@ -138,18 +139,16 @@ feature "Transactions" do
         page.should have_content "Total Due" 
       end
  
-      it "should create a transaction with 100% discount" do
+      it "creates a transaction with 100% discount" do
        user_data_with_state
         expect { 
           click_ok; sleep 2
 	}.to change(Transaction, :count).by(1)
-
         page.should have_content "has been submitted"
       end
 
-      it "Cancel transaction" do
+      it "Cancels transaction" do
         click_cancel_ok
-
         page.should_not have_content "Total Due"
         page.should have_content "Home" 
       end
@@ -163,23 +162,24 @@ feature "Transactions" do
       user_data_with_state
     end
 
-    it { should have_selector('title', text: 'PixiPay') }
-    it { should have_content "Invoice # #{@invoice.id} from #{@seller.name}" }
-    it { should have_content @invoice.pixi_title }
-    it { should have_content "Total Due" }
-    it { should have_selector('.addr-tbl', visible: false) }
-    it { should have_selector('#edit-txn-addr', visible: false) }
-    it { should_not have_content "Payment Information" }
-    it { should_not have_selector('#edit-card-btn', visible: false) }
-    it { should have_link('Prev', href: invoice_path(@invoice)) }
-    it { should_not have_link('Cancel', href: temp_listing_path(@listing)) }
-    it { should have_button('Done!') }
+    it 'shows content' do
+      page.should have_selector('title', text: 'PixiPay')
+      page.should have_content "Invoice # #{@invoice.id} from #{@seller.name}"
+      page.should have_content @invoice.pixi_title
+      page.should have_content "Total Due"
+      page.should have_selector('.addr-tbl', visible: false)
+      page.should have_selector('#edit-txn-addr', visible: false)
+      page.should_not have_content "Payment Information"
+      page.should_not have_selector('#edit-card-btn', visible: false)
+      page.should have_link('Prev', href: invoice_path(@invoice))
+      page.should_not have_link('Cancel', href: temp_listing_path(@listing))
+      page.should have_button('Done!')
+    end
 
     it "Reviews an invoice" do
       expect { 
-	      click_link 'Prev'
-	}.not_to change(Transaction, :count)
-
+	click_link 'Prev'
+      }.not_to change(Transaction, :count)
       page.should have_selector('title', text: 'Invoices')
       page.should have_content "INVOICE" 
     end
@@ -231,14 +231,16 @@ feature "Transactions" do
       user_data_with_state
     end
 
-    it { should have_content "Total Due" }
-    it { should have_selector('.addr-tbl', visible: false) }
-    it { should have_selector('#edit-txn-addr', visible: false) }
-    it { should_not have_content "Payment Information" }
-    it { should_not have_selector('#edit-card-btn', visible: false) }
-    it { should have_link('Prev', href: invoice_path(@invoice)) }
-    it { should_not have_link('Cancel', href: temp_listing_path(@listing)) }
-    it { should have_button('Done!') }
+    it 'shows content' do
+      page.should have_content "Total Due"
+      page.should have_selector('.addr-tbl', visible: false)
+      page.should have_selector('#edit-txn-addr', visible: false)
+      page.should_not have_content "Payment Information"
+      page.should_not have_selector('#edit-card-btn', visible: false)
+      page.should have_link('Prev', href: invoice_path(@invoice))
+      page.should_not have_link('Cancel', href: temp_listing_path(@listing))
+      page.should have_button('Done!')
+    end
 
     it "creates a balanced transaction with valid mc card", :js=>true do
       expect { 
@@ -258,20 +260,22 @@ feature "Transactions" do
       visit_inv_txn_path 
     end
 
-    it { should have_selector('title', text: 'PixiPay') }
-    it { should have_content "Invoice # #{@invoice.id} from #{@seller.name}" }
-    it { should have_content @invoice.pixi_title }
-    it { should have_content "Total Due" }
-    it { should have_content "Buyer Information" }
-    it { should have_content @user.contacts[0].address }
-    it { should have_content @user.contacts[0].city }
-    it { should have_content @user.contacts[0].state }
-    it { should have_content @user.contacts[0].zip }
-    it { should have_selector('#edit-txn-addr', visible: false) }
-    it { should have_content "Payment Information" }
-    it { should have_selector('#edit-card-btn', visible: true) }
-    it { should have_link('Prev', href: invoice_path(@invoice)) }
-    it { should have_button('Done!') }
+    it 'shows content' do
+      page.should have_selector('title', text: 'PixiPay')
+      page.should have_content "Invoice # #{@invoice.id} from #{@seller.name}"
+      page.should have_content @invoice.pixi_title
+      page.should have_content "Total Due"
+      page.should have_content "Buyer Information"
+      page.should have_content @user.contacts[0].address
+      page.should have_content @user.contacts[0].city
+      page.should have_content @user.contacts[0].state
+      page.should have_content @user.contacts[0].zip
+      page.should have_selector('#edit-txn-addr', visible: false)
+      page.should have_content "Payment Information"
+      page.should have_selector('#edit-card-btn', visible: true)
+      page.should have_link('Prev', href: invoice_path(@invoice))
+      page.should have_button('Done!')
+    end
 
     it "edits the buyer info" do
       expect { 
@@ -299,7 +303,6 @@ feature "Transactions" do
         page.should have_link('Add Comment', href: '#') 
         page.should have_selector('#rateit5', visible: true) 
         page.should have_selector('.cmt-descr', visible: false) 
-
       }.to change(Transaction, :count).by(1)
     end
   end
@@ -390,7 +393,6 @@ feature "Transactions" do
           fill_in 'first_name', with: ""
           credit_card_data
 	  click_ok }.not_to change(Transaction, :count)
-
         page.should have_content "First name can't be blank"
       end
 
@@ -400,7 +402,6 @@ feature "Transactions" do
           fill_in 'last_name', with: ""
           credit_card_data
 	  click_ok }.not_to change(Transaction, :count)
-
         page.should have_content "Last name can't be blank"
       end
 
@@ -410,7 +411,6 @@ feature "Transactions" do
           fill_in 'transaction_home_phone', with: ""
           credit_card_data
 	  click_ok }.not_to change(Transaction, :count)
-
         page.should have_content "Home phone can't be blank"
       end
     end
@@ -422,7 +422,6 @@ feature "Transactions" do
           fill_in 'transaction_email', with: ""
           credit_card_data
 	  click_ok }.not_to change(Transaction, :count)
-
         page.should have_content "Email can't be blank"
       end
 
@@ -432,7 +431,6 @@ feature "Transactions" do
           fill_in 'transaction_email', with: "user@x."
           credit_card_data
 	  click_ok }.not_to change(Transaction, :count)
-
         page.should have_content 'Email is not formatted properly'
       end
     end
@@ -445,7 +443,6 @@ feature "Transactions" do
     	  fill_in 'transaction_email', with: @user.email
           credit_card_data
 	  click_ok }.not_to change(Transaction, :count)
-
         page.should have_content "Address can't be blank"
       end
 
@@ -455,7 +452,6 @@ feature "Transactions" do
           fill_in 'transaction_address', with: ""
           credit_card_data
 	  click_ok }.not_to change(Transaction, :count)
-
         page.should have_content "Address can't be blank"
       end
 
@@ -465,7 +461,6 @@ feature "Transactions" do
           fill_in 'transaction_city', with: ""
           credit_card_data
 	  click_ok }.not_to change(Transaction, :count)
-
         page.should have_content "City can't be blank"
       end
 
@@ -474,7 +469,6 @@ feature "Transactions" do
 	  user_data
           credit_card_data
 	  click_ok }.not_to change(Transaction, :count)
-
         page.should have_content "State can't be blank"
       end
 
@@ -484,7 +478,6 @@ feature "Transactions" do
           fill_in 'postal_code', with: ""
           credit_card_data
 	  click_ok }.not_to change(Transaction, :count)
-
         page.should have_content "Zip can't be blank"
       end
     end
@@ -496,7 +489,6 @@ feature "Transactions" do
         expect { 
 	  credit_card_data nil
 	  click_ok }.not_to change(Transaction, :count)
-
         page.should have_content 'invalid'
       end
 
@@ -504,7 +496,6 @@ feature "Transactions" do
         expect { 
 	  credit_card_data '4242424242424242', nil, true
 	  click_ok }.not_to change(Transaction, :count)
-
         page.should have_content 'invalid'
       end
     end

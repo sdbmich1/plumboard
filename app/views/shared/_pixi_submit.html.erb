@@ -1,10 +1,12 @@
-  <div class='center hdr mbot'><h1 class='grp-hdr'><%= step_name %></h1></div>
-  <div class='row'>
+<div class='center hdr mbot'><h1 class='grp-hdr'><%= step_name %></h1></div>
+<div class='row'>
+  <div class='v-align span12'>
     <span class="span2 offset1">
       <%= render partial: 'shared/show_photo', locals: {model: model, psize: '180x180', file_name:'pixi-photo', display_cnt: 0} %>
     </span>
-    <span class="span7">
-      <div class="mtop hdr">Your pixi <span class='grp-hdr'><%= model.title %></span> has been submitted.</div>
-    </span>
+    <div class="center-wrapper">
+      <div class="mtop hdr">Your pixi <div class='grp-hdr'><%= model.title %></div> has been submitted.</div>
+    </div>
   </div>
+</div>
 

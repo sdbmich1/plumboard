@@ -134,37 +134,41 @@ module ListingsHelper
     '&name=' + @listing.nice_title + '&description=' + @listing.description
   end
 
-  # check if model is blank
-  def is_blank? model
-    model.blank?
-  end
-
   # set path based on like existance and type 
   def set_like_path model, pid
     unless pid.blank?
-      !is_blank?(model) ? pixi_like_path(model, pixi_id: pid) : pixi_likes_path(id: pid)
+      model.user_liked?(@user) ? pixi_like_path(model) : pixi_likes_path(id: pid)
     end
   end
 
   # set path based on saved existance and type 
   def set_saved_path model, pid
     unless pid.blank?
-      !is_blank?(model) ? saved_listing_path(model, pixi_id: pid) : saved_listings_path(id: pid)
+      model.user_saved?(@user) ? saved_listing_path(model) : saved_listings_path(id: pid)
     end
   end
 
   # set method based on item existance and type 
-  def set_item_method model
-    method = is_blank?(model) ? 'post' : 'delete'
+  def set_item_method model, val
+    if val == 'like'
+      method = model.user_liked?(@user) ? 'delete' : 'post'
+    else
+      method = model.user_saved?(@user) ? 'delete' : 'post'
+    end
     method.to_sym
   end
 
   # set item name
   def set_item_name model, val
     if val == 'like'
-      is_blank?(model) ? 'Cool' : 'Uncool'
+      model.user_liked?(@user) ? 'Uncool' : 'Cool'
     else
-      is_blank?(model) ? 'Save' : 'Unsave'
+      model.user_saved?(@user) ? 'Unsave' : 'Save'
     end
+  end
+
+  # check if panel needs to be displayed
+  def show_metric_panel? model
+    (!model.new_status? || !model.edit?) && model.seller?(@user)
   end
 end

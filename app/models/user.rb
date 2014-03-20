@@ -21,6 +21,7 @@ class User < ActiveRecord::Base
   # define relationships
   has_many :listings, foreign_key: :seller_id, dependent: :destroy
   has_many :active_listings, foreign_key: :seller_id, class_name: 'Listing', :conditions => "status = 'active' AND end_date >= curdate()"
+  has_many :purchased_listings, foreign_key: :buyer_id, class_name: 'Listing', conditions: { :status => 'sold' }
   has_many :temp_listings, foreign_key: :seller_id, dependent: :destroy
   has_many :saved_listings, dependent: :destroy
 
