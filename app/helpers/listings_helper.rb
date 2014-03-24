@@ -169,6 +169,6 @@ module ListingsHelper
 
   # check if panel needs to be displayed
   def show_metric_panel? model
-    (!model.new_status? || !model.edit?) && model.seller?(@user)
+    (!model.new_status? && !model.edit?) && model.seller?(@user)
   end
 end

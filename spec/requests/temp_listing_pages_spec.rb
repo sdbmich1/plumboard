@@ -207,7 +207,7 @@ feature "TempListings" do
       it "Adds a new listing w/o price" do
         expect{
 	  add_data_w_photo
-	  click_button submit
+	  click_button submit; sleep 3
 	}.to change(TempListing,:count).by(1)
       
         page.should have_content "Guitar for Sale" 
@@ -219,7 +219,7 @@ feature "TempListings" do
         expect{
 	  add_data_w_photo
           fill_in 'Price', with: "150.00"
-	  click_button submit
+	  click_button submit; sleep 3
 	}.to change(TempListing,:count).by(1)
       
         page.should have_content "Guitar for Sale" 
@@ -232,7 +232,7 @@ feature "TempListings" do
 		add_data_w_photo
                 select('Jobs', :from => 'temp_listing_category_id')
                 fill_in 'salary', with: "Competitive"
-	        click_button submit
+	        click_button submit; sleep 3
 	      }.to change(TempListing,:count).by(1)
       
         page.should have_content "Guitar for Sale" 
