@@ -161,15 +161,26 @@ describe TempListing do
     it { temp_listing.category_name.should be_nil } 
   end
 
-  describe "should find correct seller name" do 
+  describe "seller name" do 
     let(:user) { FactoryGirl.create(:pixi_user) }
     let(:temp_listing) { FactoryGirl.create(:temp_listing, seller_id: user.id) }
-    it { temp_listing.seller_name.should == user.name } 
+    it { expect(temp_listing.seller_name).to eq(user.name) } 
+
+    it "does not find seller name" do 
+      temp_listing.seller_id = 100 
+      expect(temp_listing.seller_name).not_to eq(user.name)
+    end
   end
 
-  describe "should not find correct seller name" do 
-    temp_listing = FactoryGirl.create :temp_listing, seller_id: 100
-    it { temp_listing.seller_name.should be_nil } 
+  describe "seller email" do 
+    let(:user) { FactoryGirl.create(:pixi_user) }
+    let(:temp_listing) { FactoryGirl.create(:temp_listing, seller_id: user.id) }
+    it { expect(temp_listing.seller_email).to eq(user.email) } 
+
+    it "does not find seller email" do 
+      temp_listing.seller_id = 100 
+      expect(temp_listing.seller_email).not_to eq(user.email)
+    end
   end
 
   describe "should find correct seller photo" do 

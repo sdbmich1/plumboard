@@ -1,6 +1,6 @@
 require "open-uri"
 class User < ActiveRecord::Base
-  include ThinkingSphinx::Scopes
+  include ThinkingSphinx::Scopes, Area
   extend Rolify
 
   rolify
@@ -14,7 +14,7 @@ class User < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :first_name, :last_name, :email, :password, :password_confirmation, :remember_me, :birth_date, :gender, :pictures_attributes,
-    :fb_user, :provider, :uid, :contacts_attributes, :status, :card_token
+    :fb_user, :provider, :uid, :contacts_attributes, :status, :card_token, :preferences_attributes
 
   before_save :ensure_authentication_token unless Rails.env.test?
 
@@ -63,6 +63,9 @@ class User < ActiveRecord::Base
   has_many :contacts, :as => :contactable, :dependent => :destroy
   accepts_nested_attributes_for :contacts, :allow_destroy => true, :reject_if => :all_blank
 
+  has_many :preferences, :dependent => :destroy
+  accepts_nested_attributes_for :preferences, :allow_destroy => true, :reject_if => :all_blank
+
   # name format validators
   name_regex = 	/^[A-Z]'?['-., a-zA-Z]+$/i
 
@@ -78,6 +81,7 @@ class User < ActiveRecord::Base
   validates :birth_date,  :presence => true  
   validates :gender,  :presence => true
   validate :must_have_picture
+  validate :must_have_zip
 
   # validate picture exists
   def must_have_picture
@@ -89,9 +93,42 @@ class User < ActiveRecord::Base
     end
   end
 
+  # validate zip exists
+  def must_have_zip
+    if provider.blank?
+      if home_zip.blank? 
+        errors.add(:base, 'Must have a zip')
+        false
+      else
+        # check for valid zip
+        if home_zip.to_region 
+	  true 
+	else
+          errors.add(:base, 'Must have a valid zip')
+	  false
+	end
+      end
+    else
+      true
+    end
+  end
+
+  # get home zip
+  def home_zip
+    self.preferences.build if self.preferences.blank?
+    preferences[0].zip
+  end
+
+  # set home zip
+  def home_zip=(val)
+    self.preferences.build if self.preferences.blank?
+    preferences[0].zip = val
+  end
+
   # used to add pictures for new user
   def with_picture
     self.pictures.build if self.pictures.blank?
+    self.preferences.build if self.preferences.blank?
     self
   end
 
@@ -221,13 +258,14 @@ class User < ActiveRecord::Base
     self
   end
 
-  # display image with name for autocomplete
+  # display image for user
   def photo
     self.pictures[0].photo.url(:tiny) rescue nil
   end
 
   # check if address is populated
   def has_address?
+    self.contacts.build if self.contacts.blank?
     if contacts[0]
       !contacts[0].address.blank? && !contacts[0].city.blank? && !contacts[0].state.blank? && !contacts[0].zip.blank?
     else
@@ -235,6 +273,7 @@ class User < ActiveRecord::Base
     end
   end
 
+  # display image with name for autocomplete
   def pic_with_name
     pic = self.photo rescue nil
     pic ? "<img src='#{pic}' class='inv-pic' /> #{self.name}" : nil

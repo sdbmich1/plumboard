@@ -133,6 +133,15 @@ describe Inquiry do
     it { @inquiry.subject.should be_nil } 
   end
 
+  describe ".contact_type" do 
+    it "finds correct contact_type" do
+      inquiry = FactoryGirl.build(:inquiry, code: 'XX')
+      inquiry.contact_type.should be_nil
+    end
+
+    it { @inquiry.contact_type.should == "inquiry" } 
+  end
+
   describe 'set_flds' do
     it "sets status to active" do
       @inquiry = @user.inquiries.build FactoryGirl.attributes_for :inquiry, status: nil

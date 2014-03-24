@@ -1,4 +1,5 @@
 class Contact < ActiveRecord::Base
+  include AddressManager
   attr_accessible :address, :address2, :city, :home_phone, :mobile_phone, :state, :work_phone, :zip, :website, :country, :lng, :lat, :county
    
   belongs_to :contactable, :polymorphic => true, :dependent => :destroy
@@ -15,10 +16,9 @@ class Contact < ActiveRecord::Base
   geocoded_by :full_address, :latitude  => :lat, :longitude => :lng
   after_validation :geocode  
 
+  # display full address
   def full_address
-    addr = [self.address, self.city, self.state].compact.join(', ')
-    addr += addr + ', ' + self.country unless self.country.blank?
-    addr
+    addr = AddressManager::full_address self
   end
 
   # get by type

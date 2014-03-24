@@ -1,4 +1,4 @@
-<% provide(:title, @listing.title) %>
+<% provide(:title, @listing.nice_title) if @listing %>
 <%= content_for :subhead do %>
   <%= render partial: 'shared/navbar', locals: { menu_name: 'Pixi' } %>
 <% end %>

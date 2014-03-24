@@ -232,13 +232,22 @@ describe Listing do
     it { @listing.category_name.should be_nil } 
   end
 
-  describe "should find correct seller name" do 
-    it { @listing.seller_name.should == "Joe Blow" } 
+  describe "seller name" do 
+    it { expect(@listing.seller_name).to eq(@user.name) } 
+
+    it "does not find seller name" do 
+      @listing.seller_id = 100 
+      expect(@listing.seller_name).not_to eq(@user.name)
+    end
   end
 
-  describe "should not find correct seller name" do 
-    before { @listing.seller_id = 100 }
-    it { @listing.seller_name.should be_nil } 
+  describe "seller email" do 
+    it { expect(@listing.seller_email).to eq(@user.email) } 
+
+    it "does not find seller email" do 
+      @listing.seller_id = 100 
+      expect(@listing.seller_email).not_to eq(@user.email)
+    end
   end
 
   describe "seller photo" do 
@@ -606,6 +615,16 @@ describe Listing do
 
     it { expect(@listing.user_liked?(@user)).not_to be_nil }
     it { expect(@listing.user_liked?(@usr)).not_to eq(true) }
+  end
+
+  describe 'msg count' do
+    it { expect(@listing.msg_count).to eq(0) }
+
+    it "has messages" do
+      @recipient = FactoryGirl.create :pixi_user
+      @post = @listing.posts.create user_id: @user.id, recipient_id: @recipient.id
+      expect(@listing.msg_count).to eq(1)
+    end
   end
 
   describe "dup pixi" do

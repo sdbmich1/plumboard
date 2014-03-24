@@ -27,6 +27,13 @@ module PixiPostsHelper
 
   # define menu access
   def access_pxp_admin_menu?
-    action_name == 'index' && can?(:manage_items, @user)
+    if %w(edit show).detect {|x| action_name == x} 
+      !@post.owner?(@user)
+    elsif action_name == 'index' && can?(:manage_items, @user)
+      true
+    else
+      false
+    end
+    
   end
 end

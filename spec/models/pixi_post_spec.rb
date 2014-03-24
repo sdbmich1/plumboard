@@ -92,13 +92,41 @@ describe PixiPost do
     end
   end
 
-  describe "should find correct seller name" do 
-    it { @pixi_post.seller_name.should == @user.name } 
+  describe "pixter name" do 
+    it { @pixi_post.pixter_name.should be_nil } 
+
+    it "should not find correct pixter name" do 
+      pixan = create(:pixi_user)
+      @pixi_post.pixan_id = pixan.id 
+      expect(@pixi_post.pixter_name).to eq(pixan.name)
+    end
   end
 
-  describe "should not find correct seller name" do 
-    before { @pixi_post.user_id = 100 }
-    it { @pixi_post.seller_name.should be_nil } 
+  describe "seller name" do 
+    it { @pixi_post.seller_name.should == @user.name } 
+
+    it "should not find correct seller name" do 
+      @pixi_post.user_id = 100 
+      expect(@pixi_post.seller_name).not_to eq(@user.name)
+    end
+  end
+
+  describe "seller first name" do 
+    it { @pixi_post.seller_first_name.should == @user.first_name } 
+
+    it "should not find correct seller first_name" do 
+      @pixi_post.user_id = 100 
+      expect(@pixi_post.seller_first_name).not_to eq(@user.first_name)
+    end
+  end
+
+  describe "seller email" do 
+    it { @pixi_post.seller_email.should == @user.email } 
+
+    it "should not find correct seller email" do 
+      @pixi_post.user_id = 100 
+      expect(@pixi_post.seller_email).not_to eq(@user.email)
+    end
   end
 
   describe "owner" do 
@@ -195,6 +223,16 @@ describe PixiPost do
 
     it 'should return true' do
       @pixi_post.get_time('preferred_time').should be_true
+    end
+  end
+
+  describe 'get_date' do
+    it 'should not return true' do
+      @pixi_post.get_date('test').should_not be_true
+    end
+
+    it 'should return true' do
+      @pixi_post.get_date('preferred_date').should be_true
     end
   end
 
@@ -372,4 +410,16 @@ describe PixiPost do
       pixi_post.should_not be_valid 
     end
   end 
+
+  describe "full address" do
+    it 'has address' do
+      addr = [@pixi_post.address, @pixi_post.city, @pixi_post.state].compact.join(', ') + ' ' + [@pixi_post.zip, @pixi_post.country].compact.join(', ')
+      expect(@pixi_post.full_address).to eq(addr)
+    end
+
+    it 'has no address' do
+      @pixi_post.address = @pixi_post.city = @pixi_post.state = @pixi_post.zip = @pixi_post.country = nil
+      expect(@pixi_post.full_address).to be_empty
+    end
+  end
 end

@@ -130,8 +130,8 @@ module ListingsHelper
   # set string to share content on facebook
   def fb_share
     'https://www.facebook.com/dialog/feed?app_id=' + API_KEYS['facebook']['api_key'] + '&display=popup&caption=Check out this pixi on Pixiboard!' +
-    '&link=https://developers.facebook.com/docs/reference/dialogs/&redirect_uri=' + get_url + '&picture=' + get_photo + 
-    '&name=' + @listing.nice_title + '&description=' + @listing.description
+    '&link=https://developers.facebook.com/docs/reference/dialogs/&redirect_uri=' + get_url + 
+    '&picture=' + get_photo + '&name=' + @listing.nice_title + '&description=' + @listing.description
   end
 
   # set path based on like existance and type 

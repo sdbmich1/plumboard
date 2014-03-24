@@ -1,14 +1,13 @@
-  <div class="row">
-    <%= form_for(@user, url: user_path(@user, target: 'shared/user_contact'), html: { method: :put, class: "form-horizontal uform" }, remote: true ) do |f| %>
+<div class="row">
+  <%= form_for(@user, url: user_path(@user, target: 'shared/user_contact'), html: {method: :put, class: "form-horizontal uform"}, remote: true) do |f| %>
       <div id="notice"><%= render partial: 'layouts/notices' %></div>
       <div id="form_errors"><%= render partial: 'shared/error_messages', :locals => { :target => @user } %></div>
-
       <div class="sm-top span6 offset3">
         <div id='signup'>
 	  <%= f.fields_for :contacts do |form| %>
 	    <div class="control-group">
 	      <label class="control-label">Home Phone</label>
-	      <div class='controls'><%= form.text_field :home_phone, autofocus: true, placeholder: "Home Phone" %></div>
+	      <div class='controls'><%= form.text_field :home_phone, placeholder: "Home Phone" %></div>
 	      <label class="control-label">Work Phone</label>
 	      <div class='controls'><%= form.text_field :work_phone, placeholder: "Work Phone" %></div>
 	      <label class="control-label">Mobile Phone</label>
@@ -29,7 +28,6 @@
 	  <% end %>
         </div>
       </div>
-
-      <div class="span4 offset5"><%= f.submit "Save Changes", class: "btn btn-large btn-primary submit-btn" %></div>
-    <% end %>
-  </div>
+    <div class="span4 offset5"><%= f.submit "Save Changes", class: "btn btn-large btn-primary submit-btn" %></div>
+  <% end %>
+</div>

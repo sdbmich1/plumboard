@@ -1,5 +1,6 @@
   <%= form_for(@listing, :html => { :multipart => true, id: 'pixi-form' }) do |f| %>
     <div class="div-border">
+      <div id="notice"><%= render partial: 'layouts/flash_messages', flash: flash %></div>
       <div id="form_errors">
         <%= render partial: 'shared/error_messages', :locals => { :target => @listing } %>
       </div>

@@ -1,5 +1,5 @@
 class Transaction < ActiveRecord::Base
-  include CalcTotal, Payment
+  include CalcTotal, Payment, AddressManager
 
   attr_accessor :cvv, :card_number, :exp_month, :exp_year, :mobile_phone
   attr_accessible :address, :address2, :amt, :city, :code, :country, :credit_card_no, :description, :email, :first_name, 
@@ -55,11 +55,8 @@ class Transaction < ActiveRecord::Base
       txn.first_name, txn.last_name, txn.email = usr.first_name, usr.last_name, usr.email
       
       # load user contact info
-      if usr.contacts[0]
-        txn.address, txn.address2 = usr.contacts[0].address, usr.contacts[0].address2
-        txn.city, txn.state = usr.contacts[0].city, usr.contacts[0].state
-        txn.zip, txn.home_phone = usr.contacts[0].zip, usr.contacts[0].home_phone
-        txn.country = usr.contacts[0].country
+      if usr.has_address?
+        txn = AddressManager::synch_address txn, usr.contacts[0], false
       end
     end
     txn
@@ -179,7 +176,7 @@ class Transaction < ActiveRecord::Base
 
   # check if address is populated
   def has_address?
-    !address.blank? && !city.blank? && !state.blank? && !zip.blank?
+    !address.blank? && !city.blank? && !state.blank? && !zip.blank? && !home_phone.blank?
   end
   
   # process transaction

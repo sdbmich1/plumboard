@@ -1,10 +1,19 @@
   <tr>
-    <td></td>
-    <td><div class='price'><%= get_conv_title %></div></td>
-    <td class="width120">
-      <div class='pull-right'>
+    <% if showColFlg %>
+      <td></td>
+      <td><div class='price'><%= get_conv_title %></div></td>
+      <td class="width120">
+        <div class='pull-right'>
+          <%= render partial: 'shared/tooltip', locals: { msg: get_conv_fee_msg } %>
+        </div>
+      </td>
+    <% else %>
+      <td class='v-align'><%= get_conv_title %></td>
+      <td>
+      <div class='price'>
         <%= render partial: 'shared/tooltip', locals: { msg: get_conv_fee_msg } %>
       </div>
-    </td>
+      </td>
+    <% end %>
     <td class="width120"><div class='price'><%= ntc(get_invoice_fee) %></div></td>
   </tr>

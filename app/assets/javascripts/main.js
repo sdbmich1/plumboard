@@ -151,7 +151,7 @@ function handleFileSelect(evt, style) {
 }
 
 // used to toggle spinner
-$(document).on("ajax:beforeSend", '#mark-posts, #post-frm, #comment-doc, #site_id, .pixi-cat, #purchase_btn, #search_btn, .uform, .back-btn, #pixi-form, .submenu, #cat-link', function () {
+$(document).on("ajax:beforeSend", '#mark-posts, #post-frm, #comment-doc, .pixi-cat, #purchase_btn, #search_btn, .uform, .back-btn, #pixi-form, .submenu, #cat-link', function () {
     toggleLoading();
 });	
 
@@ -159,7 +159,7 @@ $(document).on("ajax:success", '.pixi-cat, #purchase_btn, #search_btn, .uform, .
   toggleLoading();
 });	
 
-$(document).on("ajax:complete", '#mark-posts, #post-frm, #comment-doc, #site_id, .pixi-cat, #purchase_btn, #search_btn, .uform, .back-btn, #pixi-form, .submenu, #cat-link', function () {
+$(document).on("ajax:complete", '#mark-posts, #post-frm, #comment-doc, .pixi-cat, #purchase_btn, #search_btn, .uform, .back-btn, #pixi-form, .submenu, #cat-link', function () {
   toggleLoading();
 });	
 
@@ -332,7 +332,7 @@ function reload_board(element) {
     $container.masonry('reload');
   });
 
-  switchToggle(false);
+ // switchToggle(false);
 }
 
 // initialize infinite scroll
@@ -718,6 +718,9 @@ function resetScroll(url) {
 	    isDone: false                           
 	  }
       });
+    },
+    complete: function() {
+      switchToggle(false);
     }
   });
 }
@@ -781,6 +784,7 @@ $(window).scroll(function(e) {
 	},
         complete: function(data){
 	  processFlg = false;
+	  switchToggle(false);
 	}
       })
     }
@@ -810,3 +814,19 @@ $(document).on("change", "#cc_card_year", function() {
   var card_yr = $(this).val();
   $('#exp_yr').val(card_yr);
 });
+
+/*
+// adjust window menu css
+$(window).resize(function(){
+  if($('.bar-top').length > 0) {
+    if($(window).height() < 768) {
+      $(".bar-top").css('margin-top', '0px'); 
+      $(".navbar").css('margin-top', '-20px'); 
+      $(".navbar").css('margin-bottom', '-5px'); 
+    } else {
+      $(".navbar").css('margin-top', '20px'); 
+      $(".navbar").css('margin-bottom', '5px'); 
+    }
+  }
+});
+*/

@@ -142,6 +142,11 @@ class Listing < ListingParent
     pixi_likes.size rescue 0
   end
 
+  # return msg count 
+  def msg_count
+    posts.size rescue 0
+  end
+
   # return whether pixi is liked
   def is_liked?
     liked_count > 0 rescue nil

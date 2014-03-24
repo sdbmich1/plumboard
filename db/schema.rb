@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140311204216) do
+ActiveRecord::Schema.define(:version => 20140321000319) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -427,6 +427,17 @@ ActiveRecord::Schema.define(:version => 20140311204216) do
 
   add_index "posts", ["pixi_id"], :name => "index_posts_on_pixi_id"
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id_and_created_at", :unique => true
+
+  create_table "preferences", :force => true do |t|
+    t.integer  "user_id"
+    t.string   "zip"
+    t.string   "email_msg_flg"
+    t.string   "mobile_msg_flg"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+  end
+
+  add_index "preferences", ["user_id", "zip"], :name => "index_preferences_on_user_id_and_zip"
 
   create_table "promo_codes", :force => true do |t|
     t.string   "code"

@@ -1,5 +1,7 @@
 class PixiPost < ActiveRecord::Base
   resourcify
+  include AddressManager
+
   before_save :set_flds
 
   attr_accessor :pixan_name
@@ -58,9 +60,24 @@ class PixiPost < ActiveRecord::Base
     where(:status => val)
   end
 
-  # get seller name for a listing
+  # get pixter name
+  def pixter_name
+    pixan.name rescue nil
+  end
+
+  # get seller name
   def seller_name
     user.name rescue nil
+  end
+
+  # get seller first name
+  def seller_first_name
+    user.first_name rescue nil
+  end
+
+  # get seller email
+  def seller_email
+    user.email rescue nil
   end
 
   # check if invoice owner
@@ -97,10 +114,8 @@ class PixiPost < ActiveRecord::Base
   def self.load_new usr, zip
     if usr
       pp = usr.pixi_posts.build
-      if !usr.contacts[0].blank? && zip == usr.contacts[0].zip
-        pp.address, pp.address2 = usr.contacts[0].address, usr.contacts[0].address2
-        pp.city, pp.state, pp.zip = usr.contacts[0].city, usr.contacts[0].state, usr.contacts[0].zip
-        pp.mobile_phone, pp.home_phone = usr.contacts[0].mobile_phone, usr.contacts[0].home_phone
+      if usr.has_address? && zip == usr.contacts[0].zip
+        pp = AddressManager::synch_address pp, usr.contacts[0], false
       else
         loc = PixiPostZip.active.find_by_zip(zip.to_i) rescue nil
 	pp.city, pp.state = loc.city, loc.state unless loc.blank?
@@ -109,6 +124,16 @@ class PixiPost < ActiveRecord::Base
       end
     end
     pp
+  end
+
+  # display full address
+  def full_address
+    addr = AddressManager::full_address self
+  end
+
+  # format date
+  def get_date method
+    send(method).strftime("%m/%d/%Y") rescue nil
   end
 
   # format time

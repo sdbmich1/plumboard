@@ -6,3 +6,7 @@
      <%= f.date_select :birth_date, {:as => :date, :start_year => Date.today.year - 13,
 	               :end_year => Date.today.year - 100, :use_short_month => true,
 		       :order => [:month, :day, :year], :prompt => true}, {:class=>'width120'} %></div>
+<div><%= f.fields_for :preferences do |form| %>
+       <%= form.number_field :zip, :placeholder=> 'Home Zip', size: 5, id: 'home_zip' %>
+     <% end %>
+</div>

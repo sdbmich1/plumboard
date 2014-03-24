@@ -48,8 +48,16 @@ describe Contact do
     it { should_not be_valid }
   end
 
-  it "has full address" do
-    @contact.full_address.should == [@contact.address, @contact.city, @contact.state, @contact.country].compact.join(', ')
+  describe "full address" do
+    it 'has address' do
+      addr = [@contact.address, @contact.city, @contact.state].compact.join(', ') + ' ' + [@contact.zip, @contact.country].compact.join(', ')
+      expect(@contact.full_address).to eq(addr)
+    end
+
+    it 'has no address' do
+      @contact.address = @contact.city = @contact.state = @contact.zip = @contact.country = nil
+      expect(@contact.full_address).to be_empty
+    end
   end
 
 end

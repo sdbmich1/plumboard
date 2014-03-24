@@ -4,6 +4,7 @@ class ListingsController < ApplicationController
   before_filter :authenticate_user!, except: [:local, :category]
   before_filter :load_data, only: [:index, :seller, :category, :show, :local]
   after_filter :add_points, only: [:show]
+  include LocationManager
   respond_to :html, :json, :js, :mobile
   layout :page_layout
 
@@ -17,8 +18,8 @@ class ListingsController < ApplicationController
 
   def show
     @listing = Listing.find_by_pixi_id params[:id]
-    @post = Post.new 
     @comment = @listing.comments.build if @listing
+    @post = Post.new 
     load_comments
     respond_with(@listing) do |format|
       format.json { render json: {listing: @listing, comments: @comments} }
@@ -92,8 +93,10 @@ class ListingsController < ApplicationController
 
   def load_data
     @page, @cat, @loc, @loc_name = params[:page] || 1, params[:cid], params[:loc], params[:loc_name]
-    @loc ||= Contact.find_by_name(@loc_name).id rescue nil
-    @loc_name ||= Site.find(@loc).name rescue nil
+    @loc_name ||= LocationManager::get_loc_name request.remote_ip, @loc, @user.home_zip
+    @loc ||= LocationManager::get_loc_id(@loc_name, @user.home_zip)
+    Rails.logger.info 'Pixi Location id = ' + @loc.to_s
+    Rails.logger.info 'Pixi Location name = ' + @loc_name.to_s
   end
 
   def page_layout

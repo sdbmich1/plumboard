@@ -73,11 +73,13 @@ feature "TempListings" do
       visit new_temp_listing_path
     end
 
-    it { should have_content "Build Your Pixi" }
-    it { should have_selector('.sm-thumb') }
-    it { should have_selector('#photo') }
-    it { should have_link 'Cancel', href: root_path }
-    it { should have_button 'Next' }
+    it 'shows content' do
+      page.should have_content "Build Your Pixi"
+      page.should have_selector('.sm-thumb')
+      page.should have_selector('#photo')
+      page.should have_link 'Cancel', href: root_path
+      page.should have_button 'Next'
+    end
 
     def add_data
       fill_in 'Title', with: "Guitar for Sale"
@@ -283,10 +285,12 @@ feature "TempListings" do
     let(:temp_listing) { FactoryGirl.create(:temp_listing) }
     before { visit edit_temp_listing_path(temp_listing) }
 
-    it { should have_selector('.sm-thumb') }
-    it { should have_selector('#photo') }
-    it { should have_link 'Cancel', href: root_path }
-    it { should have_button 'Next' }
+    it 'shows content' do
+      page.should have_selector('.sm-thumb')
+      page.should have_selector('#photo')
+      page.should have_link 'Cancel', href: root_path
+      page.should have_button 'Next'
+    end
 
     it "empty title should not change a listing" do
       expect { 
@@ -352,9 +356,11 @@ feature "TempListings" do
       visit edit_temp_listing_path(temp_listing) 
     end
 
-    it { should have_selector('.sm-thumb') }
-    it { should have_selector('#photo') }
-    it { should have_button 'Next' }
+    it 'shows content' do
+      page.should have_selector('.sm-thumb')
+      page.should have_selector('#photo')
+      page.should have_button 'Next'
+    end
 
     it "Changes a pixi title" do
       expect{
@@ -435,20 +441,21 @@ feature "TempListings" do
     let(:temp_listing) { FactoryGirl.create(:temp_listing, seller_id: user.id, status: 'new') }
     before { visit temp_listing_path(temp_listing) }
 
-    it { should have_content "Step 2 of 2" }
-    it { should have_content "Posted By: #{temp_listing.seller_name}" }
-    it { should_not have_selector('#contact_content') }
-    it { should_not have_selector('#comment_content') }
-    it { should_not have_link 'Follow', href: '#' }
-    it { should have_link 'Edit', href: edit_temp_listing_path(temp_listing) }
-    it { should have_link 'Remove', href: temp_listing_path(temp_listing) }
-    it { should have_link 'Done!', href: submit_temp_listing_path(temp_listing) }
-    it { should_not have_button 'Next' }
-    it { should have_content "ID: #{temp_listing.pixi_id}" }
-    it { should have_content "Posted: #{get_local_time(temp_listing.start_date)}" }
-    it { should have_content "Updated: #{get_local_time(temp_listing.updated_at)}" }
-
-    it { should have_content 'Acoustic Guitar' }
+    it 'shows content' do
+      page.should have_content "Step 2 of 2"
+      page.should have_content "Posted By: #{temp_listing.seller_name}"
+      page.should_not have_selector('#contact_content')
+      page.should_not have_selector('#comment_content')
+      page.should_not have_link 'Follow', href: '#'
+      page.should have_link 'Edit', href: edit_temp_listing_path(temp_listing)
+      page.should have_link 'Remove', href: temp_listing_path(temp_listing)
+      page.should have_link 'Done!', href: submit_temp_listing_path(temp_listing)
+      page.should_not have_button 'Next'
+      page.should have_content "ID: #{temp_listing.pixi_id}"
+      page.should have_content "Posted: #{get_local_time(temp_listing.start_date)}"
+      page.should have_content "Updated: #{get_local_time(temp_listing.updated_at)}"
+      page.should have_content 'Acoustic Guitar'
+    end
 
     it "cancel remove pixi", js: true do
       click_remove_cancel
@@ -488,10 +495,12 @@ feature "TempListings" do
     let(:temp_listing) { FactoryGirl.create(:temp_listing, seller_id: user.id, status: 'new', category_id: category.id) }
     before { visit temp_listing_path(temp_listing) }
 
-    it { should have_content "Step 2 of 3" }
-    it { should_not have_link 'Done!', href: resubmit_temp_listing_path(temp_listing) }
-    it { should_not have_link 'Done!', href: submit_temp_listing_path(temp_listing) }
-    it { should have_button 'Next' }
+    it 'shows content' do
+      page.should have_content "Step 2 of 3"
+      page.should_not have_link 'Done!', href: resubmit_temp_listing_path(temp_listing)
+      page.should_not have_link 'Done!', href: submit_temp_listing_path(temp_listing)
+      page.should have_button 'Next'
+    end
 
     it "submits a pixi" do
       expect { 
@@ -506,9 +515,11 @@ feature "TempListings" do
     let(:temp_listing) { FactoryGirl.create(:temp_listing, seller_id: user.id, status: 'edit') }
     before { visit temp_listing_path(temp_listing) }
 
-    it { should have_link 'Done!', href: resubmit_temp_listing_path(temp_listing) }
-    it { should_not have_link 'Done!', href: submit_temp_listing_path(temp_listing) }
-    it { should_not have_button 'Next' }
+    it 'shows content' do
+      page.should have_link 'Done!', href: resubmit_temp_listing_path(temp_listing)
+      page.should_not have_link 'Done!', href: submit_temp_listing_path(temp_listing)
+      page.should_not have_button 'Next'
+    end
 
     it "cancels review of active pixi" do
       click_cancel_cancel

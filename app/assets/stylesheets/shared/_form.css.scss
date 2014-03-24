@@ -9,6 +9,11 @@ $pixiBlue: #026FB7;
 .pixi-color { 
   color: $pixiOrange; 
 }
+
+.pixi-blue-color { 
+  color: $pixiBlue; 
+}
+
 .pixi-bkgnd { background-color: $pixiOrange }
 .pixi-lt-bkgnd { background-color: #fde9d9 }
 .pixi-blue-bkgnd { background-color: $pixiBlue }
@@ -113,6 +118,7 @@ form#new_post {margin-bottom: -0px!important;}
 .ng-top { margin-top: -5px!important }  
 .mright { margin-right: 10px!important }
 .med-top {margin-top: 10px!important;}
+.med-bot { margin-bottom: 10px!important }  
 .no-mtop {margin-top: 0!important}
 
 .no-btop {
@@ -156,7 +162,8 @@ a.img-link {
 }
 
 a.pixi-cat-link {
-  &:hover, &:active {
+  &:hover {
+    display: block;
     background: none;
     text-decoration: none;
   }
@@ -183,4 +190,13 @@ a.pixi-cat-link {
     left: 0.5em;
     margin-right: -50%;
   }
+}
+
+.blue-line hr {
+  color: $pixiBlue; 
+  background-color: $pixiBlue; 
+}
+
+hr {
+  border-top: 1px solid $pixiBlue;
 }

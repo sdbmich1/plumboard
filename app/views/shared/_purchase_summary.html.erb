@@ -1,4 +1,7 @@
 <div class="sm-top div-border">  
+  <div class='pull-right'>
+    <%= image_tag('rsz_pixipay.png', class: 'ppay-logo') %>
+  </div>
   <div class="mtop">  
     <span class="offset1 span2">
       <%= render :partial => 'shared/show_photo', :locals => {model: @listing, psize: '100x100', file_name:'pixi-photo', display_cnt: 0} %>

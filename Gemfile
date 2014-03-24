@@ -126,6 +126,9 @@ gem 'bootstrap-sass', '~> 2.3.2.1'
 # add memcached
 gem 'dalli'
 
+# add area
+gem 'area', '~> 0.10.0'
+
 # development gems
 group :development do
   gem 'better_errors'

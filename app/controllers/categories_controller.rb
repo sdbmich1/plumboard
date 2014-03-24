@@ -6,6 +6,7 @@ class CategoriesController < ApplicationController
   before_filter :load_data, only: [:index]
   before_filter :get_page, only: [:index, :inactive, :manage, :create, :update]
   autocomplete :site, :name, :full => true, :limit => 20
+  include LocationManager
   respond_to :html, :json, :js, :mobile
   layout :page_layout
 
@@ -63,15 +64,9 @@ class CategoriesController < ApplicationController
   # set location var
   def load_data
     @loc = params[:loc]
-    if @loc.blank?
-      @ip = Rails.env.development? || Rails.env.test? ? '24.4.199.34' : request.remote_ip
-      @area = Geocoder.search(@ip)
-      @loc_name = Contact.near([@area.first.latitude, @area.first.longitude]).first.city rescue nil
-      @loc = Site.find_by_name(@loc_name).id rescue nil
+    @loc_name = LocationManager::get_loc_name request.remote_ip, @loc, @user.home_zip
+    @loc ||= LocationManager::get_loc_id(@loc_name, @user.home_zip)
       Rails.logger.info 'Category Location id = ' + @loc.to_s
-    else
-      @loc_name = Site.find(@loc).name rescue nil
-    end
       Rails.logger.info 'Category Location name = ' + @loc_name.to_s
   end
 

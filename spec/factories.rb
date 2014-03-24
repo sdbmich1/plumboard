@@ -10,29 +10,34 @@ FactoryGirl.define do
     birth_date            Time.parse("1967-04-23")
   end
 
-    factory :admin, :class => "User", :parent => :user do
-      before(:create) {|usr| usr.pictures.build FactoryGirl.attributes_for(:picture)}
-      after(:create) {|usr| usr.add_role(:admin)}
-    end
-
-    factory :editor, :class => "User", :parent => :user do
-      before(:create) {|usr| usr.pictures.build FactoryGirl.attributes_for(:picture)}
-      after(:create) {|usr| usr.add_role(:editor)}
-    end
-
-    factory :subscriber, :class => "User", :parent => :user do
-      before(:create) {|usr| usr.pictures.build FactoryGirl.attributes_for(:picture)}
-      after(:create) {|usr| usr.add_role(:subscriber)}
-    end
-
   factory :pixi_user, :class => "User", :parent => :user do
     after(:build) do |usr| 
       usr.pictures.build FactoryGirl.attributes_for(:picture)
+      usr.preferences.build FactoryGirl.attributes_for(:preference)
     end
     after(:create) do |usr|
       usr.confirm!
       usr.confirmed_at		{ Time.now }
     end
+  end
+
+  factory :unconfirmed_user, :class => "User", :parent => :user do
+    after(:build) do |usr| 
+      usr.pictures.build FactoryGirl.attributes_for(:picture)
+      usr.preferences.build FactoryGirl.attributes_for(:preference)
+    end
+  end
+
+  factory :admin, :class => "User", :parent => :pixi_user do
+    after(:create) {|usr| usr.add_role(:admin)}
+  end
+
+  factory :editor, :class => "User", :parent => :pixi_user do
+    after(:create) {|usr| usr.add_role(:editor)}
+  end
+
+  factory :subscriber, :class => "User", :parent => :pixi_user do
+    after(:create) {|usr| usr.add_role(:subscriber)}
   end
 
   factory :contact_user, :class => "User", :parent => :pixi_user do
@@ -341,5 +346,11 @@ FactoryGirl.define do
   factory :saved_listing do
     user_id		1
     pixi_id		"xxxx"
+  end
+
+  factory :preference do
+    zip    		'90201'
+    email_msg_flg   	'yes'
+    mobile_msg_flg   	'yes'
   end
 end

@@ -58,6 +58,10 @@ describe User do
     it { should have_many(:saved_listings) }
     it { should respond_to(:pixi_wants) }
     it { should have_many(:pixi_wants) }
+    it { should respond_to(:preferences) }
+    it { should have_many(:preferences).dependent(:destroy) }
+    it { should accept_nested_attributes_for(:preferences).allow_destroy(true) }
+
     it { should respond_to(:unpaid_invoice_count) } 
     it { should respond_to(:has_unpaid_invoices?) } 
     it { should respond_to(:has_address?) } 
@@ -226,6 +230,14 @@ describe User do
     end 
   end  
 
+  describe 'home_zip' do
+    let(:user) { FactoryGirl.build :user }
+    it { expect(@user.home_zip).not_to be_nil }
+    it { expect(user.home_zip).to be_nil }
+    it { expect(@user.home_zip=('94108')).to eq('94108') }
+    it { expect(user.home_zip=(nil)).to be_nil }
+  end
+
   describe "must have pictures" do
     let(:user) { FactoryGirl.build :user }
 
@@ -238,6 +250,34 @@ describe User do
     it "saves with at least one picture" do
       picture = user.pictures.build
       picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
+      user.home_zip = '94108'
+      user.save
+      user.should be_valid
+    end
+  end
+
+  describe "must have zip" do
+    let(:user) { FactoryGirl.build :user }
+
+    it "does not save w/o zip" do
+      picture = user.pictures.build
+      picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
+      user.save
+      user.should_not be_valid
+    end
+
+    it "does not save with invalid zip" do
+      picture = user.pictures.build
+      picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
+      user.home_zip = '99999'
+      user.save
+      user.should_not be_valid
+    end
+
+    it "saves with zip" do
+      picture = user.pictures.build
+      picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
+      user.home_zip = '94108'
       user.save
       user.should be_valid
     end

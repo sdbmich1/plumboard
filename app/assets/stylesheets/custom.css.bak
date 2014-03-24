@@ -152,19 +152,6 @@ footer {
    }
 }
 
-/* responsive footer fix by Aalaap Ghag */
-@media (max-width: 767px) {
-  body {
-    padding-right: 0px;
-    padding-left: 0px;
-  }
-
-  footer, .wrapper {
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-}
-
 @mixin box_sizing {
   -moz-box-sizing: border-box; 
   -webkit-box-sizing: border-box; 

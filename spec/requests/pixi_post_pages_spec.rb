@@ -89,24 +89,7 @@ feature "PixiPosts" do
     select("2", :from => "post_qty")
   end
 
-  describe 'user opens a new pixi post' do
-    before do
-      init_setup user
-      visit new_pixi_post_path(zip: '90201')
-    end
-
-    it "Opens from menu" do
-      expect { 
-	  click_link 'By Us'
-      }.not_to change(PixiPost, :count)
-
-      page.should have_content "PixiPost" 
-      page.should have_content "Requested By: " 
-      page.should have_content @user.name
-    end
-  end
-
-  describe 'user w/o adds a new pixi post' do
+  describe 'user w/o address adds a new pixi post' do
     before do
       init_setup user
       visit new_pixi_post_path(zip: '94103') 

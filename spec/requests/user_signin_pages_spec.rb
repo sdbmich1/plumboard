@@ -12,7 +12,7 @@ feature "UserSignins" do
 
   def invalid_login
     fill_in "user_email", :with => "notarealuser@example.com"
-    fill_in "user_password", :with => "fakepassword"
+    fill_in "pwd", :with => "fakepassword"
     click_button submit
   end
 
@@ -37,9 +37,11 @@ feature "UserSignins" do
   describe 'sign in page' do 
     before { visit new_user_session_path }
 
-    it { should have_selector '#fb-btn', href: user_omniauth_authorize_path(:facebook) }
-    it { should have_button('Sign in') }
-    it { should have_link 'Sign up for free!', href: new_user_registration_path }
+    it 'shows content' do
+      page.should have_selector '#fb-btn', href: user_omniauth_authorize_path(:facebook)
+      page.should have_button('Sign in')
+      page.should have_link 'Sign up for free!', href: new_user_registration_path
+    end
 
     describe 'facebook' do 
       before :each do
@@ -68,7 +70,7 @@ feature "UserSignins" do
 
     describe 'registered unconfirmed users' do 
       before do
-        @user = FactoryGirl.create :subscriber, confirmed_at: nil 
+        @user = FactoryGirl.create :unconfirmed_user, confirmed_at: nil 
       end
 
       it "displays confirm message to a registered user" do
@@ -88,24 +90,26 @@ feature "UserSignins" do
         user_login
       end
 
-      it { should have_content(@user.first_name) }
-      it { should have_link('Sign out', href: destroy_user_session_path) }
-      it { should_not have_link('Orders', href: pending_listings_path) }
-      it { should_not have_link('Transactions', href: transactions_path) }
-      it { should_not have_link('PixiPosts', href: pixi_posts_path) }
-      it { should_not have_link('Users', href: users_path) }
-      it { should_not have_link('Inquiries', href: inquiries_path(ctype: 'inquiry')) }
-      it { should have_button('Post') }
-      it { should have_link('By You', href: new_temp_listing_path) }
-      it { should have_link('By Us', href: check_pixi_post_zips_path) }
-      it { should_not have_link('For Seller', href: new_temp_listing_path(pixan_id: @user)) }
-      it { should have_link('My Pixis', href: seller_listings_path) }
-      it { should have_link('My Messages', href: posts_path) }
-      it { should have_link('My Invoices', href: invoices_path) }
-      it { should have_link('My Accounts', href: new_bank_account_path) }
-      it { should have_link('My Settings', href: settings_path) }
-      it { should have_link('My PixiPosts', href: seller_pixi_posts_path(status: 'active')) }
-      it { should_not have_link('Sign in', href: new_user_session_path) }
+      it 'shows content' do
+        page.should have_content(@user.first_name)
+        page.should have_link('Sign out', href: destroy_user_session_path)
+        page.should_not have_link('Orders', href: pending_listings_path)
+        page.should_not have_link('Transactions', href: transactions_path)
+        page.should_not have_link('PixiPosts', href: pixi_posts_path)
+        page.should_not have_link('Users', href: users_path)
+        page.should_not have_link('Inquiries', href: inquiries_path(ctype: 'inquiry'))
+        page.should have_button('Post')
+        page.should have_link('By You', href: new_temp_listing_path)
+        page.should have_link('By Us', href: check_pixi_post_zips_path)
+        page.should_not have_link('For Seller', href: new_temp_listing_path(pixan_id: @user))
+        page.should have_link('My Pixis', href: seller_listings_path)
+        page.should have_link('My Messages', href: posts_path)
+        page.should have_link('My Invoices', href: invoices_path)
+        page.should have_link('My Accounts', href: new_bank_account_path)
+        page.should have_link('My Settings', href: settings_path)
+        page.should have_link('My PixiPosts', href: seller_pixi_posts_path(status: 'active'))
+        page.should_not have_link('Sign in', href: new_user_session_path)
+      end
 
       it "displays sign in link after signout" do
         click_link "Sign out"
@@ -119,26 +123,28 @@ feature "UserSignins" do
         user_login
       end
 
-      it { should have_content(@user.first_name) }
-      it { should have_content('Manage') }
-      it { should have_link('Pending Orders', href: pending_listings_path(status: 'pending')) }
-      it { should have_link('PixiPosts', href: pixi_posts_path(status: 'active')) }
-      it { should have_link('Inquiries', href: inquiries_path(ctype: 'inquiry')) }
-      it { should have_link('Categories', href: manage_categories_path) }
-      it { should have_link('Transactions', href: transactions_path) }
-      it { should have_link('Users', href: users_path) }
-      it { should have_button('Post') }
-      it { should have_link('By You', href: new_temp_listing_path) }
-      it { should have_link('By Us', href: check_pixi_post_zips_path) }
-      it { should have_link('For Seller', href: new_temp_listing_path(pixan_id: @user)) }
-      it { should have_link('My Pixis', href: seller_listings_path) }
-      it { should have_link('My Messages', href: posts_path) }
-      it { should have_link('My Invoices', href: invoices_path) }
-      it { should have_link('My Accounts', href: new_bank_account_path) }
-      it { should have_link('My Settings', href: settings_path) }
-      it { should have_link('My PixiPosts', href: seller_pixi_posts_path(status: 'active')) }
-      it { should have_link('Sign out', href: destroy_user_session_path) }
-      it { should_not have_link('Sign in', href: new_user_session_path) }
+      it 'shows content' do
+        page.should have_content(@user.first_name)
+        page.should have_content('Manage')
+        page.should have_link('Pending Orders', href: pending_listings_path(status: 'pending'))
+        page.should have_link('PixiPosts', href: pixi_posts_path(status: 'active'))
+        page.should have_link('Inquiries', href: inquiries_path(ctype: 'inquiry'))
+        page.should have_link('Categories', href: manage_categories_path)
+        page.should have_link('Transactions', href: transactions_path)
+        page.should have_link('Users', href: users_path)
+        page.should have_button('Post')
+        page.should have_link('By You', href: new_temp_listing_path)
+        page.should have_link('By Us', href: check_pixi_post_zips_path)
+        page.should have_link('For Seller', href: new_temp_listing_path(pixan_id: @user))
+        page.should have_link('My Pixis', href: seller_listings_path)
+        page.should have_link('My Messages', href: posts_path)
+        page.should have_link('My Invoices', href: invoices_path)
+        page.should have_link('My Accounts', href: new_bank_account_path)
+        page.should have_link('My Settings', href: settings_path)
+        page.should have_link('My PixiPosts', href: seller_pixi_posts_path(status: 'active'))
+        page.should have_link('Sign out', href: destroy_user_session_path)
+        page.should_not have_link('Sign in', href: new_user_session_path)
+      end
 
       it "displays sign in link after signout" do
         click_link "Sign out"
@@ -152,23 +158,25 @@ feature "UserSignins" do
         user_login
       end
 
-      it { should have_content(@user.first_name) }
-      it { should have_content('Manage') }
-      it { should have_link('Pending Orders', href: pending_listings_path(status: 'pending')) }
-      it { should have_link('PixiPosts', href: pixi_posts_path(status: 'active')) }
-      it { should have_link('Inquiries', href: inquiries_path(ctype: 'inquiry')) }
-      it { should_not have_link('Categories', href: manage_categories_path) }
-      it { should_not have_link('Transactions', href: transactions_path) }
-      it { should_not have_link('Users', href: users_path) }
-      it { should have_link('For Seller', href: new_temp_listing_path(pixan_id: @user)) }
-      it { should have_link('My Pixis', href: seller_listings_path) }
-      it { should have_link('My Messages', href: posts_path) }
-      it { should have_link('My Invoices', href: invoices_path) }
-      it { should have_link('My Accounts', href: new_bank_account_path) }
-      it { should have_link('My Settings', href: settings_path) }
-      it { should have_link('My PixiPosts', href: seller_pixi_posts_path(status: 'active')) }
-      it { should have_link('Sign out', href: destroy_user_session_path) }
-      it { should_not have_link('Sign in', href: new_user_session_path) }
+      it 'shows content' do
+        page.should have_content(@user.first_name)
+        page.should have_content('Manage')
+        page.should have_link('Pending Orders', href: pending_listings_path(status: 'pending'))
+        page.should have_link('PixiPosts', href: pixi_posts_path(status: 'active'))
+        page.should have_link('Inquiries', href: inquiries_path(ctype: 'inquiry'))
+        page.should_not have_link('Categories', href: manage_categories_path)
+        page.should_not have_link('Transactions', href: transactions_path)
+        page.should_not have_link('Users', href: users_path)
+        page.should have_link('For Seller', href: new_temp_listing_path(pixan_id: @user))
+        page.should have_link('My Pixis', href: seller_listings_path)
+        page.should have_link('My Messages', href: posts_path)
+        page.should have_link('My Invoices', href: invoices_path)
+        page.should have_link('My Accounts', href: new_bank_account_path)
+        page.should have_link('My Settings', href: settings_path)
+        page.should have_link('My PixiPosts', href: seller_pixi_posts_path(status: 'active'))
+        page.should have_link('Sign out', href: destroy_user_session_path)
+        page.should_not have_link('Sign in', href: new_user_session_path)
+      end
 
       it "displays sign in link after signout" do
         click_link "Sign out"
@@ -185,8 +193,10 @@ feature "UserSignins" do
 	visit root_path
       end
 
-      it { should have_content('My Accounts') }
-      it { should have_link('My Accounts', href: bank_account_path(@account)) }
+      it 'shows content' do
+        page.should have_content('My Accounts')
+        page.should have_link('My Accounts', href: bank_account_path(@account))
+      end
     end
 
     describe 'registered subscriber users' do
@@ -195,21 +205,23 @@ feature "UserSignins" do
         user_login
       end
 
-      it { should have_content(@user.first_name) }
-      it { should_not have_content('Manage') }
-      it { should_not have_link('PixiPosts', href: pixi_posts_path) }
-      it { should_not have_link('Inquiries', href: inquiries_path(ctype: 'inquiry')) }
-      it { should_not have_link('Pending Orders', href: pending_listings_path(status: 'pending')) }
-      it { should_not have_link('Categories', href: manage_categories_path) }
-      it { should_not have_link('Transactions', href: transactions_path) }
-      it { should_not have_link('Users', href: users_path) }
-      it { should have_link('My Pixis', href: seller_listings_path) }
-      it { should have_link('My Messages', href: posts_path) }
-      it { should have_link('My Invoices', href: invoices_path) }
-      it { should have_link('My Settings', href: settings_path) }
-      it { should have_link('My PixiPosts', href: seller_pixi_posts_path(status: 'active')) }
-      it { should have_link('Sign out', href: destroy_user_session_path) }
-      it { should_not have_link('Sign in', href: new_user_session_path) }
+      it 'shows content' do
+        page.should have_content(@user.first_name)
+        page.should_not have_content('Manage')
+        page.should_not have_link('PixiPosts', href: pixi_posts_path)
+        page.should_not have_link('Inquiries', href: inquiries_path(ctype: 'inquiry'))
+        page.should_not have_link('Pending Orders', href: pending_listings_path(status: 'pending'))
+        page.should_not have_link('Categories', href: manage_categories_path)
+        page.should_not have_link('Transactions', href: transactions_path)
+        page.should_not have_link('Users', href: users_path)
+        page.should have_link('My Pixis', href: seller_listings_path)
+        page.should have_link('My Messages', href: posts_path)
+        page.should have_link('My Invoices', href: invoices_path)
+        page.should have_link('My Settings', href: settings_path)
+        page.should have_link('My PixiPosts', href: seller_pixi_posts_path(status: 'active'))
+        page.should have_link('Sign out', href: destroy_user_session_path)
+        page.should_not have_link('Sign in', href: new_user_session_path)
+      end
 
       it "displays sign in link after signout" do
         click_link "Sign out"

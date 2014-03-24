@@ -1,4 +1,5 @@
 <%= form_for [@user, @user.with_picture], url: user_path(@user, target: 'shared/user_form'), html: { class: 'uform' }, remote: true do |f| %>
+    <div id="notice"><%= render 'layouts/flash_messages', flash: flash %></div>
     <div id="form_errors"><%= render partial: 'shared/error_messages', locals: { target: f.object } %></div>
     <%= render partial: 'shared/show_user_photo', locals: { f: f, model: @user, file_name: 'person_icon.jpg' } %>
 

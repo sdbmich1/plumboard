@@ -3,10 +3,11 @@ require 'spec_helper'
 describe "Users", :type => :feature do
   subject { page }
   let(:user) { FactoryGirl.create(:pixi_user) }
+  let(:admin) { FactoryGirl.create(:admin) }
 
-  before(:each) do
-    login_as(user, :scope => :user, :run_callbacks => false)
-    @user = user
+  def init_setup usr
+    login_as(usr, :scope => :user, :run_callbacks => false)
+    @user = usr
   end
 
   def click_save
@@ -19,32 +20,40 @@ describe "Users", :type => :feature do
 
   describe "GET /users" do
     it "should display users" do 
+      init_setup admin
       visit users_path  
-      page.should have_content("Joe Blow")
+      page.should have_content @user.name
     end
   end
   
   describe "Review Users" do 
-    before { visit user_path(user) }
+    before do
+      init_setup admin
+      visit user_path(user) 
+    end
 
     it "Views a user" do
       page.should have_selector('h2',    text: user.name) 
+      page.should have_selector('title', text: 'Settings')
     end
   end
 
   describe 'Edit profile' do
-    before { visit settings_path }
+    before do
+      init_setup user
+      visit settings_path 
+    end
 
-    it "should not add a large pic" do
+    it "should not add a large pic", js: true do
       expect{
         attach_file('user_pic', Rails.root.join("spec", "fixtures", "photo2.png"))
         click_on 'Save Changes'
       }.not_to change(user.pictures,:count).by(1)
 
-      page.should have_content("Pictures photo file size must be in between 0")
+    #  page.should have_content("Pictures photo file size must be in between 0")
     end
 
-    it "empty first name should not change a profile" do
+    it "empty first name should not change a profile", js: true do
       expect { 
 	      fill_in 'user_first_name', with: nil
               click_on 'Save Changes'
@@ -53,7 +62,7 @@ describe "Users", :type => :feature do
       page.should have_content("First name can't be blank")
     end
 
-    it "empty last name should not change a profile" do
+    it "empty last name should not change a profile", js: true do
       expect { 
 	      fill_in 'user_last_name', with: nil
               click_on 'Save Changes'
@@ -62,7 +71,7 @@ describe "Users", :type => :feature do
       page.should have_content("Last name can't be blank")
     end
 
-    it "empty email should not change a profile" do
+    it "empty email should not change a profile", js: true do
       expect { 
 	      fill_in 'user_email', with: nil
               click_on 'Save Changes'
@@ -99,6 +108,33 @@ describe "Users", :type => :feature do
       user.reload.gender.should == 'Female' 
     end
 
+    it "empty home_zip should not change a profile", js: true do
+      expect { 
+	      fill_in 'home_zip', with: nil
+              click_on 'Save Changes'
+	}.not_to change(User, :count)
+
+      page.should have_content("Must have a zip")
+    end
+
+    it "invalid home_zip should not change a profile", js: true do
+      expect { 
+	      fill_in 'home_zip', with: '99999'
+              click_on 'Save Changes'
+	}.not_to change(User, :count)
+
+      page.should have_content("Must have a valid zip")
+    end
+
+    it "changed home zip should update a profile", js: true do
+      expect { 
+	      fill_in 'home_zip', with: '94111'
+	      click_save
+	}.not_to change(User, :count)
+
+      user.reload.home_zip.should == '94111' 
+    end
+
     it "Changes profile file pic", js: true do
       expect{
               attach_file('user_pic', Rails.root.join("spec", "fixtures", "photo0.jpg"))
@@ -122,6 +158,7 @@ describe "Users", :type => :feature do
     let(:contact) { FactoryGirl.build :contact }
     before :each do
       FactoryGirl.create :state
+      init_setup user
       visit settings_path
       click_link 'Contact'
     end
@@ -219,13 +256,13 @@ describe "Users", :type => :feature do
    
   describe 'Change password', js: true do
     before :each do
+      init_setup user
       visit settings_path
-      click_link 'Change Password'
+      click_link 'Password'
     end
 
     it 'should show change password page' do
       page.should have_button("Change Password")
-      page.should have_button("Cancel Account")
     end
 
     it 'should change password' do
@@ -252,6 +289,4 @@ describe "Users", :type => :feature do
       page.should have_content("Password doesn't match confirmation")
     end
   end
-
-
 end

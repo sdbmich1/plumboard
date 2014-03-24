@@ -12,16 +12,23 @@ feature "UserRegistrations" do
     end
 
     def user_birth_date
-	select('Jan', :from => "user_birth_date_2i")
-	select('10', :from => 'user_birth_date_3i')
-	select('1983', :from => 'user_birth_date_1i')
+      select('Jan', :from => "user_birth_date_2i")
+      select('10', :from => 'user_birth_date_3i')
+      select('1983', :from => 'user_birth_date_1i')
+    end
+
+    def user_pwd
+      fill_in 'user_password', :with => 'userpassword'
+      fill_in "user_password_confirmation", with: 'userpassword'
     end
 
     describe "with invalid information" do
       before { visit new_user_registration_path }
 
-      it { should have_link "Pixiboard's Terms of Service", href: terms_path }
-      it { should have_link 'Privacy Policy', href: privacy_path }
+      it 'shows content' do
+        page.should have_link "Pixiboard's Terms of Service", href: terms_path
+        page.should have_link 'Privacy Policy', href: privacy_path
+      end
 
       it "should not create a empty user" do
         expect{ 
@@ -46,8 +53,6 @@ feature "UserRegistrations" do
 		user_info
 		user_birth_date
 		select('Male', :from => 'user_gender')
-        	fill_in 'user_password', :with => 'userpassword'
-        	fill_in "user_password_confirmation", with: 'userpassword'
 		click_button submit 
 	}.not_to change(User, :count)
 
@@ -59,8 +64,7 @@ feature "UserRegistrations" do
 		user_info
 		user_birth_date
         	fill_in 'user_email', :with => 'newuser@example.com'
-        	fill_in 'user_password', :with => 'userpassword'
-        	fill_in "user_password_confirmation", with: 'userpassword'
+		user_pwd
       		add_data_w_photo
 		click_button submit 
 	}.not_to change(User, :count)
@@ -71,8 +75,32 @@ feature "UserRegistrations" do
 		user_info
 		select('Male', :from => 'user_gender')
         	fill_in 'user_email', :with => 'newuser@example.com'
-        	fill_in 'user_password', :with => 'userpassword'
-        	fill_in "user_password_confirmation", with: 'userpassword'
+		user_pwd
+      		add_data_w_photo
+		click_button submit 
+	}.not_to change(User, :count)
+      end
+
+      it "should not create user w/o zip" do
+        expect{ 
+		user_info
+		user_birth_date
+		select('Male', :from => 'user_gender')
+        	fill_in 'user_email', :with => 'newuser@example.com'
+		user_pwd
+      		add_data_w_photo
+		click_button submit 
+	}.not_to change(User, :count)
+      end
+
+      it "should not create user w/o valid zip" do
+        expect{ 
+		user_info
+		user_birth_date
+		select('Male', :from => 'user_gender')
+        	fill_in 'user_email', :with => 'newuser@example.com'
+		user_pwd
+                fill_in 'home_zip', :with => '99999'
       		add_data_w_photo
 		click_button submit 
 	}.not_to change(User, :count)
@@ -113,10 +141,10 @@ feature "UserRegistrations" do
     def user_data
       user_info
       fill_in 'user_email', :with => 'newuser@example.com'
-      user_birth_date
       select('Male', :from => 'user_gender')
-      fill_in 'user_password', :with => 'userpassword'
-      fill_in "user_password_confirmation", with: 'userpassword'
+      user_birth_date
+      fill_in 'home_zip', :with => '90201'
+      user_pwd
     end
 
     def add_data_w_photo

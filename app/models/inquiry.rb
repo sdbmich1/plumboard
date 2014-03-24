@@ -39,6 +39,11 @@ class Inquiry < ActiveRecord::Base
     first_name + ' ' + last_name rescue nil
   end
 
+  # get contact_type for inquiry
+  def contact_type
+    inquiry_type.contact_type rescue nil
+  end
+
   # get subject for inquiry
   def subject
     inquiry_type.subject rescue nil

@@ -3,11 +3,25 @@
 <%= content_for :content do %>
   <%= render partial: 'shared/pg_sub_header', locals: { stitle: 'How It Works' } %>
   <div class='mtop row'>
-    <div class='offset1 span10'>
-      <%= image_tag 'rsz_howitworks_share_20140217.png', class: 'pxb-img' %>
-      <%= image_tag 'rsz_howitworks_connect_20140217.png', class: 'pxb-img' %>
-      <%= image_tag 'rsz_howitworks_magic_20140217.png', class: 'pxb-img' %>
-      <div class='height480 div-border pg-bkgnd-white mbot'>
+    <div class='offset1 span10 pg-text'>
+      Pixiboard&#0153; is a visual marketplace where buying and selling items is easy, safe, and secure. It doesn't cost anything to look. 
+      It doesn't cost anything to post.  We only get paid when you get paid.<br><br>
+      <div class='offset1'><%= link_to 'Using Pixiboard', '#pxboard', class: 'terms-link' %></div><br>
+      <div class='offset1'><%= link_to 'Using PixiPay', '#pxpay', class: 'terms-link' %></div><br>
+      <div class='offset1'><%= link_to 'Using PixiPost', '#pxpost', class: 'terms-link' %></div><br>
+      <div class='offset1'><%= link_to 'Pixi Videos', '#pxvideo', class: 'terms-link' %></div><br>
+      Pixiboard is a virtual garage sale anytime, anywhere. Images help buyers and sellers connect instantly. Sellers can move items quickly for cash
+      they need. Buyers can rapidly find the things they want at the price they can afford. Everyone wins. Connect. Share. Magic.
+      <div class='mtop center-wrapper blue-line'><hr class='width180'></div>
+    </div>
+  </div>
+  <%= render 'shared/about_pxboard' %>
+  <%= render 'shared/about_pxpay' %>
+  <%= render 'shared/about_pxpost' %>
+  <div class='mtop row'>
+    <div class='offset1 span10 pg-text'>
+      <a name='pxvideo' class='title-str'>Pixi Videos</a><br><br>
+      <div class='height480'>
         <div class='mtop span2 page-text'>Here's what it's like to use Pixiboard</div>
         <div class='mtop span7 mbot' id='video-container'>
           <%= image_tag 'http://placehold.it/640x360', class: 'span7 vimeo-thumb', 'data-vimeo-id'=>'82242899' %>

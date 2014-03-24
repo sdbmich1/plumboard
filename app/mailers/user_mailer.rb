@@ -1,5 +1,5 @@
 class UserMailer < ActionMailer::Base
-  default from: "support@pixiboard.com"
+  default from: '"PixiSupport" <support@pixiboard.com>'
 
   helper :application, :transactions, :listings
 
@@ -22,7 +22,7 @@ class UserMailer < ActionMailer::Base
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     # set message details
-    mail(:to => "#{post.user.email}", :subject => "PixiPost Request Submitted") 
+    mail(:to => "#{post.seller_email}", :subject => "PixiPost Request Submitted") 
   end
 
   # send pixi post appt to sellers
@@ -33,10 +33,10 @@ class UserMailer < ActionMailer::Base
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     # set message details
-    mail(:to => "#{post.user.email}", :subject => "PixiPost Appointment Scheduled") 
+    mail(:to => "#{post.seller_email}", :subject => "PixiPost Appointment Scheduled") 
   end
 
-  # send pixi post appt to sellers
+  # send inquiry response to user
   def send_inquiry inquiry 
     @inquiry = inquiry
 
@@ -44,8 +44,18 @@ class UserMailer < ActionMailer::Base
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     # set message details
-    email = @inquiry.is_support? ? 'support@pixiboard.com' : 'info@pixiboard.com'
-    mail(:to => "#{email}", :subject => "User Inquiry")
+    mail(:to => "#{@inquiry.email}", :subject => "Pixiboard Inquiry: #{@inquiry.contact_type} #{@inquiry.id}")
+  end
+
+  # send inquiry response to pxb
+  def send_inquiry_notice inquiry 
+    @inquiry = inquiry
+
+    # set logo
+    attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
+    # set message details
+    mail(:to => "support@pixiboard.com", :subject => "Pixiboard Inquiry: #{@inquiry.contact_type} #{@inquiry.id}")
   end
 
   # send payment receipts to sellers
@@ -70,6 +80,18 @@ class UserMailer < ActionMailer::Base
     mail(:to => "#{post.recipient.email}", :subject => "Pixiboard Post: #{post.pixi_title} ") 
   end
 
+  # send interest notices to members
+  def send_interest want
+    @want = want
+    @listing = @want.listing
+
+    # set logo
+    attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
+    # set message details
+    mail(:to => "#{@listing.seller_email}", :subject => "Pixiboard Post: Someone Wants Your #{@listing.title} ") 
+  end
+
   # send approval notices to members
   def send_approval listing
     @listing = listing
@@ -78,7 +100,7 @@ class UserMailer < ActionMailer::Base
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     # set message details
-    mail(:to => "#{listing.user.email}", :subject => "Pixi Approved: #{listing.title} ") 
+    mail(:to => "#{listing.seller_email}", :subject => "Pixi Approved: #{listing.title} ") 
   end
 
   # send denial notices to members
@@ -89,7 +111,7 @@ class UserMailer < ActionMailer::Base
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     # set message details
-    mail(:to => "#{listing.user.email}", :subject => "Pixi Denied: #{listing.title} ") 
+    mail(:to => "#{listing.seller_email}", :subject => "Pixi Denied: #{listing.title} ") 
   end
 
   # send confirm message to new members
@@ -100,7 +122,7 @@ class UserMailer < ActionMailer::Base
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     # set message details
-    mail(:to => "#{user.email}", :subject => "Your New Pixiboard Account")
+    mail(:to => "#{user.email}", :subject => "Welcome to Pixiboard Community!")
   end
 
   # send welcome message to new members

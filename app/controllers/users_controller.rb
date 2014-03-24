@@ -45,8 +45,12 @@ class UsersController < ApplicationController
 
   # loads confirmation message
   def flash_msg chg_email
-    (chg_email && @user.pending_reconfirmation?) ?
-        t("devise.registrations.update_needs_confirmation") : t("devise.registrations.updated") || 'Saved changes successfully.'
+    if chg_email 
+      (@user.pending_reconfirmation?) ?
+        t("devise.registrations.update_needs_confirmation") : t("devise.registrations.updated")
+    else 
+      'Saved changes successfully.'
+    end
   end
 
   def query

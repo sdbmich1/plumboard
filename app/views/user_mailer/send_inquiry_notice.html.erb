@@ -8,14 +8,18 @@
   	<center>
     	<h3>
     	  <span style="height:30px;font-weight:bolder;font-size:medium;">
-	    Thank you for contacting us.  We are in the process of reviewing your item and will be in touch with you.
+	    Somebody is asking us a question!<br><br>
+	    Inquiry Type: <%= @inquiry.contact_type %><br>
+	    Inquiry Subject: <%= @inquiry.subject %><br>
+	    Inquiry #: <%= @inquiry.id %><br>
+	    Details: <%= @inquiry.comments %><br>
   	  </span>
 	</h3><br />
 
 	<br /><br />
   	</center>
 
-	<span style="margin-top:20px;">Happy Pixing!</span><br /><br />
+	<span style="margin-top:20px;">Let's get on it!</span><br /><br />
 	<span>The Pixiboard Team</span><br /><br /> 	
     	<%= render :partial=>'shared/mail_footer' %>
   </body>

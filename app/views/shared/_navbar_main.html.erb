@@ -2,6 +2,6 @@
   <li class="active"><%= link_to "Profile", settings_path, class: 'submenu', remote: true %></li>
   <li><%= link_to "Contact", settings_contact_path, class: 'submenu', remote: true %></li>
   <% unless @user.fb_user? %>
-    <li><%= link_to "Change Password", settings_password_path, class: 'submenu', remote: true %></li>
+    <li><%= link_to "Password", settings_password_path, class: 'submenu', remote: true %></li>
   <% end %>
 </ul>

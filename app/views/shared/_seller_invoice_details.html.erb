@@ -1,4 +1,4 @@
-  <%= render partial: 'shared/show_conv_fee' if @invoice.owner?(@user) %>
+  <%= render partial: 'shared/show_conv_fee', locals: {showColFlg: true} if @invoice.owner?(@user) %>
   <tr>
     <td></td>
     <td></td>

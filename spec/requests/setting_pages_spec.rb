@@ -12,7 +12,10 @@ describe "Settings", :type => :feature do
   describe "GET /settings" do
     it "should display settings" do 
       visit settings_path  
-      page.should have_content("Profile")
+      page.should have_selector("#user_first_name")
+      page.should have_link("Profile", href: settings_path)
+      page.should have_link("Contact", href: settings_contact_path)
+      page.should have_link("Password", href: settings_password_path)
     end
   end
 
@@ -35,8 +38,8 @@ describe "Settings", :type => :feature do
   describe 'View change password setting page via click' do
     before { visit settings_path }
     it 'should show contact page', js: true do
-      click_link 'Change Password'
-      page.should have_content("Change Password")
+      click_link 'Password'
+      page.should have_content("Password")
     end
   end
 end

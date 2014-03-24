@@ -178,6 +178,11 @@ class ListingParent < ActiveRecord::Base
     user.first_name rescue nil
   end
 
+  # get seller email for a listing
+  def seller_email
+    user.email rescue nil
+  end
+
   # short description
   def brief_descr
     descr = description.length < 96 ? description.html_safe : description.html_safe[0..96] + '...' rescue nil

@@ -41,6 +41,24 @@ describe OldListing do
   it { should respond_to(:user) }
   it { should respond_to(:pictures) }
 
+  describe "seller name" do 
+    it { expect(@listing.seller_name).to eq(@user.name) } 
+
+    it "does not find seller name" do 
+      @listing.seller_id = 100 
+      expect(@listing.seller_name).not_to eq(@user.name)
+    end
+  end
+
+  describe "seller email" do 
+    it { expect(@listing.seller_email).to eq(@user.email) } 
+
+    it "does not find seller email" do 
+      @listing.seller_id = 100 
+      expect(@listing.seller_email).not_to eq(@user.email)
+    end
+  end
+
   describe "seller rating count" do 
     it { @listing.seller_rating_count.should == 0 } 
 

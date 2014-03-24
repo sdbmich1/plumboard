@@ -5,16 +5,15 @@
 </head>
   <body> 	
     	<%= render :partial=>'shared/mail_header' %>
-  	<center>
-    	<h3>
-    	  <span style="height:30px;font-weight:bolder;font-size:medium;">
-  		A payment has been deposited into your account.</span>
-	</h3><br />
+	Hi <%= @post.seller_first_name %>,<br /><br />
+	Your PixiPost has been scheduled for <%= @post.get_date('appt_date') %> at <%= @post.get_time('appt_time') %>.  
+	Your Pixter, <%= @post.pixter_name %> will arrive at
+	<%= @post.full_address %> at the specified time to post your pixi(s).<br /><br />
 
+	Visit <%= seller_pixi_posts_url(status: 'scheduled') %> to view or change your appointment.
 	<br /><br />
-  	</center>
 
-	<span style="margin-top:20px;">Thanks for your business.</span><br /><br />
+	<span style="margin-top:20px;">Keep on Pixing!</span><br /><br />
 	<span>The Pixiboard Team</span><br /><br /> 	
     	<%= render :partial=>'shared/mail_footer' %>
   </body>

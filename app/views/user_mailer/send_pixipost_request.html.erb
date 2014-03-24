@@ -5,16 +5,14 @@
 </head>
   <body> 	
     	<%= render :partial=>'shared/mail_header' %>
-  	<center>
-    	<h3>
-    	  <span style="height:30px;font-weight:bolder;font-size:medium;">
-  		A payment has been deposited into your account.</span>
-	</h3><br />
+	Hi <%= @post.seller_first_name %>,<br /><br />
+	We have received your PixiPost request.  A Pixiboard Pixter will be in touch with you soon to confirm your requested time 
+	and location.<br /><br />
 
+	Visit <%= seller_pixi_posts_url(status: 'active') %> to see the status of your request.
 	<br /><br />
-  	</center>
 
-	<span style="margin-top:20px;">Thanks for your business.</span><br /><br />
+	<span style="margin-top:20px;">Keep on Pixing!</span><br /><br />
 	<span>The Pixiboard Team</span><br /><br /> 	
     	<%= render :partial=>'shared/mail_footer' %>
   </body>
