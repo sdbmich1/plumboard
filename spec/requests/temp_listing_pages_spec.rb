@@ -22,6 +22,20 @@ feature "TempListings" do
     FactoryGirl.create :site, name: 'San Francisco - Nob Hill'
   end
 
+    def add_data
+      fill_in 'Title', with: "Guitar for Sale"
+      set_site_id @site.id; sleep 0.5
+      select_category 'Foo Bar'
+      fill_in 'Description', with: "Guitar for Sale"
+    end
+
+  def add_data_w_photo
+    script = "$('input[type=file]').show();"
+    page.driver.browser.execute_script(script)
+    attach_file('photo', "#{Rails.root}/spec/fixtures/photo.jpg")
+    add_data
+  end
+
   def click_cancel_ok
     click_link 'Cancel'
     page.driver.browser.switch_to.alert.accept
@@ -81,18 +95,6 @@ feature "TempListings" do
       page.should have_button 'Next'
     end
 
-    def add_data
-      fill_in 'Title', with: "Guitar for Sale"
-      set_site_id @site.id; sleep 0.5
-      select_category 'Foo Bar'
-      fill_in 'Description', with: "Guitar for Sale"
-    end
-
-    def add_data_w_photo
-      attach_file('photo', "#{Rails.root}/spec/fixtures/photo.jpg")
-      add_data
-    end
-
     def event_data sdt, edt
       attach_file('photo', "#{Rails.root}/spec/fixtures/photo.jpg")
       fill_in 'Title', with: "Guitar for Sale"
@@ -139,7 +141,6 @@ feature "TempListings" do
           select_category 'Foo Bar'
           attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
 	  click_button submit }.not_to change(TempListing, :count)
-
 	  page.should have_content "Description can't be blank"
       end
 
@@ -152,7 +153,6 @@ feature "TempListings" do
           attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
           fill_in 'Description', with: "Guitar for Sale"
 	  click_button submit }.not_to change(TempListing, :count)
-
 	  page.should have_content "Start Date is not a valid date"
       end
 
@@ -160,7 +160,6 @@ feature "TempListings" do
         expect { 
 	  event_data "30/30/2456", Date.today().strftime('%m/%d/%Y')
 	  click_button submit }.not_to change(TempListing, :count)
-
 	  page.should have_content "Start Date is not a valid date"
       end
 
@@ -168,7 +167,6 @@ feature "TempListings" do
         expect { 
 	  event_data Date.yesterday.strftime('%m/%d/%Y'), Date.today().strftime('%m/%d/%Y')
 	  click_button submit }.not_to change(TempListing, :count)
-
 	  page.should have_content "Start Date must be on or after "
       end
 
@@ -176,7 +174,6 @@ feature "TempListings" do
         expect { 
 	  event_data Date.today().strftime('%m/%d/%Y'), nil
 	  click_button submit }.not_to change(TempListing, :count)
-
 	  page.should have_content "End Date is not a valid date"
       end
 
@@ -184,7 +181,6 @@ feature "TempListings" do
         expect { 
 	  event_data Date.today().strftime('%m/%d/%Y'), "30/30/2456"
 	  click_button submit }.not_to change(TempListing, :count)
-
 	  page.should have_content "End Date is not a valid date"
       end
 
@@ -209,10 +205,8 @@ feature "TempListings" do
 	  add_data_w_photo
 	  click_button submit; sleep 3
 	}.to change(TempListing,:count).by(1)
-      
         page.should have_content "Guitar for Sale" 
         page.should have_content 'Review Your Pixi'
-        page.should_not have_content "Price" 
       end	      
 
       it "Adds a new listing w price" do
@@ -221,7 +215,6 @@ feature "TempListings" do
           fill_in 'Price', with: "150.00"
 	  click_button submit; sleep 3
 	}.to change(TempListing,:count).by(1)
-      
         page.should have_content "Guitar for Sale" 
         page.should have_content 'Review Your Pixi'
         page.should have_content "Price: $150.00" 
@@ -234,7 +227,6 @@ feature "TempListings" do
                 fill_in 'salary', with: "Competitive"
 	        click_button submit; sleep 3
 	      }.to change(TempListing,:count).by(1)
-      
         page.should have_content "Guitar for Sale" 
         page.should have_content 'Review Your Pixi'
         page.should have_content "Compensation: Competitive" 
@@ -249,7 +241,6 @@ feature "TempListings" do
                 select('2001', :from => 'yr_built')
 	        click_button submit
 	      }.to change(TempListing,:count).by(1)
-      
         page.should have_content "Buick Regal for sale" 
         page.should have_content 'Review Your Pixi'
         page.should have_content "Price:" 
@@ -268,7 +259,6 @@ feature "TempListings" do
 		select('10:00 PM', :from => 'end-time')
 	        click_button submit
 	}.to change(TempListing,:count).by(1)
-      
         page.should have_content "Guitar for Sale" 
         page.should have_content 'Review Your Pixi'
         page.should have_content "Start Date: "
@@ -297,7 +287,6 @@ feature "TempListings" do
 	      fill_in 'Title', with: nil
 	      click_button submit 
 	}.not_to change(TempListing, :count)
-
       page.should have_content "Title can't be blank"
       page.should have_content 'Build Pixi'
     end
@@ -307,7 +296,6 @@ feature "TempListings" do
 	      fill_in 'Description', with: nil
 	      click_button submit 
 	}.not_to change(TempListing, :count)
-
       page.should have_content "Description can't be blank"
       page.should have_content 'Build Pixi'
     end
@@ -317,7 +305,6 @@ feature "TempListings" do
 	      fill_in 'Price', with: '$500'
 	      click_button submit 
 	}.not_to change(TempListing, :count)
-
       page.should have_content 'Build Pixi'
       page.should have_content "Price is not a number"
     end
@@ -327,7 +314,6 @@ feature "TempListings" do
 	      fill_in 'Price', with: '5000000'
 	      click_button submit 
 	}.not_to change(TempListing, :count)
-
       page.should have_content 'Build Pixi'
     end
 
@@ -336,7 +322,6 @@ feature "TempListings" do
               attach_file('photo', Rails.root.join("spec", "fixtures", "photo2.png"))
               click_button submit
       }.not_to change(temp_listing.pictures,:count).by(-1)
-
       page.should have_content 'Build Pixi'
     end
 
@@ -344,7 +329,6 @@ feature "TempListings" do
       expect { 
 	      click_remove_ok; sleep 4
       }.not_to change(temp_listing.pictures,:count).by(-1)
-
       page.should have_content 'Pixi must have at least one image'
     end
   end
@@ -367,7 +351,6 @@ feature "TempListings" do
 	      fill_in 'Title', with: "Guitar for Sale"
               click_button submit
       }.to change(TempListing,:count).by(0)
-
       page.should have_content "Guitar for Sale"
       page.should have_content 'Review Your Pixi'
     end
@@ -378,7 +361,6 @@ feature "TempListings" do
               set_site_id @site.id; sleep 0.5
               click_button submit
       }.to change(TempListing,:count).by(0)
-
       page.should have_content 'Review Your Pixi'
     end
 
@@ -387,7 +369,6 @@ feature "TempListings" do
 	      fill_in 'Description', with: "Acoustic bass"
               click_button submit
       }.to change(TempListing,:count).by(0)
-
       page.should have_content 'Review Your Pixi'
       page.should have_content "Acoustic bass" 
     end
@@ -397,7 +378,6 @@ feature "TempListings" do
               attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
               click_button submit
       }.to change(temp_listing.pictures,:count).by(1)
-
       page.should have_content 'Review Your Pixi'
     end
 
@@ -405,7 +385,6 @@ feature "TempListings" do
       expect{
          click_remove_ok
       }.to change(TempListing,:count).by(0)
-
       page.should have_content "Pixis" 
     end
 
@@ -418,7 +397,6 @@ feature "TempListings" do
       expect{
         click_remove_ok; sleep 2
       }.to change(Picture,:count).by(-1)
-
       page.should have_content 'Build Pixi'
     end
 
@@ -432,7 +410,6 @@ feature "TempListings" do
               fill_in 'Price', with: nil
               click_button submit
       }.to change(TempListing,:count).by(0)
-
       page.should have_content 'Review Your Pixi'
     end
   end
@@ -466,7 +443,6 @@ feature "TempListings" do
       expect{
         click_remove_ok; sleep 3;
       }.to change(TempListing,:count).by(-1)
-
       page.should have_content "Pixis" 
       page.should_not have_content temp_listing.title
     end
@@ -475,8 +451,7 @@ feature "TempListings" do
       expect { 
 	      click_link 'Done!'
 	}.not_to change(TempListing, :count)
-
-      page.should have_content "Pixi Submitted" 
+      page.should have_selector('.big_logo')
       page.should have_content temp_listing.title
       page.should have_link 'Done', href: root_path
     end
@@ -485,7 +460,6 @@ feature "TempListings" do
       expect { 
 	      click_link 'Edit'
 	}.not_to change(TempListing, :count)
-
       page.should have_content "Build Pixi" 
     end
   end

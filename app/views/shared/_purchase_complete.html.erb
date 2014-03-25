@@ -1,5 +1,8 @@
 <div id="pmtForm">
   <div class='center hdr mbot'><h3 class='grp-hdr'><%= step_name %></h3></div>
+  <div class='pull-right'>
+    <%= image_tag('rsz_pixipay.png', class: 'ppay-logo') %>
+  </div>
   <div class='offset2'>
     <table>
     <tr><td class='span2 center-wrapper'>
@@ -12,27 +15,7 @@
     <tr><td></td><td>
       <%= render :partial=>'shared/transaction_details', :locals=>{:transaction=>@transaction, :showAmt=>false} %>
     </td></tr>
-  </table>  
+    </table>  
   </div>
-  <div class="clear-all"></div>
-  <div class='mtop center-wrapper'>
-    <%= form_for @rating, url: ratings_path(id: @transaction.id), :method => :post, :id => 'ratings_form' do |f| %> 
-      <%= f.hidden_field 'seller_id', value: @transaction.seller_id %>
-      <%= f.hidden_field 'pixi_id', value: @transaction.pixi_id %>
-      <%= f.hidden_field 'user_id', value: @user.id %>
-      <%= f.hidden_field 'value', id: 'value5' %>
-      <div class='sm-top'><h5>Please Rate Your Seller</h5></div>
-      <table class='sm-top'><tr>
-        <td><div class="rateit bigpixis" id="rateit5" data-rateit-starwidth="32" data-rateit-starheight="29"></div></td>
-        <td></td><td>
-          <div><%= link_to 'Add Comment', '#', class: 'btn mleft15', id: 'seller-cmt-btn' %></div></td></tr>
-      </table>
-      <div class='width360' id='cmt-fld' style='display:none'>
-        <%= f.text_area 'comments', class: 'sm-top cmt-descr', placeholder: 'Type your comment here' %></div>
-      <div class="clear-all"></div>
-      <div class="mtop">
-        <%= f.submit 'Done', class: 'btn btn-large btn-primary submit-btn', id: 'done-btn' %>
-      </div>
-    <% end %>
-  </div>
+  <%= render partial: 'shared/rating_form', locals: { transaction: @transaction } %>
 </div>

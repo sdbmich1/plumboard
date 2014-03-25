@@ -294,6 +294,11 @@ class User < ActiveRecord::Base
     Post.unread_count self rescue 0
   end
 
+  # new user?
+  def new_user?
+    sign_in_count == 1 rescue nil
+  end
+
   # set json string
   def as_json(options={})
     super(only: [:id, :first_name, :last_name, :email, :birth_date, :gender, :current_sign_in_ip, :fb_user], 

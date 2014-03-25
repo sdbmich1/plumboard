@@ -167,6 +167,7 @@ $(document).on("ajax:complete", '#mark-posts, #post-frm, #comment-doc, .pixi-cat
 $(document).ajaxError( function(e, xhr, options){
   if(xhr.status == 401)
       // window.location.replace('/users/sign_in');
+      console.log('in 401 status error handler');
       window.location.reload();
 });	
 

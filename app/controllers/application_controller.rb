@@ -57,7 +57,7 @@ class ApplicationController < ActionController::Base
 
   def after_sign_in_path_for(resource)
     @user ||= resource
-    session[:return_to] || categories_path
+    session[:return_to] || categories_path(newFlg: @user.new_user?)
   end
 
   # set user if signed in 

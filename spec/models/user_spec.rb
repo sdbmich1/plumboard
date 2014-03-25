@@ -461,6 +461,18 @@ describe User do
     end
   end
 
+  describe 'new_user?' do
+    it 'should return true' do
+      @user.sign_in_count = 1
+      @user.new_user?.should be_true
+    end
+
+    it 'should not return true' do
+      user = FactoryGirl.build :user
+      user.new_user?.should_not be_true
+    end
+  end
+
   describe 'convert time' do
     it 'should return a date' do
       User.convert_date("01/13/1989").should == "13/01/1989".to_date

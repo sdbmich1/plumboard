@@ -10,6 +10,11 @@ module PostsHelper
     sentFlg ? post.recipient : post.user
   end
 
+  # set read / unread icon
+  def set_msg_icon post
+    post.unread?(@user) ? 'pixi_blank16.png' : 'pixi_orange16.png'
+  end
+
   # set mobile tab themes
   def get_theme val
     case action_name

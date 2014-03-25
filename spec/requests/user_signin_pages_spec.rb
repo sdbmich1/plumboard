@@ -55,6 +55,15 @@ feature "UserSignins" do
         click_on "fb-btn"
         page.should have_link('Sign out', href: destroy_user_session_path)
         page.should have_content "Home"
+        page.should have_content "Welcome to Pixiboard, Bob!"
+        page.should have_content "To get a better user experience"
+
+	click_on 'Sign out'
+        page.should have_link "Browse"
+        click_on "fb-btn"
+        page.should have_content "Home"
+        page.should_not have_content "Welcome to Pixiboard, Bob!"
+        page.should_not have_content "To get a better user experience"
       end
 
       scenario 'signs-in from home page' do
@@ -109,6 +118,22 @@ feature "UserSignins" do
         page.should have_link('My Settings', href: settings_path)
         page.should have_link('My PixiPosts', href: seller_pixi_posts_path(status: 'active'))
         page.should_not have_link('Sign in', href: new_user_session_path)
+        page.should have_content "Welcome to Pixiboard, #{@user.first_name}!"
+        page.should_not have_content "To get a better user experience"
+
+	visit new_temp_listing_path
+        page.should_not have_content "Home"
+        page.should have_content "Build Your Pixi"
+
+	visit root_path
+        page.should have_content "Home"
+        page.should_not have_content "Welcome to Pixiboard"
+
+	click_on 'Sign out'
+        page.should have_link "Browse"
+	user_login
+        page.should have_content "Home"
+        page.should_not have_content "Welcome to Pixiboard"
       end
 
       it "displays sign in link after signout" do
