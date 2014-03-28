@@ -6,8 +6,7 @@ class CommentsController < ApplicationController
   layout :page_layout
 
   def create
-    @listing = Listing.find_by_pixi_id params[:comment][:pixi_id]
-    @comment = @listing.comments.build params[:comment] if @listing
+    @comment = Comment.new params[:comment]
     respond_with(@comment) do |format|
       if @comment.save
         reload_data
@@ -26,7 +25,7 @@ class CommentsController < ApplicationController
 
   def load_data
     @page = params[:page] || 1
-    @per_page = params[:per_page] || 4
+    @per_page = params[:per_page] || PIXI_COMMENTS
   end
 
   def reload_data 

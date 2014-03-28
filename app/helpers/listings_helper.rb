@@ -169,6 +169,12 @@ module ListingsHelper
 
   # check if panel needs to be displayed
   def show_metric_panel? model
-    (!model.new_status? && !model.edit?) && model.seller?(@user)
+    (model.active? || model.sold?) && model.seller?(@user)
+  end
+
+  # set pixi poster
+  def set_poster_id listing
+    poster = listing.pixi_post? ? 'pixan_id' : 'seller_id'
+    poster.to_sym
   end
 end

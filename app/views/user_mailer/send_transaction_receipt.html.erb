@@ -6,12 +6,12 @@
   <body> 	
     <%= render :partial=>'shared/mail_header' %>
     <center>
-    	<h3>
-    	<span style="height:30px;font-weight:bolder;font-size:medium;">
-  		Your order has been processed.</span></h3><br />
+    <h3>
+    <span style="height:30px;font-weight:bolder;font-size:medium;">
+  	Your order has been processed.</span></h3><br />
 
-	<%= render :partial=>'shared/transaction_order_items', :locals=>{:items=>@transaction.transaction_details} %><br />
-	<%= render :partial=>'shared/transaction_details', :locals=>{:transaction=>@transaction, :showAmt=>false} %><br /><br />
+    <%= render partial: 'shared/transaction_order_items', locals: {items: @transaction.transaction_details, invoice: @invoice, paid: true} %><br />
+    <%= render :partial=>'shared/transaction_details', :locals=>{:transaction=>@transaction, :showAmt=>false} %><br /><br />
     </center>
 
     <span style="margin-top:20px;">Thanks for your business.</span><br /><br />

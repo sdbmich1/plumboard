@@ -7,18 +7,12 @@
 
       <%= render partial: 'shared/listing_fields', :locals => { f: f } %>
       <%= f.hidden_field :start_date, value: Time.now %>
-
-      <% if @listing.pixi_post? %>
-        <%= f.hidden_field :pixan_id, value: @user.id %>
-      <% else %>
-        <%= f.hidden_field :seller_id, value: @user.id %>
-      <% end %>
-
+      <%= f.hidden_field set_poster_id(@listing), value: @user.id %>
       <%= f.hidden_field :post_ip, value: @user.current_sign_in_ip %>
     </div>
 
     <div class="nav pull-right">
       <%= link_to 'Cancel', root_path, confirm: msg, class: "btn btn-large" %>
-      <%= f.submit "Next", class: "btn btn-large btn-primary submit-btn" %>
+      <%= f.submit "Next", class: "btn btn-large btn-primary submit-btn", id: 'build-pixi-btn' %>
     </div>
   <% end %>

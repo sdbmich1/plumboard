@@ -9,7 +9,7 @@
 <% end %>
 
 <% if @transaction %>
-  <%= render partial: 'shared/show_conv_fee', locals: {showColFlg: false} unless @transaction.get_fee.blank? %>
+  <%= render partial: 'shared/show_conv_fee', locals: {showColFlg: false, invoice: invoice} if show_help? %>
   <tr class='title-str'>
   	<td class='order-total'><%= show_title(paid) %></td>
   	<td></td>

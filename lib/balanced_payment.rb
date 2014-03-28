@@ -135,7 +135,8 @@ module BalancedPayment
 
   # process credit card messages
   def self.process_error acct, e
-    acct.errors.add :base, "Account declined or invalid. Please re-submit. #{e.message}"
+    acct.errors.add :base, "Account declined or invalid. Please re-submit."
+    Rails.logger.info "Card failed: #{e.message}" 
     acct
   end
 end

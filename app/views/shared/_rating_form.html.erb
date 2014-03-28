@@ -7,7 +7,7 @@
       <%= f.hidden_field 'value', id: 'value5' %>
       <div class='sm-top'><h5>Please Rate Your Seller</h5></div>
       <table class='sm-top'><tr>
-        <td><div class="rateit bigpixis" id="rateit5" data-rateit-starwidth="32" data-rateit-starheight="29"></div></td>
+        <td class='width180'><div class="rateit bigpixis" id="rateit5" data-rateit-starwidth="32" data-rateit-starheight="29"></div></td>
         <td></td><td>
           <div><%= link_to 'Add Comment', '#', class: 'btn mleft15', id: 'seller-cmt-btn' %></div></td></tr>
       </table>
@@ -15,7 +15,7 @@
         <%= f.text_area 'comments', class: 'sm-top cmt-descr', placeholder: 'Type your comment here' %></div>
       <div class="clear-all"></div>
       <div class="mtop">
-        <%= f.submit 'Done', class: 'btn btn-large btn-primary submit-btn', id: 'done-btn' %>
+        <%= f.submit 'Done', class: 'btn btn-large btn-primary submit-btn', id: 'rating-done-btn' %>
       </div>
     <% end %>
   </div>

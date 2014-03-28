@@ -3,12 +3,12 @@
 <head>
   <link href="/assets/favicon.ico" rel="shortcut icon" />
   <title><%= full_title(yield(:title)) %></title>
-  <%= stylesheet_link_tag    "application", "jquery.bxslider", :media => "all" %>
-  <%= javascript_include_tag "application", "http://code.jquery.com/jquery-1.7.1.min.js", 'bootstrap.min.js', 'jquery.rateit.min.js',
-  	"https://js.stripe.com/v1/", 'transaction.js', 'jquery.placeholder.min.js', 'payment.js', "https://js.balancedpayments.com/v1/balanced.js" %>
-  <%= tag :meta, :name => "stripe-key", :content => STRIPE_PUBLIC_KEY %>
-  <%= tag :meta, :name => "balanced-key", :content => BALANCED_URI %>
-  <%= tag :meta, :name => "credit-card-api", :content => CREDIT_CARD_API %>
+  <%= stylesheet_link_tag    "application", :media => "all" %>
+  <%= javascript_include_tag "application", 'bootstrap.min.js' %>
+  <script>
+    !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);
+    js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+  </script>
   <%= csrf_meta_tags %>
   <%= render 'layouts/shim' %>
 </head>
@@ -16,7 +16,7 @@
   <div id='wrap'>
     <%= render 'layouts/header' %>
     <%= yield :subhead %>
-    <div class="container">
+    <div class="container" id='section-container'>
       <div id="spinner" class="round" style="display:none"></div>
       <%= render 'layouts/flash_messages', flash: flash %>
       <%= yield :content %>

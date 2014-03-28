@@ -12,6 +12,11 @@ class Comment < ActiveRecord::Base
 
   CONTENT_LENGTH = 40   # set comment display length
 
+  # get pixis by category id
+  def self.get_by_pixi pid, pg=1
+    where(:pixi_id => pid).paginate page: pg, per_page: PIXI_COMMENTS
+  end
+
   # short content
   def summary
     descr = content.length < CONTENT_LENGTH ? content.html_safe : content.html_safe[0..CONTENT_LENGTH-1] rescue nil

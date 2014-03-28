@@ -106,11 +106,6 @@ class Listing < ListingParent
     invoices.where(:id => val).first rescue nil
   end
 
-  # verify if listing is sold
-  def sold?
-    status == 'sold'
-  end
-
   # mark pixi as sold
   def mark_as_sold buyer_id=nil
     unless sold?
@@ -175,7 +170,7 @@ class Listing < ListingParent
   # return wanted users 
   def self.wanted_users pid
     select("users.id, CONCAT(users.first_name, ' ', users.last_name) AS name, users.updated_at, users.created_at")
-      .joins(:pixi_wants => [:user]).where(pixi_id: pid).order('users.first_name')
+      .joins(:pixi_wants => [:user]).where(pixi_id: pid).order("users.first_name")
   end
 
   # sphinx scopes

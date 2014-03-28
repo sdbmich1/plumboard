@@ -9,4 +9,9 @@ module CommentsHelper
   def get_comment_form
     pname = [(mobile_device? ? 'mobile' : 'shared'), 'comment_form'].join('/')
   end
+
+  # add new comment for listing
+  def setup_comment(listing)
+    listing ? listing.comments.build : Comment.new
+  end
 end

@@ -6,6 +6,7 @@ class UserMailer < ActionMailer::Base
   # send receipts to customers
   def send_transaction_receipt transaction
     @transaction = transaction
+    @invoice = transaction.get_invoice
 
     # set logo
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )

@@ -3,7 +3,7 @@
     <div id='comment-hdr'><%= get_comment_header %></div>
     <%= render partial: "#{get_comment_form}" unless !@listing.active? || @listing.seller?(@user) %>
   </div> 
-  <div id='comment-item'>
+  <div id='comment-item' class='big-neg-top'>
     <%= render 'shared/comment_list' %>
   </div> 
 <% end %>

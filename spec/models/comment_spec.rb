@@ -70,4 +70,12 @@ describe Comment do
       @comment.sender_name.should be_nil 
     end
   end
+
+  describe "get_by_pixi" do 
+    it { Comment.get_by_pixi(0, 1).should_not include @comment } 
+    it 'has comments' do
+      @comment.save
+      expect(Comment.get_by_pixi(@comment.pixi_id, 1)).to include(@comment)
+    end
+  end
 end

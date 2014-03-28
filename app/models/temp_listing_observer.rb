@@ -5,7 +5,7 @@ class TempListingObserver < ActiveRecord::Observer
     if model.status == 'approved'
       listing = Listing.find_by_pixi_id model.pixi_id
 
-      #reset status if listing already exists
+      # reset status if listing already exists
       model.status = 'edit' if listing
     end
   end
@@ -16,6 +16,7 @@ class TempListingObserver < ActiveRecord::Observer
       model.post_to_board
       model.transaction.process_transaction unless model.transaction.approved? rescue nil
     elsif model.status == 'denied'
+
       # send denial messages
       send_system_message model
       UserMailer.delay.send_denial(model)

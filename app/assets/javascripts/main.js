@@ -208,10 +208,8 @@ $(document).ready(function(){
   }
 
   // Automatically put focus on first item in drop-down list
-  if( $('input[data-autocomplete]').length > 0 ) {
-    
-    // $('input[data-autocomplete]').autocomplete({ autoFocus: true });
-    console.log('autocomplete check');
+  if( $('input[data-autocomplete]').length > 0 && ($('#site_id').length > 0 || $('#buyer_name').length > 0 || $('#slr_name').length > 0) ) {
+    $('input[data-autocomplete]').autocomplete({ autoFocus: true });
   }
 
   // set location
@@ -265,9 +263,9 @@ $(document).ready(function(){
 
   // set rating elements
   if ($('#rateit5').length > 0) {  
-    $('#done-btn').attr('disabled', true);
-    $("#rateit5").bind("rated", function (event, value)  { $('#value5').val(value); $('#done-btn').removeAttr('disabled'); });
-    $("#rateit5").bind('reset', function () { $('#value5').val(0); $('#done-btn').attr('disabled', true); });
+    $('#rating-done-btn').attr('disabled', true);
+    $("#rateit5").bind("rated", function (event, value)  { $('#value5').val(value); $('#rating-done-btn').removeAttr('disabled'); });
+    $("#rateit5").bind('reset', function () { $('#value5').val(0); $('#rating-done-btn').attr('disabled', true); });
   }
 
   // set inquiry form elements
@@ -303,10 +301,19 @@ function allFilled(list) {
   return filled;
 }
 
+// toggle button on value reset
+$(document).on('change', '#value5', function() {
+  if($(this).val() == '0') {
+    $('#rating-done-btn').removeAttr('disabled');
+  } else {
+    $('#rating-done-btn').attr('disabled', true);
+  }
+});
+
 // disable btn to prevent double click
-$(document).on("click", "#approve-btn", function(showElem){
+$(document).on("click", "#approve-btn, #build-pixi-btn", function(showElem){
   toggleLoading();
-  $('#approve-btn').attr('disabled', true);
+  $(this).attr('disabled', true);
 });
 
 // reload masonry on ajax calls to swap data
@@ -511,13 +518,14 @@ $(document).on('click', '#want-btn', function(e) {
 var keyPress = false; 
 
 // submit contact form on enter key
-$(document).on("keypress", "#contact_content", function(e){
-   console.log('in keypress');
+$(document).on("keypress", "#contact_content", function(e){ 
    keyEnter(e, $(this), '#contact-btn');
 });
 
 // submit comment form on enter key
 $(document).on("keypress", "#comment_content", function(e){
+  var a = $(this).attr('id');
+  console.log('element name = ' + a);
   keyEnter(e, $(this), '#comment-btn');
 });
 
@@ -742,8 +750,11 @@ function keyEnter(e, $this, str) {
     keyPress = true;
     e.preventDefault();
 
-    if($this.val().length > 0)
+    if($this.val().length > 0) {
       $(str).click();
+      $(str).attr('disabled', true);
+      keyPress = false;
+    }  
   }
 }
 

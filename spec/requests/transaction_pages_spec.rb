@@ -5,6 +5,7 @@ feature "Transactions" do
   let(:user) { FactoryGirl.create(:pixi_user) }
   let(:contact_user) { FactoryGirl.create(:contact_user) }
   let(:submit) { "Done!" }
+  let(:save) { "Save" }
 
   before(:each) do
     FactoryGirl.create :state
@@ -78,6 +79,19 @@ feature "Transactions" do
     click_valid_ok
   end
 
+  def valid_dates
+    select "January", from: "cc_card_month"
+    select (Date.today.year+2).to_s, from: "cc_card_year"
+  end
+
+  def load_credit_card cid="4111111111111111", cvv="123", valid=true
+    credit_card cid
+    fill_in "card_code",  with: cvv
+    valid ? valid_dates : invalid_card_dates
+    fill_in "card_zip",  with: '94103'
+    click_valid_save
+  end
+
   def user_login
     fill_in "Email", with: @user.email
     fill_in "Password", with: @user.password
@@ -92,6 +106,11 @@ feature "Transactions" do
   def click_valid_ok
     click_button submit 
     page.driver.browser.switch_to.alert.accept
+    sleep 3
+  end
+
+  def click_valid_save
+    click_button save 
     sleep 3
   end
 
@@ -215,10 +234,10 @@ feature "Transactions" do
         credit_card_data '341111111111111', '1234'
         page.should have_content("Purchase Complete")
         page.should have_link('Add Comment', href: '#') 
-        page.should have_selector('#rateit5', visible: true) 
+        page.should have_selector("#rateit5", visible: true) 
         page.should have_selector('.cmt-descr', visible: false) 
-        page.find('#rateit5').click
-        page.find('#done-btn').click; sleep 3
+        page.find("#rateit5").click
+        page.find('#rating-done-btn').click; sleep 3
       }.to change(Transaction, :count).by(1)
     end
   end
@@ -252,7 +271,7 @@ feature "Transactions" do
     end
   end
 
-  describe "Valid Invoice Transactions w/ existing card" do
+  describe "Valid Transaction data w/ existing card" do
     before(:each) do
       usr = FactoryGirl.create(:contact_user) 
       init_setup usr
@@ -295,8 +314,32 @@ feature "Transactions" do
         page.should have_content("Code")
       }.to change(Transaction, :count).by(0)
     end
+  end
+
+  describe "Valid Invoice Transactions w/ existing card" do
+    before(:each) do
+      usr = FactoryGirl.create(:contact_user) 
+      init_setup usr
+      @acct = @user.card_accounts.create FactoryGirl.attributes_for :card_account, card_no: '1111'
+      visit new_card_account_path
+    end
 
     it "submits payment", js: true do
+      expect {
+        load_credit_card; sleep 2
+      }.to change(CardAccount, :count).by(1)
+      page.should have_content 'Card #'
+
+      visit_inv_txn_path 
+      page.should have_content @user.contacts[0].address
+      page.should have_content @user.contacts[0].city
+      page.should have_content @user.contacts[0].state
+      page.should have_content @user.contacts[0].zip
+      page.should have_selector('#edit-txn-addr', visible: false)
+      page.should have_content "Payment Information"
+      page.should have_selector('#edit-card-btn', visible: true)
+      page.should have_link('Prev', href: invoice_path(@invoice))
+
       expect { 
         click_valid_ok
         page.should have_content("Purchase Complete")

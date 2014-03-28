@@ -1,8 +1,8 @@
-  <%= render partial: 'shared/show_conv_fee', locals: {showColFlg: true} if @invoice.owner?(@user) %>
+  <%= render partial: 'shared/show_conv_fee', locals: {showColFlg: true, invoice: @invoice} if @invoice.owner?(@user) %>
   <tr>
     <td></td>
     <td></td>
     <td><div class='order-total price'>Amount You Receive</div></td>
-    <td class="width120"><div class='order-total price'><%= ntc @invoice.amount - get_invoice_fee %></div></td>
+    <td class="width120"><div class='order-total price'><%= ntc @invoice.amount - get_invoice_fee(@invoice) %></div></td>
   </tr>
 

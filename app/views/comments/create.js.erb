@@ -9,6 +9,7 @@
   }
   else {
     $("#comment_form").html("<%= escape_javascript( render(partial: 'shared/comments') ) %>");
+    $("#comment_content").val('');
   }
 <% end %>
 

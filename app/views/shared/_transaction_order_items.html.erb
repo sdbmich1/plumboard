@@ -13,5 +13,5 @@
   	  </tr>
   	 <% end %>
   <% end %>
-  <%= render :partial => 'shared/order_total', :locals=>{:paid=>true} %>
+  <%= render partial: 'shared/order_total', :locals=>{paid: paid, invoice: invoice} %>
 </table>

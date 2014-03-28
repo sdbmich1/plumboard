@@ -1,5 +1,4 @@
-<% if @post %>
-  <%= form_for @post, remote: true, class: 'width320' do |f| %> 
+  <%= form_for setup_post(listing), remote: true, class: 'width320' do |f| %> 
     <div id="notice" style="display:none"></div>
     <div id="form_errors">
       <%= render partial: 'shared/error_messages', :locals => { :target => f.object } %>
@@ -10,9 +9,8 @@
     <%= f.hidden_field 'user_id', value: @user.id %>
 
     <div class="reply_form">
-      <%= f.text_area 'content', value: PIXI_POST, placeholder: 'Send message to seller.', id: 'contact_content' %>  
+      <%= f.text_area 'content', value: PIXI_POST, placeholder: 'Send message to seller.', autofocus: true, id: 'contact_content' %>  
       <div class='contact-str'>Press Enter to send</div>
       <%= f.submit 'Contact', :class=>'btn btn-warning', id: 'contact-btn' %>
     </div>
   <% end %>
-<% end %>

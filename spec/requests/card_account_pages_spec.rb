@@ -93,9 +93,11 @@ feature "CardAccounts" do
       click_link 'Card'
     end
 
-    it { should have_selector('h2', text: 'Setup Your Card Account') }
-    it { should have_content("Card #") }
-    it { should have_button("Save") }
+    it 'shows content' do
+      page.should have_selector('h2', text: 'Setup Your Card Account')
+      page.should have_content("Card #")
+      page.should have_button("Save")
+    end
 
     it "creates an new account" do
       expect {
@@ -117,9 +119,11 @@ feature "CardAccounts" do
       click_link 'Card'
     end
 
-    it { should have_selector('h2', text: 'Your Card Account') }
-    it { should have_content("Card #") }
-    it { should have_link("Remove", href: card_account_path(@account)) }
+    it 'shows content' do
+      page.should have_selector('h2', text: 'Your Card Account')
+      page.should have_content("Card #")
+      page.should have_link("Remove", href: card_account_path(@account))
+    end
 
     it "removes an account" do
       click_remove_cancel
@@ -138,9 +142,11 @@ feature "CardAccounts" do
     end
 
     describe 'visit create page', js: true do
-      it { should have_selector('h2', text: 'Setup Your Card Account') }
-      it { should have_content("Card #") }
-      it { should have_button("Save") }
+      it 'shows content' do
+        page.should have_selector('h2', text: 'Setup Your Card Account')
+        page.should have_content("Card #")
+        page.should have_button("Save")
+      end
 
       it "rejects missing card #" do
 	credit_card_data '', '123', true

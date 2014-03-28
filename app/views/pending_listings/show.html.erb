@@ -1,4 +1,7 @@
 <% provide(:title, 'Review Pending Order') %>
+<%= content_for :subhead do %>
+  <%= render partial: 'shared/navbar', locals: { menu_name: 'Pending Orders' } %>
+<% end %>
 <%= content_for :content do %>
   <div id="showOrderForm">
     <%= render :partial => 'shared/show_listing', locals: {:listing=>@listing, :edit_mode=>false} %>

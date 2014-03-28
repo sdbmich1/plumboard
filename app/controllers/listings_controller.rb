@@ -18,8 +18,6 @@ class ListingsController < ApplicationController
 
   def show
     @listing = Listing.find_by_pixi_id params[:id]
-    @comment = @listing.comments.build if @listing
-    @post = Post.new 
     load_comments
     respond_with(@listing) do |format|
       format.json { render json: {listing: @listing, comments: @comments} }
@@ -95,12 +93,10 @@ class ListingsController < ApplicationController
     @page, @cat, @loc, @loc_name = params[:page] || 1, params[:cid], params[:loc], params[:loc_name]
     @loc_name ||= LocationManager::get_loc_name request.remote_ip, @loc, @user.home_zip
     @loc ||= LocationManager::get_loc_id(@loc_name, @user.home_zip)
-    Rails.logger.info 'Pixi Location id = ' + @loc.to_s
-    Rails.logger.info 'Pixi Location name = ' + @loc_name.to_s
   end
 
   def page_layout
-    %w(index category local).detect {|x| action_name == x} ? 'listings' : mobile_device? ? 'form' : 'application'
+    %w(index category local).detect {|x| action_name == x} ? 'listings' : mobile_device? ? 'form' : action_name == 'show' ? 'pixi' : 'application'
   end
 
   def add_points
@@ -108,6 +104,6 @@ class ListingsController < ApplicationController
   end
 
   def load_comments
-    @comments = @listing.comments.paginate(page: @page, per_page: params[:per_page] || 4) if @listing
+    @comments = @listing.comments.paginate(page: @page, per_page: PIXI_COMMENTS) rescue nil
   end
 end

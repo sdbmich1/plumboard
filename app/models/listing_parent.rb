@@ -138,6 +138,11 @@ class ListingParent < ActiveRecord::Base
     status == 'edit'
   end
 
+  # verify if listing is sold
+  def sold?
+    status == 'sold'
+  end
+
   # verify if alias is used
   def alias?
     show_alias_flg == 'yes'

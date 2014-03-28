@@ -14,7 +14,7 @@
       <% end %>
     </div>
     <table class="offset3 mtop mbot">
-      <%= render :partial=>'shared/order_details', :locals=>{:order=>@order, :paid=>false} %>
+      <%= render :partial=>'shared/order_details', :locals=>{order: @order, paid: false, invoice: @invoice} %>
       <tr></tr>
     </table>
   </div>

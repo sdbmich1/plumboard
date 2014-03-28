@@ -24,8 +24,7 @@ describe CommentsController do
 
   describe "POST create" do
     before :each do
-      Listing.stub!(:find_by_pixi_id).with('1').and_return(@listing)
-      @listing.stub_chain(:comments, :build).and_return( @comment )
+      Comment.stub!(:new).and_return( @comment )
       controller.stub!(:load_data).and_return(true)
     end
     
@@ -58,8 +57,6 @@ describe CommentsController do
     context 'success' do
 
       before :each do
-        @comment = mock_model Comment
-        @listing.stub_chain(:comments, :build).and_return( @comment )
         @comment.stub!(:save).and_return(true)
         controller.stub!(:load_data).and_return(true)
         controller.stub!(:reload_data).and_return(true)
@@ -69,16 +66,6 @@ describe CommentsController do
         @comments = stub_model(Comment)
         Listing.stub!(:find_by_pixi_id).with('1').and_return(@listing)
         @listing.stub_chain(:comments, :paginate, :build).and_return( @comments )
-      end
-       
-      it "should load the requested listing" do
-        Listing.stub(:find_by_pixi_id).with('1').and_return(@listing)
-        do_create
-      end
-
-      it "should assign @listing" do
-        do_create
-        assigns(:listing).should_not be_nil 
       end
 
       it "should load the requested comment" do

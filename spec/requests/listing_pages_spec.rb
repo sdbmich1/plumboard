@@ -66,7 +66,15 @@ feature "Listings" do
           page.should have_content 'Want'
       }.to change(Post,:count).by(1)
 
-      page.should have_content listing.nice_title
+      expect{
+      	  fill_in 'comment_content', with: "Great pixi. I highly recommend it.\n" 
+	  sleep 3
+      }.to change(Comment,:count).by(1)
+
+      page.should have_content "Comments (#{listing.comments.size})"
+      page.should have_content "Great pixi. I highly recommend it." 
+      page.should have_content @user.name 
+      expect(page).not_to have_field('#comment_content', with: 'Great pixi')
     end
      
     it "does not contact a seller", js: true do
@@ -246,8 +254,10 @@ feature "Listings" do
 	  sleep 3
       }.to change(Comment,:count).by(1)
 
-      page.should have_content "Great pixi. I highly recommend it." 
       page.should have_content "Comments (#{listing.comments.size})"
+      page.should have_content "Great pixi. I highly recommend it." 
+      page.should have_content @user.name 
+      expect(page).not_to have_field('#comment_content', with: 'Great pixi')
     end
      
     it "does not add a comment", js: true do
