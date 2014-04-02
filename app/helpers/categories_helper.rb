@@ -16,6 +16,6 @@ module CategoriesHelper
 
   # set class for category link
   def set_cat_link_class
-    @loc.blank? ? 'pixi-cat-link' : ''
+    @loc.blank? ? 'pixi-cat-link' : 'img-link'
   end
 end

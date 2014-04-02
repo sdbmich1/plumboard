@@ -119,7 +119,8 @@ module ListingsHelper
 
   # set string to share content on pinterest
   def pin_share
-    url = "//www.pinterest.com/pin/create/button/?url=" + get_url + "&media=" + get_photo + "&description=Check out this pixi on Pixiboard!"
+    url = "//www.pinterest.com/pin/create/button/?url=" + get_url + "&media=" + get_photo + "&description=Check out this pixi on Pixiboard! " +
+       @listing.nice_title
   end
 
   # set string to share content on twitter

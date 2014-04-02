@@ -15,6 +15,11 @@ module PostsHelper
     post.unread?(@user) ? 'pixi_blank16.png' : 'pixi_orange16.png'
   end
 
+  # set read / unread icon
+  def invoice_due? post
+    post.due_invoice?(@user) && post.inv_msg? 
+  end
+
   # set mobile tab themes
   def get_theme val
     case action_name

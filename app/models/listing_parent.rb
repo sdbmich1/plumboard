@@ -293,7 +293,7 @@ class ListingParent < ActiveRecord::Base
 
   # format start date
   def start_dt
-    start_date.utc.getlocal.strftime('%m/%d/%Y') rescue nil
+    start_date.strftime('%m/%d/%Y') rescue nil
   end
 
   # format updated date

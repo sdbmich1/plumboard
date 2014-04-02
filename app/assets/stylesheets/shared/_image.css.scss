@@ -53,6 +53,11 @@
 }
 
 /* listing image thumbnails */
+.thumb-size {
+  height: 60px!important;
+  width: 60px!important;
+}
+
 .thumb {
   height: 100px;
   width: 100px!important;
@@ -68,15 +73,11 @@
 }
 
 .inv-pic img {
-  height: 60px!important;
-  width: 60px!important;
-  @extend .pic-item;
+  @extend .thumb-size, .pic-item;
 }
 
 .sm-thumb {
-  height: 60px;
-  width: 60px!important;
-  @extend .pic-item;
+  @extend .thumb-size, .pic-item;
   margin: 5px 10px 0 5px;
 }
 
@@ -199,4 +200,13 @@ img.tiny {
 
 .big-top {
   margin-top: 10%;
+}
+
+.close-image{
+  display: block;
+  float:right;
+  position:relative;
+  top:-10px;
+  right: -10px;
+  height: 20px;
 }

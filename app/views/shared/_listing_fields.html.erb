@@ -2,8 +2,11 @@
 <div class='row'>
   <div class='span2'>Add photo(s)</div>
   <div id='add-pixi-photo' class='span10'>
-    <output id='list'><%= image_tag 'photo-camera.png', class: 'sm-thumb' %></output>
+    <output id='list'><%= image_tag 'photo-camera.png', class: 'sm-thumb', id: 'pixi-camera-icon' %></output>
+    <div class='clear-all'></div>
+    <div class='width120 clear-left'>
     <%= render partial: 'shared/photo', locals: { f: f } %>
+    </div>
   </div>
 </div>
 <div class='row'>

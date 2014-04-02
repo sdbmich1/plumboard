@@ -173,7 +173,7 @@ class Invoice < ActiveRecord::Base
 
   # format inv date
   def inv_dt
-    inv_date.utc.getlocal.strftime('%m/%d/%Y') rescue nil
+    inv_date.strftime('%m/%d/%Y') rescue nil
   end
 
   # set json string

@@ -23,6 +23,7 @@
 //= require bootstrap-datepicker.js
 //= require datepicker.js
 //= require main.js
+//= require readfile.js
 //= require map.js
 //= require transaction.js
 //= require payment.js

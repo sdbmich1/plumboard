@@ -2,8 +2,7 @@ require 'spec_helper'
 
 describe "Users", :type => :feature do
   subject { page }
-  let(:user) { FactoryGirl.create(:pixi_user) }
-  let(:admin) { FactoryGirl.create(:admin) }
+  let(:admin) { FactoryGirl.create(:admin, user_type_code: 'PX') }
 
   def init_setup usr
     login_as(usr, :scope => :user, :run_callbacks => false)
@@ -19,10 +18,47 @@ describe "Users", :type => :feature do
   end
 
   describe "GET /users" do
-    it "should display users" do 
+    before :each do
+      @member =  create(:pixi_user) 
+      @pixter = create(:pixi_user, user_type_code: 'PT') 
+      @pixan = create(:pixi_user, user_type_code: 'PX') 
       init_setup admin
       visit users_path  
+    end
+
+    it "should display users" do 
+      page.should have_link 'All', href: users_path
+      page.should have_link 'Pixans', href: users_path(utype: 'PX')
+      page.should have_link 'Pixters', href: users_path(utype: 'PT')
+      page.should have_content @member.name
       page.should have_content @user.name
+      page.should have_content @pixter.name
+      page.should have_content @pixan.name
+      page.should have_content 'Enrolled'
+    end
+
+    it "should display pixans", js: true do 
+      click_link 'Pixans'
+      page.should have_link 'All', href: users_path
+      page.should have_link 'Pixans', href: users_path(utype: 'PX')
+      page.should have_link 'Pixters', href: users_path(utype: 'PT')
+      page.should have_content @user.name
+      page.should_not have_content @member.name
+      page.should_not have_content @pixter.name
+      page.should have_content @pixan.name
+      page.should have_content 'Enrolled'
+    end
+
+    it "should display pixters", js: true do 
+      click_link 'Pixters'
+      page.should have_link 'All', href: users_path
+      page.should have_link 'Pixans', href: users_path(utype: 'PX')
+      page.should have_link 'Pixters', href: users_path(utype: 'PT')
+      page.should_not have_content @user.name
+      page.should_not have_content @member.name
+      page.should have_content @pixter.name
+      page.should_not have_content @pixan.name
+      page.should have_content 'Enrolled'
     end
   end
   

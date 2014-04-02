@@ -1,11 +1,12 @@
+require 'will_paginate/array' 
 class UsersController < ApplicationController
-  before_filter :check_permissions, only: [:index]
+  before_filter :check_permissions, :load_data, only: [:index]
   before_filter :authenticate_user!
   before_filter :load_target, only: [:update]
   respond_to :html, :js, :json, :mobile
 
   def index
-    @users = User.all
+    @users = User.get_by_type(params[:utype], @page).paginate(page: @page, per_page: 15)
   end
 
   def show
@@ -55,6 +56,10 @@ class UsersController < ApplicationController
 
   def query
     @query = Riddle::Query.escape params[:search]
+  end 
+
+  def load_data
+    @page = params[:page] || 1
   end 
 
   def check_permissions

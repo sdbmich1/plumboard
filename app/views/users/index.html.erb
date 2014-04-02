@@ -1,6 +1,11 @@
 <% provide(:title, 'Members') %>
-<%= content_for :content do %>
-  <h2><%= 'Members' %>
-  <%= render partial: 'shared/user', collection: @users %>
+<%= content_for :subhead do %>
+  <%= render :partial => 'shared/navbar', locals: { menu_name: 'Users' } %>
 <% end %>
+<%= content_for :content do %>
+  <div id="pendingOrder">
+    <%= render :partial => 'shared/user_list' %>
+  </div>
+<% end %>
+
 

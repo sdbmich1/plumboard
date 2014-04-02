@@ -326,6 +326,12 @@ FactoryGirl.define do
     status		"active"
   end
 
+  factory :user_type do
+    code		"PX"
+    description		"Pixan"
+    status		"active"
+  end
+
   factory :faq do
     question_type	"Payment"
     subject		"How do I pay?"

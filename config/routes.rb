@@ -75,6 +75,12 @@ Plumboard::Application.routes.draw do
     end
   end
 
+  resources :user_searches, except: [:new, :edit, :update, :create, :destroy, :show] do
+    collection do
+      get :autocomplete_user_first_name
+    end
+  end
+
   resources :comments, only: [:index, :new, :create]
   resources :ratings, only: [:index, :new, :create]
 

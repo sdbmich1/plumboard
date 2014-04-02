@@ -1,0 +1,5 @@
+<ul class="nav">
+  <li class="active"><%= link_to "All", users_path, class: 'submenu', id: 'active-users', remote: true %></li>
+  <li><%= link_to "Pixans", users_path(utype: 'PX'), class: 'submenu', id: 'pixan-users', remote: true %></li>
+  <li><%= link_to "Pixters", users_path(utype: 'PT'), class: 'submenu', id: 'pixter-users', remote: true %></li>
+</ul>

@@ -5,15 +5,13 @@
 </head>
   <body> 	
     	<%= render :partial=>'shared/mail_header' %><br /><br />
-	Hi <%= @listing.user.first_name %>,<br />
-    	<h3>
-    	<span style="height:30px;font-weight:bolder;font-size:medium;">
+	Hi <%= @listing.seller_first_name %>,<br /><br />
   		Your pixi has been approved on Pixiboard.
-		Visit <%= get_url %> to check it out. Thanks for your business.</span></h3><br />
+		Visit <%= get_url %> to check it out. Thanks for your business.<br />
 
-	<span style="margin-top:20px;">Happy Pixing!</span><br /><br />
+	<span style="margin-top:10px;">Happy Pixing!</span><br />
 	<span>The Pixiboard Team</span><br /><br /> 	
-    	<%= render :partial=>'shared/mail_footer' %>
+    	<center><%= render :partial=>'shared/mail_footer' %></center>
   </body>
 </html>
 

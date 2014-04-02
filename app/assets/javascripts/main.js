@@ -11,19 +11,6 @@ $.ajaxSetup({
   'success': function() { toggleLoading(); }
 }); 
 
-// preview image on file upload
-$(document).on("change", "input[type=file]", function(evt){
-    // reset file list
-    $('#list').empty();
-
-    // render image
-    if($('#usr_photo').length != 0) 
-      { handleFileSelect(evt, 'usr-photo'); }
-    else  
-      { handleFileSelect(evt, 'sm-thumb'); }
-    return false;
-}); 
-
 // hide & reset comp field
 function hideComp(){
   $('#comp-fld').hide('fast');
@@ -42,7 +29,7 @@ $(function (){
     var cat = $("select[id*=category_id] option:selected").text();
 
     // toggle field display based on category value
-    if(cat == 'Event') {
+    if(cat.indexOf("Event") > 0) {
       $('#event-fields').show('fast');
 
       // hide fields
@@ -82,7 +69,10 @@ $(function (){
 }); 
 
 // paginate on click
-$(document).on("click", ".pg-list .pagination a, #pendingOrder .pagination a, #post_form .pagination a, #comment-list .pagination a, #post-list .pagination a", function(){
+var pstr = "#inq-list .pagination a, #pendingOrder .pagination a, #post_form .pagination a, #comment-list .pagination a," +
+  "#post-list .pagination a, #user-list .pagination a, #inv-list .pagination a, #faq-list .pagination a";
+
+$(document).on("click", pstr, function(){
   toggleLoading();
   $.getScript(this.href);
   return false;
@@ -119,37 +109,6 @@ function toggleLoading () {
   $("#spinner").toggle(); 
 }
 
-function handleFileSelect(evt, style) {
-  var files = evt.target.files; // FileList object
-
-  // Loop through the FileList and render image files as thumbnails.
-  for (var i = 0, f; f = files[i]; i++) {
-
-    // Only process image files.
-    if (!f.type.match('image.*')) {
-      continue;
-    }
-
-    if (typeof FileReader !== "undefined") {
-      var reader = new FileReader();
-
-      // Closure to capture the file information.
-      reader.onload = (function(theFile) {
-        return function(e) {
-          // Render thumbnail.
-	  var span = document.createElement('span');
-          span.innerHTML = ['<img class="', style, '" src="', e.target.result,
-		          '" title="', escape(theFile.name), '"/>'].join('');
-          document.getElementById('list').insertBefore(span, null);
-        };
-      })(f);
-
-      // Read in the image file as a data URL.
-      reader.readAsDataURL(f);
-    }
-  }
-}
-
 // used to toggle spinner
 $(document).on("ajax:beforeSend", '#mark-posts, #post-frm, #comment-doc, .pixi-cat, #purchase_btn, #search_btn, .uform, .back-btn, #pixi-form, .submenu, #cat-link', function () {
     toggleLoading();
@@ -184,6 +143,7 @@ function load_slider(cntl) {
       slideMargin: 10,
       minSlides: 2,
       auto: cntl,
+      pager: cntl,
       autoControls: cntl,
       mode: 'fade'
     });
@@ -311,7 +271,7 @@ $(document).on('change', '#value5', function() {
 });
 
 // disable btn to prevent double click
-$(document).on("click", "#approve-btn, #build-pixi-btn", function(showElem){
+$(document).on("click", "#approve-btn, #build-pixi-btn, #register-btn", function(showElem){
   toggleLoading();
   $(this).attr('disabled', true);
 });

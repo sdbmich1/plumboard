@@ -293,6 +293,29 @@ task :import_inquiry_type => :environment do
   end
 end
 
+task :import_user_type => :environment do
+
+  UserType.delete_all
+  CSV.foreach(Rails.root.join('db', 'user_type_040114.csv'), :headers => true) do |row|
+
+    attrs = {
+		:code	       => row[0],
+      		:description   => row[1],
+		:status	       => 'active'
+    }
+
+    # add user_type
+    new_user_type = UserType.new(attrs)
+
+    # save user_type
+    if new_user_type.save 
+      puts "Saved user_type #{attrs.inspect}"
+    else
+      puts new_user_type.errors
+    end
+  end
+end
+
 task :import_faq => :environment do
 
   Faq.delete_all
