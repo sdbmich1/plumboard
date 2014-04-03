@@ -550,6 +550,28 @@ describe User do
     end
   end
 
+  describe 'type_descr' do
+    it "shows description" do
+      create :user_type
+      @user.user_type_code = 'PX'
+      expect(@user.type_descr).to eq 'Pixan'
+    end
+
+    it "does not show description" do
+      expect(@user.type_descr).to be_nil
+    end
+  end
+
+  describe 'process_uri' do
+    it "processes uri" do
+      expect(@user.process_uri("https://graph.facebook.com/708798320/picture?type=square")).not_to be_nil
+    end
+
+    it "does not process uri" do
+      expect(@user.process_uri(nil)).to be_false
+    end
+  end
+
   describe "post associations" do
     let(:listing) { FactoryGirl.create :listing, seller_id: @user.id }
     let(:newer_listing) { FactoryGirl.create :listing, seller_id: @user.id }

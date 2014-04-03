@@ -170,6 +170,12 @@ $(document).ready(function(){
   // Automatically put focus on first item in drop-down list
   if( $('input[data-autocomplete]').length > 0 && ($('#site_id').length > 0 || $('#buyer_name').length > 0 || $('#slr_name').length > 0) ) {
     $('input[data-autocomplete]').autocomplete({ autoFocus: true });
+
+    // check for incorrect selection
+    $(document).on('change', 'input[data-autocomplete]', function() {
+      var item = $(this).val();
+      if (item == 'no existing match') { $(this).val(''); }
+    });
   }
 
   // set location
@@ -271,7 +277,7 @@ $(document).on('change', '#value5', function() {
 });
 
 // disable btn to prevent double click
-$(document).on("click", "#approve-btn, #build-pixi-btn, #register-btn", function(showElem){
+$(document).on("click", "#approve-btn, #register-btn", function(showElem){
   toggleLoading();
   $(this).attr('disabled', true);
 });

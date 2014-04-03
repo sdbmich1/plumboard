@@ -129,6 +129,12 @@ gem 'dalli'
 # add area
 gem 'area', '~> 0.10.0'
 
+# client validation
+gem "parsley-rails"
+
+# handle https uri
+gem 'open_uri_redirections'
+
 # development gems
 group :development do
   gem 'better_errors'

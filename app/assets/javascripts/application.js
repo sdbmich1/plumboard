@@ -30,3 +30,4 @@
 //= require si.files.js
 //= require autocomplete-rails.js
 //= require jquery.ui.autocomplete.html.js
+//= require parsley

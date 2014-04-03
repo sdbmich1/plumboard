@@ -18,6 +18,32 @@ body {
 @import "shared/form";
 @import "shared/image";
 
+/* responsive mobile fix */
+@media only screen and (max-width: 320px) { 
+  .hero-unit {  
+    h1 {font-size: 2em;}   
+  } 
+}
+
+@media screen and (max-width: 480px)  
+{
+  nav.navbar
+    {margin: auto;} 
+}
+
+/* responsive footer fix by Aalaap Ghag */
+@media (max-width: 767px) {
+  body {
+    padding-right: 0px;
+    padding-left: 0px;
+  }
+
+  footer, .wrapper {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
 *{
   margin:0;
   padding:0;
@@ -150,19 +176,6 @@ footer {
         margin-left: 10px;
       }
    }
-}
-
-/* responsive footer fix by Aalaap Ghag */
-@media (max-width: 767px) {
-  body {
-    padding-right: 0px;
-    padding-left: 0px;
-  }
-
-  footer, .wrapper {
-    padding-left: 20px;
-    padding-right: 20px;
-  }
 }
 
 @mixin box_sizing {

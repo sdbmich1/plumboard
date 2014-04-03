@@ -180,4 +180,9 @@ module ApplicationHelper
   def valid_next_page? model
     model.next_page <= model.total_pages rescue nil
   end
+
+  # check for ajax
+  def remote?
+    action_name == 'show' ? false : true
+  end
 end

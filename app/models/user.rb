@@ -1,6 +1,7 @@
 require "open-uri"
+require 'open_uri_redirections'
 class User < ActiveRecord::Base
-  include ThinkingSphinx::Scopes, Area
+  include ThinkingSphinx::Scopes, Area, LocationManager
   extend Rolify
 
   rolify
@@ -215,6 +216,7 @@ class User < ActiveRecord::Base
       user.password = user.password_confirmation = Devise.friendly_token[0,20]
       user.fb_user = true
       user.gender = data.gender.capitalize rescue nil
+      user.home_zip = LocationManager::get_home_zip(data.location) rescue nil
 
       #add photo 
       picture_from_url user, access_token
@@ -226,7 +228,8 @@ class User < ActiveRecord::Base
   # add photo from url
   def self.picture_from_url usr, access_token
     pic = usr.pictures.build
-    pic.photo = URI.parse(access_token.info.image.sub("square","large")) rescue nil
+    avatar_url = process_uri(access_token.info.image.sub("square","large")) rescue nil
+    pic.photo = URI.parse(avatar_url) rescue nil
     pic
   end
 
@@ -316,17 +319,27 @@ class User < ActiveRecord::Base
 
   # return users by type
   def self.get_by_type val, pg=1
-    if val.blank? 
-      all
-    else
-      where(:user_type_code => val)
+    val.blank? ? all : where(:user_type_code => val)
+  end
+
+  # handle https uri requests
+  def process_uri uri
+    unless uri.blank?
+      open(uri, :allow_redirections => :safe) do |r|
+        r.base_uri.to_s
+      end
     end
+  end
+
+  # display user type
+  def type_descr
+    user_type.description rescue nil
   end
 
   # set json string
   def as_json(options={})
     super(only: [:id, :first_name, :last_name, :email, :birth_date, :gender, :current_sign_in_ip, :fb_user], 
-          methods: [:name, :photo, :unpaid_invoice_count, :pixi_count, :unread_count, :birth_dt], 
+          methods: [:name, :photo, :unpaid_invoice_count, :pixi_count, :unread_count, :birth_dt, :home_zip], 
           include: {active_listings: {}, unpaid_received_invoices: {}, bank_accounts: {}, contacts: {}, card_accounts: {}})
   end
 

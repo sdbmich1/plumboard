@@ -60,22 +60,27 @@ describe "Users", :type => :feature do
       page.should_not have_content @pixan.name
       page.should have_content 'Enrolled'
     end
+
+    it "views user" do
+      expect { 
+	visit user_path(@member)
+      }.not_to change(User, :count)
+
+      page.should have_content "View User"
+      page.should have_content @member.name
+      page.should have_content @member.email
+      page.should have_content @member.birth_dt
+      page.should have_content "Facebook"
+      page.should have_content "Address"
+      page.should_not have_link 'Edit', href: edit_user_path(@member) 
+      page.should have_link 'Done', href: users_path(utype: @member.user_type_code) 
+      page.should_not have_content @user.name
+    end
   end
   
-  describe "Review Users" do 
-    before do
-      init_setup admin
-      visit user_path(user) 
-    end
-
-    it "Views a user" do
-      page.should have_selector('h2',    text: user.name) 
-      page.should have_selector('title', text: 'Settings')
-    end
-  end
-
   describe 'Edit profile' do
     before do
+      user = create(:pixi_user) 
       init_setup user
       visit settings_path 
     end
@@ -84,8 +89,7 @@ describe "Users", :type => :feature do
       expect{
         attach_file('user_pic', Rails.root.join("spec", "fixtures", "photo2.png"))
         click_on 'Save Changes'
-      }.not_to change(user.pictures,:count).by(1)
-
+      }.not_to change(@user.pictures,:count).by(1)
     #  page.should have_content("Pictures photo file size must be in between 0")
     end
 
@@ -94,8 +98,6 @@ describe "Users", :type => :feature do
 	      fill_in 'user_first_name', with: nil
               click_on 'Save Changes'
 	}.not_to change(User, :count)
-
-      page.should have_content("First name can't be blank")
     end
 
     it "empty last name should not change a profile", js: true do
@@ -103,8 +105,6 @@ describe "Users", :type => :feature do
 	      fill_in 'user_last_name', with: nil
               click_on 'Save Changes'
 	}.not_to change(User, :count)
-
-      page.should have_content("Last name can't be blank")
     end
 
     it "empty email should not change a profile", js: true do
@@ -112,8 +112,6 @@ describe "Users", :type => :feature do
 	      fill_in 'user_email', with: nil
               click_on 'Save Changes'
 	}.not_to change(User, :count)
-
-      page.should have_content("Email can't be blank")
     end
 
     it "changed first name should update a profile", js: true do
@@ -122,8 +120,7 @@ describe "Users", :type => :feature do
 	      click_save
 	      page.should have_content 'Ted'
 	}.not_to change(User, :count)
-
-      user.reload.first_name.should  == 'Ted' 
+      @user.reload.first_name.should  == 'Ted' 
     end
 
     it "changed last name should update a profile", js: true do
@@ -131,8 +128,7 @@ describe "Users", :type => :feature do
 	      fill_in 'user_last_name', with: 'White'
 	      click_save
 	}.not_to change(User, :count)
-
-      user.reload.last_name.should == 'White' 
+      @user.reload.last_name.should == 'White' 
     end
 
     it "changed gender should update a profile", js: true do
@@ -140,8 +136,7 @@ describe "Users", :type => :feature do
       	      select('Female', :from => 'user_gender')
 	      click_save
 	}.not_to change(User, :count)
-
-      user.reload.gender.should == 'Female' 
+      @user.reload.gender.should == 'Female' 
     end
 
     it "empty home_zip should not change a profile", js: true do
@@ -149,8 +144,6 @@ describe "Users", :type => :feature do
 	      fill_in 'home_zip', with: nil
               click_on 'Save Changes'
 	}.not_to change(User, :count)
-
-      page.should have_content("Must have a zip")
     end
 
     it "invalid home_zip should not change a profile", js: true do
@@ -158,8 +151,6 @@ describe "Users", :type => :feature do
 	      fill_in 'home_zip', with: '99999'
               click_on 'Save Changes'
 	}.not_to change(User, :count)
-
-      page.should have_content("Must have a valid zip")
     end
 
     it "changed home zip should update a profile", js: true do
@@ -167,16 +158,14 @@ describe "Users", :type => :feature do
 	      fill_in 'home_zip', with: '94111'
 	      click_save
 	}.not_to change(User, :count)
-
-      user.reload.home_zip.should == '94111' 
+      @user.reload.home_zip.should == '94111' 
     end
 
     it "Changes profile file pic", js: true do
       expect{
               attach_file('user_pic', Rails.root.join("spec", "fixtures", "photo0.jpg"))
 	      click_save
-      }.to change(user.pictures,:count).by(0)
-
+      }.to change(@user.pictures,:count).by(0)
       page.should have_content("successfully")
     end
 
@@ -185,15 +174,15 @@ describe "Users", :type => :feature do
 	      fill_in "user_email", with: "tedwhite@test.com"
 	      click_save
 	}.not_to change(User, :count)
-
-      user.reload.unconfirmed_email.should == "tedwhite@test.com"
+      @user.reload.unconfirmed_email.should == "tedwhite@test.com"
     end
   end
 
   describe 'Edit user contact info', js: true do
     let(:contact) { FactoryGirl.build :contact }
     before :each do
-      FactoryGirl.create :state
+      user = create(:pixi_user) 
+      create :state
       init_setup user
       visit settings_path
       click_link 'Contact'
