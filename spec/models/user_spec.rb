@@ -564,11 +564,11 @@ describe User do
 
   describe 'process_uri' do
     it "processes uri" do
-      expect(@user.process_uri("https://graph.facebook.com/708798320/picture?type=square")).not_to be_nil
+      expect(User.process_uri("https://graph.facebook.com/708798320/picture?type=square")).not_to be_nil
     end
 
     it "does not process uri" do
-      expect(@user.process_uri(nil)).to be_false
+      expect(User.process_uri(nil)).to be_false
     end
   end
 

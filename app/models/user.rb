@@ -228,8 +228,8 @@ class User < ActiveRecord::Base
   # add photo from url
   def self.picture_from_url usr, access_token
     pic = usr.pictures.build
-    avatar_url = process_uri(access_token.info.image.sub("square","large")) rescue nil
-    pic.photo = URI.parse(avatar_url) rescue nil
+    avatar_url = process_uri(access_token.info.image.sub("square","large"))
+    pic.photo = URI.parse(avatar_url) 
     pic
   end
 
@@ -323,7 +323,7 @@ class User < ActiveRecord::Base
   end
 
   # handle https uri requests
-  def process_uri uri
+  def self.process_uri uri
     unless uri.blank?
       open(uri, :allow_redirections => :safe) do |r|
         r.base_uri.to_s
