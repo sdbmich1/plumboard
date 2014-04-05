@@ -1,10 +1,5 @@
 <% provide(:title, 'Terms') %>
 <%= render partial: 'shared/pg_header', locals: { linkFlg: true } %>
 <%= content_for :content do %>
-  <%= render partial: 'shared/pg_sub_header', locals: { stitle: 'Terms of Service' } %>
-  <div class='row med-top'>
-    <div class='offset1 span8'>
-    <p>Find me in app/views/pages/terms.html.erb</p>
-    </div>
-  </div>
+  <%= render :file => 'public/pixi_terms', :formats => [:html], :layout => nil %>
 <% end %>

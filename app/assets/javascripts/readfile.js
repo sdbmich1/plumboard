@@ -1,10 +1,12 @@
 var px_img;
 
-$(document).on("submit", "#pixi-form", function(evt){
+$(document).on("submit", "#pixi-form, #register-form", function(evt){
   toggleLoading();
   $(this).attr('disabled', true);
+  /*
   var files = $('#photo').prop("files");
   var names = $.map(files, function(val) { console.log(val.name); });
+  */
 }); 
 
 // preview image on file upload
