@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140402032105) do
+ActiveRecord::Schema.define(:version => 20140406231535) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -717,10 +717,11 @@ ActiveRecord::Schema.define(:version => 20140402032105) do
     t.string   "provider"
     t.string   "uid"
     t.string   "status"
-    t.string   "card_token"
+    t.string   "acct_token"
     t.string   "user_type_code"
   end
 
+  add_index "users", ["acct_token"], :name => "index_users_on_acct_token"
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

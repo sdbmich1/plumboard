@@ -24,6 +24,7 @@
 //= require datepicker.js
 //= require main.js
 //= require readfile.js
+//= require acomplete.js
 //= require map.js
 //= require transaction.js
 //= require payment.js

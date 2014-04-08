@@ -44,7 +44,7 @@ class ApplicationController < ActionController::Base
   end
 
   def isDev?
-    Rails.env.development?
+    false # Rails.env.development?
   end
 
   def set_access_control_headers

@@ -136,9 +136,24 @@ class Invoice < ActiveRecord::Base
     buyer.name rescue nil
   end
 
+  # get buyer first name
+  def buyer_first_name
+    buyer.first_name rescue nil
+  end
+
+  # get buyer email
+  def buyer_email
+    buyer.email rescue nil
+  end
+
   # get seller name
   def seller_name
     seller.name rescue nil
+  end
+
+  # get seller first name
+  def seller_first_name
+    seller.first_name rescue nil
   end
 
   # get seller email

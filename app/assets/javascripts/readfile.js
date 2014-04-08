@@ -1,14 +1,5 @@
 var px_img;
 
-$(document).on("submit", "#pixi-form, #register-form", function(evt){
-  toggleLoading();
-  $(this).attr('disabled', true);
-  /*
-  var files = $('#photo').prop("files");
-  var names = $.map(files, function(val) { console.log(val.name); });
-  */
-}); 
-
 // preview image on file upload
 $(document).on("change", "input[type=file]", function(evt){
     var style = 'usr-photo';

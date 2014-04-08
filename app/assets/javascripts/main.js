@@ -167,17 +167,6 @@ $(document).ready(function(){
     $('a').tooltip();
   }
 
-  // Automatically put focus on first item in drop-down list
-  if( $('input[data-autocomplete]').length > 0 && ($('#site_id').length > 0 || $('#buyer_name').length > 0 || $('#slr_name').length > 0) ) {
-    $('input[data-autocomplete]').autocomplete({ autoFocus: true });
-
-    // check for incorrect selection
-    $(document).on('change', 'input[data-autocomplete]', function() {
-      var item = $(this).val();
-      if (item == 'no existing match') { $(this).val(''); }
-    });
-  }
-
   // set location
   if( $('#home_site_name').length > 0 ) {
     getLocation(true);
@@ -280,6 +269,11 @@ $(document).on('change', '#value5', function() {
 $(document).on("click", "#approve-btn", function(showElem){
   toggleLoading();
   $(this).attr('disabled', true);
+});
+
+// show spinner on forms with image uploads
+$(document).on("click", "#build-pixi-btn, #register-btn", function(showElem){
+  toggleLoading();
 });
 
 // reload masonry on ajax calls to swap data
@@ -793,18 +787,31 @@ $(document).on("change", "#cc_card_year", function() {
   $('#exp_yr').val(card_yr);
 });
 
-/*
-// adjust window menu css
-$(window).resize(function(){
-  if($('.bar-top').length > 0) {
-    if($(window).height() < 768) {
+//jQuery.event.add(window, "load", resizeFrame);
+//jQuery.event.add(window, "resize", resizeFrame);
+
+// used to resize window
+function resizeFrame() {
+  if(navigator.userAgent.match(/msie/i)) {
+    console.log('height = ' + $(window).height());
+    console.log('width = ' + $(window).width());
+    if($(window).width() < 1024) {
       $(".bar-top").css('margin-top', '0px'); 
+      $("#wrap").css('margin-top', '0px!important'); 
       $(".navbar").css('margin-top', '-20px'); 
-      $(".navbar").css('margin-bottom', '-5px'); 
     } else {
-      $(".navbar").css('margin-top', '20px'); 
-      $(".navbar").css('margin-bottom', '5px'); 
+      console.log('ms lrg width = ' + $(window).width());
+      $(".bar-top").css('margin-top', '40px!important'); 
+      $("#wrap").css('margin-top', '20px!important'); 
+      $(".navbar").css('margin-top', '20px!important'); 
+      $("#nav-home-menu").css('margin-top', '20px!important'); 
     }
   }
-});
-*/
+  $(window).trigger('resize');
+}
+
+function resizeTop() {
+  $(".bar-top").css('margin-top', '0px'); 
+  $("#wrap").css('margin-top', '0px!important'); 
+  $(".navbar").css('margin-top', '-20px'); 
+}

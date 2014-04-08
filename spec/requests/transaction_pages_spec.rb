@@ -242,7 +242,7 @@ feature "Transactions" do
     end
   end
 
-  describe "Valid Invoice Transactions w/ invalid card" do
+  describe "Invoice Transactions" do
     before(:each) do
       init_setup user
       @acct = @user.card_accounts.create FactoryGirl.attributes_for(:card_account, status: 'active', expiration_year: Date.today.year-1)
@@ -326,7 +326,7 @@ feature "Transactions" do
 
     it "submits payment", js: true do
       expect {
-        load_credit_card; sleep 2
+        load_credit_card; sleep 0.5
       }.to change(CardAccount, :count).by(1)
       page.should have_content 'Card #'
 
@@ -369,12 +369,19 @@ feature "Transactions" do
       expect { 
 	  credit_card_data '4444444444444448', '123', true
       }.not_to change(Transaction, :count)
-      page.should have_content 'invalid'
+      page.should_not have_content("Purchase Complete")
     end
 
     it "should not create a transaction with bad card #", :js=>true do
       expect { 
 	  credit_card_data '6666666666666666', '123', true
+	  click_ok }.not_to change(Transaction, :count)
+      page.should have_content 'invalid'
+    end
+
+    it "should not create a transaction with bad card token", :js=>true do
+      expect { 
+	  credit_card_data '4222222222222220', '123', true
 	  click_ok }.not_to change(Transaction, :count)
       page.should have_content 'invalid'
     end

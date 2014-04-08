@@ -5,14 +5,12 @@
 </head>
   <body> 	
     	<%= render :partial=>'shared/mail_header' %>
-    	  <span style="height:30px;margin-left:0.5in;">
-	    Somebody is asking us a question!<br><br>
-	    Inquiry Type: <%= @inquiry.contact_type %><br>
-	    Inquiry Subject: <%= @inquiry.subject %><br>
-	    Inquiry #: <%= @inquiry.id %><br>
-	    Details: <%= @inquiry.comments %><br>
-  	  </span>
-	<br />
+	Hello Fellow Pixans,<br /><br />
+	
+    	<span style="height:30px;">
+	  <%= @listing.seller_name %> has submitted a pixi for approval.
+  	</span>
+	<br /><br />
 
 	<span style="margin-top:20px;">Let's get on it!</span><br /><br />
 	<span>The Pixiboard Team</span><br /><br /> 	

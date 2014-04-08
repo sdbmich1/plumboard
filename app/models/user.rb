@@ -15,7 +15,7 @@ class User < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :first_name, :last_name, :email, :password, :password_confirmation, :remember_me, :birth_date, :gender, :pictures_attributes,
-    :fb_user, :provider, :uid, :contacts_attributes, :status, :card_token, :preferences_attributes, :user_type_code
+    :fb_user, :provider, :uid, :contacts_attributes, :status, :acct_token, :preferences_attributes, :user_type_code
 
   before_save :ensure_authentication_token unless Rails.env.test?
 

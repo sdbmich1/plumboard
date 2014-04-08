@@ -5,10 +5,10 @@
 </head>
   <body> 	
     	<%= render :partial=>'shared/mail_header' %><br /><br />
-	Hi <%= @listing.seller_first_name %>,<br />
-    	<span style="height:30px;font-weight:bolder;font-size:medium;">
+	Hi <%= @listing.seller_first_name %>,<br /><br />
+    	<span style="height:30px;">
   		Your pixi was denied for viewing on Pixiboard due to <%= @listing.explanation %>.
-		Please update your pixi and resubmit. </span><br />
+		Please update your pixi and resubmit. </span><br /><br />
 
 	<span style="margin-top:20px;">Keep on Pixing!</span><br /><br />
 	<span>The Pixiboard Team</span><br /><br /> 	

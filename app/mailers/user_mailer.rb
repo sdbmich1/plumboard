@@ -137,6 +137,17 @@ class UserMailer < ActionMailer::Base
     mail(:to => "#{user.email}", :subject => "Welcome to Pixiboard Community!")
   end
 
+  # send submit response to pxb
+  def send_submit_notice listing 
+    @listing = listing
+
+    # set logo
+    attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
+    # set message details
+    mail(:to => "support@pixiboard.com", :subject => "Pixi Submitted: #{@listing.nice_title}")
+  end
+
   # set logo image
   def set_logo_image
     img = { :data => File.read("#{Rails.root.to_s + '/app/assets/images/px_word_logo.png'}"),

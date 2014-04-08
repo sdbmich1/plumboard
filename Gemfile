@@ -84,7 +84,7 @@ gem "aws-sdk", "~> 1.11.3"
 # add payment gateways
 gem 'activemerchant'
 gem 'stripe'
-gem 'balanced', "~> 0.7.4"
+gem 'balanced', "~> 0.8.1"
 
 # install oauth
 gem 'omniauth'
@@ -172,7 +172,7 @@ group :test do
   gem 'launchy'
   gem "database_cleaner"
   gem 'connection_pool'
-  gem 'selenium-webdriver'
+  gem 'selenium-webdriver', '~> 2.41.0'
   gem 'shoulda-matchers'
   # gem "webmock", "~> 1.11.0"
   gem "fakeweb", "~> 1.3"

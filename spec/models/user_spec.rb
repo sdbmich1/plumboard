@@ -21,7 +21,7 @@ describe User do
     it { should respond_to(:fb_user) }
     it { should respond_to(:pictures) }
     it { should respond_to(:status) }
-    it { should respond_to(:card_token) }
+    it { should respond_to(:acct_token) }
     it { should respond_to(:user_type_code) }
 
     it { should respond_to(:interests) }

@@ -12,12 +12,13 @@ class TempListingObserver < ActiveRecord::Observer
 
   # add listing to board and process transaction
   def after_update model
-    if model.status == 'approved'
+    case model.status
+    when 'pending'
+      UserMailer.delay.send_submit_notice(model)
+    when 'approved'
       model.post_to_board
       model.transaction.process_transaction unless model.transaction.approved? rescue nil
-    elsif model.status == 'denied'
-
-      # send denial messages
+    when 'denied'
       send_system_message model
       UserMailer.delay.send_denial(model)
     end

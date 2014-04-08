@@ -102,4 +102,19 @@ class BankAccount < ActiveRecord::Base
       false
     end
   end
+
+  # account owner name
+  def owner_name
+    user.name rescue nil
+  end
+
+  # account owner first name
+  def owner_first_name
+    user.first_name rescue nil
+  end
+
+  # account owner email
+  def email
+    user.email rescue nil
+  end
 end

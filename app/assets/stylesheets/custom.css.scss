@@ -19,7 +19,11 @@ body {
 @import "shared/image";
 
 /* responsive mobile fix */
-@media only screen and (max-width: 320px) { 
+@media screen and (max-width: 320px) { 
+  #wrap {
+    margin-top: 0px!important;
+  }
+
   .hero-unit {  
     h1 {font-size: 2em;}   
   } 
@@ -27,15 +31,42 @@ body {
 
 @media screen and (max-width: 480px)  
 {
+  #wrap {
+    margin-top: 0px!important;
+  }
+
   nav.navbar
     {margin: auto;} 
 }
 
 /* responsive footer fix by Aalaap Ghag */
-@media (max-width: 767px) {
+@media screen and (max-width: 960px) {
   body {
+    padding-top: 0px!important;
     padding-right: 0px;
     padding-left: 0px;
+  }
+
+  #wrap {
+    margin-top: 0px!important;
+  }
+
+  footer, .wrapper {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+/* responsive footer fix by Aalaap Ghag */
+@media screen and (max-width: 767px) {
+  body {
+    padding-top: 0px!important;
+    padding-right: 0px;
+    padding-left: 0px;
+  }
+
+  #wrap {
+    margin-top: 0px!important;
   }
 
   footer, .wrapper {
@@ -706,9 +737,9 @@ a#home-link, a.home-link {
 }
 
 a#browse-link {
+  color: black;
   &:hover, &:visited, &:link {
-    color: black;
-    background-color: transparent;
+    background-color: none;
     text-decoration: underline;
   }
 }
