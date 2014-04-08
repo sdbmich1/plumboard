@@ -22,6 +22,9 @@
 /db/sphinx
 /log/*.pid
 
+# Ignore other files
+database.yml
+
 # Ignore all public files
 /public/system/pictures
 /public/assets
@@ -33,4 +36,5 @@
 # ignore secrets folder
 /config/secrets/*
 
-.elasticbeanstalk/
+.elasticbeanstalk/
+
