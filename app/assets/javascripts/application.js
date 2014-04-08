@@ -23,9 +23,12 @@
 //= require bootstrap-datepicker.js
 //= require datepicker.js
 //= require main.js
+//= require readfile.js
+//= require acomplete.js
 //= require map.js
 //= require transaction.js
 //= require payment.js
 //= require si.files.js
 //= require autocomplete-rails.js
 //= require jquery.ui.autocomplete.html.js
+//= require parsley

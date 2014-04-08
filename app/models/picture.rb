@@ -47,7 +47,7 @@ class Picture < ActiveRecord::Base
   def transliterate_file_name
     extension = File.extname(photo_file_name).gsub(/^\.+/, '')
     filename = photo_file_name.gsub(/\.#{extension}$/, '')
-    self.photo.instance_write(:file_name, "#{NameParse::transliterate(filename)}.#{NameParse::transliterate(extension)}")
+    self.photo.instance_write(:file_name, "#{NameParse::transliterate(filename)}.#{NameParse::transliterate(extension)}".gsub('//', '/'))
   end
 
   # generate styles (downloads original first)

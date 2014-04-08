@@ -17,7 +17,8 @@ describe UsersController do
   describe 'GET index' do
     before(:each) do
       @users = mock("users")
-      User.stub!(:all).and_return(@users)
+      User.stub!(:get_by_type).and_return(@users)
+      @users.stub!(:paginate).and_return(@users)
     end
 
     def do_get
@@ -30,7 +31,7 @@ describe UsersController do
     end
 
     it "should assign @users" do
-      User.should_receive(:all).and_return(@users)
+      User.should_receive(:get_by_type).and_return(@users)
       do_get 
       assigns(:users).should_not be_nil
     end

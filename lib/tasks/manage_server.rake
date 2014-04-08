@@ -14,6 +14,9 @@ namespace :manage_server do
     Transaction.destroy_all
     Listing.destroy_all
     TempListing.destroy_all
+    BankAccount.destroy_all
+    CardAccount.destroy_all
+    Invoice.destroy_all
   end
 end
 

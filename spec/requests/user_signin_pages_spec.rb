@@ -45,10 +45,11 @@ feature "UserSignins" do
 
     describe 'facebook' do 
       before :each do
+        create :state
         OmniAuth.config.add_mock :facebook,
-          uid: "fb-12345", info: { name: "Bob Smith", image: "http://graph.facebook.com/708798320/picture?type=square" },
+          uid: "fb-12345", info: { name: "Bob Smith", image: "https://graph.facebook.com/708798320/picture?type=square" },
           extra: { raw_info: { first_name: 'Bob', last_name: 'Smith',
-          email: 'bob.smith@test.com', birthday: "01/03/1989", gender: 'male' } } 
+          email: 'bob.smith@test.com', birthday: "01/03/1989", gender: 'male', location: 'San Francisco, California' } }
       end
 
       scenario 'signs-in from sign-in page' do

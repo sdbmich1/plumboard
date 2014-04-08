@@ -271,6 +271,7 @@ describe Transaction do
     it "does not get invoice pixi" do
       @transaction.get_invoice_listing.should_not be_true
       @transaction.get_invoice.should_not be_true
+      @transaction.seller.should_not be_true
       @transaction.seller_name.should_not be_true
       @transaction.seller_id.should_not be_true
       @transaction.pixi_id.should_not be_true
@@ -282,6 +283,7 @@ describe Transaction do
       @invoice.save!
       @invoice.transaction.get_invoice_listing.should be_true
       @invoice.transaction.get_invoice.should be_true
+      @invoice.transaction.seller.should_not be_nil
       @invoice.transaction.seller_name.should == @seller.name
       @invoice.transaction.seller_id.should == @seller.id
       @invoice.transaction.pixi_id.should == @invoice.pixi_id
@@ -300,7 +302,7 @@ describe Transaction do
       @customer = mock('Balanced::Customer')
       Balanced::Customer.stub_chain(:new, :save, :uri).and_return(@customer)
       @customer.stub!(:uri).and_return(true)
-      @customer.stub!(:debit).with(amount: 10000).and_return(true)
+      @customer.stub!(:debit).with(amount: 10000, appears_on_statement_as: 'pixiboard.com', meta: {}).and_return(true)
     end
 
     it "does not process" do

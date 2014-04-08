@@ -47,7 +47,7 @@ class BankAccountsController < ApplicationController
   private
 
   def page_layout
-    mobile_device? ? 'form' : 'application'
+    mobile_device? ? 'form' : 'transactions'
   end
 
   # load target partial form

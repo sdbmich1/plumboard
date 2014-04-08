@@ -481,6 +481,17 @@ describe TempListing do
     end
   end
 
+  describe 'sold?' do
+    it 'should return true' do
+      @temp_listing.status = 'sold'
+      @temp_listing.sold?.should be_true
+    end
+
+    it 'should not return true' do
+      @temp_listing.sold?.should_not be_true
+    end
+  end
+
   describe '.pending?' do
     it "is not pending" do
       @temp_listing.pending?.should be_false 

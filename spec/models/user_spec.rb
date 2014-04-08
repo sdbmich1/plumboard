@@ -21,7 +21,8 @@ describe User do
     it { should respond_to(:fb_user) }
     it { should respond_to(:pictures) }
     it { should respond_to(:status) }
-    it { should respond_to(:card_token) }
+    it { should respond_to(:acct_token) }
+    it { should respond_to(:user_type_code) }
 
     it { should respond_to(:interests) }
     it { should respond_to(:contacts) }
@@ -61,6 +62,7 @@ describe User do
     it { should respond_to(:preferences) }
     it { should have_many(:preferences).dependent(:destroy) }
     it { should accept_nested_attributes_for(:preferences).allow_destroy(true) }
+    it { should belong_to(:user_type).with_foreign_key('code') }
 
     it { should respond_to(:unpaid_invoice_count) } 
     it { should respond_to(:has_unpaid_invoices?) } 
@@ -483,6 +485,28 @@ describe User do
     end
   end
 
+  describe 'birth_dt' do
+    it 'should return a date' do
+      @user.birth_dt.should == "04/23/1967"
+    end
+
+    it 'should not return a date' do
+      @user.birth_date = nil
+      @user.birth_dt.should_not == "04/23/1967"
+    end
+  end
+
+  describe 'nice_date' do
+    it 'returns a nice date' do
+      @user.nice_date(@user.created_at).should == @user.created_at.utc.getlocal.strftime('%m/%d/%Y %l:%M %p')
+    end
+
+    it 'does not return a nice date' do
+      user = build :pixi_user
+      user.nice_date(user.created_at).should be_nil
+    end
+  end
+
   describe "invoice associations" do
     before do
       @buyer = FactoryGirl.create(:pixi_user) 
@@ -507,6 +531,44 @@ describe User do
       @user.paid_invoices.should_not be_empty
       @user.unpaid_invoices.should be_empty
       @buyer.has_unpaid_invoices?.should_not be_true 
+    end
+  end
+
+  describe "get by type" do
+    it "includes pixans" do
+      @user.user_type_code = 'PX'
+      @user.save
+      expect(User.get_by_type(['PX', 'PT'])).not_to be_empty
+    end
+
+    it "includes all" do
+      expect(User.get_by_type(nil)).not_to be_empty
+    end
+
+    it "does not include pixans" do
+      expect(User.get_by_type(['PX', 'PT'])).not_to include(@user)
+    end
+  end
+
+  describe 'type_descr' do
+    it "shows description" do
+      create :user_type
+      @user.user_type_code = 'PX'
+      expect(@user.type_descr).to eq 'Pixan'
+    end
+
+    it "does not show description" do
+      expect(@user.type_descr).to be_nil
+    end
+  end
+
+  describe 'process_uri' do
+    it "processes uri" do
+      expect(User.process_uri("https://graph.facebook.com/708798320/picture?type=square")).not_to be_nil
+    end
+
+    it "does not process uri" do
+      expect(User.process_uri(nil)).to be_false
     end
   end
 

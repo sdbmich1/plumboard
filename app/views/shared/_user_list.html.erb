@@ -1,0 +1,26 @@
+<% unless @users.blank? %>    
+    <table class="table table-hover table-condensed table-bordered">
+    <thead>
+      <tr>
+      <th></th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Home Zip</th>
+      <th>Birth Date</th>
+      <th>Enrolled</th>
+      <th>Last Login</th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+      <%= render partial: 'shared/user_row', collection: @users, as: :user %>
+    </tbody>
+  </table>
+
+  <div id='user-list' class="nav pull-right">
+    <%= will_paginate @users, page_links: false if @users.respond_to?(:total_pages) %>
+  </div> 
+<% else %>
+  <div class='center-wrapper'>No users found.</div>
+<% end %>
+

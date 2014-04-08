@@ -1,5 +1,4 @@
-<% if @comment %>  
-  <%= form_for @comment, remote: true, id: 'comment-doc', class: 'width320' do |f| %> 
+  <%= form_for setup_comment(@listing), remote: true, id: 'comment-doc', class: 'width320' do |f| %> 
     <div id="comment_notice" style="display:none"></div>
     <div id="comment_errors">
       <%= render partial: 'shared/error_messages', :locals => { :target => f.object } %>
@@ -8,9 +7,8 @@
     <%= f.hidden_field 'pixi_id', value: @listing.pixi_id %>
     <%= f.hidden_field 'user_id', value: @user.id %>
 
-    <div id="comment_content">
+    <div id="cmnt_content">
       <%= f.text_area 'content', placeholder: 'Add a comment to item and press Enter to submit...' %>  
       <%= f.submit 'Comment', :class=>'btn btn-warning', id: 'comment-btn' %>
     </div>
   <% end %>
-<% end %>

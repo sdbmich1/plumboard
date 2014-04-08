@@ -3,9 +3,10 @@
 <head>
   <link href="/assets/favicon.ico" rel="shortcut icon" />
   <title><%= full_title(yield(:title)) %></title>
-  <%= stylesheet_link_tag    "application", "jquery.bxslider", "datepicker", "si.files", :media => "all" %>
-  <%= javascript_include_tag "application", "autocomplete-rails.js", "jquery.ui.autocomplete.html.js", 
-        'bootstrap.min.js', 'jquery.placeholder.min.js' %>
+  <%= stylesheet_link_tag    "application", :media => "all" %>
+  <%= javascript_include_tag "application", "bootstrap.min.js" %>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
   <%= csrf_meta_tags %>
   <%= render 'layouts/shim' %>
 </head>

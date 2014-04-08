@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140321000319) do
+ActiveRecord::Schema.define(:version => 20140406231535) do
 
   create_table "bank_accounts", :force => true do |t|
     t.string   "token"
@@ -385,8 +385,10 @@ ActiveRecord::Schema.define(:version => 20140321000319) do
     t.datetime "updated_at",   :null => false
     t.string   "pixi_id"
     t.integer  "recipient_id"
+    t.string   "msg_type"
   end
 
+  add_index "posts", ["msg_type"], :name => "index_posts_on_msg_type"
   add_index "posts", ["pixi_id"], :name => "index_posts_on_pixi_id"
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id_and_created_at", :unique => true
 
@@ -621,6 +623,16 @@ ActiveRecord::Schema.define(:version => 20140321000319) do
 
   add_index "user_pixi_points", ["user_id", "code", "created_at"], :name => "index_user_pixi_points_on_user_id_and_code_and_created_at"
 
+  create_table "user_types", :force => true do |t|
+    t.string   "code"
+    t.string   "description"
+    t.string   "status"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "user_types", ["code"], :name => "index_user_types_on_code"
+
   create_table "users", :force => true do |t|
     t.string   "first_name"
     t.string   "last_name"
@@ -650,14 +662,17 @@ ActiveRecord::Schema.define(:version => 20140321000319) do
     t.string   "provider"
     t.string   "uid"
     t.string   "status"
-    t.string   "card_token"
+    t.string   "acct_token"
+    t.string   "user_type_code"
   end
 
+  add_index "users", ["acct_token"], :name => "index_users_on_acct_token"
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
   add_index "users", ["unlock_token"], :name => "index_users_on_unlock_token", :unique => true
+  add_index "users", ["user_type_code"], :name => "index_users_on_user_type"
 
   create_table "users_roles", :id => false, :force => true do |t|
     t.integer "user_id"

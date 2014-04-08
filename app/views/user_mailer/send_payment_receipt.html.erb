@@ -5,15 +5,16 @@
 </head>
   <body> 	
     	<%= render :partial=>'shared/mail_header' %>
-  	<center>
-    	<h3>
-    	<span style="height:30px;font-weight:bolder;font-size:medium;">
-  		A payment has been deposited into your account.</span></h3><br />
+	Hi <%= @invoice.seller_first_name %>,<br /><br />
+    	<span style="height:30px;">
+	  Congratulations on your sale!  A payment has been deposited into your account.</span><br /><br />
 
+  	<center>
 	<%= render :partial=>'shared/payment_details', :locals=>{:payment=>@payment, :invoice=>@invoice} %><br /><br />
   	</center>
 
-	<span style="margin-top:20px;">Thanks for your business.</span><br /><br />
+	<span style="margin-top:20px;">Thanks for your business.</span>
+	<span style="margin-top:20px;">Keep on pixing!</span><br /><br />
 	<span>The Pixiboard Team</span><br /><br /> 	
     	<%= render :partial=>'shared/mail_footer' %>
   </body>

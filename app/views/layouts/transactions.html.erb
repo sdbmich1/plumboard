@@ -5,8 +5,7 @@
   <title><%= full_title(yield(:title)) %></title>
   <%= stylesheet_link_tag    "application", "jquery.bxslider", :media => "all" %>
   <%= javascript_include_tag "application", "http://code.jquery.com/jquery-1.7.1.min.js", 'bootstrap.min.js', 'jquery.rateit.min.js',
-  	"https://js.stripe.com/v1/", 'transaction.js','jquery.bxslider.min.js', 'jquery.placeholder.min.js', 'payment.js', 
-	"https://js.balancedpayments.com/v1/balanced.js" %>
+  	"https://js.stripe.com/v1/", 'transaction.js', 'jquery.placeholder.min.js', 'payment.js', "https://js.balancedpayments.com/v1/balanced.js" %>
   <%= tag :meta, :name => "stripe-key", :content => STRIPE_PUBLIC_KEY %>
   <%= tag :meta, :name => "balanced-key", :content => BALANCED_URI %>
   <%= tag :meta, :name => "credit-card-api", :content => CREDIT_CARD_API %>
@@ -19,7 +18,7 @@
     <%= yield :subhead %>
     <div class="container">
       <div id="spinner" class="round" style="display:none"></div>
-      <%= render 'layouts/flash_messages' %>
+      <%= render 'layouts/flash_messages', flash: flash %>
       <%= yield :content %>
     </div>
   </div>

@@ -1,4 +1,4 @@
-$("#user_form").html("<%= escape_javascript( raw render(:partial => "shared/user_form") ) %>");
+$("#user_form").html("<%= escape_javascript( raw render(:partial => "shared/user_form", locals: {user: @usr}) ) %>");
 
 // reload choose file image
 SI.Files.stylizeById('#user_pic');

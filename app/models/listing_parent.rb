@@ -138,6 +138,11 @@ class ListingParent < ActiveRecord::Base
     status == 'edit'
   end
 
+  # verify if listing is sold
+  def sold?
+    status == 'sold'
+  end
+
   # verify if alias is used
   def alias?
     show_alias_flg == 'yes'
@@ -288,7 +293,7 @@ class ListingParent < ActiveRecord::Base
 
   # format start date
   def start_dt
-    start_date.utc.getlocal.strftime('%m/%d/%Y') rescue nil
+    start_date.strftime('%m/%d/%Y') rescue nil
   end
 
   # format updated date

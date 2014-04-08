@@ -3,6 +3,6 @@
     <button class="close" data-dismiss="alert">
 	<i class="icon-remove-sign"></i>
     </button>
-    <%= message unless message.to_s == 'true' %>
+    <%= message unless message.to_s == 'true' || message.blank? %>
   </div>
 <% end %>

@@ -19,6 +19,6 @@
   <div class='center-wrapper'>No invoices found.</div>
 <% end %>
 
-<div class='pg-list' class="nav pull-right">
+<div id='inv-list' class="nav pull-right">
   <%= will_paginate @invoices if @invoices.respond_to?(:total_pages) %>
 </div> 

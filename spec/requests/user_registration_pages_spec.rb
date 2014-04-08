@@ -35,8 +35,7 @@ feature "UserRegistrations" do
           fill_in "user_first_name", with: ''
 	  click_button submit 
 	}.not_to change(User, :count)
-
-        page.should have_content "can't be blank"
+        page.should have_content "Create Your Account"
       end
 
       it "should not create a incomplete user" do
@@ -44,8 +43,7 @@ feature "UserRegistrations" do
 		user_info
 		click_button submit 
 	}.not_to change(User, :count)
-
-        page.should have_content "can't be blank"
+        page.should have_content "Create Your Account"
       end
 
       it "should not create user w/o email" do
@@ -55,8 +53,7 @@ feature "UserRegistrations" do
 		select('Male', :from => 'user_gender')
 		click_button submit 
 	}.not_to change(User, :count)
-
-        page.should have_content "can't be blank"
+        page.should have_content "Create Your Account"
       end
 
       it "should not create user w/o gender" do
@@ -68,6 +65,7 @@ feature "UserRegistrations" do
       		add_data_w_photo
 		click_button submit 
 	}.not_to change(User, :count)
+        page.should have_content "Create Your Account"
       end
 
       it "should not create user w/o birthdate" do
@@ -79,6 +77,7 @@ feature "UserRegistrations" do
       		add_data_w_photo
 		click_button submit 
 	}.not_to change(User, :count)
+        page.should have_content "Create Your Account"
       end
 
       it "should not create user w/o zip" do
@@ -91,6 +90,7 @@ feature "UserRegistrations" do
       		add_data_w_photo
 		click_button submit 
 	}.not_to change(User, :count)
+        page.should have_content "Create Your Account"
       end
 
       it "should not create user w/o valid zip" do
@@ -104,6 +104,7 @@ feature "UserRegistrations" do
       		add_data_w_photo
 		click_button submit 
 	}.not_to change(User, :count)
+        page.should have_content "Create Your Account"
       end
 
       it "should not create user w/o password" do
@@ -116,6 +117,7 @@ feature "UserRegistrations" do
       		add_data_w_photo
 		click_button submit 
 	}.not_to change(User, :count)
+        page.should have_content "Create Your Account"
       end
 
       it "should not create user w/o password confirmation" do
@@ -128,6 +130,7 @@ feature "UserRegistrations" do
       		add_data_w_photo
 		click_button submit 
 	}.not_to change(User, :count)
+        page.should have_content "Create Your Account"
       end
 
       it "should not create a user with no photo" do
@@ -135,6 +138,7 @@ feature "UserRegistrations" do
       		user_data
 		click_button submit 
 	}.not_to change(User, :count)
+        page.should have_content "Create Your Account"
       end
     end
 

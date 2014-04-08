@@ -2,7 +2,7 @@
   <div class="controls">
     <div class="input-append">
       <%= autocomplete_field_tag 'search', nil, get_autocomplete_path, :id_element => '', :update_elements => {}, 
-          :placeholder => 'Search', class: 'span3 search-text', autofocus: true %>
+          :placeholder => set_placeholder, class: 'span3 search-text', autofocus: true %>
       <button type='submit' id='submit-btn' class="btn btn-search" type="button">
 	<i class="icon-search icon-white"></i>
       </button>

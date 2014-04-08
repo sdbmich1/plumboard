@@ -119,7 +119,8 @@ module ListingsHelper
 
   # set string to share content on pinterest
   def pin_share
-    url = "//www.pinterest.com/pin/create/button/?url=" + get_url + "&media=" + get_photo + "&description=Check out this pixi on Pixiboard!"
+    url = "//www.pinterest.com/pin/create/button/?url=" + get_url + "&media=" + get_photo + "&description=Check out this pixi on Pixiboard! " +
+       @listing.nice_title
   end
 
   # set string to share content on twitter
@@ -169,6 +170,12 @@ module ListingsHelper
 
   # check if panel needs to be displayed
   def show_metric_panel? model
-    (!model.new_status? && !model.edit?) && model.seller?(@user)
+    (model.active? || model.sold?) && model.seller?(@user)
+  end
+
+  # set pixi poster
+  def set_poster_id listing
+    poster = listing.pixi_post? ? 'pixan_id' : 'seller_id'
+    poster.to_sym
   end
 end

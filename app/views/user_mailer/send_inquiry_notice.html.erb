@@ -5,19 +5,14 @@
 </head>
   <body> 	
     	<%= render :partial=>'shared/mail_header' %>
-  	<center>
-    	<h3>
-    	  <span style="height:30px;font-weight:bolder;font-size:medium;">
+    	  <span style="height:30px;margin-left:0.5in;">
 	    Somebody is asking us a question!<br><br>
 	    Inquiry Type: <%= @inquiry.contact_type %><br>
 	    Inquiry Subject: <%= @inquiry.subject %><br>
 	    Inquiry #: <%= @inquiry.id %><br>
 	    Details: <%= @inquiry.comments %><br>
   	  </span>
-	</h3><br />
-
-	<br /><br />
-  	</center>
+	<br />
 
 	<span style="margin-top:20px;">Let's get on it!</span><br /><br />
 	<span>The Pixiboard Team</span><br /><br /> 	

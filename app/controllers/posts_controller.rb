@@ -44,7 +44,6 @@ class PostsController < ApplicationController
   end
 
   def create
-    @listing = Listing.find_by_pixi_id params[:post][:pixi_id]
     @post = Post.new params[:post]
     respond_with(@post) do |format|
       if @post.save
@@ -80,6 +79,7 @@ class PostsController < ApplicationController
 
   def reload_data pid
     @listing = Listing.find_by_pixi_id pid
+    @comments = @listing.comments.paginate page: @page, per_page: PIXI_COMMENTS if @listing
     @user.pixi_wants.create(pixi_id: pid) # add to user's wanted list
   end
 end

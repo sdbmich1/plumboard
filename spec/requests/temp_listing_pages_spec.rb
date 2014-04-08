@@ -24,14 +24,15 @@ feature "TempListings" do
 
     def add_data
       fill_in 'Title', with: "Guitar for Sale"
+      fill_in 'site_name', with: "Stanford University\n"
       set_site_id @site.id; sleep 0.5
       select_category 'Foo Bar'
       fill_in 'Description', with: "Guitar for Sale"
     end
 
   def add_data_w_photo
-    script = "$('input[type=file]').show();"
-    page.driver.browser.execute_script(script)
+    # script = "$('input[type=file]').show();"
+    # page.driver.browser.execute_script(script)
     attach_file('photo', "#{Rails.root}/spec/fixtures/photo.jpg")
     add_data
   end
@@ -199,14 +200,14 @@ feature "TempListings" do
       end
     end
 
-    describe "Create with valid information", js: true do
-      it "Adds a new listing w/o price" do
+    describe "Create with valid information" do
+      it "Adds a new listing w/o price", js:true do
         expect{
 	  add_data_w_photo
 	  click_button submit; sleep 3
+          page.should have_content 'Review Your Pixi'
+          page.should have_content "Guitar for Sale" 
 	}.to change(TempListing,:count).by(1)
-        page.should have_content "Guitar for Sale" 
-        page.should have_content 'Review Your Pixi'
       end	      
 
       it "Adds a new listing w price" do

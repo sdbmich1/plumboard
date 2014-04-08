@@ -18,20 +18,27 @@ describe "PendingListings", :type => :feature do
   describe "Review Pending Orders" do 
     before { visit pending_listing_path(listing) }
 
-    it { should have_selector('title', text: 'Review Pending Order') }
-    it { should have_content 'Acoustic Guitar' }
-    it { should have_content "Posted By: #{listing.seller_name}" }
-    it { should_not have_link 'Follow', href: '#' }
-    it { should_not have_selector('#contact_content') }
-    it { should_not have_selector('#comment_content') }
-    it { should have_link 'Back', href: pending_listings_path(status: 'pending') }
-    it { should have_button('Deny') }
-    it { should have_link 'Improper Content', href: deny_pending_listing_path(listing, reason: 'Improper Content') }
-    it { should have_link 'Bad Pictures', href: deny_pending_listing_path(listing, reason: 'Bad Pictures') }
-    it { should have_link 'Approve', href: approve_pending_listing_path(listing) }
-    it { should have_content "ID: #{listing.pixi_id}" }
-    it { should have_content "Posted: #{get_local_time(listing.start_date)}" }
-    it { should have_content "Updated: #{get_local_time(listing.updated_at)}" }
+    it 'shows content' do
+      page.should have_selector('title', text: 'Review Pending Order')
+      page.should have_content 'Acoustic Guitar'
+      page.should have_content "Posted By: #{listing.seller_name}"
+      page.should_not have_link 'Follow', href: '#'
+      page.should_not have_selector('#contact_content')
+      page.should_not have_selector('#comment_content')
+      page.should_not have_content('Want')
+      page.should_not have_content('Cool')
+      page.should_not have_content('Saved')
+      page.should have_link 'Active'
+      page.should have_link 'Denied'
+      page.should have_link 'Back', href: pending_listings_path(status: 'pending')
+      page.should have_button('Deny')
+      page.should have_link 'Improper Content', href: deny_pending_listing_path(listing, reason: 'Improper Content')
+      page.should have_link 'Bad Pictures', href: deny_pending_listing_path(listing, reason: 'Bad Pictures')
+      page.should have_link 'Approve', href: approve_pending_listing_path(listing)
+      page.should have_content "ID: #{listing.pixi_id}"
+      page.should have_content "Posted: #{get_local_time(listing.start_date)}"
+      page.should have_content "Updated: #{get_local_time(listing.updated_at)}"
+    end
 
     it "Returns to pending order list" do
       click_link 'Back'
@@ -64,6 +71,18 @@ describe "PendingListings", :type => :feature do
       page.should_not have_content listing.title 
       page.should have_content("Pending Orders")
     end
+
+    it "displays denied listings" do
+      click_link 'Denied'
+      page.should have_content('No pixis found')
+    end
+
+    it "displays active listings" do
+      click_link 'Active'
+      page.should have_link 'Active'
+      page.should have_content 'Location'
+      page.should have_content 'Last Updated'
+    end
   end
 
   describe "GET /pending_listings" do  
@@ -76,14 +95,16 @@ describe "PendingListings", :type => :feature do
       visit pending_listings_path(status: 'pending') 
     end
 
-    it { should have_content('Pending Orders') }
-    it { should_not have_content('No pixis found') }
-    it { should have_selector('#denied-pixis') }
-    it { should have_selector('#pending-pixis') }
-    it { should have_link 'Active' }
-    it { should have_link 'Denied' }
-    it { should_not have_content(@denied_listing.title) }
-    it { should have_content(@pending_listing.title) }
+    it 'shows content' do
+      page.should have_content('Pending Orders')
+      page.should_not have_content('No pixis found')
+      page.should have_selector('#denied-pixis')
+      page.should have_selector('#pending-pixis')
+      page.should have_link 'Active'
+      page.should have_link 'Denied'
+      page.should_not have_content(@denied_listing.title)
+      page.should have_content(@pending_listing.title)
+    end
 
     it "displays denied listings", js: true do
       click_link 'Denied'

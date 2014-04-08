@@ -2,7 +2,7 @@ class Post < ActiveRecord::Base
   resourcify
   acts_as_readable :on => :created_at
 
-  attr_accessible :content, :user_id, :pixi_id, :recipient_id
+  attr_accessible :content, :user_id, :pixi_id, :recipient_id, :msg_type
 
   PIXI_POST = PIXI_KEYS['pixi']['pixi_post']
 
@@ -75,10 +75,10 @@ class Post < ActiveRecord::Base
   end
 
   # add post for invoice creation or payment
-  def self.add_post inv, listing, sender, recipient, msg
+  def self.add_post inv, listing, sender, recipient, msg, msgType=''
     if sender && recipient
       # new post
-      post = listing.posts.build recipient_id: recipient, user_id: sender
+      post = listing.posts.build recipient_id: recipient, user_id: sender, msg_type: msgType
 
       # set amount format
       amt = "%0.2f" % inv.amount
@@ -101,7 +101,7 @@ class Post < ActiveRecord::Base
       msg = "You received Invoice ##{inv.id} from #{inv.seller.name} for $"
 
       # add post
-      add_post inv, listing, inv.seller_id, inv.buyer_id, msg
+      add_post inv, listing, inv.seller_id, inv.buyer_id, msg, 'inv'
     else
       false
     end
@@ -121,7 +121,7 @@ class Post < ActiveRecord::Base
       msg = "You received a payment for Invoice ##{inv.id} from #{inv.buyer_name} for $"
 
       # add post
-      add_post inv, listing, inv.buyer_id, inv.seller_id, msg
+      add_post inv, listing, inv.buyer_id, inv.seller_id, msg, 'paidinv'
     else
       false
     end
@@ -134,6 +134,11 @@ class Post < ActiveRecord::Base
     else
       false
     end
+  end
+
+  # check if invoice msg 
+  def inv_msg?
+    msg_type == 'inv'
   end
 
   # set json string

@@ -66,7 +66,15 @@ feature "Listings" do
           page.should have_content 'Want'
       }.to change(Post,:count).by(1)
 
-      page.should have_content listing.nice_title
+      expect{
+      	  fill_in 'comment_content', with: "Great pixi. I highly recommend it.\n" 
+	  sleep 3
+      }.to change(Comment,:count).by(1)
+
+      page.should have_content "Comments (#{listing.comments.size})"
+      page.should have_content "Great pixi. I highly recommend it." 
+      page.should have_content @user.name 
+      expect(page).not_to have_field('#comment_content', with: 'Great pixi')
     end
      
     it "does not contact a seller", js: true do
@@ -246,8 +254,10 @@ feature "Listings" do
 	  sleep 3
       }.to change(Comment,:count).by(1)
 
-      page.should have_content "Great pixi. I highly recommend it." 
       page.should have_content "Comments (#{listing.comments.size})"
+      page.should have_content "Great pixi. I highly recommend it." 
+      page.should have_content @user.name 
+      expect(page).not_to have_field('#comment_content', with: 'Great pixi')
     end
      
     it "does not add a comment", js: true do
@@ -298,15 +308,29 @@ feature "Listings" do
           click_link 'Edit'
 	end
 
-        it { should have_content("Build Pixi") }
-
         it "adds a pixi pic" do
+          page.should have_content("Build Pixi") 
+
           expect{
+	    fill_in 'Title', with: 'Rhodes Bass Guitar'
             attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
             click_button 'Next'; sleep 2
           }.to change(Picture,:count).by(1)
-
           page.should have_content 'Review Your Pixi'
+        end
+
+        it "gets changes approved" do
+          editor = FactoryGirl.create :editor, email: 'jsnow@pixitext.com', confirmed_at: Time.now 
+          init_setup editor
+          visit pending_listings_path(status: 'pending') 
+
+	  click_on 'Details'
+          page.should have_button('Deny')
+          page.should have_link 'Approve', href: approve_pending_listing_path(listing)
+          expect {
+            click_link 'Approve';
+	  }.to change(Listing, :count).by(0)
+          page.should have_content("Pending Orders")
         end
       end
 

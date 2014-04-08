@@ -41,7 +41,7 @@ FactoryGirl.define do
   end
 
   factory :contact_user, :class => "User", :parent => :pixi_user do
-    card_token		"/v1/customers/CU3HH3hlEKbL04U2GOKgX8o2"
+    acct_token		"/v1/customers/CU3HH3hlEKbL04U2GOKgX8o2"
     before(:create) do |usr|
       usr.contacts.build FactoryGirl.attributes_for(:contact)
     end
@@ -259,11 +259,11 @@ FactoryGirl.define do
   factory :card_account do
     status		'active'
     card_type	'visa'
-    card_number	'9000900090009000'
+    card_number	'9000900090001111'
     card_no	9000
     expiration_month   6
-    expiration_year    2018
-    token	"/v1/marketplaces/TEST-MP2Q4OaIanQuIDJIixHGmhQA/cards/CC5yjh7ElKiRFu5oArBZ8wmy"
+    expiration_year    Date.today.year+2
+    token		"/v1/marketplaces/TEST-MP2Q4OaIanQuIDJIixHGmhQA/cards/CC4kUNrs7OjmVpLeCT6PPSHE"
     zip   '90201'
   end
 
@@ -323,6 +323,12 @@ FactoryGirl.define do
     code		"WS"
     contact_type	"support"
     subject		"Website"
+    status		"active"
+  end
+
+  factory :user_type do
+    code		"PX"
+    description		"Pixan"
     status		"active"
   end
 

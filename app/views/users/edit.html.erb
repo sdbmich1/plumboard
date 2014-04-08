@@ -1,9 +1,9 @@
-<% provide(:title, 'Edit Profile') %>
+<% provide(:title, 'Edit User') %>
 <%= content_for :subhead do %>
-  <%= render :partial => 'shared/navbar', locals: { menu_name: 'Edit Profile' } %>
+  <%= render :partial => 'shared/navbar', locals: { menu_name: 'Users' } %>
 <% end %>
 <%= content_for :content do %>
   <div class="row mbot" id="user_form">
-    <%= render partial: 'shared/user_form' %>
+    <%= render partial: 'shared/user_form', locals: { user: @usr } %>
   </div>
 <% end %>

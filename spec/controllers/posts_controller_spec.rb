@@ -24,13 +24,13 @@ describe PostsController do
   before(:each) do
     log_in_test_user
     @user = mock_user
+    @listing = stub_model Listing
+    @post = stub_model Post
   end
 
   describe "POST create" do
     before :each do
-      @listing = mock_model Listing
-      @post = mock_model Post
-      Listing.stub!(:find_by_pixi_id).with('1').and_return(@listing)
+      Post.stub!(:new).and_return(@post)
     end
     
     def do_create
@@ -40,7 +40,7 @@ describe PostsController do
     context 'failure' do
       
       before :each do
-        Post.stub!(:save).and_return(false)
+        @post.stub!(:save).and_return(false)
       end
 
       it "should assign @post" do
@@ -62,8 +62,14 @@ describe PostsController do
     context 'success' do
 
       before :each do
-        Post.stub!(:save).and_return(true)
+        @post.stub!(:save).and_return(true)
         controller.stub!(:reload_data).and_return(true)
+      end
+
+      after (:each) do
+        @comments = stub_model(Comment)
+        Listing.stub!(:find_by_pixi_id).with('1').and_return(@listing)
+        @listing.stub!(:comments).and_return( @comments )
       end
        
       it "should load the requested listing" do
@@ -71,9 +77,19 @@ describe PostsController do
         do_create
       end
 
-      it "should assign @listing" do
+      it "should assign @post" do
         do_create
-        assigns(:listing).should_not be_nil 
+        assigns(:post).should_not be_nil 
+      end
+       
+      it "should load the requested comments" do
+        @listing.stub(:comments).and_return(@comments)
+        do_create
+      end
+
+      it "should assign @comments" do
+        do_create
+        assigns(:comments).should == @comments
       end
 
       it "should load the requested post" do

@@ -97,4 +97,9 @@ module TransactionsHelper
   def get_card
     @card ||= @user.get_valid_card
   end
+
+  # show help
+  def show_help?
+    !@transaction.get_fee.blank? rescue nil
+  end
 end

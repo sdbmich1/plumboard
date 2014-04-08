@@ -116,6 +116,7 @@ module ApplicationHelper
       when 'PixiPosts'; render 'shared/navbar_pixi_post'
       when 'My PixiPosts'; render 'shared/navbar_pixi_post'
       when 'Inquiries'; render 'shared/navbar_inquiry'
+      when 'Users'; render 'shared/navbar_users'
       else render 'shared/navbar_main'
     end
   end
@@ -133,8 +134,8 @@ module ApplicationHelper
   # set account path based on user has an account
   def get_account_path
     if @user.has_bank_account? 
-      @account ||= @user.bank_accounts.first
-      bank_account_path(@account)
+      @account = @user.bank_accounts.first
+      @account.new_record? ? new_bank_account_path : bank_account_path(@account)
     else 
       new_bank_account_path
     end
@@ -178,5 +179,10 @@ module ApplicationHelper
   # check page count for infinite scroll display
   def valid_next_page? model
     model.next_page <= model.total_pages rescue nil
+  end
+
+  # check for ajax
+  def remote?
+    action_name == 'show' ? false : true
   end
 end

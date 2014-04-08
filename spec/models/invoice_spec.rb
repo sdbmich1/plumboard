@@ -283,20 +283,30 @@ describe Invoice do
   end
 
   describe "buyer" do 
-    it { @invoice.buyer_name.should_not be_empty } 
+    it { expect(@invoice.buyer_name).to eq(@buyer.name) } 
+    it { expect(@invoice.buyer_first_name).to eq(@buyer.first_name) } 
+    it { expect(@invoice.buyer_email).to eq(@buyer.email) } 
 
     it "should not find correct buyer name" do 
       @invoice.buyer_id = 100 
+      @invoice.buyer_first_name.should be_nil 
       @invoice.buyer_name.should be_nil 
+    end
+
+    it "should not find correct buyer email" do 
+      @invoice.buyer_id = 100 
+      @invoice.buyer_email.should be_nil 
     end
   end
 
   describe "seller" do 
-    it { @invoice.seller_name.should_not be_empty } 
-    it { @invoice.seller_email.should_not be_empty } 
+    it { expect(@invoice.seller_name).to eq(@user.name) } 
+    it { expect(@invoice.seller_first_name).to eq(@user.first_name) } 
+    it { expect(@invoice.seller_email).to eq(@user.email) } 
 
     it "should not find correct seller name" do 
       @invoice.seller_id = 100 
+      @invoice.seller_first_name.should be_nil 
       @invoice.seller_name.should be_nil 
     end
 

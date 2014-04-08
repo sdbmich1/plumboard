@@ -55,9 +55,10 @@ GEM
       json (~> 1.4)
       nokogiri (< 1.6.0)
       uuidtools (~> 2.1)
-    balanced (0.7.4)
+    balanced (0.8.1)
       faraday (>= 0.8.6)
       faraday_middleware (~> 0.9.0)
+    bcrypt-ruby (3.0.1)
     bcrypt-ruby (3.0.1-x86-mingw32)
     better_errors (0.7.0)
       coderay (>= 1.0.0)
@@ -87,7 +88,7 @@ GEM
       rack-test (>= 0.5.4)
       selenium-webdriver (~> 2.0)
       xpath (~> 0.1.4)
-    childprocess (0.4.0)
+    childprocess (0.5.2)
       ffi (~> 1.0, >= 1.0.11)
     chronic (0.9.1)
     clamp (0.6.3)
@@ -130,6 +131,7 @@ GEM
       launchy (~> 2.1)
       mail (~> 2.2)
     erubis (2.7.0)
+    eventmachine (1.0.3)
     eventmachine (1.0.3-x86-mingw32)
     exception_notification (3.0.1)
       actionmailer (>= 3.0.4)
@@ -222,7 +224,7 @@ GEM
     money (5.1.0)
       i18n (~> 0.6.0)
     mono_logger (1.1.0)
-    multi_json (1.8.4)
+    multi_json (1.9.2)
     multi_xml (0.5.3)
     multipart-post (1.2.0)
     mysql2 (0.3.12)
@@ -233,6 +235,7 @@ GEM
     net-ssh (2.6.3)
     net-ssh-gateway (1.1.0)
       net-ssh (>= 1.99.1)
+    nokogiri (1.5.10)
     nokogiri (1.5.10-x86-mingw32)
     oauth (0.4.7)
     oauth2 (0.8.0)
@@ -262,13 +265,20 @@ GEM
       multi_json (~> 1.3)
       omniauth-oauth (~> 1.0)
     open4 (1.3.0)
+    open_uri_redirections (0.1.4)
     orm_adapter (0.4.0)
     paperclip (3.5.0)
       activemodel (>= 3.0.0)
       activesupport (>= 3.0.0)
       cocaine (~> 0.5.0)
       mime-types
+    parsley-rails (1.2.4.0)
+      railties (>= 3.0.0)
     polyglot (0.3.3)
+    pry (0.9.12.2)
+      coderay (~> 1.0.5)
+      method_source (~> 0.8)
+      slop (~> 3.4)
     pry (0.9.12.2-x86-mingw32)
       coderay (~> 1.0.5)
       method_source (~> 0.8)
@@ -366,7 +376,7 @@ GEM
       thor
     ruby-hmac (0.4.0)
     ruby-openid (2.2.2)
-    rubyzip (1.1.0)
+    rubyzip (1.1.2)
     rvm-capistrano (1.4.1)
       capistrano (>= 2.0.0)
     sass (3.2.5)
@@ -374,8 +384,8 @@ GEM
       railties (~> 3.2.0)
       sass (>= 3.1.10)
       tilt (~> 1.3)
-    selenium-webdriver (2.39.0)
-      childprocess (>= 0.2.5)
+    selenium-webdriver (2.41.0)
+      childprocess (>= 0.5.0)
       multi_json (~> 1.0)
       rubyzip (~> 1.0)
       websocket (~> 1.0.4)
@@ -434,6 +444,7 @@ GEM
       activesupport (>= 2.3.4)
       chronic (>= 0.6.3)
     will_paginate (3.0.4)
+    win32console (1.3.2)
     win32console (1.3.2-x86-mingw32)
     xpath (0.1.4)
       nokogiri (~> 1.3)
@@ -445,7 +456,7 @@ DEPENDENCIES
   activemerchant
   area (~> 0.10.0)
   aws-sdk (~> 1.11.3)
-  balanced (~> 0.7.4)
+  balanced (~> 0.8.1)
   better_errors
   binding_of_caller
   bootstrap-datepicker-rails
@@ -491,7 +502,9 @@ DEPENDENCIES
   omniauth-openid
   omniauth-twitter
   open4
+  open_uri_redirections
   paperclip
+  parsley-rails
   quiet_assets
   rack-google_analytics
   rails (= 3.2.12)
@@ -507,7 +520,7 @@ DEPENDENCIES
   rubber
   rvm-capistrano
   sass-rails (= 3.2.5)
-  selenium-webdriver
+  selenium-webdriver (~> 2.41.0)
   shoulda-matchers
   spork (~> 1.0rc)
   stripe

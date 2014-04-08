@@ -7,7 +7,7 @@
     </center>
     <p><center><span class="listing-title"><%= @listing.title %></span></center></p>
     <div class="clear-all"></div>
-    <%= render :partial=>'shared/order_details', :locals=>{:order=>@order, :paid=>true} %>
+    <%= render :partial=>'shared/order_details', :locals=>{order: @order, paid: true, invoice: @transaction.get_invoice} %>
     <%= render :partial=>'shared/transaction_details', :locals=>{:transaction=>@transaction, :showAmt=>false} %>
   </div>
   <div class="clear-all"></div>

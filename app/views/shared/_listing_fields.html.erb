@@ -2,33 +2,36 @@
 <div class='row'>
   <div class='span2'>Add photo(s)</div>
   <div id='add-pixi-photo' class='span10'>
-    <output id='list'><%= image_tag 'photo-camera.png', class: 'sm-thumb' %></output>
+    <output id='list'><%= image_tag 'photo-camera.png', class: 'sm-thumb', id: 'pixi-camera-icon' %></output>
+    <div class='clear-all'></div>
+    <div class='width120 clear-left'>
     <%= render partial: 'shared/photo', locals: { f: f } %>
+    </div>
   </div>
 </div>
 <div class='row'>
   <div class='span7' style="<%= !@listing.pixi_post? ? 'display:none' : '' %>">
     <%= f.label :seller_id, 'Seller' %>
     <%= autocomplete_field_tag 'slr_name', @listing.slr_name, autocomplete_user_first_name_temp_listings_path,
-	        :update_elements => { :id => '#seller_id' }, :placeholder => 'Seller Name', id: 'slr_name' %> 
-    <%= f.hidden_field :seller_id, id: 'seller_id' %>
+	        :update_elements => { :id => '#seller_id' }, :placeholder => 'Seller Name', id: 'slr_name', required: @listing.pixi_post?  %> 
+    <%= f.hidden_field :seller_id, id: 'seller_id', required: @listing.pixi_post? %>
   </div>
 </div>
 <div class='row'>
   <div class='span7'>
-    <%= f.label :title %><%= f.text_field :title, :placeholder => 'Enter Pixi Title' %>
+    <%= f.label :title %><%= f.text_field :title, :placeholder => 'Enter Pixi Title', required: true %>
   </div>
   <div class='span4'>
     <%= f.label :category_id, 'Category' %>
-    <%= f.collection_select :category_id, Category.active, :id, :name_title, {:prompt => 'Select'}, {class: 'pixi-select'} %>
+    <%= f.collection_select :category_id, Category.active, :id, :name_title, {:prompt => 'Select'}, {class: 'pixi-select', required: true} %>
   </div>
 </div>
 <div class='row' id='input-form'>
   <div class='span7'>
     <%= f.label :site_id, 'Location' %>
     <%= autocomplete_field_tag 'site_name', @listing.site_name, autocomplete_site_name_temp_listings_path,
-	        :update_elements => { :id => '#site_id' }, :placeholder => 'Enter School, City or Neighborhood' %> 
-    <%= f.hidden_field :site_id, id: 'site_id' %>
+	        :update_elements => { :id => '#site_id' }, :placeholder => 'Enter School, City or Neighborhood', required: true %> 
+    <%= f.hidden_field :site_id, id: 'site_id', required: true %>
   </div>
   <div class='span2' id='price-fld' style="<%= @listing.job? ? 'display:none' : '' %>"><%= f.label :price, 'Price $' %>
     <%= f.number_field :price, step: 0.01, size: 10, value: num_display(f.object, "price"), class: 'width120', placeholder: 'Ex. 50.00' %>
@@ -42,11 +45,11 @@
 <div class='row' id='event-fields' style="<%= !@listing.event? ? 'display:none' : '' %>">
   <div class='span2'> 
     <%= f.label :event_start_date, 'Start Date', class: 'med-top' %>
-    <%= f.text_field :event_start_date, value: @listing.event_start_date, id: "start-date" %>
+    <%= f.text_field :event_start_date, value: @listing.event_start_date, size: 10, id: "start-date", required: @listing.event? %>
   </div>
   <div class='offset1 span2'>
     <%= f.label :event_end_date, 'End Date', class: 'med-top' %>
-    <%= f.text_field :event_end_date, :value => @listing.event_end_date, :size => 10, :id => "end-date" %>
+    <%= f.text_field :event_end_date, :value => @listing.event_end_date, size: 10, id: "end-date", required: @listing.event?  %>
   </div>
   <div class='offset1 span2'>
     <%= f.label :event_start_time, 'Start Time', class: 'med-top' %>
@@ -61,6 +64,6 @@
 </div>
 <div class='row'>
   <div class='span11'>
-    <%= f.label :description, class: 'med-top' %><%= f.text_area :description, :placeholder => 'Describe Your Pixi' %>
+    <%= f.label :description, class: 'med-top' %><%= f.text_area :description, :placeholder => 'Describe Your Pixi', required: true %>
   </div>
 </div>

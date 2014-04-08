@@ -11,6 +11,6 @@
       <%= f.submit 'Reply', class: "btn btn-medium btn-primary submit-btn", id: 'reply-btn' %>
     <% end %>
     <% unless sentFlg %>
-      <%= render partial: 'shared/pay_invoice', locals: { invoice: post.invoice } if post.due_invoice?(@user) %>
+      <%= render partial: 'shared/pay_invoice', locals: { invoice: post.invoice } if invoice_due?(post) %>
     <% end %>
     </div>

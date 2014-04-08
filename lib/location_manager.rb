@@ -23,4 +23,12 @@ module LocationManager
     @area = Geocoder.search(@ip)
     @loc_name = Contact.near([@area.first.latitude, @area.first.longitude]).first.city rescue nil
   end
+
+  # get home zip
+  def self.get_home_zip loc_name
+    city, state = loc_name.split(', ')[0], loc_name.split(', ')[1] rescue nil
+    state_code = State.find_by_state_name(state).code rescue nil
+    loc = [city, state_code].join(', ') if state_code
+    loc.to_zip.first rescue nil
+  end
 end

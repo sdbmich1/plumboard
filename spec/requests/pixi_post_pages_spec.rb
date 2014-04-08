@@ -230,7 +230,7 @@ feature "PixiPosts" do
       page.should have_selector('title', text: 'My PixiPosts')
       page.should have_content "PixiPost" 
       page.should have_content "Seller Name" 
-      page.should have_link "Active", href: seller_pixi_posts_path(status: 'active')
+      page.should have_link "Submitted", href: seller_pixi_posts_path(status: 'active')
       page.should have_link "Scheduled", href: seller_pixi_posts_path(status: 'scheduled')
       page.should have_link "Completed", href: seller_pixi_posts_path(status: 'completed')
       page.should have_content @pixi_post.id
@@ -259,7 +259,7 @@ feature "PixiPosts" do
       page.should_not have_link("#{@scheduled.id}", href: pixi_post_path(@scheduled))
       page.should_not have_link("#{@completed.id}", href: pixi_post_path(@completed))
       page.should have_selector('title', text: 'My PixiPosts')
-      page.should have_link "Active"
+      page.should have_link "Submitted"
       page.should have_link "Scheduled"
       page.should have_link "Completed"
       page.should have_content "My PixiPosts"
@@ -324,7 +324,7 @@ feature "PixiPosts" do
     end
 
     it 'show content' do
-      page.should have_link "Active", href: seller_pixi_posts_path(status: 'active')
+      page.should have_link "Submitted", href: seller_pixi_posts_path(status: 'active')
       page.should have_link "Scheduled", href: seller_pixi_posts_path(status: 'scheduled')
       page.should have_link "Completed", href: seller_pixi_posts_path(status: 'completed')
       page.should have_content "My PixiPosts"
@@ -366,10 +366,10 @@ feature "PixiPosts" do
 
     it "opens pixipost edit page" do
       page.should have_selector('title', text: 'Edit PixiPost') 
-      page.should_not have_link "Active", href: seller_pixi_posts_path(status: 'active')
+      page.should_not have_link "Submitted", href: seller_pixi_posts_path(status: 'active')
       page.should_not have_link "Scheduled", href: seller_pixi_posts_path(status: 'scheduled')
       page.should_not have_link "Completed", href: seller_pixi_posts_path(status: 'completed')
-      page.should have_link "Active", href: pixi_posts_path(status: 'active')
+      page.should have_link "Submitted", href: pixi_posts_path(status: 'active')
       page.should have_link "Scheduled", href: pixi_posts_path(status: 'scheduled')
       page.should have_link "Completed", href: pixi_posts_path(status: 'completed')
       page.should have_content "Request Information"

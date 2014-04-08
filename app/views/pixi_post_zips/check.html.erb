@@ -9,13 +9,18 @@
         <span class='sm-top pg-title-black'><%= PIXI_POST_CAPTION %></span><br />
       </div>
       <div class='neg-top pull-right sm-bot'>
-        <%= image_tag 'rsz_ppost_words_20140314.png', class: 'pixi-logo' %>
+          <%= image_tag 'rsz_ppost_words_20140314.png', class: 'pixi-logo' %>
       </div>
     </div>
   </div>
 <% end %>
 <%= content_for :content do %>
   <div class='container'>
+    <div class='row'>
+      <div class='med-top mbot span6'>
+          <span class='pxp-title-black'><%= PIXI_POST_TAG_LINE.html_safe %></span>
+      </div>
+    </div>
     <div class='row v-align'>
       <div class='span7'>
         <%= image_tag 'rsz_ppost_howitworks_share.png', class: 'ppost_img' %>

@@ -1,0 +1,18 @@
+<div class='row'>
+<div class='offset4'>
+  <table>
+    <tr><td class='span3'>Name:</td>
+      <td><%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: user} %><%= user.name %></td>
+    </tr>
+    <tr><td class='span3'>Email:</td><td><%= user.email %></td></tr>
+    <tr><td class='span3'>Gender:</td><td><%= user.gender %></td></tr>
+    <tr><td class='span3'>Birth Date: </td><td><%= user.birth_dt %></td></tr>
+    <tr><td class='span3'>Home Zip: </td><td><%= user.home_zip %></td></tr>
+    <tr><td class='span3'>Type: </td><td><%= user.type_descr %></td></tr>
+    <tr><td class='span3'>Facebook Login: </td><td><%= toggle_bool(user.fb_user) %></td></tr>
+    <tr><td class='span3'>Enrolled: </td><td><%= user.nice_date(user.created_at) %></td></tr>
+    <tr><td class='span3'>Last Sign In: </td><td><%= user.nice_date(user.last_sign_in_at) %></td></tr>
+    <tr><td class='span3'>Address on File: </td><td><%= toggle_bool(user.has_address?) %></td></tr>
+  </table>
+  </div>
+</div>

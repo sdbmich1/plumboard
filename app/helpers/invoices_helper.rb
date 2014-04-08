@@ -47,23 +47,25 @@ module InvoicesHelper
   end
 
   # get invoice fee based on user
-  def get_invoice_fee
-    @invoice.owner?(@user) ? @invoice.get_fee(true) : @invoice.get_fee
-  end
-
-  # get conv fee message based on user
-  def get_conv_fee_msg
-    @invoice.owner?(@user) ? @invoice.listing.pixi_post? ? PXPOST_FEE_MSG : SELLER_FEE_MSG : CONV_FEE_MSG
+  def get_invoice_fee inv
+    inv.owner?(@user) ? inv.get_fee(true) : inv.get_fee rescue 0
   end
 
   # get invoice total based on user
   def get_invoice_total inv
-    inv.owner?(@user) ? inv.amount : inv.amount + inv.get_fee
+    inv.owner?(@user) ? inv.amount : inv.amount + inv.get_fee rescue 0
+  end
+
+  # get conv fee message based on user
+  def get_conv_fee_msg inv
+    if inv
+      inv.owner?(@user) ? inv.listing.pixi_post? ? PXPOST_FEE_MSG : SELLER_FEE_MSG : CONV_FEE_MSG
+    end
   end
 
   # get conv fee title
-  def get_conv_title
-    str = @invoice.owner?(@user) && action_name == 'show' ? 'Less ' : ''
+  def get_conv_title inv
+    str = inv.owner?(@user) && action_name == 'show' ? 'Less ' : '' rescue ''
     str + 'Convenience Fee'
   end
 end

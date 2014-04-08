@@ -6,6 +6,7 @@ class UserMailer < ActionMailer::Base
   # send receipts to customers
   def send_transaction_receipt transaction
     @transaction = transaction
+    @invoice = transaction.get_invoice
 
     # set logo
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
@@ -134,6 +135,17 @@ class UserMailer < ActionMailer::Base
 
     # set message details
     mail(:to => "#{user.email}", :subject => "Welcome to Pixiboard Community!")
+  end
+
+  # send submit response to pxb
+  def send_submit_notice listing 
+    @listing = listing
+
+    # set logo
+    attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
+    # set message details
+    mail(:to => "support@pixiboard.com", :subject => "Pixi Submitted: #{@listing.nice_title}")
   end
 
   # set logo image

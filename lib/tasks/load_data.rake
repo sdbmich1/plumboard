@@ -24,6 +24,11 @@ namespace :db do
   task :set_pixi_buyers => :environment do
     update_pixi_buyers
   end
+
+  # used to load user roles
+  task :load_roles, [:role] => [:environment] do |t, args|
+    Role.create!(:name => args.role)
+  end
 end
 
 def set_keys

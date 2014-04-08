@@ -1,8 +1,8 @@
 module PostsHelper
 
-  # add new post for user
-  def setup_post(usr)
-    usr.posts.build
+  # add new post for listing
+  def setup_post(listing)
+    listing ? listing.posts.build : Post.new
   end
 
   # toggle msg sender or recipient based on send flg
@@ -13,6 +13,11 @@ module PostsHelper
   # set read / unread icon
   def set_msg_icon post
     post.unread?(@user) ? 'pixi_blank16.png' : 'pixi_orange16.png'
+  end
+
+  # set read / unread icon
+  def invoice_due? post
+    post.due_invoice?(@user) && post.inv_msg? 
   end
 
   # set mobile tab themes

@@ -67,6 +67,7 @@ form#new_post {margin-bottom: -0px!important;}
 
 .clear-all { clear:both }
 .clear-right { clear:right }
+.clear-left { clear:left }
 .price { text-align: right }
 .order-total { font-weight: bolder; font-size: medium }
 .v-align { vertical-align: middle }
@@ -75,7 +76,7 @@ form#new_post {margin-bottom: -0px!important;}
 .right-form {float: right;}
 
 .mleft5 {
-  margin-left: 2px!important;
+  margin-left: 5px!important;
 }
 
 .mleft10 {
@@ -112,14 +113,20 @@ form#new_post {margin-bottom: -0px!important;}
 .div-border-blue {  
   border: 1px solid $pixiBlue; }
 
-.sm-bot { margin-bottom: 5px!important }  
+.mright { margin-right: 10px!important }
 .sm-top { margin-top: 5px!important }  
+.big-neg-top { margin-top: -25px!important }  
+.px-neg-top { margin-top: -22px!important }  
+.med-neg-top { margin-top: -15px!important }  
 .neg-top { margin-top: -10px!important }  
 .ng-top { margin-top: -5px!important }  
-.mright { margin-right: 10px!important }
 .med-top {margin-top: 10px!important;}
-.med-bot { margin-bottom: 10px!important }  
 .no-mtop {margin-top: 0!important}
+
+.sm-bot { margin-bottom: 5px!important }  
+.med-bot { margin-bottom: 10px!important }  
+.neg-bot { margin-bottom: -10px!important }  
+.ng-bot { margin-bottom: -5px!important }  
 
 .no-btop {
   border-top: none; 
@@ -200,3 +207,35 @@ a.pixi-cat-link {
 hr {
   border-top: 1px solid $pixiBlue;
 }
+
+a.clear-link {
+  outline: 0;
+}
+
+.cnt {
+  height: 20px;
+  width: auto;
+  float: right;
+  background-color: #ccc;
+  position: relative;
+  border: 1px solid #333;
+  &:before, &:after {
+    border: solid transparent;
+    content: ' ';
+    height: 0;
+    right: 100%;
+    position: absolute;
+    width: 0;
+  }
+  &:after {
+    border-width: 9px;
+    border-right-color: #ccc;
+    top: 5px;
+  }
+  &:before {
+    border-width: 11px;
+    border-right-color: #333;
+    top: 3px;
+  }
+}
+

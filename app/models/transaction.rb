@@ -155,6 +155,11 @@ class Transaction < ActiveRecord::Base
   end
 
   # get invoice seller
+  def seller
+    get_invoice.seller rescue nil
+  end
+
+  # get invoice seller name
   def seller_name
     get_invoice.seller_name rescue nil
   end
@@ -186,9 +191,7 @@ class Transaction < ActiveRecord::Base
       result = Payment::charge_card(token, amt, description, self) if amt > 0.0
 
       # check for errors
-      if self.errors.any?
-        return false 
-      end
+      return false if self.errors.any?
 
       # check result - update confirmation # if nil (free transactions) use timestamp instead
       if result

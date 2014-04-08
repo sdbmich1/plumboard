@@ -86,7 +86,7 @@ describe BankAccount do
 
   describe 'save_account' do
     before do
-      @bank_acct = mock('Balanced::BankAccount', uri: 'abcdef', account_number: 'xxx0001', bank_name: 'BofA')
+      @bank_acct = mock('Balanced::BankAccount', uri: '/v1/bank_accounts/BA1KZ46FcuH6dSzWCkSqViec', account_number: 'xxx0001', bank_name: 'BofA')
       @bank_acct.stub_chain(:new, :save).and_return(true)
       @bank_acct.stub_chain(:uri, :account_number, :bank_name).and_return(@bank_acct)
       Balanced::BankAccount.stub_chain(:new, :save).and_return(@bank_acct)
@@ -106,10 +106,10 @@ describe BankAccount do
 
   describe 'credit_account' do
     before do
-      @bank_acct = mock('Balanced::BankAccount', amount: '50000') 
+      @bank_acct = mock('Balanced::BankAccount', amount: '50000', appears_on_statement_as: 'pixiboard.com') 
       Balanced::BankAccount.stub!(:find).with(@account.token).and_return(@bank_acct)
-      Balanced::BankAccount.stub!(:credit).with(:amount=>50000).and_return(@bank_acct)
-      @bank_acct.stub!(:credit).with(:amount=>50000).and_return(true)
+      Balanced::BankAccount.stub!(:credit).with(:amount=>50000, :appears_on_statement_as=>'pixiboard.com').and_return(@bank_acct)
+      @bank_acct.stub!(:credit).with(:amount=>50000, :appears_on_statement_as=>'pixiboard.com').and_return(true)
     end
 
     it 'should credit account' do
@@ -125,18 +125,32 @@ describe BankAccount do
     before do
       @bank_acct = mock('Balanced::BankAccount')
       Balanced::BankAccount.stub!(:find).with(@account.token).and_return(@bank_acct)
-      Balanced::BankAccount.stub!(:destroy).and_return(true)
-      @bank_acct.stub!(:destroy).and_return(true)
+      Balanced::BankAccount.stub!(:unstore).and_return(true)
+      @bank_acct.stub!(:unstore).and_return(true)
     end
 
     it 'should delete account' do
       account = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account
-      account.delete_account.should be_true
+      account.errors.any?.should_not be_true
+      # account.delete_account.should be_true
     end
 
     it 'should not delete account' do
       @account.token = nil
       @account.delete_account.should_not be_true
+    end
+  end
+
+  describe "owner" do 
+    it { expect(@account.owner_name).to eq(@user.name) } 
+    it { expect(@account.owner_first_name).to eq(@user.first_name) } 
+    it { expect(@account.email).to eq(@user.email) } 
+
+    it "should not find correct owner name" do 
+      @account.user_id = 100 
+      @account.owner_first_name.should be_nil 
+      @account.owner_name.should be_nil 
+      @account.email.should be_nil 
     end
   end
 end

@@ -15,6 +15,7 @@ describe Post do
   it { should respond_to(:user_id) }
   it { should respond_to(:pixi_id) }
   it { should respond_to(:recipient_id) }
+  it { should respond_to(:msg_type) }
   it { should respond_to(:user) }
   it { should respond_to(:listing) }
   it { should respond_to(:recipient) }
@@ -220,6 +221,15 @@ describe Post do
     it "does not return pixi title" do 
       @post.pixi_id = 100 
       @post.pixi_title.should be_nil 
+    end
+  end
+
+  describe "inv_msg?" do 
+    it { expect(@post.inv_msg?).to eq(false) } 
+
+    it "returns true" do 
+      @post.msg_type = 'inv' 
+      expect(@post.inv_msg?).to eq(true) 
     end
   end
 

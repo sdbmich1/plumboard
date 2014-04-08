@@ -4,5 +4,8 @@
         <%= form.file_field :photo, { id: "photo", multiple: true, class: 'file' } %>
       </label>
     <% end %>
+    <div class='px-neg-top right-form'>
+      <%= render partial: 'shared/tooltip', locals: { msg: 'Hold Shift or CTRL key to select multiple images.' } %>
+    </div>
   </div>
 

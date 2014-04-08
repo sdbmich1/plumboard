@@ -4,23 +4,21 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
 </head>
   <body> 	
-    	<%= render :partial=>'shared/mail_header' %><br />
+    	<%= render :partial=>'shared/mail_header' %><br /><br />
 	Hi <%= @user.first_name %>,<br /><br />
     	<h2>Welcome to Pixiboard!</h2>
 
-    	<span style="height:20px;">
+    	<span style="height:10px;">
   	  Thanks for joining the Pixiboard community! Before you can start viewing, posting and managing pixis, 
 	  you need to confirm your email address. <br /><br /> 
 	  Please confirm your account email through the link below:
 	</span><br /><br />
 
-	<center style='width: 240px;'>
-	<%= link_to 'Confirm Your Account', confirmation_url(@user, :confirmation_token => @user.confirmation_token) %> 
-	</center><br />
+	<%= link_to 'Confirm Your Account', confirmation_url(@user, :confirmation_token => @user.confirmation_token) %><br />
 
-	<span style="margin-top:20px;">Happy Pixing!</span><br /><br />
+	<span style="margin-top:20px;">Happy Pixing!</span><br />
 	<span>The Pixiboard Team</span><br /><br /> 	
-    	<%= render :partial=>'shared/mail_footer' %>
+	<center><%= render :partial=>'shared/mail_footer' %></center>
   </body>
 </html>
 

@@ -18,6 +18,63 @@ body {
 @import "shared/form";
 @import "shared/image";
 
+/* responsive mobile fix */
+@media screen and (max-width: 320px) { 
+  #wrap {
+    margin-top: 0px!important;
+  }
+
+  .hero-unit {  
+    h1 {font-size: 2em;}   
+  } 
+}
+
+@media screen and (max-width: 480px)  
+{
+  #wrap {
+    margin-top: 0px!important;
+  }
+
+  nav.navbar
+    {margin: auto;} 
+}
+
+/* responsive footer fix by Aalaap Ghag */
+@media screen and (max-width: 960px) {
+  body {
+    padding-top: 0px!important;
+    padding-right: 0px;
+    padding-left: 0px;
+  }
+
+  #wrap {
+    margin-top: 0px!important;
+  }
+
+  footer, .wrapper {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+/* responsive footer fix by Aalaap Ghag */
+@media screen and (max-width: 767px) {
+  body {
+    padding-top: 0px!important;
+    padding-right: 0px;
+    padding-left: 0px;
+  }
+
+  #wrap {
+    margin-top: 0px!important;
+  }
+
+  footer, .wrapper {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
 *{
   margin:0;
   padding:0;
@@ -150,19 +207,6 @@ footer {
         margin-left: 10px;
       }
    }
-}
-
-/* responsive footer fix by Aalaap Ghag */
-@media (max-width: 767px) {
-  body {
-    padding-right: 0px;
-    padding-left: 0px;
-  }
-
-  footer, .wrapper {
-    padding-left: 20px;
-    padding-right: 20px;
-  }
 }
 
 @mixin box_sizing {
@@ -693,9 +737,9 @@ a#home-link, a.home-link {
 }
 
 a#browse-link {
+  color: black;
   &:hover, &:visited, &:link {
-    color: black;
-    background-color: transparent;
+    background-color: none;
     text-decoration: underline;
   }
 }
@@ -723,5 +767,11 @@ form .clearfix:before, form .clearfix:after {
     font-family: "Trebuchet MS";
     color: #000000;
     font-size: 36px;
+    font-weight: bold;
+  }
+
+.pxp-title-black {
+    color: #000000;
+    font-size: 14px;
     font-weight: bold;
   }

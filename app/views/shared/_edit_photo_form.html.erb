@@ -7,7 +7,8 @@
 	<div id="<%= pic.id %>" class='inv-pic'><%= image_tag pic.photo.url(:small) %></div>
 	<% if remove_photo %>
 	  <div class='remove-btn'>
-	  <%= link_to picture_path(pic, pixi_id: model.pixi_id), method: :delete, confirm: photo_msg, remote: true, class: 'btn btn-mini btn-primary sm-top mbot' do %>
+	  <%= link_to picture_path(pic, pixi_id: model.pixi_id), method: :delete, confirm: photo_msg, remote: true, class: 
+	    'btn btn-mini btn-primary sm-top mbot' do %>
 	   Remove 
 	  <% end %>
 	  </div>
