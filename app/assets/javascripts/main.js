@@ -787,31 +787,3 @@ $(document).on("change", "#cc_card_year", function() {
   $('#exp_yr').val(card_yr);
 });
 
-//jQuery.event.add(window, "load", resizeFrame);
-//jQuery.event.add(window, "resize", resizeFrame);
-
-// used to resize window
-function resizeFrame() {
-  if(navigator.userAgent.match(/msie/i)) {
-    console.log('height = ' + $(window).height());
-    console.log('width = ' + $(window).width());
-    if($(window).width() < 1024) {
-      $(".bar-top").css('margin-top', '0px'); 
-      $("#wrap").css('margin-top', '0px!important'); 
-      $(".navbar").css('margin-top', '-20px'); 
-    } else {
-      console.log('ms lrg width = ' + $(window).width());
-      $(".bar-top").css('margin-top', '40px!important'); 
-      $("#wrap").css('margin-top', '20px!important'); 
-      $(".navbar").css('margin-top', '20px!important'); 
-      $("#nav-home-menu").css('margin-top', '20px!important'); 
-    }
-  }
-  $(window).trigger('resize');
-}
-
-function resizeTop() {
-  $(".bar-top").css('margin-top', '0px'); 
-  $("#wrap").css('margin-top', '0px!important'); 
-  $(".navbar").css('margin-top', '-20px'); 
-}

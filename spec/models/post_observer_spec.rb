@@ -7,10 +7,18 @@ describe PostObserver do
     let(:listing) { FactoryGirl.create :listing, seller_id: user.id }
     let(:post) { listing.posts.build(content: "Lorem ipsum", user_id: user.id, recipient_id: recipient.id) }
 
-    it 'should deliver the receipt' do
+    it 'delivers the receipt' do
       @user_mailer = mock(UserMailer)
       UserMailer.stub(:delay).and_return(UserMailer)
       UserMailer.should_receive(:send_notice).with(post)
+      post.save!
+    end
+
+    it 'does not deliver the receipt' do
+      post.msg_type = 'approve'
+      @user_mailer = mock(UserMailer)
+      UserMailer.stub(:delay).and_return(UserMailer)
+      UserMailer.should_not_receive(:send_notice).with(post)
       post.save!
     end
 

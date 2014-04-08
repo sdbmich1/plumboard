@@ -23,6 +23,7 @@
 //= require bootstrap-datepicker.js
 //= require datepicker.js
 //= require main.js
+//= require resize.js
 //= require readfile.js
 //= require acomplete.js
 //= require map.js

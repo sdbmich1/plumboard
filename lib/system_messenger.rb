@@ -10,7 +10,7 @@ module SystemMessenger
       end
 
       # send message
-      sender.posts.create(pixi_id: listing.pixi_id, recipient_id: usr.id, content: msg)
+      sender.posts.create(pixi_id: listing.pixi_id, recipient_id: usr.id, content: msg, msg_type: msg_type)
     end
   end
 end

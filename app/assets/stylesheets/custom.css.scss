@@ -27,6 +27,11 @@ body {
   .hero-unit {  
     h1 {font-size: 2em;}   
   } 
+
+  #footer, .wrapper {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
 }
 
 @media screen and (max-width: 480px)  
@@ -37,6 +42,11 @@ body {
 
   nav.navbar
     {margin: auto;} 
+
+  #footer, .wrapper {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
 }
 
 /* responsive footer fix by Aalaap Ghag */
@@ -51,7 +61,7 @@ body {
     margin-top: 0px!important;
   }
 
-  footer, .wrapper {
+  #footer, .wrapper {
     padding-left: 20px;
     padding-right: 20px;
   }
@@ -69,7 +79,7 @@ body {
     margin-top: 0px!important;
   }
 
-  footer, .wrapper {
+  #footer, .wrapper {
     padding-left: 20px;
     padding-right: 20px;
   }
