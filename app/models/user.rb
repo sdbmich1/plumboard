@@ -1,7 +1,6 @@
 require "open-uri"
-require 'open_uri_redirections'
 class User < ActiveRecord::Base
-  include ThinkingSphinx::Scopes, Area, LocationManager
+  include ThinkingSphinx::Scopes, Area
   extend Rolify
 
   rolify
@@ -15,34 +14,26 @@ class User < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :first_name, :last_name, :email, :password, :password_confirmation, :remember_me, :birth_date, :gender, :pictures_attributes,
-    :fb_user, :provider, :uid, :contacts_attributes, :status, :acct_token, :preferences_attributes, :user_type_code
+    :fb_user, :provider, :uid, :contacts_attributes, :status, :card_token, :preferences_attributes
 
   before_save :ensure_authentication_token unless Rails.env.test?
 
-  # define pixi relationships
+  # define relationships
   has_many :listings, foreign_key: :seller_id, dependent: :destroy
   has_many :active_listings, foreign_key: :seller_id, class_name: 'Listing', :conditions => "status = 'active' AND end_date >= curdate()"
   has_many :purchased_listings, foreign_key: :buyer_id, class_name: 'Listing', conditions: { :status => 'sold' }
   has_many :temp_listings, foreign_key: :seller_id, dependent: :destroy
   has_many :saved_listings, dependent: :destroy
-  has_many :pixi_likes, dependent: :destroy
-  has_many :pixi_wants, dependent: :destroy
 
-  # define site relationships
   has_many :site_users, :dependent => :destroy
   has_many :sites, :through => :site_users
 
-  # define user relationships
-  belongs_to :user_type, primary_key: 'code', foreign_key: 'user_type_code'
   has_many :user_interests, :dependent => :destroy
   has_many :interests, :through => :user_interests
-  has_many :user_pixi_points, dependent: :destroy
 
-  # define message relationships
   has_many :posts, dependent: :destroy
   has_many :incoming_posts, :foreign_key => "recipient_id", :class_name => "Post", :dependent => :destroy
 
-  # define invoice relationships
   has_many :invoices, foreign_key: :seller_id, dependent: :destroy
   has_many :unpaid_invoices, foreign_key: :seller_id, class_name: 'Invoice', conditions: { :status => 'unpaid' }
   has_many :paid_invoices, foreign_key: :seller_id, class_name: 'Invoice', conditions: { :status => 'paid' }
@@ -52,12 +43,15 @@ class User < ActiveRecord::Base
   has_many :bank_accounts, dependent: :destroy
   has_many :card_accounts, dependent: :destroy
   has_many :transactions, dependent: :destroy
-
   has_many :comments, dependent: :destroy
   has_many :inquiries, dependent: :destroy
+  has_many :pixi_likes, dependent: :destroy
+  has_many :pixi_wants, dependent: :destroy
 
   has_many :ratings, dependent: :destroy
   has_many :seller_ratings, :foreign_key => "seller_id", :class_name => "Rating"
+
+  has_many :user_pixi_points, dependent: :destroy
 
   has_many :pixi_posts, dependent: :destroy
   has_many :active_pixi_posts, class_name: 'PixiPost', :conditions => { :status => 'active' }
@@ -211,12 +205,11 @@ class User < ActiveRecord::Base
 
     # find or create user
     unless user = User.where(:email => data.email).first
-      user = User.new(:first_name => data.first_name, :last_name => data.last_name, 
+      user = User.new(:first_name => data.first_nahjme, :last_name => data.last_name, 
 	      :birth_date => convert_date(data.birthday), :provider => access_token.provider, :uid => access_token.uid, :email => data.email) 
       user.password = user.password_confirmation = Devise.friendly_token[0,20]
       user.fb_user = true
       user.gender = data.gender.capitalize rescue nil
-      user.home_zip = LocationManager::get_home_zip(data.location) rescue nil
 
       #add photo 
       picture_from_url user, access_token
@@ -228,8 +221,7 @@ class User < ActiveRecord::Base
   # add photo from url
   def self.picture_from_url usr, access_token
     pic = usr.pictures.build
-    avatar_url = process_uri(access_token.info.image.sub("square","large"))
-    pic.photo = URI.parse(avatar_url) 
+    pic.photo = URI.parse(access_token.info.image.sub("square","large")) rescue nil
     pic
   end
 
@@ -307,39 +299,10 @@ class User < ActiveRecord::Base
     sign_in_count == 1 rescue nil
   end
 
-  # format birth date
-  def birth_dt
-    birth_date.strftime('%m/%d/%Y') rescue nil
-  end
-
-  # convert date/time display
-  def nice_date(tm)
-    tm.utc.getlocal.strftime('%m/%d/%Y %l:%M %p') rescue nil
-  end
-
-  # return users by type
-  def self.get_by_type val, pg=1
-    val.blank? ? all : where(:user_type_code => val)
-  end
-
-  # handle https uri requests
-  def self.process_uri uri
-    unless uri.blank?
-      open(uri, :allow_redirections => :safe) do |r|
-        r.base_uri.to_s
-      end
-    end
-  end
-
-  # display user type
-  def type_descr
-    user_type.description rescue nil
-  end
-
   # set json string
   def as_json(options={})
     super(only: [:id, :first_name, :last_name, :email, :birth_date, :gender, :current_sign_in_ip, :fb_user], 
-          methods: [:name, :photo, :unpaid_invoice_count, :pixi_count, :unread_count, :birth_dt, :home_zip], 
+          methods: [:name, :photo, :unpaid_invoice_count, :pixi_count, :unread_count, :birth_dt], 
           include: {active_listings: {}, unpaid_received_invoices: {}, bank_accounts: {}, contacts: {}, card_accounts: {}})
   end
 
