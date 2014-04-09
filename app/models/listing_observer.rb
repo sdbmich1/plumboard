@@ -19,6 +19,11 @@ class ListingObserver < ActiveRecord::Observer
 
   def after_update model
     delete_temp_pixi model
+
+    # mark saved pixis if sold or closed
+    if model.sold? || model.closed? || model.inactive?
+      SavedListing.update_status model.pixi_id, model.status
+    end
   end
 
   # remove temp pixi

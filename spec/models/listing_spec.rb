@@ -436,6 +436,28 @@ describe Listing do
     end
   end
 
+  describe 'closed?' do
+    it 'should return true' do
+      @listing.status = 'closed'
+      @listing.closed?.should be_true
+    end
+
+    it 'should not return true' do
+      @listing.closed?.should_not be_true
+    end
+  end
+
+  describe 'inactive?' do
+    it 'should return true' do
+      @listing.status = 'inactive'
+      @listing.inactive?.should be_true
+    end
+
+    it 'should not return true' do
+      @listing.inactive?.should_not be_true
+    end
+  end
+
   describe 'mark_as_sold' do
     it 'should return true' do
       @listing.mark_as_sold.should be_true
@@ -555,21 +577,26 @@ describe Listing do
     before(:each) do
       @usr = FactoryGirl.create :pixi_user
       @saved_listing = @user.saved_listings.create FactoryGirl.attributes_for :saved_listing, pixi_id: @listing.pixi_id
+      @usr.saved_listings.create FactoryGirl.attributes_for :saved_listing, pixi_id: @listing.pixi_id, status: 'sold'
     end
 
-    it { Listing.saved_list(@usr).should_not include @listing } 
-    it { Listing.saved_list(@user).should_not be_empty }
-    it { expect(@listing.saved_count).to eq(1) }
-    it { expect(@listing.is_saved?).to eq(true) }
+    it "checks saved list" do
+      Listing.saved_list(@usr).should_not include @listing  
+      Listing.saved_list(@user).should_not be_empty 
+    end
+
+    it "is saved" do
+      expect(@listing.saved_count).not_to eq(0) 
+      expect(@listing.is_saved?).to eq(true) 
+      expect(@listing.user_saved?(@user)).not_to be_nil 
+    end
 
     it "is not saved" do
       listing = create(:listing, seller_id: @user.id, title: 'Hair brush') 
       expect(listing.saved_count).to eq(0)
       expect(listing.is_saved?).to eq(false)
+      expect(@listing.user_saved?(@usr)).not_to eq(true) 
     end
-
-    it { expect(@listing.user_saved?(@user)).not_to be_nil }
-    it { expect(@listing.user_saved?(@usr)).not_to eq(true) }
   end
 
   describe "wanted" do 

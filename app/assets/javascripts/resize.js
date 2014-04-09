@@ -11,11 +11,16 @@ function resizeFrame() {
       $(".bar-top").addClass('no-mtop');
       $(".navbar").addClass('mneg-top');
       $(".navbar .navbar-fixed-top").addClass('affix');
+
+      if($('#pixi-hdr').length > 0) {
+        $(".navbar").addClass('mneg-bot');
+      }
     } else {
       //console.log('ms lrg width = ' + $(window).width());
       $("body").removeClass('no-pad');
       $(".bar-top").removeClass('no-mtop');
       $(".navbar").removeClass('mneg-top');
+      $(".navbar").removeClass('mneg-bot');
       $(".navbar .navbar-fixed-top").removeClass('affix');
     }
 }
