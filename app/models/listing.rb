@@ -88,7 +88,7 @@ class Listing < ListingParent
 
   # get saved list by user
   def self.saved_list usr, pg=1
-    active.joins(:saved_listings).where("saved_listings.user_id = ?", usr.id).paginate page: pg
+    active.joins(:saved_listings).where("saved_listings.status = 'active' AND saved_listings.user_id = ?", usr.id).paginate page: pg
   end
 
   # get wanted list by user

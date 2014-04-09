@@ -54,9 +54,45 @@ describe ListingObserver do
   end
 
   describe 'after_update' do
+    let(:category) { create :category }
+    let(:listing) { create(:listing, seller_id: user.id) }
+    
     it 'deletes temp pixi' do
-      listing = FactoryGirl.create(:listing, seller_id: user.id)
+      listing.status = 'closed'
+      listing.save
       delete_pixi listing
+    end
+
+    it 'marks saved pixis as sold' do
+      expect {
+        create(:saved_listing, user_id: user.id, pixi_id: listing.pixi_id); sleep 1
+        listing.status = 'sold'
+        listing.save; sleep 2
+      }.to change{ SavedListing.where(:status => 'sold').count }.by(1)
+    end
+
+    it 'marks saved pixis as closed' do
+      expect {
+        create(:saved_listing, user_id: user.id, pixi_id: listing.pixi_id); sleep 1
+        listing.status = 'closed'
+        listing.save; sleep 2
+      }.to change{ SavedListing.where(:status => 'closed').count }.by(1)
+    end
+
+    it 'marks saved pixis as inactive' do
+      expect {
+        create(:saved_listing, user_id: user.id, pixi_id: listing.pixi_id); sleep 1
+        listing.status = 'inactive'
+        listing.save; sleep 2
+      }.to change{ SavedListing.where(:status => 'inactive').count }.by(1)
+    end
+
+    it 'marks saved pixis as unclosed' do
+      expect {
+        create(:saved_listing, user_id: user.id, pixi_id: listing.pixi_id); sleep 1
+        listing.status = 'unclosed'
+        listing.save; sleep 2
+      }.to change{ SavedListing.where(:status => 'unclosed').count }.by(0)
     end
   end
 end

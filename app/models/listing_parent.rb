@@ -143,6 +143,16 @@ class ListingParent < ActiveRecord::Base
     status == 'sold'
   end
 
+  # verify if listing is inactive
+  def inactive?
+    status == 'inactive'
+  end
+
+  # verify if listing is closed
+  def closed?
+    status == 'closed'
+  end
+
   # verify if alias is used
   def alias?
     show_alias_flg == 'yes'

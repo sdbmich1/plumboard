@@ -8,10 +8,14 @@ class ApplicationController < ActionController::Base
 
   # check if mobile device based on user_agent 
   def mobile_device?
-    if session[:mobile_param]  
-      session[:mobile_param] == "1"  
-    else  
-      request.user_agent =~ /iPhone;|Android|BlackBerry|Symbian|Windows Phone/  
+    if isDev?
+      if session[:mobile_param]  
+        session[:mobile_param] == "1"  
+      else  
+        request.user_agent =~ /iPhone;|Android|BlackBerry|Symbian|Windows Phone/  
+      end  
+    else
+      false
     end  
   end
 

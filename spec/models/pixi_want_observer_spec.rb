@@ -14,6 +14,13 @@ describe PixiWantObserver do
       pixi_want.save!
     end
 
+    it 'marks saved pixis as wanted' do
+      expect {
+        create(:saved_listing, user_id: buyer.id, pixi_id: listing.pixi_id); sleep 2
+        create(:pixi_want, pixi_id: listing.pixi_id, user_id: buyer.id); sleep 2
+      }.to change{ SavedListing.where(:status => 'wanted').count }.by(1)
+    end
+
     it 'should add pixi points' do
       pixi_want.save!
       buyer.user_pixi_points.find_by_code('cs').code.should == 'cs'
