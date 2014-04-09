@@ -114,7 +114,7 @@ module ListingsHelper
   end
 
   def get_photo
-    'http://' + @listing.photo_url
+    @listing.photo_url
   end
 
   # set string to share content on pinterest
