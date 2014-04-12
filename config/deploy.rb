@@ -16,6 +16,7 @@ require 'delayed/recipes'
 load "deploy/assets"
 
 set :rails_env, Rubber.env
+set :rails_root, '/var/www/html/pixiboard/staging/plumboard'
 default_run_options[:pty] = true
 set :ssh_options, {:forward_agent => true}
 # ssh_options[:keys] = %w(~/.ec2/pixi-prod01.pem)
@@ -93,18 +94,21 @@ namespace :deploy do
   desc "Enable rubber scripts"
   task :enable_rubber do
     puts "\n\n=== Enabling rubber scripts! ===\n\n"
-    run "chmod +x #{current_path}/script/rubber && chmod +x #{release_path}/script/rubber"
+    run "chmod +x #{release_path}/script/rubber"
+  end
+
+  task :enable_rubber_current do
+    puts "\n\n=== Enabling rubber current scripts! ===\n\n"
+    run "chmod +x #{current_path}/script/rubber "
+    run "ln -nfs #{shared_path}/config/rubber/common/database.yml #{release_path}/config/rubber/common/database.yml"
+    run "touch #{current_path}/log/production.log"
   end
 
   desc "Symlink shared resources on each release"
   task :symlink_shared, :roles => :app do
-    run "ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml"
-    run "ln -nfs #{shared_path}/config/pixi_keys.yml #{release_path}/config/pixi_keys.yml"    
-    run "ln -nfs #{shared_path}/config/api_keys.yml #{release_path}/config/api_keys.yml"    
-    run "ln -nfs #{shared_path}/config/aws.yml #{release_path}/config/aws.yml"    
-    run "ln -nfs #{shared_path}/config/gateway.yml #{release_path}/config/gateway.yml"    
-    run "ln -nfs #{shared_path}/config/sendmail.yml #{release_path}/config/sendmail.yml"    
-    run "ln -nfs #{shared_path}/config/thinking_sphinx.yml #{release_path}/config/thinking_sphinx.yml"    
+    run "ln -nfs #{shared_path}/config/rubber/common/database.yml #{release_path}/config/rubber/common/database.yml"
+    run "ln -nfs #{shared_path}/assets/manifest.yml #{release_path}/assets_manifest.yml"    
+    run "chmod +x #{release_path}/script/rubber"
   end 
 end
 
@@ -153,6 +157,19 @@ namespace :deploy do
   end
 end
 
+namespace :files do
+  puts "\n\n=== Uploading secret files! ===\n\n"
+  task :upload_secret do
+    upload("#{rails_root}/config/aws.yml", "#{release_path}/config/aws.yml", :via => :scp)
+    upload("#{rails_root}/config/api_keys.yml", "#{release_path}/config/api_keys.yml")
+    upload("#{rails_root}/config/pixi_keys.yml", "#{release_path}/config/pixi_keys.yml")
+    upload("#{rails_root}/config/gateway.yml", "#{release_path}/config/gateway.yml")
+    upload("#{rails_root}/config/sendmail.yml", "#{release_path}/config/sendmail.yml")
+    upload("#{rails_root}/config/thinking_sphinx.yml", "#{release_path}/config/thinking_sphinx.yml")
+    upload("#{rails_root}/config/database.yml", "#{release_path}/config/database.yml")
+  end
+end
+
 namespace :deploy do
   namespace :web do
     desc "Enable maintenance mode for apache"
@@ -176,7 +193,9 @@ end
 
 # capistrano's deploy:cleanup doesn't play well with FILTER
 before 'deploy:setup', 'sphinx:create_sphinx_dir'
-before 'deploy:update_code', 'deploy:enable_rubber'
+after 'deploy:update_code', 'deploy:enable_rubber', 'deploy:enable_rubber_current'
+after 'bundle:install', 'deploy:enable_rubber', 'deploy:enable_rubber_current'
+after 'rubber:config', 'deploy:enable_rubber'
 after 'deploy:update_code', 'deploy:symlink_shared', 'sphinx:stop'
 after "deploy", "cleanup"
 after "deploy:migrations", "cleanup", "sphinx:sphinx_symlink", "sphinx:configure", "sphinx:rebuild"
@@ -199,7 +218,7 @@ if Rubber::Util.has_asset_pipeline?
 
   callbacks[:after].delete_if {|c| c.source == "deploy:assets:precompile"}
   callbacks[:before].delete_if {|c| c.source == "deploy:assets:symlink"}
-  before "deploy:assets:precompile", "deploy:assets:symlink"
+  before "deploy:assets:precompile", "deploy:assets:symlink", "files:upload_secret"
   after "rubber:config", "deploy:assets:precompile"
 end
 
