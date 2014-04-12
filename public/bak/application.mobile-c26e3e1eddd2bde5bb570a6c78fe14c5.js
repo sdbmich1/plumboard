@@ -1,1 +1,0 @@
-$(document).bind("pageinit",function(){$(".fld").length>0&&$(".fld").css("background-color","#FFF"),$(".cabinet").length>0&&SI.Files.stylizeAll()});
