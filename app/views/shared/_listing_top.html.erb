@@ -1,7 +1,7 @@
-<div class='span1 no-left'>
+<div id='slr-pic' class='span1 no-left'>
   <%= render partial: 'shared/show_picture', locals: {psize: 'small', model: listing.user} %>
 </div>
-<div class='span5'>
+<div id='slr-det' class='span5'>
   <div class='valign'>
     Posted By: <%= listing.seller_name %> 
     <div class="sm-top rateit smpixis" data-rateit-value="<%= get_rating listing.user %>" data-rateit-ispreset="true" data-rateit-readonly="true"></div>

@@ -344,7 +344,7 @@ function load_masonry(nav, nxt, item, sz){
     $container.imagesLoaded( function(){
       $container.masonry({
         itemSelector : '.item',
-	gutter : 1,
+	gutter : 10,
 	isFitWidth: true,
         columnWidth : sz
       });
