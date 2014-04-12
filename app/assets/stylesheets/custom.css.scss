@@ -331,6 +331,7 @@ input, select, .uneditable-input {
 
 /* field widths */
 .width30 {width: 30px!important}
+.width60 {width: 60px!important}
 .width80 {width: 80px!important}
 .width120 {width: 120px!important}
 .width124 {width: 124px!important}
@@ -504,9 +505,9 @@ a#notice-btn {
 #msg_Container {
   width: 30px;
   height: 25px;
-  top: 2%;
+  top: 20%;
   padding: 0;
-  position:fixed;
+  position:absolute;
   right: 42%;
   background: transparent url(message_icon60.png) no-repeat center center;
   display: inline;
@@ -587,7 +588,6 @@ a.btn-mask {
 }
  
 #contact_content {
-  width: 375px!important;
   @extend .ta_content;
 }
  

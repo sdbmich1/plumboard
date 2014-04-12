@@ -10,46 +10,58 @@ function resizeFrame() {
       }
       $(".bar-top").addClass('no-mtop');
       $(".navbar").addClass('mneg-top');
-      $(".navbar .navbar-fixed-top").addClass('affix');
+      $("#msg_Container").addClass('top5');
+
+      $("#slr-pic").addClass('width60');
+      $("#slr-det").addClass('width240');
 
       if($('#pixi-hdr').length > 0) {
-        $(".navbar").addClass('mneg-bot');
+      //  $(".navbar-fixed-top").addClass('mneg-bot');
       }
     } else {
       //console.log('ms lrg width = ' + $(window).width());
       $("body").removeClass('no-pad');
+
+      // set nav menu classes
       $(".bar-top").removeClass('no-mtop');
       $(".navbar").removeClass('mneg-top');
-      $(".navbar").removeClass('mneg-bot');
-      $(".navbar .navbar-fixed-top").removeClass('affix');
+      $(".navbar-fixed-top").removeClass('affix');
+      $("#msg_Container").removeClass('top5');
+
+      if($('#slr-pic').length > 0) {
+        $("#slr-pic").removeClass('width60');
+        $("#slr-det").removeClass('width240');
+      }
     }
 }
 
 // adjust window 
 function adjustWindow() {
-  var docHeight = $(window).height();
+  var docHeight = $(document).height();
+  var winHeight = $(window).height();
   var footerHeight = $('#footer').height();
 
   if($('#cat-wrap').length > 0) {
     var footerTop = $('#footer').position().top + footerHeight;
   } else {
-    var footerTop = docHeight - footerHeight;
+    var footerTop = winHeight - footerHeight;
   }
-  var total = footerTop - docHeight;
-  //console.log('height = ' + docHeight);
+  var total = footerTop - winHeight;
+  //console.log('height = ' + winHeight);
+  //console.log('docHeight = ' + docHeight);
   //console.log('footerTop = ' + footerTop);
 
-  if (footerTop > docHeight && $(window).width() < 1024) {
+  if (footerTop > winHeight && $(window).width() < 1024) {
     //console.log('total = ' + total);
     if(navigator.userAgent.match(/msie/i)) {
       $('#footer').css('margin-top', 80+ total + 'px');
     } else {
       if($('#cat-wrap').length > 0) 
-        $('#footer').css('margin-top', 120+ docHeight*5 + 'px');
+        $('#footer').css('margin-top', 80+ docHeight + 'px');
     }
   }
   else {
-    $('#footer').css('margin-top', 80+ docHeight + 'px');
+    $('#footer').css('margin-top', 80+ winHeight + 'px');
   }
   resizeFrame();
 }
