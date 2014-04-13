@@ -29,7 +29,7 @@ $(function (){
     var cat = $("select[id*=category_id] option:selected").text();
 
     // toggle field display based on category value
-    if(cat.indexOf("Event") > 0) {
+    if(cat.match(/^Event/) != null || cat == 'Tickets') {
       $('#event-fields').show('fast');
 
       // hide fields
@@ -70,7 +70,7 @@ $(function (){
 
 // paginate on click
 var pstr = "#inq-list .pagination a, #pendingOrder .pagination a, #post_form .pagination a, #comment-list .pagination a," +
-  "#post-list .pagination a, #user-list .pagination a, #inv-list .pagination a, #faq-list .pagination a";
+  "#post-list .pagination a, #user-list .pagination a, #inv-list .pagination a, #faq-list .pagination a, #pxp-list .pagination a";
 
 $(document).on("click", pstr, function(){
   toggleLoading();
@@ -231,6 +231,12 @@ $(document).ready(function(){
       $('#inq-done-btn').attr('disabled', true);
     }
   }
+});
+
+// masks phone number fields
+var mask_flds = '#pixi_post_home_phone, #pixi_post_mobile_phone, #home_phone, #mobile_phone, #work_phone, #transaction_home_phone';
+$(document).on('focus', mask_flds, function() {
+  $(this).mask("(999) 999-9999");
 });
 
 // check for empty flds on form when fld changes
@@ -485,7 +491,6 @@ $(document).on("keypress", "#contact_content", function(e){
 // submit comment form on enter key
 $(document).on("keypress", "#comment_content", function(e){
   var a = $(this).attr('id');
-  console.log('element name = ' + a);
   keyEnter(e, $(this), '#comment-btn');
 });
 

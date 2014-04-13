@@ -597,6 +597,23 @@ describe TempListing do
     it { @temp_listing.has_pixi_post?.should be_true }
   end
 
+  describe 'contacts' do
+    before(:each) do
+      @sr = @temp_listing.contacts.create FactoryGirl.attributes_for(:contact)
+    end
+				            
+    it "should have many contacts" do 
+      @temp_listing.contacts.should include(@sr)
+    end
+
+    it "should destroy associated contacts" do
+      @temp_listing.destroy
+      [@sr].each do |s|
+         Contact.find_by_id(s.id).should be_nil
+       end
+    end  
+  end  
+
   describe '.start_date?' do
     it "has no start date" do
       @temp_listing.start_date?.should be_false

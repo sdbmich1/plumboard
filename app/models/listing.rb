@@ -16,9 +16,6 @@ class Listing < ListingParent
   has_many :site_listings, :dependent => :destroy
   #has_many :sites, :through => :site_listings, :dependent => :destroy
 
-  has_many :pictures, :as => :imageable, :dependent => :destroy
-  accepts_nested_attributes_for :pictures, :allow_destroy => true
-
   default_scope :order => "updated_at DESC"
 
   # set active status

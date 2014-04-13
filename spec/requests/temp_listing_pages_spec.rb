@@ -200,8 +200,8 @@ feature "TempListings" do
       end
     end
 
-    describe "Create with valid information" do
-      it "Adds a new listing w/o price", js:true do
+    describe "Create with valid information", js:true do
+      it "Adds a new listing w/o price" do
         expect{
 	  add_data_w_photo
 	  click_button submit; sleep 3

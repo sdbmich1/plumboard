@@ -6,22 +6,22 @@
   <div id='inv_form'>
     <div class="div-border">
       <div id="form_errors">
-        <%= render partial: 'shared/error_messages', :locals => { :target => @post } %>
+        <%= render partial: 'shared/error_messages', :locals => { :target => post } %>
       </div>
       <div class='pull-right'>
         <%= image_tag 'rsz_ppost_words_20140314.png', class: 'ppay-logo' %>
       </div>
-      <div style="<%= @post.owner?(@user) ? 'display:none' : '' %>">
-        <%= render partial: 'shared/pixi_post_details', locals: {post: @post, showAddrFlg: false} %>
+      <div style="<%= post.owner?(@user) ? 'display:none' : '' %>">
+        <%= render partial: 'shared/pixi_post_details', locals: {post: post, showAddrFlg: false} %>
       </div>
-      <div style="<%= !@post.owner?(@user) ? 'display:none' : '' %>">
-        <%= render partial: 'shared/pixi_post_item', locals: { f: f } %>
+      <div style="<%= !post.owner?(@user) ? 'display:none' : '' %>">
+        <%= render partial: 'shared/pixi_post_item', locals: {post: post, f: f } %>
       </div>
     </div>
-    <%= render partial: 'shared/pixi_post_address', locals: { f: f } %>
+    <%= render partial: 'shared/pixi_post_address', locals: {post: post, f: f } %>
 
-    <% if !@post.owner?(@user) %>
-      <%= render partial: 'shared/manage_pixi_post', locals: { f: f } %>
+    <% if !post.owner?(@user) %>
+      <%= render partial: 'shared/manage_pixi_post', locals: {post: post, f: f } %>
     <% end %>
     <div class="nav pull-right">
       <%= link_to 'Cancel', set_pixi_post_path, confirm: msg, class: "btn btn-large" %>

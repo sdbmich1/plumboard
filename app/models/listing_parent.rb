@@ -15,12 +15,18 @@ class ListingParent < ActiveRecord::Base
   attr_accessible :buyer_id, :category_id, :description, :title, :seller_id, :status, :price, :show_alias_flg, :show_phone_flg, :alias_name,
   	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id, :year_built, :pixan_id, :job_type,
 	:edited_by, :edited_dt, :post_ip, :lng, :lat, :event_start_date, :event_end_date, :compensation, :event_start_time, :event_end_time,
-	:explanation
+	:explanation, :contacts_attributes
 
   belongs_to :user, foreign_key: :seller_id
   belongs_to :site
   belongs_to :category
   belongs_to :transaction
+
+  has_many :pictures, :as => :imageable, :dependent => :destroy
+  accepts_nested_attributes_for :pictures, :allow_destroy => true
+
+  has_many :contacts, :as => :contactable, :dependent => :destroy
+  accepts_nested_attributes_for :contacts, :allow_destroy => true
 
   validates :title, :presence => true, :length => { :maximum => 80 }
   validates :description, :presence => true
@@ -44,7 +50,7 @@ class ListingParent < ActiveRecord::Base
 
   # check if pixi is an event
   def event?
-    %w(Event Events Happenings).detect { |cat| cat == category_name }
+    %w(Event Events Happenings Tickets).detect { |cat| cat == category_name }
   end
 
   # check if pixi can have a year

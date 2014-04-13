@@ -1,0 +1,3 @@
+<%= collection_select :pixi_post, :pixan_id, User.get_by_type(['PX','PT']).reorder('first_name ASC'), :id, :name, 
+  {prompt: 'Select Pixter', selected: post.pixan_id},
+  {id: 'pixan_id', class: 'span3 pixi-select'} %>

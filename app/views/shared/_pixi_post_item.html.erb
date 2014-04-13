@@ -4,34 +4,34 @@
     <div class='row'>
       <div class='span2'> 
         <%= f.label :preferred_date, 'Preferred Date*', class: 'sm-top' %>
-        <%= f.text_field :preferred_date, value: get_local_date(@post.preferred_date), class: 'dt-pckr width120', size: 10, id: 'pref-dt' %>
+        <%= f.text_field :preferred_date, value: get_local_date(post.preferred_date), class: 'dt-pckr width120', size: 10, id: 'pref-dt' %>
       </div>
       <div class='span2'>
         <%= f.label :preferred_time, 'Preferred Time', class: 'sm-top' %>
         <%= f.time_select :preferred_time, { :combined => true, :default => Time.now.change(:hour => 12), ampm: true, 
     	  :minute_interval => 30, :time_separator => "", :start_hour => 9, :end_hour => 18 }, :class=>'pixi-select width120', 
-	  value: @post.preferred_time, id: 'pref-time' %>
+	  value: post.preferred_time, id: 'pref-time' %>
       </div>
       <div class='span2'>
         <%= f.label :alt_date, 'Alternate Date', class: 'sm-top' %>
-        <%= f.text_field :alt_date, value: get_local_date(@post.alt_date), class: 'dt-pckr width120', size: 10, id: 'alt-dt' %>
+        <%= f.text_field :alt_date, value: get_local_date(post.alt_date), class: 'dt-pckr width120', size: 10, id: 'alt-dt' %>
       </div>
       <div class='span2'>
         <%= f.label :alt_time, 'Alternate Time', class: 'sm-top' %>
         <%= f.time_select :alt_time, { :combined => true, :default => Time.now.change(:hour => 12), ampm: true, 
-    	  :minute_interval => 30, :time_separator => "", :start_hour => 9, :end_hour => 18 }, value: @post.alt_time, 
+    	  :minute_interval => 30, :time_separator => "", :start_hour => 9, :end_hour => 18 }, value: post.alt_time, 
 	  :class=>'pixi-select width120', id: 'alt-time' %>
       </div>
     </div>
     <div class='row'>
       <div class='span2'>
         <%= f.label :quantity, '# of Items' %>
-        <%= f.select 'quantity', options_for_select(get_ary, :selected => set_quantity(@post)), {}, {id: 'post_qty', 
+        <%= f.select 'quantity', options_for_select(get_ary, :selected => set_quantity(post)), {}, {id: 'post_qty', 
 	  class: 'width120 pixi-select'} %></td>
       </div>
       <div class='span2'>
         <%= f.label :value, 'Value*' %>
-        <%= f.number_field :value, :size => 10, value: num_display(f.object, "value"), class: 'width120', placeholder: 'Value' %>
+        <%= f.number_field :value, step: 0.01, size: 10, value: num_display(f.object, "value"), class: 'width120', placeholder: 'Ex. 50.00' %>
       </div>
       <div class='span7'>
         <%= f.label :description %><%= f.text_area :description, id: 'description', :placeholder => 'Describe Your Item' %>

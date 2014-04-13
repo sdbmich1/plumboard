@@ -48,6 +48,10 @@ class Ability
         can :view_dashboard, User
       end
 
+      if user.has_role? :pixter
+        can [:read, :update], PixiPost, status: 'scheduled'
+      end
+
       if user.has_role? :subscriber
         can :view_dashboard, User
       end

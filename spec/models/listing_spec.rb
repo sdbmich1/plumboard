@@ -45,6 +45,7 @@ describe Listing do
   it { should respond_to(:site_listings) }
   it { should respond_to(:transaction) }
   it { should respond_to(:pictures) }
+  it { should respond_to(:contacts) }
   it { should respond_to(:category) }
   it { should respond_to(:comments) }
   it { should respond_to(:pixi_likes) }
@@ -379,6 +380,23 @@ describe Listing do
       @listing.destroy
       [@sr].each do |s|
          Picture.find_by_id(s.id).should be_nil
+       end
+    end  
+  end  
+
+  describe 'contacts' do
+    before(:each) do
+      @sr = @listing.contacts.create FactoryGirl.attributes_for(:contact)
+    end
+				            
+    it "should have many contacts" do 
+      @listing.contacts.should include(@sr)
+    end
+
+    it "should destroy associated contacts" do
+      @listing.destroy
+      [@sr].each do |s|
+         Contact.find_by_id(s.id).should be_nil
        end
     end  
   end  

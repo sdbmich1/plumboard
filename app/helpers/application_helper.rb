@@ -185,4 +185,14 @@ module ApplicationHelper
   def remote?
     action_name == 'show' ? false : true
   end
+
+  # set model class for pixi dropdown menu
+  def set_pixi_class
+    controller_name == 'pixi_posts' ? 'pixi_post'.to_sym : 'invoice'.to_sym
+  end
+
+  # get acct type for account menu
+  def get_acct_type
+    controller_name == 'bank_accounts' ? 'bank' : 'card'
+  end
 end

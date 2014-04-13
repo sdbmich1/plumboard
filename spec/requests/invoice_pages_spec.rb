@@ -359,7 +359,7 @@ feature "Invoices" do
       init_setup user
       init_data
       visit invoices_path 
-      click_link 'Create'
+      click_link 'Bill'
     end
 
     it "displays invoice content", js: true do

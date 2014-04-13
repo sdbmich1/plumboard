@@ -7,11 +7,11 @@
 	  <%= f.fields_for :contacts do |form| %>
 	    <div class="control-group">
 	      <label class="control-label">Home Phone</label>
-	      <div class='controls'><%= form.text_field :home_phone, placeholder: "Home Phone" %></div>
+	      <div class='controls'><%= form.text_field :home_phone, placeholder: "Home Phone", id: 'home_phone', size: 10 %></div>
 	      <label class="control-label">Work Phone</label>
-	      <div class='controls'><%= form.text_field :work_phone, placeholder: "Work Phone" %></div>
+	      <div class='controls'><%= form.text_field :work_phone, placeholder: "Work Phone", id: 'work_phone', size: 10 %></div>
 	      <label class="control-label">Mobile Phone</label>
-	      <div class='controls'><%= form.text_field :mobile_phone, placeholder: "Mobile Phone" %></div>
+	      <div class='controls'><%= form.text_field :mobile_phone, placeholder: "Mobile Phone", id: 'mobile_phone', size: 10 %></div>
 	      <label class="control-label">Address</label>
 	      <div class='controls'><%= form.text_field :address, placeholder: "Address"  %></div>
 	      <label class="control-label">Address2</label>
@@ -21,7 +21,7 @@
 	      <label class="control-label">State</label>
 	      <div class='controls mbot'><%= form.collection_select :state, State.all, :code, :state_name, {:prompt => 'Select State'} %></div>
 	      <label class="control-label">Zip</label>
-	      <div class='controls'><%= form.text_field :zip, placeholder: "Zip" , :size => 10 %></div>
+	      <div class='controls'><%= form.text_field :zip, placeholder: "Zip" , size: 5 %></div>
 	      <label class="control-label">Country</label>
 	      <div class='controls'><%= country_select "contact", "country", ["United States"], :class => 'country' %></div>
 	    </div>

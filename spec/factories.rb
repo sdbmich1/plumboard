@@ -36,6 +36,10 @@ FactoryGirl.define do
     after(:create) {|usr| usr.add_role(:editor)}
   end
 
+  factory :pixter, :class => "User", :parent => :pixi_user do
+    after(:create) {|usr| usr.add_role(:pixter)}
+  end
+
   factory :subscriber, :class => "User", :parent => :pixi_user do
     after(:create) {|usr| usr.add_role(:subscriber)}
   end

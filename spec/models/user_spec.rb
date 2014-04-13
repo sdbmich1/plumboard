@@ -34,6 +34,7 @@ describe User do
     it { should respond_to(:listings) } 
     it { should respond_to(:temp_listings) } 
     it { should respond_to(:active_listings) } 
+    it { should respond_to(:pixi_posted_listings) } 
     it { should respond_to(:posts) } 
     it { should respond_to(:incoming_posts) } 
     it { should respond_to(:invoices) } 
@@ -50,8 +51,12 @@ describe User do
     it { should respond_to(:pixi_posts) }
     it { should respond_to(:active_pixi_posts) }
     it { should respond_to(:pixan_pixi_posts) }
+    it { should have_many(:active_listings).class_name('Listing').with_foreign_key('seller_id')
+      .conditions("status='active' AND end_date >= curdate()") }
+    it { should have_many(:pixi_posted_listings).class_name('Listing').with_foreign_key('seller_id')
+      .conditions("status='active' AND end_date >= curdate() AND pixan_id IS NOT NULL") }
     it { should have_many(:purchased_listings).class_name('Listing').with_foreign_key('buyer_id').conditions(:status=>"sold") }
-    it { should have_many(:pixan_pixi_posts).class_name('PixiPost').with_foreign_key('pixan_id') }
+    it { should respond_to(:pixan_pixi_posts) }
     it { should have_many(:pixan_pixi_posts).class_name('PixiPost').with_foreign_key('pixan_id') }
     it { should respond_to(:pixi_likes) }
     it { should have_many(:pixi_likes) }
@@ -504,6 +509,23 @@ describe User do
     it 'does not return a nice date' do
       user = build :pixi_user
       user.nice_date(user.created_at).should be_nil
+    end
+  end
+
+  describe "listing associations" do
+    before do
+      @buyer = FactoryGirl.create(:pixi_user) 
+      @pixter = FactoryGirl.create(:pixi_user, user_type_code: 'PT') 
+      @listing = FactoryGirl.create(:listing, seller_id: @user.id)
+      @pp_listing = FactoryGirl.create(:listing, seller_id: @user.id, pixan_id: @pixter.id)
+      @sold_listing = FactoryGirl.create(:listing, seller_id: @buyer.id, status: 'sold')
+    end
+
+    it 'accesses listings' do 
+      expect(@user.active_listings).to include(@listing) 
+      expect(@buyer.active_listings).not_to include(@sold_listing)
+      expect(@user.pixi_posted_listings).to include(@pp_listing)
+      expect(@user.pixi_posted_listings).not_to include(@listing)
     end
   end
 

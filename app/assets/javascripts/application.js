@@ -33,3 +33,4 @@
 //= require autocomplete-rails.js
 //= require jquery.ui.autocomplete.html.js
 //= require parsley
+//= require jquery.maskedinput.min.js

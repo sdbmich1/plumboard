@@ -1,13 +1,13 @@
 <div class="row">
   <div class="span8">
-    <label class='control-label'><span class='no-left span1'>Date: </span><%= get_local_date(@invoice.inv_date) %></label>
+    <label class='control-label'><span class='no-left span1'>Date: </span><%= get_local_date(invoice.inv_date) %></label>
     <label class='control-label'><span class='no-left span1'>From: </span>
-      <%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: @invoice.seller} %>
-      <%= @invoice.seller_name %></label>
+      <%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: invoice.seller} %>
+      <%= invoice.seller_name %></label>
     <div class="mtop">
       <label class="control-label"><span class='no-left span1'>Bill To: </span>
-        <%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: @invoice.buyer} %>
-        <%= @invoice.buyer_name %></label>
+        <%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: invoice.buyer} %>
+        <%= invoice.buyer_name %></label>
     </div>
   </div>
   <div class="span4">
@@ -17,10 +17,10 @@
     <div class='clear-all'></div>  
     <div class='sm-top order-total price'>INVOICE</div>
     <div class="sm-top price">
-       <label class="control-label">Invoice # <%= @invoice.id %></label>
+       <label class="control-label">Invoice # <%= invoice.id %></label>
     </div>
     <div class="sm-top price">
-       <label class="control-label">Status: <%= @invoice.nice_status %></label>
+       <label class="control-label">Status: <%= invoice.nice_status %></label>
     </div>
   </div>
 </div>
@@ -28,14 +28,14 @@
   <div class="sm-top span12">
     <div class="control-group">
       <%= render partial: 'shared/invoice_details' %>
-      <label class="sm-top control-label">Comments: <%= @invoice.comment %></label>
+      <label class="sm-top control-label">Comments: <%= invoice.comment %></label>
     </div>
     <div class="pull-right">
-      <% if @invoice.owner?(@user) && @invoice.unpaid? %>
-      	<%= link_to 'Remove', @invoice, method: :delete, confirm: 'Delete this invoice?', class: 'btn btn-large', remote: true %>
-        <%= link_to 'Edit', edit_invoice_path(@invoice), class: 'btn btn-large', remote: true %>
+      <% if invoice.owner?(@user) && invoice.unpaid? %>
+      	<%= link_to 'Remove', invoice, method: :delete, confirm: 'Delete this invoice?', class: 'btn btn-large' %>
+        <%= link_to 'Edit', edit_invoice_path(invoice), class: 'btn btn-large' %>
       <% else %>
-        <%= render partial: 'shared/pay_invoice', locals: { invoice: @invoice } if @invoice.unpaid? %>
+        <%= render partial: 'shared/pay_invoice', locals: { invoice: invoice } if invoice.unpaid? %>
       <% end %>
     </div>
   </div>

@@ -4,7 +4,8 @@ feature "PixiPosts" do
   subject { page }
   let(:user) { FactoryGirl.create(:pixi_user) }
   let(:contact_user) { FactoryGirl.create(:contact_user) }
-  let(:editor) { FactoryGirl.create :editor, first_name: 'Steve', confirmed_at: Time.now }
+  let(:pixter) { FactoryGirl.create :pixter, user_type_code: 'PT', confirmed_at: Time.now }
+  let(:editor) { FactoryGirl.create :editor, first_name: 'Steve', user_type_code: 'PX', confirmed_at: Time.now }
   let(:submit) { "Save" }
 
   before(:each) do
@@ -44,7 +45,8 @@ feature "PixiPosts" do
   end
 
   def set_pixan
-    page.execute_script %Q{ $('#pixan_id').val("#{editor.id}") }
+    #page.execute_script %Q{ $('#pixan_id').val("#{editor.id}") }
+    select(editor.name, :from => 'pixan_id')
   end
 
   def set_pixi
@@ -240,16 +242,16 @@ feature "PixiPosts" do
   end
 
   describe "Seller views active PixiPosts" do 
-    let(:pixan) { FactoryGirl.create :pixi_user }
 
     before do
       init_setup user
       load_zips
+      @pixan = create :pixi_user, user_type_code: 'PX'
       @listing = FactoryGirl.create :listing, seller_id: @user.id 
       @pixi_post = @user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post, description: 'tire rims')
-      @scheduled = @user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: pixan.id, appt_date: Time.now+3.days,
+      @scheduled = @user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: @pixan.id, appt_date: Time.now+3.days,
         appt_time: Time.now+3.days, description: 'xbox 360'
-      @completed = @user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: pixan.id, appt_date: Time.now+3.days, 
+      @completed = @user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: @pixan.id, appt_date: Time.now+3.days, 
         appt_time: Time.now+3.days, completed_date: Time.now+3.days, pixi_id: @listing.pixi_id, description: 'rocking chair'
       visit seller_pixi_posts_path(status: 'active') 
     end

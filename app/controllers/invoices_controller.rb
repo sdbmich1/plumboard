@@ -41,7 +41,7 @@ class InvoicesController < ApplicationController
     @invoice = Invoice.find params[:id]
     respond_with(@invoice) do |format|
       if @invoice.update_attributes(params[:invoice])
-        @invoices = Invoice.get_invoices(@user).paginate(page: @page)
+        # @invoices = Invoice.get_invoices(@user).paginate(page: @page)
         format.json { render json: {invoice: @invoice} }
       else
         format.json { render json: { errors: @invoice.errors.full_messages }, status: 422 }
@@ -53,7 +53,7 @@ class InvoicesController < ApplicationController
     @invoice = @user.invoices.build params[:invoice]
     respond_with(@invoice) do |format|
       if @invoice.save
-        @invoices = Invoice.get_invoices(@user).paginate(page: @page)
+        # @invoices = Invoice.get_invoices(@user).paginate(page: @page)
         format.json { render json: {invoice: @invoice} }
       else
         format.json { render json: { errors: @invoice.errors.full_messages }, status: 422 }
@@ -80,10 +80,6 @@ class InvoicesController < ApplicationController
   end
 
   def set_params
-    respond_to do |format|
-      format.html 
-      format.mobile 
-      format.json { params[:invoice] = JSON.parse(params[:invoice]) }
-    end
+    params[:invoice] = JSON.parse(params[:invoice]) if request.xhr?
   end
 end

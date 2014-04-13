@@ -7,8 +7,6 @@ class TempListing < ListingParent
   attr_accessor :slr_name
   attr_accessible :slr_name
   has_many :site_listings, :foreign_key => :listing_id, :dependent => :destroy
-  has_many :pictures, :as => :imageable, :dependent => :destroy
-  accepts_nested_attributes_for :pictures, allow_destroy: true, reject_if: :all_blank, limit: MAX_PIXI_PIX 
 
   # set unique key
   def generate_token

@@ -3,11 +3,11 @@
     <% if toggle %>
       <label class='tbl-hdr'>Email* </label><%= form.text_field :email %>
     <% else %>
-      <label class='tbl-hdr'>Mobile Phone* </label><%= form.text_field :mobile_phone %>
+      <label class='tbl-hdr'>Mobile Phone* </label><%= form.text_field :mobile_phone, size: 10 %>
     <% end %>
   </td>
   <td></td>
-  <td><label class='tbl-hdr'>Home Phone* </label><%= form.text_field :home_phone %></td>
+  <td><label class='tbl-hdr'>Home Phone* </label><%= form.text_field :home_phone, size: 10 %></td>
 </tr>
 <tr>
   <td><label class='tbl-hdr'>Address 1* </label><%= form.text_field :address %></td>	
@@ -21,7 +21,7 @@
 	<%= form.collection_select :state, State.all, :code, :state_name, {prompt: 'Select State'}, {class: 'pixi-select'} %></td>
 </tr>
 <tr>
-  <td><label class='tbl-hdr'>Zip* </label><%= form.text_field :zip, :size => 10, id: 'postal_code' %></td>
+  <td><label class='tbl-hdr'>Zip* </label><%= form.text_field :zip, size: 5, id: 'postal_code' %></td>
   <td></td>
   <td><label class='neg-top tbl-hdr'>Country </label><%= country_select "transaction", "country", ["United States"], {}, {class: 'country pixi-select'} %></td>	  
 </tr>

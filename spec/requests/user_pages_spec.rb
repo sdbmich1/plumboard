@@ -178,26 +178,25 @@ describe "Users", :type => :feature do
     end
   end
 
-  describe 'Edit user contact info', js: true do
+  describe 'Edit user contact info' do
     let(:contact) { FactoryGirl.build :contact }
     before :each do
       user = create(:pixi_user) 
       create :state
       init_setup user
       visit settings_path
-      click_link 'Contact'
     end
 
     def user_home_phone
-      fill_in 'user_contacts_attributes_0_home_phone', with: contact.home_phone
+      fill_in 'home_phone', with: contact.home_phone
     end
 
     def user_mobile_phone
-      fill_in 'user_contacts_attributes_0_mobile_phone', with: contact.mobile_phone
+      fill_in 'mobile_phone', with: contact.mobile_phone
     end
 
     def user_work_phone
-      fill_in 'user_contacts_attributes_0_work_phone', with: contact.work_phone
+      fill_in 'work_phone', with: contact.work_phone
     end
      
     def user_address(addr='123 Elm', addr2='Ste 1', city='SF', zip='94103', sflg=true)
@@ -208,15 +207,19 @@ describe "Users", :type => :feature do
       fill_in 'user_contacts_attributes_0_zip', with: zip
     end
 
-    it 'should show contact page' do
+    it 'shows contact page', js: true do
+      page.should have_link("Contact")
+      click_link 'Contact'
       page.should have_content("Home Phone")
+      page.should have_content("Mobile Phone")
+      page.should have_content("Work Phone")
     end
 
     it 'should save contact address info' do
       expect {
         user_address
         click_save
-	}.to change(user.contacts, :count).by(1)
+	}.to change(@user.contacts, :count).by(1)
       page.should have_content("successfully")
     end
 
@@ -225,7 +228,7 @@ describe "Users", :type => :feature do
         user_home_phone
         user_address
         click_save
-	}.to change(user.contacts, :count).by(1)
+	}.to change(@user.contacts, :count).by(1)
       page.should have_content("successfully")
     end
 
@@ -233,49 +236,49 @@ describe "Users", :type => :feature do
       expect {
         user_home_phone
         click_submit
-	}.not_to change(user.contacts, :count).by(1)
+	}.not_to change(@user.contacts, :count).by(1)
     end
 
     it 'should not save mobile phone' do
       expect {
         user_mobile_phone
         click_submit
-	}.not_to change(user.contacts, :count).by(1)
+	}.not_to change(@user.contacts, :count).by(1)
     end
 
     it 'should not save work phone' do
       expect {
         user_work_phone
         click_submit
-	}.not_to change(user.contacts, :count).by(1)
+	}.not_to change(@user.contacts, :count).by(1)
     end
 
     it 'should not save with no address' do
       expect {
         user_address nil, nil, 'SF', '94103', true
         click_submit
-	}.not_to change(user.contacts, :count).by(1)
+	}.not_to change(@user.contacts, :count).by(1)
     end
 
     it 'should not save w/o city' do
       expect {
         user_address '123 Elm', nil, nil, '94108'
         click_submit
-	}.not_to change(user.contacts, :count).by(1)
+	}.not_to change(@user.contacts, :count).by(1)
     end
 
     it 'should not save w/o zip' do
       expect {
         user_address '123 Elm', nil, 'SF', nil
         click_submit
-	}.not_to change(user.contacts, :count).by(1)
+	}.not_to change(@user.contacts, :count).by(1)
     end
 
     it 'should not save w/o state' do
       expect {
         user_address '123 Elm', nil, 'SF', '94103', false
         click_submit
-	}.not_to change(user.contacts, :count).by(1)
+	}.not_to change(@user.contacts, :count).by(1)
     end
   end
    
