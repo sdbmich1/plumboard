@@ -34,3 +34,4 @@
 //= require jquery.ui.autocomplete.html.js
 //= require parsley
 //= require jquery.maskedinput.min.js
+//= require jquery.masonry.ordered.js

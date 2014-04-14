@@ -1,6 +1,6 @@
 <% unless controller_name == 'pixi_posts' %>
-  <%= collection_select(:invoice, :pixi_id, model.active_listings, :pixi_id, :title, {prompt: 'Select Pixi', selected: @invoice.pixi_id}, 
-    { class: 'pixi-select' }) %>
+  <%= collection_select(:invoice, :pixi_id, model.active_listings.reorder('title ASC'), :pixi_id, :title, {prompt: 'Select Pixi', 
+    selected: @invoice.pixi_id}, { class: 'pixi-select' }) %>
 <% else %>
   <%= collection_select(:pixi_post, :pixi_id, model.pixi_posted_listings, :pixi_id, :title, {prompt: 'Select', selected: @post.pixi_id}, 
     { class: 'pixi-select' }) %>

@@ -42,7 +42,7 @@ feature "Listings" do
       page.should_not have_link listing.site_name, href: local_listings_path(loc: listing.site_id)
       page.should have_link listing.category_name, href: category_listings_path(cid: listing.category_id, loc: listing.site_id)
       page.should_not have_link 'Back', href: listings_path
-      page.should_not have_link 'Remove', href: listing_path(listing)
+      page.should_not have_button 'Remove'
       page.should_not have_link 'Edit', href: edit_temp_listing_path(listing)
       page.should have_content "ID: #{listing.pixi_id}"
       page.should have_content "Posted: #{listing.get_local_time(listing.start_date)}"
@@ -222,16 +222,20 @@ feature "Listings" do
       page.should_not have_selector('#want-btn')
       page.should_not have_selector('#cool-btn')
       page.should_not have_selector('#save-btn')
-      page.should_not have_selector('#fb-link')
-      page.should_not have_selector('#tw-link')
-      page.should_not have_selector('#pin-link')
+      page.should have_selector('#fb-link')
+      page.should have_selector('#tw-link')
+      page.should have_selector('#pin-link')
       page.should_not have_link 'Follow', href: '#'
       page.should have_content "Want (#{listing.wanted_count})"
       page.should have_content "Cool (#{listing.liked_count})"
       page.should have_content "Saved (#{listing.saved_count})"
       page.should have_content "Comments (#{listing.comments.size})"
       page.should_not have_link 'Cancel', href: root_path
-      page.should have_link 'Remove', href: listing_path(listing)
+      page.should have_button 'Remove'
+      page.should have_link 'Changed Mind', href: listing_path(listing, reason: 'Changed Mind')
+      page.should have_link 'Donated Item', href: listing_path(listing, reason: 'Donated Item')
+      page.should have_link 'Gave Away Item', href: listing_path(listing, reason: 'Gave Away Item')
+      page.should have_link 'Sold Item', href: listing_path(listing, reason: 'Sold Item')
       page.should have_link 'Edit', href: edit_temp_listing_path(listing)
     end
   end
@@ -295,12 +299,12 @@ feature "Listings" do
       before { visit listing_path(listing) }
 
       it "Deletes a pixi" do
-        expect{
-          click_on 'Remove'
-        }.to change(Listing,:count).by(-1)
-
-        page.should have_content "Pixis" 
-        page.should_not have_content "Guitar Lessons" 
+        expect {
+          click_link 'Sold Item'; sleep 2
+          page.should_not have_content listing.title 
+          page.should have_content "Pixis" 
+        }.to change(Listing, :count).by(0)
+	expect(listing.reload.status).to eq('inactive')
       end
 
       describe "Edits active pixi" do

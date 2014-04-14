@@ -9,8 +9,8 @@
     <div class="reply_form">
       <%= f.text_area 'content', placeholder: 'Type something and click reply to send...', id: 'reply_content' %>  
       <%= f.submit 'Reply', class: "btn btn-medium btn-primary submit-btn", id: 'reply-btn' %>
-    <% end %>
-    <% unless sentFlg %>
-      <%= render partial: 'shared/pay_invoice', locals: { invoice: post.invoice } if invoice_due?(post) %>
-    <% end %>
+      <% unless sentFlg %>
+        <%= render partial: 'shared/pay_invoice', locals: { invoice: post.invoice } if invoice_due?(post) %>
+      <% end %>
     </div>
+  <% end %>

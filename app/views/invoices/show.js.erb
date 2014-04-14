@@ -1,4 +1,4 @@
-$("#inv_form").html("<%= escape_javascript( raw render(partial: 'shared/show_invoice')) %>");
+$("#inv_form").html("<%= escape_javascript( raw render(partial: 'shared/show_invoice', locals: { invoice: @invoice } )) %>");
 $('#spinner').hide(300);
 
 

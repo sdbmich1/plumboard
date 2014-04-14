@@ -11,7 +11,7 @@
     <span class="timestamp">
       Posted <%= ts_in_words(post.created_at) %>.
     </span>
-    <%= render partial: 'shared/reply', locals: { post: post, sentFlg: sentFlg } unless post.sender? @user %>
+    <%= render partial: 'shared/reply', locals: { post: post, sentFlg: sentFlg } unless post.system_msg? || post.sender?(@user) %>
   </div>
   <div class='clear-all'></div>
 </li>

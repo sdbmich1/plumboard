@@ -47,29 +47,27 @@ describe "PendingListings", :type => :feature do
 
     it 'Approves an order' do
       expect {
-        click_link 'Approve'; sleep 4
+        click_link 'Approve'
+        page.should_not have_content listing.title 
+        page.should have_content("Pending Orders")
 	}.to change(Listing, :count).by(1)
-
-      page.should_not have_content listing.title 
-      page.should have_content("Pending Orders")
     end
 
     it 'Denies an order for improper content' do
       expect {
         click_link 'Improper Content'; sleep 2
-	}.to change(Listing, :count).by(0)
-
-      page.should_not have_content listing.title 
-      page.should have_content("Pending Orders")
+        page.should_not have_content listing.title 
+        page.should have_content("Pending Orders")
+	listing.status.should == 'denied'
+      }.to change(Listing, :count).by(0)
     end
 
     it 'Denies an order for bad pictures' do
       expect {
         click_link 'Bad Pictures'; sleep 2
+        page.should_not have_content listing.title 
+        page.should have_content("Pending Orders")
 	}.to change(Listing, :count).by(0)
-
-      page.should_not have_content listing.title 
-      page.should have_content("Pending Orders")
     end
 
     it "displays denied listings" do

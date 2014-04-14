@@ -233,4 +233,12 @@ describe Post do
     end
   end
 
+  describe "system_msg?" do 
+    it { expect(@post.system_msg?).to be_nil } 
+
+    it "returns true" do 
+      @post.msg_type = 'approve' 
+      expect(@post.system_msg?).not_to be_nil
+    end
+  end
 end

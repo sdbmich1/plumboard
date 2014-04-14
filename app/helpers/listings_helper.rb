@@ -182,4 +182,19 @@ module ListingsHelper
     poster = listing.pixi_post? ? 'pixan_id' : 'seller_id'
     poster.to_sym
   end
+
+  # select drop down for remove btn
+  def remove_menu listing
+    if listing.job? 
+      items = ['Filled Position', 'Removed Job']
+    elsif listing.event?  
+      items = ['Event Cancelled', 'Event Ended']
+    else
+      items = ['Changed Mind', 'Donated Item', 'Gave Away Item', 'Sold Item']
+    end
+
+    # build content tag
+    items.collect {|item| concat(content_tag(:li, link_to(item, listing_path(listing, reason: item), method: :put)))}
+    return ''
+  end
 end

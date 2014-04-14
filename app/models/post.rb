@@ -130,7 +130,7 @@ class Post < ActiveRecord::Base
   # check if invoice is due
   def due_invoice? usr
     if invoice
-      !invoice.owner?(usr) && invoice.unpaid? ? true : false
+      !invoice.owner?(usr) && invoice.unpaid? && invoice.buyer_name == usr.name ? true : false
     else
       false
     end
@@ -139,6 +139,11 @@ class Post < ActiveRecord::Base
   # check if invoice msg 
   def inv_msg?
     msg_type == 'inv'
+  end
+
+  # check if system msg 
+  def system_msg?
+    %w(approve deny system).detect {|x| msg_type == x}
   end
 
   # set json string

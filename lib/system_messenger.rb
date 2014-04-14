@@ -6,7 +6,7 @@ module SystemMessenger
     if sender = User.where(:email => PIXI_EMAIL).first
       case msg_type
         when 'approve'; msg = 'Your pixi has been approved.'
-	when 'deny'; msg = 'Your pixi has been denied due to #{listing.explanation}.'
+	when 'deny'; msg = "Your pixi has been denied due to #{listing.explanation}."
       end
 
       # send message

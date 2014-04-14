@@ -239,6 +239,10 @@ $(document).on('focus', mask_flds, function() {
   $(this).mask("(999) 999-9999");
 });
 
+$(document).on('focus', '#pixi-form', function() {
+  $("#spinner").hide('fast'); 
+});
+
 // check for empty flds on form when fld changes
 var inq_flds = '#inq_first_name, #inq_last_name, #inq_comments, #inq_subject, #inq_email';
 $(document).on('keyup change', inq_flds, function() {
@@ -352,7 +356,11 @@ function load_masonry(nav, nxt, item, sz){
         itemSelector : '.item',
 	gutter : 10,
 	isFitWidth: true,
-        columnWidth : sz
+        columnWidth : sz,
+	layoutPriorities : {
+	   upperPosition: 1,
+	   shelfOrder: 1
+	}
       });
     });
 
@@ -792,3 +800,7 @@ $(document).on("change", "#cc_card_year", function() {
   $('#exp_yr').val(card_yr);
 });
 
+// check if dropdown is open to close
+$(document).on("click", ".navbar li a", function() {
+  $('li[class="dropdown open"]').removeClass('open');
+});

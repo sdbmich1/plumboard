@@ -24,6 +24,15 @@ class ListingsController < ApplicationController
     end
   end
 
+  def update
+    @listing = Listing.find_by_pixi_id params[:id]
+    if @listing.update_attributes(explanation: params[:reason], status: 'inactive')
+      redirect_to category_listings_path(loc: @listing.site_id, cid: @listing.category_id)
+    else
+      render action: :show, error: "Pixi was not removed. Please try again."
+    end
+  end
+
   def destroy
     @listing = Listing.find_by_pixi_id params[:id]
     respond_with(@listing) do |format|

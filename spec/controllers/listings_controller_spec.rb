@@ -461,4 +461,66 @@ describe ListingsController do
     end
   end
 
+  describe "PUT /:id" do
+    before (:each) do
+      Listing.stub!(:find_by_pixi_id).and_return( @listing )
+    end
+
+    def do_update
+      put :update, :id => "1", reason: 'test'
+    end
+
+    context "with valid params" do
+      before (:each) do
+        @listing.stub(:update_attributes).and_return(true)
+      end
+
+      it "should load the requested listing" do
+        Listing.stub(:find_by_pixi_id) { @listing }
+        do_update
+      end
+
+      it "should update the requested listing" do
+        Listing.stub(:find_by_pixi_id).with("1") { mock_listing }
+	mock_listing.should_receive(:update_attributes).with({:explanation=>"test", :status=>"inactive"})
+        do_update
+      end
+
+      it "should assign @listing" do
+        Listing.stub(:find_by_pixi_id) { mock_listing(:update_attributes => true) }
+        do_update
+        assigns(:listing).should_not be_nil 
+      end
+
+      it "redirects to the updated listing" do
+        do_update
+        response.should be_redirect
+      end
+    end
+
+    context "with invalid params" do
+    
+      before (:each) do
+        @listing.stub(:update_attributes).and_return(false)
+      end
+
+      it "should load the requested listing" do
+        Listing.stub(:find_by_pixi_id) { @listing }
+        do_update
+      end
+
+      it "should assign @listing" do
+        Listing.stub(:find_by_pixi_id) { mock_listing(:update_attributes => false) }
+        do_update
+        assigns(:listing).should_not be_nil 
+      end
+
+      it "renders the edit form" do 
+        Listing.stub(:find_by_pixi_id) { mock_listing(:update_attributes => false) }
+        do_update
+	response.should render_template(:show)
+      end
+    end
+  end
+
 end
