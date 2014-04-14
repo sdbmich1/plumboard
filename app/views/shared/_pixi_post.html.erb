@@ -2,8 +2,8 @@
   <%= render :partial => 'shared/navbar', locals: { menu_name: set_pixi_post_menu } %>
 <% end %>
 <%= content_for :content do %>
-  <%= form_for @post do |f| %>
   <div id='inv_form'>
+    <%= form_for @post do |f| %>
     <div class="div-border">
       <div id="form_errors">
         <%= render partial: 'shared/error_messages', :locals => { :target => post } %>
@@ -18,15 +18,14 @@
         <%= render partial: 'shared/pixi_post_item', locals: {post: post, f: f } %>
       </div>
     </div>
-    <%= render partial: 'shared/pixi_post_address', locals: {post: post, f: f } %>
-
-    <% if !post.owner?(@user) %>
-      <%= render partial: 'shared/manage_pixi_post', locals: {post: post, f: f } %>
-    <% end %>
-    <div class="nav pull-right">
+    <div id='pxp_items'>
+      <%= render partial: 'shared/pixi_post_address', locals: {post: post, f: f } %>
+      <%= render partial: 'shared/manage_pixi_post', locals: {post: post, f: f } if !post.owner?(@user) %>
+    </div>
+    <div id='pxp_btn' class="nav pull-right">
       <%= link_to 'Cancel', set_pixi_post_path, confirm: msg, class: "btn btn-large" %>
       <%= f.submit "Save", class: "btn btn-large btn-primary submit-btn" %>
     </div>
+    <% end %>
   </div>
-  <% end %>
 <% end %>

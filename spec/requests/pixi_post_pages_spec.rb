@@ -242,7 +242,6 @@ feature "PixiPosts" do
   end
 
   describe "Seller views active PixiPosts" do 
-
     before do
       init_setup user
       load_zips
@@ -256,7 +255,7 @@ feature "PixiPosts" do
       visit seller_pixi_posts_path(status: 'active') 
     end
 
-    it 'show content' do
+    it 'shows active content' do
       page.should have_link("#{@pixi_post.id}", href: pixi_post_path(@pixi_post))
       page.should_not have_link("#{@scheduled.id}", href: pixi_post_path(@scheduled))
       page.should_not have_link("#{@completed.id}", href: pixi_post_path(@completed))
@@ -264,12 +263,24 @@ feature "PixiPosts" do
       page.should have_link "Submitted"
       page.should have_link "Scheduled"
       page.should have_link "Completed"
+      page.should have_content "Preferred Date"
+      page.should have_content "Preferred Time"
+      page.should_not have_content "Scheduled Date"
+      page.should_not have_content "Scheduled Time"
+      page.should_not have_content "Completed Date"
+      page.should_not have_content "Completed Time"
       page.should have_content "My PixiPosts"
       page.should have_content "Seller Name" 
     end
 
     it "displays scheduled posts", js: true do
       page.find('#schd-posts').click
+      page.should_not have_content "Preferred Date"
+      page.should_not have_content "Preferred Time"
+      page.should have_content "Scheduled Date"
+      page.should have_content "Scheduled Time"
+      page.should_not have_content "Completed Date"
+      page.should_not have_content "Completed Time"
       page.should_not have_content @pixi_post.description
       page.should_not have_content @completed.description
       page.should have_content @scheduled.description
@@ -278,6 +289,12 @@ feature "PixiPosts" do
 
     it "displays completed posts", js: true do
       page.find('#comp-posts').click
+      page.should_not have_content "Preferred Date"
+      page.should_not have_content "Preferred Time"
+      page.should_not have_content "Scheduled Date"
+      page.should_not have_content "Scheduled Time"
+      page.should have_content "Completed Date"
+      page.should have_content "Completed Time"
       page.should_not have_content @pixi_post.description
       page.should_not have_content @scheduled.description
       page.should have_content @completed.description
@@ -325,10 +342,16 @@ feature "PixiPosts" do
       visit seller_pixi_posts_path(status: 'active') 
     end
 
-    it 'show content' do
+    it 'shows active content' do
       page.should have_link "Submitted", href: seller_pixi_posts_path(status: 'active')
       page.should have_link "Scheduled", href: seller_pixi_posts_path(status: 'scheduled')
       page.should have_link "Completed", href: seller_pixi_posts_path(status: 'completed')
+      page.should have_content "Preferred Date"
+      page.should have_content "Preferred Time"
+      page.should_not have_content "Scheduled Date"
+      page.should_not have_content "Scheduled Time"
+      page.should_not have_content "Completed Date"
+      page.should_not have_content "Completed Time"
       page.should have_content "My PixiPosts"
     end
 
@@ -457,6 +480,12 @@ feature "PixiPosts" do
       page.should_not have_selector('title', text: 'My PixiPosts')
       page.should have_content "PixiPost"
       page.should have_content "Seller Name" 
+      page.should have_content "Preferred Date"
+      page.should have_content "Preferred Time"
+      page.should_not have_content "Scheduled Date"
+      page.should_not have_content "Scheduled Time"
+      page.should_not have_content "Completed Date"
+      page.should_not have_content "Completed Time"
     end
 
     it "clicks to open a pixipost" do

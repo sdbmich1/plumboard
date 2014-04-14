@@ -28,7 +28,7 @@ class PixiPost < ActiveRecord::Base
   validates :mobile_phone, allow_blank: true, length: {is: 10}
   validate :zip_service_area
   validates_date :preferred_date, presence: true, on_or_after: :today, unless: :has_appt?
-  validates_date :alt_date, allow_blank: true, on_or_after: :today
+  validates_date :alt_date, allow_blank: true, on_or_after: :today, unless: :has_appt?
   validates_date :appt_date, on_or_after: :today, presence: true, if: :has_pixan?
   validates_date :completed_date, on_or_after: :today, presence: true, if: :has_pixi?
   validates_datetime :alt_time, presence: true, unless: "alt_date.nil?"
@@ -108,6 +108,11 @@ class PixiPost < ActiveRecord::Base
   # check if pixi is assigned
   def has_pixi?
     !pixi_id.blank?
+  end
+
+  # check if comments is assigned
+  def has_comments?
+    !comments.blank?
   end
 
   # load new pixi post with pre-populated fields

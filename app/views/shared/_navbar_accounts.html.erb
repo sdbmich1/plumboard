@@ -1,4 +1,6 @@
 <ul class="nav pull-right">
-  <li id='li_home' class="active"><%= link_to "Bank", get_account_path, class: 'submenu', remote: true %></li>
-  <li><%= link_to "Card", get_card_path, class: 'submenu', remote: true %></li>
+  <li id='li_home' class="<%= controller_name == 'bank_accounts' ? 'active' : '' %>">
+    <%= link_to "Bank", get_account_path, class: 'submenu', remote: true %></li>
+  <li class="<%= controller_name == 'card_accounts' ? 'active' : '' %>">
+    <%= link_to "Card", get_card_path, class: 'submenu', remote: true %></li>
 </ul>

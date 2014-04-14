@@ -134,8 +134,8 @@ module ApplicationHelper
   # set account path based on user has an account
   def get_account_path
     if @user.has_bank_account? 
-      @account = @user.bank_accounts.first
-      @account.new_record? ? new_bank_account_path : bank_account_path(@account)
+      @acct = @user.bank_accounts.first
+      @acct.new_record? ? new_bank_account_path : bank_account_path(@acct)
     else 
       new_bank_account_path
     end

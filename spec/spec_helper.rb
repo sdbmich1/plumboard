@@ -61,6 +61,7 @@ Spork.prefork do
 
     config.before(:each, :js => true) do
       DatabaseCleaner.strategy = :truncation
+      page.driver.browser.manage.window.maximize
     end
 
     config.before(:each) do

@@ -26,10 +26,11 @@ feature "CardAccounts" do
     fill_in "card_number", with: val
   end
 
-  def credit_card_data cid="4111111111111111", cvv="123", valid=true
+  def credit_card_data cid="4111111111111111", cvv="123", valid=true, zip=94108
     credit_card cid
     fill_in "card_code",  with: cvv
     valid ? valid_card_dates : invalid_card_dates
+    fill_in "card_zip",  with: zip
     click_valid_ok
   end
 
@@ -88,8 +89,7 @@ feature "CardAccounts" do
 
   describe "Create Card Account", js: true do 
     before do
-      visit root_path
-      click_link 'My Accounts'
+      visit new_bank_account_path
       click_link 'Card'
     end
 
@@ -101,11 +101,11 @@ feature "CardAccounts" do
 
     it "creates an new account" do
       expect {
-        credit_card_data; sleep 2
+        credit_card_data; 
+        page.should have_link 'Remove'
       }.to change(CardAccount, :count).by(1)
 
       # page.should have_content 'Home'
-      page.should have_link 'Remove'
       page.should have_content 'Card #'
       page.should have_content 'Default'
     end
@@ -166,6 +166,14 @@ feature "CardAccounts" do
 
       it "rejects invalid exp date" do
 	credit_card_data '4111111111111111', '123', false
+      end
+
+      it "rejects invalid zip" do
+	credit_card_data '4111111111111111', '123', false, 99999
+      end
+
+      it "rejects blank zip" do
+	credit_card_data '4111111111111111', '123', false, ''
       end
     end
   end

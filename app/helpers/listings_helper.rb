@@ -170,7 +170,11 @@ module ListingsHelper
 
   # check if panel needs to be displayed
   def show_metric_panel? model
-    (model.active? || model.sold?) && model.seller?(@user)
+    if controller_name == 'listings'
+      (model.active? || model.sold?) && model.seller?(@user)
+    else
+      false
+    end
   end
 
   # set pixi poster

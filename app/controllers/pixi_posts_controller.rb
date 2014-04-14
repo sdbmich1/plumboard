@@ -53,7 +53,7 @@ class PixiPostsController < ApplicationController
   end
 
   def index
-    @posts = PixiPost.get_by_status(params[:status]).paginate(page: @page)
+    @posts = PixiPost.get_by_status(@status).paginate(page: @page)
     respond_with(@posts) do |format|
       format.json { render json: {posts: @posts} }
     end
@@ -89,6 +89,7 @@ class PixiPostsController < ApplicationController
 
   def load_data
     @page = params[:page] || 1
+    @status = params[:status]
   end
 
   def set_zip

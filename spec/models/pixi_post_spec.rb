@@ -216,6 +216,17 @@ describe PixiPost do
     end
   end
 
+  describe 'has_comments?' do
+    it 'does not return true' do
+      @pixi_post.has_comments?.should_not be_true
+    end
+
+    it 'returns true' do
+      pixi_post = FactoryGirl.build :pixi_post, comments: 'ask for julie'
+      pixi_post.has_comments?.should be_true
+    end
+  end
+
   describe 'get_time' do
     it 'should not return true' do
       @pixi_post.get_time('test').should_not be_true
@@ -281,17 +292,25 @@ describe PixiPost do
         @pixi_post.should be_valid
       end
 
-      it "should reject a bad preferred date" do
+      it "does not reject a old preferred date" do
+        @pixan = create :pixi_user
+        @pixi_post.preferred_date = Date.today-1.day
+        @pixi_post.appt_date = @pixi_post.appt_time = Time.now+3.days
+	@pixi_post.pixan_id = @pixan.id
+        @pixi_post.should be_valid
+      end
+
+      it "rejects a bad preferred date" do
         @pixi_post.preferred_date = Date.today-1.day
         @pixi_post.should_not be_valid
       end
 
-      it "should reject a bad preferred time" do
+      it "rejects a bad preferred time" do
         @pixi_post.preferred_time = nil
         @pixi_post.should_not be_valid
       end
 
-      it "should not be valid without a preferred date" do
+      it "is not be valid without a preferred date" do
         @pixi_post.preferred_date = nil
         @pixi_post.should_not be_valid
       end
@@ -306,6 +325,14 @@ describe PixiPost do
 
       it "has valid alternate date" do
         @pixi_post.alt_date = Date.today+3.days
+        @pixi_post.should be_valid
+      end
+
+      it "does not reject a old alt date" do
+        @pixan = create :pixi_user
+        @pixi_post.alt_date = Date.today-1.day
+        @pixi_post.appt_date = @pixi_post.appt_time = Time.now+3.days
+	@pixi_post.pixan_id = @pixan.id
         @pixi_post.should be_valid
       end
 

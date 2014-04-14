@@ -274,6 +274,7 @@ class ListingParent < ActiveRecord::Base
 
       # load attributes to new record
       listing = tmpFlg ? Listing.new(attr) : TempListing.new(attr)
+      listing.status = 'edit' if !tmpFlg
     end
 
     # add photos

@@ -364,6 +364,7 @@ describe TempListing do
 
     it "returns new listing" do 
       temp_listing.dup_pixi(true).should be_true
+      expect(temp_listing.dup_pixi(true).status).not_to eq('edit')
     end
   end
 

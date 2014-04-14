@@ -16,7 +16,9 @@ $(document).on("focus", ".dt-pckr", function(e){
 
       // set end date
       $(this).datepicker('setValue', newDate);
-  });
+    }).on('changeDate', function(ev) { 
+      newDt.hide();
+  }).data('datepicker');
 });
 
 // manage event date

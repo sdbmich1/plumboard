@@ -683,6 +683,7 @@ describe Listing do
 
     it "returns new listing" do 
       listing.dup_pixi(false).should be_true
+      expect(listing.dup_pixi(false).status).to eq('edit')
     end
   end
 

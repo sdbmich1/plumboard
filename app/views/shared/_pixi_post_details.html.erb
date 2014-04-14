@@ -36,6 +36,9 @@
       </tr>
       <tr><td class='span3'>Submitted: </td><td><%= get_local_date(post.created_at) %></td></tr>
     <% end %>
+    <% if post.has_comments? %>
+      <tr><td class='span3'>Comments: </td><td><%= post.comments %><br /></td></tr>
+    <% end %>
   </table>
   </div>
 </div>

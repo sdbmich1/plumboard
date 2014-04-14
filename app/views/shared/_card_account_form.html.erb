@@ -2,7 +2,7 @@
   <h2>Setup Your Card Account</h2>
 </div>
   <div class="row">
-    <%= form_for(@account, html: { id: 'card-acct-form', class: "form-horizontal uform" }, :remote=>true) do |f| %>
+    <%= form_for(@account, html: { id: 'card-acct-form', class: "form-horizontal uform" }) do |f| %>
       <div id="form_errors"><%= render partial: 'shared/error_messages', locals: { :target => f.object } %></div>
       <div id="data_error" style="display:none" class="error"></div>
 
@@ -16,7 +16,8 @@
 	      <div class='neg-top'>
 	        <label class="control-label">Exp Month</label>
 	        <div class='controls'>
-                  <%= select_month Date.today, {add_month_numbers_true: true}, {name: 'exp_month', id: "cc_card_month", class: "sm-top span2"} %></div> 
+                  <%= select_month Date.today, {add_month_numbers_true: true}, {name: 'exp_month', id: "cc_card_month", class: "sm-top span2"} %>
+		</div> 
 	      </div>
 	      <div class='clear-all'></div>
 	      <div class='sm-top'>

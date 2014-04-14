@@ -34,6 +34,34 @@ module PixiPostsHelper
     else
       false
     end
-    
+  end
+
+  # get column header to match view type
+  def get_col_header val
+    case val
+      when 'active'; 'Preferred'
+      when 'scheduled'; 'Scheduled'
+      when 'completed'; 'Completed'
+    end
+  end
+
+  # get time value to match view type
+  def get_col_time val, post
+    case val
+      when 'active'; tm = post.preferred_time
+      when 'scheduled'; tm = post.appt_time
+      when 'completed'; tm = post.completed_time
+    end
+    tm.strftime("%l:%M %p") rescue nil
+  end
+
+  # get date value to match view type
+  def get_col_date val, post
+    case val
+      when 'active'; tm = post.preferred_date
+      when 'scheduled'; tm = post.appt_date
+      when 'completed'; tm = post.completed_date
+    end
+    get_local_date(tm) rescue nil
   end
 end
