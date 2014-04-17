@@ -11,7 +11,7 @@
 
       <div class="span4">
         <div id='signup'>
-          <%= render partial: 'shared/user_info', locals: { f: f } %>
+          <%= render partial: 'shared/user_info', locals: { f: f, user: @user } %>
 	  <% if @user.password_required? %>
     	    <div><%= f.password_field :password, placeholder: 'New password (min. 8 characters)', required: true %></div>
     	    <div><%= f.password_field :password_confirmation, placeholder: 'Re-enter password', required: true %></div>

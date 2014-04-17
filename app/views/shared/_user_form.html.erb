@@ -5,7 +5,7 @@
 
     <div class="sm-top span5">
       <div id='signup'>
-        <%= render partial: 'shared/user_info', locals: { f: f } %>
+        <%= render partial: 'shared/user_info', locals: { f: f, user: @usr } %>
       </div>
       <%= f.submit "Save Changes", class: "btn btn-large btn-primary submit-btn" %>
     </div>
