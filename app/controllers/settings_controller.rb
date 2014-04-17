@@ -4,7 +4,7 @@ class SettingsController < ApplicationController
   layout :page_layout
 
   def index
-    respond_with(@user = current_user)
+    respond_with(@usr = current_user)
   end
 
   def password

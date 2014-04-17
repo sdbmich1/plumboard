@@ -147,9 +147,14 @@ describe Invoice do
 
   describe "get_invoices" do 
     before { @invoice.save }
-
     it { Invoice.get_invoices(@user).should_not be_empty }
     it { Invoice.get_invoices(@buyer).should be_empty }
+  end
+
+  describe "get_buyer_invoices" do 
+    before { @invoice.save }
+    it { Invoice.get_buyer_invoices(@user).should be_empty }
+    it { Invoice.get_buyer_invoices(@buyer).should_not be_empty }
   end
 
   describe "find_invoice" do 

@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe TempListing do
   before(:each) do
+    @user = create :pixi_user
     @category = FactoryGirl.create(:category, pixi_type: 'basic') 
     @temp_listing = FactoryGirl.create(:temp_listing)
   end
@@ -121,6 +122,33 @@ describe TempListing do
   describe "when category_id is empty" do
     before { @temp_listing.category_id = "" }
     it { should_not be_valid }
+  end
+
+  describe 'set_end_date' do
+    it "sets correct end date" do
+      temp_listing = FactoryGirl.build(:temp_listing, seller_id: @user.id)
+      expect(temp_listing.set_end_date).to be > Date.today + 1.day
+    end
+
+    it "sets incorrect end date" do
+      temp_listing = FactoryGirl.build(:temp_listing, seller_id: @user.id, start_date: nil)
+      expect(temp_listing.set_end_date).to eq Date.today + 1.day
+    end
+  end
+
+  describe 'set_flds' do
+    it "sets fields" do
+      @temp = create(:temp_listing, seller_id: @user.id, status: nil)
+      expect(@temp.status).to eq('new')
+      expect(@temp.pixi_id).not_to be_nil
+    end
+
+    it "does not set fields" do
+      temp_listing = FactoryGirl.build(:temp_listing, seller_id: @user.id, status: 'edit', pixi_id: '123456')
+      temp_listing.save
+      expect(temp_listing.status).not_to eq('new')
+      expect(temp_listing.pixi_id).not_to eq('123456')
+    end
   end
 
   describe "should not include invalid site listings" do 
@@ -362,9 +390,28 @@ describe TempListing do
       listing.dup_pixi(true).should_not be_true
     end
 
-    it "returns new listing" do 
-      temp_listing.dup_pixi(true).should be_true
-      expect(temp_listing.dup_pixi(true).status).not_to eq('edit')
+    it "returns new listing w/ associations" do 
+      @listing = FactoryGirl.create(:listing, seller_id: user.id)
+      @pixi_want = user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
+      @pixi_like = user.pixi_likes.create FactoryGirl.attributes_for :pixi_like, pixi_id: @listing.pixi_id
+      @temp_listing = @listing.dup_pixi(false)
+      expect(@listing.pixi_id).to eq(@temp_listing.pixi_id)
+      @temp_listing.title, @temp_listing.price = 'Super Fender Bass', 999.99
+      picture = @temp_listing.pictures.build
+      picture.photo = File.new Rails.root.join("spec", "fixtures", "photo0.jpg")
+      @temp_listing.save
+      expect(@temp_listing.pictures.count).to be > 1
+      @dup_listing = @temp_listing.dup_pixi(true)
+      expect(@dup_listing.title).not_to eq(@listing.title)
+      expect(@dup_listing.status).to eq('active')
+      expect(@dup_listing.price).to eq(999.99)
+      expect(@dup_listing.wanted_count).to eq(1)
+      expect(@dup_listing.liked_count).to eq(1)
+      expect(@dup_listing.pictures.count).to be > 1
+      expect(TempListing.where(pixi_id: @listing.pixi_id).count).to eq(0)
+      expect(TempListing.where("title like 'Super%'").count).to eq(0)
+      expect(Listing.where(pixi_id: @listing.pixi_id).count).to eq(1)
+      expect(Listing.where("title like 'Super%'").count).to eq(1)
     end
   end
 
@@ -528,7 +575,7 @@ describe TempListing do
 
   describe '.event?' do
     before do
-      @cat = FactoryGirl.create(:category, name: 'Event', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Jobs', category_type: 'event', pixi_type: 'premium') 
     end
 
     it "is not an event" do
@@ -543,7 +590,7 @@ describe TempListing do
 
   describe '.has_year?' do
     before do
-      @cat = FactoryGirl.create(:category, name: 'Automotive', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Jobs', category_type: 'asset', pixi_type: 'premium') 
     end
 
     it "does not have a year" do
@@ -558,7 +605,7 @@ describe TempListing do
 
   describe '.job?' do
     before do
-      @cat = FactoryGirl.create(:category, name: 'Jobs', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Jobs', category_type: 'employment', pixi_type: 'premium') 
     end
 
     it "is not a job" do

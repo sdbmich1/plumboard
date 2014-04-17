@@ -114,8 +114,7 @@ feature "CardAccounts" do
   describe "Delete Card Account", js: true do 
     before do
       @account = @user.card_accounts.create FactoryGirl.attributes_for :card_account, status: 'active'
-      visit root_path
-      click_link 'My Accounts'
+      visit new_bank_account_path
       click_link 'Card'
     end
 
@@ -134,46 +133,40 @@ feature "CardAccounts" do
     end
   end
 
-  describe "Invalid Card Account" do 
+  describe "Invalid Card Account", js: true do 
     before do
-      visit root_path
-      click_link 'My Accounts'
+      visit new_bank_account_path
       click_link 'Card'
     end
 
-    describe 'visit create page', js: true do
+    describe 'visit create page' do
       it 'shows content' do
-        page.should have_selector('h2', text: 'Setup Your Card Account')
+        page.should have_content('Setup Your Card Account')
         page.should have_content("Card #")
         page.should have_button("Save")
       end
 
       it "rejects missing card #" do
 	credit_card_data '', '123', true
-      end
+        page.should have_content('Card declined')
 
-      it "rejects invalid card number" do
 	credit_card_data '0000', '123', true
-      end
+        page.should have_content('Card declined')
 
-      it "rejects missing card code" do
-	credit_card_data '4111111111111111', '', true
-      end
+	credit_card_data '4111111111111111', nil, true
+        page.should have_content('Card declined')
 
-      it "rejects invalid card code" do
 	credit_card_data '4111111111111111', '10', true
-      end
+        page.should have_content('Card declined')
 
-      it "rejects invalid exp date" do
 	credit_card_data '4111111111111111', '123', false
-      end
+        page.should have_content('Card declined')
 
-      it "rejects invalid zip" do
 	credit_card_data '4111111111111111', '123', false, 99999
-      end
+        page.should have_content('Card declined')
 
-      it "rejects blank zip" do
 	credit_card_data '4111111111111111', '123', false, ''
+        page.should_not have_content('successfully')
       end
     end
   end

@@ -14,7 +14,7 @@
         <%= simple_format(listing.summary) %><br />
 
         <% if listing.price %>
-          Price: <%= number_to_currency listing.price %>
+          Price: <%= ntc listing.price %>
         <% end %>
         <% if listing.job? %>
           Compensation: <%= listing.compensation %>

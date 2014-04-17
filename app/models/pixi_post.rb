@@ -24,8 +24,8 @@ class PixiPost < ActiveRecord::Base
   validates :preferred_time, presence: true
   validates :pixan_id, presence: true, if: :has_appt? || :is_completed?
   validates :pixi_id, presence: true, unless: "completed_date.nil?"
-  validates :home_phone, presence: true, length: {is: 10}
-  validates :mobile_phone, allow_blank: true, length: {is: 10}
+  validates :home_phone, presence: true, length: {in: 10..15}
+  validates :mobile_phone, allow_blank: true, length: {in: 10..15}
   validate :zip_service_area
   validates_date :preferred_date, presence: true, on_or_after: :today, unless: :has_appt?
   validates_date :alt_date, allow_blank: true, on_or_after: :today, unless: :has_appt?

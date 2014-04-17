@@ -1,0 +1,10 @@
+<% provide(:title, 'Invoices') %>
+<%= content_for :subhead do %>
+  <%= render :partial => 'shared/navbar', locals: { menu_name: { name: 'Invoices', action: 'sent' } } %>
+<% end %>
+<%= content_for :content do %>
+  <div id='inv_form'>
+    <%= render :partial => 'shared/invoices' %>
+  </div>
+<% end %>
+

@@ -18,40 +18,6 @@ describe TempListingObserver do
     @observer = TempListingObserver.instance
     @observer.stub(:send_system_message).with(@model).and_return(true)
   end
-  
-  describe 'before_update' do
-
-    describe 'reset status' do
-      before(:each) do
-        @user = create :contact_user 
-        @temp_listing = create :temp_listing_with_transaction, seller_id: @user.id
-        @temp_listing.status = 'pending'
-        @temp_listing.save!
-        @temp_listing.approve_order @user
-        Listing.stub(:find_by_pixi_id).with(@temp_listing.pixi_id).and_return(true)
-      end
-
-      it 'should reset status' do
-        @temp_listing.title = 'cute room for rent'
-        @temp_listing.save!
-        @temp_listing.status.should == 'edit'
-      end
-    end
-
-    describe 'does not reset status' do
-      before(:each) do
-        @user = create :contact_user 
-        @temp_listing = create :temp_listing_with_transaction, seller_id: @user.id
-        Listing.stub(:find_by_pixi_id).with(@temp_listing.pixi_id).and_return(false)
-      end
-
-      it 'should not reset status' do
-        @temp_listing.title = 'cute room for rent'
-        @temp_listing.save!
-        @temp_listing.status.should_not == 'edit'
-      end
-    end
-  end
 
   describe 'after_update' do
 

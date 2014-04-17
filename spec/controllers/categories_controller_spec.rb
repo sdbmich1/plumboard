@@ -47,7 +47,7 @@ describe CategoriesController do
     end
 
     it "should render the correct layout" do
-      response.should render_template("layouts/listings")
+      response.should render_template("layouts/categories")
     end
   end
 
@@ -273,5 +273,33 @@ describe CategoriesController do
     end
   end
 
+  describe 'xhr GET category_type' do
+    before :each do
+      @category = mock_category
+      Category.stub_chain(:find, :category_type).and_return( @category )
+      @category.stub(:category_type) {'asset'}
+      do_get
+    end
 
+    def do_get
+      xhr :get, :category_type, id: '1'
+    end
+
+    it "should load nothing" do
+      controller.stub!(:render)
+    end
+
+    it "should assign @category_type" do
+      assigns(:cat_type).should_not be_nil
+    end
+
+    it "should show the requested category category_type" do
+      response.should be_success
+    end
+
+    it "responds to JSON" do
+      get :category_type, :id => '1', :format => :json
+      expect(response).to be_success
+    end
+  end
 end

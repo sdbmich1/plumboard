@@ -1,7 +1,7 @@
 require 'will_paginate/array' 
 class UsersController < ApplicationController
-  before_filter :check_permissions, :load_data, only: [:index]
   before_filter :authenticate_user!
+  before_filter :load_data, only: [:index]
   before_filter :load_target, only: [:update]
   respond_to :html, :js, :json, :mobile
 
@@ -11,7 +11,7 @@ class UsersController < ApplicationController
 
   def show
     @usr = User.find params[:id]
-    @photo = @user.pictures
+    @photo = @usr.pictures
   end
 
   def edit
@@ -19,6 +19,7 @@ class UsersController < ApplicationController
   end
 
   def update
+    authorize! :update, User
     @usr = User.find params[:id]
     changing_email = params[:user][:email] != @usr.email
     if @usr.update_attributes(params[:user])

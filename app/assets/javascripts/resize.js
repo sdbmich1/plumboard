@@ -33,8 +33,7 @@ function resizeFrame() {
 
     // clear dynamic added nav menu classes
     $("body").removeClass('no-pad');
-    $(".bar-top").removeClass('no-mtop');
-    $(".bar-top").removeClass('mneg-top');
+    $(".bar-top").removeClass('no-mtop mneg-top');
     $(".navbar").removeClass('mneg-top');
     $(".navbar-fixed-top").removeClass('affix');
     $("#msg_Container").removeClass('top5');
@@ -60,9 +59,11 @@ function adjustWindow() {
     var footerTop = winHeight - footerHeight;
   }
   var total = footerTop - winHeight;
-  //console.log('height = ' + winHeight);
+  console.log('height = ' + winHeight);
   //console.log('docHeight = ' + docHeight);
-  //console.log('footerTop = ' + footerTop);
+  console.log('footerTop = ' + footerTop);
+  console.log('ms lrg width = ' + $(window).width());
+  console.log('total = ' + total);
 
   // adjust footer so that it doesn't render atop of page content
   if (footerTop > winHeight && $(window).width() < 1024) {

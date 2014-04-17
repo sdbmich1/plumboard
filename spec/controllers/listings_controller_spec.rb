@@ -288,12 +288,9 @@ describe ListingsController do
 
   describe 'GET show/:id' do
     before :each do
-      @post = stub_model(Post)
-      @comment = stub_model(Comment)
       @comments = mock('comments')
       Listing.stub!(:find_by_pixi_id).and_return( @listing )
-      Post.stub!(:new).and_return( @post )
-      @listing.stub_chain(:comments, :build).and_return( @comment )
+      @listing.stub_chain(:comments, :build).and_return( @comments )
       controller.stub!(:load_comments).and_return(@comments)
       controller.stub!(:add_points).and_return(:success)
     end
@@ -312,24 +309,9 @@ describe ListingsController do
       do_get
     end
 
-    it "should load the new post" do
-      Post.stub(:new).and_return(@post)
-      do_get
-    end
-
     it "should assign @listing" do
       do_get
       assigns(:listing).should_not be_nil
-    end
-
-    it "should assign @post" do
-      do_get
-      assigns(:post).should_not be_nil
-    end
-
-    it "should assign @comment" do
-      do_get
-      assigns(:comment).should_not be_nil
     end
 
     it "show action should render show template" do
@@ -345,11 +327,9 @@ describe ListingsController do
 
   describe 'xhr GET show/:id' do
     before :each do
-      @post = stub_model(Post)
-      @comment = stub_model(Comment)
+      @comments = stub_model(Comment)
       Listing.stub!(:find_by_pixi_id).and_return( @listing )
-      Post.stub!(:new).and_return( @post )
-      @listing.stub_chain(:comments, :build).and_return( @comment )
+      @listing.stub_chain(:comments, :build).and_return( @comments )
       controller.stub!(:load_comments).and_return(:success)
       controller.stub!(:add_points).and_return(:success)
     end
@@ -368,24 +348,9 @@ describe ListingsController do
       do_get
     end
 
-    it "should load the new post" do
-      Post.stub(:new).and_return(@post)
-      do_get
-    end
-
     it "should assign @listing" do
       do_get
       assigns(:listing).should_not be_nil
-    end
-
-    it "should assign @post" do
-      do_get
-      assigns(:post).should_not be_nil
-    end
-
-    it "should assign @comment" do
-      do_get
-      assigns(:comment).should_not be_nil
     end
 
     it "show action should render show template" do
@@ -431,7 +396,7 @@ describe ListingsController do
     end
   end
 
-  describe 'xhr GET get_pixi_price' do
+  describe 'xhr GET pixi_price' do
     before :each do
       @listing = mock_listing
       Listing.stub_chain(:find_by_pixi_id, :price).and_return( @listing )
@@ -440,7 +405,7 @@ describe ListingsController do
     end
 
     def do_get
-      xhr :get, :get_pixi_price, pixi_id: '1'
+      xhr :get, :pixi_price, pixi_id: '1'
     end
 
     it "should load nothing" do
@@ -456,7 +421,7 @@ describe ListingsController do
     end
 
     it "responds to JSON" do
-      get :get_pixi_price, :pixi_id => '1', :format => :json
+      get :pixi_price, :pixi_id => '1', :format => :json
       expect(response).to be_success
     end
   end

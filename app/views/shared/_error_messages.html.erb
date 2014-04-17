@@ -1,5 +1,8 @@
 <% if target.errors.any? %>  
-  <div id="errorExplanation" class="error">  
+  <div class="alert alert-error">
+     <button class="close" data-dismiss="alert">
+       <i class="icon-remove-sign"></i>
+     </button>
     <%= target.errors.full_messages.first %> 
   </div>  
 <% end %>

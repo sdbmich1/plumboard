@@ -1,7 +1,7 @@
 <%= link_to 'Edit', edit_temp_listing_path(listing), class: 'btn btn-large' %>
 <% if listing.edit? %>
   <%= link_to 'Cancel', root_path, confirm: msg, class: 'btn btn-large' %>
-<% else %>
+<% elsif listing.active? %>
   <div class="btn-group">
     <button type="button" class="btn btn-large dropdown-toggle" data-toggle="dropdown">
       Remove <span class="caret icon-white"></span>
@@ -10,5 +10,7 @@
       <%= remove_menu listing %>
     </ul>
   </div>
+<% else %>
+  <%= link_to 'Remove', listing, method: :delete, confirm: msg, class: 'btn btn-large' %>
 <% end %>
 

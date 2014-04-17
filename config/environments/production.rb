@@ -27,11 +27,11 @@ Plumboard::Application.configure do
   config.assets.expire_after 2.weeks
 
   # Specifies the header that your server uses for sending files
-  # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for apache
+  config.action_dispatch.x_sendfile_header = "X-Sendfile" # for apache
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for nginx
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # config.force_ssl = true
+  config.force_ssl = true
 
   # See everything in the log (default is :info)
   # config.log_level = :debug
@@ -58,7 +58,7 @@ Plumboard::Application.configure do
   config.assets.precompile += ['.css', '.js', '.png', '.jpg', '.bmp', '.gif', '.ico']
 
   # Disable delivery errors, bad email addresses will be ignored
-  # config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.raise_delivery_errors = true
   config.action_mailer.default_url_options = { :host => 'www.pixiboard.com' }
   ActionMailer::Base.delivery_method = :smtp
 
@@ -84,4 +84,9 @@ Plumboard::Application.configure do
 
   # facebook ssl setting
   FACEBOOK_SSL_OPTIONS = {:ca_path => "/etc/ssl/certs"}
+
+  config.middleware.use ExceptionNotifier,
+      :email_prefix => "Pixiboard: ",
+      :sender_address => %{"Pixiboard Admin" <webmaster@pixiboard.com>},
+      :exception_recipients => %w{techsupport@pixiboard.com} 
 end

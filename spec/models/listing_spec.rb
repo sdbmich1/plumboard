@@ -465,6 +465,17 @@ describe Listing do
     end
   end
 
+  describe 'removed?' do
+    it 'should return true' do
+      @listing.status = 'removed'
+      @listing.removed?.should be_true
+    end
+
+    it 'should not return true' do
+      @listing.removed?.should_not be_true
+    end
+  end
+
   describe 'inactive?' do
     it 'should return true' do
       @listing.status = 'inactive'
@@ -537,7 +548,7 @@ describe Listing do
 
   describe '.event?' do
     before do
-      @cat = FactoryGirl.create(:category, name: 'Event', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Event', category_type: 'event', pixi_type: 'premium') 
     end
 
     it "is not an event" do
@@ -552,7 +563,7 @@ describe Listing do
 
   describe '.has_year?' do
     before do
-      @cat = FactoryGirl.create(:category, name: 'Automotive', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Automotive', category_type: 'asset', pixi_type: 'premium') 
     end
 
     it "does not have a year" do
@@ -567,7 +578,7 @@ describe Listing do
 
   describe '.job?' do
     before do
-      @cat = FactoryGirl.create(:category, name: 'Jobs', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Jobs', category_type: 'employment', pixi_type: 'premium') 
     end
 
     it "is not a job" do
@@ -682,8 +693,10 @@ describe Listing do
     end
 
     it "returns new listing" do 
-      listing.dup_pixi(false).should be_true
-      expect(listing.dup_pixi(false).status).to eq('edit')
+      new_pixi = listing.dup_pixi(false)
+      expect(new_pixi.status).to eq('edit')
+      expect(new_pixi.title).to eq(listing.title)
+      expect(new_pixi.id).not_to eq(listing.id)
     end
   end
 

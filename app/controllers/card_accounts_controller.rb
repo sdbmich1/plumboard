@@ -1,5 +1,6 @@
 class CardAccountsController < ApplicationController
   before_filter :authenticate_user!
+  # before_filter :check_permissions
   respond_to :html, :json, :js, :mobile
   layout :page_layout
 
@@ -51,4 +52,7 @@ class CardAccountsController < ApplicationController
     mobile_device? ? 'form' : 'application'
   end
 
+  def check_permissions
+    authorize! :crud, CardAccount
+  end
 end

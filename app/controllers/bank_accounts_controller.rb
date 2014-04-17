@@ -33,6 +33,7 @@ class BankAccountsController < ApplicationController
         format.json { render json: {account: @account} }
       else
         flash.now[:error] = 'Error occurred creating account. Please try again.'
+	format.html { render :new }
 	format.json { render :json => { :errors => @account.errors.full_messages }, :status => 422 }
       end
     end
@@ -71,5 +72,9 @@ class BankAccountsController < ApplicationController
     else
       redirect_to root_path
     end
+  end
+
+  def check_permissions
+    authorize! :crud, BankAccount
   end
 end

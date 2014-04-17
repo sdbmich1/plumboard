@@ -19,12 +19,14 @@ class TempListing < ListingParent
 
   # set fields upon creation
   def set_flds
-    # generate unique pixi key
-    generate_token
+    self.status = 'new' if status.blank?
 
-    self.status = 'new' if self.status.blank?
+    # generate unique pixi key
+    generate_token if pixi_id.blank?
+
     self.alias_name = rand(36**ALIAS_LENGTH).to_s(36) if alias?
     set_end_date
+    self
   end
 
   # approve order

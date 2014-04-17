@@ -24,6 +24,7 @@
 //= require datepicker.js
 //= require main.js
 //= require resize.js
+//= require togglePixiFields.js
 //= require readfile.js
 //= require acomplete.js
 //= require map.js

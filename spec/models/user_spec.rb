@@ -51,6 +51,7 @@ describe User do
     it { should respond_to(:pixi_posts) }
     it { should respond_to(:active_pixi_posts) }
     it { should respond_to(:pixan_pixi_posts) }
+
     it { should have_many(:active_listings).class_name('Listing').with_foreign_key('seller_id')
       .conditions("status='active' AND end_date >= curdate()") }
     it { should have_many(:pixi_posted_listings).class_name('Listing').with_foreign_key('seller_id')

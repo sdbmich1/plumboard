@@ -61,6 +61,11 @@ class Invoice < ActiveRecord::Base
     where(:seller_id=>usr) rescue nil
   end
 
+  # get invoices for given buyer
+  def self.get_buyer_invoices usr
+    where(:buyer_id=>usr) rescue nil
+  end
+
   # check if invoice owner
   def owner? usr
     seller_id == usr.id

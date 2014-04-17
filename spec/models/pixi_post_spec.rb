@@ -49,8 +49,10 @@ describe PixiPost do
   it { should ensure_length_of(:address).is_at_most(50) }
   it { should ensure_length_of(:city).is_at_most(30) }
   it { should ensure_length_of(:zip).is_equal_to(5) }
-  it { should ensure_length_of(:home_phone).is_equal_to(10) }
-  it { should ensure_length_of(:mobile_phone).is_equal_to(10) }
+  it { should validate_presence_of(:home_phone) }
+  it { should ensure_length_of(:home_phone).is_at_least(10).is_at_most(15) }
+  it { should ensure_length_of(:mobile_phone).is_at_least(10).is_at_most(15) }
+  it { should_not allow_value('4157251111abcdef').for(:home_phone) }
   it { should allow_value(4157251111).for(:home_phone) }
   it { should_not allow_value(7251111).for(:home_phone) }
   it { should allow_value(4157251111).for(:mobile_phone) }

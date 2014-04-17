@@ -173,7 +173,7 @@ module ApplicationHelper
 
   # convert to currency
   def ntc val
-    number_to_currency val
+    number_to_currency val, delimiter: ","
   end
 
   # check page count for infinite scroll display

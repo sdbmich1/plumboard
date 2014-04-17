@@ -1,6 +1,7 @@
 require 'will_paginate/array' 
 class TempListingsController < ApplicationController
   before_filter :authenticate_user!
+  before_filter :check_permissions, only: [:create, :show, :edit, :update, :delete]
   before_filter :load_data, only: [:unposted]
   before_filter :set_params, only: [:create, :update]
   autocomplete :site, :name, :full => true
@@ -138,4 +139,7 @@ class TempListingsController < ApplicationController
     !params[:pixan_id].blank?
   end
 
+  def check_permissions
+    authorize! :crud, TempListing
+  end
 end

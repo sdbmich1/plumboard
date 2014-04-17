@@ -1,8 +1,12 @@
 namespace :db do
 
+  # set_keys
   task :load_pixi_ids => :environment do
-    # set_keys
     set_temp_keys
+  end
+
+  task :update_cat_types => :environment do
+    updateCategoryType
   end
 
   task :update_sites => :environment do
@@ -51,6 +55,12 @@ end
 def update_pixis
   pixis = Listing.active
   pixis.map! {|p| p.end_date = Time.now+14.days; p.save}
+end
+
+def updateCategoryType
+  Category.where(name: ['GIGS', 'JOBS', 'EMPLOYMENT']).update_all(category_type: 'employment')
+  Category.where(name: ['EVENT', 'EVENTS', 'HAPPENINGS', 'TICKETS']).update_all(category_type: 'event')
+  Category.where(name: ['ANTIQUES', 'AUTOMOTIVE', 'BOATS', 'COLLECTIBLES', 'MOTORCYCLE', 'REAL ESTATE']).update_all(category_type: 'asset')
 end
 
 def update_sites

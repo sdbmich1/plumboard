@@ -72,7 +72,7 @@ describe "Users", :type => :feature do
       page.should have_content @member.birth_dt
       page.should have_content "Facebook"
       page.should have_content "Address"
-      page.should_not have_link 'Edit', href: edit_user_path(@member) 
+      page.should have_link 'Edit', href: edit_user_path(@member) 
       page.should have_link 'Done', href: users_path(utype: @member.user_type_code) 
       page.should_not have_content @user.name
     end
@@ -178,13 +178,14 @@ describe "Users", :type => :feature do
     end
   end
 
-  describe 'Edit user contact info' do
+  describe 'Edit user contact info', js: true do
     let(:contact) { FactoryGirl.build :contact }
     before :each do
-      user = create(:pixi_user) 
+      @pxuser = create(:pixi_user) 
       create :state
-      init_setup user
+      init_setup @pxuser
       visit settings_path
+      click_link 'Contact'
     end
 
     def user_home_phone
@@ -207,15 +208,16 @@ describe "Users", :type => :feature do
       fill_in 'user_contacts_attributes_0_zip', with: zip
     end
 
-    it 'shows contact page', js: true do
+    it 'shows contact page' do
       page.should have_link("Contact")
-      click_link 'Contact'
       page.should have_content("Home Phone")
       page.should have_content("Mobile Phone")
       page.should have_content("Work Phone")
     end
 
     it 'should save contact address info' do
+      page.should have_link("Contact")
+      page.should have_content("Work Phone")
       expect {
         user_address
         click_save
@@ -224,6 +226,7 @@ describe "Users", :type => :feature do
     end
 
     it 'should save contact address & home phone info' do
+      page.should have_link("Contact")
       expect {
         user_home_phone
         user_address
@@ -233,6 +236,7 @@ describe "Users", :type => :feature do
     end
 
     it 'should not save home phone' do
+      page.should have_link("Contact")
       expect {
         user_home_phone
         click_submit
@@ -240,6 +244,7 @@ describe "Users", :type => :feature do
     end
 
     it 'should not save mobile phone' do
+      page.should have_link("Contact")
       expect {
         user_mobile_phone
         click_submit
@@ -247,6 +252,7 @@ describe "Users", :type => :feature do
     end
 
     it 'should not save work phone' do
+      page.should have_link("Contact")
       expect {
         user_work_phone
         click_submit
@@ -254,6 +260,7 @@ describe "Users", :type => :feature do
     end
 
     it 'should not save with no address' do
+      page.should have_link("Contact")
       expect {
         user_address nil, nil, 'SF', '94103', true
         click_submit

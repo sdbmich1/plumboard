@@ -34,9 +34,9 @@ class Transaction < ActiveRecord::Base
 
   validates :state, :presence => true
   validates :zip, presence: true, length: {is: 5}
-  validates :home_phone, presence: true, length: {is: 10}
-  validates :mobile_phone, allow_blank: true, length: {is: 10}
-  validates :work_phone, allow_blank: true, length: {is: 10}
+  validates :home_phone, presence: true, length: {in: 10..15}
+  validates :mobile_phone, allow_blank: true, length: {in: 10..15}
+  validates :work_phone, allow_blank: true, length: {in: 10..15}
   validates :amt, presence: true, numericality: { greater_than_or_equal_to: 0 }
 
   # pre-load new transaction for given user

@@ -1,3 +1,4 @@
+<% if account %>
 <div class='center'>
   <h2>Your Card Account</h2>
 </div>
@@ -21,4 +22,7 @@
     </div>
   </div>
 </div>
+<% else %>
+  <div class='center-wrapper mtop'>Account not found for given user.</div>
+<% end %>
 

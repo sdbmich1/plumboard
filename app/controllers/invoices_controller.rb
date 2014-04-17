@@ -1,7 +1,8 @@
 require 'will_paginate/array' 
 class InvoicesController < ApplicationController
   before_filter :authenticate_user!
-  before_filter :load_data, only: [:index, :incoming, :paid, :create]
+  # before_filter :check_permissions, only: [:create, :edit, :update, :destroy, :show]
+  before_filter :load_data, only: [:index, :sent, :received]
   before_filter :set_params, only: [:create, :update]
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name
   respond_to :html, :js, :json, :mobile
@@ -12,6 +13,13 @@ class InvoicesController < ApplicationController
   end
    
   def index
+    @invoices = Invoice.all.paginate(page: @page)
+    respond_with(@invoices) do |format|
+      format.json { render json: {invoices: @invoices} }
+    end
+  end
+   
+  def sent
     @invoices = @user.invoices.paginate(page: @page)
     respond_with(@invoices) do |format|
       format.json { render json: {invoices: @invoices} }
@@ -33,15 +41,14 @@ class InvoicesController < ApplicationController
   end
 
   def edit
-    @invoice = Invoice.find params[:id]
+    @invoice = @user.invoices.find params[:id]
     respond_with(@invoice)
   end
 
   def update
-    @invoice = Invoice.find params[:id]
+    @invoice = @user.invoices.find params[:id]
     respond_with(@invoice) do |format|
       if @invoice.update_attributes(params[:invoice])
-        # @invoices = Invoice.get_invoices(@user).paginate(page: @page)
         format.json { render json: {invoice: @invoice} }
       else
         format.json { render json: { errors: @invoice.errors.full_messages }, status: 422 }
@@ -53,7 +60,6 @@ class InvoicesController < ApplicationController
     @invoice = @user.invoices.build params[:invoice]
     respond_with(@invoice) do |format|
       if @invoice.save
-        # @invoices = Invoice.get_invoices(@user).paginate(page: @page)
         format.json { render json: {invoice: @invoice} }
       else
         format.json { render json: { errors: @invoice.errors.full_messages }, status: 422 }
@@ -62,7 +68,7 @@ class InvoicesController < ApplicationController
   end
 
   def destroy
-    @invoice = Invoice.find params[:id]
+    @invoice = @user.invoices.find params[:id]
     if @invoice.destroy
       @invoices = Invoice.get_invoices(@user).paginate(page: @page)
     end  
@@ -81,5 +87,9 @@ class InvoicesController < ApplicationController
 
   def set_params
     params[:invoice] = JSON.parse(params[:invoice]) if request.xhr?
+  end
+
+  def check_permissions
+    authorize! :crud, Invoice
   end
 end

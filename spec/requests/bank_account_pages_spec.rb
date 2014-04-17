@@ -58,9 +58,11 @@ feature "BankAccounts" do
       add_data
     end
 
-    it { should have_selector('h2', text: 'Setup Your Payment Account') }
-    it { should have_content("Account #") }
-    it { should have_button("Save") }
+    it "shows content" do
+      page.should have_content('Setup Your Payment Account')
+      page.should have_content("Account #")
+      page.should have_button("Save")
+    end
 
     it "creates an new account" do
       expect {
@@ -81,17 +83,20 @@ feature "BankAccounts" do
       click_link 'My Accounts'
     end
 
-    it { should have_selector('h2', text: 'Your Payment Account') }
-    it { should have_content("Account #") }
-    it { should have_link("Remove", href: bank_account_path(@account)) }
+    it "shows content" do
+      page.should have_content('Your Payment Account')
+      page.should have_content("Account #")
+      page.should have_link("Remove", href: bank_account_path(@account))
+    end
 
     it "removes an account" do
       expect {
           click_on 'Remove'; sleep 3;
       }.to change(BankAccount, :count).by(-1)
 
-      # page.should have_content 'Pixis'
-      # page.should_not have_content 'Account #'
+      page.should have_content 'Home'
+      page.should have_content 'Pixis'
+      page.should_not have_content 'Account #'
     end
   end
 
@@ -104,10 +109,12 @@ feature "BankAccounts" do
       add_data
     end
 
-    it { should have_selector('h2', text: 'Setup Your Payment Account') }
-    it { should have_content("You need to setup a bank account") }
-    it { should have_content("Account #") }
-    it { should have_button("Next") }
+    it "shows content" do
+      page.should have_content('Setup Your Payment Account')
+      page.should have_content("You need to setup a bank account")
+      page.should have_content("Account #")
+      page.should have_button("Next")
+    end
 
     it "creates an new account" do
       expect {
@@ -123,47 +130,38 @@ feature "BankAccounts" do
     before do
       init_setup user
       @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
-      visit invoices_path 
     end
-
-    it { should have_link('Create', href: new_bank_account_path(target: 'shared/invoice_form')) }
-    it { should_not have_link('Create', href: new_invoice_path) }
 
     describe 'visit create page', js: true do
       before do
-        click_link 'Create'
+        visit new_bank_account_path(target: 'shared/invoice_form')
         add_data
       end
 
-      it { should have_selector('h2', text: 'Setup Your Payment Account') }
-      it { should have_content("Account #") }
-      it { should have_button("Next") }
+      it "shows content" do
+        page.should have_content('Setup Your Payment Account')
+        page.should have_content("Account #")
+        page.should have_button("Next")
+      end
 
       it "creates an new account" do
         expect {
             click_on 'Next'; sleep 3;
           }.to change(BankAccount, :count).by(1)
-
         page.should have_content 'Bill To'
         page.should_not have_content 'Account #'
       end
 
-      it "rejects missing acct name" do
+      it "attempts to create an invalid account" do
         fill_in 'bank_account_acct_name', with: ""
 	submit_invalid_acct
-      end
 
-      it "rejects missing acct #" do
         fill_in 'acct_number', with: ""
 	submit_invalid_acct
-      end
 
-      it "rejects missing routing #" do
         fill_in 'routing_number', with: ""
 	submit_invalid_acct
-      end
 
-      it "rejects invalid routing #" do
         fill_in 'routing_number', with: "100000007"
 	submit_invalid_acct
       end

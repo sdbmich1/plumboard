@@ -4,6 +4,8 @@ class Ability
   def initialize(user)
     user ||= User.new # guest user (not logged in)
 
+    alias_action :create, :read, :update, :destroy, :to => :crud
+
     if user.has_role? :admin
       can :manage, :all
       can :manage, PixiPost
@@ -12,12 +14,11 @@ class Ability
       can :manage_orders, User
       can :manage_users, User
       can :view_dashboard, User
-
-      can [:manage, :create, :edit, :read, :update, :destroy], Category do |cat|
-        cat.try(:user) == user
-      end
     else
       can :read, :all
+      can [:read, :update], User do |usr|
+        usr.try(:user) == user
+      end
 
       can [:create, :read], Transaction do |txn|
         txn.try(:user) == user
@@ -27,15 +28,23 @@ class Ability
         post.try(:user) == user
       end
 
-      can [:create, :read, :update, :delete], TempListing do |listing|
+      can :crud, TempListing do |listing|
         listing.try(:user) == user
       end
 
-      can [:create, :update, :delete], Invoice do |invoice|
-        invoice.try(:user) == user
+      can :crud, Invoice do |invoice|
+	invoice.try(:user) == user
       end
 
-      can :delete, Listing do |listing|
+      can :crud, BankAccount do |acct|
+        acct.try(:user) == user
+      end
+
+      can :crud, CardAccount do |acct|
+        acct.try(:user) == user
+      end
+
+      can :update, Listing do |listing|
         listing.try(:user) == user
       end
 

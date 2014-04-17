@@ -39,13 +39,15 @@ describe Transaction do
   it { should respond_to(:exp_year) }
   it { should validate_numericality_of(:amt).is_greater_than_or_equal_to(0) }
   it { should ensure_length_of(:zip).is_equal_to(5) }
-  it { should ensure_length_of(:home_phone).is_equal_to(10) }
-  it { should ensure_length_of(:mobile_phone).is_equal_to(10) }
-  it { should ensure_length_of(:work_phone).is_equal_to(10) }
+  it { should validate_presence_of(:home_phone) }
+  it { should ensure_length_of(:home_phone).is_at_least(10).is_at_most(15) }
+  it { should ensure_length_of(:mobile_phone).is_at_least(10).is_at_most(15) }
+  it { should ensure_length_of(:work_phone).is_at_least(10).is_at_most(15) }
 
   it { should allow_value(4157251111).for(:home_phone) }
   it { should allow_value(4157251111).for(:work_phone) }
   it { should allow_value(4157251111).for(:mobile_phone) }
+  it { should_not allow_value('4157251111abcdefg').for(:mobile_phone) }
   it { should_not allow_value(7251111).for(:home_phone) }
   it { should_not allow_value(7251111).for(:work_phone) }
   it { should_not allow_value(7251111).for(:mobile_phone) }

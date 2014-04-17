@@ -1,10 +1,9 @@
 require 'will_paginate/array' 
 class ListingsController < ApplicationController
-  include PointManager
+  include PointManager, LocationManager
   before_filter :authenticate_user!, except: [:local, :category]
   before_filter :load_data, only: [:index, :seller, :category, :show, :local]
   after_filter :add_points, only: [:show]
-  include LocationManager
   respond_to :html, :json, :js, :mobile
   layout :page_layout
 
@@ -26,7 +25,7 @@ class ListingsController < ApplicationController
 
   def update
     @listing = Listing.find_by_pixi_id params[:id]
-    if @listing.update_attributes(explanation: params[:reason], status: 'inactive')
+    if @listing.update_attributes(explanation: params[:reason], status: 'removed')
       redirect_to category_listings_path(loc: @listing.site_id, cid: @listing.category_id)
     else
       render action: :show, error: "Pixi was not removed. Please try again."
@@ -91,7 +90,7 @@ class ListingsController < ApplicationController
     end
   end
 
-  def get_pixi_price
+  def pixi_price
     @listing = Listing.find_by_pixi_id(params[:pixi_id])
     respond_with(@price = @listing.price)
   end

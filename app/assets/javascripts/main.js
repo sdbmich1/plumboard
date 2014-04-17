@@ -21,51 +21,17 @@ function hideComp(){
   }  
 }
 
-$(function (){
-  // when the #category id field changes
-  $(document).on("change", "select[id*=category_id]", function(evt){
+// when the #category id field changes
+$(document).on("change", "select[id*=category_id]", function(evt){
 
-    // grab the selected category
-    var cat = $("select[id*=category_id] option:selected").text();
+  // check if pixi form
+  if($('#pixi-form').length > 0) {
+    var cid = $(this).val();
+    var url = '/categories/category_type?id=' + cid;
 
-    // toggle field display based on category value
-    if(cat.match(/^Event/) != null || cat == 'Tickets') {
-      $('#event-fields').show('fast');
-
-      // hide fields
-      hideComp();
-      $('#yr-fld').hide('fast');
-    }
-    else {
-      $('#event-fields').hide('fast');
-
-      // clear event flds
-      $('#start-date, #end-date, #start-time, #end-time').val('');
-      
-      // check for jobs
-      if(cat == 'Jobs' || cat == 'Gigs') {
-        $('#price-fld, #yr-fld').hide('fast');
-        $('#comp-fld').show('fast');
-
-	// reset fields
-	if($('#input-form').length > 0) {
-	  $('#temp_listing_price, #yr_built').val('');
-	}
-      }
-      else {
-        hideComp();
-
-        // check for year categories
-        if(cat == 'Automotive' || cat == 'Motorcycle' || cat == 'Boats') {
-          $('#yr-fld').show('fast');
-        }
-        else {
-          $('#yr-fld').hide('fast');
-        }
-      }
-    }
-
-  }); 
+    // process script
+    processUrl(url);
+  }
 }); 
 
 // paginate on click
@@ -239,6 +205,7 @@ $(document).on('focus', mask_flds, function() {
   $(this).mask("(999) 999-9999");
 });
 
+// hide spinner
 $(document).on('focus', '#pixi-form', function() {
   $("#spinner").hide('fast'); 
 });
@@ -421,7 +388,7 @@ $(document).on("change", "#inv_qty, #inv_price, #inv_tax", function(){
 // get pixi price based selection of pixi ID
 $(document).on("change", "select[id*=pixi_id]", function() {
   var pid = $(this).val();
-  var url = '/listings/get_pixi_price?pixi_id=' + pid;
+  var url = '/listings/pixi_price?pixi_id=' + pid;
 
   // reset buyer id
   $('#invoice_buyer_id').val('');

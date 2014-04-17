@@ -292,11 +292,15 @@ feature "Listings" do
 
   describe "Check Pixis" do 
     before(:each) do
-      init_setup user
+      editor = FactoryGirl.create :editor, email: 'jsnow@pixitext.com', confirmed_at: Time.now 
+      @listing = create :listing, seller_id: editor.id
+      @pixi_want = editor.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
+      @pixi_like = editor.pixi_likes.create FactoryGirl.attributes_for :pixi_like, pixi_id: @listing.pixi_id
+      init_setup editor
     end
 
     describe "Review Pixis" do 
-      before { visit listing_path(listing) }
+      before { visit listing_path(@listing) }
 
       it "Deletes a pixi" do
         expect {
@@ -304,7 +308,7 @@ feature "Listings" do
           page.should_not have_content listing.title 
           page.should have_content "Pixis" 
         }.to change(Listing, :count).by(0)
-	expect(listing.reload.status).to eq('inactive')
+	expect(@listing.reload.status).to eq('removed')
       end
 
       describe "Edits active pixi" do
@@ -313,28 +317,33 @@ feature "Listings" do
 	end
 
         it "adds a pixi pic" do
-          page.should have_content("Build Pixi") 
-
+          page.should have_content("Build Your Pixi") 
           expect{
 	    fill_in 'Title', with: 'Rhodes Bass Guitar'
-            attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
-            click_button 'Next'; sleep 2
-          }.to change(Picture,:count).by(1)
-          page.should have_content 'Review Your Pixi'
-        end
+            attach_file('photo', Rails.root.join("spec", "fixtures", "photo0.jpg"))
+            click_button 'Next'
+            page.should have_content 'Review Your Pixi'
+            click_link 'Done!'
+            page.should have_content 'Rhodes Bass Guitar'
 
-        it "gets changes approved" do
-          editor = FactoryGirl.create :editor, email: 'jsnow@pixitext.com', confirmed_at: Time.now 
-          init_setup editor
-          visit pending_listings_path(status: 'pending') 
-
-	  click_on 'Details'
-          page.should have_button('Deny')
-          page.should have_link 'Approve', href: approve_pending_listing_path(listing)
-          expect {
-            click_link 'Approve';
-	  }.to change(Listing, :count).by(0)
-          page.should have_content("Pending Orders")
+            visit pending_listing_path(@listing) 
+            page.should have_content 'Rhodes Bass Guitar'
+            page.should have_button('Deny')
+            page.should have_link 'Approve', href: approve_pending_listing_path(@listing)
+            click_link 'Approve'; sleep 2;
+            page.should have_content("Pending Orders")
+            page.should have_content 'No pixis found'
+	    visit listing_path(@listing)
+            page.should have_content 'Rhodes Bass Guitar'
+            @listing.wanted_count.should eq(1)
+            @listing.liked_count.should eq(1)
+            @listing.pictures.count.should eq(2)
+            Listing.where(seller_id: @user.id).count.should eq(1)
+            TempListing.where(pixi_id: @listing.pixi_id).count.should eq(0)
+            TempListing.where("title like 'Rhodes%'").count.should eq(0)
+            Listing.where("title like 'Rhodes%'").count.should eq(1)
+            Listing.where("title like 'Acoustic%'").count.should eq(0)
+          }.to change(Listing,:count).by(0)
         end
       end
 

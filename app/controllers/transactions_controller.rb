@@ -1,5 +1,6 @@
 class TransactionsController < ApplicationController
   before_filter :authenticate_user!
+  before_filter :check_permissions, only: [:create, :show]
   before_filter :load_vars, :except => [:index, :refund]
   respond_to :html, :js, :json, :mobile
   include CalcTotal
@@ -50,5 +51,9 @@ class TransactionsController < ApplicationController
     @order = action_name == 'new' ? params : params[:order] ? params[:order] : params
     @qtyCnt = action_name == 'new' ? @order[:qtyCnt].to_i : 0
     @discount = CalcTotal::get_discount
+  end
+
+  def check_permissions
+    authorize! [:create, :read], Transaction
   end
 end

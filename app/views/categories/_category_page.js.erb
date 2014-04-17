@@ -1,0 +1,16 @@
+<% if @category.errors.any? %>
+  $("#notice").hide(300);
+  $("#form_errors").html("<%= escape_javascript( render(partial: 'shared/error_messages', locals: {target: @category})) %>");
+<% else %>
+  $("#notice").html("<%= escape_javascript( raw render(partial: 'layouts/notices')) %>");
+  $("#notice").show(300);
+  $("#pxboard").html("<%= escape_javascript(render(partial: 'shared/categories')) %>");
+<% end %>
+
+// toggle menu state
+var $this = $("#li_home");
+reset_menu_state($this, true);
+
+$('#spinner').hide(300);
+
+

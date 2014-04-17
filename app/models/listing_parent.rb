@@ -50,12 +50,12 @@ class ListingParent < ActiveRecord::Base
 
   # check if pixi is an event
   def event?
-    %w(Event Events Happenings Tickets).detect { |cat| cat == category_name }
+    category.category_type == 'event' rescue nil
   end
 
   # check if pixi can have a year
   def has_year?
-    %w(Automotive Antiques Motorcycle Boats).detect { |cat| cat == category_name }
+    category.category_type == 'asset' rescue nil
   end
 
   # check if event start date exists
@@ -159,6 +159,11 @@ class ListingParent < ActiveRecord::Base
     status == 'closed'
   end
 
+  # verify if listing is removed
+  def removed?
+    status == 'removed'
+  end
+
   # verify if alias is used
   def alias?
     show_alias_flg == 'yes'
@@ -257,7 +262,7 @@ class ListingParent < ActiveRecord::Base
 
   # check if pixi is a job
   def job?
-    %w(Gigs Jobs Employment).detect { |cat| cat == category_name}
+    category.category_type == 'employment' rescue nil
   end
 
   # duplicate pixi between models
@@ -273,8 +278,10 @@ class ListingParent < ActiveRecord::Base
       %w(id created_at updated_at).map {|x| attr.delete x}
 
       # load attributes to new record
-      listing = tmpFlg ? Listing.new(attr) : TempListing.new(attr)
-      listing.status = 'edit' if !tmpFlg
+      unless tmpFlg
+        listing = TempListing.new(attr)
+        listing.status = 'edit'
+      end
     end
 
     # add photos
@@ -289,8 +296,19 @@ class ListingParent < ActiveRecord::Base
       listing.pictures.build(:photo => pic.photo)
     end
 
+    # update fields
+    if tmpFlg && listing
+      listing.title, listing.price, listing.category_id, listing.site_id = self.title, self.price, self.category_id, self.site_id
+      listing.description, listing.compensation, listing.status = self.description, self.compensation, 'active'
+      listing.event_start_date, listing.event_start_time = self.event_start_date, self.event_start_time
+      listing.event_end_date, listing.event_end_time = self.event_end_date, self.event_end_time
+      listing.pixan_id, listing.year_built, listing.buyer_id = self.pixan_id, self.year_built, self.buyer_id
+      listing.show_phone_flg, listing.start_date, listing.end_date = self.show_phone_flg, self.start_date, self.end_date
+      listing.post_ip, listing.lat, listing.lng, listing.edited_by = self.post_ip, self.lat, self.lng, self.edited_by
+    end
+
     # add dup
-    listing.save ? listing : false
+    listing.save ? listing : false rescue false
   end
 
   # seller pic

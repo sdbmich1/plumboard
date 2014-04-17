@@ -102,7 +102,8 @@ class CardAccount < ActiveRecord::Base
 
   # process messages
   def process_error e
-    self.errors.add :base, "Card declined or invalid. Please re-submit. #{e.message}"
+    self.errors.add :base, "Card declined or invalid. Please re-submit." 
+    Rails.logger.info "Card failed: #{e.message}" 
     self
   end
 end
