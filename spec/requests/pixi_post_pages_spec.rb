@@ -246,7 +246,7 @@ feature "PixiPosts" do
       init_setup user
       load_zips
       @pixan = create :pixi_user, user_type_code: 'PX'
-      @listing = FactoryGirl.create :listing, seller_id: @user.id 
+      @listing = FactoryGirl.create :listing, seller_id: @user.id, pixan_id: @pixan.id
       @pixi_post = @user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post, description: 'tire rims')
       @scheduled = @user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: @pixan.id, appt_date: Time.now+3.days,
         appt_time: Time.now+3.days, description: 'xbox 360'

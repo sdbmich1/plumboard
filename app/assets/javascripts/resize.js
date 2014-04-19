@@ -59,23 +59,33 @@ function adjustWindow() {
     var footerTop = winHeight - footerHeight;
   }
   var total = footerTop - winHeight;
+  var ftr_total = docHeight - footerTop;
+
   console.log('height = ' + winHeight);
-  //console.log('docHeight = ' + docHeight);
+  console.log('docHeight = ' + docHeight);
   console.log('footerTop = ' + footerTop);
   console.log('ms lrg width = ' + $(window).width());
   console.log('total = ' + total);
+  console.log('ftr_total = ' + ftr_total);
 
   // adjust footer so that it doesn't render atop of page content
   if (footerTop > winHeight && $(window).width() < 1024) {
     if(navigator.userAgent.match(/msie/i)) {
       mtop = 80 + total;
     } else {
-      if($('#cat-wrap').length > 0) 
-        mtop = 80 + docHeight;
+      if($('#cat-wrap').length > 0) {
+        if(!navigator.userAgent.match(/safari/i)) 
+          mtop = 80 + ftr_total + docHeight;
+	else
+	  mtop = 80 + docHeight;
+      }
     }
   }
   else {
-    mtop = 80 + winHeight;
+    if($('#cat-wrap').length > 0) 
+      mtop = total;
+    else
+      mtop = 80;
   }
   $('#footer').css('margin-top', mtop + 'px');
   $('.scrollup').css('margin-top', mtop + 'px');
