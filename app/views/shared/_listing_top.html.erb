@@ -5,7 +5,7 @@
   <div class='valign'>
     Posted By: <%= listing.seller_name %> 
     <div class="sm-top rateit smpixis" data-rateit-value="<%= get_rating listing.user %>" data-rateit-ispreset="true" data-rateit-readonly="true"></div>
-    <%= "(#{listing.seller_rating_count})" %>
+    <%= "(#{nth(listing.seller_rating_count)})" %>
   </div>
   <div class='clear-all'></div>
   <% unless !listing.active? || listing.seller?(@user) %>

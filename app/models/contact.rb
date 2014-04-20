@@ -25,4 +25,10 @@ class Contact < ActiveRecord::Base
   def self.get_by_type val
     where contactable_type: val
   end
+
+  # get sites associated with contact location
+  def self.get_sites city, state
+    stmt = "city = ? and state = ?"
+    where(stmt, city, state).get_by_type('Site').map(&:contactable_id).uniq
+  end
 end

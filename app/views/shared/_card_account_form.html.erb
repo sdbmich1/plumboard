@@ -1,36 +1,36 @@
 <div class='center'>
   <h2>Setup Your Card Account</h2>
 </div>
-  <div class="row">
-    <%= form_for(@account, html: { id: 'card-acct-form', class: "form-horizontal uform" }) do |f| %>
-      <div id="form_errors"><%= render partial: 'shared/error_messages', locals: { :target => f.object } %></div>
-      <div id="data_error" style="display:none" class="error"></div>
-
-      <div class="sm-top span6 offset3">
-        <div id='signup'>
-	    <div class="control-group">
-	      <label class="control-label">Card #</label>
-	      <div class='controls'><%= f.number_field :card_number, :size => 16, placeholder: 'Card Number', id: 'card_number' %></div>
-	      <label class="control-label">Card Code</label>
-	      <div class='controls'><%= f.number_field :card_code, :size => 4, placeholder: 'Card Code', id: 'card_code' %></div>
-	      <div class='neg-top'>
-	        <label class="control-label">Exp Month</label>
-	        <div class='controls'>
-                  <%= select_month Date.today, {add_month_numbers_true: true}, {name: 'exp_month', id: "cc_card_month", class: "sm-top span2"} %>
-		</div> 
-	      </div>
-	      <div class='clear-all'></div>
-	      <div class='sm-top'>
-	      <label class="control-label">Exp Year</label>
-	      <div class='controls'>
-                <%= select_year nil, {start_year: Date.today.year, end_year: Date.today.year+15}, 
+<div class="row">
+  <%= form_for(@account, html: { id: 'card-acct-form', class: "form-horizontal uform" }, data: {validate: 'parsley'}) do |f| %>
+    <div id="form_errors"><%= render partial: 'shared/error_messages', locals: { :target => f.object } %></div>
+    <div id="data_error" style="display:none" class="error"></div>
+    <div class="sm-top span6 offset3">
+      <div id='signup'>
+	<div class="control-group">
+	  <label class="control-label">Card #</label>
+	  <div class='controls'><%= f.number_field :card_number, :size => 16, placeholder: 'Card Number', id: 'card_number', required: true %></div>
+	  <label class="control-label">Card Code</label>
+	  <div class='controls'><%= f.number_field :card_code, :size => 4, placeholder: 'Card Code', id: 'card_code', required: true %></div>
+	  <div class='neg-top'>
+	    <label class="control-label">Exp Month</label>
+	    <div class='controls'>
+              <%= select_month Date.today, {add_month_numbers_true: true}, {name: 'exp_month', id: "cc_card_month", class: "sm-top span2"} %>
+	    </div> 
+	  </div>
+	  <div class='clear-all'></div>
+	  <div class='sm-top'>
+	    <label class="control-label">Exp Year</label>
+	    <div class='controls'>
+              <%= select_year nil, {start_year: Date.today.year, end_year: Date.today.year+15}, 
 	           {name: 'exp_year', id: "cc_card_year", class: "sm-top span2"} %></div>
-	      </div>
-	      <label class="control-label sm-top">Postal Code</label>
-	      <div class='controls'><%= f.number_field :zip, size: 5, placeholder: 'Postal Code', id: 'card_zip', class: 'med-top width140' %></div>
-	      <%= f.hidden_field :expiration_month, id: 'exp_mo', value: Date.today.month %>
-	      <%= f.hidden_field :expiration_year, id: 'exp_yr', value: Date.today.year %>
 	    </div>
+	    <label class="control-label sm-top">Postal Code</label>
+	    <div class='controls'><%= f.number_field :zip, size: 5, placeholder: 'Postal Code', id: 'card_zip', class: 'med-top width140', 
+	      required: true %></div>
+	    <%= f.hidden_field :expiration_month, id: 'exp_mo', value: Date.today.month %>
+	    <%= f.hidden_field :expiration_year, id: 'exp_yr', value: Date.today.year %>
+	  </div>
         </div>
       </div>
       <%= f.hidden_field :user_id, value: @user.id %>

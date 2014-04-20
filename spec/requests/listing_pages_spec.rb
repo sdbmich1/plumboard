@@ -58,7 +58,7 @@ feature "Listings" do
     it "Contacts a seller", js: true do
       expect{
           page.find('#want-btn').click
-	  page.execute_script("$('#post_form').toggle();")
+	  # page.execute_script("$('#post_form').toggle();")
           page.should have_selector('#contact_content', visible: true) 
       	  fill_in 'contact_content', with: "I'm interested in this pixi. Please contact me.\n"
 	  sleep 3
@@ -80,13 +80,9 @@ feature "Listings" do
     it "does not contact a seller", js: true do
       expect{
           page.find('#want-btn').click
-	  page.execute_script("$('#post_form').toggle();")
           page.should have_selector('#contact_content', visible: true) 
 	  fill_in 'contact_content', with: "\n"
-          page.should have_link 'Want'
       }.not_to change(Post,:count).by(1)
-
-      page.should have_content "Content can't be blank"
     end
 
     it "clicks on Cool", js: true do
@@ -123,14 +119,16 @@ feature "Listings" do
       pixi_user = FactoryGirl.create(:pixi_user) 
       init_setup pixi_user
       @user.pixi_likes.create FactoryGirl.attributes_for :pixi_like, pixi_id: listing.pixi_id
+      @user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: listing.pixi_id
       @user.saved_listings.create FactoryGirl.attributes_for :saved_listing, pixi_id: listing.pixi_id
       @user.posts.create FactoryGirl.attributes_for :post, pixi_id: listing.pixi_id, recipient_id: user.id
       visit listing_path(listing) 
     end
 
     it "views pixi page" do
-      page.should_not have_link 'Want', href: '#'
+      expect(listing.user_wanted?(@user)).not_to be_nil
       page.should have_content 'Want'
+      page.should_not have_link 'Want', href: '#'
       page.find_link('Uncool').visible?
       page.should_not have_link 'Cool'
       page.should have_link 'Unsave'
@@ -160,7 +158,7 @@ feature "Listings" do
   end
 
   describe "View Event Pixi" do 
-    let(:category) { FactoryGirl.create :category, name: 'Event' }
+    let(:category) { FactoryGirl.create :category, name: 'Event', category_type: 'event' }
     let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id, 
       category_id: category.id, event_start_date: Date.tomorrow, event_end_date: Date.tomorrow, event_start_time: Time.now+2.hours, 
       event_end_time: Time.now+3.hours ) }
@@ -189,7 +187,7 @@ feature "Listings" do
   end
 
   describe "View Compensation Pixi" do 
-    let(:category) { FactoryGirl.create :category, name: 'Gigs' }
+    let(:category) { FactoryGirl.create :category, name: 'Gigs', category_type: 'employment' }
     let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id, 
       category_id: category.id, compensation: 'Salary + Equity', price: nil) }
 
@@ -268,8 +266,6 @@ feature "Listings" do
       expect{
 	  fill_in 'comment_content', with: "\n"
       }.not_to change(Comment,:count).by(1)
-
-      page.should have_content "Content can't be blank"
     end
   end
 
@@ -305,7 +301,7 @@ feature "Listings" do
       it "Deletes a pixi" do
         expect {
           click_link 'Sold Item'; sleep 2
-          page.should_not have_content listing.title 
+          page.should_not have_content @listing.title 
           page.should have_content "Pixis" 
         }.to change(Listing, :count).by(0)
 	expect(@listing.reload.status).to eq('removed')

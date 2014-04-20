@@ -15,6 +15,7 @@ describe Category do
   it { should respond_to(:temp_listings) }
   it { should respond_to(:active_listings) } 
   it { should respond_to(:pictures) }
+  it { should have_many(:active_listings).class_name('Listing').conditions("status = 'active' AND end_date >= curdate()") }
 
   describe "when name is empty" do
     before { @category.name = "" }
@@ -67,6 +68,18 @@ describe Category do
     it 'does not return true' do
       @category.pixi_type = nil
       @category.premium?.should_not be_true
+    end
+  end
+
+  describe 'has_pixis?' do
+    it 'returns true' do
+      @cat = create :category
+      create :listing, category_id: @cat.id
+      @cat.has_pixis?.should be_true
+    end
+
+    it 'does not return true' do
+      @category.has_pixis?.should_not be_true
     end
   end
 

@@ -59,6 +59,7 @@ FactoryGirl.define do
   factory :site do
     name 		"SFSU"
     status		"active"
+    org_type		"school"
   end
 
   factory :picture do

@@ -91,8 +91,8 @@ class ListingsController < ApplicationController
   end
 
   def pixi_price
-    @listing = Listing.find_by_pixi_id(params[:pixi_id])
-    respond_with(@price = @listing.price)
+    @listing = Listing.find_by_pixi_id(params[:pixi_id]) if params[:pixi_id]
+    @price = @listing.price rescue nil
   end
 
   protected

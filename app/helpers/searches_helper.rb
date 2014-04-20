@@ -10,11 +10,11 @@ module SearchesHelper
   end
 
   # get autocomplete path based on controller
-  def get_autocomplete_path
+  def get_autocomplete_path loc=''
     case controller_name
       when 'posts'; autocomplete_post_content_post_searches_path
       when 'users'; autocomplete_user_first_name_user_searches_path
-      else autocomplete_listing_title_searches_path
+      else autocomplete_listing_title_searches_path(loc: loc)
     end
   end
 

@@ -105,4 +105,40 @@ describe Site do
       expect(Site.cities).to be_empty 
     end  
   end
+
+  describe 'check_site' do
+    it 'locates sites' do
+      @site1 = create :site, name: 'Detroit', org_type: 'city'
+      @site1.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro', city: 'Detroit', state: 'MI'
+      expect(Site.check_site @site1.id, 'city').not_to be_nil 
+    end
+
+    it 'does not return sites' do
+      expect(Site.check_site @site.id, 'city').to be_nil 
+    end  
+  end
+
+  describe 'check types' do
+    it 'is a city' do
+      site = create :site, name: 'Detroit', org_type: 'city'
+      expect(site.is_city?).to be_true
+      expect(site.is_school?).not_to be_true
+      expect(site.is_region?).not_to be_true
+    end
+
+    it 'is a school' do
+      site = create :site, name: 'Detroit College', org_type: 'school'
+      expect(site.is_school?).to be_true
+      expect(site.is_city?).not_to be_true
+      expect(site.is_region?).not_to be_true
+    end
+
+    it 'is a region' do
+      site = create :site, name: 'Detroit', org_type: 'region'
+      expect(site.is_region?).to be_true
+      expect(site.is_school?).not_to be_true
+      expect(site.is_city?).not_to be_true
+    end
+  end
+
 end

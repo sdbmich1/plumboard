@@ -1,4 +1,5 @@
 class Transaction < ActiveRecord::Base
+  resourcify
   include CalcTotal, Payment, AddressManager
 
   attr_accessor :cvv, :card_number, :exp_month, :exp_year, :mobile_phone

@@ -22,11 +22,11 @@ feature "CardAccounts" do
     select (Date.today.year+2).to_s, from: "cc_card_year"
   end
 
-  def credit_card val="4111111111111111"
+  def credit_card val
     fill_in "card_number", with: val
   end
 
-  def credit_card_data cid="4111111111111111", cvv="123", valid=true, zip=94108
+  def credit_card_data cid, cvv, valid=true, zip
     credit_card cid
     fill_in "card_code",  with: cvv
     valid ? valid_card_dates : invalid_card_dates
@@ -101,7 +101,7 @@ feature "CardAccounts" do
 
     it "creates an new account" do
       expect {
-        credit_card_data; 
+	credit_card_data '4111111111111111', '123', true, 94108
         page.should have_link 'Remove'
       }.to change(CardAccount, :count).by(1)
 
@@ -147,16 +147,13 @@ feature "CardAccounts" do
       end
 
       it "rejects missing card #" do
-	credit_card_data '', '123', true
-        page.should have_content('Card declined')
+	credit_card_data nil, '123', true
+        page.should_not have_content('Successfully')
 
 	credit_card_data '0000', '123', true
         page.should have_content('Card declined')
 
-	credit_card_data '4111111111111111', nil, true
-        page.should have_content('Card declined')
-
-	credit_card_data '4111111111111111', '10', true
+	credit_card_data '4111111111111111', '  ', true
         page.should have_content('Card declined')
 
 	credit_card_data '4111111111111111', '123', false
@@ -166,7 +163,7 @@ feature "CardAccounts" do
         page.should have_content('Card declined')
 
 	credit_card_data '4111111111111111', '123', false, ''
-        page.should_not have_content('successfully')
+        page.should_not have_content('Successfully')
       end
     end
   end

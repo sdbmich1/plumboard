@@ -176,6 +176,11 @@ module ApplicationHelper
     number_to_currency val, delimiter: ","
   end
 
+  # convert to thousand
+  def nth val
+    number_to_human(val)
+  end
+
   # check page count for infinite scroll display
   def valid_next_page? model
     model.next_page <= model.total_pages rescue nil

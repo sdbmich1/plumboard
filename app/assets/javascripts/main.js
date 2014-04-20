@@ -27,10 +27,13 @@ $(document).on("change", "select[id*=category_id]", function(evt){
   // check if pixi form
   if($('#pixi-form').length > 0) {
     var cid = $(this).val();
-    var url = '/categories/category_type?id=' + cid;
 
-    // process script
-    processUrl(url);
+    if (cid.length > 0) {
+      var url = '/categories/category_type?id=' + cid;
+
+      // process script
+      processUrl(url);
+    }
   }
 }); 
 
@@ -388,13 +391,16 @@ $(document).on("change", "#inv_qty, #inv_price, #inv_tax", function(){
 // get pixi price based selection of pixi ID
 $(document).on("change", "select[id*=pixi_id]", function() {
   var pid = $(this).val();
-  var url = '/listings/pixi_price?pixi_id=' + pid;
 
-  // reset buyer id
-  $('#invoice_buyer_id').val('');
+  if (pid.length > 0) {
+    var url = '/listings/pixi_price?pixi_id=' + pid;
 
-  // process script
-  processUrl(url);
+    // reset buyer id
+    $('#invoice_buyer_id').val('');
+
+    // process script
+    processUrl(url);
+  }
 });
 
 // set invoice buyer if selected buyer is changed
@@ -453,7 +459,15 @@ $(document).on('click', '#edit-card-btn', function(e) {
 
 // toggle contact form for show pixi
 $(document).on('click', '#want-btn', function(e) {
+  var fld = '#contact_content';
   $('#post_form').toggle();
+
+  // set focus on fld
+  $(fld).focus();
+  $(fld).val($(fld).val());
+
+  // toggle button name
+  $(this).text($(this).text() == 'Want' ? 'Unwant' : 'Want');
 });
 
 var keyPress = false; 
@@ -693,8 +707,11 @@ function keyEnter(e, $this, str) {
     if($this.val().length > 0) {
       $(str).click();
       $(str).attr('disabled', true);
-      keyPress = false;
     }  
+    else {
+      $(str).removeAttr('disabled');
+    }  
+    keyPress = false;
   }
 }
 

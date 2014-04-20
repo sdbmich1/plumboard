@@ -390,12 +390,20 @@ describe TempListing do
       listing.dup_pixi(true).should_not be_true
     end
 
-    it "returns new listing w/ associations" do 
+    it 'returns new listing' do
+      @new_listing = @temp_listing.dup_pixi(true)
+      expect(@new_listing.pixi_id).to eq(@temp_listing.pixi_id)
+      expect(TempListing.where(pixi_id: @new_listing.pixi_id).count).to eq(0)
+      expect(Listing.where(pixi_id: @new_listing.pixi_id).count).to eq(1)
+    end
+
+    it "returns edit listing w/ associations" do 
       @listing = FactoryGirl.create(:listing, seller_id: user.id)
       @pixi_want = user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
       @pixi_like = user.pixi_likes.create FactoryGirl.attributes_for :pixi_like, pixi_id: @listing.pixi_id
       @temp_listing = @listing.dup_pixi(false)
       expect(@listing.pixi_id).to eq(@temp_listing.pixi_id)
+      expect(@temp_listing.status).to eq('edit')
       @temp_listing.title, @temp_listing.price = 'Super Fender Bass', 999.99
       picture = @temp_listing.pictures.build
       picture.photo = File.new Rails.root.join("spec", "fixtures", "photo0.jpg")

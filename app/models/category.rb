@@ -5,7 +5,7 @@ class Category < ActiveRecord::Base
   has_many :subcategories
   has_many :listings
   has_many :temp_listings
-  has_many :active_listings, class_name: 'Listing', conditions: { :status => 'active' }
+  has_many :active_listings, class_name: 'Listing', :conditions => "status = 'active' AND end_date >= curdate()"
 
   has_many :pictures, :as => :imageable, :dependent => :destroy
   accepts_nested_attributes_for :pictures, :allow_destroy => true, :reject_if => :all_blank
@@ -51,6 +51,11 @@ class Category < ActiveRecord::Base
   # check if category is premium
   def premium?
     pixi_type == 'premium'  
+  end
+
+  # check if category has active pixis
+  def has_pixis?
+    active_listings.size > 0 rescue false
   end
 
   # titleize name

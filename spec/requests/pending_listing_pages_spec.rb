@@ -58,7 +58,7 @@ describe "PendingListings", :type => :feature do
         click_link 'Improper Content'; sleep 2
         page.should_not have_content listing.title 
         page.should have_content("Pending Orders")
-	listing.status.should == 'denied'
+	listing.reload.status.should == 'denied'
       }.to change(Listing, :count).by(0)
     end
 

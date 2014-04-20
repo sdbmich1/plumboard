@@ -47,6 +47,26 @@ class Site < ActiveRecord::Base
     get_by_type 'city'
   end
 
+  # check if site is city
+  def is_city?
+    org_type == 'city'
+  end
+
+  # check if site is school
+  def is_school?
+    org_type == 'school'
+  end
+
+  # check if site is region
+  def is_region?
+    org_type == 'region'
+  end
+
+  # check site type
+  def self.check_site sid, val
+    where("id = ? and org_type = ?", sid, val).first
+  end
+
   # set json string
   def as_json(options={})
     super(only: [:id, :name])

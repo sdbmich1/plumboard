@@ -1,8 +1,8 @@
 require 'will_paginate/array' 
 class CategoriesController < ApplicationController
-  # load_and_authorize_resource
-  # skip_authorize_resource :only => [:index, :category_type]
-  before_filter :check_permissions, only: [:edit, :show, :inactive, :manage, :create, :update]
+  load_and_authorize_resource
+  skip_authorize_resource :only => [:index, :category_type, :autocomplete_site_name]
+  # before_filter :check_permissions, only: [:edit, :show, :inactive, :manage, :create, :update]
   before_filter :authenticate_user!, except: [:index, :autocomplete_site_name]
   before_filter :load_data, :check_signin_status, only: [:index]
   before_filter :get_page, only: [:index, :inactive, :manage, :create, :update]
@@ -35,16 +35,20 @@ class CategoriesController < ApplicationController
   def create
     @category = Category.new params[:category]
     if @category.save 
-      flash.now[:notice] = 'Successfully created category.' 
-      @categories = Category.active.paginate page: @page
+      flash[:notice] = 'Successfully created category.' 
+      redirect_to manage_categories_path
+    else
+      render :new
     end
   end
 
   def update
     @category = Category.find params[:id]
     if @category.update_attributes(params[:category])
-      flash.now[:notice] = 'Successfully updated category'
-      @categories = Category.active.paginate page: @page
+      flash[:notice] = 'Successfully updated category'
+      redirect_to manage_categories_path
+    else
+      render :edit
     end
   end
 
@@ -53,8 +57,8 @@ class CategoriesController < ApplicationController
   end
 
   def category_type
-    @category = Category.find params[:id]
-    respond_with(@cat_type = @category.category_type)
+    @category = Category.find params[:id] if params[:id]
+    @cat_type = @category.category_type rescue nil
   end
 
   protected
@@ -78,8 +82,7 @@ class CategoriesController < ApplicationController
   def check_signin_status
     @newFlg = params[:newFlg].to_bool rescue nil
     if @newFlg && @user.fb_user  
-      msg = 'To get a better user experience, please go to My Settings and add your zip code. This will enable us to better localize your pixis.'
-      flash.now[:success] = msg
+      flash.now[:success] = FB_WELCOME_MSG
     end
   end
 

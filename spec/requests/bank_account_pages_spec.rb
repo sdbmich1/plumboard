@@ -46,12 +46,13 @@ feature "BankAccounts" do
 
     page.should_not have_content 'Bill To'
     page.should have_content 'Account #'
-    page.should have_content 'invalid'
+    page.should_not have_content 'Successfully'
   end
 
   describe "Create Bank Account" do 
     before do
-      init_setup user
+      px_user = create :pixi_user
+      init_setup px_user
       @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
       visit root_path
       click_link 'My Accounts'
@@ -76,7 +77,8 @@ feature "BankAccounts" do
 
   describe "Delete Bank Account" do 
     before do
-      init_setup user
+      px_user = create :pixi_user
+      init_setup px_user
       @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
       @account = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
       visit root_path
@@ -102,7 +104,8 @@ feature "BankAccounts" do
 
   describe "Create Bank Account - Bill" do 
     before do
-      init_setup user
+      px_user = create :pixi_user
+      init_setup px_user
       @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
       visit root_path
       click_link 'Bill'
@@ -128,7 +131,8 @@ feature "BankAccounts" do
 
   describe "Create Invoice Bank Account" do 
     before do
-      init_setup user
+      px_user = create :pixi_user
+      init_setup px_user
       @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
     end
 

@@ -61,4 +61,20 @@ describe Contact do
     end
   end
 
+  describe 'get_sites' do
+    it 'locates sites' do
+      @site = create :site, name: 'Detroit', org_type: 'city'
+      @site1 = create :site, name: 'Detroit City College', org_type: 'school'
+      @site2 = create :site, name: 'Greektown', org_type: 'area'
+      @site.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro', city: 'Detroit', state: 'MI'
+      @site1.contacts.create FactoryGirl.attributes_for :contact, address: '1000 Michigan Ave', city: 'Detroit', state: 'MI'
+      @site2.contacts.create FactoryGirl.attributes_for :contact, address: '100 State', city: 'Detroit', state: 'MI', zip: '48214'
+      expect(Contact.get_sites('Detroit', 'MI').count).to eq(3)
+    end
+
+    it 'does not locate sites' do
+      expect(Contact.get_sites('Detroit', 'MI').count).to eq(0)
+    end
+  end
+
 end

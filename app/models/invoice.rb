@@ -1,4 +1,5 @@
 class Invoice < ActiveRecord::Base
+  resourcify
   include CalcTotal
   before_create :set_flds
 

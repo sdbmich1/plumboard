@@ -4,7 +4,7 @@
 <% else %>
   $("#notice").html("<%= escape_javascript( raw render(partial: 'layouts/notices')) %>");
   $("#notice").show(300);
-  $("#pxboard").html("<%= escape_javascript(render(partial: 'shared/categories')) %>");
+  $("#pxboard").html("<%= escape_javascript(render(partial: 'shared/category', collection: @categories)) %>");
 <% end %>
 
 // toggle menu state

@@ -1,4 +1,4 @@
-<%= form_for @category, url: get_category_path, html: { class: 'uform' }, remote: true do |f| %>
+<%= form_for @category, url: get_category_path, html: { class: 'uform' } do |f| %>
     <div id="form_errors"><%= render partial: 'shared/error_messages', locals: { target: f.object } %></div>
     <%= render partial: 'shared/show_user_photo', locals: { f: f, model: @category, file_name: 'photo-camera.png' } %>
 
@@ -12,7 +12,8 @@
 	  <label class="control-label">Pixi Type<label>
           <div><%= f.select :pixi_type, options_for_select( ['basic', 'premium'], :selected=>@category.pixi_type ) %></div>
 	  <label class="control-label">Status<label>
-          <div><%= f.select :status, options_for_select( ['active', 'inactive'], :selected=>@category.status ) %></div>
+          <div><%= f.select :status, options_for_select( ['active', 'inactive'], :selected=>@category.status ), {}, 
+	    {disabled: @category.has_pixis?} %></div>
       </div>
 
       <%= f.submit "Save Changes", class: "btn btn-large btn-primary submit-btn" %>

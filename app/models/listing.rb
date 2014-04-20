@@ -57,14 +57,14 @@ class Listing < ListingParent
 
   # get active pixis by city
   def self.active_by_city city, state, pg
-    stmt = "city = ? and state = ?"
-    active.where(site_id: Contact.where(stmt, city, state).get_by_type('Site').map(&:contactable_id).uniq).paginate(page: pg)
+    active.where(site_id: Contact.get_sites(city, state)).paginate(page: pg)
   end
 
   # get pixis by city
   def self.get_by_city cid, sid, pg=1
+
     # check if site is a city
-    unless loc = Site.where("id = ? and org_type = ?", sid, 'city').first
+    unless loc = Site.check_site(sid, 'city')
       cid.blank? ? get_by_site(sid, pg) : get_category_by_site(cid, sid, pg)
     else
       # get active pixis by site's city and state
@@ -126,7 +126,7 @@ class Listing < ListingParent
 
   # return whether pixi is wanted by user
   def user_wanted? usr
-    pixi_wants.where(user_id: usr.id).first
+    pixi_wants.where(user_id: usr.id).first rescue nil
   end
 
   # return liked count 

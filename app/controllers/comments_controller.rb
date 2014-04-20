@@ -12,6 +12,7 @@ class CommentsController < ApplicationController
         reload_data
         format.json { render json: {comments: @comments} }
       else
+        flash.now[:error] = @comment.errors.full_messages
         format.json { render json: { errors: @comment.errors.full_messages }, status: 422 }
       end
     end

@@ -278,10 +278,8 @@ class ListingParent < ActiveRecord::Base
       %w(id created_at updated_at).map {|x| attr.delete x}
 
       # load attributes to new record
-      unless tmpFlg
-        listing = TempListing.new(attr)
-        listing.status = 'edit'
-      end
+      listing = tmpFlg ? Listing.new(attr) : TempListing.new(attr)
+      listing.status = 'edit' unless tmpFlg
     end
 
     # add photos
@@ -297,7 +295,7 @@ class ListingParent < ActiveRecord::Base
     end
 
     # update fields
-    if tmpFlg && listing
+    if tmpFlg && listing 
       listing.title, listing.price, listing.category_id, listing.site_id = self.title, self.price, self.category_id, self.site_id
       listing.description, listing.compensation, listing.status = self.description, self.compensation, 'active'
       listing.event_start_date, listing.event_start_time = self.event_start_date, self.event_start_time
