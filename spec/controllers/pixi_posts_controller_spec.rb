@@ -18,6 +18,13 @@ describe PixiPostsController do
   before(:each) do
     log_in_test_user
     @post = stub_model(PixiPost, :id=>1, user_id: 1, quantity: 1, value: 60, description: "Guitar for Sale")
+    controller.stub!(:current_user).and_return(@user)
+  end
+
+  def set_admin
+    @abilities = Ability.new(@user)
+    Ability.stub(:new).and_return(@abilities)
+    @abilities.stub!(:can?).and_return(true)
   end
 
   describe 'GET show/:id' do
@@ -100,7 +107,7 @@ describe PixiPostsController do
 
       it "should render the new template" do
         do_create
-        response.should be_redirect
+        response.should_not be_redirect
       end
 
       it "responds to JSON" do
@@ -182,6 +189,7 @@ describe PixiPostsController do
       PixiPost.stub!(:get_by_status).and_return(@posts)
       @posts.stub!(:paginate).and_return(@posts)
       controller.stub!(:load_data).and_return(:success)
+      set_admin
       do_get
     end
 
@@ -209,6 +217,7 @@ describe PixiPostsController do
       PixiPost.stub!(:get_by_status).and_return(@posts)
       @posts.stub!(:paginate).and_return(@posts)
       controller.stub!(:load_data).and_return(:success)
+      set_admin
       do_get
     end
 
@@ -227,7 +236,6 @@ describe PixiPostsController do
 
   describe 'GET seller' do
     before :each do
-      @user = User.stub!(:find).and_return(@user)
       @posts = stub_model(PixiPost)
       @user.stub_chain(:pixi_posts, :where).and_return( @posts )
       @posts.stub!(:paginate).and_return( @posts )
@@ -240,10 +248,6 @@ describe PixiPostsController do
 
     it "renders the :seller view" do
       response.should render_template :seller
-    end
-
-    it "should assign @user" do
-      assigns(:user).should_not be_nil
     end
 
     it "should assign @posts" do

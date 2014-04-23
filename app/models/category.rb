@@ -40,12 +40,12 @@ class Category < ActiveRecord::Base
 
   # return active categories
   def self.active
-    where(:status => 'active')
+    includes(:pictures).where(:status => 'active')
   end
 
   # return inactive categories
   def self.inactive
-    where(:status => 'inactive')
+    includes(:pictures).where(:status => 'inactive')
   end
 
   # check if category is premium

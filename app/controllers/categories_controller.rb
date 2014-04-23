@@ -59,6 +59,7 @@ class CategoriesController < ApplicationController
   def category_type
     @category = Category.find params[:id] if params[:id]
     @cat_type = @category.category_type rescue nil
+    respond_with(@cat_type)
   end
 
   protected
@@ -81,7 +82,7 @@ class CategoriesController < ApplicationController
   # check user signin status
   def check_signin_status
     @newFlg = params[:newFlg].to_bool rescue nil
-    if @newFlg && @user.fb_user  
+    if @newFlg && @user.fb_user && @user.new_user? 
       flash.now[:success] = FB_WELCOME_MSG
     end
   end

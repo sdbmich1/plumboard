@@ -25,6 +25,9 @@ class User < ActiveRecord::Base
   has_many :pixi_posted_listings, foreign_key: :seller_id, class_name: 'Listing', 
     :conditions => "status = 'active' AND end_date >= curdate() AND pixan_id IS NOT NULL"
   has_many :purchased_listings, foreign_key: :buyer_id, class_name: 'Listing', conditions: { :status => 'sold' }
+  has_many :sold_pixis, foreign_key: :seller_id, class_name: 'Listing', conditions: { :status => 'sold' }
+  has_many :new_pixis, foreign_key: :seller_id, class_name: 'TempListing', conditions: "status NOT IN ('approved', 'pending', 'denied')"
+  has_many :pending_pixis, foreign_key: :seller_id, class_name: 'TempListing', conditions: "status IN ('pending', 'denied')"
   has_many :temp_listings, foreign_key: :seller_id, dependent: :destroy
   has_many :saved_listings, dependent: :destroy
   has_many :pixi_likes, dependent: :destroy
@@ -140,6 +143,18 @@ class User < ActiveRecord::Base
     self
   end
 
+  # eager load associations
+  def self.find_user uid
+    includes(:pixi_posted_listings, :pixi_wants, :pixi_likes,
+      :bank_accounts, :card_accounts, :transactions, :ratings, :seller_ratings, :inquiries, :comments,
+      :posts, :incoming_posts, :pixi_posts, :active_pixi_posts, :pixan_pixi_posts, :saved_listings, 
+      :pictures, :contacts, :preferences, :user_pixi_points, 
+      :paid_invoices => {:listing => :pictures}, :unpaid_invoices => {:listing => :pictures}, :invoices => {:listing => :pictures},  
+      :unpaid_received_invoices => {:listing => :pictures}, :received_invoices => {:listing => :pictures}, 
+      :listings => :pictures, :active_listings => :pictures, :sold_pixis => :pictures, :temp_listings => :pictures, 
+      :purchased_listings => :pictures, :pending_pixis => :pictures, :new_pixis => :pictures).where(id: uid).first 
+  end
+
   # check for a picture
   def any_pix?
     pictures.detect { |x| x && !x.photo_file_name.nil? }
@@ -168,21 +183,6 @@ class User < ActiveRecord::Base
   # return whether user has pixis
   def has_pixis?
     pixi_count > 0 rescue nil
-  end
-
-  # return all new pixis for user
-  def new_pixis
-    self.temp_listings.where("status NOT IN ('approved', 'pending', 'denied')")
-  end
-
-  # return all pending pixis for user
-  def pending_pixis
-    self.temp_listings.where("status IN ('pending', 'denied')")
-  end
-
-  # return all pixis for user
-  def sold_pixis
-    self.listings.get_by_status('sold')
   end
 
   # return whether user has any bank accounts

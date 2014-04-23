@@ -17,7 +17,7 @@ class PixiPostsController < ApplicationController
   end
 
   def create
-    @post = @user.pixi_posts.build params[:pixi_post]
+    @post = PixiPost.new params[:pixi_post]
     respond_with(@post) do |format|
       if @post.save
         format.json { render json: {post: @post} }

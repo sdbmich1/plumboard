@@ -10,7 +10,7 @@ describe CategoriesController do
   end
 
   def mock_user(stubs={})
-    (@mock_user ||= mock_model(Category, stubs).as_null_object).tap do |user|
+    (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
       user.stub(stubs) unless stubs.empty?
     end
   end
@@ -21,17 +21,27 @@ describe CategoriesController do
     @category = stub_model(Category, name: 'Computer', category_type: 'sales', status: 'active')
   end
 
-  def load_categories
+  def set_admin
+    @user.add_role(:admin)
+    @abilities = Ability.new(@user)
+    Ability.stub(:new).and_return(@abilities)
+    @abilities.stub!(:can?).and_return(true)
+  end
+
+  def load_categories atype='active'
     @categories = mock("categories")
-    Category.stub!(:active).and_return(@categories)
+    Category.stub!(atype.to_sym).and_return(@categories)
     @categories.stub!(:paginate).and_return(@categories)
-    controller.stub!(:get_page).and_return(:success)
+    controller.stub!(:current_user).and_return(@user)
+    @user.stub!(:home_zip).and_return('94108')
+    controller.stub_chain(:get_page, :load_data, :check_signin_status).and_return(:success)
+    do_get
   end
 
   describe 'GET manage' do
     before(:each) do
+      set_admin
       load_categories
-      do_get
     end
 
     def do_get
@@ -51,10 +61,31 @@ describe CategoriesController do
     end
   end
 
+  describe 'GET index' do
+    before(:each) do
+      load_categories
+    end
+
+    def do_get
+      get :index
+    end
+
+    it "renders the :index view" do
+      response.should render_template :index
+    end
+
+    it "should assign @categories" do
+      assigns(:categories).should == @categories
+    end
+
+    it "should render the correct layout" do
+      response.should render_template("layouts/categories")
+    end
+  end
+
   describe 'xhr GET index' do
     before(:each) do
       load_categories
-      do_get
     end
 
     def do_get
@@ -76,11 +107,8 @@ describe CategoriesController do
 
   describe 'xhr GET inactive' do
     before(:each) do
-      @categories = mock("categories")
-      Category.stub!(:inactive).and_return(@categories)
-      @categories.stub!(:paginate).and_return(@categories)
-      controller.stub!(:get_page).and_return(:success)
-      do_get
+      set_admin
+      load_categories 'inactive'
     end
 
     def do_get
@@ -103,6 +131,7 @@ describe CategoriesController do
   describe "GET 'new'" do
 
     before :each do
+      set_admin
       Category.stub!(:new).and_return(@category)
       @category.stub_chain(:pictures, :build).and_return( @photo )
       do_get
@@ -127,6 +156,9 @@ describe CategoriesController do
   end
 
   describe "POST create" do
+    before :each do
+      set_admin
+    end
     
     context 'failure' do
       
@@ -153,7 +185,6 @@ describe CategoriesController do
 
       before :each do
         Category.stub!(:save).and_return(true)
-        load_categories
       end
 
       def do_create
@@ -187,6 +218,7 @@ describe CategoriesController do
   describe "GET 'edit/:id'" do
 
     before :each do
+      set_admin
       Category.stub!(:find).and_return( @category )
     end
 
@@ -212,17 +244,17 @@ describe CategoriesController do
 
   describe "PUT /:id" do
     before (:each) do
+      set_admin
       Category.stub!(:find).and_return( @category )
     end
 
     def do_update
-      xhr :put, :update, :id => "1", :category => {'name'=>'test', 'category_type' => 'test'}
+      put :update, :id => "1", :category => {'name'=>'test', 'category_type' => 'test'}
     end
 
     context "with valid params" do
       before (:each) do
         @category.stub(:update_attributes).and_return(true)
-        load_categories
       end
 
       it "loads the requested category" do
@@ -244,7 +276,7 @@ describe CategoriesController do
 
       it "redirect to the categories page" do
         do_update
-        response.should be_success
+        response.should be_redirect
       end
     end
 

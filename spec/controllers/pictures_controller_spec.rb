@@ -108,6 +108,7 @@ describe PicturesController do
 
   describe 'GET show/:id' do
     before :each do
+      @picture = mock_model Picture
       Picture.stub!(:find).and_return( @picture )
     end
 

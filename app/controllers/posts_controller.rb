@@ -78,8 +78,9 @@ class PostsController < ApplicationController
   end
 
   def reload_data pid
-    @listing = Listing.find_by_pixi_id pid
+    @listing = Listing.find_pixi pid
     @comments = @listing.comments.paginate page: @page, per_page: PIXI_COMMENTS if @listing
     @user.pixi_wants.create(pixi_id: pid) # add to user's wanted list
+    @user.pixi_wants.reload
   end
 end

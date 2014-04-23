@@ -15,6 +15,12 @@ describe TempListingsController do
     end
   end
 
+  def reload_data
+    controller.stub!(:reload_data).and_return(:success)
+    controller.stub!(:current_user).and_return(@user)
+    @user.stub_chain(:temp_listings, :new_pixis, :pending_pixis)
+  end
+
   before(:each) do
     log_in_test_user
     @listing = stub_model(TempListing, :id=>1, site_id: 1, seller_id: 1, pixi_id: '1', title: "Guitar for Sale", description: "Guitar for Sale")
@@ -23,7 +29,7 @@ describe TempListingsController do
   describe 'GET show/:id' do
     before :each do
       @photo = stub_model(Picture)
-      TempListing.stub!(:find_by_pixi_id).and_return( @listing )
+      TempListing.stub!(:find_pixi).and_return( @listing )
       @listing.stub!(:pictures).and_return( @photo )
     end
 
@@ -37,7 +43,7 @@ describe TempListingsController do
     end
 
     it "should load the requested listing" do
-      TempListing.stub(:find_by_pixi_id).with('1').and_return(@listing)
+      TempListing.stub(:find_pixi).with('1').and_return(@listing)
       do_get
     end
 
@@ -126,6 +132,7 @@ describe TempListingsController do
 
       before :each do
         TempListing.stub!(:save).and_return(true)
+        reload_data
       end
 
       def do_create
@@ -167,8 +174,8 @@ describe TempListingsController do
     before :each do
       @listing = stub_model(TempListing)
       @pixi = stub_model(Listing)
-      TempListing.stub!(:find_by_pixi_id).and_return( @listing )
-      Listing.stub!(:find_by_pixi_id).and_return( @pixi )
+      TempListing.stub!(:find_pixi).and_return( @listing )
+      Listing.stub!(:find_pixi).and_return( @pixi )
       @pixi.stub!(:dup_pixi).and_return( @listing )
       @photo = stub_model(Picture)
       @listing.stub_chain(:pictures, :build).and_return(@photo)
@@ -179,7 +186,7 @@ describe TempListingsController do
     end
 
     it "loads the requested listing" do
-      TempListing.should_receive(:find_by_pixi_id).with('1').and_return(@listing)
+      TempListing.should_receive(:find_pixi).with('1').and_return(@listing)
       do_get
     end
 
@@ -207,6 +214,7 @@ describe TempListingsController do
     context "with valid params" do
       before (:each) do
         @listing.stub(:update_attributes).and_return(true)
+        reload_data
       end
 
       it "should load the requested listing" do
@@ -272,6 +280,7 @@ describe TempListingsController do
 
     before (:each) do
       TempListing.stub!(:find_by_pixi_id).and_return(@listing)
+      reload_data
     end
 
     def do_delete
@@ -317,6 +326,7 @@ describe TempListingsController do
     context "success" do
       before :each do
         @listing.stub!(:resubmit_order).and_return(true)
+        reload_data
       end
 
       it "should load the requested listing" do
@@ -338,7 +348,7 @@ describe TempListingsController do
 
       it "redirects the page" do
         do_resubmit
-	response.should be_redirect
+        response.should render_template(:resubmit)
       end
 
       it "responds to JSON" do
@@ -382,6 +392,7 @@ describe TempListingsController do
     context "success" do
       before :each do
         @listing.stub!(:resubmit_order).and_return(true)
+        reload_data
       end
 
       it "should load the requested listing" do
@@ -403,7 +414,7 @@ describe TempListingsController do
 
       it "redirects the page" do
         do_submit
-	response.should be_redirect
+        response.should render_template(:submit)
       end
 
       it "responds to JSON" do

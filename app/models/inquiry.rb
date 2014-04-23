@@ -31,7 +31,7 @@ class Inquiry < ActiveRecord::Base
   
   # select active inquiries
   def self.active
-    where(:status => 'active')
+    includes(:user, :inquiry_type).where(:status => 'active')
   end
 
   # get user name for inquiry
@@ -41,7 +41,7 @@ class Inquiry < ActiveRecord::Base
 
   # get contact_type for inquiry
   def contact_type
-    inquiry_type.contact_type rescue nil
+    inquiry_type.contact_type.titleize rescue nil
   end
 
   # get subject for inquiry
@@ -56,7 +56,7 @@ class Inquiry < ActiveRecord::Base
 
   # find inquiries by status
   def self.get_by_status val
-    where(:status => val).order('updated_at DESC')
+    includes(:user, :inquiry_type).where(:status => val).order('updated_at DESC')
   end
 
   # find inquiries by contact type

@@ -342,11 +342,6 @@ feature "Listings" do
           }.to change(Listing,:count).by(0)
         end
       end
-
-      it "Returns to pixi list" do
-        click_link 'Back'
-        page.should have_content("Pixis")
-      end
     end
 
     describe "GET /category" do  
@@ -356,7 +351,7 @@ feature "Listings" do
 
       before(:each) do
         FactoryGirl.create(:listing, title: "Guitar", seller_id: @user.id, site_id: site.id, category_id: category.id) 
-        visit category_listings_path(cid: category, loc: site.id) 
+        visit category_listings_path(cid: category.id, loc: site.id) 
       end
       
       it "views pixi category page" do
@@ -371,22 +366,22 @@ feature "Listings" do
       let(:listings) { 30.times { FactoryGirl.create(:listing, seller_id: @user.id) } }
 
       before(:each) do
-        @site = FactoryGirl.create :site, name: 'Pixi Tech'
-        FactoryGirl.create :site, name: 'Cal State'
-	@category = FactoryGirl.create :category
-        FactoryGirl.create(:listing, title: "HP Printer J4580", description: "printer", seller_id: @user.id, site_id: @site.id, 
+        @site = create :site, name: 'Pixi Tech'
+        create :site, name: 'Cal State'
+	@category = create :category, name: 'Music'
+        create(:listing, title: "HP Printer J4580", description: "printer", seller_id: @user.id, site_id: @site.id, 
 	  category_id: @category.id) 
-        @listing = FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: @user.id, pixi_id: temp_listing.pixi_id,
+        @listing = create(:listing, title: "Guitar", description: "Lessons", seller_id: @user.id, pixi_id: temp_listing.pixi_id,
 	  category_id: @category.id) 
-	@category1 = FactoryGirl.create :category, name: 'Gigs'
-	@category2 = FactoryGirl.create :category, name: 'Automotive'
-	@category3 = FactoryGirl.create :category, name: 'Furniture'
-	@category4 = FactoryGirl.create :category, name: 'Books'
-        @listing1 = FactoryGirl.create(:listing, title: "Intern", description: "Unpaid job", seller_id: @user.id, category_id: @category1.id, 
+	@category1 = create :category, name: 'Gigs'
+	@category2 = create :category, name: 'Automotive'
+	@category3 = create :category, name: 'Furniture'
+	@category4 = create :category, name: 'Books'
+        @listing1 = create(:listing, title: "Intern", description: "Unpaid job", seller_id: @user.id, category_id: @category1.id, 
 	  site_id: @site.id) 
-        @listing2 = FactoryGirl.create(:listing, title: "Buick Regal", description: "used car", seller_id: @user.id, category_id: @category2.id) 
-        @listing3 = FactoryGirl.create(:listing, title: "Sofa", description: "used couch", seller_id: @user.id, category_id: @category3.id) 
-        @listing4 = FactoryGirl.create(:listing, title: "Calc 201", description: "text book", seller_id: @user.id, category_id: @category4.id) 
+        @listing2 = create(:listing, title: "Buick Regal", description: "used car", seller_id: @user.id, category_id: @category2.id) 
+        @listing3 = create(:listing, title: "Sofa", description: "used couch", seller_id: @user.id, category_id: @category3.id) 
+        @listing4 = create(:listing, title: "Calc 201", description: "text book", seller_id: @user.id, category_id: @category4.id) 
         visit listings_path 
       end
       
@@ -408,33 +403,31 @@ feature "Listings" do
       it "selects a site", js: true do
         fill_autocomplete('site_name', with: 'pixi')
 	set_site_id
-        page.should have_content 'HP Printer J4580'
-
         page.should have_content @listing1.nice_title
         page.should_not have_content @listing.nice_title
         page.should have_content @site.name
       end
 
       it "selects categories", js: true do
-        select(@category.name_title, :from => 'category_id')
+        select('Music', :from => 'category_id')
         page.should have_content @category.name_title
         page.should_not have_content @listing1.nice_title
-        page.should have_content @listing.nice_title
+        page.should have_content 'Guitar'
       end
     end  
 
     describe "My pixis page" do
-      let(:listings) { 30.times { FactoryGirl.create(:listing, seller_id: user.id) } }
+      let(:listings) { 30.times { create(:listing, seller_id: user.id) } }
       before do
-        @other_user = FactoryGirl.create :pixi_user, email: 'john.doe@pxb.com'
-        px_user = FactoryGirl.create :pixi_user, email: 'jsnow@pxb.com'
+        @other_user = create :pixi_user, email: 'john.doe@pxb.com'
+        px_user = create :pixi_user, email: 'jsnow@pxb.com'
         init_setup px_user
-        @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
-        @temp_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id) 
-        @pending_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id, status: 'pending', title: 'Snare Drum') 
-        @denied_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id, status: 'denied', title: 'Xbox 360') 
-        @sold_listing = FactoryGirl.create(:listing, seller_id: @user.id, title: 'Leather Briefcase', status: 'sold') 
-        @purchased_listing = FactoryGirl.create(:listing, seller_id: @other_user.id, buyer_id: @user.id, title: 'Comfy Green Chair', status: 'sold') 
+        @listing = create(:listing, seller_id: @user.id) 
+        @temp_listing = create(:temp_listing, seller_id: @user.id) 
+        @pending_listing = create(:temp_listing, seller_id: @user.id, status: 'pending', title: 'Snare Drum') 
+        @denied_listing = create(:temp_listing, seller_id: @user.id, status: 'denied', title: 'Xbox 360') 
+        @sold_listing = create(:listing, seller_id: @user.id, title: 'Leather Briefcase', status: 'sold') 
+        @purchased_listing = create(:listing, seller_id: @other_user.id, buyer_id: @user.id, title: 'Comfy Green Chair', status: 'sold') 
         @user.pixi_wants.create FactoryGirl.attributes_for :pixi_like, pixi_id: listing.pixi_id
         @user.saved_listings.create FactoryGirl.attributes_for :saved_listing, pixi_id: listing.pixi_id
         visit seller_listings_path 
@@ -446,7 +439,7 @@ feature "Listings" do
         page.should have_link 'Active', href: seller_listings_path
         page.should have_link 'Draft', href: unposted_temp_listings_path
         page.should have_link 'Pending', href: pending_temp_listings_path
-        page.should have_link 'Purchased', href: purchased_temp_listings_path
+        page.should have_link 'Purchased', href: purchased_listings_path
         page.should have_link 'Sold', href: sold_listings_path
         page.should have_link 'Saved', href: saved_listings_path
         page.should have_link 'Wanted', href: wanted_listings_path

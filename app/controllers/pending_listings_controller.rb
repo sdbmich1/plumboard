@@ -9,12 +9,12 @@ class PendingListingsController < ApplicationController
   end
 
   def show
-    @listing = TempListing.find_by_pixi_id params[:id]
+    @listing = TempListing.find_pixi params[:id]
     @photo = @listing.pictures
   end
 
   def approve
-    @listing = TempListing.find_by_pixi_id params[:id]
+    @listing = TempListing.find_pixi params[:id]
     if @listing && @listing.approve_order(@user)
       redirect_to pending_listings_path(status: 'pending')
     else
@@ -23,7 +23,7 @@ class PendingListingsController < ApplicationController
   end
 
   def deny
-    @listing = TempListing.find_by_pixi_id params[:id]
+    @listing = TempListing.find_pixi params[:id]
     if @listing && @listing.deny_order(@user, params[:reason])
       redirect_to pending_listings_path(status: 'pending')
     else

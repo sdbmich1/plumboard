@@ -1,3 +1,4 @@
+<div class='left-form'>
 <%= form_tag new_transaction_path, :method => :get, :id => 'purchase_btn' do %> 
   <%= hidden_field_tag 'invoice_id', invoice.id %>
   <%= hidden_field_tag 'id', invoice.pixi_id %>
@@ -15,4 +16,5 @@
   <%= hidden_field_tag 'transaction_type', 'invoice' %>
   <%= submit_tag('Pay', class: pay_btn_cls, id: 'pay-btn') %>
 <% end %>  
+</div>
 

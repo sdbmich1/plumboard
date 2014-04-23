@@ -670,6 +670,16 @@ describe TempListing do
     end  
   end  
 
+  describe "find_pixi" do
+    it 'finds a pixi' do
+      expect(TempListing.find_pixi(@temp_listing.pixi_id)).not_to be_nil
+    end
+
+    it 'does not find pixi' do
+      expect(TempListing.find_pixi(0)).to be_nil
+    end
+  end
+
   describe '.start_date?' do
     it "has no start date" do
       @temp_listing.start_date?.should be_false

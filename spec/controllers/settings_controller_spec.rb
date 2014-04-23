@@ -9,6 +9,12 @@ describe SettingsController do
     end
   end
 
+  def mock_category(stubs={})
+    (@mock_category ||= mock_model(Category, stubs).as_null_object).tap do |category|
+      user.stub(stubs) unless stubs.empty?
+    end
+  end
+
   before(:each) do
     log_in_test_user
     @user = mock_user
@@ -17,16 +23,12 @@ describe SettingsController do
   describe 'GET index' do
 
     before :each do
-      do_get
       controller.stub!(:current_user).and_return(@user)
+      do_get
     end
 
     def do_get
       get :index
-    end
-
-    it "should load the requested user" do
-      controller.current_user.should == @user
     end
 
     it "should assign @user" do
@@ -41,16 +43,12 @@ describe SettingsController do
   describe "xhr GET 'index'" do
 
     before :each do
-      do_get
       controller.stub!(:current_user).and_return(@user)
+      do_get
     end
 
     def do_get
       xhr :get, :index
-    end
-
-    it "should load the requested user" do
-      controller.current_user.should == @user
     end
 
     it "should assign @user" do
@@ -65,16 +63,12 @@ describe SettingsController do
   describe "GET 'password'" do
 
     before :each do
-      do_get
       controller.stub!(:current_user).and_return(@user)
+      do_get
     end
 
     def do_get
       xhr :get, :password
-    end
-
-    it "should load the requested user" do
-      controller.current_user.should == @user
     end
 
     it "should assign @user" do
@@ -89,18 +83,14 @@ describe SettingsController do
   describe "GET 'contact'" do
 
     before :each do
-      do_get
       @contacts = stub_model(Contact)
       controller.stub!(:current_user).and_return(@user)
-      @user.stub!(:contacts).and_return( @contacts )
+      @user.stub_chain(:contacts, :build).and_return(@contacts)
+      do_get
     end
 
     def do_get
       xhr :get, :contact, id: '1'
-    end
-
-    it "should load the requested user" do
-      controller.current_user.should == @user
     end
 
     it "should assign @user" do
@@ -109,16 +99,11 @@ describe SettingsController do
 
     it "should assign @contacts" do
       do_get
-      assigns(:user).contacts.should_not be_nil
+      assigns(:contacts).should_not be_nil
     end
 
     it "should load nothing" do
       controller.stub!(:render)
-    end
-
-    it "responds to JSON" do
-      get :contact, id: '1', format: :json
-      expect(response).to be_success
     end
   end
 end

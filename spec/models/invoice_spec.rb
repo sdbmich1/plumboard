@@ -166,6 +166,17 @@ describe Invoice do
     it { Invoice.find_invoice(order2).should be_nil }
   end
 
+  describe "find_inv" do
+    before { @invoice.save }
+    it 'finds a pixi' do
+      expect(Invoice.find_inv(@invoice.id)).not_to be_nil
+    end
+
+    it 'does not find pixi' do
+      expect(Invoice.find_inv(0)).to be_nil
+    end
+  end
+
   describe "paid" do 
     it "should not verify invoice is paid" do 
       @invoice.paid?.should_not be_true 

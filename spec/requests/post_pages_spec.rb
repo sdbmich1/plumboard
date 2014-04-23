@@ -38,12 +38,14 @@ feature "Messages" do
       click_on 'notice-btn'
     end
 
-    it { should have_link('Sent', href: sent_posts_path) }
-    it { should have_link('Received', href: posts_path) }
-    it { should_not have_link('Mark All Read', href: mark_posts_path) }
-    it { should have_content 'No messages found.' }
-    it { should_not have_button('Pay') }
-    it { should_not have_button('Reply') }
+    it 'shows content' do
+      page.should have_link('Sent', href: sent_posts_path)
+      page.should have_link('Received', href: posts_path)
+      page.should_not have_link('Mark All Read', href: mark_posts_path)
+      page.should have_content 'No messages found.'
+      page.should_not have_button('Pay')
+      page.should_not have_button('Reply')
+    end
   end
 
   describe 'Received messages' do
@@ -53,12 +55,14 @@ feature "Messages" do
       click_on 'notice-btn'
     end
 
-    it { should have_selector('title', :text => full_title('Posts')) }
-    it { should have_content @post.user.name }
-    it { should have_link('Sent', href: sent_posts_path) }
-    it { should have_link('Received', href: posts_path) }
-    it { should have_link('Mark All Read', href: mark_posts_path) }
-    it { should_not have_button('Pay') }
+    it 'shows content' do
+      page.should have_selector('title', :text => full_title('Messages'))
+      page.should have_content @post.user.name
+      page.should have_link('Sent', href: sent_posts_path)
+      page.should have_link('Received', href: posts_path)
+      page.should have_link('Mark All Read', href: mark_posts_path)
+      page.should_not have_button('Pay')
+    end
 
     it "replies to a message", js: true do
       send_reply
@@ -89,7 +93,6 @@ feature "Messages" do
 
       it "opens pay invoice page" do
         click_on 'Pay'
-        page.should have_selector('title', text: 'Pay Invoice')
         page.should have_content 'Total Due'
       end
     end
@@ -104,12 +107,14 @@ feature "Messages" do
       click_on 'Received'
     end
     
-    it { should have_link('Mark All Read', href: mark_posts_path) }
-    it { should have_content @post.user.name }
-    it { should have_content @post.listing.title }
-    it { should have_content @post.content }
-    it { should have_button('Reply') }
-    it { should have_button('Pay') }
+    it 'shows content' do
+      page.should have_link('Mark All Read', href: mark_posts_path)
+      page.should have_content @post.user.name
+      page.should have_content @post.listing.title
+      page.should have_content @post.content
+      page.should have_button('Reply')
+      page.should have_button('Pay')
+    end
 
     it "replies to a message" do
       send_reply
@@ -126,7 +131,6 @@ feature "Messages" do
 
     it "pays an invoice" do
       click_on 'Pay'
-      page.should have_selector('title', text: 'Pay Invoice')
       page.should have_content 'Total Due'
     end
   end

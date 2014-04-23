@@ -25,7 +25,7 @@ describe RatingsController do
     before :each do
       @transaction = stub_model(Transaction)
       Transaction.stub!(:find).with('1').and_return(@transaction)
-      User.stub!(:find).with('1').and_return(@user)
+      controller.stub!(:current_user).and_return(@user)
       @user.stub_chain(:ratings, :build).and_return( @rating )
     end
     
@@ -52,11 +52,6 @@ describe RatingsController do
       it "should render nothing" do
         do_create
 	controller.stub!(:render)
-      end
-
-      it "responds to JSON" do
-        post :create, id: '1', :rating => { pixi_id: '1', 'comments'=>'test' }, format: :json
-	response.status.should_not eq(200)
       end
     end
 

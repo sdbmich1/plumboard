@@ -61,7 +61,7 @@ class Post < ActiveRecord::Base
 
   # get posts for recipient
   def self.get_posts usr
-    where(:recipient_id=>usr)
+    includes(:listing => [:pictures], :user => [:pictures], :recipient => [:pictures]).where(:recipient_id=>usr)
   end
 
   # get unread posts for recipient

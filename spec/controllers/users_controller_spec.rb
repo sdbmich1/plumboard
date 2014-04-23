@@ -12,6 +12,7 @@ describe UsersController do
   before(:each) do
     log_in_test_user
     @user = mock_user
+    controller.stub!(:current_user).and_return(@user)
   end
 
   describe 'GET index' do

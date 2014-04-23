@@ -595,6 +595,16 @@ describe User do
     end
   end
 
+  describe "find_user" do
+    it 'finds a user' do
+      expect(User.find_user(@user.id)).not_to be_nil
+    end
+
+    it 'does not find user' do
+      expect(User.find_user(0)).to be_nil
+    end
+  end
+
   describe "post associations" do
     let(:listing) { FactoryGirl.create :listing, seller_id: @user.id }
     let(:newer_listing) { FactoryGirl.create :listing, seller_id: @user.id }

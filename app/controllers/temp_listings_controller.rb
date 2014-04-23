@@ -16,7 +16,7 @@ class TempListingsController < ApplicationController
   end
 
   def show
-    @listing = TempListing.find_by_pixi_id params[:id]
+    @listing = TempListing.find_pixi params[:id]
     @photo = @listing.pictures if @listing
     respond_with(@listing) do |format|
       format.json { render json: {listing: @listing} }
@@ -24,7 +24,7 @@ class TempListingsController < ApplicationController
   end
 
   def edit
-    @listing = TempListing.find_by_pixi_id(params[:id]) || Listing.find_by_pixi_id(params[:id]).dup_pixi(false)
+    @listing = TempListing.find_pixi(params[:id]) || Listing.find_pixi(params[:id]).dup_pixi(false)
     @photo = @listing.pictures.build if @listing
     respond_with(@listing) do |format|
       format.json { render json: {listing: @listing} }
@@ -35,6 +35,7 @@ class TempListingsController < ApplicationController
     @listing = TempListing.find_by_pixi_id params[:id]
     respond_with(@listing) do |format|
       if @listing.update_attributes(params[:temp_listing])
+        reload_data
         format.json { render json: {listing: @listing} }
       else
         format.json { render json: { errors: @listing.errors.full_messages }, status: 422 }
@@ -44,12 +45,9 @@ class TempListingsController < ApplicationController
 
   def create
     @listing = TempListing.new params[:temp_listing]
-    if params[:file]
-      @pic = @listing.pictures.build
-      @pic.photo = File.new params[:file].tempfile 
-    end
     respond_with(@listing) do |format|
       if @listing.save
+        reload_data
         format.json { render json: {listing: @listing} }
       else
         format.json { render json: { errors: @listing.errors.full_messages }, status: 422 }
@@ -61,6 +59,7 @@ class TempListingsController < ApplicationController
     @listing = TempListing.find_by_pixi_id params[:id]
     respond_with(@listing) do |format|
       if @listing.resubmit_order
+        reload_data
         format.json { render json: {listing: @listing} }
       else
         format.html { render action: :show, error: "Pixi was not submitted. Please try again." }
@@ -73,6 +72,7 @@ class TempListingsController < ApplicationController
     @listing = TempListing.find_by_pixi_id params[:id]
     respond_with(@listing) do |format|
       if @listing.resubmit_order
+        reload_data
         format.json { render json: {listing: @listing} }
       else
         format.html { render action: :show, error: "Pixi was not submitted. Please try again." }
@@ -85,6 +85,7 @@ class TempListingsController < ApplicationController
     @listing = TempListing.find_by_pixi_id params[:id]
     respond_with(@listing) do |format|
       if @listing.destroy  
+        reload_data
         format.html { redirect_to root_path }
         format.mobile { redirect_to root_path }
 	format.json { head :ok }
@@ -122,6 +123,10 @@ class TempListingsController < ApplicationController
 
   # parse fields to adjust formatting
   def set_params
+    if params[:file]
+      @pic = @listing.pictures.build
+      @pic.photo = File.new params[:file].tempfile 
+    end
     respond_to do |format|
       format.html { params[:temp_listing] = ResetDate::reset_dates(params[:temp_listing]) }
       format.json { params[:temp_listing] = JSON.parse(params[:temp_listing]) }
@@ -141,5 +146,12 @@ class TempListingsController < ApplicationController
 
   def check_permissions
     authorize! :crud, TempListing
+  end
+
+  # reload eager load assns
+  def reload_data
+    @user.temp_listings.reload
+    @user.new_pixis.reload
+    @user.pending_pixis.reload
   end
 end

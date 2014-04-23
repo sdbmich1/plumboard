@@ -1,5 +1,7 @@
 require 'will_paginate/array' 
 class InvoicesController < ApplicationController
+  load_and_authorize_resource
+  # skip_authorize_resource :only => [:new, :show, :create]
   before_filter :authenticate_user!
   # before_filter :check_permissions, only: [:create, :edit, :update, :destroy, :show]
   before_filter :load_data, only: [:index, :sent, :received]
@@ -34,7 +36,7 @@ class InvoicesController < ApplicationController
   end
 
   def show
-    @invoice = Invoice.find params[:id]
+    @invoice = @user.invoices.reload.find params[:id]
     respond_with(@invoice) do |format|
       format.json { render json: {user: @user, invoice: @invoice} }
     end

@@ -8,7 +8,7 @@
     goToUrl(url, true);
   }
   else {
-    $("#comment_form").html("<%= escape_javascript( render(partial: 'shared/comments') ) %>");
+    $("#comment_form").html("<%= escape_javascript( render(partial: 'shared/comments', locals: {listing: @listing}) ) %>");
     $("#comment_content").val('');
   }
 <% end %>

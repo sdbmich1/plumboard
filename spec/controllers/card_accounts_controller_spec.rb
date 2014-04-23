@@ -95,6 +95,7 @@ describe CardAccountsController do
 
   describe 'GET show/:id' do
     before :each do
+      controller.stub!(:current_user).and_return(@user)
       @user.stub_chain(:card_accounts, :first).and_return( @account )
     end
 

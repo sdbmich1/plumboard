@@ -1,5 +1,6 @@
 class TempListing < ListingParent
   self.table_name = "temp_listings"
+  resourcify
 
   include CalcTotal
   before_create :set_flds
@@ -27,6 +28,11 @@ class TempListing < ListingParent
     self.alias_name = rand(36**ALIAS_LENGTH).to_s(36) if alias?
     set_end_date
     self
+  end
+
+  # finds specific pixi
+  def self.find_pixi pid
+    includes(:pictures, :category, :transaction, :user=>[:pictures]).where(pixi_id: pid).first
   end
 
   # approve order

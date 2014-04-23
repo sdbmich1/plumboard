@@ -218,6 +218,17 @@ describe PixiPost do
     end
   end
 
+  describe 'is_admin?' do
+    it 'should not return true' do
+      @pixi_post.is_admin?.should_not be_true
+    end
+
+    it 'should return true' do
+      pixi_post = FactoryGirl.build :pixi_post, completed_date: Date.today+1.day, appt_date: Date.today+1.day
+      pixi_post.is_admin?.should be_true
+    end
+  end
+
   describe 'has_comments?' do
     it 'does not return true' do
       @pixi_post.has_comments?.should_not be_true
@@ -392,6 +403,26 @@ describe PixiPost do
 
       it "has valid completed date" do
         @post.completed_date = Date.today+3.days
+        @post.should be_valid
+      end
+
+      it "has valid completed date w/ old preferred date" do
+        @post.completed_date = Time.now+3.days
+        @post.preferred_date = Time.now-3.days
+        @post.should be_valid
+      end
+
+      it "has valid completed date w/ old alt date" do
+        @post.completed_date = Time.now+3.days
+        @post.alt_date = Time.now-3.days
+        @post.should be_valid
+      end
+
+      it "has valid completed date w/ old appt date" do
+        @pixan = FactoryGirl.create :pixi_user
+	@post.pixan_id = @pixan.id
+        @post.completed_date = Time.now+3.days
+        @post.appt_date = @post.appt_time = Time.now-3.days
         @post.should be_valid
       end
 

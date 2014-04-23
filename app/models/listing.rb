@@ -18,6 +18,12 @@ class Listing < ListingParent
 
   default_scope :order => "updated_at DESC"
 
+  # finds specific pixi
+  def self.find_pixi pid
+    includes(:invoices, :posts, :pictures, :pixi_likes, :pixi_wants, :saved_listings, :category, :transaction, :user => [:pictures], 
+      :comments=> {:user=>:pictures}).where(pixi_id: pid).first
+  end
+
   # set active status
   def activate
     if self.status != 'sold'

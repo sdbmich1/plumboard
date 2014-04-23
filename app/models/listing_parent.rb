@@ -111,7 +111,7 @@ class ListingParent < ActiveRecord::Base
 
   # find listings by status
   def self.get_by_status val
-    where(:status => val).order('updated_at DESC')
+    includes(:pictures, :user).where(:status => val).order('updated_at DESC')
   end
 
   # find listings by seller user id
@@ -269,7 +269,7 @@ class ListingParent < ActiveRecord::Base
   def dup_pixi tmpFlg
     
     # check for temp or active pixi based on flag
-    listing = tmpFlg ? Listing.where(:pixi_id => self.pixi_id).first : TempListing.where(:pixi_id => self.pixi_id).first
+    listing = tmpFlg ? Listing.find_pixi(self.pixi_id) : TempListing.find_pixi(self.pixi_id)
 
     unless listing
       attr = self.attributes  # copy attributes

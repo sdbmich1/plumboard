@@ -22,9 +22,9 @@ describe PixiLikesController do
 
   describe "POST create" do
     before :each do
-      @listing = mock_model Listing
-      Listing.stub!(:find_by_pixi_id).and_return(@listing)
       @like = mock_model PixiLike
+      controller.stub!(:current_user).and_return(@user)
+      @user.stub_chain(:pixi_likes, :build).and_return(@like)
       controller.stub!(:reload_data).and_return(true)
     end
     
@@ -35,12 +35,7 @@ describe PixiLikesController do
     context 'failure' do
       
       before :each do
-        PixiLike.stub!(:save).and_return(false)
-      end
-
-      it "should assign @listing" do
-        do_create
-        assigns(:listing).should_not be_nil 
+        @like.stub!(:save).and_return(false)
       end
 
       it "should assign @like" do
@@ -52,17 +47,12 @@ describe PixiLikesController do
         do_create
 	controller.stub!(:render)
       end
-
-      it "responds to JSON" do
-        post :create, pixi_id: '1', format: :json
-	response.status.should_not eq(0)
-      end
     end
 
     context 'success' do
 
       before :each do
-        PixiLike.stub!(:save).and_return(true)
+        @like.stub!(:save).and_return(true)
       end
 
       it "should load the requested like" do
@@ -92,6 +82,7 @@ describe PixiLikesController do
   describe "DELETE /:id" do
     before (:each) do
       @like = mock_model PixiLike
+      controller.stub!(:current_user).and_return(@user)
       @user.stub_chain(:build, :pixi_likes, :find_by_pixi_id).and_return(@like)
       controller.stub!(:reload_data).and_return(true)
     end

@@ -98,15 +98,22 @@ feature "Transactions" do
     click_button "Sign in"
   end
 
+  def accept_btn
+    wait = Selenium::WebDriver::Wait.new ignore: Selenium::WebDriver::Error::NoAlertPresentError
+    alert = wait.until { page.driver.browser.switch_to.alert }
+    alert.accept
+  end
+
   def click_ok
-    click_button submit 
+    click_button submit; sleep 3 
     page.driver.browser.switch_to.alert.accept
   end
 
   def click_valid_ok
-    click_button submit 
-    page.driver.browser.switch_to.alert.accept
-    sleep 3
+    click_button submit
+    # page.driver.browser.switch_to.alert.accept
+    accept_btn
+    sleep 2
   end
 
   def click_valid_save
@@ -115,17 +122,17 @@ feature "Transactions" do
   end
 
   def click_cancel_ok
-    click_link 'Cancel'
+    click_link 'Cancel'; sleep 1 
     page.driver.browser.switch_to.alert.accept
   end
 
   def click_cancel_cancel
-    click_link 'Cancel'
+    click_link 'Cancel'; sleep 1 
     page.driver.browser.switch_to.alert.dismiss
   end
 
   def click_submit_cancel
-    click_button submit 
+    click_button submit; sleep 1 
     page.driver.browser.switch_to.alert.dismiss
   end
 

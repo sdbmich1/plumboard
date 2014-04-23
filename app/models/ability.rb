@@ -20,9 +20,7 @@ class Ability
         usr.try(:user) == user
       end
 
-      can [:create, :read], Transaction do |txn|
-        txn.try(:user) == user
-      end
+      can [:create, :show], Transaction, :user_id => user.id
 
       can [:create, :read, :update], Post do |post|
         post.try(:user) == user
@@ -32,9 +30,8 @@ class Ability
         listing.try(:user) == user
       end
 
-      can :crud, Invoice do |invoice|
-	invoice.try(:user) == user
-      end
+      can [:crud, :sent], Invoice, :seller_id => user.id
+      can [:show, :received], Invoice, :buyer_id => user.id
 
       can :crud, BankAccount do |acct|
         acct.try(:user) == user

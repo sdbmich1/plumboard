@@ -14,6 +14,7 @@ feature "Invoices" do
   end
 
   def create_buyers
+    @buyer = FactoryGirl.create(:pixi_user, first_name: 'Phil', last_name: 'Hayes') 
     @buyer1 = FactoryGirl.create(:pixi_user, first_name: 'Bob', last_name: 'Jones', email: 'bjones@pixitest.com') 
     FactoryGirl.create(:pixi_user, first_name: 'Bob', last_name: 'Nelson', email: 'bnelson@pixitest.com') 
     FactoryGirl.create(:pixi_user, first_name: 'Bob', last_name: 'Davis', email: 'bdavis@pixitest.com') 
@@ -64,13 +65,12 @@ feature "Invoices" do
     select("2", :from => "inv_qty")
     select_pixi
     set_buyer_id
-    fill_in 'inv_price', with: 200.00
+    # fill_in 'inv_price', with: 200.00
     fill_in 'inv_tax', with: 8.25
-    fill_in 'invoice_comment', with: "Thanks for your business."
+    # fill_in 'invoice_comment', with: "Thanks for your business."
   end
 
   def init_data
-    @buyer = FactoryGirl.create(:pixi_user, first_name: 'Phil', last_name: 'Hayes') 
     @person = FactoryGirl.create(:pixi_user, first_name: 'Kim', last_name: 'Harris') 
     @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
     @pxp_listing = FactoryGirl.create(:listing, seller_id: @user.id, pixan_id: @person.id) 
@@ -90,6 +90,7 @@ feature "Invoices" do
     @listing4 = FactoryGirl.create(:listing, title: 'Trek Bike', seller_id: @buyer.id) 
     @invoice2 = @buyer.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing2.pixi_id, buyer_id: @user.id, status: 'paid')  
     @invoice3 = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing3.pixi_id, buyer_id: @person.id)
+    sleep 2
     @invoice4 = @buyer.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing4.pixi_id, buyer_id: @user.id)
   end
 
@@ -106,7 +107,8 @@ feature "Invoices" do
 
   describe "Check menu invoice link" do
     before do
-      init_setup user
+      px_user = create :pixi_user
+      init_setup px_user
       visit root_path 
     end
 
@@ -117,7 +119,8 @@ feature "Invoices" do
 
   describe 'user has pixis w/o bank acct' do
     before do
-      init_setup user
+      px_user = create :pixi_user
+      init_setup px_user
       FactoryGirl.create(:listing, seller_id: @user.id) 
       visit root_path 
     end
@@ -130,7 +133,8 @@ feature "Invoices" do
 
   describe 'user has pixis w bank acct' do
     before do
-      init_setup user
+      px_user = create :pixi_user
+      init_setup px_user
       FactoryGirl.create(:listing, seller_id: @user.id) 
       @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
       visit root_path 
@@ -144,7 +148,8 @@ feature "Invoices" do
 
   describe "Seller checks invoices" do
     before do
-      init_setup user
+      px_user = create :pixi_user
+      init_setup px_user
       visit root_path 
       click_link 'My Invoices'
     end
@@ -152,55 +157,18 @@ feature "Invoices" do
     it 'shows content' do
       page.should have_content("Invoices")
       page.should have_selector('title', text: 'Invoices')
-      page.should have_link('Sent', href: invoices_path)
+      page.should have_link('Sent', href: sent_invoices_path)
       page.should have_link('Received', href: received_invoices_path)
       page.should have_content "No invoices found."
-    end
-
-    describe 'user has no pixis' do
-      it { should_not have_link('Create', href: new_invoice_path) }
-    end
-  end
-
-  describe 'Seller has pixis w/o bank acct' do
-    before do
-      init_setup user
-      FactoryGirl.create(:listing, seller_id: @user.id) 
-      visit root_path 
-      click_link 'My Invoices'
-    end
-
-    it 'shows content' do
-      page.should have_link('Create', href: new_bank_account_path(target: 'shared/invoice_form'))
-      page.should_not have_link('Create', href: new_invoice_path)
-    end
-
-    it "displays new invoice link" do
-      @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
-      page.should_not have_link 'Create', href: new_bank_account_path
-    end
-  end
-
-  describe 'Seller has pixis w bank acct' do
-    before do
-      init_setup user
-      FactoryGirl.create(:listing, seller_id: @user.id) 
-      @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
-      visit root_path 
-      click_link 'My Invoices'
-    end
-
-    it 'shows content' do
-      page.should_not have_link('Create', href: new_bank_account_path)
-      page.should have_link('Create', href: new_invoice_path)
     end
   end
 
   describe "Sent Invoices" do
     before do
-      init_setup user
+      px_user = create :pixi_user
+      init_setup px_user
       add_invoices
-      visit invoices_path 
+      visit sent_invoices_path 
     end
 
     it 'shows content' do
@@ -209,19 +177,10 @@ feature "Invoices" do
       page.should have_content "Phil Hayes"
       page.should have_content @listing.title
     end
-  end
 
-  describe "Seller views Unpaid Invoice" do
-    before do
-      init_setup user
-      add_invoices
-      visit invoices_path 
-    end
-
-    it "shows invoice page", js: true do
+    it "shows invoice page" do
       page.should have_link("#{@invoice.id}", href: invoice_path(@invoice)) 
-    
-      click_on "#{@invoice.id}"
+      visit invoice_path(@invoice)
       page.should have_content @invoice.buyer_name
       page.should have_content @invoice.pixi_title
       page.should have_content "Amount Due" 
@@ -232,25 +191,20 @@ feature "Invoices" do
       page.should have_content "#{@invoice.amount - @invoice.get_fee(true)}"
       page.should have_link('Edit', href: edit_invoice_path(@invoice)) 
       page.should have_link('Remove', href: invoice_path(@invoice)) 
-
-      click_on 'Edit'
-      unknown_buyer
-      page.should have_content "Buyer can't be blank" 
     end
   end
 
   describe "View Paid Invoice" do
     before do
-      init_setup user
+      px_user = create :pixi_user
+      init_setup px_user
       add_paid_invoice
-      visit invoices_path 
+      visit sent_invoices_path 
     end
 
-    it { should have_link("#{@invoice.id}", href: invoice_path(@invoice)) }
-
-    it "shows invoice page", js: true do
-      click_on "#{@invoice.id}"
-
+    it "shows invoice page" do
+      page.should have_link("#{@invoice.id}", href: invoice_path(@invoice)) 
+      visit invoice_path(@invoice)
       page.should have_content "Amount Due" 
       page.should_not have_link('Edit', href: edit_invoice_path(@invoice)) 
       page.should_not have_link('Remove', href: invoice_path(@invoice)) 
@@ -259,41 +213,30 @@ feature "Invoices" do
 
   describe "Edit Invoice" do
     before do
-      init_setup user
+      px_user = create :pixi_user
+      init_setup px_user
       add_invoices
-      visit invoices_path 
+      visit sent_invoices_path 
     end
         
-    it { should have_link("#{@invoice.id}", href: invoice_path(@invoice)) }
     it 'changes price', js: true  do
-      click_on "#{@invoice.id}"
+      page.should have_link("#{@invoice.id}", href: invoice_path(@invoice)) 
+      visit invoice_path(@invoice)
       page.should have_link('Edit', href: edit_invoice_path(@invoice)) 
 
       click_on 'Edit'
       zero_price
-
       fill_in 'inv_price', with: 215.00
       expect { 
 	    click_button 'Send'; sleep 3
 	}.to change(Invoice, :count).by(0)
-
       page.should have_content "Status" 
     end
-  end
-
-  describe "Remove Invoice" do
-    before do
-      init_setup user
-      add_invoices
-      visit invoices_path 
-    end
         
-    it { should have_link("#{@invoice.id}", href: invoice_path(@invoice)) }
-
     it 'removes invoice', js: true  do
-      click_on "#{@invoice.id}"
+      page.should have_link("#{@invoice.id}", href: invoice_path(@invoice)) 
+      visit invoice_path(@invoice)
       page.should have_link('Remove', href: invoice_path(@invoice)) 
-
       click_remove_cancel
       page.should have_link('Remove', href: invoice_path(@invoice)) 
 
@@ -304,8 +247,9 @@ feature "Invoices" do
 
   describe "Received Invoices w/o Invoices" do
     before do
-      init_setup user
-      visit invoices_path 
+      px_user = create :pixi_user
+      init_setup px_user
+      visit sent_invoices_path 
     end
 
     it "has no received invoices", js: true do
@@ -316,9 +260,10 @@ feature "Invoices" do
 
   describe "Received Invoices w/ Invoices" do
     before do
-      init_setup user
+      px_user = create :pixi_user
+      init_setup px_user
       add_invoices
-      visit invoices_path 
+      visit sent_invoices_path 
     end
 
     it "shows paid received invoices", js: true do
@@ -344,7 +289,7 @@ feature "Invoices" do
       click_link 'Received'
       page.should have_link("#{@invoice4.id}", href: invoice_path(@invoice4)) 
 
-      click_on "#{@invoice4.id}"
+      visit invoice_path(@invoice4)
       page.should have_content "Trek Bike" 
       page.should have_selector('#pay-btn', visible: true) 
 
@@ -356,9 +301,10 @@ feature "Invoices" do
 
   describe "Manage Invoices" do
     before do
-      init_setup user
+      px_user = create :pixi_user
+      init_setup px_user
       init_data
-      visit invoices_path 
+      visit sent_invoices_path 
       click_link 'Bill'
     end
 
@@ -456,8 +402,8 @@ feature "Invoices" do
         end
 
         it 'accepts invoice with pixi post' do
-	  select_buyer
 	  select_pixi_post
+	  select_buyer
 	  set_buyer_id
 	  expect { 
 	    click_button 'Send'; sleep 3
@@ -476,8 +422,7 @@ feature "Invoices" do
       init_setup user
       init_data
       @buyer.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
-      visit invoices_path 
-      click_link 'Create'
+      visit new_invoice_path 
     end
         
     it 'invoice w/ wanted buyers', js: true do

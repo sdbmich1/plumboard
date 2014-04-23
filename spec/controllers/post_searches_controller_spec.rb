@@ -27,12 +27,10 @@ describe PostSearchesController do
 
   describe 'GET /index' do
     before :each do
-      @user = FactoryGirl.create(:pixi_user)
-      @recipient = FactoryGirl.create :pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tom.davis@pixitest.com'
-      @listing = FactoryGirl.create :listing, seller_id: @user.id, title: 'Big Guitar'
-      @post = @listing.posts.build user_id: @user.id, recipient_id: @recipient.id
       @posts = mock("posts")
       Post.stub!(:search).and_return( @posts )
+      controller.stub!(:current_user).and_return(@user)
+      @user.stub_chain(:user_pixi_points, :create).and_return(:success)
       controller.stub_chain(:query, :page, :add_points).and_return(:success)
     end
 

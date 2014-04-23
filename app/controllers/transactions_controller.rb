@@ -1,13 +1,12 @@
 class TransactionsController < ApplicationController
   before_filter :authenticate_user!
-  before_filter :check_permissions, only: [:create, :show]
   before_filter :load_vars, :except => [:index, :refund]
   respond_to :html, :js, :json, :mobile
   include CalcTotal
   layout :page_layout
 
   def new
-    @listing = Listing.find_by_pixi_id(params[:id]) || TempListing.find_by_pixi_id(params[:id])
+    @listing = Listing.find_pixi(params[:id]) || TempListing.find_pixi(params[:id])
     @transaction = Transaction.load_new(@user, @listing, @order)
     @invoice = Invoice.find_invoice(@order) unless @transaction.pixi?
     respond_with(@transaction)
@@ -15,7 +14,7 @@ class TransactionsController < ApplicationController
 
   def create
     @listing = Listing.find_by_pixi_id(params[:id]) || TempListing.find_by_pixi_id(params[:id])
-    @transaction = @user.transactions.build params[:transaction] 
+    @transaction = Transaction.new params[:transaction] 
     @invoice = Invoice.find_invoice(@order) unless @transaction.pixi?
     respond_with(@transaction) do |format|
       if @transaction.save_transaction(params[:order], @listing)
@@ -51,9 +50,5 @@ class TransactionsController < ApplicationController
     @order = action_name == 'new' ? params : params[:order] ? params[:order] : params
     @qtyCnt = action_name == 'new' ? @order[:qtyCnt].to_i : 0
     @discount = CalcTotal::get_discount
-  end
-
-  def check_permissions
-    authorize! [:create, :read], Transaction
   end
 end

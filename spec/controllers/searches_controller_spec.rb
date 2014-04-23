@@ -15,10 +15,10 @@ describe SearchesController do
 
   describe 'GET /index' do
     before :each do
-      @user = FactoryGirl.create(:pixi_user)
-      @listing = FactoryGirl.create(:listing, seller_id: @user.id)
       @listings = mock("listings")
       Listing.stub!(:search).and_return( @listings )
+      controller.stub!(:current_user).and_return(@user)
+      @user.stub_chain(:user_pixi_points, :create).and_return(:success)
       controller.stub_chain(:query, :page, :add_points, :get_location).and_return(:success)
     end
 

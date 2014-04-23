@@ -54,7 +54,8 @@ describe BankAccountsController do
   describe "GET 'new'" do
 
     before :each do
-      controller.stub_chain(:load_target, :current_user).and_return(@user)
+      controller.stub!(:current_user).and_return(@user)
+      controller.stub!(:load_target).and_return(:success)
       @user.stub_chain(:bank_accounts, :build).and_return( @account )
       do_get
     end
@@ -75,7 +76,8 @@ describe BankAccountsController do
   describe "xhr GET 'new'" do
 
     before :each do
-      controller.stub_chain(:load_target, :current_user).and_return(@user)
+      controller.stub!(:current_user).and_return(@user)
+      controller.stub!(:load_target).and_return(:success)
       @user.stub_chain(:bank_accounts, :build).and_return( @account )
       do_get
     end
@@ -95,6 +97,7 @@ describe BankAccountsController do
 
   describe 'GET show/:id' do
     before :each do
+      controller.stub!(:current_user).and_return(@user)
       @user.stub_chain(:bank_accounts, :first).and_return( @account )
     end
 

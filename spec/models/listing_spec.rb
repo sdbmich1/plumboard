@@ -683,6 +683,16 @@ describe Listing do
     end
   end
 
+  describe "find_pixi" do
+    it 'finds a pixi' do
+      expect(Listing.find_pixi(@listing.pixi_id)).not_to be_nil
+    end
+
+    it 'does not find pixi' do
+      expect(Listing.find_pixi(0)).to be_nil
+    end
+  end
+
   describe "dup pixi" do
     let(:user) { FactoryGirl.create :pixi_user }
     let(:listing) { FactoryGirl.create :listing, seller_id: user.id }

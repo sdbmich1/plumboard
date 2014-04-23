@@ -13,7 +13,7 @@
       <%= render partial: 'shared/social_links' unless !listing.active? %>
     </div>
     <div class="span5">
-      <div id='comment_form'><%= render partial: 'shared/comments' %></div>
+      <div id='comment_form'><%= render partial: 'shared/comments', locals: {listing: listing} %></div>
     </div>
   </div>
 

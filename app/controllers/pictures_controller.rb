@@ -15,7 +15,11 @@ class PicturesController < ApplicationController
   end
 
   def show
-    respond_with @picture = Picture.find(params[:id])
+    @picture = Picture.find(params[:id])
+    respond_with(@picture) do |format|
+      format.html { render nothing: true }
+      format.json { render json: {picture: @picture} }
+    end
   end
 
   def create

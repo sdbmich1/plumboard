@@ -5,14 +5,19 @@ var dt = nowTemp.getDate();
 var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), dt, 0, 0, 0, 0);
 
 // set default date
-$(document).on("focus", ".dt-pckr", function(e){
+$(document).on("focus", ".dt-pckr, .px-date", function(e){
+
+  // set datepicker start date based on class
+  var myClass = $(this).attr("class");
+  var nDays = (myClass.match(/px-date/i)) ? 0 : 3;
+
   var newDt = $(this).datepicker({
     onRender: function(date) {
       return date.valueOf() < now.valueOf() ? 'disabled' : '';
       }
     }).on('show', function(ev) { 
       var newDate = new Date(ev.date);
-      newDate.setDate(newDate.getDate() + 1);
+      newDate.setDate(newDate.getDate() + nDays);
 
       // set end date
       $(this).datepicker('setValue', newDate);

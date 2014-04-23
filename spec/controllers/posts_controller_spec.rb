@@ -26,6 +26,7 @@ describe PostsController do
     @user = mock_user
     @listing = stub_model Listing
     @post = stub_model Post
+    controller.stub!(:current_user).and_return(@user)
   end
 
   describe "POST create" do

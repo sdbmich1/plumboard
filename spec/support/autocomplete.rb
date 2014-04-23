@@ -9,7 +9,8 @@ def old_fill_autocomplete(item_text, input_selector="input[data-autocomplete]")
     item_selector = ".ui-menu-item a:contains('#{item_text}')"
      
     # page.should have_selector item_selector
-    page.execute_script %Q{ $("#{item_selector}").trigger("mouseenter").trigger("click"); }
+    page.execute_script %Q{ $("#{item_selector}").click(); }
+    # page.execute_script %Q{ $("#{item_selector}").trigger("mouseenter").trigger("click"); }
     # page.execute_script("$('.ui-menu-item a:contains(\"#{item_text}\")').trigger('mouseenter').click()")
 end
 
@@ -18,8 +19,11 @@ def fill_autocomplete(field, options = {})
 
   page.execute_script %Q{ $('##{field}').trigger('focus') }
   page.execute_script %Q{ $('##{field}').trigger('keydown') }
-  selector = %Q{ul.ui-autocomplete li.ui-menu-item a:contains("#{options[:select]}")}
+  # selector = %Q{ul.ui-autocomplete li.ui-menu-item a:contains("#{options[:select]}")}
+  selector = "ul.ui-autocomplete li.ui-menu-item a"
 
-  page.should have_selector('ul.ui-autocomplete li.ui-menu-item a')
-  page.execute_script %Q{ $('#{selector}').trigger('mouseenter').click() }
+  sleep 3
+  # page.should have_selector('ul.ui-autocomplete li.ui-menu-item a')
+  # page.execute_script %Q{ $('#{selector}').trigger('mouseenter').click() }
+  page.execute_script("$('#{selector}').click()")
 end

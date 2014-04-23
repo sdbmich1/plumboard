@@ -16,7 +16,7 @@ class ListingsController < ApplicationController
   end
 
   def show
-    @listing = Listing.find_by_pixi_id params[:id]
+    @listing = Listing.find_pixi(params[:id])
     load_comments
     respond_with(@listing) do |format|
       format.json { render json: {listing: @listing, comments: @comments} }
@@ -93,6 +93,7 @@ class ListingsController < ApplicationController
   def pixi_price
     @listing = Listing.find_by_pixi_id(params[:pixi_id]) if params[:pixi_id]
     @price = @listing.price rescue nil
+    respond_with(@price)
   end
 
   protected

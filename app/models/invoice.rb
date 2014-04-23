@@ -35,6 +35,11 @@ class Invoice < ActiveRecord::Base
     self.bank_account_id = seller.bank_accounts.first.id if seller.has_bank_account?
   end
 
+  def self.find_inv id
+    includes(:posts, :pixi_payments, :bank_account, :transaction, :listing => :pictures, :buyer => :pictures, 
+      :seller => :pictures).where(id: id).first
+  end
+
   # get by status
   def self.get_by_status val
     where(:status=>val)

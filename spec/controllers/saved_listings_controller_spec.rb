@@ -33,14 +33,6 @@ describe SavedListingsController do
       get :index
     end
 
-    it "should load the requested user" do
-      controller.current_user.should == @user
-    end
-
-    it "should assign @user" do
-      assigns(:user).should_not be_nil 
-    end
-
     it "should assign @listings" do
       assigns(:listings).should_not be_nil
     end
@@ -62,6 +54,8 @@ describe SavedListingsController do
   describe "POST create" do
     before :each do
       @listing = mock_model SavedListing
+      controller.stub!(:current_user).and_return(@user)
+      @user.stub_chain(:saved_listings, :build).and_return(@listing)
       controller.stub!(:reload_data).and_return(true)
     end
     
@@ -72,7 +66,7 @@ describe SavedListingsController do
     context 'failure' do
       
       before :each do
-        SavedListing.stub!(:save).and_return(false)
+        @listing.stub!(:save).and_return(false)
       end
 
       it "should assign @listing" do
@@ -94,7 +88,7 @@ describe SavedListingsController do
     context 'success' do
 
       before :each do
-        SavedListing.stub!(:save).and_return(true)
+        @listing.stub!(:save).and_return(true)
       end
 
       it "should load the requested listing" do
@@ -113,17 +107,13 @@ describe SavedListingsController do
           should change(SavedListing, :count).by(1)
         end
       end
-
-      it "responds to JSON" do
-        post :create, pixi_id: '1', format: :json
-	response.status.should_not eq(0)
-      end
     end
   end
 
   describe "DELETE /:id" do
     before (:each) do
       @listing = mock_model SavedListing
+      controller.stub!(:current_user).and_return(@user)
       @user.stub_chain(:saved_listings, :find_by_pixi_id).and_return(@listing)
       controller.stub!(:reload_data).and_return(true)
     end

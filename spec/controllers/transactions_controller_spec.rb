@@ -21,10 +21,17 @@ describe TransactionsController do
     end
   end
 
+  def set_ability
+    @abilities = Ability.new(@user)
+    Ability.stub(:new).and_return(@abilities)
+  end
+
   before(:each) do
     log_in_test_user
     @user = mock_user
-    @transaction = stub_model(Transaction, :id=>1, first_name: "Test", last_name: "user", price: 5.00)
+    set_ability
+    @transaction = stub_model(Transaction, first_name: "Test", last_name: "user", amt: 5.00, address: '123 Elm', city: 'LA', state: 'CA', 
+      zip: '94108', home_phone: '4155551212', mobile_phone: '4155551212', email: 'test@test.com')
   end
 
   describe 'GET index' do
@@ -58,7 +65,7 @@ describe TransactionsController do
 
     before :each do
       @listing = stub_model(TempListing)
-      TempListing.stub!(:find_by_pixi_id).and_return(@listing)
+      TempListing.stub!(:find_pixi).and_return(@listing)
       @invoice = stub_model(Invoice)
       controller.stub(:order) {['order', 'order']}
       controller.stub!(:current_user).and_return(@user)
@@ -94,14 +101,14 @@ describe TransactionsController do
 
   describe 'GET show/:id' do
     before :each do
-      @user = stub_model(User)
       @rating = stub_model(Rating)
       Transaction.stub!(:find).and_return( @transaction )
+      controller.stub!(:current_user).and_return(@user)
       @user.stub_chain(:ratings, :build).and_return(@rating)
     end
 
     def do_get
-      get :show, id: @transaction
+      get :show, id: '1'
     end
 
     it "should show the requested transaction" do
@@ -110,7 +117,8 @@ describe TransactionsController do
     end
 
     it "should load the requested transaction" do
-      Transaction.stub(:find).with(@transaction.id).and_return(@transaction)
+      Transaction.stub!(:find).with('1').and_return(@transaction)
+      # @user.stub_chain(:transactions, :find).with('1').and_return(@transaction)
       do_get
     end
 
@@ -134,17 +142,17 @@ describe TransactionsController do
     before :each do
       @listing = stub_model(TempListing)
       TempListing.stub!(:find_by_pixi_id).and_return(@listing)
+      Transaction.stub!(:new).and_return(@transaction)
+    end
+
+    def do_create
+      post :create, id: '1', transaction: { 'first_name'=>'test', 'description'=>'test' }, order: { "item_name" => 'New Pixi', "quantity" => 1, 
+	   "price" => 5.00 }
     end
     
     context 'failure' do
-      
       before :each do
-	User.stub_chain(:find, :transactions, :build).and_return(@user)
         Transaction.stub!(:save_transaction).and_return(false)
-      end
-
-      def do_create
-        post :create, id: '1'
       end
 
       it "should assign @transaction" do
@@ -159,11 +167,12 @@ describe TransactionsController do
 
       it "create action should render new action" do
         do_create
-        response.should be_redirect
+        response.should_not be_redirect
       end
 
       it "responds to JSON" do
-        post :create, id: '1', :format=>:json
+        post :create, id: '1', transaction: { 'first_name'=>'test', 'description'=>'test' }, order: { "item_name" => 'New Pixi', "quantity" => 1, 
+	   "price" => 5.00 }, :format=>:json
 	response.status.should_not eq(0)
       end
     end
@@ -172,18 +181,11 @@ describe TransactionsController do
 
       before :each do
 	@my_model = stub_model(Transaction,:save=>true)
-	User.stub_chain(:find, :transactions, :build).and_return(@user)
         Transaction.stub!(:save_transaction).and_return(true)
       end
 
-      def do_create
-        post :create, id: '1', transaction: { 'first_name'=>'test', 'description'=>'test' }, order: { "item_name" => 'New Pixi', "quantity" => 1, 
-	   "price" => 5.00 }
-      end
-
       it "should load the requested transaction" do
-        # Transaction.stub(:new).with({'first_name'=>'test', 'description'=>'test' }) { mock_transaction(:save_transaction => true) }
-        Transaction.stub(:new).with({'first_name'=>'test', 'description'=>'test' }) { @my_model }
+        Transaction.stub(:new).with({'first_name'=>'test', 'description'=>'test' }) { mock_transaction(:save_transaction => true) }
         do_create
       end
 

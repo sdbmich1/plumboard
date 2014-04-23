@@ -2,7 +2,7 @@
     <div class='row'>
       <div class='span2'> 
         <%= f.label :appt_date, 'Appointment Date', class: 'sm-top' %>
-        <%= f.text_field :appt_date, value: get_local_date(post.appt_date), class: 'dt-pckr width120', size: 10, id: 'appt-dt' %>
+        <%= f.text_field :appt_date, value: get_local_date(post.appt_date), class: 'px-date width120', size: 10, id: 'appt-dt' %>
       </div>
       <div class='span2'>
         <%= f.label :appt_time, 'Appointment Time', class: 'sm-top' %>
@@ -12,7 +12,7 @@
       </div>
       <div class='span2'>
         <%= f.label :completed_date, 'Completed Date', class: 'sm-top' %>
-        <%= f.text_field :completed_date, value: get_local_date(post.completed_date), class: 'dt-pckr width120', size: 10, id: 'cmp-dt' %>
+        <%= f.text_field :completed_date, value: get_local_date(post.completed_date), class: 'px-date width120', size: 10, id: 'cmp-dt' %>
       </div>
       <div class='span2'>
         <%= f.label :completed_time, 'Completed Time', class: 'sm-top' %>

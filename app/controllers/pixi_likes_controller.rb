@@ -3,7 +3,6 @@ class PixiLikesController < ApplicationController
   respond_to :html, :js, :mobile, :json
 
   def create
-    @listing = Listing.find_by_pixi_id params[:id]
     @like = @user.pixi_likes.build pixi_id: params[:id]
     respond_with(@like) do |format|
       if @like.save
