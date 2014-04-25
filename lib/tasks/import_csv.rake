@@ -285,6 +285,46 @@ task :load_categories => :environment do
   end
 end
 
+
+task :update_categories => :environment do
+
+  CSV.foreach(Rails.root.join('db', 'category_data_042214.csv'), :headers => true do |row|
+
+    attrs = {:name             => row[0].titleize,
+             :category_type    => row[1],
+             :status           => 'active'}
+
+    #update category
+    
+    if Category.exists?(attrs):
+      updated_category = Category.find_by name: :name
+    else
+      updated_category = Category.find_or_initialize_by_name(attrs)
+    end
+
+    updated_category.update_attributes(attrs)
+
+    #add photo
+    if updated_category.pictures.size == 0
+      updated_category.pictures.map { |pic| updated_category.pictures.delete(pic) }
+    end
+
+    picture = new_category.pictures.build
+    picture.photo = File.new("#{Rails.root}" + row[2]) if picture
+
+    #save category
+    if updated_category.save
+      puts "Saved category #{attrs.inspect}"
+    else
+      puts updated_category.errors
+    end
+  end
+end
+    
+
+
+
+
 task :import_point_system => :environment do
 
   PixiPoint.delete_all
