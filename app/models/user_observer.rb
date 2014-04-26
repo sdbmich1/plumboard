@@ -3,6 +3,9 @@ class UserObserver < ActiveRecord::Observer
   include PointManager
 
   def after_create usr
+    # set default user type
+    usr.user_type_code = 'mbr'
+
     # update points
     ptype = usr.uid.blank? ? 'dr' : 'fr'
     PointManager::add_points usr, ptype

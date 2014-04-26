@@ -76,6 +76,12 @@ describe "Users", :type => :feature do
       page.should have_link 'Done', href: users_path(utype: @member.user_type_code) 
       page.should_not have_content @user.name
     end
+
+    it 'edits member profile' do
+      visit edit_user_path(@member)
+      page.should have_content 'Birth Date'
+      expect(page).to have_selector('#ucode', visible: true) 
+    end
   end
   
   describe 'Edit profile' do
@@ -94,6 +100,7 @@ describe "Users", :type => :feature do
     end
 
     it "empty first name should not change a profile", js: true do
+      expect(page).not_to have_selector('#ucode', visible: true) 
       expect { 
 	      fill_in 'user_first_name', with: nil
               click_on 'Save Changes'

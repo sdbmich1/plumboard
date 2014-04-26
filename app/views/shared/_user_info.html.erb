@@ -10,3 +10,9 @@
        <%= form.number_field :zip, placeholder: 'Home Zip', size: 5, id: 'home_zip', required: true %>
      <% end %>
 </div>
+<% if can? :manage_users, user %>
+  <div>
+    <%= f.collection_select :user_type_code, UserType.active, :code, :description, {selected: user.user_type_code, prompt: 'Select User Type'}, 
+      {class: 'mbot', id: 'ucode'} %>
+  </div>
+<% end %>

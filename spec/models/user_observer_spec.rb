@@ -29,6 +29,10 @@ describe UserObserver do
     let(:user) { FactoryGirl.create :pixi_user }
     let(:pixi_user) { FactoryGirl.create :pixi_user, uid: '11111' }
 
+    it 'set default user_type' do
+      user.user_type_code.should == 'mbr'
+    end
+
     it 'adds dr pixi points' do
       user.user_pixi_points.find_by_code('dr').code.should == 'dr'
     end

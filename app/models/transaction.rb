@@ -235,6 +235,11 @@ class Transaction < ActiveRecord::Base
     amt > 0 rescue nil
   end
 
+  # eager load txn
+  def self.find id
+    includes(:transaction_details, :invoices => :listing, :user => [:pictures, :bank_accounts]).where(id: id).first
+  end
+
   # set json string
   def as_json(options={})
     super(except: [:updated_at], 

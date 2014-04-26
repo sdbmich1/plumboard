@@ -114,6 +114,7 @@ form#new_post {margin-bottom: -0px!important;}
 
 .mright { margin-right: 10px!important }
 .sm-top { margin-top: 5px!important }  
+.xneg-top { margin-top: -40px!important }  
 .big-neg-top { margin-top: -25px!important }  
 .px-neg-top { margin-top: -22px!important }  
 .mneg-top { margin-top: -20px!important }  
@@ -126,6 +127,7 @@ form#new_post {margin-bottom: -0px!important;}
 .sm-bot { margin-bottom: 5px!important }  
 .med-bot { margin-bottom: 10px!important }  
 .neg-bot { margin-bottom: -10px!important }  
+.big-neg-bot { margin-bottom: -20px!important }  
 .mneg-bot { margin-bottom: -7px!important }  
 .ng-bot { margin-bottom: -5px!important }  
 
@@ -247,9 +249,14 @@ a.clear-link {
 }
 
 .top5 {
-  top: 2%!important;
+  top: 3%!important;
 }
 
 .pad-bot60 {
  padding-bottom: 60px !important;
+}
+
+.no-float {
+  margin:0 auto;
+  float:none;
 }

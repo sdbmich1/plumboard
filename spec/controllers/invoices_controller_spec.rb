@@ -21,6 +21,12 @@ describe InvoicesController do
     end
   end
 
+  def reload_data
+    controller.stub!(:reload_data).and_return(:success)
+    controller.stub!(:current_user).and_return(@user)
+    @user.stub_chain(:received_invoices, :invoices)
+  end
+
   before(:each) do
     log_in_test_user
     @user = mock_user
@@ -202,8 +208,8 @@ describe InvoicesController do
 
   describe 'GET show' do
     before :each do
-      Invoice.stub!(:find_inv).and_return( @invoice )
-      controller.stub!(:current_user).and_return(@user)
+      Invoice.stub!(:includes) { Invoice }
+      Invoice.stub!(:find).and_return( @invoice )
       do_get
     end
 
@@ -212,7 +218,7 @@ describe InvoicesController do
     end
 
     it "should load the requested invoice" do
-      Invoice.should_receive(:find_inv).with('1').and_return(@invoice)
+      Invoice.should_receive(:find).with('1').and_return(@invoice)
       do_get
     end
 
@@ -231,8 +237,8 @@ describe InvoicesController do
 
   describe 'xhr GET show' do
     before :each do
-      Invoice.stub!(:find_inv).and_return( @invoice )
-      controller.stub!(:current_user).and_return(@user)
+      Invoice.stub!(:includes) { Invoice }
+      Invoice.stub!(:find).and_return( @invoice )
       do_get
     end
 
@@ -245,7 +251,7 @@ describe InvoicesController do
     end
 
     it "should load the requested invoice" do
-      Invoice.should_receive(:find_inv).with('1').and_return(@invoice)
+      Invoice.should_receive(:find).with('1').and_return(@invoice)
       do_get
     end
 
@@ -261,8 +267,8 @@ describe InvoicesController do
   describe "xhr GET 'edit/:id'" do
 
     before :each do
-      controller.stub!(:current_user).and_return(@user)
-      @user.stub_chain(:invoices, :find).and_return( @invoice )
+      Invoice.stub!(:includes) { Invoice }
+      Invoice.stub!(:find).and_return( @invoice )
     end
 
     def do_get
@@ -287,8 +293,7 @@ describe InvoicesController do
   describe "GET 'edit/:id'" do
 
     before :each do
-      controller.stub!(:current_user).and_return(@user)
-      @user.stub_chain(:invoices, :find).and_return( @invoice )
+      Invoice.stub!(:find).and_return( @invoice )
       do_get
     end
 
@@ -313,7 +318,8 @@ describe InvoicesController do
     before (:each) do
       controller.stub!(:set_params).and_return(:success)
       controller.stub!(:current_user).and_return(@user)
-      @user.stub_chain(:invoices, :find).and_return( @invoice )
+      Invoice.stub!(:includes) { Invoice }
+      Invoice.stub!(:find).and_return( @invoice )
     end
 
     def do_update
@@ -323,21 +329,22 @@ describe InvoicesController do
     context "with valid params" do
       before (:each) do
         @invoice.stub(:update_attributes).and_return(true)
+	reload_data
       end
 
       it "should load the requested invoice" do
-        @user.stub_chain(:invoices, :find) { @invoice }
+        Invoice.stub!(:find) { @invoice }
         do_update
       end
 
       it "should update the requested invoice" do
-        @user.stub_chain(:invoices, :find).with("1") { mock_invoice }
+        Invoice.stub!(:find).with("1") { mock_invoice }
 	mock_invoice.should_receive(:update_attributes).with({'pixi_id' => 'test', 'comment' => 'test'})
         do_update
       end
 
       it "should assign @invoice" do
-        @user.stub_chain(:invoices, :find) { mock_invoice(:update_attributes => true) }
+        Invoice.stub!(:find) { mock_invoice(:update_attributes => true) }
         do_update
         assigns(:invoice).should_not be_nil 
       end
@@ -356,18 +363,18 @@ describe InvoicesController do
       end
 
       it "should load the requested invoice" do
-        @user.stub_chain(:invoices, :find) { @invoice }
+        Invoice.stub!(:find) { @invoice }
         do_update
       end
 
       it "should assign @invoice" do
-        @user.stub_chain(:invoices, :find) { mock_invoice(:update_attributes => false) }
+        Invoice.stub!(:find) { mock_invoice(:update_attributes => false) }
         do_update
         assigns(:invoice).should_not be_nil 
       end
 
       it "should not render anything" do 
-        @user.stub_chain(:invoices, :find) { mock_invoice(:update_attributes => false) }
+        Invoice.stub!(:find) { mock_invoice(:update_attributes => false) }
         do_update
         controller.stub!(:render)
       end
@@ -419,6 +426,7 @@ describe InvoicesController do
 
       before :each do
         Invoice.stub!(:save).and_return(true)
+	reload_data
       end
 
       it "loads the requested invoice" do
@@ -455,8 +463,9 @@ describe InvoicesController do
   describe "DELETE 'destroy'" do
 
     before (:each) do
-      controller.stub!(:current_user).and_return(@user)
-      @user.stub_chain(:invoices, :find).and_return(@invoice)
+      Invoice.stub!(:includes) { Invoice }
+      Invoice.stub!(:find).and_return(@invoice)
+      reload_data
     end
 
     def do_delete
@@ -465,18 +474,14 @@ describe InvoicesController do
 
     context 'success' do
 
-      it "should load the requested invoice" do
-        @user.stub_chain(:invoices, :find).with("37").and_return(@invoice)
-      end
-
       it "destroys the requested invoice" do
-        @user.stub_chain(:invoices, :find).with("37") { mock_invoice }
+        Invoice.stub!(:find).with("37") { mock_invoice }
         mock_invoice.should_receive(:destroy)
         do_delete
       end
 
       it "redirects to the invoices list" do
-        @user.stub_chain(:invoices, :find) { mock_invoice }
+        Invoice.stub!(:find) { mock_invoice }
         do_delete
         response.should_not be_redirect
       end

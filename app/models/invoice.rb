@@ -24,7 +24,7 @@ class Invoice < ActiveRecord::Base
   validates :amount, presence: true, :numericality => { greater_than: 0, less_than_or_equal_to: MAX_PIXI_AMT.to_f }  
   validates :quantity, presence: true, :numericality => { greater_than: 0, less_than_or_equal_to: MAX_INV_QTY.to_i }    
   validates :sales_tax, allow_blank: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
-    		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }
+    		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_SALES_TAX.to_i }
 
   default_scope order: 'invoices.created_at DESC'
 
@@ -35,9 +35,9 @@ class Invoice < ActiveRecord::Base
     self.bank_account_id = seller.bank_accounts.first.id if seller.has_bank_account?
   end
 
-  def self.find_inv id
+  def self.find id
     includes(:posts, :pixi_payments, :bank_account, :transaction, :listing => :pictures, :buyer => :pictures, 
-      :seller => :pictures).where(id: id).first
+      :seller => :pictures).where(id: id.to_i).first
   end
 
   # get by status
