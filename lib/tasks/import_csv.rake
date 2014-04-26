@@ -288,7 +288,7 @@ end
 
 task :update_categories => :environment do
 
-  CSV.foreach(Rails.root.join('db', 'category_data_042214.csv'), :headers => true do |row|
+  CSV.foreach(Rails.root.join('db', 'category_data_042214.csv'), :headers => true) do |row|
 
     attrs = {:name             => row[0].titleize,
              :category_type    => row[1],
@@ -296,8 +296,8 @@ task :update_categories => :environment do
 
     #update category
     
-    if Category.exists?(attrs):
-      updated_category = Category.find_by name: :name
+    if Category.exists?(attrs)
+      updated_category = Category.where(name = :name) 
     else
       updated_category = Category.find_or_initialize_by_name(attrs)
     end
