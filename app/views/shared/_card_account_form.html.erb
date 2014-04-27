@@ -9,9 +9,13 @@
       <div id='signup'>
 	<div class="control-group">
 	  <label class="control-label">Card #</label>
-	  <div class='controls'><%= f.number_field :card_number, :size => 16, placeholder: 'Card Number', id: 'card_number', required: true %></div>
+	  <div class='controls'><%= f.number_field :card_number, :size => 16, placeholder: 'Card Number', id: 'card_number', required: true %>
+	    <%= image_tag('cc_logos.jpeg', :class=>'cc-logo neg-top mbot') %>
+	  </div>
 	  <label class="control-label">Card Code</label>
-	  <div class='controls'><%= f.number_field :card_code, :size => 4, placeholder: 'Card Code', id: 'card_code', required: true %></div>
+	  <div class='controls'><%= f.number_field :card_code, :size => 4, placeholder: 'Card Code', id: 'card_code', required: true %>
+	    <%= image_tag('cvv.png', :class=>'cvv-logo neg-top mbot') %>
+	  </div>
 	  <div class='neg-top'>
 	    <label class="control-label">Exp Month</label>
 	    <div class='controls'>
@@ -40,4 +44,3 @@
       <div class="span4 offset5 mbot"><%= f.submit 'Save', class: "btn btn-large btn-primary submit-btn" %></div>
     <% end %>
   </div>
-

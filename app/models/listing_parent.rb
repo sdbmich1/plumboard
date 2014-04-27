@@ -265,6 +265,19 @@ class ListingParent < ActiveRecord::Base
     category.category_type == 'employment' rescue nil
   end
 
+  # delete selected photo
+  def delete_photo pid, val=1
+    # find selected photo
+    pic = self.pictures.find pid
+
+    # remove photo if found and not only photo for listing
+    result = pic && self.pictures.size > val ? self.pictures.delete(pic) : false
+
+    # add error msg
+    errors.add :base, "Pixi must have at least one image." unless result
+    result
+  end
+
   # duplicate pixi between models
   def dup_pixi tmpFlg
     
@@ -280,6 +293,12 @@ class ListingParent < ActiveRecord::Base
       # load attributes to new record
       listing = tmpFlg ? Listing.new(attr) : TempListing.new(attr)
       listing.status = 'edit' unless tmpFlg
+    end
+
+    # compare pictures to see if any need to be removed from active pixi
+    if tmpFlg
+      file_names = listing.pictures.map(&:photo_file_name) - self.pictures.map(&:photo_file_name)
+      file_ids = listing.pictures.where(photo_file_name: file_names).map(&:id)
     end
 
     # add photos
@@ -306,7 +325,12 @@ class ListingParent < ActiveRecord::Base
     end
 
     # add dup
-    listing.save ? listing : false rescue false
+    if listing.save
+      listing.delete_photo(file_ids, 0) if tmpFlg rescue false
+      listing
+    else
+      false
+    end
   end
 
   # seller pic

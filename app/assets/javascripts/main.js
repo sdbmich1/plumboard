@@ -209,7 +209,7 @@ $(document).on('focus', mask_flds, function() {
 });
 
 // hide spinner
-$(document).on('focus', '#pixi-form', function() {
+$(document).on('focus', '#signup, #pixi-form', function() {
   $("#spinner").hide('fast'); 
 });
 

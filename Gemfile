@@ -125,6 +125,7 @@ gem 'bootstrap-sass', '~> 2.3.2.1'
 
 # add memcached
 gem 'dalli'
+gem 'dalli-elasticache'
 
 # add area
 gem 'area', '~> 0.10.0'
@@ -148,6 +149,7 @@ group :development do
   gem 'rvm-capistrano'
 
   gem 'quiet_assets'
+  gem 'bullet'
 end
 
 group :development, :test do

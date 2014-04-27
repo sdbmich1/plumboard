@@ -51,4 +51,13 @@ Plumboard::Application.configure do
 
   # facebook ssl setting
   FACEBOOK_SSL_OPTIONS = {:ca_path => "/etc/ssl/certs"}
+
+  # add bullet for performance monitoring (eager loading)
+  config.after_initialize do
+    Bullet.enable = true
+    Bullet.alert = true
+    Bullet.bullet_logger = true
+    Bullet.console = true
+    Bullet.rails_logger = true
+  end
 end
