@@ -2,9 +2,13 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.2.12'
 gem 'rake' 
+
+#added faraday gem version 0.8.9 to run smoothly on Mac
+gem 'faraday', '0.8.9'
  
 # use devise for user authenication
-gem 'devise'
+# changed to verison 3.0.4 to run smoothly on Mac
+gem 'devise', '3.0.4'
 
 # add delayed job
 gem 'delayed_job_active_record'
