@@ -295,10 +295,8 @@ task :update_categories => :environment do
              :status           => 'active'}
 
     #update category
-    
-    if Category.exists?(attrs)
-      updated_category = Category.where(name = :name) 
-    else
+    updated_category = Category.where(name = :name) 
+    if not updated_category
       updated_category = Category.find_or_initialize_by_name(attrs)
     end
 
