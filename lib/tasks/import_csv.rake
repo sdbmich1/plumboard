@@ -260,9 +260,9 @@ task :load_categories => :environment do
   CSV.foreach(Rails.root.join('db', 'category_data_020613.csv'), :headers => true) do |row|
 
     attrs = {
-	      	:name              => row[0].titleize,
-      		:category_type     => row[1],
-		:status		   => 'active'
+	      	name              => row[0].titleize,
+      		category_type     => row[1],
+		status		   => 'active'
     }
 
     # find or add category
@@ -295,19 +295,19 @@ task :update_categories => :environment do
              :status           => 'active'}
 
     #update category
-    updated_category = Category.where(name = :name) 
+    updated_category = Category.find(:first, :conditions => ["name = ?", :name])
     if not updated_category
       updated_category = Category.find_or_initialize_by_name(attrs)
+    else
+      updated_category.update_attributes!(attrs)
     end
-
-    updated_category.update_attributes(attrs)
 
     #add photo
     if updated_category.pictures.size == 0
       updated_category.pictures.map { |pic| updated_category.pictures.delete(pic) }
     end
 
-    picture = new_category.pictures.build
+    picture = updated_category.pictures.build
     picture.photo = File.new("#{Rails.root}" + row[2]) if picture
 
     #save category
