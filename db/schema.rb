@@ -510,14 +510,6 @@ ActiveRecord::Schema.define(:version => 20140408221138) do
 
   add_index "sites", ["institution_id"], :name => "index_organizations_on_institution_id"
 
-  create_table "states", :force => true do |t|
-    t.string "code"
-    t.string "state_name"
-    t.float  "sortkey"
-    t.string "hide"
-    t.string "status"
-  end
-
   create_table "subcategories", :force => true do |t|
     t.string   "name"
     t.integer  "category_id"
