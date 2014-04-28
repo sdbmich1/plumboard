@@ -5,8 +5,8 @@ require 'thinking_sphinx/capistrano'
 require 'whenever/capistrano'
 require 'rvm/capistrano'
 require 'delayed/recipes'
-require 'capistrano/ext/multistage'
-require 'capistrano/maintenance'
+# require 'capistrano/ext/multistage'
+# require 'capistrano/maintenance'
 
 # set stages
 set :stages, %w(production staging)
@@ -99,7 +99,8 @@ namespace :deploy do
 
   task :enable_rubber_current do
     puts "\n\n=== Enabling rubber current scripts! ===\n\n"
-    run "chmod +x #{current_path}/script/rubber "
+    # run "ln -nfs #{release_path}/script/rubber #{current_path}/script/rubber"
+    # run "chmod +x #{current_path}/script/rubber "
     run "ln -nfs #{shared_path}/config/rubber/common/database.yml #{release_path}/config/rubber/common/database.yml"
     run "touch #{current_path}/log/production.log"
   end
@@ -189,7 +190,8 @@ end
 namespace :memcached do
   desc "Flushes memcached local instance"
   task :flush, :roles => [:app] do
-    run("cd #{current_path} && rake memcached:flush")
+    # run("cd #{current_path} && rake memcached:flush")
+    Rails.cache.clear
   end
 end
 
@@ -200,9 +202,9 @@ end
 
 # capistrano's deploy:cleanup doesn't play well with FILTER
 before 'deploy:setup', 'sphinx:create_sphinx_dir'
-after 'deploy:update_code', 'deploy:enable_rubber', 'deploy:enable_rubber_current'
-after 'bundle:install', 'deploy:enable_rubber', 'deploy:enable_rubber_current'
-after 'rubber:config', 'deploy:enable_rubber'
+after 'deploy:update_code', 'deploy:enable_rubber'
+after 'bundle:install', 'deploy:enable_rubber'
+before 'rubber:config', 'deploy:enable_rubber', 'deploy:enable_rubber_current'
 after 'deploy:update_code', 'deploy:symlink_shared', 'sphinx:stop'
 after "deploy", "cleanup"
 after "deploy:migrations", "cleanup", "sphinx:sphinx_symlink", "sphinx:configure", "sphinx:rebuild"
