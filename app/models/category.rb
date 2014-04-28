@@ -39,8 +39,8 @@ class Category < ActiveRecord::Base
   end
 
   # return active categories
-  def self.active
-    includes(:pictures).where(:status => 'active')
+  def self.active flg=false
+    flg ? includes(:pictures).where(:status => 'active') : where(:status => 'active')
   end
 
   # return inactive categories

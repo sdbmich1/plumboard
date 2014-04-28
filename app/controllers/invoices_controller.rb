@@ -22,24 +22,18 @@ class InvoicesController < ApplicationController
   end
    
   def sent
-    @invoices = @user.invoices.paginate(page: @page)
-    respond_with(@invoices) do |format|
-      format.json { render json: {invoices: @invoices} }
-    end
+    @invoices = Invoice.get_invoices(@user).paginate(page: @page)
+    respond_with(@invoices)
   end
    
   def received
-    @invoices = @user.received_invoices.paginate(page: @page)
-    respond_with(@invoices) do |format|
-      format.json { render json: {invoices: @invoices} }
-    end
+    @invoices = Invoice.get_buyer_invoices(@user).paginate(page: @page)
+    respond_with(@invoices)
   end
 
   def show
     @invoice = Invoice.find params[:id]
-    respond_with(@invoice) do |format|
-      format.json { render json: {user: @user, invoice: @invoice} }
-    end
+    respond_with(@invoice)
   end
 
   def edit
@@ -51,7 +45,6 @@ class InvoicesController < ApplicationController
     @invoice = Invoice.find params[:id]
     respond_with(@invoice) do |format|
       if @invoice.update_attributes(params[:invoice])
-        reload_data
         format.json { render json: {invoice: @invoice} }
       else
         format.json { render json: { errors: @invoice.errors.full_messages }, status: 422 }
@@ -63,7 +56,6 @@ class InvoicesController < ApplicationController
     @invoice = @user.invoices.build params[:invoice]
     respond_with(@invoice) do |format|
       if @invoice.save
-        reload_data
         format.json { render json: {invoice: @invoice} }
       else
         format.json { render json: { errors: @invoice.errors.full_messages }, status: 422 }
@@ -75,7 +67,6 @@ class InvoicesController < ApplicationController
     @invoice = Invoice.find params[:id]
     if @invoice.destroy
       @invoices = Invoice.get_invoices(@user).paginate(page: @page)
-      reload_data
     end  
     respond_with(@invoice)
   end
@@ -92,12 +83,6 @@ class InvoicesController < ApplicationController
 
   def set_params
     params[:invoice] = JSON.parse(params[:invoice]) if request.xhr?
-  end
-
-  # reload eager load assns
-  def reload_data
-    @user.invoices.reload
-    @user.received_invoices.reload
   end
 
   def check_permissions

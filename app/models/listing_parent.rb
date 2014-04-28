@@ -1,6 +1,7 @@
 require 'rails_rinku'
 class ListingParent < ActiveRecord::Base
   resourcify
+  include Area
   self.abstract_class = true
   self.per_page = 20
 
@@ -101,17 +102,22 @@ class ListingParent < ActiveRecord::Base
 
   # select active listings
   def self.active
-    select('listings.id, listings.pixi_id, listings.title, listings.category_id, categories.name AS category_name, listings.updated_at,
-      listings.status, listings.description, listings.created_at, listings.seller_id, listings.site_id, listings.price')
+    include_list.select('listings.id, listings.pixi_id, listings.title, listings.category_id, categories.name AS category_name, 
+      listings.updated_at, listings.status, listings.description, listings.created_at, listings.seller_id, listings.site_id, 
+      listings.price')
     .joins(:category)
-    .includes(:pictures)
     .where(where_stmt)
     .reorder('listings.updated_at DESC')
   end
 
+  # eager load assns
+  def self.include_list
+    includes(:pictures, :site)
+  end
+
   # find listings by status
   def self.get_by_status val
-    includes(:pictures, :user).where(:status => val).order('updated_at DESC')
+    include_list.where(:status => val).order('updated_at DESC')
   end
 
   # find listings by seller user id
@@ -179,9 +185,19 @@ class ListingParent < ActiveRecord::Base
     seller_id == usr.id rescue nil
   end
 
+  # verify if current user is pixter
+  def pixter? usr
+    pixan_id == usr.id rescue nil
+  end
+
   # verify if pixi posted by PXB
   def pixi_post?
     !pixan_id.blank?
+  end
+
+  # verify pixi can be edited
+  def editable? usr
+    (seller?(usr) || pixter?(usr)) && !sold?
   end
 
   # get category name for a listing
@@ -355,7 +371,11 @@ class ListingParent < ActiveRecord::Base
 
   # format updated date
   def updated_dt
-    updated_at.utc.getlocal.strftime('%m/%d/%Y %l:%M %p') rescue nil
+    if Rails.env.development? || Rails.env.test? 
+      updated_at.utc.getlocal.strftime('%m/%d/%Y %l:%M %p') rescue Time.now
+    else
+      updated_at.advance(hours: [lat, lng].to_zip.to_gmt_offset).strftime('%m/%d/%Y %l:%M %p') rescue Time.now
+    end
   end
 
   # set json string

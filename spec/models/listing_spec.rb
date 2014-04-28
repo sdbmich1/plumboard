@@ -194,14 +194,24 @@ describe Listing do
     it { Listing.get_category_by_site(@listing.category_id, @listing.site_id, 1).should_not be_empty }
   end
 
-  it "includes seller listings" do 
-    @listing.seller_id = 1
-    @listing.save
-    Listing.get_by_seller(1).should_not be_empty  
+  describe "seller listings" do 
+    it "includes seller listings" do 
+      @listing.seller_id = 1
+      @listing.save
+      Listing.get_by_seller(1).should_not be_empty  
+    end
+
+    it { Listing.get_by_seller(0).should_not include @listing } 
   end
 
-  describe "should not include incorrect seller listings" do 
-    it { Listing.get_by_seller(0).should_not include @listing } 
+  describe "buyer listings" do 
+    it { Listing.get_by_buyer(0).should_not include @listing } 
+
+    it "includes buyer listings" do 
+      @listing.buyer_id = 1
+      @listing.save
+      Listing.get_by_buyer(1).should_not be_empty  
+    end
   end
 
   describe "should return correct site name" do 
@@ -300,6 +310,43 @@ describe Listing do
 
     it  "should not verify user is seller" do 
       @listing.seller?(@user2).should_not be_true 
+    end
+  end
+
+  describe "pixter" do 
+    before do
+      @pixter = create :pixi_user, user_type_code: 'PT'
+      @user2 = FactoryGirl.create(:pixi_user, first_name: 'Lisa', last_name: 'Harden', email: 'lisaharden@pixitest.com') 
+      @listing = FactoryGirl.create(:listing, seller_id: @user.id, pixan_id: @pixter.id) 
+    end
+
+    it "should verify user is pixter" do 
+      @listing.pixter?(@pixter).should be_true 
+    end
+
+    it "should not verify user is pixter" do 
+      @listing.pixter?(@user2).should_not be_true 
+    end
+  end
+
+  describe "editable" do 
+    before do
+      @pixter = create :pixi_user, user_type_code: 'PT'
+      @user2 = FactoryGirl.create(:pixi_user, first_name: 'Lisa', last_name: 'Harden', email: 'lisaharden@pixitest.com') 
+      @listing = FactoryGirl.create(:listing, seller_id: @user.id, pixan_id: @pixter.id) 
+      @sold = FactoryGirl.create(:listing, seller_id: @user.id, pixan_id: @pixter.id, status: 'sold') 
+    end
+
+    it "is editable" do 
+      @listing.editable?(@pixter).should be_true 
+    end
+
+    it "sold pixi is not editable" do 
+      @sold.editable?(@pixter).should_not be_true 
+    end
+
+    it "is not editable" do 
+      @listing.editable?(@user2).should_not be_true 
     end
   end
 

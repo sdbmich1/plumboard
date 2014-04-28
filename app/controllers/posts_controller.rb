@@ -7,10 +7,8 @@ class PostsController < ApplicationController
   layout :page_layout
 
   def index
-    @posts = @user.incoming_posts.paginate(page: @page, per_page: @per_page)
-    respond_with(@posts) do |format|
-      format.json { render json: {posts: @posts} }
-    end
+    @posts = Post.get_posts(@user).paginate(page: @page, per_page: @per_page)
+    respond_with(@posts)
   end
 
   def reply
@@ -26,10 +24,8 @@ class PostsController < ApplicationController
   end
 
   def show
-    @posts = @user.incoming_posts.paginate(page: @page, per_page: @per_page)
-    respond_with(@posts) do |format|
-      format.json { render json: {posts: @posts} }
-    end
+    @posts = Post.get_posts(@user).paginate(page: @page, per_page: @per_page)
+    respond_with(@posts)
   end
 
   def mark
@@ -37,10 +33,8 @@ class PostsController < ApplicationController
   end
 
   def sent
-    @posts = @user.posts.paginate(page: @page, per_page: @per_page)
-    respond_with(@posts) do |format|
-      format.json { render json: {posts: @posts} }
-    end
+    @posts = Post.get_sent_posts(@user).paginate(page: @page, per_page: @per_page)
+    respond_with(@posts)
   end
 
   def create
@@ -81,6 +75,5 @@ class PostsController < ApplicationController
     @listing = Listing.find_pixi pid
     @comments = @listing.comments.paginate page: @page, per_page: PIXI_COMMENTS if @listing
     @user.pixi_wants.create(pixi_id: pid) # add to user's wanted list
-    @user.pixi_wants.reload
   end
 end

@@ -89,7 +89,7 @@ Plumboard::Application.routes.draw do
       get :autocomplete_site_name, :autocomplete_user_first_name, 'unposted', 'pending'
     end
     member do
-      put 'resubmit', 'submit'
+      put 'submit'
     end
   end
 

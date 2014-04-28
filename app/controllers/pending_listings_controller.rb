@@ -10,7 +10,7 @@ class PendingListingsController < ApplicationController
 
   def show
     @listing = TempListing.find_pixi params[:id]
-    @photo = @listing.pictures
+    @photo = @listing.pictures if @listing
   end
 
   def approve
@@ -18,7 +18,8 @@ class PendingListingsController < ApplicationController
     if @listing && @listing.approve_order(@user)
       redirect_to pending_listings_path(status: 'pending')
     else
-      render action: :show, error: "Order approval was not successful."
+      flash[:error] = "Order approval was not successful."
+      redirect_to pending_listing_path(@listing)
     end
   end
 
@@ -27,7 +28,8 @@ class PendingListingsController < ApplicationController
     if @listing && @listing.deny_order(@user, params[:reason])
       redirect_to pending_listings_path(status: 'pending')
     else
-      render action: :show, error: "Order denial was not successful."
+      flash[:error] = "Order denial was not successful."
+      redirect_to pending_listing_path(@listing)
     end
   end
 

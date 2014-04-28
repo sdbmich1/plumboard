@@ -6,7 +6,7 @@ describe Post do
     @recipient = FactoryGirl.create :pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tom.davis@pixitest.com'
     @buyer = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Smith', email: 'jack.smith99@pixitest.com'
     @listing = FactoryGirl.create :listing, seller_id: @user.id, title: 'Big Guitar'
-    @post = @listing.posts.build user_id: @user.id, recipient_id: @recipient.id
+    @post = @listing.posts.build FactoryGirl.attributes_for :post, user_id: @user.id, recipient_id: @recipient.id
   end
    
   subject { @post }
@@ -88,6 +88,27 @@ describe Post do
     end
   end
 
+  describe "read posts" do 
+    before { @post.save }
+
+    it "should return a post - get_posts" do 
+      Post.get_posts(@recipient).should_not be_nil 
+    end
+
+    it "should not return a post - get_posts" do 
+      Post.get_posts(@user).should be_empty 
+    end
+
+    it "returns sent posts" do 
+      @listing.posts.create FactoryGirl.attributes_for :post, user_id: @user.id, recipient_id: @recipient.id
+      Post.get_sent_posts(@user).should_not be_empty 
+    end
+
+    it "does not return sent posts" do 
+      Post.get_sent_posts(@buyer).should be_empty 
+    end
+  end
+
   describe "unread count" do 
     before { @post.save }
 
@@ -97,14 +118,6 @@ describe Post do
 
     it "should not return a count > 0" do 
       Post.unread_count(@user).should_not == 1 
-    end
-
-    it "should return a post - get_posts" do 
-      Post.get_posts(@recipient).should_not be_nil 
-    end
-
-    it "should not return a post - get_posts" do 
-      Post.get_posts(@user).should be_empty 
     end
 
     it "should return a post - get_unread" do 

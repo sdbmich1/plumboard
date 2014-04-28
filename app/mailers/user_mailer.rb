@@ -1,7 +1,7 @@
 class UserMailer < ActionMailer::Base
   default from: '"PixiSupport" <support@pixiboard.com>'
 
-  helper :application, :transactions, :listings
+  helper :application, :transactions, :listings, :invoices
 
   # send receipts to customers
   def send_transaction_receipt transaction

@@ -121,7 +121,7 @@ describe PostsController do
 
     before :each do
       @posts = stub_model(Post)
-      @user.stub!(:posts).and_return( @posts )
+      Post.stub!(:get_sent_posts).and_return( @posts )
       @posts.stub!(:paginate).and_return( @posts )
     end
 
@@ -130,7 +130,7 @@ describe PostsController do
     end
 
     it "should load the requested posts" do
-      @user.stub(:posts).and_return(@posts)
+      Post.stub!(:get_sent_posts).and_return( @posts )
       do_get
       assigns(:posts).should_not be_nil 
     end
@@ -165,7 +165,7 @@ describe PostsController do
   describe "GET /show" do
     before :each do
       @posts = mock("posts")
-      @user.stub!(:incoming_posts).and_return( @posts )
+      Post.stub!(:get_posts).and_return( @posts )
       @posts.stub!(:paginate).and_return( @posts )
     end
     
@@ -189,7 +189,7 @@ describe PostsController do
 
     before :each do
       @posts = stub_model(Post)
-      @user.stub!(:incoming_posts).and_return( @posts )
+      Post.stub!(:get_posts).and_return( @posts )
       @posts.stub!(:paginate).and_return( @posts )
     end
 
@@ -198,7 +198,7 @@ describe PostsController do
     end
 
     it "should load the requested posts" do
-      @user.stub(:incoming_posts).and_return(@posts)
+      Post.stub!(:get_posts).and_return( @posts )
       do_get
       assigns(:posts).should_not be_nil 
     end
@@ -218,7 +218,7 @@ describe PostsController do
 
     before :each do
       @posts = stub_model(Post)
-      @user.stub!(:incoming_posts).and_return( @posts )
+      Post.stub!(:get_posts).and_return( @posts )
       @posts.stub!(:paginate).and_return( @posts )
     end
 
@@ -227,7 +227,7 @@ describe PostsController do
     end
 
     it "should load the requested posts" do
-      @user.stub(:incoming_posts).and_return(@posts)
+      Post.stub!(:get_posts).and_return( @posts )
       do_get
       assigns(:posts).should_not be_nil 
     end

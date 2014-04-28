@@ -32,7 +32,7 @@ class TempListing < ListingParent
 
   # finds specific pixi
   def self.find_pixi pid
-    includes(:pictures, :category, :transaction, :user=>[:pictures]).where(pixi_id: pid).first
+    includes(:pictures, :category, :user=>[:pictures]).where(pixi_id: pid).first
   end
 
   # approve order
@@ -88,5 +88,10 @@ class TempListing < ListingParent
   # find listings by site id
   def self.get_by_site val
     where(:site_id => val)
+  end
+
+  # find pixis in draft status
+  def self.draft
+    include_list.where("status NOT IN ('approved', 'pending')")
   end
 end

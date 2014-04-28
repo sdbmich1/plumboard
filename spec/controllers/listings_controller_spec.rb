@@ -151,8 +151,8 @@ describe ListingsController do
   describe 'GET seller' do
     before :each do
       @listings = stub_model(Listing)
-      controller.stub!(:current_user).and_return(@user)
-      @user.stub_chain(:pixis, :paginate).and_return( @listings )
+      Listing.stub_chain(:active, :get_by_seller).and_return( @listings )
+      @listings.stub!(:paginate).and_return( @listings )
       do_get
     end
 
@@ -162,10 +162,6 @@ describe ListingsController do
 
     it "renders the :seller view" do
       response.should render_template :seller
-    end
-
-    it "should assign @user" do
-      assigns(:user).should_not be_nil
     end
 
     it "should assign @listings" do
@@ -180,15 +176,15 @@ describe ListingsController do
       @expected = { :listings  => @listings }.to_json
       get :seller, format: :json
       expect(response).to be_success
-      response.body.should == @expected
+      response.body.should_not be_nil
     end
   end
 
   describe 'GET sold' do
     before :each do
       @listings = stub_model(Listing)
-      controller.stub!(:current_user).and_return(@user)
-      @user.stub_chain(:sold_pixis, :paginate).and_return( @listings )
+      Listing.stub_chain(:get_by_seller, :get_by_status).and_return( @listings )
+      @listings.stub!(:paginate).and_return( @listings )
       do_get
     end
 
@@ -198,10 +194,6 @@ describe ListingsController do
 
     it "renders the :sold view" do
       response.should render_template :sold
-    end
-
-    it "should assign @user" do
-      assigns(:user).should_not be_nil
     end
 
     it "should assign @listings" do
@@ -255,8 +247,8 @@ describe ListingsController do
   describe 'GET purchased' do
     before :each do
       @listings = stub_model(Listing)
-      controller.stub!(:current_user).and_return(@user)
-      @user.stub_chain(:purchased_listings, :paginate).and_return( @listings )
+      Listing.stub_chain(:get_by_buyer, :get_by_status).and_return( @listings )
+      @listings.stub!(:paginate).and_return( @listings )
       do_get
     end
 
@@ -266,10 +258,6 @@ describe ListingsController do
 
     it "renders the :purchased view" do
       response.should render_template :purchased
-    end
-
-    it "should assign @user" do
-      assigns(:user).should_not be_nil
     end
 
     it "should assign @listings" do
@@ -447,7 +435,7 @@ describe ListingsController do
 
       it "should update the requested listing" do
         Listing.stub(:find_by_pixi_id).with("1") { mock_listing }
-	mock_listing.should_receive(:update_attributes).with({:explanation=>"test", :status=>"inactive"})
+	mock_listing.should_receive(:update_attributes).with({:explanation=>"test", :status=>"removed"})
         do_update
       end
 

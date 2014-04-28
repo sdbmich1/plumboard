@@ -36,6 +36,7 @@ database.yml
 
 # ignore secrets folder
 /config/secrets/*
+/config/certs/*
 
 .elasticbeanstalk/
 

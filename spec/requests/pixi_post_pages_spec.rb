@@ -109,15 +109,14 @@ feature "PixiPosts" do
       page.should have_button('Save')
     end
 
-    it "creates a pixi post" do
+    it "creates a pixi post", js: true do
       add_data
       user_data_with_state
       expect { 
-	  click_button submit
+	click_button submit; sleep 3
+        page.should have_content "PixiPost Request"
+        page.should have_content @user.name
       }.to change(PixiPost, :count).by(1)
-
-      page.should have_content "PixiPost Request"
-      page.should have_content @user.name
     end
   end
 
@@ -140,17 +139,16 @@ feature "PixiPosts" do
       page.should have_button('Save')
     end
 
-    it "creates a pixi post" do
+    it "creates a pixi post", js: true do
       add_data
       expect { 
-	  click_button submit; sleep 2
+	click_button submit; sleep 3
+        page.should have_content "PixiPost Request"
       }.to change(PixiPost, :count).by(1)
-
-      page.should have_content "PixiPost Request"
     end
   end
 
-  describe "Create with invalid information" do
+  describe "Create with invalid information", js: true do
     before do
       init_setup user
       visit new_pixi_post_path 

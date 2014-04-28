@@ -246,7 +246,7 @@ $(document).on('change', '#value5', function() {
 });
 
 // disable btn to prevent double click
-$(document).on("click", "#approve-btn", function(showElem){
+$(document).on("click", "#approve-btn, #px-done-btn", function(showElem){
   toggleLoading();
   $(this).attr('disabled', true);
 });

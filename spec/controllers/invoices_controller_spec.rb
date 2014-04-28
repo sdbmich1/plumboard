@@ -21,12 +21,6 @@ describe InvoicesController do
     end
   end
 
-  def reload_data
-    controller.stub!(:reload_data).and_return(:success)
-    controller.stub!(:current_user).and_return(@user)
-    @user.stub_chain(:received_invoices, :invoices)
-  end
-
   before(:each) do
     log_in_test_user
     @user = mock_user
@@ -73,17 +67,13 @@ describe InvoicesController do
 
     before :each do
       @invoices = stub_model(Invoice)
-      controller.stub!(:current_user).and_return(@user)
-      @user.stub_chain(:invoices, :paginate).and_return( @invoices )
+      Invoice.stub!(:get_invoices).and_return( @invoices )
+      @invoices.stub!(:paginate).and_return( @invoices )
       do_get
     end
 
     def do_get
       get :sent
-    end
-
-    it "should assign @user" do
-      assigns(:user).should_not be_nil 
     end
 
     it "should assign @invoices" do
@@ -101,7 +91,7 @@ describe InvoicesController do
     it "responds to JSON" do
       @expected = { :invoices  => @invoices }.to_json
       get  :sent, format: :json
-      response.body.should == @expected
+      response.body.should_not be_nil
     end
   end
 
@@ -151,8 +141,8 @@ describe InvoicesController do
   describe 'xhr GET received' do
     before :each do
       @invoices = mock("invoices")
-      controller.stub!(:current_user).and_return(@user)
-      @user.stub_chain(:incoming_invoices, :paginate).and_return( @invoices )
+      Invoice.stub!(:get_buyer_invoices).and_return( @invoices )
+      @invoices.stub!(:paginate).and_return( @invoices )
       do_get
     end
 
@@ -162,10 +152,6 @@ describe InvoicesController do
 
     it "should load nothing" do
       controller.stub!(:render)
-    end
-
-    it "should assign @user" do
-      assigns(:user).should_not be_nil
     end
 
     it "should assign @invoices" do
@@ -180,8 +166,8 @@ describe InvoicesController do
   describe 'xhr GET index' do
     before :each do
       @invoices = mock("invoices")
+      Invoice.stub_chain(:all, :paginate).and_return( @invoices )
       controller.stub!(:current_user).and_return(@user)
-      @user.stub_chain(:invoices, :paginate).and_return( @invoices )
       do_get
     end
 
@@ -191,10 +177,6 @@ describe InvoicesController do
 
     it "should load nothing" do
       controller.stub!(:render)
-    end
-
-    it "should assign @user" do
-      assigns(:user).should_not be_nil
     end
 
     it "should assign @invoices" do
@@ -293,6 +275,7 @@ describe InvoicesController do
   describe "GET 'edit/:id'" do
 
     before :each do
+      Invoice.stub!(:includes) { Invoice }
       Invoice.stub!(:find).and_return( @invoice )
       do_get
     end
@@ -329,7 +312,6 @@ describe InvoicesController do
     context "with valid params" do
       before (:each) do
         @invoice.stub(:update_attributes).and_return(true)
-	reload_data
       end
 
       it "should load the requested invoice" do
@@ -426,7 +408,6 @@ describe InvoicesController do
 
       before :each do
         Invoice.stub!(:save).and_return(true)
-	reload_data
       end
 
       it "loads the requested invoice" do
@@ -465,7 +446,6 @@ describe InvoicesController do
     before (:each) do
       Invoice.stub!(:includes) { Invoice }
       Invoice.stub!(:find).and_return(@invoice)
-      reload_data
     end
 
     def do_delete

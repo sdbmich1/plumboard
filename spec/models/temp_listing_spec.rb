@@ -381,6 +381,48 @@ describe TempListing do
     end
   end
 
+  describe "draft listings" do
+    it { expect(TempListing.draft.count).to eq(1) }
+
+    it "should not include pending temp_listings" do
+      @temp_listing.status = 'pending' 
+      @temp_listing.save
+      TempListing.draft.should_not include @temp_listing 
+    end
+  end
+
+  describe "pixter" do 
+    before do
+      @pixter = create :pixi_user, user_type_code: 'PT'
+      @user2 = FactoryGirl.create(:pixi_user, first_name: 'Lisa', last_name: 'Harden', email: 'lisaharden@pixitest.com') 
+      @temp_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id, pixan_id: @pixter.id) 
+    end
+
+    it "should verify user is pixter" do 
+      @temp_listing.pixter?(@pixter).should be_true 
+    end
+
+    it "should not verify user is pixter" do 
+      @temp_listing.pixter?(@user2).should_not be_true 
+    end
+  end
+
+  describe "editable" do 
+    before do
+      @pixter = create :pixi_user, user_type_code: 'PT'
+      @user2 = FactoryGirl.create(:pixi_user, first_name: 'Lisa', last_name: 'Harden', email: 'lisaharden@pixitest.com') 
+      @temp_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id, pixan_id: @pixter.id) 
+    end
+
+    it "is editable" do 
+      @temp_listing.editable?(@pixter).should be_true 
+    end
+
+    it "is not editable" do 
+      @temp_listing.editable?(@user2).should_not be_true 
+    end
+  end
+
   describe "dup pixi" do
     let(:user) { FactoryGirl.create :pixi_user }
     let(:temp_listing) { FactoryGirl.create :temp_listing_with_transaction, seller_id: user.id }

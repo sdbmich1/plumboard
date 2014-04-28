@@ -18,24 +18,19 @@ class TempListingsController < ApplicationController
   def show
     @listing = TempListing.find_pixi params[:id]
     @photo = @listing.pictures if @listing
-    respond_with(@listing) do |format|
-      format.json { render json: {listing: @listing} }
-    end
+    respond_with(@listing)
   end
 
   def edit
-    @listing = TempListing.find_pixi(params[:id]) || Listing.find_pixi(params[:id]).dup_pixi(false)
+    @listing = TempListing.find_by_pixi_id(params[:id]) || Listing.find_by_pixi_id(params[:id]).dup_pixi(false)
     @photo = @listing.pictures.build if @listing
-    respond_with(@listing) do |format|
-      format.json { render json: {listing: @listing} }
-    end
+    respond_with(@listing)
   end
 
   def update
     @listing = TempListing.find_by_pixi_id params[:id]
     respond_with(@listing) do |format|
       if @listing.update_attributes(params[:temp_listing])
-        reload_data
         format.json { render json: {listing: @listing} }
       else
         format.json { render json: { errors: @listing.errors.full_messages }, status: 422 }
@@ -47,7 +42,6 @@ class TempListingsController < ApplicationController
     @listing = TempListing.new params[:temp_listing]
     respond_with(@listing) do |format|
       if @listing.save
-        reload_data
         format.json { render json: {listing: @listing} }
       else
         format.json { render json: { errors: @listing.errors.full_messages }, status: 422 }
@@ -59,23 +53,9 @@ class TempListingsController < ApplicationController
     @listing = TempListing.find_by_pixi_id params[:id]
     respond_with(@listing) do |format|
       if @listing.resubmit_order
-        reload_data
         format.json { render json: {listing: @listing} }
       else
-        format.html { render action: :show, error: "Pixi was not submitted. Please try again." }
-        format.json { render json: { errors: @listing.errors.full_messages }, status: 422 }
-      end
-    end
-  end
-
-  def resubmit
-    @listing = TempListing.find_by_pixi_id params[:id]
-    respond_with(@listing) do |format|
-      if @listing.resubmit_order
-        reload_data
-        format.json { render json: {listing: @listing} }
-      else
-        format.html { render action: :show, error: "Pixi was not submitted. Please try again." }
+        format.html { redirect_to @listing, alert: "Pixi was not submitted. Please try again." }
         format.json { render json: { errors: @listing.errors.full_messages }, status: 422 }
       end
     end
@@ -85,7 +65,6 @@ class TempListingsController < ApplicationController
     @listing = TempListing.find_by_pixi_id params[:id]
     respond_with(@listing) do |format|
       if @listing.destroy  
-        reload_data
         format.html { redirect_to root_path }
         format.mobile { redirect_to root_path }
 	format.json { head :ok }
@@ -98,17 +77,13 @@ class TempListingsController < ApplicationController
   end
 
   def unposted
-    @listings = @user.new_pixis.paginate(page: @page)
-    respond_with(@listings) do |format|
-      format.json { render json: {listings: @listings} }
-    end
+    @listings = TempListing.draft.get_by_seller(@user).paginate(page: @page)
+    respond_with(@listings)
   end
 
   def pending
-    @listings = @user.pending_pixis.paginate(page: @page)
-    respond_with(@listings) do |format|
-      format.json { render json: {listings: @listings} }
-    end
+    @listings = TempListing.get_by_status('pending').get_by_seller(@user).paginate(page: @page)
+    respond_with(@listings)
   end
   
   private
@@ -146,12 +121,5 @@ class TempListingsController < ApplicationController
 
   def check_permissions
     authorize! :crud, TempListing
-  end
-
-  # reload eager load assns
-  def reload_data
-    @user.temp_listings.reload
-    @user.new_pixis.reload
-    @user.pending_pixis.reload
   end
 end

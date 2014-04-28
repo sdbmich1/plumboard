@@ -127,11 +127,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  # override method to eager load associations
-  def current_user
-    @current_user ||= super && User.find_user(@current_user.id)
-  end
-
   # set current ability
   def current_ability
     @current_ability ||= Ability.new(current_user)
