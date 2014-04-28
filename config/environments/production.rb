@@ -43,8 +43,8 @@ Plumboard::Application.configure do
   # config.logger = ActiveSupport::TaggedLogging.new(SyslogLogger.new)
 
   # Use a different cache store in production
-  # config.cache_store = :mem_cache_store
-  config.cache_store = :dalli_store
+  elasticache = Dalli::ElastiCache.new("pxb-cache01.hwslci.cfg.usw1.cache.amazonaws.com:11211")
+  config.cache_store = :dalli_store, elasticache.servers, {:expires_in => 1.day, :compress => true}
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"
@@ -89,4 +89,9 @@ Plumboard::Application.configure do
       :email_prefix => "Pixiboard: ",
       :sender_address => %{"Pixiboard Admin" <webmaster@pixiboard.com>},
       :exception_recipients => %w{techsupport@pixiboard.com} 
+
+  # devise ssl config
+  config.to_prepare { Devise::SessionsController.force_ssl }
+  config.to_prepare { Devise::RegistrationsController.force_ssl }
+  config.to_prepare { Devise::PasswordsController.force_ssl }
 end
