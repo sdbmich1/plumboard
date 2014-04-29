@@ -296,11 +296,7 @@ task :update_categories => :environment do
 
     #update category
     updated_category = Category.find(:first, :conditions => ["name = ?", :name])
-    if not updated_category
-      updated_category = Category.find_or_initialize_by_name(attrs)
-    else
-      updated_category.update_attributes!(attrs)
-    end
+    updated_category.update_attributes!(attrs)
 
     #add photo
     if updated_category.pictures.size == 0
