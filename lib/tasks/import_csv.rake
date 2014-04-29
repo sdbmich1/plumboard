@@ -259,9 +259,9 @@ task :load_categories => :environment do
   CSV.foreach(Rails.root.join('db', 'category_data_020613.csv'), :headers => true) do |row|
 
     attrs = {
-	      	name              => row[0].titleize,
-      		category_type     => row[1],
-		status		   => 'active'
+	      	:name              => row[0].titleize,
+      		:category_type     => row[1],
+		:status		   => 'active'
     }
 
     # find or add category
