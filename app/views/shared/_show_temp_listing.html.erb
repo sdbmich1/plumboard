@@ -1,9 +1,6 @@
   <% if listing.new_status? %>
     <% unless listing.free? %>
       <%= render :partial => 'shared/item_purchase', locals: {:listing=>listing} if listing.seller?(@user) %>
-    <% else %>
-      <%= link_to "Done!", submit_temp_listing_path(listing), method: :put, class: "btn btn-large btn-primary submit-btn" %>
     <% end %>
-  <% else %>
-    <%= link_to "Done!", resubmit_temp_listing_path(listing), method: :put, class: "btn btn-large btn-primary submit-btn" %>
   <% end %>
+  <%= link_to "Done!", submit_temp_listing_path(listing), method: :put, class: "btn btn-large btn-primary submit-btn", id: 'px-done-btn' %>

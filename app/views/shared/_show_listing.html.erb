@@ -22,7 +22,7 @@
   <div class="row">
     <div class="mtop pull-right">
       <% unless controller_name == 'pending_listings' %>
-        <%= render partial: 'shared/review_nav', locals: { listing: listing } if listing.seller?(@user) %>
+        <%= render partial: 'shared/review_nav', locals: { listing: listing } if listing.editable?(@user) %>
         <%= render partial: 'shared/show_temp_listing', locals: {listing: listing} if edit_mode %>
       <% end %>
     </div>

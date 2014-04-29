@@ -17,6 +17,7 @@ namespace :manage_server do
     BankAccount.destroy_all
     CardAccount.destroy_all
     Invoice.destroy_all
+    PixiPost.destroy_all
   end
 end
 

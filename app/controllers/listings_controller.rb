@@ -48,46 +48,34 @@ class ListingsController < ApplicationController
   end
 
   def seller
-    @listings = @user.pixis.paginate(page: @page)
-    respond_with(@listings) do |format|
-      format.json { render json: {listings: @listings} }
-    end
+    @listings = Listing.active.get_by_seller(@user).paginate(page: @page)
+    respond_with(@listings)
   end
 
   def sold
-    @listings = @user.sold_pixis.paginate(page: @page)
-    respond_with(@listings) do |format|
-      format.json { render json: {listings: @listings} }
-    end
+    @listings = Listing.get_by_seller(@user).get_by_status('sold').paginate(page: @page)
+    respond_with(@listings)
   end
 
   def wanted
     @listings = Listing.wanted_list @user, @page
-    respond_with(@listings) do |format|
-      format.json { render json: {listings: @listings} }
-    end
+    respond_with(@listings)
   end
 
   def purchased
-    @listings = @user.purchased_listings.paginate(page: @page)
-    respond_with(@listings) do |format|
-      format.json { render json: {listings: @listings} }
-    end
+    @listings = Listing.get_by_buyer(@user).get_by_status('sold').paginate(page: @page)
+    respond_with(@listings)
   end
 
   def category
     @listings = Listing.get_by_city @cat, @loc, @page
     @category = Category.find @cat
-    respond_with(@listings) do |format|
-      format.json { render json: {listings: @listings} }
-    end
+    respond_with(@listings)
   end
 
   def local
     @listings = Listing.get_by_city @cat, @loc, @page
-    respond_with(@listings) do |format|
-      format.json { render json: {listings: @listings} }
-    end
+    respond_with(@listings)
   end
 
   def pixi_price

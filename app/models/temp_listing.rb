@@ -32,7 +32,7 @@ class TempListing < ListingParent
 
   # finds specific pixi
   def self.find_pixi pid
-    includes(:pictures, :category, :transaction, :user=>[:pictures]).where(pixi_id: pid).first
+    includes(:pictures, :category, :user=>[:pictures]).where(pixi_id: pid).first
   end
 
   # approve order
@@ -85,21 +85,13 @@ class TempListing < ListingParent
     end
   end
 
-  # delete selected photo
-  def delete_photo pid
-    # find selected photo
-    pic = self.pictures.find pid
-
-    # remove photo if found and not only photo for listing
-    result = pic && self.pictures.size > 1 ? self.pictures.delete(pic) : false
-
-    # add error msg
-    errors.add :base, "Pixi must have at least one image." unless result
-    result
-  end
-
   # find listings by site id
   def self.get_by_site val
     where(:site_id => val)
+  end
+
+  # find pixis in draft status
+  def self.draft
+    include_list.where("status NOT IN ('approved', 'pending')")
   end
 end

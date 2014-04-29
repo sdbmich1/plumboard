@@ -4,13 +4,14 @@
     <td class='width120'>
       <%= f.select 'quantity', options_for_select(get_ary, :selected => set_quantity(@invoice)), {}, {id: 'inv_qty', class: 'pixi-select'} %></td>
     <td class="width360"><%= render partial: 'shared/active_listings', locals: {model: @user} %></td>
-    <td class="width120"><%= f.number_field :price, step: 0.01, id: 'inv_price', value: num_display(f.object, "price"), class: 'price' %></td>
+    <td class="width120"><%= f.number_field :price, in: 0..MAX_PIXI_AMT, step: 0.01, id: 'inv_price', value: num_display(f.object, "price"), 
+      class: 'price' %></td>
     <td class="width120"><%= f.text_field :subtotal, id: 'inv_amt', value: num_display(f.object, "subtotal"), readonly: true, class: 'price' %></td>
   </tr>
   <tr>
     <td></td>
     <td><div class='price'><span>Sales Tax (%)</span><%= render partial: 'shared/tooltip', locals: { msg: SALES_TAX_MSG } %></div></td>
-    <td class="width120"><%= f.number_field :sales_tax, step: 0.01, id: 'inv_tax', class: 'price' %></td>
+    <td class="width120"><%= f.number_field :sales_tax, in: 0..MAX_SALES_TAX, step: 0.01, id: 'inv_tax', class: 'price' %></td>
     <td class="width120">
       <%= f.text_field :tax_total, readonly: true, id: 'inv_tax_total', value: num_display(f.object, "tax_total"), class: 'price' %></td>
   </tr>

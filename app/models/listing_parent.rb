@@ -1,6 +1,7 @@
 require 'rails_rinku'
 class ListingParent < ActiveRecord::Base
   resourcify
+  include Area
   self.abstract_class = true
   self.per_page = 20
 
@@ -101,17 +102,22 @@ class ListingParent < ActiveRecord::Base
 
   # select active listings
   def self.active
-    select('listings.id, listings.pixi_id, listings.title, listings.category_id, categories.name AS category_name, listings.updated_at,
-      listings.status, listings.description, listings.created_at, listings.seller_id, listings.site_id, listings.price')
+    include_list.select('listings.id, listings.pixi_id, listings.title, listings.category_id, categories.name AS category_name, 
+      listings.updated_at, listings.status, listings.description, listings.created_at, listings.seller_id, listings.site_id, 
+      listings.price')
     .joins(:category)
-    .includes(:pictures)
     .where(where_stmt)
     .reorder('listings.updated_at DESC')
   end
 
+  # eager load assns
+  def self.include_list
+    includes(:pictures, :site)
+  end
+
   # find listings by status
   def self.get_by_status val
-    includes(:pictures, :user).where(:status => val).order('updated_at DESC')
+    include_list.where(:status => val).order('updated_at DESC')
   end
 
   # find listings by seller user id
@@ -179,9 +185,19 @@ class ListingParent < ActiveRecord::Base
     seller_id == usr.id rescue nil
   end
 
+  # verify if current user is pixter
+  def pixter? usr
+    pixan_id == usr.id rescue nil
+  end
+
   # verify if pixi posted by PXB
   def pixi_post?
     !pixan_id.blank?
+  end
+
+  # verify pixi can be edited
+  def editable? usr
+    (seller?(usr) || pixter?(usr)) && !sold?
   end
 
   # get category name for a listing
@@ -265,6 +281,19 @@ class ListingParent < ActiveRecord::Base
     category.category_type == 'employment' rescue nil
   end
 
+  # delete selected photo
+  def delete_photo pid, val=1
+    # find selected photo
+    pic = self.pictures.find pid
+
+    # remove photo if found and not only photo for listing
+    result = pic && self.pictures.size > val ? self.pictures.delete(pic) : false
+
+    # add error msg
+    errors.add :base, "Pixi must have at least one image." unless result
+    result
+  end
+
   # duplicate pixi between models
   def dup_pixi tmpFlg
     
@@ -280,6 +309,12 @@ class ListingParent < ActiveRecord::Base
       # load attributes to new record
       listing = tmpFlg ? Listing.new(attr) : TempListing.new(attr)
       listing.status = 'edit' unless tmpFlg
+    end
+
+    # compare pictures to see if any need to be removed from active pixi
+    if tmpFlg
+      file_names = listing.pictures.map(&:photo_file_name) - self.pictures.map(&:photo_file_name)
+      file_ids = listing.pictures.where(photo_file_name: file_names).map(&:id)
     end
 
     # add photos
@@ -306,7 +341,12 @@ class ListingParent < ActiveRecord::Base
     end
 
     # add dup
-    listing.save ? listing : false rescue false
+    if listing.save
+      listing.delete_photo(file_ids, 0) if tmpFlg rescue false
+      listing
+    else
+      false
+    end
   end
 
   # seller pic
@@ -331,7 +371,11 @@ class ListingParent < ActiveRecord::Base
 
   # format updated date
   def updated_dt
-    updated_at.utc.getlocal.strftime('%m/%d/%Y %l:%M %p') rescue nil
+    if Rails.env.development? || Rails.env.test? 
+      updated_at.utc.getlocal.strftime('%m/%d/%Y %l:%M %p') rescue Time.now
+    else
+      updated_at.advance(hours: [lat, lng].to_zip.to_gmt_offset).strftime('%m/%d/%Y %l:%M %p') rescue Time.now
+    end
   end
 
   # set json string

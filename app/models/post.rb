@@ -59,9 +59,19 @@ class Post < ActiveRecord::Base
     listing.title if listing
   end
 
+  # set list of included assns for eager loading
+  def self.inc_list
+    includes(:invoice => [:listing, :buyer, :seller], :listing => [:pictures], :user => [:pictures], :recipient => [:pictures])
+  end
+
+  # get sent posts for user
+  def self.get_sent_posts usr
+    inc_list.where(:user_id=>usr)
+  end
+
   # get posts for recipient
   def self.get_posts usr
-    includes(:listing => [:pictures], :user => [:pictures], :recipient => [:pictures]).where(:recipient_id=>usr)
+    inc_list.where(:recipient_id=>usr)
   end
 
   # get unread posts for recipient

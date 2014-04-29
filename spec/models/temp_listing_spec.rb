@@ -381,6 +381,48 @@ describe TempListing do
     end
   end
 
+  describe "draft listings" do
+    it { expect(TempListing.draft.count).to eq(1) }
+
+    it "should not include pending temp_listings" do
+      @temp_listing.status = 'pending' 
+      @temp_listing.save
+      TempListing.draft.should_not include @temp_listing 
+    end
+  end
+
+  describe "pixter" do 
+    before do
+      @pixter = create :pixi_user, user_type_code: 'PT'
+      @user2 = FactoryGirl.create(:pixi_user, first_name: 'Lisa', last_name: 'Harden', email: 'lisaharden@pixitest.com') 
+      @temp_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id, pixan_id: @pixter.id) 
+    end
+
+    it "should verify user is pixter" do 
+      @temp_listing.pixter?(@pixter).should be_true 
+    end
+
+    it "should not verify user is pixter" do 
+      @temp_listing.pixter?(@user2).should_not be_true 
+    end
+  end
+
+  describe "editable" do 
+    before do
+      @pixter = create :pixi_user, user_type_code: 'PT'
+      @user2 = FactoryGirl.create(:pixi_user, first_name: 'Lisa', last_name: 'Harden', email: 'lisaharden@pixitest.com') 
+      @temp_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id, pixan_id: @pixter.id) 
+    end
+
+    it "is editable" do 
+      @temp_listing.editable?(@pixter).should be_true 
+    end
+
+    it "is not editable" do 
+      @temp_listing.editable?(@user2).should_not be_true 
+    end
+  end
+
   describe "dup pixi" do
     let(:user) { FactoryGirl.create :pixi_user }
     let(:temp_listing) { FactoryGirl.create :temp_listing_with_transaction, seller_id: user.id }
@@ -416,6 +458,58 @@ describe TempListing do
       expect(@dup_listing.wanted_count).to eq(1)
       expect(@dup_listing.liked_count).to eq(1)
       expect(@dup_listing.pictures.count).to be > 1
+      expect(TempListing.where(pixi_id: @listing.pixi_id).count).to eq(0)
+      expect(TempListing.where("title like 'Super%'").count).to eq(0)
+      expect(Listing.where(pixi_id: @listing.pixi_id).count).to eq(1)
+      expect(Listing.where("title like 'Super%'").count).to eq(1)
+    end
+
+    it "returns edit listing w/ associations - remove photo" do 
+      @listing = FactoryGirl.create(:listing, seller_id: user.id)
+      @pixi_want = user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
+      @pixi_like = user.pixi_likes.create FactoryGirl.attributes_for :pixi_like, pixi_id: @listing.pixi_id
+      picture = @listing.pictures.build
+      picture.photo = File.new Rails.root.join("spec", "fixtures", "photo2.png")
+      @listing.save
+      @temp_listing = @listing.dup_pixi(false)
+      expect(@listing.pixi_id).to eq(@temp_listing.pixi_id)
+      expect(@temp_listing.status).to eq('edit')
+      @temp_listing.title, @temp_listing.price = 'Super Fender Bass', 999.99
+      @temp_listing.delete_photo(@temp_listing.pictures.first.id)
+      expect(@temp_listing.pictures.count).to eq(1)
+      @dup_listing = @temp_listing.dup_pixi(true)
+      expect(@dup_listing.title).not_to eq(@listing.title)
+      expect(@dup_listing.status).to eq('active')
+      expect(@dup_listing.price).to eq(999.99)
+      expect(@dup_listing.wanted_count).to eq(1)
+      expect(@dup_listing.liked_count).to eq(1)
+      expect(@dup_listing.pictures.count).to eq 1
+      expect(TempListing.where(pixi_id: @listing.pixi_id).count).to eq(0)
+      expect(TempListing.where("title like 'Super%'").count).to eq(0)
+      expect(Listing.where(pixi_id: @listing.pixi_id).count).to eq(1)
+      expect(Listing.where("title like 'Super%'").count).to eq(1)
+    end
+
+    it "returns edit listing w/ associations - remove only photo" do 
+      @listing = FactoryGirl.create(:listing, seller_id: user.id)
+      @pixi_want = user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
+      @pixi_like = user.pixi_likes.create FactoryGirl.attributes_for :pixi_like, pixi_id: @listing.pixi_id
+      @temp_listing = @listing.dup_pixi(false)
+      expect(@listing.pixi_id).to eq(@temp_listing.pixi_id)
+      expect(@temp_listing.status).to eq('edit')
+      @temp_listing.title, @temp_listing.price = 'Super Fender Bass', 999.99
+      picture = @temp_listing.pictures.build
+      picture.photo = File.new Rails.root.join("spec", "fixtures", "photo2.png")
+      @temp_listing.save
+      @temp_listing.delete_photo(@temp_listing.pictures.first.id)
+      expect(@temp_listing.pictures.count).to eq(1)
+      @dup_listing = @temp_listing.dup_pixi(true)
+      expect(@dup_listing.title).not_to eq(@listing.title)
+      expect(@dup_listing.status).to eq('active')
+      expect(@dup_listing.price).to eq(999.99)
+      expect(@dup_listing.wanted_count).to eq(1)
+      expect(@dup_listing.liked_count).to eq(1)
+      expect(@dup_listing.pictures.count).to eq 1
       expect(TempListing.where(pixi_id: @listing.pixi_id).count).to eq(0)
       expect(TempListing.where("title like 'Super%'").count).to eq(0)
       expect(Listing.where(pixi_id: @listing.pixi_id).count).to eq(1)

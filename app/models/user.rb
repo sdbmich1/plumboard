@@ -26,8 +26,8 @@ class User < ActiveRecord::Base
     :conditions => "status = 'active' AND end_date >= curdate() AND pixan_id IS NOT NULL"
   has_many :purchased_listings, foreign_key: :buyer_id, class_name: 'Listing', conditions: { :status => 'sold' }
   has_many :sold_pixis, foreign_key: :seller_id, class_name: 'Listing', conditions: { :status => 'sold' }
-  has_many :new_pixis, foreign_key: :seller_id, class_name: 'TempListing', conditions: "status NOT IN ('approved', 'pending', 'denied')"
-  has_many :pending_pixis, foreign_key: :seller_id, class_name: 'TempListing', conditions: "status IN ('pending', 'denied')"
+  has_many :new_pixis, foreign_key: :seller_id, class_name: 'TempListing', conditions: "status NOT IN ('approved', 'pending')"
+  has_many :pending_pixis, foreign_key: :seller_id, class_name: 'TempListing', conditions: { :status => 'pending' }
   has_many :temp_listings, foreign_key: :seller_id, dependent: :destroy
   has_many :saved_listings, dependent: :destroy
   has_many :pixi_likes, dependent: :destroy

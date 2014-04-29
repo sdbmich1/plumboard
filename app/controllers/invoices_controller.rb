@@ -1,9 +1,9 @@
 require 'will_paginate/array' 
 class InvoicesController < ApplicationController
-  load_and_authorize_resource
-  # skip_authorize_resource :only => [:new, :show, :create]
+  # load_and_authorize_resource
   before_filter :authenticate_user!
-  # before_filter :check_permissions, only: [:create, :edit, :update, :destroy, :show]
+  # skip_authorize_resource :only => [:show]
+  before_filter :check_permissions, only: [:create, :edit, :update, :destroy, :show]
   before_filter :load_data, only: [:index, :sent, :received]
   before_filter :set_params, only: [:create, :update]
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name
@@ -22,33 +22,27 @@ class InvoicesController < ApplicationController
   end
    
   def sent
-    @invoices = @user.invoices.paginate(page: @page)
-    respond_with(@invoices) do |format|
-      format.json { render json: {invoices: @invoices} }
-    end
+    @invoices = Invoice.get_invoices(@user).paginate(page: @page)
+    respond_with(@invoices)
   end
    
   def received
-    @invoices = @user.received_invoices.paginate(page: @page)
-    respond_with(@invoices) do |format|
-      format.json { render json: {invoices: @invoices} }
-    end
+    @invoices = Invoice.get_buyer_invoices(@user).paginate(page: @page)
+    respond_with(@invoices)
   end
 
   def show
-    @invoice = @user.invoices.reload.find params[:id]
-    respond_with(@invoice) do |format|
-      format.json { render json: {user: @user, invoice: @invoice} }
-    end
+    @invoice = Invoice.find params[:id]
+    respond_with(@invoice)
   end
 
   def edit
-    @invoice = @user.invoices.find params[:id]
+    @invoice = Invoice.find params[:id]
     respond_with(@invoice)
   end
 
   def update
-    @invoice = @user.invoices.find params[:id]
+    @invoice = Invoice.find params[:id]
     respond_with(@invoice) do |format|
       if @invoice.update_attributes(params[:invoice])
         format.json { render json: {invoice: @invoice} }
@@ -70,7 +64,7 @@ class InvoicesController < ApplicationController
   end
 
   def destroy
-    @invoice = @user.invoices.find params[:id]
+    @invoice = Invoice.find params[:id]
     if @invoice.destroy
       @invoices = Invoice.get_invoices(@user).paginate(page: @page)
     end  

@@ -24,7 +24,7 @@ class Invoice < ActiveRecord::Base
   validates :amount, presence: true, :numericality => { greater_than: 0, less_than_or_equal_to: MAX_PIXI_AMT.to_f }  
   validates :quantity, presence: true, :numericality => { greater_than: 0, less_than_or_equal_to: MAX_INV_QTY.to_i }    
   validates :sales_tax, allow_blank: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
-    		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }
+    		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_SALES_TAX.to_i }
 
   default_scope order: 'invoices.created_at DESC'
 
@@ -35,9 +35,9 @@ class Invoice < ActiveRecord::Base
     self.bank_account_id = seller.bank_accounts.first.id if seller.has_bank_account?
   end
 
-  def self.find_inv id
-    includes(:posts, :pixi_payments, :bank_account, :transaction, :listing => :pictures, :buyer => :pictures, 
-      :seller => :pictures).where(id: id).first
+  # override find method
+  def self.find id
+    inc_list.where(id: id.to_i).first
   end
 
   # get by status
@@ -62,14 +62,19 @@ class Invoice < ActiveRecord::Base
     inv
   end
 
+  # define eager load assns
+  def self.inc_list
+    includes(:listing => :pictures, :buyer => :pictures, :seller => :pictures)
+  end
+
   # get invoices for given user
   def self.get_invoices usr
-    where(:seller_id=>usr) rescue nil
+    inc_list.where(:seller_id=>usr) rescue nil
   end
 
   # get invoices for given buyer
   def self.get_buyer_invoices usr
-    where(:buyer_id=>usr) rescue nil
+    inc_list.where(:buyer_id=>usr) rescue nil
   end
 
   # check if invoice owner
@@ -115,7 +120,8 @@ class Invoice < ActiveRecord::Base
   def get_fee sellerFlg=false
     if amount
       # calculate fee
-      fee = sellerFlg ? CalcTotal::get_convenience_fee(amount, pixan_id) : CalcTotal::get_convenience_fee(amount) + CalcTotal::get_processing_fee(amount)
+      fee = sellerFlg ? CalcTotal::get_convenience_fee(amount, pixan_id) : CalcTotal::get_convenience_fee(amount) + 
+        CalcTotal::get_processing_fee(amount)
       fee.round(2)
     else
       0.0
@@ -124,22 +130,12 @@ class Invoice < ActiveRecord::Base
 
   # get txn processing fee
   def get_processing_fee
-    if amount
-      fee = CalcTotal::get_processing_fee amount
-      fee.round(2)
-    else
-      0.0
-    end
+    fee = amount ? CalcTotal::get_processing_fee(amount).round(2) : 0.0
   end
 
   # get txn convenience fee
   def get_convenience_fee
-    if amount
-      fee = CalcTotal::get_convenience_fee(amount)
-      fee.round(2)
-    else
-      0.0
-    end
+    fee = amount ? CalcTotal::get_convenience_fee(amount).round(2) : 0.0
   end
 
   # get buyer name

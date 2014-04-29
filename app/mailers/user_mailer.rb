@@ -1,7 +1,7 @@
 class UserMailer < ActionMailer::Base
   default from: '"PixiSupport" <support@pixiboard.com>'
 
-  helper :application, :transactions, :listings
+  helper :application, :transactions, :listings, :invoices
 
   # send receipts to customers
   def send_transaction_receipt transaction
@@ -45,7 +45,7 @@ class UserMailer < ActionMailer::Base
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     # set message details
-    mail(:to => "#{@inquiry.email}", :subject => "Pixiboard Inquiry: #{@inquiry.contact_type} ##{@inquiry.id}")
+    mail(:to => "#{@inquiry.email}", :subject => "Pixiboard Inquiry Recieved!")
   end
 
   # send inquiry response to pxb
@@ -153,5 +153,14 @@ class UserMailer < ActionMailer::Base
     img = { :data => File.read("#{Rails.root.to_s + '/app/assets/images/px_word_logo.png'}"),
 	    :mime_type => "image/png",
 	    :encoding => "base64" }
+  end
+  # send saved pixi notice
+  def send_save_pixi saved_listing
+
+    @listing = saved_listing.listing
+    # set logo
+    attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+    # set message details
+    mail(:to => "#{saved_listing.user.email}", :subject => "Your Pixi is Saved!")
   end
 end

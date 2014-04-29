@@ -42,8 +42,9 @@ describe Invoice do
   it { should_not allow_value(-5000.00).for(:price) }
   it { should_not allow_value('$5000.0').for(:price) }
 
-  it { should allow_value(50.00).for(:sales_tax) }
+  it { should allow_value(10.00).for(:sales_tax) }
   it { should allow_value(7.25).for(:sales_tax) }
+  it { should_not allow_value(50).for(:sales_tax) }
   it { should_not allow_value(500).for(:sales_tax) }
   it { should_not allow_value(50.001).for(:sales_tax) }
   it { should_not allow_value(-5.00).for(:sales_tax) }
@@ -166,14 +167,14 @@ describe Invoice do
     it { Invoice.find_invoice(order2).should be_nil }
   end
 
-  describe "find_inv" do
+  describe "find" do
     before { @invoice.save }
     it 'finds a pixi' do
-      expect(Invoice.find_inv(@invoice.id)).not_to be_nil
+      expect(Invoice.find(@invoice.id)).not_to be_nil
     end
 
     it 'does not find pixi' do
-      expect(Invoice.find_inv(0)).to be_nil
+      expect(Invoice.find(0)).to be_nil
     end
   end
 

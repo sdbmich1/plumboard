@@ -340,22 +340,6 @@ feature "Invoices" do
           page.should have_content "Buyer can't be blank" 
         end
         
-        it 'does not accept zero price' do
-	  select_buyer
-	  select_pixi
-	  set_buyer_id
-	  zero_price
-        end
-        
-        it 'does not accept bad price' do
-	  select_buyer
-	  select_pixi
-	  set_buyer_id
-          fill_in 'inv_price', with: "R0"
-	  click_button 'Send'
-          page.should have_content "Price is not a number" 
-        end
-        
         it 'should not accept bad sales tax' do
 	  select_buyer
 	  select_pixi

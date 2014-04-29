@@ -324,6 +324,11 @@ describe User do
       @user.new_pixis.should_not be_empty
     end
 
+    it "returns denied pixis" do
+      @temp_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id, status: 'denied')
+      @user.new_pixis.should_not be_empty
+    end
+
     it "does not return new pixis" do
       @temp_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id, status: 'pending')
       @user.new_pixis.should be_empty
@@ -334,6 +339,11 @@ describe User do
     it "returns pending pixis" do
       @temp_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id, status: 'pending')
       @user.pending_pixis.should_not be_empty
+    end
+
+    it "does not return denied pixis" do
+      @temp_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id, status: 'denied')
+      @user.pending_pixis.should be_empty
     end
 
     it "does not return pending pixis" do

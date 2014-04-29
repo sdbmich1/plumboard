@@ -1,4 +1,4 @@
-<%= render partial: 'shared/edit_photo_form', locals: {model: @listing, psize: 'sm-thumb', form: f, remove_photo: true } %>
+<%= render partial: 'shared/edit_photo_form', locals: {model: listing, psize: 'sm-thumb', form: f, remove_photo: true } %>
 <div class='row'>
   <div class='span2'>Add photo(s)</div>
   <div id='add-pixi-photo' class='span10'>
@@ -10,11 +10,12 @@
   </div>
 </div>
 <div class='row'>
-  <div class='span7' style="<%= !@listing.pixi_post? ? 'display:none' : '' %>">
+  <div class='span7' style="<%= !listing.pixi_post? || listing.edit? ? 'display:none' : '' %>">
     <%= f.label :seller_id, 'Seller' %>
-    <%= autocomplete_field_tag 'slr_name', @listing.slr_name, autocomplete_user_first_name_temp_listings_path,
-	        :update_elements => { :id => '#seller_id' }, :placeholder => 'Seller Name', id: 'slr_name', required: @listing.pixi_post?  %> 
-    <%= f.hidden_field :seller_id, id: 'seller_id', required: @listing.pixi_post? %>
+    <%= autocomplete_field_tag 'slr_name', listing.slr_name, autocomplete_user_first_name_temp_listings_path,
+	        :update_elements => { :id => '#seller_id' }, :placeholder => 'Seller Name', id: 'slr_name', 
+		required: listing.pixi_post? && !listing.edit?  %> 
+    <%= f.hidden_field :seller_id, id: 'seller_id', required: listing.pixi_post? && !listing.edit? %>
   </div>
 </div>
 <div class='row'>
@@ -29,27 +30,27 @@
 <div class='row' id='input-form'>
   <div class='span7'>
     <%= f.label :site_id, 'Location' %>
-    <%= autocomplete_field_tag 'site_name', @listing.site_name, autocomplete_site_name_temp_listings_path,
+    <%= autocomplete_field_tag 'site_name', listing.site_name, autocomplete_site_name_temp_listings_path,
 	        :update_elements => { :id => '#site_id' }, :placeholder => 'Enter School, City or Neighborhood', required: true %> 
     <%= f.hidden_field :site_id, id: 'site_id', required: true %>
   </div>
-  <div class='span2' id='price-fld' style="<%= @listing.job? ? 'display:none' : '' %>"><%= f.label :price, 'Price $' %>
+  <div class='span2' id='price-fld' style="<%= listing.job? ? 'display:none' : '' %>"><%= f.label :price, 'Price $' %>
     <%= f.number_field :price, step: 0.01, size: 10, value: num_display(f.object, "price"), class: 'width120', placeholder: 'Ex. 50.00' %>
   </div>
-  <div class='span2' id='yr-fld' style="<%= !@listing.has_year? ? 'display:none' : '' %>"><%= f.label 'Year' %>
-    <%= f.select 'year_built', options_for_select(get_year_ary, :selected => @listing.year_built), {:prompt => 'Select'}, 
+  <div class='span2' id='yr-fld' style="<%= !listing.has_year? ? 'display:none' : '' %>"><%= f.label 'Year' %>
+    <%= f.select 'year_built', options_for_select(get_year_ary, :selected => listing.year_built), {:prompt => 'Select'}, 
           {id: 'yr_built', class: 'pixi-select'} %></div>
-  <div class='span4' id='comp-fld' style="<%= !@listing.job? ? 'display:none' : '' %>"><%= f.label :compensation %>
+  <div class='span4' id='comp-fld' style="<%= !listing.job? ? 'display:none' : '' %>"><%= f.label :compensation %>
     <%= f.text_field :compensation, id: 'salary' %></div>
 </div>
-<div class='row' id='event-fields' style="<%= !@listing.event? ? 'display:none' : '' %>">
+<div class='row' id='event-fields' style="<%= !listing.event? ? 'display:none' : '' %>">
   <div class='span2'> 
     <%= f.label :event_start_date, 'Start Date', class: 'med-top' %>
-    <%= f.text_field :event_start_date, value: @listing.event_start_date, size: 10, id: "start-date", required: @listing.event? %>
+    <%= f.text_field :event_start_date, value: listing.event_start_date, size: 10, id: "start-date", required: listing.event? %>
   </div>
   <div class='offset1 span2'>
     <%= f.label :event_end_date, 'End Date', class: 'med-top' %>
-    <%= f.text_field :event_end_date, :value => @listing.event_end_date, size: 10, id: "end-date", required: @listing.event?  %>
+    <%= f.text_field :event_end_date, :value => listing.event_end_date, size: 10, id: "end-date", required: listing.event?  %>
   </div>
   <div class='offset1 span2'>
     <%= f.label :event_start_time, 'Start Time', class: 'med-top' %>

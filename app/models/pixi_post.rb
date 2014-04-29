@@ -29,7 +29,7 @@ class PixiPost < ActiveRecord::Base
   validate :zip_service_area
   validates_date :preferred_date, presence: true, on_or_after: :today, unless: :is_admin?
   validates_date :alt_date, allow_blank: true, on_or_after: :today, unless: :is_admin?
-  validates_date :appt_date, on_or_after: :today, presence: true, if: :has_pixan? && "completed_date.nil?" 
+  validates_date :appt_date, on_or_after: :today, presence: true, if: :can_set_appt?
   validates_date :completed_date, on_or_after: :today, presence: true, if: :has_pixi?
   validates_datetime :alt_time, presence: true, unless: "alt_date.nil?"
   validates_datetime :appt_time, presence: true, unless: "appt_date.nil?"
@@ -46,6 +46,11 @@ class PixiPost < ActiveRecord::Base
   # checks if post has appointment & is completed
   def is_admin?
     has_appt? || is_completed?
+  end
+
+  # checks if post has pixan & is inot completed
+  def can_set_appt?
+    has_pixan? && !is_completed?
   end
 
   # set fields upon creation

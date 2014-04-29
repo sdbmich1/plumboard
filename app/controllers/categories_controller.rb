@@ -12,11 +12,11 @@ class CategoriesController < ApplicationController
   layout :page_layout
 
   def index
-    respond_with(@categories = Category.active.paginate(page: @page, per_page: 60))
+    respond_with(@categories = Category.active(true).paginate(page: @page, per_page: 60))
   end
 
   def manage
-    respond_with(@categories = Category.active.paginate(page: @page, per_page: 60))
+    respond_with(@categories = Category.active(true).paginate(page: @page, per_page: 60))
   end
 
   def new

@@ -16,6 +16,7 @@
 *.swp
 *.swo
 *~
+.idea*
 
 # Ignore all sphinx files
 /config/*.conf
@@ -35,6 +36,7 @@ database.yml
 
 # ignore secrets folder
 /config/secrets/*
+/config/certs/*
 
 .elasticbeanstalk/
 

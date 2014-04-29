@@ -20,7 +20,7 @@ class Listing < ListingParent
 
   # finds specific pixi
   def self.find_pixi pid
-    includes(:invoices, :posts, :pictures, :pixi_likes, :pixi_wants, :saved_listings, :category, :transaction, :user => [:pictures], 
+    includes(:pictures, :pixi_likes, :pixi_wants, :saved_listings, :category, :user => [:pictures], 
       :comments=> {:user=>:pictures}).where(pixi_id: pid).first
   end
 
@@ -102,6 +102,11 @@ class Listing < ListingParent
   # get cool list by user
   def self.cool_list usr, pg=1
     active.joins(:pixi_likes).where("pixi_likes.user_id = ?", usr.id).paginate page: pg
+  end
+
+  # find listings by buyer user id
+  def self.get_by_buyer val
+    where(:buyer_id => val)
   end
 
   # get invoice

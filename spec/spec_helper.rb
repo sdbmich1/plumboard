@@ -61,7 +61,11 @@ Spork.prefork do
 
     config.before(:each, :js => true) do
       DatabaseCleaner.strategy = :truncation
-      page.driver.browser.manage.window.maximize
+      # page.driver.browser.manage.window.maximize
+    end
+
+    config.before(:each) do
+      set_selenium_window_size(1250, 800) if Capybara.current_driver == :selenium
     end
 
     config.before(:each) do

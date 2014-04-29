@@ -31,7 +31,8 @@
       </div>
       <div class='span2'>
         <%= f.label :value, 'Value*' %>
-        <%= f.number_field :value, step: 0.01, size: 10, value: num_display(f.object, "value"), class: 'width120', placeholder: 'Ex. 50.00' %>
+	<%= f.number_field :value, in: 0..MAX_PIXI_AMT, step: 0.01, size: 10, value: num_display(f.object, "value"), class: 'width120', 
+	  placeholder: 'Ex. 50.00' %>
       </div>
       <div class='span7'>
         <%= f.label :description %><%= f.text_area :description, id: 'description', :placeholder => 'Describe Your Item' %>
