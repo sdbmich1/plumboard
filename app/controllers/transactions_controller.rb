@@ -6,7 +6,7 @@ class TransactionsController < ApplicationController
   layout :page_layout
 
   def new
-    @listing = Listing.find_pixi(params[:id]) || TempListing.find_pixi(params[:id])
+    @listing = Listing.find_by_pixi_id(params[:id]) || TempListing.find_by_pixi_id(params[:id])
     @transaction = Transaction.load_new(@user, @listing, @order)
     @invoice = Invoice.find_invoice(@order) unless @transaction.pixi?
     respond_with(@transaction)

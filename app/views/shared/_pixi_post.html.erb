@@ -20,7 +20,7 @@
     </div>
     <div id='pxp_items'>
       <%= render partial: 'shared/pixi_post_address', locals: {post: post, f: f } %>
-      <%= render partial: 'shared/manage_pixi_post', locals: {post: post, f: f } if !post.owner?(@user) %>
+      <%= render partial: 'shared/manage_pixi_post', locals: {post: post, f: f } if can? :manage_items, @user %>
     </div>
     <div id='pxp_btn' class="nav pull-right">
       <%= link_to 'Cancel', set_pixi_post_path, confirm: msg, class: "btn btn-large" %>

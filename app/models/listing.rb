@@ -43,7 +43,7 @@ class Listing < ListingParent
     if Rails.env.development?
       active.paginate page: pg
     else
-      active.where(site_id: Contact.near(ip, range).get_by_type('Site').map(&:contactable_id).uniq).paginate(page: pg)
+      active.where(site_id: Contact.promixity(ip, range)).paginate(page: pg)
     end
   end
 

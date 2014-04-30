@@ -51,6 +51,16 @@ module InvoicesHelper
     inv.owner?(@user) ? inv.get_fee(true) : inv.get_fee rescue 0
   end
 
+  # switch column title based on action
+  def get_column_title
+    action_name == 'received' ? 'From' : 'Bill To'
+  end
+
+  # switch display name based on action
+  def display_name inv
+    action_name == 'received' ? inv.seller_name : inv.buyer_name 
+  end
+
   # get invoice total based on user
   def get_invoice_total inv
     inv.owner?(@user) ? inv.amount : inv.amount + inv.get_fee rescue 0

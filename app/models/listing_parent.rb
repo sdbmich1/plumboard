@@ -1,7 +1,7 @@
 require 'rails_rinku'
 class ListingParent < ActiveRecord::Base
   resourcify
-  include Area
+  include Area, ResetDate
   self.abstract_class = true
   self.per_page = 20
 
@@ -371,11 +371,7 @@ class ListingParent < ActiveRecord::Base
 
   # format updated date
   def updated_dt
-    if Rails.env.development? || Rails.env.test? 
-      updated_at.utc.getlocal.strftime('%m/%d/%Y %l:%M %p') rescue Time.now
-    else
-      updated_at.advance(hours: [lat, lng].to_zip.to_gmt_offset).strftime('%m/%d/%Y %l:%M %p') rescue Time.now
-    end
+    ResetDate::format_date updated_at, [lat, lng].to_zip 
   end
 
   # set json string

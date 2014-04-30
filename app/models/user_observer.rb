@@ -1,17 +1,9 @@
 class UserObserver < ActiveRecord::Observer
   observe User
-  include PointManager
 
-  def after_create usr
-    # set default user type
+  # set default user type
+  def before_create usr
     usr.user_type_code = 'mbr'
-
-    # update points
-    ptype = usr.uid.blank? ? 'dr' : 'fr'
-    PointManager::add_points usr, ptype
-
-    # send welcome message to facebook users
-    UserMailer.delay.welcome_email(usr) if usr.fb_user?
   end
 
   # update points

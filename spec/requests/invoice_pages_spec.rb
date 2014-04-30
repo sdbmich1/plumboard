@@ -271,7 +271,7 @@ feature "Invoices" do
       click_link 'Received'
     
       page.should have_content "Status" 
-      page.should have_content @user.name
+      page.should have_content @buyer.name
       page.should have_link("#{@invoice2.id}", href: invoice_path(@invoice2)) 
 
       visit invoice_path(@invoice2)

@@ -156,10 +156,11 @@ class UserMailer < ActionMailer::Base
   end
   # send saved pixi notice
   def send_save_pixi saved_listing
-
     @listing = saved_listing.listing
+
     # set logo
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
     # set message details
     mail(:to => "#{saved_listing.user.email}", :subject => "Your Pixi is saved!")
   end

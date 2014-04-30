@@ -3,7 +3,7 @@
     <%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: invoice.listing} %>
   </td>
   <td class='span1'><div class='price'><%= link_to invoice.id, invoice, remote: true %></div></td>
-  <td class='span2'><%= invoice.buyer_name %></td>
+  <td class='span2'><%= display_name(invoice) %></td>
   <td class='span4'><%= link_to invoice.pixi_title, invoice.listing, class: 'pending_title' %></td>
   <td class='span1'><div class='price'><%= ntc(get_invoice_total invoice) %></div></td>
   <td class='span1 center-wrapper'><%= invoice.nice_status %></td>

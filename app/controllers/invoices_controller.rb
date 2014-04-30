@@ -1,9 +1,9 @@
 require 'will_paginate/array' 
 class InvoicesController < ApplicationController
-  # load_and_authorize_resource
+  load_and_authorize_resource
   before_filter :authenticate_user!
-  # skip_authorize_resource :only => [:show]
-  before_filter :check_permissions, only: [:create, :edit, :update, :destroy, :show]
+  skip_authorize_resource :only => [:autocomplete_user_first_name]
+  # before_filter :check_permissions, only: [:create, :edit, :update, :destroy, :show]
   before_filter :load_data, only: [:index, :sent, :received]
   before_filter :set_params, only: [:create, :update]
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name

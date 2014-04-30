@@ -178,6 +178,7 @@ group :test do
   gem 'shoulda-matchers'
   # gem "webmock", "~> 1.11.0"
   gem "fakeweb", "~> 1.3"
+  gem 'test_after_commit'
 end
 
 # production gems

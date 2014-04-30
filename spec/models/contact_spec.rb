@@ -77,4 +77,20 @@ describe Contact do
     end
   end
 
+  describe 'proximity' do
+    it 'locates sites' do
+      @site = create :site, name: 'Oakland', org_type: 'city'
+      @site1 = create :site, name: 'Oakland City College', org_type: 'school'
+      @site2 = create :site, name: 'Lake Merritt', org_type: 'area'
+      @site.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro', city: 'Oakland', state: 'CA'
+      @site1.contacts.create FactoryGirl.attributes_for :contact, address: '1000 Grant Ave', city: 'Oakland', state: 'CA'
+      @site2.contacts.create FactoryGirl.attributes_for :contact, address: '100 Webster', city: 'Oakland', state: 'CA', zip: '94601'
+      expect(Contact.proximity(nil, 25, [1, 1], true).count).to eq(0)
+    end
+
+    it 'does not locate sites' do
+      expect(Contact.proximity(nil, 25, 'Detroit, MI', false).count).to eq(0)
+    end
+  end
+
 end

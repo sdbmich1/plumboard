@@ -29,4 +29,13 @@ module ResetDate
     end
     val
   end
+
+  # format display date
+  def self.format_date tm, zip
+    if Rails.env.development? || Rails.env.test? 
+      tm.utc.getlocal.strftime('%m/%d/%Y %l:%M %p') rescue Time.now
+    else
+      tm.advance(hours: zip.to_gmt_offset.to_i).strftime('%m/%d/%Y %l:%M %p') rescue Time.now
+    end
+  end
 end

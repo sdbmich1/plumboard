@@ -615,6 +615,33 @@ describe User do
     end
   end
 
+  describe 'async_send_notifications' do
+
+    def send_mailer usr
+      @mailer = mock(UserMailer)
+      UserMailer.stub!(:delay).and_return(@mailer)
+      @mailer.stub(:welcome_email).with(usr).and_return(@mailer)
+    end
+
+    it 'adds dr pixi points' do
+      @user = create :pixi_user 
+      expect(@user.user_pixi_points.count).not_to eq(0)
+      @user.user_pixi_points.find_by_code('dr').code.should == 'dr'
+      @user.user_pixi_points.find_by_code('fr').should be_nil
+    end
+
+    it 'adds fr pixi points' do
+      @pixi_user = create :pixi_user, uid: '11111' 
+      @pixi_user.user_pixi_points.find_by_code('fr').code.should == 'fr'
+      @pixi_user.user_pixi_points.find_by_code('dr').should be_nil
+    end
+
+    it 'delivers the welcome message' do
+      @pixi_user = create :pixi_user, uid: '11111' 
+      send_mailer @user if @pixi_user.fb_user?
+    end
+  end
+
   describe "post associations" do
     let(:listing) { FactoryGirl.create :listing, seller_id: @user.id }
     let(:newer_listing) { FactoryGirl.create :listing, seller_id: @user.id }
