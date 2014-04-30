@@ -16,7 +16,7 @@
 *.swp
 *.swo
 *~
-./idea*
+.idea*
 
 # Ignore all sphinx files
 /config/*.conf

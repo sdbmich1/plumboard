@@ -163,11 +163,7 @@ task :load_neighborhoods => :environment do
       # converting the row to an array by splitting ','
       row_array = row.split(',');
       
-      # Testing code
-      #puts "passed row conversion"
-      #puts row[0]
-      #puts row[1]
-      
+
       # setting the name of the city, state and county
       city   = row[0]
       state  = row[1] 
@@ -216,37 +212,40 @@ end
 
       
 
-=begin task :load_neighborhoods, [:file, :city, :county] => [:environment] do |t, args|
 
-  CSV.foreach(Rails.root.join('db', args.file), :headers => true) do |row|
-    
-    # get area name
-    area = row[0]
+task :load_cities => :environment do
+  CSV.foreach(Rails.root.join('db', 'DMA_50_neighborhoods_transposed.csv'), :headers => false) do |row|
 
-    # set site attributes
+    # converting the row to an array by splitting ','
+    row_array = row.split(',');
+
+    # setting the name of the city, state and county
+    city   = row[0]
+    state  = row[1]
+    county = row[2]
+
+
     attrs = {
-	  :name              => [args.city, area].join(' - '),
-		:status		   => 'active',
-		:org_type	   => 'area'
+        :name        => city,
+        :status      => 'active',
+        :org_type    => 'city'
     }
-
     # add site
-    unless site = Site.where(:name => row[0]).first
+    unless site = Site.where(:name => city).first
       new_site = Site.new(attrs)
 
-      # set location/contact attributes
-      loc_attrs = { 
-	     	:address         => area,
-	     	:city            => args.city,
-		:county		 => args.county,
-          	:state           => 'CA'
+      # setting location/contact attributes
+      loc_attrs = {
+          :city     => city,
+          :county   => county,
+          :state    => state
       }
 
       # add contact info for site
       new_site.contacts.build(loc_attrs)
 
       # save site
-      if new_site.save 
+      if new_site.save
         puts "Saved site #{attrs.inspect}"
       else
         puts new_site.errors
@@ -254,7 +253,7 @@ end
     end
   end
 end
-=end
+
 task :load_categories => :environment do
 
   CSV.foreach(Rails.root.join('db', 'category_data_020613.csv'), :headers => true) do |row|
