@@ -1,44 +1,44 @@
-Name ,Type,Image_file
+Name ,Type,Image_file,Original_name
 antiques,sales,/db/images/antique-typewriter.jpg
 apparel: bags & such,sales,/db/images/apparel.jpg
-apparel: clothes,sales,/db/images/pile-of-clothes.jpg
-apparel: jewelry,sales,/db/images/bracelet.jpg
-arts & crafts,sales,/db/images/glass-arts-and-crafts.jpg
-automotive,Services ,/db/images/muscle-car.jpg
-baby & kids: childcare,Services ,/db/images/babies.jpg
-baby & kids: stuff,sales,/db/images/baby-buggy.jpg
-beauty,Services ,/db/images/beauty.jpg
-bikes,sales,/db/images/bike2.jpg
+apparel: clothes,sales,/db/images/pile-of-clothes.jpg,clothes
+apparel: jewelry,sales,/db/images/bracelet.jpg,jewelry
+arts & crafts,sales,/db/images/glass-arts-and-crafts.jpg,arts & crafts
+automotive,Services ,/db/images/muscle-car.jpg,automotive
+baby & kids: childcare,Services ,/db/images/babies.jpg,childcare
+baby & kids: stuff,sales,/db/images/baby-buggy.jpg,baby & kids
+beauty,Services ,/db/images/beauty.jpg,beauty
+bikes,sales,/db/images/bike2.jpg,cycle
 boats,sales,/db/images/rowboat.jpg
-books,sales,/db/images/text-books.jpg
-classes/tutoring/lessons,Services ,/db/images/small-chalkboard.jpg
+books,sales,/db/images/text-books.jpg,books
+classes/tutoring/lessons,Services ,/db/images/small-chalkboard.jpg,lessons
 collectibles,sales,/db/images/collectibles.jpg
-deals,sales,/db/images/coupons.jpg
-electronics: cell phones,sales,/db/images/cell.jpg
-electronics: computer,sales,/db/images/apple-mac.jpg
-electronics: stuff,sales,/db/images/tv.jpg
-events,Services ,/db/images/events.jpg
-focus groups,Services ,/db/images/focus-groups.jpg
-furniture,sales,/db/images/furniture.jpg
-housing: appliances,sales,/db/images/fridge.jpg
-housing: for rent,Services,/db/images/for-rent.jpg
-housing: for sale,sales,/db/images/house-for-sale.jpg
-housing: move,Services ,/db/images/moving.jpg
-housing: roommates,services,/db/images/roommate.jpg
-jobs,Employment,/db/images/job-openings.jpg
-lost & found,Services ,/db/images/Lost-and-Found.jpg
-motorcycle,sales,/db/images/motorcycle.jpg
-music,sales,/db/images/music.jpg
-pet,Services ,/db/images/pets.jpg
-photo & video,sales,/db/images/old-camera.jpg
-ride share,Services ,/db/images/medium-carpool.jpg
-scholarships,Services ,/db/images/photo1.jpg
-service: financial,Services,/db/images/financial.jpg
+deals,sales,/db/images/coupons.jpg,deals
+electronics: cell phones,sales,/db/images/cell.jpg,cell phones
+electronics: computer,sales,/db/images/apple-mac.jpg,computer
+electronics: stuff,sales,/db/images/tv.jpg,electronics
+events,Services ,/db/images/events.jpg,event
+focus groups,Services ,/db/images/focus-groups.jpg,focus groups
+furniture,sales,/db/images/furniture.jpg,furniture
+housing: appliances,sales,/db/images/fridge.jpg,appliances
+housing: for rent,Services,/db/images/for-rent.jpg,housing
+housing: for sale,sales,/db/images/house-for-sale.jpg,real estate
+housing: move,Services ,/db/images/moving.jpg,move
+housing: roommates,services,/db/images/roommate.jpg,roommate
+jobs,Employment,/db/images/job-openings.jpg,jobs
+lost & found,Services ,/db/images/Lost-and-Found.jpg,lost & found
+motorcycle,sales,/db/images/motorcycle.jpg,motorcycle
+music,sales,/db/images/music.jpg,music
+pet,Services ,/db/images/pets.jpg,pet
+photo & video,sales,/db/images/old-camera.jpg,photo
+ride share,Services ,/db/images/medium-carpool.jpg,ride share
+scholarships,Services ,/db/images/photo1.jpg,scholarships
+service: financial,Services,/db/images/financial.jpg,financial
 service: handiwork,Services ,/db/images/tools.jpg
-service: house cleaning,Services ,/db/images/housework.jpg
-service: legal,Services ,/db/images/law.jpg
+service: house cleaning,Services ,/db/images/housework.jpg,household
+service: legal,Services ,/db/images/law.jpg,legal
 stuff,sales,/db/images/stuff.jpg
-tickets,sales,/db/images/tickets.jpg
+tickets,sales,/db/images/tickets.jpg,tickets
 toys & games,sales,/db/images/rubics-cube.jpg
-travel,Services ,/db/images/travelsuitcase.jpg
-video games,sales,/db/images/videogames.jpg
+travel,Services ,/db/images/travelsuitcase.jpg,travel
+video games,sales,/db/images/videogames.jpg,video games
