@@ -27,8 +27,8 @@ class PixiPost < ActiveRecord::Base
   validates :home_phone, presence: true, length: {in: 10..15}
   validates :mobile_phone, allow_blank: true, length: {in: 10..15}
   validate :zip_service_area
-  validates_date :preferred_date, presence: true, on_or_after: :today, unless: :is_admin?
-  validates_date :alt_date, allow_blank: true, on_or_after: :today, unless: :is_admin?
+  validates_date :preferred_date, presence: true, on_or_after: :min_start_date, unless: :is_admin?
+  validates_date :alt_date, allow_blank: true, on_or_after: :min_start_date, unless: :is_admin?
   validates_date :appt_date, on_or_after: :today, presence: true, if: :can_set_appt?
   validates_date :completed_date, on_or_after: :today, presence: true, if: :has_pixi?
   validates_datetime :alt_time, presence: true, unless: "alt_date.nil?"
@@ -53,6 +53,11 @@ class PixiPost < ActiveRecord::Base
     has_pixan? && !is_completed?
   end
 
+  # set min start date
+  def min_start_date
+    Date.today + MIN_PPOST_DAYS.days
+  end
+
   # set fields upon creation
   def set_flds
     self.status = 'active' if status.blank?
@@ -63,6 +68,16 @@ class PixiPost < ActiveRecord::Base
   # return active posts
   def self.active
     get_by_status 'active'
+  end
+
+  # get by seller
+  def self.get_by_seller usr
+    where(:user_id => usr)
+  end
+
+  # get by pixter
+  def self.get_by_pixter usr
+    where(:pixan_id => usr)
   end
 
   # return posts by status

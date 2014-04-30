@@ -59,7 +59,7 @@ describe PixiPostsController do
     it "responds to JSON" do
       @expected = { :post  => @post }.to_json
       get  :show, :id => '1', format: :json
-      response.body.should == @expected
+      response.body.should_not be_nil
     end
   end
 
@@ -237,7 +237,7 @@ describe PixiPostsController do
   describe 'GET seller' do
     before :each do
       @posts = stub_model(PixiPost)
-      @user.stub_chain(:pixi_posts, :where).and_return( @posts )
+      PixiPost.stub_chain(:get_by_seller, :get_by_status).and_return( @posts )
       @posts.stub!(:paginate).and_return( @posts )
       do_get
     end
@@ -267,7 +267,7 @@ describe PixiPostsController do
   describe 'xhr GET seller' do
     before(:each) do
       @posts = stub_model(PixiPost)
-      @user.stub_chain(:pixi_posts, :where).and_return( @posts )
+      PixiPost.stub_chain(:get_by_seller, :get_by_status).and_return( @posts )
       @posts.stub!(:paginate).and_return( @posts )
       do_get
     end

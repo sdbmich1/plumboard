@@ -16,9 +16,7 @@ class InvoicesController < ApplicationController
    
   def index
     @invoices = Invoice.all.paginate(page: @page)
-    respond_with(@invoices) do |format|
-      format.json { render json: {invoices: @invoices} }
-    end
+    respond_with(@invoices)
   end
    
   def sent

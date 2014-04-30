@@ -81,12 +81,14 @@ feature "PixiPosts" do
   end
   
   def alt_data
-    fill_in 'alt-dt', with: Date.tomorrow().strftime('%m/%d/%Y')
+    dt =  Date.today + 4.days
+    fill_in 'alt-dt', with: dt.strftime('%m/%d/%Y')
     select('2:00 PM', :from => 'alt-time')
   end
   
   def pref_data
-    fill_in 'pref-dt', with: Date.tomorrow().strftime('%m/%d/%Y')
+    dt =  Date.today + 4.days
+    fill_in 'pref-dt', with: dt.strftime('%m/%d/%Y')
     select('1:00 PM', :from => 'pref-time')
     select("2", :from => "post_qty")
   end
@@ -412,6 +414,7 @@ feature "PixiPosts" do
         click_button submit; sleep 2
       }.to change(PixiPost,:count).by(0)
 
+      page.should have_content user.name
       page.should have_content 'PixiPost Request'
       page.should have_content 'Appointment Date'
       page.should have_content 'Appointment Time'

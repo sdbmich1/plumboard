@@ -1,6 +1,7 @@
 // process datepicker
 var nowTemp = new Date();
-nowTemp.setDate(nowTemp.getDate() + 1);
+var CurrentDate = new Date();
+nowTemp.setDate(nowTemp.getDate() + 3);
 var dt = nowTemp.getDate(); 
 var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), dt, 0, 0, 0, 0);
 
@@ -17,6 +18,12 @@ $(document).on("focus", ".dt-pckr, .px-date", function(e){
       }
     }).on('show', function(ev) { 
       var newDate = new Date(ev.date);
+
+      // reset var if greater than current date
+      if(nDays > 0)
+        nDays = (newDate > CurrentDate) ? 0 : nDays;
+
+      // set date
       newDate.setDate(newDate.getDate() + nDays);
 
       // set end date

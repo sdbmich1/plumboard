@@ -29,9 +29,7 @@ class PixiPostsController < ApplicationController
 
   def edit
     @post = PixiPost.find params[:id]
-    respond_with(@post) do |format|
-      format.json { render json: {post: @post} }
-    end
+    respond_with(@post)
   end
 
   def update
@@ -47,16 +45,12 @@ class PixiPostsController < ApplicationController
 
   def show
     @post = PixiPost.find params[:id]
-    respond_with(@post) do |format|
-      format.json { render json: {post: @post} }
-    end
+    respond_with(@post)
   end
 
   def index
     @posts = PixiPost.get_by_status(@status).paginate(page: @page)
-    respond_with(@posts) do |format|
-      format.json { render json: {posts: @posts} }
-    end
+    respond_with(@posts)
   end
 
   def destroy
@@ -75,10 +69,8 @@ class PixiPostsController < ApplicationController
   end
 
   def seller
-    @posts = @user.pixi_posts.where(status: params[:status]).paginate(page: @page)
-    respond_with(@posts) do |format|
-      format.json { render json: {posts: @posts} }
-    end
+    @posts = PixiPost.get_by_seller(@user).get_by_status(@status).paginate(page: @page)
+    respond_with(@posts)
   end
   
   private

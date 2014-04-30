@@ -9,15 +9,7 @@
     </div>
   </div>
 </div>
-<div class='row'>
-  <div class='span7' style="<%= !listing.pixi_post? || listing.edit? ? 'display:none' : '' %>">
-    <%= f.label :seller_id, 'Seller' %>
-    <%= autocomplete_field_tag 'slr_name', listing.slr_name, autocomplete_user_first_name_temp_listings_path,
-	        :update_elements => { :id => '#seller_id' }, :placeholder => 'Seller Name', id: 'slr_name', 
-		required: listing.pixi_post? && !listing.edit?  %> 
-    <%= f.hidden_field :seller_id, id: 'seller_id', required: listing.pixi_post? && !listing.edit? %>
-  </div>
-</div>
+<%= render partial: 'shared/listing_seller_fields', locals: { f: f, listing: listing } if listing.pixi_post? && !listing.edit? %>
 <div class='row'>
   <div class='span7'>
     <%= f.label :title %><%= f.text_field :title, :placeholder => 'Enter Pixi Title', required: true %>

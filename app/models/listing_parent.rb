@@ -104,7 +104,7 @@ class ListingParent < ActiveRecord::Base
   def self.active
     include_list.select('listings.id, listings.pixi_id, listings.title, listings.category_id, categories.name AS category_name, 
       listings.updated_at, listings.status, listings.description, listings.created_at, listings.seller_id, listings.site_id, 
-      listings.price')
+      listings.price, listings.lat, listings.lng')
     .joins(:category)
     .where(where_stmt)
     .reorder('listings.updated_at DESC')
@@ -371,7 +371,7 @@ class ListingParent < ActiveRecord::Base
 
   # format updated date
   def updated_dt
-    ResetDate::format_date updated_at, [lat, lng].to_zip 
+    ResetDate::format_date updated_at, [lat, lng].to_zip rescue Date.today
   end
 
   # set json string

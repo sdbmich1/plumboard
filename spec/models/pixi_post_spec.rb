@@ -292,6 +292,27 @@ describe PixiPost do
     end
   end
 
+  describe "seller posts" do 
+    it "includes seller posts" do
+      @user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post) 
+      expect(PixiPost.all.count).to eq(1)
+      PixiPost.get_by_seller(@user).should_not be_empty  
+    end
+      
+    it { PixiPost.get_by_seller(0).should_not include @pixi_post } 
+  end
+
+  describe "pixter posts" do 
+    it { PixiPost.get_by_pixter(0).should_not include @pixi_post } 
+
+    it "includes pixter posts" do 
+      @pixi_post.appt_date = @pixi_post.appt_time = Time.now+3.days
+      @pixi_post.pixan_id = 1
+      @pixi_post.save
+      PixiPost.get_by_pixter(1).should_not be_empty  
+    end
+  end
+
   describe "date validations" do
     before do
       @pixi_post.alt_date = Date.today+3.days 
@@ -301,7 +322,7 @@ describe PixiPost do
 
     describe 'preferred date' do
       it "has valid preferred date" do
-        @pixi_post.preferred_date = Date.today+2.days
+        @pixi_post.preferred_date = Date.today+4.days
         @pixi_post.should be_valid
       end
 
@@ -331,7 +352,7 @@ describe PixiPost do
 
     describe 'alternate date' do
       before do
-        @pixi_post.preferred_date = Date.today+2.days 
+        @pixi_post.preferred_date = Date.today+4.days 
         @pixi_post.preferred_time = Time.now+2.hours
         @pixi_post.alt_time = Time.now+3.hours
       end

@@ -81,9 +81,9 @@ function adjustWindow() {
   console.log('docHeight = ' + docHeight);
   console.log('footerTop = ' + footerTop);
   console.log('ms lrg width = ' + $(window).width());
+  */
   console.log('total = ' + total);
   console.log('ftr_total = ' + ftr_total);
-  */
 
   // adjust footer so that it doesn't render atop of page content
   if (footerTop > winHeight && $(window).width() < 1024) {
