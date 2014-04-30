@@ -293,9 +293,23 @@ task :update_categories => :environment do
              :category_type    => row[1],
              :status           => 'active'}
 
+    attrs2 = {:original_name => row[3]}
+
+    #original_name is the original name of the category created by the load_categories task,
+    #if it exists. If the task doesn't exist, original_name is nil. Only categories first
+    #created from the load categories task will have the original_name attribute.
+
     #update category
-    updated_category = Category.find(:first, :conditions => ["name = ?", :name])
-    updated_category.update_attributes!(attrs)
+    updated_category = Category.find(:first, :conditions => ["name = ?", attrs2[:original_name]])
+    if not updated_category
+      updated_category = Category.find_or_initialize_by_name(attrs)
+    else
+      class << updated_category
+        attr_accessor :original_name
+      end
+      updated_category.update_attributes!(attrs)
+      updated_category.original_name = attrs2[:original_name]
+    end
 
     #add photo
     if updated_category.pictures.size == 0
@@ -313,7 +327,7 @@ task :update_categories => :environment do
     end
   end
 end
-    
+
 
 
 
