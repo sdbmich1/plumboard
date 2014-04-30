@@ -304,11 +304,7 @@ task :update_categories => :environment do
     if not updated_category
       updated_category = Category.find_or_initialize_by_name(attrs)
     else
-      class << updated_category
-        attr_accessor :original_name
-      end
       updated_category.update_attributes!(attrs)
-      updated_category.original_name = attrs2[:original_name]
     end
 
     #add photo
@@ -328,6 +324,29 @@ task :update_categories => :environment do
   end
 end
 
+=begin
+#deletes old categories created from the load_categories task that aren't used anymore
+task :delete_old_categories => :environment do
+  
+ CSV.foreach(Rails.root.join('db', 'category_data_020613.csv'), :headers => true) do |row|
+
+    attrs = {:name             => row[0].titleize,
+             :category_type    => row[1],
+             :status           => 'active'}
+
+    category_exists = Category.find(:first, :conditions => ["name = ?", attrs[:name]])
+    if not category_exists
+      old_category = Category.find(:first, :conditions => ["name = ?", attrs[:name]])
+      old_category.destroy()
+      if old_category.is_destroyed?
+        puts "Category destroyed #{old_category}"
+      else
+        puts "Errors"
+      end
+    end
+ end
+end
+=end
 
 
 
