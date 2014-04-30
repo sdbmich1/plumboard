@@ -1,12 +1,12 @@
 Name ,Type,Image_file
 antiques,sales,/db/images/antique-typewriter.jpg
-bags & such,apparel,/db/images/apparel.jpg
-clothes,apparel,/db/images/pile-of-clothes.jpg
-jewelry,apparel,/db/images/bracelet.jpg
+apparel: bags & such,sales,/db/images/apparel.jpg
+apparel: clothes,sales,/db/images/pile-of-clothes.jpg
+apparel: jewelry,sales,/db/images/bracelet.jpg
 arts & crafts,sales,/db/images/glass-arts-and-crafts.jpg
 automotive,Services ,/db/images/muscle-car.jpg
-childcare,baby & kids,/db/images/babies.jpg
-stuff,baby & kids,/db/images/baby-buggy.jpg
+baby & kids: childcare,Services ,/db/images/babies.jpg
+baby & kids: stuff,sales,/db/images/baby-buggy.jpg
 beauty,Services ,/db/images/beauty.jpg
 bikes,sales,/db/images/bike2.jpg
 boats,sales,/db/images/rowboat.jpg
@@ -14,31 +14,31 @@ books,sales,/db/images/text-books.jpg
 classes/tutoring/lessons,Services ,/db/images/small-chalkboard.jpg
 collectibles,sales,/db/images/collectibles.jpg
 deals,sales,/db/images/coupons.jpg
-cell phones,sales,/db/images/cell.jpg
-computer,electronics,/db/images/apple-mac.jpg
-stuff,electronics,/db/images/tv.jpg
+electronics: cell phones,sales,/db/images/cell.jpg
+electronics: computer,sales,/db/images/apple-mac.jpg
+electronics: stuff,sales,/db/images/tv.jpg
 events,Services ,/db/images/events.jpg
 focus groups,Services ,/db/images/focus-groups.jpg
 furniture,sales,/db/images/furniture.jpg
-appliances,housing,/db/images/fridge.jpg
-for rent,housing,/db/images/for-rent.jpg
-for sale,housing,/db/images/house-for-sale.jpg
-music,sales,/db/images/music.jpg
+housing: appliances,sales,/db/images/fridge.jpg
+housing: for rent,Services,/db/images/for-rent.jpg
+housing: for sale,sales,/db/images/house-for-sale.jpg
 housing: move,Services ,/db/images/moving.jpg
-roommates,housing,/db/images/roommate.jpg
+housing: roommates,services,/db/images/roommate.jpg
 jobs,Employment,/db/images/job-openings.jpg
 lost & found,Services ,/db/images/Lost-and-Found.jpg
 motorcycle,sales,/db/images/motorcycle.jpg
-financial,services ,/db/images/financial.jpg
-pet,Services ,/db/images/pets.png
+music,sales,/db/images/music.jpg
+pet,Services ,/db/images/pets.jpg
 photo & video,sales,/db/images/old-camera.jpg
 ride share,Services ,/db/images/medium-carpool.jpg
 scholarships,Services ,/db/images/photo1.jpg
-tickets,sales,/db/images/tickets.jpg
-handiwork,service,/db/images/tools.jpg
-house cleaning,service,/db/images/housework.jpg
-legal,service,/db/images/law.jpg
+service: financial,Services,/db/images/financial.jpg
+service: handiwork,Services ,/db/images/tools.jpg
+service: house cleaning,Services ,/db/images/housework.jpg
+service: legal,Services ,/db/images/law.jpg
 stuff,sales,/db/images/stuff.jpg
+tickets,sales,/db/images/tickets.jpg
 toys & games,sales,/db/images/rubics-cube.jpg
 travel,Services ,/db/images/travelsuitcase.jpg
 video games,sales,/db/images/videogames.jpg
