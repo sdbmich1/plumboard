@@ -34,7 +34,7 @@ photo & video,sales,/db/images/old-camera.jpg,Photo
 ride share,Services ,/db/images/medium-carpool.jpg,Ride Share
 scholarships,Services ,/db/images/photo1.jpg,Scholarships
 service: financial,Services,/db/images/financial.jpg,Financial
-service: handiwork,Services ,/db/images/tools.jpg
+service: handiwork,Services ,/db/images/tools.jpg,Handiwork
 service: house cleaning,Services ,/db/images/housework.jpg,Household
 service: legal,Services ,/db/images/law.jpg,Legal
 stuff,sales,/db/images/stuff.jpg
