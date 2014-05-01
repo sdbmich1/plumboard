@@ -296,8 +296,7 @@ task :update_categories => :environment do
     attrs2 = {:original_name => row[3]}
 
     #original_name is the original name of the category created by the load_categories task,
-    #if it exists. If the task doesn't exist, original_name is nil. Only categories first
-    #created from the load categories task will have the original_name attribute.
+    #if it exists. If the task doesn't exist, original_name is nil. 
 
     #update category
     updated_category = Category.find(:first, :conditions => ["name = ?", attrs2[:original_name]])
@@ -308,7 +307,7 @@ task :update_categories => :environment do
     end
 
     #add photo
-    if updated_category.pictures.size == 0
+    if updated_category.pictures.size > 0
       updated_category.pictures.map { |pic| updated_category.pictures.delete(pic) }
     end
 
@@ -323,31 +322,6 @@ task :update_categories => :environment do
     end
   end
 end
-
-=begin
-#deletes old categories created from the load_categories task that aren't used anymore
-task :delete_old_categories => :environment do
-  
- CSV.foreach(Rails.root.join('db', 'category_data_020613.csv'), :headers => true) do |row|
-
-    attrs = {:name             => row[0].titleize,
-             :category_type    => row[1],
-             :status           => 'active'}
-
-    category_exists = Category.find(:first, :conditions => ["name = ?", attrs[:name]])
-    if not category_exists
-      old_category = Category.find(:first, :conditions => ["name = ?", attrs[:name]])
-      old_category.destroy()
-      if old_category.is_destroyed?
-        puts "Category destroyed #{old_category}"
-      else
-        puts "Errors"
-      end
-    end
- end
-end
-=end
-
 
 
 
