@@ -168,6 +168,9 @@ namespace :files do
     upload("#{rails_root}/config/sendmail.yml", "#{release_path}/config/sendmail.yml")
     upload("#{rails_root}/config/thinking_sphinx.yml", "#{release_path}/config/thinking_sphinx.yml")
     upload("#{rails_root}/config/database.yml", "#{release_path}/config/database.yml")
+    upload("#{rails_root}/config/certs/pixiboard.crt", "#{release_path}/config/pixiboard.crt")
+    upload("#{rails_root}/config/certs/pixiboard.key", "#{release_path}/config/pixiboard.key")
+    upload("#{rails_root}/config/certs/gd_bundle.crt", "#{release_path}/config/gd_bundle.crt")
   end
 end
 
@@ -206,12 +209,12 @@ after 'deploy:update_code', 'deploy:enable_rubber'
 after 'bundle:install', 'deploy:enable_rubber'
 before 'rubber:config', 'deploy:enable_rubber', 'deploy:enable_rubber_current'
 after 'deploy:update_code', 'deploy:symlink_shared', 'sphinx:stop'
-after "deploy", "cleanup"
+after "deploy", "cleanup", "memcached:flush"
 after "deploy:migrations", "cleanup", "sphinx:sphinx_symlink", "sphinx:configure", "sphinx:rebuild"
-after "deploy:update", "memcached.flush"
+#after "deploy:update", "memcached:flush"
+
 task :cleanup, :except => { :no_release => true } do
   count = fetch(:keep_releases, 5).to_i
-  
   rsudo <<-CMD
     all=$(ls -x1 #{releases_path} | sort -n);
     keep=$(ls -x1 #{releases_path} | sort -n | tail -n #{count});
