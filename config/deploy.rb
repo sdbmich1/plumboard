@@ -168,10 +168,15 @@ namespace :files do
     upload("#{rails_root}/config/sendmail.yml", "#{release_path}/config/sendmail.yml")
     upload("#{rails_root}/config/thinking_sphinx.yml", "#{release_path}/config/thinking_sphinx.yml")
     upload("#{rails_root}/config/database.yml", "#{release_path}/config/database.yml")
+  end
+
+  task :upload_certs do
     upload("#{rails_root}/config/certs/pixiboard.crt", "#{release_path}/config/pixiboard.crt")
     upload("#{rails_root}/config/certs/pixiboard.key", "#{release_path}/config/pixiboard.key")
     upload("#{rails_root}/config/certs/gd_bundle.crt", "#{release_path}/config/gd_bundle.crt")
+    run "touch #{current_path}/public/httpchk.txt"
   end
+
 end
 
 namespace :deploy do
@@ -231,7 +236,7 @@ if Rubber::Util.has_asset_pipeline?
 
   callbacks[:after].delete_if {|c| c.source == "deploy:assets:precompile"}
   callbacks[:before].delete_if {|c| c.source == "deploy:assets:symlink"}
-  before "deploy:assets:precompile", "deploy:assets:symlink", "files:upload_secret"
+  before "deploy:assets:precompile", "deploy:assets:symlink", "files:upload_secret", "files:upload_certs"
   after "rubber:config", "deploy:assets:precompile"
 end
 
