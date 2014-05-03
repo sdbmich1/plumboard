@@ -241,7 +241,7 @@ feature "PixiPosts" do
     end
   end
 
-  describe "Seller views active PixiPosts" do 
+  describe "Seller views PixiPosts" do 
     before do
       init_setup user
       load_zips
@@ -271,6 +271,7 @@ feature "PixiPosts" do
       page.should_not have_content "Completed Time"
       page.should have_content "My PixiPosts"
       page.should have_content "Seller Name" 
+      page.should_not have_content "Pixter Name" 
     end
 
     it "displays scheduled posts", js: true do
@@ -285,6 +286,8 @@ feature "PixiPosts" do
       page.should_not have_content @completed.description
       page.should have_content @scheduled.description
       page.should_not have_content 'No posts found.'
+      page.should_not have_content "Seller Name" 
+      page.should have_content "Pixter Name" 
     end
 
     it "displays completed posts", js: true do
@@ -299,6 +302,44 @@ feature "PixiPosts" do
       page.should_not have_content @scheduled.description
       page.should have_content @completed.description
       page.should_not have_content 'No posts found.'
+      page.should_not have_content "Seller Name" 
+      page.should have_content "Pixter Name" 
+    end
+
+    it "clicks to open a scheduled pixipost" do
+      visit pixi_post_path(@scheduled)
+      page.should have_content "PixiPost Request"
+      page.should_not have_link 'Edit', href: edit_pixi_post_path(@scheduled) 
+      page.should have_link 'Reschedule', href: reschedule_pixi_post_path(@scheduled) 
+      page.should have_link 'Remove', href: pixi_post_path(@scheduled) 
+      page.should have_link 'Done', href: seller_pixi_posts_path(status: 'active') 
+      page.should have_content @scheduled.description
+      page.should have_content @pixan.name
+    end
+
+    it "reschedules a scheduled pixipost", js: true do
+      visit reschedule_pixi_post_path(@scheduled)
+      page.should have_content "Requested By: "
+      page.should have_content @user.name
+      expect { 
+        pref_data
+        alt_data
+	click_button submit; sleep 3
+        page.should have_content "PixiPost Request"
+        page.should have_content @user.name
+      }.to change(PixiPost, :count).by(1)
+      expect(PixiPost.where(id: @scheduled.id).count).to eq(0)
+    end
+
+    it "clicks to open a completed pixipost" do
+      visit pixi_post_path(@completed)
+      page.should have_content "PixiPost Request"
+      page.should_not have_link 'Edit', href: edit_pixi_post_path(@completed) 
+      page.should_not have_link 'Reschedule', href: reschedule_pixi_post_path(@completed) 
+      page.should_not have_link 'Remove', href: pixi_post_path(@completed) 
+      page.should have_link 'Done', href: seller_pixi_posts_path(status: 'active') 
+      page.should have_content @completed.description
+      page.should have_content @pixan.name
     end
 
     it "clicks to open a pixipost" do
@@ -308,6 +349,7 @@ feature "PixiPosts" do
 
       page.should have_content "PixiPost Request"
       page.should have_link 'Edit', href: edit_pixi_post_path(@pixi_post) 
+      page.should_not have_link 'Reschedule', href: reschedule_pixi_post_path(@scheduled) 
       page.should have_link 'Remove', href: pixi_post_path(@pixi_post) 
       page.should have_link 'Done', href: seller_pixi_posts_path(status: 'active') 
       page.should have_content @pixi_post.description
@@ -348,11 +390,35 @@ feature "PixiPosts" do
       page.should have_link "Completed", href: seller_pixi_posts_path(status: 'completed')
       page.should have_content "Preferred Date"
       page.should have_content "Preferred Time"
+      page.should have_content "Seller Name"
+      page.should_not have_content "Pixter Name"
       page.should_not have_content "Scheduled Date"
       page.should_not have_content "Scheduled Time"
       page.should_not have_content "Completed Date"
       page.should_not have_content "Completed Time"
       page.should have_content "My PixiPosts"
+    end
+
+    it 'shows scheduled content', js: true do
+      @pixan = create :pixi_user
+      @post = @user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: @pixan.id, appt_date: Date.today+3.days, 
+        appt_time: Time.now+3.days
+      click_link 'Scheduled'
+      page.should have_link "Submitted", href: seller_pixi_posts_path(status: 'active')
+      page.should have_link "Scheduled", href: seller_pixi_posts_path(status: 'scheduled')
+      page.should have_link "Completed", href: seller_pixi_posts_path(status: 'completed')
+      page.should_not have_content "Preferred Date"
+      page.should_not have_content "Preferred Time"
+      page.should have_content "Scheduled Date"
+      page.should have_content "Scheduled Time"
+      page.should_not have_content "Completed Date"
+      page.should_not have_content "Completed Time"
+      page.should_not have_content "Seller Name"
+      page.should have_content "Pixter Name"
+      page.should have_content "My PixiPosts"
+      page.should_not have_content "No posts found"
+      page.should have_content @post.pixter_name
+      page.should have_content @post.description
     end
 
     it "clicks to open a pixipost" do
@@ -470,8 +536,13 @@ feature "PixiPosts" do
     before do
       load_zips
       init_setup editor
-      @pixi_post = user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post)
-      @listing = FactoryGirl.create(:listing, seller_id: user.id) 
+      @pixan = create :pixi_user, user_type_code: 'PX'
+      @listing = FactoryGirl.create :listing, seller_id: user.id, pixan_id: @pixan.id
+      @pixi_post = user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post, description: 'tire rims')
+      @scheduled = user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: @pixan.id, appt_date: Time.now+3.days,
+        appt_time: Time.now+3.days, description: 'xbox 360'
+      @completed = user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: @pixan.id, appt_date: Time.now+3.days, 
+        appt_time: Time.now+3.days, completed_date: Time.now+3.days, pixi_id: @listing.pixi_id, description: 'rocking chair'
       visit pixi_posts_path(status: 'active') 
     end
 
@@ -479,8 +550,15 @@ feature "PixiPosts" do
       page.should have_link("#{@pixi_post.id}", href: pixi_post_path(@pixi_post))
       page.should have_selector('title', text: 'PixiPosts')
       page.should_not have_selector('title', text: 'My PixiPosts')
+      page.should_not have_link "Submitted", href: seller_pixi_posts_path(status: 'active')
+      page.should_not have_link "Scheduled", href: seller_pixi_posts_path(status: 'scheduled')
+      page.should_not have_link "Completed", href: seller_pixi_posts_path(status: 'completed')
+      page.should have_link "Submitted", href: pixi_posts_path(status: 'active')
+      page.should have_link "Scheduled", href: pixi_posts_path(status: 'scheduled')
+      page.should have_link "Completed", href: pixi_posts_path(status: 'completed')
       page.should have_content "PixiPost"
       page.should have_content "Seller Name" 
+      page.should_not have_content "Pixter Name" 
       page.should have_content "Preferred Date"
       page.should have_content "Preferred Time"
       page.should_not have_content "Scheduled Date"
@@ -489,19 +567,65 @@ feature "PixiPosts" do
       page.should_not have_content "Completed Time"
     end
 
-    it "clicks to open a pixipost" do
-      expect { 
-        click_on "#{@pixi_post.id}"
-      }.not_to change(PixiPost, :count)
+    it 'show scheduled content' do
+      visit pixi_posts_path(status: 'scheduled')
+      page.should have_content "Seller Name" 
+      page.should_not have_content "Pixter Name" 
+      page.should_not have_content "Preferred Date"
+      page.should_not have_content "Preferred Time"
+      page.should have_content "Scheduled Date"
+      page.should have_content "Scheduled Time"
+      page.should_not have_content "Completed Date"
+      page.should_not have_content "Completed Time"
+      page.should_not have_content 'No posts found'
+    end
 
+    it 'show completed content' do
+      visit pixi_posts_path(status: 'completed')
+      page.should have_content "Seller Name" 
+      page.should_not have_content "Pixter Name" 
+      page.should_not have_content "Preferred Date"
+      page.should_not have_content "Preferred Time"
+      page.should_not have_content "Scheduled Date"
+      page.should_not have_content "Scheduled Time"
+      page.should have_content "Completed Date"
+      page.should have_content "Completed Time"
+      page.should_not have_content 'No posts found'
+    end
+
+    it "clicks to open a pixipost" do
+      visit pixi_post_path(@pixi_post)
       page.should have_content "PixiPosts"
       page.should have_content "PixiPost Request"
       page.should have_content @pixi_post.description
       page.should have_content user.name
       page.should have_link 'Edit', href: edit_pixi_post_path(@pixi_post) 
       page.should_not have_link 'Remove', href: pixi_post_path(@pixi_post) 
+      page.should_not have_link 'Reschedule', href: reschedule_pixi_post_path(@pixi_post) 
       # page.should have_selector('#rm-btn', visible: false) 
       page.should have_link 'Done', href: pixi_posts_path(status: 'active') 
+    end
+
+    it "clicks to open a scheduled pixipost" do
+      visit pixi_post_path(@scheduled)
+      page.should have_content "PixiPost Request"
+      page.should have_link 'Edit', href: edit_pixi_post_path(@scheduled) 
+      page.should_not have_link 'Reschedule', href: reschedule_pixi_post_path(@scheduled) 
+      page.should_not have_link 'Remove', href: pixi_post_path(@scheduled) 
+      page.should have_link 'Done', href: pixi_posts_path(status: 'active') 
+      page.should have_content @scheduled.description
+      page.should have_content user.name
+    end
+
+    it "clicks to open a completed pixipost" do
+      visit pixi_post_path(@completed)
+      page.should have_content "PixiPost Request"
+      page.should have_link 'Edit', href: edit_pixi_post_path(@completed) 
+      page.should_not have_link 'Reschedule', href: reschedule_pixi_post_path(@completed) 
+      page.should_not have_link 'Remove', href: pixi_post_path(@completed) 
+      page.should have_link 'Done', href: pixi_posts_path(status: 'active') 
+      page.should have_content @completed.description
+      page.should have_content user.name
     end
   end
 

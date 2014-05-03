@@ -260,3 +260,8 @@ a.clear-link {
   margin:0 auto;
   float:none;
 }
+
+tr.spaceUnder > td
+{
+  padding-bottom: 1em;
+}

@@ -171,6 +171,28 @@ class PixiPost < ActiveRecord::Base
     send(method).strftime("%l:%M %p") rescue nil
   end
 
+  # cancels existing post and create new post based on original post
+  def self.reschedule pid
+    if old_post = PixiPost.where(id: pid).first
+      attr = old_post.attributes  # copy attributes
+
+      # remove protected attributes
+      %w(id pixan_id appt_date appt_time preferred_date preferred_time alt_date alt_time comments pixi_id created_at updated_at)
+      .map {|x| attr.delete x}
+
+      # load attributes to new record
+      new_post = PixiPost.new(attr)
+       
+      # remove old post
+      old_post.destroy
+
+      # return new post
+      new_post
+    else
+      PixiPost.new
+    end
+  end
+
   # set json string
   def as_json(options={})
     super(except: [:updated_at], 

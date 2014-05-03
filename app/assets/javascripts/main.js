@@ -392,7 +392,7 @@ $(document).on("change", "#inv_qty, #inv_price, #inv_tax", function(){
 $(document).on("change", "select[id*=pixi_id]", function() {
   var pid = $(this).val();
 
-  if (pid.length > 0) {
+  if (pid.length > 0 && $('#invoice_buyer_id').length > 0) {
     var url = '/listings/pixi_price?pixi_id=' + pid;
 
     // reset buyer id
