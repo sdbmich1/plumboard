@@ -19,20 +19,15 @@ class ListingObserver < ActiveRecord::Observer
 
   def after_update model
     delete_temp_pixi model
-
-    # mark saved pixis if sold or closed
-    if model.sold? || model.closed? || model.inactive?
-      SavedListing.update_status model.pixi_id, model.status
-    end
   end
 
   # remove temp pixi
   def delete_temp_pixi model
-    TempListing.where(:pixi_id => model.pixi_id).destroy_all
+    TempListing.where(:pixi_id => model.pixi_id).destroy_all rescue nil
   end
 
   # send system message to user
   def send_system_message model
-    SystemMessenger::send_message model.user, model, 'approve'
+    SystemMessenger::send_message model.user, model, 'approve' rescue nil
   end
 end

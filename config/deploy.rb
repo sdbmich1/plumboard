@@ -108,7 +108,7 @@ namespace :deploy do
   desc "Symlink shared resources on each release"
   task :symlink_shared, :roles => :app do
     run "ln -nfs #{shared_path}/config/rubber/common/database.yml #{release_path}/config/rubber/common/database.yml"
-    run "ln -nfs #{shared_path}/assets/manifest.yml #{release_path}/assets_manifest.yml"    
+    # run "ln -nfs #{shared_path}/public/assets/manifest.yml #{release_path}/assets_manifest.yml"    
     run "chmod +x #{release_path}/script/rubber"
   end 
 end
@@ -214,8 +214,8 @@ after 'deploy:update_code', 'deploy:enable_rubber'
 after 'bundle:install', 'deploy:enable_rubber'
 before 'rubber:config', 'deploy:enable_rubber', 'deploy:enable_rubber_current'
 after 'deploy:update_code', 'deploy:symlink_shared', 'sphinx:stop'
-after "deploy", "cleanup", "memcached:flush"
 after "deploy:migrations", "cleanup", "sphinx:sphinx_symlink", "sphinx:configure", "sphinx:rebuild"
+#after "deploy", "cleanup", "memcached:flush"
 #after "deploy:update", "memcached:flush"
 
 task :cleanup, :except => { :no_release => true } do
