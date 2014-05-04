@@ -4,7 +4,7 @@ if File.exist?(gemfile) && ENV['BUNDLE_GEMFILE'].nil?
   exec("bundle", "exec", "cap", *ARGV)
 end
 
-# load 'deploy' if respond_to?(:namespace) # cap2 differentiator
+load 'deploy' if respond_to?(:namespace) # cap2 differentiator
 
 env = ENV['RUBBER_ENV'] ||= (ENV['RAILS_ENV'] || 'production')
 root = File.dirname(__FILE__)
