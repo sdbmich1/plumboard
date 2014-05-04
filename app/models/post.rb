@@ -153,7 +153,7 @@ class Post < ActiveRecord::Base
 
   # check if system msg 
   def system_msg?
-    %w(approve deny system).detect {|x| msg_type == x}
+    %w(approve deny want system).detect {|x| msg_type == x}
   end
 
   # set json string

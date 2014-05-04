@@ -73,6 +73,8 @@ function processAcct() {
 function processError(response, msg) {
   var $balancedError = $('#data_error'); 
 
+  // show error after check if menu is large
+  checkMenuHgt('#data_error');
   $balancedError.show(300).text(msg);
 
   if($('#bank-acct-form').length > 0) {
