@@ -85,6 +85,42 @@ describe PixiPostsController do
     end
   end
 
+  describe 'GET reschedule/:id' do
+    before :each do
+      PixiPost.stub!(:reschedule).and_return( @post )
+    end
+
+    def do_get
+      get :reschedule, :id => '1'
+    end
+
+    it "should reschedule the requested post" do
+      do_get
+      response.should be_success
+    end
+
+    it "should load the requested post" do
+      PixiPost.stub(:reschedule).with('1').and_return(@post)
+      do_get
+    end
+
+    it "should assign @post" do
+      do_get
+      assigns(:post).should_not be_nil
+    end
+
+    it "reschedule action should render reschedule template" do
+      do_get
+      response.should render_template(:reschedule)
+    end
+
+    it "responds to JSON" do
+      @expected = { :post  => @post }.to_json
+      get  :reschedule, :id => '1', format: :json
+      response.body.should_not be_nil
+    end
+  end
+
   describe "POST create" do
     before do
       controller.stub!(:set_params).and_return(:success)

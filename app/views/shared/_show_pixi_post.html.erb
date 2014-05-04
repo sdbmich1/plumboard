@@ -1,10 +1,11 @@
 <div class='neg-top center hdr mbot'><h3 class='grp-hdr'>PixiPost Request</div>
 <%= render partial: 'shared/pixi_post_details', locals: {post: post, showAddrFlg: true} %>
 <div class="mtop pull-right">
-  <% if post.owner? @user %>
+  <%= link_to 'Edit', edit_pixi_post_path(post), class: 'btn btn-large' if can_edit? post %>
+  <% if post.owner?(@user) && !post.is_completed? %>
     <%= link_to 'Remove', post, method: :delete, confirm: 'Delete this PixiPost?', class: 'btn btn-large', id: 'rm-btn' %>
+    <%= link_to 'Reschedule', reschedule_pixi_post_path(post), confirm: 'Cancel this appointment?', class: 'btn btn-large' %>
   <% end %>
-  <%= link_to 'Edit', edit_pixi_post_path(post), class: 'btn btn-large' %>
   <%= link_to 'Done', set_pixi_post_path, class: 'btn btn-large btn-primary submit-btn' %>
 </div>
 

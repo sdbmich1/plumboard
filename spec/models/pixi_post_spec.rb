@@ -260,6 +260,33 @@ describe PixiPost do
     end
   end
 
+  describe 'reschedule' do
+    before do
+      @pixan = FactoryGirl.create :pixi_user
+      @post = @user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: @pixan.id, appt_date: Date.today+5.days, 
+        appt_time: Time.now+5.days, comments: 'use the back door'
+      @pid = @post.id
+    end
+
+    it 'recreates post' do
+      @new_post = PixiPost.reschedule(@pid)
+      expect(@new_post.user_id).not_to be_nil
+      expect(@new_post.description).not_to be_nil
+      expect(@new_post.alt_date).to be_nil
+      expect(@new_post.preferred_date).to be_nil
+      expect(@new_post.appt_date).to be_nil
+      expect(@new_post.pixan_id).to be_nil
+      expect(@new_post.comments).to be_nil
+      expect(PixiPost.where(id: @pid).count).to eq(0)
+    end
+
+    it 'does not recreate post' do
+      @new_post = PixiPost.reschedule(0)
+      expect(@new_post.description).to be_nil
+      expect(PixiPost.where(id: @pid).count).to eq(1)
+    end
+  end
+
   describe 'set_flds' do
     it "sets status to active" do
       @post = @user.pixi_posts.build FactoryGirl.attributes_for :pixi_post, status: nil

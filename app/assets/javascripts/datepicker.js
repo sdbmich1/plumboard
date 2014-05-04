@@ -1,16 +1,17 @@
 // process datepicker
-var nowTemp = new Date();
-var CurrentDate = new Date();
-nowTemp.setDate(nowTemp.getDate() + 3);
-var dt = nowTemp.getDate(); 
-var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), dt, 0, 0, 0, 0);
 
 // set default date
 $(document).on("focus", ".dt-pckr, .px-date", function(e){
 
   // set datepicker start date based on class
+  var CurrentDate = new Date();
   var myClass = $(this).attr("class");
-  var nDays = (myClass.match(/px-date/i)) ? 0 : 3;
+  var nDays = (myClass.indexOf("px-date") >= 0) ? 0 : 3;
+
+  var nowTemp = new Date();
+  nowTemp.setDate(nowTemp.getDate() + nDays);
+  var dt = nowTemp.getDate(); 
+  var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), dt, 0, 0, 0, 0);
 
   var newDt = $(this).datepicker({
     onRender: function(date) {
@@ -20,8 +21,9 @@ $(document).on("focus", ".dt-pckr, .px-date", function(e){
       var newDate = new Date(ev.date);
 
       // reset var if greater than current date
-      if(nDays > 0)
+      if(nDays > 0) {
         nDays = (newDate > CurrentDate) ? 0 : nDays;
+      }
 
       // set date
       newDate.setDate(newDate.getDate() + nDays);

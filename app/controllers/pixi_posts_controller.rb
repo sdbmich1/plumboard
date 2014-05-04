@@ -72,6 +72,11 @@ class PixiPostsController < ApplicationController
     @posts = PixiPost.get_by_seller(@user).get_by_status(@status).paginate(page: @page)
     respond_with(@posts)
   end
+
+  def reschedule
+    @post = PixiPost.reschedule params[:id]
+    respond_with(@post)
+  end
   
   private
 

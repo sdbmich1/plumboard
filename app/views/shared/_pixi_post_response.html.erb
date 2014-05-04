@@ -1,0 +1,22 @@
+    <% if post.has_appt? %>
+      <tr class='mtop'><td class='span3'>Pixter Name:</td>
+        <td><%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: post.pixan} %><%= post.pixter_name %></td>
+      </tr>
+      <tr><td class='span3'>Appointment Date:</td><td><%= get_local_date(post.appt_date) %></td></tr>
+      <tr><td class='span3'>Appointment Time: </td><td><%= post.get_time('appt_time') %></td></tr>
+    <% end %>
+
+    <% if post.is_completed? %>
+      <tr><td class='span3'>Completed Date:</td><td><%= get_local_date(post.completed_date) %></td></tr>
+      <tr><td class='span3'>Completed Time: </td><td><%= post.get_time('completed_time') %></td></tr>
+    <% end %>
+    
+    <% if showAddrFlg %>
+      <tr><td class='span3 v-top'>Address:</td><td>
+        <%= post.address %><br>
+        <%= "#{post.city}, #{post.state} #{post.zip}" %><br><%= post.home_phone %></td>
+      </tr>
+    <% end %>
+    <% if post.has_comments? %>
+      <tr><td class='span3'>Comments: </td><td><%= post.comments %><br /></td></tr>
+    <% end %>

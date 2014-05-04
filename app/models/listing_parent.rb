@@ -102,17 +102,12 @@ class ListingParent < ActiveRecord::Base
 
   # select active listings
   def self.active
-    include_list.select('listings.id, listings.pixi_id, listings.title, listings.category_id, categories.name AS category_name, 
-      listings.updated_at, listings.status, listings.description, listings.created_at, listings.seller_id, listings.site_id, 
-      listings.price, listings.lat, listings.lng')
-    .joins(:category)
-    .where(where_stmt)
-    .reorder('listings.updated_at DESC')
+    include_list.where(where_stmt).reorder('listings.updated_at DESC')
   end
 
   # eager load assns
   def self.include_list
-    includes(:pictures, :site)
+    includes(:pictures, :site, :category)
   end
 
   # find listings by status
