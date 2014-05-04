@@ -1,4 +1,3 @@
-# This is a sample Capistrano config file for rubber
 # Execute "bundle install" after deploy, but only when really needed
 require "bundler/capistrano"
 require 'thinking_sphinx/capistrano'
@@ -8,12 +7,13 @@ require 'delayed/recipes'
 # require 'capistrano/ext/multistage'
 # require 'capistrano/maintenance'
 
+# Automatically precompile assets
+set :assets_role, [:app]
+load "deploy/assets"
+
 # set stages
 set :stages, %w(production staging)
 set :default_stage, "production"
-
-# Automatically precompile assets
-load "deploy/assets"
 
 set :rails_env, Rubber.env
 set :rails_root, '/var/www/html/pixiboard/staging/plumboard'
@@ -27,7 +27,6 @@ on :load do
   set :runner,      rubber_env.app_user
   set :deploy_to,   "/mnt/#{application}-#{Rubber.env}"
   set :copy_exclude, [".git/*", ".bundle/*", "log/*", ".rvmrc", ".rbenv-version"]
-  set :assets_role, [:app]
 end
 
 # Use a simple directory tree copy here to make demo easier.
