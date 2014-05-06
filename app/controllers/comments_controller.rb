@@ -30,9 +30,9 @@ class CommentsController < ApplicationController
   end
 
   def reload_data 
-    @listing = Listing.find_by_pixi_id params[:comment][:pixi_id]
-    @comments = @listing.comments.reload.paginate page: @page, per_page: @per_page if @listing
-    @comment = @listing.comments.build
+    @listing = Listing.find_pixi params[:comment][:pixi_id]
+    @comments = @listing.comments.paginate page: @page, per_page: @per_page if @listing
+    @comment = @listing.comments.build if @listing
   end
 
 end

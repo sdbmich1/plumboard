@@ -1,7 +1,7 @@
 <% unless listing.is_a? TempListing %>
   <div id='comment-entry'>
     <div id='comment-hdr'><%= get_comment_header %></div>
-    <%= render partial: "#{get_comment_form}" unless !listing.active? || listing.seller?(@user) %>
+    <%= render partial: "#{get_comment_form}", locals: {listing: listing} unless !listing.active? || listing.seller?(@user) %>
   </div> 
   <div id='comment-item' class="<%= listing.seller?(@user) || !listing.active? ? 'sm-top' : 'big-neg-top' %>">
     <%= render 'shared/comment_list' %>
