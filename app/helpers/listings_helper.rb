@@ -125,13 +125,14 @@ module ListingsHelper
 
   # set string to share content on twitter
   def tweet_share
-    "https://twitter.com/share?url=https%3A%2F%2Fdev.twitter.com%2Fpages%2Ftweet-button"
+    "https://twitter.com/share?url=" + get_url # https%3A%2F%2Fdev.twitter.com%2Fpages%2Ftweet-button
   end
 
   # set string to share content on facebook
   def fb_share
-    'https://www.facebook.com/dialog/feed?app_id=' + API_KEYS['facebook']['api_key'] + '&display=popup&caption=Check out this pixi on Pixiboard!' +
-    '&link=https://developers.facebook.com/docs/reference/dialogs/&redirect_uri=' + get_url + 
+    'https://www.facebook.com/dialog/feed?app_id=' + API_KEYS['facebook']['api_key'] + 
+    '&display=popup&caption=Check out this pixi on Pixiboard!' +
+    '&link=' + get_url + '&redirect_uri=' + get_url + 
     '&picture=' + get_photo + '&name=' + @listing.nice_title + '&description=' + @listing.description
   end
 

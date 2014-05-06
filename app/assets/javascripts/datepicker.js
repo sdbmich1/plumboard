@@ -1,4 +1,7 @@
 // process datepicker
+var thisDay = new Date();
+var tmpDt = thisDay.getDate(); 
+var nowDt = new Date(thisDay.getFullYear(), thisDay.getMonth(), tmpDt, 0, 0, 0, 0);
 
 // set default date
 $(document).on("focus", ".dt-pckr, .px-date", function(e){
@@ -39,7 +42,7 @@ $(document).on("focus", ".dt-pckr, .px-date", function(e){
 $(document).on("focus", "#start-date", function(e){
   var sdt = $(this).datepicker({
     onRender: function(date) {
-      return date.valueOf() < now.valueOf() ? 'disabled' : '';
+      return date.valueOf() < nowDt.valueOf() ? 'disabled' : '';
       }
     }).on('changeDate', function(ev) { 
 
@@ -83,7 +86,7 @@ $(document).on("focus", "#end-date", function(e){
 
   var sdt = $('#start-date').datepicker({
     onRender: function(date) {
-      return date.valueOf() < now.valueOf() ? 'disabled' : ''; }
+      return date.valueOf() < nowDt.valueOf() ? 'disabled' : ''; }
     }).on('changeDate', function(ev) { sdt.hide(); }).data('datepicker');
 });
 

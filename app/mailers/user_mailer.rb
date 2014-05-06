@@ -78,7 +78,7 @@ class UserMailer < ActionMailer::Base
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     # set message details
-    mail(:to => "#{post.recipient.email}", :subject => "Pixiboard Post: #{post.pixi_title} ") 
+    mail(:to => "#{post.recipient_email}", :subject => "Pixiboard Post: #{post.pixi_title} ") 
   end
 
   # send interest notices to members
