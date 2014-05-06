@@ -12,14 +12,11 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require jquery-ui
-//= require bootstrap
-//= require jquery.remotipart
+//= require jquery.ui.all
 //= require jquery.bxslider.min.js
 //= require jquery.masonry.min.js
 //= require jquery.infinitescroll.min.js
 //= require jquery.placeholder.min.js
-//= require bootstrap.min.js
 //= require bootstrap-datepicker.js
 //= require datepicker.js
 //= require main.js
@@ -36,3 +33,6 @@
 //= require parsley
 //= require jquery.maskedinput.min.js
 //= require jquery.masonry.ordered.js
+//= require jquery.rateit.min.js
+//= require jquery.remotipart
+//= require_tree .

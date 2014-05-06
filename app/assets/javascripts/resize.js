@@ -100,8 +100,9 @@ function adjustWindow() {
     }
   }
   else {
-    mtop = 80;
+    mtop = ($('#cat-wrap').length > 0) ? 120 : 80;
   }
+
   $('#footer').css('margin-top', mtop + 'px');
   $('.scrollup').css('margin-top', mtop + 'px');
   resizeFrame();

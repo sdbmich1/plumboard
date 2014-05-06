@@ -64,7 +64,7 @@ describe CommentsController do
 
       after (:each) do
         @comments = stub_model(Comment)
-        Listing.stub!(:find_by_pixi_id).with('1').and_return(@listing)
+        Listing.stub!(:find_pixi).with('1').and_return(@listing)
         @listing.stub_chain(:comments, :paginate, :build).and_return( @comments )
       end
 

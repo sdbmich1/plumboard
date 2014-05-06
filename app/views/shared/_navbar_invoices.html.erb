@@ -1,4 +1,6 @@
 <ul class="nav pull-right">
-  <li id='li_home' class="<%= active == 'sent' ? 'active' : '' %>"><%= link_to "Sent", sent_invoices_path, class: 'submenu', remote: true %></li>
-  <li><%= link_to "Received", received_invoices_path, class: 'submenu', remote: true %></li>
+  <li id='li_home' class="<%= active == 'sent' ? 'active' : '' %>">
+    <%= link_to "Sent", sent_invoices_path, class: 'submenu', remote: remote? %></li>
+  <li class="<%= active == 'received' ? 'active' : '' %>">
+    <%= link_to "Received", received_invoices_path, class: 'submenu', remote: remote? %></li>
 </ul>

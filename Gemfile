@@ -36,7 +36,8 @@ gem 'rinku'
 # used to mark messages as read/unread
 gem 'unread'
 
-gem 'jquery-rails', '~> 2.1'
+# jquery
+gem 'jquery-rails', '~> 3.1.0'
 
 # Gems used only for assets and not required
 # in production environments by default.

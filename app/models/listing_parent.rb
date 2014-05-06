@@ -235,7 +235,8 @@ class ListingParent < ActiveRecord::Base
   def nice_title
     unless title.blank?
       str = price.blank? ? '' : ' - $' + price.to_i.to_s
-      title.index('$') ? title.titleize : title.titleize + str 
+      tt = title.titleize.html_safe rescue title 
+      title.index('$') ? tt : tt + str 
     else
       nil
     end
@@ -243,12 +244,12 @@ class ListingParent < ActiveRecord::Base
 
   # short title
   def short_title
-    nice_title.length < 14 ? nice_title.html_safe : nice_title.html_safe[0..14] + '...' rescue nil
+    nice_title.length < 14 ? nice_title : nice_title[0..14] + '...' rescue nil
   end
 
   # med title
   def med_title
-    nice_title.length < 25 ? nice_title.html_safe : nice_title.html_safe[0..25] + '...' rescue nil
+    nice_title.length < 25 ? nice_title : nice_title[0..25] + '...' rescue nil
   end
 
   # set end date to x days after start to denote when listing is no longer displayed on network
