@@ -69,5 +69,13 @@ describe SavedListing do
       expect(SavedListing.update_status_by_user(nil, @listing.pixi_id, 'wanted')).to be_nil
     end
   end
+  describe "first name" do
+    it { @saved_listing.first_name.should == @user.first_name }
+
+    it "does not find user name" do
+      @saved_listing.user_id = 100
+      @saved_listing.first_name.should be_nil
+    end
+  end
 
 end
