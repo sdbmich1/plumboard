@@ -54,6 +54,16 @@ class Post < ActiveRecord::Base
     recipient.name if recipient
   end
 
+  # get sender email
+  def sender_email
+    user.email if user
+  end
+
+  # get recipient email
+  def recipient_email
+    recipient.email if recipient
+  end
+
   # get pixi title
   def pixi_title
     listing.title if listing
@@ -153,7 +163,7 @@ class Post < ActiveRecord::Base
 
   # check if system msg 
   def system_msg?
-    %w(approve deny system).detect {|x| msg_type == x}
+    %w(approve deny want system).detect {|x| msg_type == x}
   end
 
   # set json string

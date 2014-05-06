@@ -10,6 +10,7 @@ describe PixiPostObserver do
   end
 
   describe 'after_create' do
+    before { create(:pixi_post_zip) }
     it 'should add pixi points' do
       @model = user.pixi_posts.build FactoryGirl.attributes_for(:pixi_post, status: 'active', address: '3456 Elm')
       @pixi_point = FactoryGirl.create :pixi_point, code: 'ppx', value: 100, action_name: 'Add PixiPost Request', category_name: 'Post'
@@ -31,14 +32,21 @@ describe PixiPostObserver do
       update_addr
       @model.user.contacts[0].address.should == @model.address 
     end
+  end
+
+  describe 'after_update' do
+    before { create(:pixi_post_zip) }
 
     it 'should deliver appt notice' do
       @pixan = FactoryGirl.create :pixi_user
-      @model = user.pixi_posts.build FactoryGirl.attributes_for :pixi_post, pixan_id: @pixan.id, appt_date: Date.today+2.days
+      @model = user.pixi_posts.create FactoryGirl.attributes_for :pixi_post
+      @model.pixan_id = @pixan.id 
+      @model.appt_date = @model.appt_time = Time.now+5.days
       @user_mailer = mock(UserMailer)
       UserMailer.stub(:delay).and_return(UserMailer)
       UserMailer.should_receive(:send_pixipost_appt).with(@model)
       @model.save!
     end
   end
+
 end

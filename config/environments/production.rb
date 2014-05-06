@@ -31,7 +31,7 @@ Plumboard::Application.configure do
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for nginx
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = true
+  # config.force_ssl = true
 
   # See everything in the log (default is :info)
   # config.log_level = :debug
@@ -51,11 +51,11 @@ Plumboard::Application.configure do
 
   # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
   # config.assets.precompile += %w( search.js )
-  files = Dir[Rails.root.join('app', 'assets', '{javascripts,stylesheets}', '**', '[^_]*.{js,css}*')]
-  files.map! {|file| file.sub(%r(#{Rails.root}/app/assets/(javascripts|stylesheets)/), '') }
-  files.map! {|file| file.sub(%r(\.(coffee|scss)), '') }
-  config.assets.precompile += files
-  config.assets.precompile += ['.css', '.js', '.png', '.jpg', '.bmp', '.gif', '.ico']
+  # files = Dir[Rails.root.join('app', 'assets', '{javascripts,stylesheets}', '**', '[^_]*.{js,css}*')]
+  # files.map! {|file| file.sub(%r(#{Rails.root}/app/assets/(javascripts|stylesheets)/), '') }
+  # files.map! {|file| file.sub(%r(\.(coffee|scss)), '') }
+  # config.assets.precompile += files
+  # config.assets.precompile += ['.css', '.js', '.png', '.jpg', '.bmp', '.gif', '.ico']
 
   # Disable delivery errors, bad email addresses will be ignored
   config.action_mailer.raise_delivery_errors = true

@@ -776,6 +776,43 @@ describe Listing do
     it { listing.updated_dt.should_not be_nil }
   end
 
+  describe "sync saved pixis" do
+    let(:user) { FactoryGirl.create :pixi_user }
+    let(:listing) { FactoryGirl.create :listing, seller_id: user.id }
+
+    it 'marks saved pixis as sold' do
+      expect {
+        create(:saved_listing, user_id: user.id, pixi_id: listing.pixi_id); sleep 1
+        listing.status = 'sold'
+        listing.save; sleep 2
+      }.to change{ SavedListing.where(:status => 'sold').count }.by(1)
+    end
+
+    it 'marks saved pixis as closed' do
+      expect {
+        create(:saved_listing, user_id: user.id, pixi_id: listing.pixi_id); sleep 1
+        listing.status = 'closed'
+        listing.save; sleep 2
+      }.to change{ SavedListing.where(:status => 'closed').count }.by(1)
+    end
+
+    it 'marks saved pixis as inactive' do
+      expect {
+        create(:saved_listing, user_id: user.id, pixi_id: listing.pixi_id); sleep 1
+        listing.status = 'inactive'
+        listing.save; sleep 2
+      }.to change{ SavedListing.where(:status => 'inactive').count }.by(1)
+    end
+
+    it 'marks saved pixis as removed' do
+      expect {
+        create(:saved_listing, user_id: user.id, pixi_id: listing.pixi_id); sleep 1
+        listing.status = 'removed'
+        listing.save; sleep 2
+      }.to change{ SavedListing.where(:status => 'removed').count }.by(1)
+    end
+  end
+
   describe "date validations" do
     before do
       @cat = FactoryGirl.create(:category, name: 'Event', pixi_type: 'premium') 

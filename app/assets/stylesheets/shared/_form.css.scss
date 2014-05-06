@@ -172,7 +172,7 @@ a.img-link {
   }
 }
 
-a.pixi-cat-link {
+a.pixi-cat-link, a.item-link {
   &:hover {
     display: block;
     background: none;
@@ -259,4 +259,9 @@ a.clear-link {
 .no-float {
   margin:0 auto;
   float:none;
+}
+
+tr.spaceUnder > td
+{
+  padding-bottom: 1em;
 }

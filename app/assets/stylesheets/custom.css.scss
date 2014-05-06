@@ -785,3 +785,7 @@ form .clearfix:before, form .clearfix:after {
     font-size: 14px;
     font-weight: bold;
   }
+
+.field_with_errors {
+  @extend .control-group.error;
+}

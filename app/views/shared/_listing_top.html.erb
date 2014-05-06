@@ -1,10 +1,10 @@
 <div id='slr-pic' class='span1 no-left'>
-  <%= render partial: 'shared/show_picture', locals: {psize: 'small', model: listing.user} %>
+  <%= render partial: 'shared/show_photo', locals: {model: listing.user, file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
 </div>
-<div id='slr-det' class='span5'>
+<div id='slr-det' class='no-left span5'>
   <div class='valign'>
     Posted By: <%= listing.seller_name %> 
-    <div class="sm-top rateit smpixis" data-rateit-value="<%= get_rating listing.user %>" data-rateit-ispreset="true" data-rateit-readonly="true"></div>
+    <div class="rateit smpixis" data-rateit-value="<%= get_rating listing.user %>" data-rateit-ispreset="true" data-rateit-readonly="true"></div>
     <%= "(#{nth(listing.seller_rating_count)})" %>
   </div>
   <div class='clear-all'></div>

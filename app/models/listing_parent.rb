@@ -102,17 +102,12 @@ class ListingParent < ActiveRecord::Base
 
   # select active listings
   def self.active
-    include_list.select('listings.id, listings.pixi_id, listings.title, listings.category_id, categories.name AS category_name, 
-      listings.updated_at, listings.status, listings.description, listings.created_at, listings.seller_id, listings.site_id, 
-      listings.price, listings.lat, listings.lng')
-    .joins(:category)
-    .where(where_stmt)
-    .reorder('listings.updated_at DESC')
+    include_list.where(where_stmt).reorder('listings.updated_at DESC')
   end
 
   # eager load assns
   def self.include_list
-    includes(:pictures, :site)
+    includes(:pictures, :site, :category)
   end
 
   # find listings by status
@@ -240,7 +235,8 @@ class ListingParent < ActiveRecord::Base
   def nice_title
     unless title.blank?
       str = price.blank? ? '' : ' - $' + price.to_i.to_s
-      title.index('$') ? title.titleize : title.titleize + str 
+      tt = title.titleize.html_safe rescue title 
+      title.index('$') ? tt : tt + str 
     else
       nil
     end
@@ -248,12 +244,12 @@ class ListingParent < ActiveRecord::Base
 
   # short title
   def short_title
-    nice_title.length < 14 ? nice_title.html_safe : nice_title.html_safe[0..14] + '...' rescue nil
+    nice_title.length < 14 ? nice_title : nice_title[0..14] + '...' rescue nil
   end
 
   # med title
   def med_title
-    nice_title.length < 25 ? nice_title.html_safe : nice_title.html_safe[0..25] + '...' rescue nil
+    nice_title.length < 25 ? nice_title : nice_title[0..25] + '...' rescue nil
   end
 
   # set end date to x days after start to denote when listing is no longer displayed on network

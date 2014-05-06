@@ -95,7 +95,7 @@ $(document).on("ajax:complete", '#mark-posts, #post-frm, #comment-doc, .pixi-cat
 $(document).ajaxError( function(e, xhr, options){
   if(xhr.status == 401)
       // window.location.replace('/users/sign_in');
-      console.log('in 401 status error handler');
+      //console.log('in 401 status error handler');
       window.location.reload();
 });	
 
@@ -286,8 +286,6 @@ function reload_board(element) {
 // initialize infinite scroll
 function initScroll(cntr, nav, nxt, item) {
   var $container = $(cntr);
-
-  console.log('initScroll');
   $container.infinitescroll({
       navSelector  : nav, 		// selector for the paged navigation (it will be hidden)
       nextSelector : nxt,  		// selector for the NEXT link (ie. page 2)  
@@ -392,7 +390,7 @@ $(document).on("change", "#inv_qty, #inv_price, #inv_tax", function(){
 $(document).on("change", "select[id*=pixi_id]", function() {
   var pid = $(this).val();
 
-  if (pid.length > 0) {
+  if (pid.length > 0 && $('#invoice_buyer_id').length > 0) {
     var url = '/listings/pixi_price?pixi_id=' + pid;
 
     // reset buyer id
@@ -720,7 +718,7 @@ function keySelectEnter(e, $this) {
   if (e.keyCode == 13 && !e.shiftKey && !keyPress) {
     keyPress = true;
     e.preventDefault();
-    console.log('in keySelectEnter');
+    //console.log('in keySelectEnter');
 
     var keyEvent = $.Event("keydown");          
     keyEvent.which = 40;

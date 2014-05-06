@@ -1,4 +1,3 @@
-# This is a sample Capistrano config file for rubber
 # Execute "bundle install" after deploy, but only when really needed
 require "bundler/capistrano"
 require 'thinking_sphinx/capistrano'
@@ -8,12 +7,13 @@ require 'delayed/recipes'
 # require 'capistrano/ext/multistage'
 # require 'capistrano/maintenance'
 
+# Automatically precompile assets
+set :assets_role, [:app]
+load "deploy/assets"
+
 # set stages
 set :stages, %w(production staging)
 set :default_stage, "production"
-
-# Automatically precompile assets
-load "deploy/assets"
 
 set :rails_env, Rubber.env
 set :rails_root, '/var/www/html/pixiboard/staging/plumboard'
@@ -27,7 +27,6 @@ on :load do
   set :runner,      rubber_env.app_user
   set :deploy_to,   "/mnt/#{application}-#{Rubber.env}"
   set :copy_exclude, [".git/*", ".bundle/*", "log/*", ".rvmrc", ".rbenv-version"]
-  set :assets_role, [:app]
 end
 
 # Use a simple directory tree copy here to make demo easier.
@@ -108,7 +107,7 @@ namespace :deploy do
   desc "Symlink shared resources on each release"
   task :symlink_shared, :roles => :app do
     run "ln -nfs #{shared_path}/config/rubber/common/database.yml #{release_path}/config/rubber/common/database.yml"
-    run "ln -nfs #{shared_path}/assets/manifest.yml #{release_path}/assets_manifest.yml"    
+    # run "ln -nfs #{shared_path}/public/assets/manifest.yml #{release_path}/assets_manifest.yml"    
     run "chmod +x #{release_path}/script/rubber"
   end 
 end
@@ -168,10 +167,15 @@ namespace :files do
     upload("#{rails_root}/config/sendmail.yml", "#{release_path}/config/sendmail.yml")
     upload("#{rails_root}/config/thinking_sphinx.yml", "#{release_path}/config/thinking_sphinx.yml")
     upload("#{rails_root}/config/database.yml", "#{release_path}/config/database.yml")
+  end
+
+  task :upload_certs do
     upload("#{rails_root}/config/certs/pixiboard.crt", "#{release_path}/config/pixiboard.crt")
     upload("#{rails_root}/config/certs/pixiboard.key", "#{release_path}/config/pixiboard.key")
     upload("#{rails_root}/config/certs/gd_bundle.crt", "#{release_path}/config/gd_bundle.crt")
+    run "touch #{current_path}/public/httpchk.txt"
   end
+
 end
 
 namespace :deploy do
@@ -209,8 +213,8 @@ after 'deploy:update_code', 'deploy:enable_rubber'
 after 'bundle:install', 'deploy:enable_rubber'
 before 'rubber:config', 'deploy:enable_rubber', 'deploy:enable_rubber_current'
 after 'deploy:update_code', 'deploy:symlink_shared', 'sphinx:stop'
-after "deploy", "cleanup", "memcached:flush"
 after "deploy:migrations", "cleanup", "sphinx:sphinx_symlink", "sphinx:configure", "sphinx:rebuild"
+#after "deploy", "cleanup", "memcached:flush"
 #after "deploy:update", "memcached:flush"
 
 task :cleanup, :except => { :no_release => true } do
@@ -231,7 +235,7 @@ if Rubber::Util.has_asset_pipeline?
 
   callbacks[:after].delete_if {|c| c.source == "deploy:assets:precompile"}
   callbacks[:before].delete_if {|c| c.source == "deploy:assets:symlink"}
-  before "deploy:assets:precompile", "deploy:assets:symlink", "files:upload_secret"
+  before "deploy:assets:precompile", "deploy:assets:symlink", "files:upload_secret", "files:upload_certs"
   after "rubber:config", "deploy:assets:precompile"
 end
 

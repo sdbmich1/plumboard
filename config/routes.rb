@@ -43,6 +43,9 @@ Plumboard::Application.routes.draw do
     collection do
       get 'seller', :autocomplete_site_name, :autocomplete_user_first_name
     end
+    member do
+      get 'reschedule'
+    end
   end
 
   resources :pixi_post_zips, except: [:new, :show, :create, :edit, :destroy, :update, :index] do
