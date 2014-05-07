@@ -72,5 +72,10 @@ module Plumboard
       g.view_specs false
       g.helper_specs false
     end
+
+    # setup time zone
+    Timezone::Configure.begin do |c|
+      c.username = 'sdbmich1'
+    end
   end
 end

@@ -30,7 +30,18 @@ module ResetDate
     val
   end
 
-  # format display date
+  # format display date by location
+  def self.display_date_by_loc tm, ll
+    timezone = Timezone::Zone.new :latlon => ll rescue nil
+    unless timezone.blank?
+      zone = timezone.zone
+      tm.utc.in_time_zone(zone).strftime('%m/%d/%Y %l:%M %p')
+    else
+      tm.utc.strftime('%m/%d/%Y %l:%M %p')
+    end
+  end
+
+  # format display date by zip
   def self.format_date tm, zip
     val = zip ? zip.to_gmt_offset.to_i : 0 rescue 0
     val == 0 ? tm : tm.advance(hours: val)

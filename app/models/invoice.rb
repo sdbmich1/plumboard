@@ -69,12 +69,16 @@ class Invoice < ActiveRecord::Base
 
   # get invoices for given user
   def self.get_invoices usr
-    includes(:buyer, :listing => :pictures).where(:seller_id=>usr) rescue nil
+    includes(:buyer, :listing => :pictures).joins(:listing)
+    .where(:listings => {:status => ['active', 'sold']})
+    .where(:seller_id => usr.id)
   end
 
   # get invoices for given buyer
   def self.get_buyer_invoices usr
-    includes(:seller, :listing => :pictures).where(:buyer_id=>usr) rescue nil
+    includes(:seller, :listing => :pictures)
+    .where(:listings => {:status => ['active', 'sold']})
+    .where(:buyer_id => usr.id)
   end
 
   # check if invoice owner
