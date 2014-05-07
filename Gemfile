@@ -108,6 +108,9 @@ gem 'validates_timeliness', '~> 3.0'
 # time select
 gem "combined_time_select", "~> 1.0.1"
 
+# get timezone
+gem 'timezone', '~> 0.3.2'
+
 # add country selection
 gem 'country_select'
 
