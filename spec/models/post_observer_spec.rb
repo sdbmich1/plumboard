@@ -22,13 +22,21 @@ describe PostObserver do
       post.save!
     end
 
-    it 'does not deliver 2nd notice' do
+    it 'deny msg does not deliver 2nd notice' do
       post.msg_type = 'deny'
       @user_mailer = mock(UserMailer)
       UserMailer.stub(:delay).and_return(UserMailer)
       UserMailer.should_not_receive(:send_notice).with(post)
       post.save!
       post.reload.content.should_not match(/explanation/)
+    end
+
+    it 'wanted msg does not deliver 2nd notice' do
+      post.msg_type = 'want'
+      @user_mailer = mock(UserMailer)
+      UserMailer.stub(:delay).and_return(UserMailer)
+      UserMailer.should_not_receive(:send_notice).with(post)
+      post.save!
     end
 
     it 'should add pixi points' do

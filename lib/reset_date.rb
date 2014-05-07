@@ -32,10 +32,8 @@ module ResetDate
 
   # format display date
   def self.format_date tm, zip
-    if Rails.env.development? || Rails.env.test? 
-      tm.utc.getlocal.strftime('%m/%d/%Y %l:%M %p') rescue Time.now
-    else
-      tm.advance(hours: zip.to_gmt_offset.to_i).strftime('%m/%d/%Y %l:%M %p') rescue Time.now
-    end
+    val = zip ? zip.to_gmt_offset.to_i : 0 rescue 0
+    val == 0 ? tm : tm.advance(hours: val)
+    tm.strftime('%m/%d/%Y %l:%M %p') rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
   end
 end

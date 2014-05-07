@@ -1,6 +1,7 @@
 <% provide(:title, 'How It Works') %>
 <%= render partial: 'shared/pg_header', locals: { linkFlg: true } %>
 <%= content_for :content do %>
+  <% cache fragment: 'howitworks' do %>
   <%= render partial: 'shared/pg_sub_header', locals: { stitle: 'How It Works' } %>
   <div class='mtop row'>
     <div class='offset1 span10 pg-text'>
@@ -10,19 +11,20 @@
       <div class='offset1'><%= link_to 'Using PixiPay', '#pxpay', class: 'terms-link' %></div><br>
       <div class='offset1'><%= link_to 'Using PixiPost', '#pxpost', class: 'terms-link' %></div><br>
       <div class='offset1'><%= link_to 'Pixi Videos', '#pxvideo', class: 'terms-link' %></div><br>
-      Pixiboard is a virtual garage sale anytime, anywhere. Images help buyers and sellers connect instantly. Sellers can move items quickly for cash
-      they need. Buyers can rapidly find the things they want at the price they can afford. Everyone wins. Connect. Share. Magic.
+      Pixiboard&#0153; is a virtual garage sale anytime, anywhere. Images help buyers and sellers connect instantly. Sellers can move items quickly for cash
+      they need. Buyers can rapidly find the things they want at the price they can afford. Everyone wins. Connect. Share. Magic.&#0153;
       <div class='mtop center-wrapper blue-line'><hr class='width180'></div>
     </div>
   </div>
   <%= render 'shared/about_pxboard' %>
   <%= render 'shared/about_pxpay' %>
   <%= render 'shared/about_pxpost' %>
+  <% end %>
   <div class='mtop row'>
     <div class='offset1 span10 pg-text'>
       <a name='pxvideo' class='title-str'>Pixi Videos</a><br><br>
       <div class='height480'>
-        <div class='mtop span2 page-text'>Here's what it's like to use Pixiboard</div>
+        <div class='mtop span2 page-text'>Here's what it's like to use Pixiboard&#0153;</div>
         <div class='mtop span7 mbot' id='video-container'>
           <%= image_tag 'http://placehold.it/640x360', class: 'span7 vimeo-thumb', 'data-vimeo-id'=>'82242899' %>
         </div>

@@ -1,3 +1,4 @@
+<% cache post do %>
 <tr>
   <td><div class='price'><%= link_to post.id, post %></div></td>
   <td class='center-wrapper'>
@@ -16,3 +17,4 @@
   <td><%= post.description %></td>
   <td class='center-wrapper'><%= link_to 'Details', post, class: 'btn btn-small' %></td>
 </tr>
+<% end %>

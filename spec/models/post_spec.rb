@@ -264,6 +264,15 @@ describe Post do
     end
   end
 
+  describe "want_msg?" do 
+    it { expect(@post.want_msg?).to eq(false) } 
+
+    it "returns true" do 
+      @post.msg_type = 'want' 
+      expect(@post.want_msg?).to eq(true) 
+    end
+  end
+
   describe "system_msg?" do 
     it { expect(@post.system_msg?).to be_nil } 
 

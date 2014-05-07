@@ -394,4 +394,25 @@ describe Invoice do
     end
   end
 
+  describe 'format_date' do
+    let(:transaction) { FactoryGirl.create :transaction }
+
+    it "does not show local updated date" do
+      @invoice.save!
+      @invoice.updated_at = nil
+      expect(@invoice.format_date(@invoice.updated_at)).to eq Time.now.strftime('%m/%d/%Y %l:%M %p')
+    end
+
+    it "show current updated date" do
+      @invoice.save!
+      expect(@invoice.format_date(@invoice.updated_at)).to eq @invoice.updated_at.strftime('%m/%d/%Y %l:%M %p')
+    end
+
+    it "shows local updated date" do
+      @invoice.transaction_id = transaction.id
+      @invoice.save!
+      expect(@invoice.format_date(@invoice.updated_at)).not_to eq Time.now.strftime('%m/%d/%Y %l:%M %p')
+    end
+  end
+
 end
