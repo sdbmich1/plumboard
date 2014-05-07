@@ -83,7 +83,7 @@ Plumboard::Application.configure do
 			       path: ":attachment/:id_partition/:style/:filename"}
 
   # facebook ssl setting
-  FACEBOOK_SSL_OPTIONS = {:ca_path => "/etc/ssl/certs"}
+  FACEBOOK_SSL_OPTIONS = {:ca_file => '/usr/lib/ssl/certs/ca-certificates.crt'}
 
   config.middleware.use ExceptionNotifier,
       :email_prefix => "Pixiboard: ",

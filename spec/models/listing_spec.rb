@@ -788,6 +788,26 @@ describe Listing do
     end
   end
 
+  describe 'display_date' do
+    let(:user) { FactoryGirl.create :pixi_user }
+    let(:listing) { FactoryGirl.create :listing, seller_id: user.id }
+
+    it "does not show local updated date" do
+      listing.updated_at = nil
+      expect(listing.display_date(listing.updated_at)).to eq Time.now.strftime('%m/%d/%Y %l:%M %p')
+    end
+
+    it "show current updated date" do
+      expect(listing.display_date(listing.updated_at)).to eq listing.updated_at.strftime('%m/%d/%Y %l:%M %p')
+    end
+
+    it "shows local updated date" do
+      listing.lat, listing.lng = 35.1498, -90.0492
+      expect(listing.display_date(listing.updated_at)).not_to eq Time.now.strftime('%m/%d/%Y %l:%M %p')
+      expect(listing.display_date(listing.updated_at)).not_to eq listing.updated_at.strftime('%m/%d/%Y %l:%M %p')
+    end
+  end
+
   describe "sync saved pixis" do
     let(:user) { FactoryGirl.create :pixi_user }
     let(:listing) { FactoryGirl.create :listing, seller_id: user.id }

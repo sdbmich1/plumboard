@@ -371,6 +371,11 @@ class ListingParent < ActiveRecord::Base
     ResetDate::format_date dt, zip rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
   end
 
+  # format date based on location
+  def display_date dt
+    ResetDate::display_date_by_loc dt, [lat, lng] rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
+  end
+
   # set json string
   def as_json(options={})
     super(methods: [:seller_name, :seller_photo, :summary, :short_title, :nice_title,
