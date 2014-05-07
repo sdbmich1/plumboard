@@ -1,3 +1,4 @@
+<% cache invoice do %>
 <tr>
   <td class='span1 center-wrapper'>
     <%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: invoice.listing} %>
@@ -9,3 +10,4 @@
   <td class='span1 center-wrapper'><%= invoice.nice_status %></td>
   <td class='span1 center-wrapper'><%= link_to 'Details', invoice, class: 'btn btn-small' %></td>
 </tr>
+<% end %>

@@ -234,7 +234,7 @@ class ListingParent < ActiveRecord::Base
   # titleize title
   def nice_title
     unless title.blank?
-      str = price.blank? ? '' : ' - $' + price.to_i.to_s
+      str = price.blank? || price == 0 ? '' : ' - $' + price.to_i.to_s
       tt = title.titleize.html_safe rescue title 
       title.index('$') ? tt : tt + str 
     else
@@ -365,9 +365,10 @@ class ListingParent < ActiveRecord::Base
     start_date.strftime('%m/%d/%Y') rescue nil
   end
 
-  # format updated date
-  def updated_dt
-    ResetDate::format_date updated_at, [lat, lng].to_zip rescue Date.today
+  # format date
+  def format_date dt
+    zip = [lat, lng].to_zip rescue nil 
+    ResetDate::format_date dt, zip rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
   end
 
   # set json string

@@ -10,6 +10,9 @@ class Ability
       can :manage, :all
       can :manage, PixiPost
       can :manage, Category
+      can :manage, Transaction
+      can :manage, Invoice
+      can :manage, User
       can :access, '/pending_listings'
       can :manage_items, User
       can :manage_orders, User
