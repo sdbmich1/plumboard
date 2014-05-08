@@ -801,6 +801,12 @@ describe Listing do
       expect(listing.display_date(listing.updated_at)).to eq listing.updated_at.strftime('%m/%d/%Y %l:%M %p')
     end
 
+    it "shows current updated date w/ pacific time zone" do
+      listing.lat, listing.lng = 37.7749, -122.419
+      listing.save!
+      expect(listing.display_date(listing.updated_at)).to eq listing.updated_at.strftime('%m/%d/%Y %l:%M %p')
+    end
+
     it "shows local updated date" do
       listing.lat, listing.lng = 35.1498, -90.0492
       expect(listing.display_date(listing.updated_at)).not_to eq Time.now.strftime('%m/%d/%Y %l:%M %p')

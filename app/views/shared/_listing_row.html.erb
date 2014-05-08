@@ -1,4 +1,4 @@
-<% cache listing do %>
+<% cache "#{controller_name}-#{listing.id}", listing do %>
 <tr>
   <td class='span1 center-wrapper'>
     <%= render partial: 'shared/show_picture', locals: {model: listing, psize: 'tiny'} %>
