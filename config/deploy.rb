@@ -117,6 +117,11 @@ end
     task :create_sphinx_dir, :roles => :app do
       run "mkdir -p #{shared_path}/db/sphinx && mkdir -p #{shared_path}/tmp"
     end
+
+    desc 'Symlink Sphinx indexes from the shared folder to the latest release.'
+    task :symlink_indexes, :roles => :app do
+      run "if [ -d #{release_path} ]; then ln -nfs #{shared_path}/db/sphinx #{release_path}/db/sphinx; else ln -nfs #{shared_path}/db/sphinx #{current_path}/db/sphinx; fi;"
+    end
    
     desc "Stop the sphinx server"
     task :stop, :roles => :app do
@@ -213,7 +218,7 @@ after 'deploy:update_code', 'deploy:enable_rubber'
 after 'bundle:install', 'deploy:enable_rubber'
 before 'rubber:config', 'deploy:enable_rubber', 'deploy:enable_rubber_current'
 after 'deploy:update_code', 'deploy:symlink_shared', 'sphinx:stop'
-after "deploy:migrations", "cleanup", "sphinx:sphinx_symlink", "sphinx:configure", "sphinx:rebuild"
+after "deploy:migrations", "cleanup"
 #after "deploy", "cleanup", "memcached:flush"
 #after "deploy:update", "memcached:flush"
 
@@ -242,4 +247,4 @@ end
 # Delayed Job  
 after "deploy:stop",    "delayed_job:stop"  
 after "deploy:start",   "delayed_job:start"  
-after "deploy:restart", "delayed_job:restart", "sphinx:start", "deploy:cleanup"
+after "deploy:restart", "delayed_job:restart", "sphinx:symlink_indexes", "sphinx:configure", "sphinx:rebuild", "deploy:cleanup"
