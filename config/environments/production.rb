@@ -79,6 +79,7 @@ Plumboard::Application.configure do
   # set paperclip aws settings
   PAPERCLIP_STORAGE_OPTIONS = {:storage => :s3, 
                                :s3_credentials => YAML.load_file("#{Rails.root}/config/aws.yml")[Rails.env],
+                               :s3_protocol => :https,
 	  		       :url => ":s3_domain_url",
 			       path: ":attachment/:id_partition/:style/:filename"}
 

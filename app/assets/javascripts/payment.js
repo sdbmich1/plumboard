@@ -38,7 +38,7 @@ function BalancedCard() {
   }
   else {
     // initialize object
-    balanced.init(marketplaceUri);
+    balanced.init(marketplaceUri, {});
 
     // create token	
     balanced.card.create({
