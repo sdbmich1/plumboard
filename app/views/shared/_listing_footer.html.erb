@@ -3,9 +3,9 @@
       ID: <%= listing.pixi_id %>
     </div>
     <div class="span4 center-wrapper">
-      Posted: <%= listing.start_date.strftime('%m/%d/%Y %l:%M %p') %>
+      Posted: <%= listing.display_date listing.start_date %></span>
     </div>
     <div class="span4 mbot">
-      <span class='pull-right'>Updated: <%= listing.updated_at.strftime('%m/%d/%Y %l:%M %p') %></span>
+      <span class='pull-right'>Updated: <%= listing.display_date listing.updated_at %></span>
     </div>
   </div>
