@@ -24,6 +24,12 @@ module LocationManager
     [@area.first.latitude, @area.first.longitude] rescue nil
   end
 
+  # get area long, lat by location
+  def self.get_lat_lng_by_loc loc
+    @area = Geocoder.search(loc)
+    [@area.first.latitude, @area.first.longitude] rescue nil
+  end
+
   # get location name by ip
   def self.get_loc_name_by_ip ip
     @loc_name = Contact.near(get_lat_lng(ip)).first.city rescue nil

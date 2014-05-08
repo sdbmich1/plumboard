@@ -203,8 +203,17 @@ namespace :memcached do
   desc "Flushes memcached local instance"
   task :flush, :roles => [:app] do
     # run("cd #{current_path} && rake memcached:flush")
+    run "cd #{latest_release} && RAILS_ENV=#{rails_env} rake memcached:flush"
     Rails.cache.clear
   end
+end
+
+namespace :whenever do    
+  desc "Update the crontab file for the Whenever Gem."
+  task :update_crontab, :roles => [:app] do
+    puts "\n\n=== Updating the Crontab! ===\n\n"
+    run "cd #{release_path} && #{whenever_command} --update-crontab" 
+  end    
 end
 
 # load in the deploy scripts installed by vulcanize for each rubber module
@@ -247,4 +256,4 @@ end
 # Delayed Job  
 after "deploy:stop",    "delayed_job:stop"  
 after "deploy:start",   "delayed_job:start"  
-after "deploy:restart", "delayed_job:restart", "sphinx:symlink_indexes", "sphinx:configure", "sphinx:rebuild", "deploy:cleanup"
+after "deploy:restart", "delayed_job:restart", "sphinx:symlink_indexes", "sphinx:configure", "sphinx:rebuild", "whenever:update_crontab", "deploy:cleanup"

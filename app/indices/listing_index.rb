@@ -1,4 +1,4 @@
-ThinkingSphinx::Index.define :listing, :with => :active_record do
+ThinkingSphinx::Index.define :listing, :with => :active_record, :delta => true do
   indexes :title, :sortable => true
   indexes :description
   # indexes seller(:last_name), :as => :seller

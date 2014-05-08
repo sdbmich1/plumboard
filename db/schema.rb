@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140408221138) do
+ActiveRecord::Schema.define(:version => 20140508193610) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -197,6 +197,7 @@ ActiveRecord::Schema.define(:version => 20140408221138) do
     t.float    "tax_total"
     t.integer  "transaction_id"
     t.integer  "bank_account_id"
+    t.boolean  "delta"
   end
 
   add_index "invoices", ["bank_account_id"], :name => "index_invoices_on_bank_account_id"
@@ -255,6 +256,7 @@ ActiveRecord::Schema.define(:version => 20140408221138) do
     t.integer  "pixan_id"
     t.string   "job_type"
     t.string   "explanation"
+    t.boolean  "delta"
   end
 
   add_index "listings", ["category_id"], :name => "index_listings_on_category_id"

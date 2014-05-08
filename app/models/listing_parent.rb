@@ -1,7 +1,7 @@
 require 'rails_rinku'
 class ListingParent < ActiveRecord::Base
   resourcify
-  include Area, ResetDate
+  include Area, ResetDate, LocationManager
   self.abstract_class = true
   self.per_page = 20
 
@@ -373,7 +373,21 @@ class ListingParent < ActiveRecord::Base
 
   # format date based on location
   def display_date dt
-    ResetDate::display_date_by_loc dt, [lat, lng] rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
+    if lat && lat > 0
+      ll = [lat, lng]
+    else
+      # get area
+      area = self.site.contacts.first rescue nil
+
+      # set location
+      loc = [area.city, area.state].join(', ') if area
+
+      # get long lat
+      ll = LocationManager::get_lat_lng_by_loc(loc) if loc
+    end
+
+    # get display date/time
+    ResetDate::display_date_by_loc dt, ll rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
   end
 
   # set json string
