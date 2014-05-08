@@ -115,7 +115,7 @@ end
   namespace :sphinx do
     desc 'create sphinx directory'
     task :create_sphinx_dir, :roles => :app do
-      run "mkdir -p #{shared_path}/sphinx"
+      run "mkdir -p #{shared_path}/db/sphinx && mkdir -p #{shared_path}/tmp"
     end
    
     desc "Stop the sphinx server"
