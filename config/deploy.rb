@@ -126,28 +126,28 @@ end
     desc "Stop the sphinx server"
     task :stop, :roles => :app do
       unless :previous_release
-        run "cd #{previous_release} && RAILS_ENV=#{rails_env} SPHINX_VERSION=2.0.8 rake thinking_sphinx:stop"
+        run "cd #{previous_release} && RAILS_ENV=#{rails_env} SPHINX_VERSION=2.0.8 rake ts:stop"
       end
     end
 
     desc "Reindex the sphinx server"
     task :index, :roles => :app do
-      run "cd #{latest_release} && RAILS_ENV=#{rails_env} SPHINX_VERSION=2.0.8 rake thinking_sphinx:index"
+      run "cd #{latest_release} && RAILS_ENV=#{rails_env} SPHINX_VERSION=2.0.8 rake ts:index"
     end
 
     desc "Configure the sphinx server"
     task :configure, :roles => :app do
-      run "cd #{latest_release} && RAILS_ENV=#{rails_env} SPHINX_VERSION=2.0.8 rake thinking_sphinx:configure"
+      run "cd #{latest_release} && RAILS_ENV=#{rails_env} SPHINX_VERSION=2.0.8 rake ts:configure"
     end
 
     desc "Start the sphinx server"
     task :start, :roles => :app do
-      run "cd #{latest_release} && RAILS_ENV=#{rails_env} SPHINX_VERSION=2.0.8 rake thinking_sphinx:start"
+      run "cd #{latest_release} && RAILS_ENV=#{rails_env} SPHINX_VERSION=2.0.8 rake ts:start"
     end
 
     desc "Rebuild the sphinx server"
     task :rebuild, :roles => :app do
-      run "cd #{latest_release} && RAILS_ENV=#{rails_env} SPHINX_VERSION=2.0.8 rake thinking_sphinx:rebuild"
+      run "cd #{latest_release} && RAILS_ENV=#{rails_env} SPHINX_VERSION=2.0.8 rake ts:rebuild"
     end    
   end
 
