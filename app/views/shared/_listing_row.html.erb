@@ -1,4 +1,4 @@
-<% cache listing do %>
+<% cache "#{controller_name}-#{listing.id}", listing do %>
 <tr>
   <td class='span1 center-wrapper'>
     <%= render partial: 'shared/show_picture', locals: {model: listing, psize: 'tiny'} %>
@@ -6,7 +6,7 @@
   <td class='span3'><%= link_to listing.title, set_pixi_path(listing), class: 'pending_title' %></td>
   <td class='span3'><%= listing.brief_descr %></td>
   <td class='span2'><%= listing.site_name %></td>
-  <td class='span2'><%= listing.format_date listing.updated_at %></td>
+  <td class='span2'><%= listing.display_date listing.updated_at %></td>
   <td class='span1 center-wrapper'><%= link_to 'Details', set_pixi_path(listing), class: 'btn btn-small' %></td>
 </tr>
 <% end %>
