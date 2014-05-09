@@ -4,6 +4,6 @@
 set :output, {:error => 'error.log', :standard => 'cron.log'}
 
 # rebuild sphinx every 5 minutes
-every "*/5 * * * *", :roles => [:app] do
-  rake "ts:rebuild"
+every "0,30 * * * *", :roles => [:app] do
+  rake "ts:index"
 end
