@@ -307,7 +307,7 @@ task :update_categories => :environment do
     end
 
     #add photo
-    if updated_category.pictures.size > 0
+    while updated_category.pictures.size > 0
       updated_category.pictures.map { |pic| updated_category.pictures.delete(pic) }
     end
 
@@ -323,7 +323,34 @@ task :update_categories => :environment do
   end
 end
 
+task :update_pictures => :environment do
 
+  CSV.foreach(Rails.root.join('db', 'category_data_042214.csv'), :headers => true) do |row|
+
+    attrs = {:name             => row[0].titleize,
+             :category_type    => row[1],
+             :status           => 'active'}
+
+
+    #update category
+    updated_category = Category.find(:first, :conditions => ["name = ?", attrs[:name]])
+
+    #add photo
+    while updated_category.pictures.size > 0
+      updated_category.pictures.map { |pic| updated_category.pictures.delete(pic) }
+    end
+
+    picture = updated_category.pictures.build
+    picture.photo = File.new("#{Rails.root}" + row[2]) if picture
+
+    #save category
+    if updated_category.save
+      puts "Saved category #{attrs.inspect}"
+    else
+      puts updated_category.errors
+    end
+  end
+end
 
 task :import_point_system => :environment do
 
