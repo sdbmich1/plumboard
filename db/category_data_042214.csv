@@ -11,9 +11,10 @@ beauty,Services ,/db/images/beauty.jpg,Beauty
 bikes,sales,/db/images/bike2.jpg,Cycle
 boats,sales,/db/images/rowboat.jpg
 books,sales,/db/images/text-books.jpg,Books
-classes/tutoring/lessons,Services ,/db/images/small-chalkboard.jpg,Lessons
+classes/tutoring/ lessons,Services ,/db/images/small-chalkboard.jpg,Lessons
 collectibles,sales,/db/images/collectibles.jpg
 deals,sales,/db/images/coupons.jpg,Deals
+electronics: audio,sales,/db/images/turntable.jpg
 electronics: cell phones,sales,/db/images/cell.jpg,Cell Phones
 electronics: computer,sales,/db/images/apple-mac.jpg,Computer
 electronics: stuff,sales,/db/images/tv.jpg,Electronics
@@ -39,6 +40,6 @@ service: house cleaning,Services ,/db/images/housework.jpg,Household
 service: legal,Services ,/db/images/law.jpg,Legal
 stuff,sales,/db/images/stuff.jpg
 tickets,sales,/db/images/tickets.jpg,Tickets
-toys & games,sales,/db/images/rubics-cube.jpg
+toys & games,sales,/db/images/rubics-cube2.jpg
 travel,Services ,/db/images/travelsuitcase.jpg,Travel
 video games,sales,/db/images/videogames.jpg,Video Games
