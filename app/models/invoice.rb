@@ -1,6 +1,6 @@
 class Invoice < ActiveRecord::Base
   resourcify
-  include CalcTotal
+  include CalcTotal, ResetDate
   before_create :set_flds
 
   attr_accessor :buyer_name, :tmp_buyer_id
@@ -69,12 +69,16 @@ class Invoice < ActiveRecord::Base
 
   # get invoices for given user
   def self.get_invoices usr
-    inc_list.where(:seller_id=>usr) rescue nil
+    includes(:buyer, :listing => :pictures).joins(:listing)
+    .where(:listings => {:status => ['active', 'sold']})
+    .where(:seller_id => usr.id)
   end
 
   # get invoices for given buyer
   def self.get_buyer_invoices usr
-    inc_list.where(:buyer_id=>usr) rescue nil
+    includes(:seller, :listing => :pictures)
+    .where(:listings => {:status => ['active', 'sold']})
+    .where(:buyer_id => usr.id)
   end
 
   # check if invoice owner
@@ -196,6 +200,12 @@ class Invoice < ActiveRecord::Base
   # format inv date
   def inv_dt
     inv_date.strftime('%m/%d/%Y') rescue nil
+  end
+
+  # format date
+  def format_date dt
+    zip = transaction.zip rescue nil 
+    ResetDate::format_date dt, zip rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
   end
 
   # set json string

@@ -65,7 +65,7 @@ describe TransactionsController do
 
     before :each do
       @listing = stub_model(TempListing)
-      TempListing.stub!(:find_pixi).and_return(@listing)
+      TempListing.stub!(:find_by_pixi_id).and_return(@listing)
       @invoice = stub_model(Invoice)
       controller.stub(:order) {['order', 'order']}
       controller.stub!(:current_user).and_return(@user)

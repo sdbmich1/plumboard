@@ -1,4 +1,3 @@
-# This is a sample Capistrano config file for rubber
 # Execute "bundle install" after deploy, but only when really needed
 require "bundler/capistrano"
 require 'thinking_sphinx/capistrano'
@@ -8,12 +7,13 @@ require 'delayed/recipes'
 # require 'capistrano/ext/multistage'
 # require 'capistrano/maintenance'
 
+# Automatically precompile assets
+set :assets_role, [:app]
+load "deploy/assets"
+
 # set stages
 set :stages, %w(production staging)
 set :default_stage, "production"
-
-# Automatically precompile assets
-load "deploy/assets"
 
 set :rails_env, Rubber.env
 set :rails_root, '/var/www/html/pixiboard/staging/plumboard'
@@ -27,7 +27,6 @@ on :load do
   set :runner,      rubber_env.app_user
   set :deploy_to,   "/mnt/#{application}-#{Rubber.env}"
   set :copy_exclude, [".git/*", ".bundle/*", "log/*", ".rvmrc", ".rbenv-version"]
-  set :assets_role, [:app]
 end
 
 # Use a simple directory tree copy here to make demo easier.
@@ -108,7 +107,7 @@ namespace :deploy do
   desc "Symlink shared resources on each release"
   task :symlink_shared, :roles => :app do
     run "ln -nfs #{shared_path}/config/rubber/common/database.yml #{release_path}/config/rubber/common/database.yml"
-    run "ln -nfs #{shared_path}/assets/manifest.yml #{release_path}/assets_manifest.yml"    
+    # run "ln -nfs #{shared_path}/public/assets/manifest.yml #{release_path}/assets_manifest.yml"    
     run "chmod +x #{release_path}/script/rubber"
   end 
 end
@@ -116,34 +115,39 @@ end
   namespace :sphinx do
     desc 'create sphinx directory'
     task :create_sphinx_dir, :roles => :app do
-      run "mkdir -p #{shared_path}/sphinx"
+      run "mkdir -p #{shared_path}/db/sphinx && mkdir -p #{shared_path}/tmp"
+    end
+
+    desc 'Symlink Sphinx indexes from the shared folder to the latest release.'
+    task :symlink_indexes, :roles => :app do
+      run "if [ -d #{release_path} ]; then ln -nfs #{shared_path}/db/sphinx #{release_path}/db/sphinx; else ln -nfs #{shared_path}/db/sphinx #{current_path}/db/sphinx; fi;"
     end
    
     desc "Stop the sphinx server"
     task :stop, :roles => :app do
       unless :previous_release
-        run "cd #{previous_release} && RAILS_ENV=#{rails_env} rake thinking_sphinx:stop"
+        run "cd #{previous_release} && RAILS_ENV=#{rails_env} SPHINX_VERSION=2.0.8 rake ts:stop"
       end
     end
 
     desc "Reindex the sphinx server"
     task :index, :roles => :app do
-      run "cd #{latest_release} && RAILS_ENV=#{rails_env} rake thinking_sphinx:index"
+      run "cd #{latest_release} && RAILS_ENV=#{rails_env} SPHINX_VERSION=2.0.8 rake ts:index"
     end
 
     desc "Configure the sphinx server"
     task :configure, :roles => :app do
-      run "cd #{latest_release} && RAILS_ENV=#{rails_env} rake thinking_sphinx:configure"
+      run "cd #{latest_release} && RAILS_ENV=#{rails_env} SPHINX_VERSION=2.0.8 rake ts:configure"
     end
 
     desc "Start the sphinx server"
     task :start, :roles => :app do
-      run "cd #{latest_release} && RAILS_ENV=#{rails_env} rake thinking_sphinx:start"
+      run "cd #{latest_release} && RAILS_ENV=#{rails_env} SPHINX_VERSION=2.0.8 rake ts:start"
     end
 
     desc "Rebuild the sphinx server"
     task :rebuild, :roles => :app do
-      run "cd #{latest_release} && RAILS_ENV=#{rails_env} rake thinking_sphinx:rebuild"
+      run "cd #{latest_release} && RAILS_ENV=#{rails_env} SPHINX_VERSION=2.0.8 rake ts:rebuild"
     end    
   end
 
@@ -169,6 +173,14 @@ namespace :files do
     upload("#{rails_root}/config/thinking_sphinx.yml", "#{release_path}/config/thinking_sphinx.yml")
     upload("#{rails_root}/config/database.yml", "#{release_path}/config/database.yml")
   end
+
+  task :upload_certs do
+    upload("#{rails_root}/config/certs/pixiboard.crt", "#{release_path}/config/pixiboard.crt")
+    upload("#{rails_root}/config/certs/pixiboard.key", "#{release_path}/config/pixiboard.key")
+    upload("#{rails_root}/config/certs/gd_bundle.crt", "#{release_path}/config/gd_bundle.crt")
+    run "touch #{current_path}/public/httpchk.txt"
+  end
+
 end
 
 namespace :deploy do
@@ -191,8 +203,17 @@ namespace :memcached do
   desc "Flushes memcached local instance"
   task :flush, :roles => [:app] do
     # run("cd #{current_path} && rake memcached:flush")
+    run "cd #{latest_release} && RAILS_ENV=#{rails_env} rake memcached:flush"
     Rails.cache.clear
   end
+end
+
+namespace :whenever do    
+  desc "Update the crontab file for the Whenever Gem."
+  task :update_crontab, :roles => [:app] do
+    puts "\n\n=== Updating the Crontab! ===\n\n"
+    run "cd #{release_path} && #{whenever_command} --update-crontab" 
+  end    
 end
 
 # load in the deploy scripts installed by vulcanize for each rubber module
@@ -206,12 +227,12 @@ after 'deploy:update_code', 'deploy:enable_rubber'
 after 'bundle:install', 'deploy:enable_rubber'
 before 'rubber:config', 'deploy:enable_rubber', 'deploy:enable_rubber_current'
 after 'deploy:update_code', 'deploy:symlink_shared', 'sphinx:stop'
-after "deploy", "cleanup"
-after "deploy:migrations", "cleanup", "sphinx:sphinx_symlink", "sphinx:configure", "sphinx:rebuild"
-after "deploy:update", "memcached.flush"
+after "deploy:migrations", "cleanup"
+#after "deploy", "cleanup", "memcached:flush"
+after "deploy:update", "deploy:migrations"
+
 task :cleanup, :except => { :no_release => true } do
   count = fetch(:keep_releases, 5).to_i
-  
   rsudo <<-CMD
     all=$(ls -x1 #{releases_path} | sort -n);
     keep=$(ls -x1 #{releases_path} | sort -n | tail -n #{count});
@@ -228,11 +249,11 @@ if Rubber::Util.has_asset_pipeline?
 
   callbacks[:after].delete_if {|c| c.source == "deploy:assets:precompile"}
   callbacks[:before].delete_if {|c| c.source == "deploy:assets:symlink"}
-  before "deploy:assets:precompile", "deploy:assets:symlink", "files:upload_secret"
+  before "deploy:assets:precompile", "deploy:assets:symlink", "files:upload_secret", "files:upload_certs"
   after "rubber:config", "deploy:assets:precompile"
 end
 
 # Delayed Job  
 after "deploy:stop",    "delayed_job:stop"  
 after "deploy:start",   "delayed_job:start"  
-after "deploy:restart", "delayed_job:restart", "deploy:cleanup"
+after "deploy:restart", "delayed_job:restart", "sphinx:symlink_indexes", "sphinx:configure", "sphinx:rebuild", "whenever:update_crontab", "deploy:cleanup"

@@ -1,15 +1,20 @@
 // process datepicker
-var nowTemp = new Date();
-nowTemp.setDate(nowTemp.getDate() + 1);
-var dt = nowTemp.getDate(); 
-var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), dt, 0, 0, 0, 0);
+var thisDay = new Date();
+var tmpDt = thisDay.getDate(); 
+var nowDt = new Date(thisDay.getFullYear(), thisDay.getMonth(), tmpDt, 0, 0, 0, 0);
 
 // set default date
 $(document).on("focus", ".dt-pckr, .px-date", function(e){
 
   // set datepicker start date based on class
+  var CurrentDate = new Date();
   var myClass = $(this).attr("class");
-  var nDays = (myClass.match(/px-date/i)) ? 0 : 3;
+  var nDays = (myClass.indexOf("px-date") >= 0) ? 0 : 3;
+
+  var nowTemp = new Date();
+  nowTemp.setDate(nowTemp.getDate() + nDays);
+  var dt = nowTemp.getDate(); 
+  var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), dt, 0, 0, 0, 0);
 
   var newDt = $(this).datepicker({
     onRender: function(date) {
@@ -17,6 +22,13 @@ $(document).on("focus", ".dt-pckr, .px-date", function(e){
       }
     }).on('show', function(ev) { 
       var newDate = new Date(ev.date);
+
+      // reset var if greater than current date
+      if(nDays > 0) {
+        nDays = (newDate > CurrentDate) ? 0 : nDays;
+      }
+
+      // set date
       newDate.setDate(newDate.getDate() + nDays);
 
       // set end date
@@ -30,7 +42,7 @@ $(document).on("focus", ".dt-pckr, .px-date", function(e){
 $(document).on("focus", "#start-date", function(e){
   var sdt = $(this).datepicker({
     onRender: function(date) {
-      return date.valueOf() < now.valueOf() ? 'disabled' : '';
+      return date.valueOf() < nowDt.valueOf() ? 'disabled' : '';
       }
     }).on('changeDate', function(ev) { 
 
@@ -74,7 +86,7 @@ $(document).on("focus", "#end-date", function(e){
 
   var sdt = $('#start-date').datepicker({
     onRender: function(date) {
-      return date.valueOf() < now.valueOf() ? 'disabled' : ''; }
+      return date.valueOf() < nowDt.valueOf() ? 'disabled' : ''; }
     }).on('changeDate', function(ev) { sdt.hide(); }).data('datepicker');
 });
 

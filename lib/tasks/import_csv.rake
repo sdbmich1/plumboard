@@ -449,11 +449,11 @@ end
 task :import_faq => :environment do
 
   Faq.delete_all
-  CSV.foreach(Rails.root.join('db', 'faq_021514.csv'), "r:ISO-8859-1") do |row|
+  CSV.foreach(Rails.root.join('db', 'faq_043014.csv'), "r:ISO-8859-1") do |row|
 
     attrs = {
-      		:subject       => row[1],
-      		:description   => row[2],
+      		:subject       => row[0],
+      		:description   => row[1],
       		:question_type => 'inquiry',
 		:status	       => 'active'
     }

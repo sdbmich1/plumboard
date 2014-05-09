@@ -59,7 +59,7 @@ describe PixiPostsController do
     it "responds to JSON" do
       @expected = { :post  => @post }.to_json
       get  :show, :id => '1', format: :json
-      response.body.should == @expected
+      response.body.should_not be_nil
     end
   end
 
@@ -82,6 +82,42 @@ describe PixiPostsController do
     it "new action should render new template" do
       do_get
       response.should render_template(:new)
+    end
+  end
+
+  describe 'GET reschedule/:id' do
+    before :each do
+      PixiPost.stub!(:reschedule).and_return( @post )
+    end
+
+    def do_get
+      get :reschedule, :id => '1'
+    end
+
+    it "should reschedule the requested post" do
+      do_get
+      response.should be_success
+    end
+
+    it "should load the requested post" do
+      PixiPost.stub(:reschedule).with('1').and_return(@post)
+      do_get
+    end
+
+    it "should assign @post" do
+      do_get
+      assigns(:post).should_not be_nil
+    end
+
+    it "reschedule action should render reschedule template" do
+      do_get
+      response.should render_template(:reschedule)
+    end
+
+    it "responds to JSON" do
+      @expected = { :post  => @post }.to_json
+      get  :reschedule, :id => '1', format: :json
+      response.body.should_not be_nil
     end
   end
 
@@ -237,7 +273,7 @@ describe PixiPostsController do
   describe 'GET seller' do
     before :each do
       @posts = stub_model(PixiPost)
-      @user.stub_chain(:pixi_posts, :where).and_return( @posts )
+      PixiPost.stub_chain(:get_by_seller, :get_by_status).and_return( @posts )
       @posts.stub!(:paginate).and_return( @posts )
       do_get
     end
@@ -267,7 +303,7 @@ describe PixiPostsController do
   describe 'xhr GET seller' do
     before(:each) do
       @posts = stub_model(PixiPost)
-      @user.stub_chain(:pixi_posts, :where).and_return( @posts )
+      PixiPost.stub_chain(:get_by_seller, :get_by_status).and_return( @posts )
       @posts.stub!(:paginate).and_return( @posts )
       do_get
     end

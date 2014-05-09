@@ -54,6 +54,16 @@ class Post < ActiveRecord::Base
     recipient.name if recipient
   end
 
+  # get sender email
+  def sender_email
+    user.email if user
+  end
+
+  # get recipient email
+  def recipient_email
+    recipient.email if recipient
+  end
+
   # get pixi title
   def pixi_title
     listing.title if listing
@@ -149,6 +159,11 @@ class Post < ActiveRecord::Base
   # check if invoice msg 
   def inv_msg?
     msg_type == 'inv'
+  end
+
+  # check if want msg 
+  def want_msg?
+    msg_type == 'want'
   end
 
   # check if system msg 

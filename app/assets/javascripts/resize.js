@@ -16,7 +16,10 @@ function resizeFrame() {
             $(".navbar-fixed-top").addClass('xneg-top big-neg-bot');
 	  }
 	  else
-            $(".navbar-fixed-top").addClass('mneg-top big-neg-bot');
+            if(!navigator.userAgent.match(/firefox/i)) 
+              $(".navbar-fixed-top").addClass('mneg-top big-neg-bot');
+	    else
+              $(".navbar-fixed-top").addClass('mneg-top');
 	}
     }
 
@@ -83,6 +86,7 @@ function adjustWindow() {
   console.log('ms lrg width = ' + $(window).width());
   console.log('total = ' + total);
   console.log('ftr_total = ' + ftr_total);
+  console.log('navbar fixed top height = ' + $('.navbar-fixed-top').height());
   */
 
   // adjust footer so that it doesn't render atop of page content
@@ -91,21 +95,23 @@ function adjustWindow() {
       mtop = 80 + total;
     } else {
       if($('#cat-wrap').length > 0) {
-        if(!navigator.userAgent.match(/safari/i)) 
-          mtop = 80 + ftr_total + docHeight;
-	else
-	  mtop = 80 + docHeight;
+        mtop = (!navigator.userAgent.match(/safari/i)) ? 80 + total + docHeight : 80 + docHeight;
       }
     }
   }
   else {
-    if($('#cat-wrap').length > 0) 
-      mtop = total;
-    else
-      mtop = 80;
+    mtop = ($('#cat-wrap').length > 0) ? 120 : 80;
   }
+
   $('#footer').css('margin-top', mtop + 'px');
   $('.scrollup').css('margin-top', mtop + 'px');
   resizeFrame();
+}
+
+function checkMenuHgt(str) {
+  var $item = $('.navbar-fixed-top');
+  if($(window).width() < 1024 && $item.length > 0 && $item.height() > 45) {
+    $(str).addClass('mtop'); 
+  }
 }
 

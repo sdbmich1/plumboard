@@ -1,7 +1,7 @@
 require 'will_paginate/array' 
 class UsersController < ApplicationController
   before_filter :authenticate_user!
-  before_filter :load_data, :check_permissions, only: [:index]
+  before_filter :load_data, :check_permissions, only: [:index, :show]
   before_filter :load_target, only: [:update]
   respond_to :html, :js, :json, :mobile
 

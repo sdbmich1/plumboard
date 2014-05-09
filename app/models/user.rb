@@ -1,7 +1,7 @@
 require "open-uri"
 require 'open_uri_redirections'
 class User < ActiveRecord::Base
-  include ThinkingSphinx::Scopes, Area, LocationManager
+  include ThinkingSphinx::Scopes, Area, LocationManager, PointManager
   extend Rolify
 
   rolify
@@ -18,6 +18,7 @@ class User < ActiveRecord::Base
     :fb_user, :provider, :uid, :contacts_attributes, :status, :acct_token, :preferences_attributes, :user_type_code
 
   before_save :ensure_authentication_token unless Rails.env.test?
+  after_commit :async_send_notification, :on => :create
 
   # define pixi relationships
   has_many :listings, foreign_key: :seller_id, dependent: :destroy
@@ -336,6 +337,17 @@ class User < ActiveRecord::Base
   # display user type
   def type_descr
     user_type.description rescue nil
+  end
+
+  # send notice & add points
+  def async_send_notification
+
+    # update points
+    ptype = uid.blank? ? 'dr' : 'fr'
+    PointManager::add_points self, ptype
+
+    # send welcome message to facebook users
+    UserMailer.delay.welcome_email(self) if fb_user?
   end
 
   # set json string

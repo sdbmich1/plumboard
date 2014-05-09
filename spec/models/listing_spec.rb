@@ -767,13 +767,88 @@ describe Listing do
     end
 
     it { listing.start_date.should_not be_nil }
+  end
 
-    it "does not show updated date" do
+  describe 'format_date' do
+    let(:user) { FactoryGirl.create :pixi_user }
+    let(:listing) { FactoryGirl.create :listing, seller_id: user.id }
+
+    it "does not show local updated date" do
       listing.updated_at = nil
-      listing.updated_dt.should be_nil
+      expect(listing.format_date(listing.updated_at)).to eq Time.now.strftime('%m/%d/%Y %l:%M %p')
     end
 
-    it { listing.updated_dt.should_not be_nil }
+    it "show current updated date" do
+      expect(listing.format_date(listing.updated_at)).to eq listing.updated_at.strftime('%m/%d/%Y %l:%M %p')
+    end
+
+    it "shows local updated date" do
+      listing.lat, listing.lng = 35.1498, -90.0492
+      expect(listing.format_date(listing.updated_at)).not_to eq Time.now.strftime('%m/%d/%Y %l:%M %p')
+    end
+  end
+
+  describe 'display_date' do
+    let(:user) { FactoryGirl.create :pixi_user }
+    let(:listing) { FactoryGirl.create :listing, seller_id: user.id }
+
+    it "does not show local updated date" do
+      listing.updated_at = nil
+      expect(listing.display_date(listing.updated_at)).to eq Time.now.strftime('%m/%d/%Y %l:%M %p')
+    end
+
+    it "show current updated date" do
+      expect(listing.display_date(listing.updated_at)).to eq listing.updated_at.strftime('%m/%d/%Y %l:%M %p')
+    end
+
+    it "shows current updated date w/ pacific time zone" do
+      listing.lat, listing.lng = 37.7749, -122.419
+      listing.save!
+      expect(listing.display_date(listing.updated_at)).to eq listing.updated_at.strftime('%m/%d/%Y %l:%M %p')
+    end
+
+    it "shows local updated date" do
+      listing.lat, listing.lng = 35.1498, -90.0492
+      expect(listing.display_date(listing.updated_at)).not_to eq Time.now.strftime('%m/%d/%Y %l:%M %p')
+      expect(listing.display_date(listing.updated_at)).not_to eq listing.updated_at.strftime('%m/%d/%Y %l:%M %p')
+    end
+  end
+
+  describe "sync saved pixis" do
+    let(:user) { FactoryGirl.create :pixi_user }
+    let(:listing) { FactoryGirl.create :listing, seller_id: user.id }
+
+    it 'marks saved pixis as sold' do
+      expect {
+        create(:saved_listing, user_id: user.id, pixi_id: listing.pixi_id); sleep 1
+        listing.status = 'sold'
+        listing.save; sleep 2
+      }.to change{ SavedListing.where(:status => 'sold').count }.by(1)
+    end
+
+    it 'marks saved pixis as closed' do
+      expect {
+        create(:saved_listing, user_id: user.id, pixi_id: listing.pixi_id); sleep 1
+        listing.status = 'closed'
+        listing.save; sleep 2
+      }.to change{ SavedListing.where(:status => 'closed').count }.by(1)
+    end
+
+    it 'marks saved pixis as inactive' do
+      expect {
+        create(:saved_listing, user_id: user.id, pixi_id: listing.pixi_id); sleep 1
+        listing.status = 'inactive'
+        listing.save; sleep 2
+      }.to change{ SavedListing.where(:status => 'inactive').count }.by(1)
+    end
+
+    it 'marks saved pixis as removed' do
+      expect {
+        create(:saved_listing, user_id: user.id, pixi_id: listing.pixi_id); sleep 1
+        listing.status = 'removed'
+        listing.save; sleep 2
+      }.to change{ SavedListing.where(:status => 'removed').count }.by(1)
+    end
   end
 
   describe "date validations" do

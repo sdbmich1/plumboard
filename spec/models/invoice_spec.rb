@@ -150,12 +150,22 @@ describe Invoice do
     before { @invoice.save }
     it { Invoice.get_invoices(@user).should_not be_empty }
     it { Invoice.get_invoices(@buyer).should be_empty }
+    it 'does not list invoice' do
+      @listing.status = 'removed'
+      @listing.save!
+      Invoice.get_invoices(@user).should be_empty 
+    end
   end
 
   describe "get_buyer_invoices" do 
     before { @invoice.save }
     it { Invoice.get_buyer_invoices(@user).should be_empty }
     it { Invoice.get_buyer_invoices(@buyer).should_not be_empty }
+    it 'does not list invoice' do
+      @listing.status = 'removed'
+      @listing.save!
+      Invoice.get_buyer_invoices(@buyer).should be_empty 
+    end
   end
 
   describe "find_invoice" do 
@@ -391,6 +401,27 @@ describe Invoice do
 
     it "does not load new invoice" do
       Invoice.load_new(nil).should be_nil
+    end
+  end
+
+  describe 'format_date' do
+    let(:transaction) { FactoryGirl.create :transaction }
+
+    it "does not show local updated date" do
+      @invoice.save!
+      @invoice.updated_at = nil
+      expect(@invoice.format_date(@invoice.updated_at)).to eq Time.now.strftime('%m/%d/%Y %l:%M %p')
+    end
+
+    it "show current updated date" do
+      @invoice.save!
+      expect(@invoice.format_date(@invoice.updated_at)).to eq @invoice.updated_at.strftime('%m/%d/%Y %l:%M %p')
+    end
+
+    it "shows local updated date" do
+      @invoice.transaction_id = transaction.id
+      @invoice.save!
+      expect(@invoice.format_date(@invoice.updated_at)).not_to eq Time.now.strftime('%m/%d/%Y %l:%M %p')
     end
   end
 

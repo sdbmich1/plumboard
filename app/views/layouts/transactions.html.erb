@@ -3,10 +3,8 @@
 <head>
   <link href="/assets/favicon.ico" rel="shortcut icon" />
   <title><%= full_title(yield(:title)) %></title>
-  <%= stylesheet_link_tag    "application", "jquery.bxslider", :media => "all" %>
-  <%= javascript_include_tag "application", "http://code.jquery.com/jquery-1.7.1.min.js", 'bootstrap.min.js', 'jquery.rateit.min.js',
-  	"https://js.stripe.com/v1/", 'transaction.js', 'jquery.placeholder.min.js', 'payment.js', "https://js.balancedpayments.com/v1/balanced.js" %>
-  <%= tag :meta, :name => "stripe-key", :content => STRIPE_PUBLIC_KEY %>
+  <%= stylesheet_link_tag    "application", :media => "all" %>
+  <%= javascript_include_tag "application", "https://js.balancedpayments.com/v1/balanced.js" %>
   <%= tag :meta, :name => "balanced-key", :content => BALANCED_URI %>
   <%= tag :meta, :name => "credit-card-api", :content => CREDIT_CARD_API %>
   <%= csrf_meta_tags %>

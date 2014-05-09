@@ -3,6 +3,8 @@ class Listing < ListingParent
   include ThinkingSphinx::Scopes
 
   before_create :activate
+  after_commit :sync_saved_pixis, :on => :update
+
   attr_accessor :parent_pixi_id
 
   belongs_to :buyer, foreign_key: 'buyer_id', class_name: 'User'
@@ -43,7 +45,7 @@ class Listing < ListingParent
     if Rails.env.development?
       active.paginate page: pg
     else
-      active.where(site_id: Contact.near(ip, range).get_by_type('Site').map(&:contactable_id).uniq).paginate(page: pg)
+      active.where(site_id: Contact.promixity(ip, range)).paginate(page: pg)
     end
   end
 
@@ -179,6 +181,11 @@ class Listing < ListingParent
   def self.wanted_users pid
     select("users.id, CONCAT(users.first_name, ' ', users.last_name) AS name, users.updated_at, users.created_at")
       .joins(:pixi_wants => [:user]).where(pixi_id: pid).order("users.first_name")
+  end
+
+  # mark saved pixis if sold or closed
+  def sync_saved_pixis
+    SavedListing.update_status pixi_id, status unless active?
   end
 
   # sphinx scopes

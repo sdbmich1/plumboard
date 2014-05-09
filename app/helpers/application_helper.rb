@@ -188,7 +188,7 @@ module ApplicationHelper
 
   # check for ajax
   def remote?
-    %w(check show).detect {|x| x == action_name}.blank?
+    %w(check show edit new).detect {|x| x == action_name}.blank?
   end
 
   # set model class for pixi dropdown menu

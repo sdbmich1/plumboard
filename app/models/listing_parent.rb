@@ -1,7 +1,7 @@
 require 'rails_rinku'
 class ListingParent < ActiveRecord::Base
   resourcify
-  include Area
+  include Area, ResetDate, LocationManager
   self.abstract_class = true
   self.per_page = 20
 
@@ -102,17 +102,12 @@ class ListingParent < ActiveRecord::Base
 
   # select active listings
   def self.active
-    include_list.select('listings.id, listings.pixi_id, listings.title, listings.category_id, categories.name AS category_name, 
-      listings.updated_at, listings.status, listings.description, listings.created_at, listings.seller_id, listings.site_id, 
-      listings.price')
-    .joins(:category)
-    .where(where_stmt)
-    .reorder('listings.updated_at DESC')
+    include_list.where(where_stmt).reorder('listings.updated_at DESC')
   end
 
   # eager load assns
   def self.include_list
-    includes(:pictures, :site)
+    includes(:pictures, :site, :category)
   end
 
   # find listings by status
@@ -239,8 +234,9 @@ class ListingParent < ActiveRecord::Base
   # titleize title
   def nice_title
     unless title.blank?
-      str = price.blank? ? '' : ' - $' + price.to_i.to_s
-      title.index('$') ? title.titleize : title.titleize + str 
+      str = price.blank? || price == 0 ? '' : ' - $' + price.to_i.to_s
+      tt = title.titleize.html_safe rescue title 
+      title.index('$') ? tt : tt + str 
     else
       nil
     end
@@ -248,12 +244,12 @@ class ListingParent < ActiveRecord::Base
 
   # short title
   def short_title
-    nice_title.length < 14 ? nice_title.html_safe : nice_title.html_safe[0..14] + '...' rescue nil
+    nice_title.length < 14 ? nice_title : nice_title[0..14] + '...' rescue nil
   end
 
   # med title
   def med_title
-    nice_title.length < 25 ? nice_title.html_safe : nice_title.html_safe[0..25] + '...' rescue nil
+    nice_title.length < 25 ? nice_title : nice_title[0..25] + '...' rescue nil
   end
 
   # set end date to x days after start to denote when listing is no longer displayed on network
@@ -369,13 +365,29 @@ class ListingParent < ActiveRecord::Base
     start_date.strftime('%m/%d/%Y') rescue nil
   end
 
-  # format updated date
-  def updated_dt
-    if Rails.env.development? || Rails.env.test? 
-      updated_at.utc.getlocal.strftime('%m/%d/%Y %l:%M %p') rescue Time.now
+  # format date
+  def format_date dt
+    zip = [lat, lng].to_zip rescue nil 
+    ResetDate::format_date dt, zip rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
+  end
+
+  # format date based on location
+  def display_date dt
+    if lat && lat > 0
+      ll = [lat, lng]
     else
-      updated_at.advance(hours: [lat, lng].to_zip.to_gmt_offset).strftime('%m/%d/%Y %l:%M %p') rescue Time.now
+      # get area
+      area = self.site.contacts.first rescue nil
+
+      # set location
+      loc = [area.city, area.state].join(', ') if area
+
+      # get long lat
+      ll = LocationManager::get_lat_lng_by_loc(loc) if loc
     end
+
+    # get display date/time
+    ResetDate::display_date_by_loc dt, ll rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
   end
 
   # set json string

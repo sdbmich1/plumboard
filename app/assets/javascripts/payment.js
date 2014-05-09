@@ -38,7 +38,7 @@ function BalancedCard() {
   }
   else {
     // initialize object
-    balanced.init(marketplaceUri);
+    balanced.init(marketplaceUri, {});
 
     // create token	
     balanced.card.create({
@@ -73,6 +73,8 @@ function processAcct() {
 function processError(response, msg) {
   var $balancedError = $('#data_error'); 
 
+  // show error after check if menu is large
+  checkMenuHgt('#data_error');
   $balancedError.show(300).text(msg);
 
   if($('#bank-acct-form').length > 0) {

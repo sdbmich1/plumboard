@@ -9,6 +9,11 @@ class SavedListing < ActiveRecord::Base
   validates :pixi_id, :presence => true
   validates :user_id, :presence => true, :uniqueness => { :scope => :pixi_id }
 
+  #return first_name
+  def first_name
+    return user.first_name rescue nil
+  end
+
   # set fields upon creation
   def set_flds
     self.status = 'active' if self.status.blank?

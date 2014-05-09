@@ -1,6 +1,15 @@
+<% cache post do %>
 <tr>
   <td><div class='price'><%= link_to post.id, post %></div></td>
-  <td><%= post.seller_name %></td>
+  <td class='center-wrapper'>
+    <% if action_name == 'seller' && @status != 'active' %>
+      <%= render partial: 'shared/show_picture', locals: {model: post.pixan, psize: 'tiny'} %>
+      <%= post.pixter_name %>
+    <% else %>
+      <%= render partial: 'shared/show_picture', locals: {model: post.user, psize: 'tiny'} if can? :manage_items, @user %>
+      <%= post.seller_name %>
+    <% end %>
+  </td>
   <td class='center-wrapper'><%= get_col_date(@status, post) %></td>
   <td class='center-wrapper'><%= get_col_time(@status, post) %></td>
   <td><div class='price'><%= post.quantity %></div></td>
@@ -8,3 +17,4 @@
   <td><%= post.description %></td>
   <td class='center-wrapper'><%= link_to 'Details', post, class: 'btn btn-small' %></td>
 </tr>
+<% end %>

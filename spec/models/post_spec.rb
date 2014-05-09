@@ -228,6 +228,24 @@ describe Post do
     end
   end
 
+  describe "sender email" do 
+    it { @post.sender_email.should == @user.email } 
+
+    it "does not return sender email" do 
+      @post.user_id = 100 
+      @post.sender_email.should be_nil 
+    end
+  end
+
+  describe "recipient email" do 
+    it { @post.recipient_email.should == @recipient.email } 
+
+    it "does not return recipient email" do 
+      @post.recipient_id = 100 
+      @post.recipient_email.should be_nil 
+    end
+  end
+
   describe "pixi title" do 
     it { @post.pixi_title.should == "Big Guitar" } 
 
@@ -243,6 +261,15 @@ describe Post do
     it "returns true" do 
       @post.msg_type = 'inv' 
       expect(@post.inv_msg?).to eq(true) 
+    end
+  end
+
+  describe "want_msg?" do 
+    it { expect(@post.want_msg?).to eq(false) } 
+
+    it "returns true" do 
+      @post.msg_type = 'want' 
+      expect(@post.want_msg?).to eq(true) 
     end
   end
 

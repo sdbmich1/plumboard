@@ -1,21 +1,26 @@
 <% provide(:title, 'About Us') %>
 <%= render partial: 'shared/pg_header', locals: { linkFlg: true } %>
 <%= content_for :content do %>
+  <% cache fragment: 'about_us' do %>
   <%= render partial: 'shared/pg_sub_header', locals: { stitle: 'About Us' } %>
   <div class='row med-top mbot'>
     <div class='offset1 span10 pg-text'>
-    At Pixiboard&#0153;, our mission is to make local commerce frictionless and safe for everyone. Pixiboard offers a fully integrated platform that 
-    fixes the process of local buying, selling, and bartering from the ground up. Beyond another fancy user interface, we are fundamentally rethinking 
+    At Pixiboard&#0153;, our mission is to make local commerce frictionless and safe for everyone. Pixiboard&#0153; offers a fully 
+    integrated platform that fixes the process of local buying, selling, and bartering from the ground up. 
+    Beyond another fancy user interface, we are fundamentally rethinking 
     how the experience of exchanging local goods and services works.<br /><br />
-    We started Pixiboard because we could not believe that there was not a better way to share items, ads, and services.  In the past you had to post 
-    them on messy bulletin boards on college campuses, pin them to back wall corkboards in cafes, or bury them in overcrowded classified advertisement 
-    websites. Not anymore.<br /><br />
-    Pixiboard empowers people to connect with others locally. Users are able to build rapport and check out buyers and sellers through features like 
-    commenting on items, browsing user profiles, rating experiences, and messaging private communiques to set-up item exchanges. More importantly, with 
-    Pixiboard's secure PixiPay&#0153; payment engine the days of carrying cash into dark meeting spots are gone forever.  There is a better way of doing 
-    business.<br /><br />
+    We started Pixiboard&#0153; because we could not believe that there was not a better way to share items, ads, and services.  
+    In the past you had to post them on messy bulletin boards on college campuses, 
+    pin them to back wall corkboards in cafes, or bury them in overcrowded classified advertisement websites. Not anymore.<br /><br />
+
+    Pixiboard&#0153; empowers people to connect with others locally. Users are able to build rapport and check out buyers and sellers 
+    through features like commenting on items, browsing user profiles, rating experiences, 
+    and messaging private communiques to set-up item exchanges. More importantly, with 
+    Pixiboard's secure PixiPay&#0153; payment engine the days of carrying cash into dark meeting spots are gone forever.  
+    There is a better way of doing business.<br /><br />
     Connect. Share. Magic.&#0153;<br>
     </div>
   </div>
   <%= render 'shared/team' %>
+  <% end %>
 <% end %>

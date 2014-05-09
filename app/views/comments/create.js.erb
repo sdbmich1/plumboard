@@ -4,7 +4,8 @@
   var url = '/listings/' + "<%= params[:comment][:pixi_id] %>"
 
   // check for mobile
-  if($('#seller-comment').length) {
+  if($('#seller-comment').length > 0) {
+    console.log('comments are firing here');
     goToUrl(url, true);
   }
   else {

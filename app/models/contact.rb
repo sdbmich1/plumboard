@@ -31,4 +31,10 @@ class Contact < ActiveRecord::Base
     stmt = "city = ? and state = ?"
     where(stmt, city, state).get_by_type('Site').map(&:contactable_id).uniq
   end
+
+  # get proximity
+  def self.proximity ip, range=25, pos=nil, geoFlg=false
+    val = geoFlg && pos ? pos : ip
+    near(val, range).get_by_type('Site').map(&:contactable_id).uniq
+  end
 end

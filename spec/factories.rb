@@ -296,9 +296,9 @@ FactoryGirl.define do
   end
 
   factory :pixi_post do
-    preferred_date	{ Time.now+2.days }
+    preferred_date	{ Time.now+7.days }
     alt_date		{ Time.now+7.days }
-    preferred_time	{ Time.now+2.days }
+    preferred_time	{ Time.now+7.days }
     alt_time		{ Time.now+7.days }
     address          "123 Elm"
     city            "LA"

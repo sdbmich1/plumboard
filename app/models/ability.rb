@@ -9,6 +9,10 @@ class Ability
     if user.has_role? :admin
       can :manage, :all
       can :manage, PixiPost
+      can :manage, Category
+      can :manage, Transaction
+      can :manage, Invoice
+      can :manage, User
       can :access, '/pending_listings'
       can :manage_items, User
       can :manage_orders, User
@@ -20,6 +24,7 @@ class Ability
         usr.try(:user) == user
       end
 
+      can :read, Category
       can [:create, :show], Transaction, :user_id => user.id
 
       can [:create, :read, :update], Post do |post|

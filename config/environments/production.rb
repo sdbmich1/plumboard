@@ -51,11 +51,11 @@ Plumboard::Application.configure do
 
   # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
   # config.assets.precompile += %w( search.js )
-  files = Dir[Rails.root.join('app', 'assets', '{javascripts,stylesheets}', '**', '[^_]*.{js,css}*')]
-  files.map! {|file| file.sub(%r(#{Rails.root}/app/assets/(javascripts|stylesheets)/), '') }
-  files.map! {|file| file.sub(%r(\.(coffee|scss)), '') }
-  config.assets.precompile += files
-  config.assets.precompile += ['.css', '.js', '.png', '.jpg', '.bmp', '.gif', '.ico']
+  # files = Dir[Rails.root.join('app', 'assets', '{javascripts,stylesheets}', '**', '[^_]*.{js,css}*')]
+  # files.map! {|file| file.sub(%r(#{Rails.root}/app/assets/(javascripts|stylesheets)/), '') }
+  # files.map! {|file| file.sub(%r(\.(coffee|scss)), '') }
+  # config.assets.precompile += files
+  # config.assets.precompile += ['.css', '.js', '.png', '.jpg', '.bmp', '.gif', '.ico']
 
   # Disable delivery errors, bad email addresses will be ignored
   config.action_mailer.raise_delivery_errors = true
@@ -79,11 +79,12 @@ Plumboard::Application.configure do
   # set paperclip aws settings
   PAPERCLIP_STORAGE_OPTIONS = {:storage => :s3, 
                                :s3_credentials => YAML.load_file("#{Rails.root}/config/aws.yml")[Rails.env],
+                               :s3_protocol => :https,
 	  		       :url => ":s3_domain_url",
 			       path: ":attachment/:id_partition/:style/:filename"}
 
   # facebook ssl setting
-  FACEBOOK_SSL_OPTIONS = {:ca_path => "/etc/ssl/certs"}
+  FACEBOOK_SSL_OPTIONS = {:ca_file => '/usr/lib/ssl/certs/ca-certificates.crt'}
 
   config.middleware.use ExceptionNotifier,
       :email_prefix => "Pixiboard: ",

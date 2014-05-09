@@ -1,10 +1,12 @@
+<% cache listing do %>
 <tr>
   <td class='span1 center-wrapper'>
-    <%= render partial: 'shared/show_photo', locals: {model: listing, file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
+    <%= render partial: 'shared/show_picture', locals: {model: listing, psize: 'tiny'} %>
   </td>
   <td class='span3'><%= link_to listing.title, set_pixi_path(listing), class: 'pending_title' %></td>
   <td class='span3'><%= listing.brief_descr %></td>
   <td class='span2'><%= listing.site_name %></td>
-  <td class='span2'><%= listing.updated_dt %></td>
+  <td class='span2'><%= listing.display_date listing.updated_at %></td>
   <td class='span1 center-wrapper'><%= link_to 'Details', set_pixi_path(listing), class: 'btn btn-small' %></td>
 </tr>
+<% end %>

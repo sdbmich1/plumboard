@@ -491,8 +491,7 @@ feature "TempListings" do
     before { visit temp_listing_path(temp_listing) }
 
     it 'shows content' do
-      page.should have_link 'Done!', href: resubmit_temp_listing_path(temp_listing)
-      page.should_not have_link 'Done!', href: submit_temp_listing_path(temp_listing)
+      page.should have_link 'Done!', href: submit_temp_listing_path(temp_listing)
       page.should_not have_button 'Next'
     end
 

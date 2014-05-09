@@ -45,6 +45,11 @@ module PixiPostsHelper
     end
   end
 
+  # get column header to match view type
+  def get_name_header val
+    val != 'active' && action_name == 'seller' ? 'Pixter' : 'Seller'
+  end
+
   # get time value to match view type
   def get_col_time val, post
     case val
@@ -64,4 +69,9 @@ module PixiPostsHelper
     end
     get_local_date(tm) rescue nil
   end
+
+  # check user can edit post
+  def can_edit? post
+    (post.owner?(@user) && !post.has_appt? && !post.is_completed?) || can?(:manage_items, @user)
+  end 
 end

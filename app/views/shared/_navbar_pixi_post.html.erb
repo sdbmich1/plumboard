@@ -1,8 +1,11 @@
 <ul class="nav">
   <% if access_pxp_admin_menu? %>
-    <li class="active"><%= link_to "Submitted", pixi_posts_path(status: 'active'), class: 'submenu', id: 'active-posts', remote: remote? %></li>
-    <li><%= link_to "Scheduled", pixi_posts_path(status: 'scheduled'), class: 'submenu', id: 'schd-posts', remote: remote? %></li>
-    <li><%= link_to "Completed", pixi_posts_path(status: 'completed'), class: 'submenu', id: 'comp-posts', remote: remote? %></li>
+    <li id='li_home' class="<%= @status == 'active' ? 'active' : '' %>">
+      <%= link_to "Submitted", pixi_posts_path(status: 'active'), class: 'submenu', id: 'active-posts', remote: remote? %></li>
+    <li class="<%= @status == 'scheduled' ? 'active' : '' %>">
+      <%= link_to "Scheduled", pixi_posts_path(status: 'scheduled'), class: 'submenu', id: 'schd-posts', remote: remote? %></li>
+    <li class="<%= @status == 'completed' ? 'active' : '' %>">
+      <%= link_to "Completed", pixi_posts_path(status: 'completed'), class: 'submenu', id: 'comp-posts', remote: remote? %></li>
   <% else %>
     <li id='li_home' class="<%= @status == 'active' ? 'active' : '' %>">
       <%= link_to "Submitted", seller_pixi_posts_path(status: 'active'), class: 'submenu', id: 'active-posts',  remote: remote? %></li>
