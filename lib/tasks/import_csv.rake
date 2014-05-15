@@ -362,7 +362,7 @@ end
 
 task :update_category_pictures => :environment do
 
-  CSV.foreach(Rails.root.join('db', 'category_data_042214.csv'), :headers => true) do |row|
+  CSV.foreach(Rails.root.join('db', 'category_data_051414.csv'), :headers => true) do |row|
 
     attrs = {:name             => row[0].titleize,
              :category_type    => row[1],
