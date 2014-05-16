@@ -62,7 +62,7 @@ end
 gem 'bootstrap-datepicker-rails'
 
 # add autocomplete
-gem 'rails3-jquery-autocomplete'
+gem 'rails3-jquery-autocomplete', "1.0.11"
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
