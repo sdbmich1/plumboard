@@ -291,48 +291,12 @@ task :update_categories => :environment do
 
     attrs = {:name             => row[0].titleize,
              :category_type    => row[1],
-             :status           => 'active'}
-
-    attrs2 = {:original_name => row[3]}
-
-    #original_name is the original name of the category created by the load_categories task,
-    #if it exists. If the task doesn't exist, original_name is nil. 
-
-    #update category
-    updated_category = Category.find(:first, :conditions => ["name = ?", attrs2[:original_name]])
-    if not updated_category
-      updated_category = Category.find_or_initialize_by_name(attrs)
-    else
-      updated_category.update_attributes!(attrs)
-    end
-
-    #add photo
-    while updated_category.pictures.size > 0
-      updated_category.pictures.map { |pic| updated_category.pictures.delete(pic) }
-    end
-
-    picture = updated_category.pictures.build
-    picture.photo = File.new("#{Rails.root}" + row[2]) if picture
-
-    #save category
-    if updated_category.save
-      puts "Saved category #{attrs.inspect}"
-    else
-      puts updated_category.errors
-    end
-  end
-end
-
-task :update_categories_new => :environment do
-
-  CSV.foreach(Rails.root.join('db', 'category_data_051414.csv'), :headers => true) do |row|
-
-    attrs = {:name             => row[0].titleize,
-             :category_type    => row[1],
              :status           => row[4]}
 
     attrs2 = {:original_name => row[3]}
 
+    #original_name is the original name of the category created by the load_categories task,
+    #if it exists. If the category name doesn't exist, original_name is nil. 
 
     #update category
     updated_category = Category.find(:first, :conditions => ["name = ?", attrs2[:original_name]])
@@ -362,14 +326,11 @@ end
 
 task :update_category_pictures => :environment do
 
-  CSV.foreach(Rails.root.join('db', 'category_data_051414.csv'), :headers => true) do |row|
+  CSV.foreach(Rails.root.join('db', 'category_data_042214.csv'), :headers => true) do |row|
 
-    attrs = {:name             => row[0].titleize,
-             :category_type    => row[1],
-             :status           => 'active'}
+    attrs = {:name             => row[0].titleize}
 
-
-    #update category
+    #find category
     updated_category = Category.find(:first, :conditions => ["name = ?", attrs[:name]])
 
     #add photo

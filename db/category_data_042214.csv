@@ -1,45 +1,52 @@
-Name ,Type,Image_file,Original_name
-antiques,sales,/db/images/antique-typewriter.jpg
-apparel: bags & such,sales,/db/images/apparel.jpg
-apparel: clothes,sales,/db/images/pile-of-clothes.jpg,Clothes
-apparel: jewelry,sales,/db/images/bracelet.jpg,Jewelry
-arts & crafts,sales,/db/images/glass-arts-and-crafts.jpg,Arts & Crafts
-automotive,Services ,/db/images/muscle-car.jpg,Automotive
-baby & kids: childcare,Services ,/db/images/babies.jpg,Childcare
-baby & kids: stuff,sales,/db/images/baby-buggy.jpg,Baby & Kids
-beauty,Services ,/db/images/beauty.jpg,Beauty
-bikes,sales,/db/images/bike2.jpg,Cycle
-boats,sales,/db/images/rowboat.jpg
-books,sales,/db/images/text-books.jpg,Books
-classes/tutoring/ lessons,Services ,/db/images/small-chalkboard.jpg,Lessons
-collectibles,sales,/db/images/collectibles.jpg
-deals,sales,/db/images/coupons.jpg,Deals
-electronics: audio,sales,/db/images/turntable.jpg
-electronics: cell phones,sales,/db/images/cell.jpg,Cell Phones
-electronics: computer,sales,/db/images/apple-mac.jpg,Computer
-electronics: stuff,sales,/db/images/tv.jpg,Electronics
-events,Services ,/db/images/events.jpg,Event
-focus groups,Services ,/db/images/focus-groups.jpg,Focus Groups
-furniture,sales,/db/images/furniture.jpg,Furniture
-housing: appliances,sales,/db/images/fridge.jpg,Appliances
-housing: for rent,Services,/db/images/for-rent.jpg,Housing
-housing: for sale,sales,/db/images/house-for-sale.jpg,Real Estate
-housing: move,Services ,/db/images/moving.jpg,Move
-housing: roommates,services,/db/images/roommate.jpg,Roommate
-jobs,Employment,/db/images/job-openings.jpg,Jobs
-lost & found,Services ,/db/images/Lost-and-Found.jpg,Lost & Found
-motorcycle,sales,/db/images/motorcycle.jpg,Motorcycle
-music,sales,/db/images/music.jpg,Music
-pet,Services ,/db/images/pets.jpg,Pet
-photo & video,sales,/db/images/old-camera.jpg,Photo
-ride share,Services ,/db/images/medium-carpool.jpg,Ride Share
-scholarships,Services ,/db/images/photo1.jpg,Scholarships
-service: financial,Services,/db/images/financial.jpg,Financial
-service: handiwork,Services ,/db/images/tools.jpg,Handiwork
-service: house cleaning,Services ,/db/images/housework.jpg,Household
-service: legal,Services ,/db/images/law.jpg,Legal
-stuff,sales,/db/images/stuff.jpg
-tickets,sales,/db/images/tickets.jpg,Tickets
-toys & games,sales,/db/images/rubics-cube2.jpg
-travel,Services ,/db/images/travelsuitcase.jpg,Travel
-video games,sales,/db/images/videogames.jpg,Video Games
+Name ,Type,Image_file,Original_name,Status
+antiques,sales,/db/images/antique-typewriter.jpg,,active
+apparel,sales,/db/images/pile-of-clothes.jpg,Clothes,active
+apparel: jewelry,sales,/db/images/bracelet.jpg,Jewelry,inactive
+arts & crafts,sales,/db/images/glass-arts-and-crafts.jpg,Arts & Crafts,active
+automotive,Services ,/db/images/muscle-car.jpg,Automotive,active
+baby & kids,sales,/db/images/baby-buggy.jpg,Baby & Kids,active
+beauty,Services ,/db/images/beauty.jpg,Beauty,active
+bikes,sales,/db/images/bike2.jpg,Cycle,active
+boats,sales,/db/images/rowboat.jpg,,active
+books,sales,/db/images/text-books.jpg,Books,active
+classes & lessons,Services ,/db/images/small-chalkboard.jpg,Lessons,active
+collectibles,sales,/db/images/collectibles.jpg,,active
+deals,sales,/db/images/coupons.jpg,Deals,active
+electronics: audio,sales,/db/images/turntable.jpg,,active
+electronics: cell phones,sales,/db/images/cell.jpg,Cell Phones,active
+electronics: computer,sales,/db/images/apple-mac.jpg,Computer,active
+electronics: stuff,sales,/db/images/tv.jpg,Electronics,active
+events,Services ,/db/images/events.jpg,Event,active
+focus groups,Services ,/db/images/focus-groups.jpg,Focus Groups,inactive
+furniture,sales,/db/images/furniture.jpg,Furniture,active
+household appliances,sales,/db/images/fridge.jpg,Appliances,active
+housing: for rent,Services,/db/images/for-rent.jpg,Housing,active
+housing: for sale,sales,/db/images/house-for-sale.jpg,Real Estate,active
+housing: move,Services ,/db/images/moving.jpg,Move,active
+housing: roommates,services,/db/images/roommate.jpg,Roommate,active
+jobs,Employment,/db/images/job-openings.jpg,Jobs,active
+lost & found,Services ,/db/images/Lost-and-Found.jpg,Lost & Found,active
+motorcycle,sales,/db/images/motorcycle.jpg,Motorcycle,active
+music,sales,/db/images/music.jpg,Music,active
+pets,Services ,/db/images/pets.jpg,Pet,active
+photo & video,sales,/db/images/old-camera.jpg,Photo,active
+ride share,Services ,/db/images/medium-carpool.jpg,Ride Share,inactive
+scholarships,Services ,/db/images/photo1.jpg,Scholarships,active
+service: financial,Services,/db/images/financial.jpg,Financial,inactive
+service: handiwork,Services ,/db/images/tools.jpg,Handiwork,inactive
+services,Services ,/db/images/housework.jpg,Household,active
+service: legal,Services ,/db/images/law.jpg,Legal,inactive
+stuff,sales,/db/images/stuff.jpg,,active
+tickets for sale,sales,/db/images/tickets.jpg,Tickets,active
+toys & games,sales,/db/images/rubics-cube2.jpg,,active
+travel,Services ,/db/images/travelsuitcase.jpg,Travel,active
+video games,sales,/db/images/videogames.jpg,Video Games,inactive
+sports equipment,sales,/db/images/sport1.jpg,,active
+gigs,Employment,/db/images/help-wanted.jpg,Gigs,inactive
+for sale,sales,/db/images/for_sale_sign.jpg,For Sale,inactive
+happenings,Community,/db/images/event.jpg,Happenings,inactive
+community,Community,/db/images/Community2.jpg,Community,inactive
+creative,Services ,/db/images/bulb.png,Creative,inactive
+tutoring,Services ,/db/images/tutor1.jpg,Tutoring,inactive
+childcare,Services ,/db/images/childcare1.jpg,Childcare,inactive
+video,sales,/db/images/old-film.jpg,Video,inactive
