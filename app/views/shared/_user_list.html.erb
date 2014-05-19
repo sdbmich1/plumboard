@@ -18,7 +18,11 @@
   </table>
 
   <div id='user-list' class="nav pull-right">
-    <%= will_paginate @users, page_links: false if @users.respond_to?(:total_pages) %>
+      <%= will_paginate @users, page_links: false if @users.respond_to?(:total_pages) %>
+      
+  </div> 
+  <div id="footer">
+      <%= page_entries_info @users, :model => 'users' %>
   </div> 
 <% else %>
   <div class='center-wrapper'>No users found.</div>
