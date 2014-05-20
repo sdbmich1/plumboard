@@ -357,6 +357,17 @@ class User < ActiveRecord::Base
           include: {active_listings: {}, unpaid_received_invoices: {}, bank_accounts: {}, contacts: {}, card_accounts: {}})
   end
 
+  def self.to_csv
+    CSV.generate do |csv|
+      # header row
+      csv << ["Name", "Email", "Home Zip", "Birth Date", "Enrolled", "Last Login"]
+      # data rows
+      all.each do |user|
+        csv << [user.name, user.email, user.home_zip, user.birth_dt, user.nice_date(user.created_at), user.nice_date(user.last_sign_in_at)]
+      end
+    end
+  end
+
   # set sphinx scopes
    sphinx_scope(:first_name) { 
      {:order => 'first_name, last_name ASC'}

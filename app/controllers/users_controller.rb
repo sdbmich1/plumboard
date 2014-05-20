@@ -7,6 +7,10 @@ class UsersController < ApplicationController
 
   def index
     @users = User.get_by_type(@utype).paginate(page: @page, per_page: 15)
+    respond_to do |format|
+      format.html
+      format.csv {send_data User.to_csv }
+    end
   end
 
   def show
@@ -67,4 +71,5 @@ class UsersController < ApplicationController
   def check_permissions
     authorize! :manage, @users
   end
+      
 end

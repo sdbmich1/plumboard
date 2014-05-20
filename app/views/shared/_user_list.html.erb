@@ -2,7 +2,7 @@
     <table class="table table-hover table-condensed table-bordered">
     <thead>
       <tr>
-      <th></th>
+     <th></th>
       <th>Name</th>
       <th>Email</th>
       <th>Home Zip</th>
@@ -19,11 +19,17 @@
 
   <div id='user-list' class="nav pull-right">
       <%= will_paginate @users, page_links: false if @users.respond_to?(:total_pages) %>
-      
   </div> 
+
   <div id="footer">
+      <div id="footer-count">
       <%= page_entries_info @users, :model => 'users' %>
+      </div>
+      <div id="footer-export">
+          <%= link_to 'Export CSV', users_path(format: "csv"), class: 'btn btn-small' %>
+      </div>
   </div> 
+
 <% else %>
   <div class='center-wrapper'>No users found.</div>
 <% end %>
