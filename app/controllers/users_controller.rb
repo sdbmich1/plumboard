@@ -9,7 +9,7 @@ class UsersController < ApplicationController
     @users = User.get_by_type(@utype).paginate(page: @page, per_page: 15)
     respond_to do |format|
       format.html
-      format.csv {send_data User.to_csv }
+      format.csv {send_data User.to_csv}
     end
   end
 
