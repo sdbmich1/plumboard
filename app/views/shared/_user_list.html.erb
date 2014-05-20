@@ -1,4 +1,8 @@
 <% unless @users.blank? %>    
+    <div id="header", style="padding: 10px; text-align:right;">
+        <%= link_to 'Export as CSV file', users_path(format: "csv"), class: 'btn btn-small' %>
+    </div>
+
     <table class="table table-hover table-condensed table-bordered">
     <thead>
       <tr>
@@ -22,12 +26,7 @@
   </div> 
 
   <div id="footer">
-      <div id="footer-count">
       <%= page_entries_info @users, :model => 'users' %>
-      </div>
-      <div id="footer-export">
-          <%= link_to 'Export CSV', users_path(format: "csv"), class: 'btn btn-small' %>
-      </div>
   </div> 
 
 <% else %>
