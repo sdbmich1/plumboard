@@ -675,6 +675,56 @@ describe Listing do
     end
   end
 
+  describe "send_saved_pixi_removed" do
+    let(:user) { FactoryGirl.create :pixi_user }
+    let(:listing) { FactoryGirl.create :listing, seller_id: user.id }
+    let(:saved_listing) {FactoryGirl.create :saved_listing, user_id: user.id, pixi_id: listing.pixi_id}
+    let(:mail) { UserMailer.send_saved_pixi_removed(saved_listing.pixi_id) }
+
+    it 'delivers the email' do
+      expect {
+        create(:saved_listing, user_id: user.id, pixi_id: listing.pixi_id); sleep 1
+        listing.status = 'sold'
+        listing.save; sleep 2
+      }.to change{ActionMailer::Base.deliveries.length}.by(1)
+    end
+
+    it 'delivers email to all saved pixi users' do
+      expect {
+        create(:saved_listing, user_id: user.id, pixi_id: listing.pixi_id); sleep 1
+        listing.status = 'sold'
+        listing.save; sleep 2
+      }.to change{ActionMailer::Base.deliveries.length}.by(2)
+    end
+          
+    it 'renders the subject' do
+      expect(mail.subject).to eql('Saved Pixi is Sold/Removed')
+    end
+
+    it 'renders the receiver email' do
+      expect(mail.to).to eql([saved_listing.user])
+    end
+
+    it 'renders the sender email' do
+      expect(mail.from).to eql(['support.pixiboard.com'])
+    end
+
+    it 'does not send email to buyer' do
+      let(:buyer) { FactoryGirl.create :pixi_user}
+      let(:new_listing) { FactoryGirl.create :listing, buyer_id: buyer.id }
+      expect {
+        create(:saved_listing, user_id: buyer.id, pixi_id: new_listing.pixi_id); sleep 1
+        listing.status = 'sold'
+        listing.save; sleep 2
+      }.to change{ActionMailer::Base.deliveries.length}.by(0)
+    end
+  end
+
+
+
+
+
+
   describe "wanted" do 
     before(:each) do
       @usr = create :pixi_user

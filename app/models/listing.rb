@@ -186,6 +186,15 @@ class Listing < ListingParent
   # mark saved pixis if sold or closed
   def sync_saved_pixis
     SavedListing.update_status pixi_id, status unless active?
+    send_saved_pixi_removed(pixi_id) unless active?
+    
+  end
+
+  # sends email saved_listing user when saved_listing is removed
+  def send_saved_pixi_removed pixi_id
+    saved_listing = SavedListing.where("pixi_id = ?", pixi_id)
+    listing = Listing.where("pixi_id = ?", pixi_id)
+    UserMailer.delay.send_saved_pixi_removed(saved_listing) unless saved_listing.user_id == listing.buyer_id
   end
 
   # sphinx scopes
