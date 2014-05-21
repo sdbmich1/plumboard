@@ -360,10 +360,16 @@ class User < ActiveRecord::Base
   def self.to_csv
     CSV.generate do |csv|
       # header row
-      csv << ["Name", "Email", "Home Zip", "Birth Date", "Enrolled", "Last Login"]
+      csv << ["Name", "Email", "Home Zip", "Birth Date", "Enrolled", "Last Login", "Gender", "Age"]
       # data rows
       all.each do |user|
-        csv << [user.name, user.email, user.home_zip, user.birth_dt, user.nice_date(user.created_at), user.nice_date(user.last_sign_in_at)]
+        #find user's age
+        now = Time.now.utc.to_date
+        age = now.year - user.birth_date.year - 
+            ((now.month > user.birth_date.month || (now.month == user.birth_date.month && now.day >= user.birth_date.day)) ? 0 : 1)
+
+        csv << [user.name, user.email, user.home_zip, user.birth_dt, user.nice_date(user.created_at), 
+                user.nice_date(user.last_sign_in_at), user.gender, age]
       end
     end
   end
