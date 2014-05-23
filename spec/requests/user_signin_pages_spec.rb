@@ -44,15 +44,21 @@ feature "UserSignins" do
     end
 
     describe 'facebook' do 
+      def omniauth eFlg=true
+        email = eFlg ? 'bob.smith@test.com' : ''
+        OmniAuth.config.add_mock :facebook,
+          uid: "fb-12345", info: { name: "Bob Smith", image: "https://graph.facebook.com/708798320/picture?type=square", 
+	    location: 'San Francisco, California' },
+          extra: { raw_info: { first_name: 'Bob', last_name: 'Smith',
+          email: email, birthday: "01/03/1989", gender: 'male' } }
+      end
+
       before :each do
         create :state
-        OmniAuth.config.add_mock :facebook,
-          uid: "fb-12345", info: { name: "Bob Smith", image: "https://graph.facebook.com/708798320/picture?type=square" },
-          extra: { raw_info: { first_name: 'Bob', last_name: 'Smith',
-          email: 'bob.smith@test.com', birthday: "01/03/1989", gender: 'male', location: 'San Francisco, California' } }
       end
 
       scenario 'signs-in from sign-in page' do
+        omniauth
         click_on "fb-btn"
         page.should have_link('Sign out', href: destroy_user_session_path)
         page.should have_content "Home"
@@ -68,13 +74,27 @@ feature "UserSignins" do
       end
 
       scenario 'signs-in from home page' do
+        omniauth
         expect {
           visit root_path
           click_on "fb-btn"
         }.to change(User, :count).by(1)
+	expect(User.find_by_email('bob.smith@test.com').home_zip).not_to be_nil
 
         page.should have_link('Sign out', href: destroy_user_session_path)
         page.should have_content "Home"
+      end
+
+      scenario 'does not sign-in from home page' do
+        omniauth false
+        expect {
+          visit root_path
+          click_on "fb-btn"
+        }.to change(User, :count).by(0)
+	expect(User.find_by_email('bob.smith@test.com')).to be_nil
+
+        page.should have_link('Sign in', href: new_user_session_path)
+        page.should have_content "Sign Up"
       end
     end
 
@@ -110,7 +130,7 @@ feature "UserSignins" do
         page.should_not have_link('Inquiries', href: inquiries_path(ctype: 'inquiry'))
         page.should have_button('Post')
         page.should have_link('By You', href: new_temp_listing_path)
-        page.should have_link('By Us', href: check_pixi_post_zips_path)
+        page.should have_link('By Us (PixiPost)', href: check_pixi_post_zips_path)
         page.should_not have_link('For Seller', href: new_temp_listing_path(pixan_id: @user))
         page.should have_link('My Pixis', href: seller_listings_path)
         page.should have_link('My Messages', href: posts_path)
@@ -160,7 +180,7 @@ feature "UserSignins" do
         page.should have_link('Users', href: users_path)
         page.should have_button('Post')
         page.should have_link('By You', href: new_temp_listing_path)
-        page.should have_link('By Us', href: check_pixi_post_zips_path)
+        page.should have_link('By Us (PixiPost)', href: check_pixi_post_zips_path)
         page.should have_link('For Seller', href: new_temp_listing_path(pixan_id: @user))
         page.should have_link('My Pixis', href: seller_listings_path)
         page.should have_link('My Messages', href: posts_path)
