@@ -229,7 +229,7 @@ before 'rubber:config', 'deploy:enable_rubber', 'deploy:enable_rubber_current'
 after 'deploy:update_code', 'deploy:symlink_shared', 'sphinx:stop'
 after "deploy:migrations", "cleanup"
 #after "deploy", "cleanup", "memcached:flush"
-after "deploy:update", "deploy:migrations"
+#after "deploy:update", "deploy:migrations"
 
 task :cleanup, :except => { :no_release => true } do
   count = fetch(:keep_releases, 5).to_i

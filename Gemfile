@@ -18,7 +18,7 @@ gem "mysql2", "~> 0.3.12"
 
 # add paperclip for photos
 gem 'paperclip'
-gem 'delayed_paperclip'
+gem 'delayed_paperclip', '~> 2.7.1'
 
 # add for ajax uploads
 gem 'remotipart', '~> 1.0'
@@ -199,6 +199,7 @@ group :production do
    gem 'rack-google_analytics', :require => "rack/google_analytics"
 end 
 
+gem 'as_csv'
 gem 'open4'
 gem 'gelf'
 gem 'graylog2_exceptions', :git => 'git://github.com/wr0ngway/graylog2_exceptions.git'
