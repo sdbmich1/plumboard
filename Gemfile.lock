@@ -50,6 +50,7 @@ GEM
     area (0.10.0)
       fastercsv (~> 1.5)
     arel (3.0.2)
+    as_csv (1.0.2)
     attr_required (0.0.5)
     aws-sdk (1.11.3)
       json (~> 1.4)
@@ -458,7 +459,6 @@ GEM
       activesupport (>= 2.3.4)
       chronic (>= 0.6.3)
     will_paginate (3.0.4)
-    win32console (1.3.2)
     win32console (1.3.2-x86-mingw32)
     xpath (0.1.4)
       nokogiri (~> 1.3)
@@ -470,6 +470,7 @@ PLATFORMS
 DEPENDENCIES
   activemerchant
   area (~> 0.10.0)
+  as_csv
   aws-sdk (~> 1.11.3)
   balanced (~> 0.8.1)
   better_errors
@@ -501,6 +502,7 @@ DEPENDENCIES
   factory_girl_rails
   faker
   fakeweb (~> 1.3)
+  faraday (= 0.8.9)
   fb_graph (~> 1.8.4)
   gelf
   geocoder (~> 1.1.8)

@@ -7,8 +7,7 @@ gem 'rake'
 gem 'faraday', '0.8.9'
  
 # use devise for user authenication
-# changed to verison 3.0.4 to run smoothly on Mac
-gem 'devise', '3.0.4'
+gem 'devise'
 
 # add delayed job
 gem 'delayed_job_active_record'
@@ -22,7 +21,7 @@ gem "mysql2", "~> 0.3.12"
 
 # add paperclip for photos
 gem 'paperclip'
-gem 'delayed_paperclip', '~> 2.7.1'
+gem 'delayed_paperclip'
 
 # add for ajax uploads
 gem 'remotipart', '~> 1.0'
