@@ -40,3 +40,5 @@ database.yml
 
 .elasticbeanstalk/
 
+Gemfile.lock
+

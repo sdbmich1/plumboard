@@ -1,8 +1,12 @@
 <% unless @users.blank? %>    
+    <div id="header", style="padding: 10px; text-align:right;">
+        <%= link_to 'Export as CSV file', users_path(format: "csv"), class: 'btn btn-small' %>
+    </div>
+
     <table class="table table-hover table-condensed table-bordered">
     <thead>
       <tr>
-      <th></th>
+     <th></th>
       <th>Name</th>
       <th>Email</th>
       <th>Home Zip</th>
@@ -18,8 +22,13 @@
   </table>
 
   <div id='user-list' class="nav pull-right">
-    <%= will_paginate @users, page_links: false if @users.respond_to?(:total_pages) %>
+      <%= will_paginate @users, page_links: false if @users.respond_to?(:total_pages) %>
   </div> 
+
+  <div id="footer">
+      <%= page_entries_info @users, :model => 'users' %>
+  </div> 
+
 <% else %>
   <div class='center-wrapper'>No users found.</div>
 <% end %>

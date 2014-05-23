@@ -1,5 +1,5 @@
 /* primary listing(pixi) image */
-.pic-item { border: 1px solid #AAAAAA; padding: 3px; 
+.pic-item { border: 1px solid #AAAAAA; padding: 5px; 
   box-shadow: 1px 1px 1px 1px #ccc;
 }
 
@@ -9,7 +9,7 @@
 
 .bdescr {
   @extend .item-descr;
-  width: 120px!important; 
+  width: 100px!important; 
   font-size: 0.75em; line-height: 16px!important; 
 }
 
