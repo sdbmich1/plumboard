@@ -50,7 +50,6 @@ GEM
     area (0.10.0)
       fastercsv (~> 1.5)
     arel (3.0.2)
-    as_csv (1.0.2)
     attr_required (0.0.5)
     aws-sdk (1.11.3)
       json (~> 1.4)
@@ -123,8 +122,8 @@ GEM
     delayed_job_active_record (4.0.0)
       activerecord (>= 3.0, < 4.1)
       delayed_job (>= 3.0, < 4.1)
-    delayed_paperclip (2.7.1)
-      paperclip (>= 3.3)
+    delayed_paperclip (2.6.1)
+      paperclip (>= 3.3.0)
     devise (2.2.3)
       bcrypt-ruby (~> 3.0)
       orm_adapter (~> 0.1)
@@ -471,7 +470,6 @@ PLATFORMS
 DEPENDENCIES
   activemerchant
   area (~> 0.10.0)
-  as_csv
   aws-sdk (~> 1.11.3)
   balanced (~> 0.8.1)
   better_errors
@@ -494,7 +492,7 @@ DEPENDENCIES
   dalli-elasticache
   database_cleaner
   delayed_job_active_record
-  delayed_paperclip (~> 2.7.1)
+  delayed_paperclip
   devise
   devise-async
   email_spec

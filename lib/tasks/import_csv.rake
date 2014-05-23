@@ -284,6 +284,74 @@ task :load_categories => :environment do
   end
 end
 
+
+task :update_categories => :environment do
+
+  CSV.foreach(Rails.root.join('db', 'category_data_042214.csv'), :headers => true) do |row|
+
+    attrs = {:id               => row[0],
+             :name             => row[1].titleize,
+             :category_type    => row[2],
+             :status           => row[3],
+             :pixi_type        => row[4]}
+
+    attrs2 = {:original_name => row[6]}
+
+    #original_name is the original name of the category created by the load_categories task,
+    #if it exists. If the category name doesn't exist, original_name is nil. 
+
+    #update category
+    updated_category = Category.find(:first, :conditions => ["name = ?", attrs2[:original_name]])
+    if not updated_category
+      updated_category = Category.find_or_initialize_by_name(attrs)
+    else
+      updated_category.update_attributes!(attrs)
+    end
+
+    #add photo
+    while updated_category.pictures.size > 0
+      updated_category.pictures.map { |pic| updated_category.pictures.delete(pic) }
+    end
+
+    picture = updated_category.pictures.build
+    picture.photo = File.new("#{Rails.root}" + row[5]) if picture
+
+    #save category
+    if updated_category.save
+      puts "Saved category #{attrs.inspect}"
+    else
+      puts updated_category.errors
+    end
+  end
+end
+
+
+task :update_category_pictures => :environment do
+
+  CSV.foreach(Rails.root.join('db', 'category_data_042214.csv'), :headers => true) do |row|
+
+    attrs = {:name             => row[1].titleize}
+
+    #find category
+    updated_category = Category.find(:first, :conditions => ["name = ?", attrs[:name]])
+
+    #add photo
+    while updated_category.pictures.size > 0
+      updated_category.pictures.map { |pic| updated_category.pictures.delete(pic) }
+    end
+
+    picture = updated_category.pictures.build
+    picture.photo = File.new("#{Rails.root}" + row[5]) if picture
+
+    #save category
+    if updated_category.save
+      puts "Saved category #{attrs.inspect}"
+    else
+      puts updated_category.errors
+    end
+  end
+end
+
 task :import_point_system => :environment do
 
   PixiPoint.delete_all
