@@ -203,7 +203,13 @@ module ApplicationHelper
   
   # set different url if pixi is pending
   def set_pixi_path listing
-    listing.pending? || controller_name == 'pending_listings' ? pending_listing_url(listing) : listing
+    if controller_name == 'pending_listings'
+      if listing.pending?
+        pending_listing_url(listing)
+      else
+        listing
+      end
+    end
   end
 
 end
