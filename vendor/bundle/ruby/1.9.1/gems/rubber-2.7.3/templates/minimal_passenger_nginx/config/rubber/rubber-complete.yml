@@ -1,0 +1,2 @@
+role_dependencies:
+  app: [passenger_nginx]

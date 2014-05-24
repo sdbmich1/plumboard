@@ -1,0 +1,6 @@
+description: A simple nginx/mongrel rails stack without a db
+dependent_templates:
+  - base
+  - mongrel
+  - nginx
+  - haproxy

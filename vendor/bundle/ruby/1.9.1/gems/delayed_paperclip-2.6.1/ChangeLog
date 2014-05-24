@@ -1,0 +1,4 @@
+2.6.1
+* Wrote Unit tests
+* Rewrote Integration tests in rspec
+* Paperclip 3.5 compatibility

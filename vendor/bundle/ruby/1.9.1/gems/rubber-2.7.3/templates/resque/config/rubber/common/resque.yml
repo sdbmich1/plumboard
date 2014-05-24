@@ -1,0 +1,5 @@
+<%
+  @path = "#{Rubber.root}/config/resque.yml"
+%>
+
+<%= Rubber.env %>: <%= rubber_instances.for_role('redis_master').first.full_name rescue 'localhost' %>:6379
