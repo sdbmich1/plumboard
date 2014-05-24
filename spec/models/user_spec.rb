@@ -266,25 +266,29 @@ describe User do
 
   describe "must have zip" do
     let(:user) { FactoryGirl.build :user }
-
-    it "does not save w/o zip" do
+    before :each do
       picture = user.pictures.build
       picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
+    end
+
+    it "does not save w/o zip" do
       user.save
       user.should_not be_valid
     end
 
     it "does not save with invalid zip" do
-      picture = user.pictures.build
-      picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
       user.home_zip = '99999'
       user.save
       user.should_not be_valid
     end
 
+    it "does not save zip with invalid length" do
+      user.home_zip = '12'
+      user.save
+      user.should_not be_valid
+    end
+
     it "saves with zip" do
-      picture = user.pictures.build
-      picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
       user.home_zip = '94108'
       user.save
       user.should be_valid
@@ -404,7 +408,8 @@ describe User do
   describe 'facebook' do
     let(:user) { FactoryGirl.build :user }
     let(:auth) { OmniAuth.config.mock_auth[:facebook] = OmniAuth::AuthHash.new({
-               provider: 'facebook', uid: "fb-12345", info: { name: "Bob Smith", image: "http://graph.facebook.com/708798320/picture?type=square" }, 
+               provider: 'facebook', uid: "fb-12345", 
+	       info: { name: "Bob Smith", image: "http://graph.facebook.com/708798320/picture?type=square" }, 
 	       extra: { raw_info: { first_name: 'Bob', last_name: 'Smith',
 	                email: 'bob.smith@test.com', birthday: "01/03/1989", gender: 'male' } } }) }
 
