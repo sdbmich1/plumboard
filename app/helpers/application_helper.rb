@@ -200,16 +200,4 @@ module ApplicationHelper
   def get_acct_type
     controller_name == 'bank_accounts' ? 'bank' : 'card'
   end
-  
-  # set different url if pixi is pending
-  def set_pixi_path listing
-    if controller_name == 'pending_listings'
-      if listing.pending?
-        pending_listing_url(listing)
-      else
-        listing
-      end
-    end
-  end
-
 end
