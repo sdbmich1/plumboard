@@ -113,7 +113,7 @@ class User < ActiveRecord::Base
         false
       else
         # check for valid zip
-        if home_zip.to_region 
+        if home_zip.length == 5 && home_zip.to_region 
 	  true 
 	else
           errors.add(:base, 'Must have a valid zip')
@@ -219,11 +219,11 @@ class User < ActiveRecord::Base
       user.password = user.password_confirmation = Devise.friendly_token[0,20]
       user.fb_user = true
       user.gender = data.gender.capitalize rescue nil
-      user.home_zip = LocationManager::get_home_zip(data.location) rescue nil
+      user.home_zip = LocationManager::get_home_zip(access_token.info.location) rescue nil
 
       #add photo 
       picture_from_url user, access_token
-      user.save(:validate => false)
+      user.email.blank? ? false : user.save(:validate => false)
     end
     user
   end
@@ -256,10 +256,6 @@ class User < ActiveRecord::Base
   end
 
   def confirmation_required?
-    super && provider.blank?
-  end
-
-  def email_required?
     super && provider.blank?
   end
 

@@ -19,7 +19,7 @@ class PendingListingsController < ApplicationController
       redirect_to pending_listings_path(status: 'pending')
     else
       flash[:error] = "Order approval was not successful."
-      redirect_to pending_listing_path(@listing)
+      redirect_to pending_listing_path(@listing) if @listing
     end
   end
 

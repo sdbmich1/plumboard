@@ -189,6 +189,16 @@ describe Listing do
     it { Listing.get_by_city(@listing.category_id, @listing.site_id, 1).should_not be_empty }
   end
 
+  describe "active_by_city" do
+    it { Listing.active_by_city(0, 1, 1).should_not include @listing } 
+    it "finds active pixis by city" do
+      @site = create :site, name: 'Detroit', org_type: 'city'
+      @site.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro', city: 'Detroit', state: 'MI'
+      listing = create(:listing, seller_id: @user.id, site_id: @site.id) 
+      expect(Listing.active_by_city('Detroit', 'MI', 1).count).to eq(1)
+    end
+  end
+
   describe "category_by_site" do
     it { Listing.get_category_by_site(0, 1, 1).should_not include @listing } 
     it { Listing.get_category_by_site(@listing.category_id, @listing.site_id, 1).should_not be_empty }

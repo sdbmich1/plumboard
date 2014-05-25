@@ -5,6 +5,7 @@
 
 .bot-descr { font-size: 0.675em; color: #555555; }
 .item-descr { color: #000; }
+.white-descr { color: #ffffff; }
 
 .bdescr {
   @extend .item-descr;
@@ -16,6 +17,11 @@
   @extend .item-descr;
   width: 110px!important; 
   font-size: 0.7em!important; line-height: 14px!important; 
+}
+
+.signin-descr {
+  @extend .white-descr;
+  font-size: 0.675em;
 }
 
 .gdescr {

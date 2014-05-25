@@ -289,11 +289,13 @@ task :update_categories => :environment do
 
   CSV.foreach(Rails.root.join('db', 'category_data_042214.csv'), :headers => true) do |row|
 
-    attrs = {:name             => row[0].titleize,
-             :category_type    => row[1],
-             :status           => row[4]}
+    attrs = {:id               => row[0],
+             :name             => row[1].titleize,
+             :category_type    => row[2],
+             :status           => row[3],
+             :pixi_type        => row[4]}
 
-    attrs2 = {:original_name => row[3]}
+    attrs2 = {:original_name => row[6]}
 
     #original_name is the original name of the category created by the load_categories task,
     #if it exists. If the category name doesn't exist, original_name is nil. 
@@ -312,7 +314,7 @@ task :update_categories => :environment do
     end
 
     picture = updated_category.pictures.build
-    picture.photo = File.new("#{Rails.root}" + row[2]) if picture
+    picture.photo = File.new("#{Rails.root}" + row[5]) if picture
 
     #save category
     if updated_category.save
@@ -328,7 +330,7 @@ task :update_category_pictures => :environment do
 
   CSV.foreach(Rails.root.join('db', 'category_data_042214.csv'), :headers => true) do |row|
 
-    attrs = {:name             => row[0].titleize}
+    attrs = {:name             => row[1].titleize}
 
     #find category
     updated_category = Category.find(:first, :conditions => ["name = ?", attrs[:name]])
@@ -339,7 +341,7 @@ task :update_category_pictures => :environment do
     end
 
     picture = updated_category.pictures.build
-    picture.photo = File.new("#{Rails.root}" + row[2]) if picture
+    picture.photo = File.new("#{Rails.root}" + row[5]) if picture
 
     #save category
     if updated_category.save
