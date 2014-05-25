@@ -687,7 +687,6 @@ describe User do
         User.destroy_all
         csv = User.to_csv
         csv.should include headers.join(',')
-        csv.should include csv_line.join(',')
       end
           
     end
