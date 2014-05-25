@@ -671,24 +671,21 @@ describe User do
   end
 
   describe "exporting as CSV" do
-      let(:headers) { ["Name", "Email", "Home Zip", "Birth Date", "Enrolled", "Last Login", "Gender", "Age"] }
-      let(:now) { Time.now.utc.to_date }
-      let(:age) { now.year - @user.birth_date.year - ((now.month > @user.birth_date.month || (now.month == @user.birth_date.month && now.day >= @user.birth_date.day)) ? 0 : 1) }
-      let(:csv_line) { [@user.name, @user.email, @user.home_zip, @user.birth_dt, @user.nice_date(@user.created_at), @user.nice_date(@user.last_sign_in_at), @user.gender, age] }
+    let(:headers) { ["Name", "Email", "Home Zip", "Birth Date", "Enrolled", "Last Login", "Gender", "Age"] }
+    let(:now) { Time.now.utc.to_date }
+    let(:age) { now.year - @user.birth_date.year - ((now.month > @user.birth_date.month || (now.month == @user.birth_date.month && now.day >= @user.birth_date.day)) ? 0 : 1) }
+    let(:csv_line) { [@user.name, @user.email, @user.home_zip, @user.birth_dt, @user.nice_date(@user.created_at), @user.nice_date(@user.last_sign_in_at), @user.gender, age] }
 
-
-      it "exports data as CSV file" do
-        csv_string = User.to_csv
-        csv_string.should include headers.join(',')
-        csv_string.should include csv_line.join(',')
-      end
-
-      it "does not export any user data" do
-        User.destroy_all
-        csv = User.to_csv
-        csv.should include headers.join(',')
-      end
-          
+    it "exports data as CSV file" do
+      csv_string = User.to_csv
+      csv_string.should include headers.join(',')
+      csv_string.should include csv_line.join(',')
     end
- 
+
+    it "does not export any user data" do
+      User.destroy_all
+      csv = User.to_csv
+      csv.should include headers.join(',')
+    end
+  end
 end
