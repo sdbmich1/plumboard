@@ -679,7 +679,6 @@ describe User do
 
 
       it "exports data as CSV file" do
-        headers = ["Name", "Email", "Home Zip", "Birth Date", "Enrolled", "Last Login", "Gender", "Age"]
         csv_string.should include headers.join(',')
         csv_string.should include csv_line.join(',')
       end
