@@ -186,15 +186,19 @@ class Listing < ListingParent
   # mark saved pixis if sold or closed
   def sync_saved_pixis
     SavedListing.update_status pixi_id, status unless active?
-    send_saved_pixi_removed(pixi_id) unless active?
+    saved_listing = SavedListing.find(:first, :conditions => ["pixi_id = ?", pixi_id])
+
+    #sends pixi removed email to people who saved the listing
+    if saved_listing.status == 'closed' || 'sold' || 'removed' || 'inactive'
+        send_saved_pixi_removed(saved_listing)
+    end
     
   end
 
   # sends email saved_listing user when saved_listing is removed
-  def send_saved_pixi_removed pixi_id
-    saved_listing = SavedListing.where("pixi_id = ?", pixi_id)
-    listing = Listing.where("pixi_id = ?", pixi_id)
-    UserMailer.delay.send_saved_pixi_removed(saved_listing) unless saved_listing.user_id == listing.buyer_id
+  def send_saved_pixi_removed saved_listing
+      listing = Listing.find(:first, :conditions => ["pixi_id = ?", saved_listing.pixi_id]) rescue nil
+    UserMailer.send_saved_pixi_removed(saved_listing) unless saved_listing.user_id == listing.buyer_id
   end
 
   # sphinx scopes

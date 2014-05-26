@@ -169,7 +169,7 @@ class UserMailer < ActionMailer::Base
   def send_saved_pixi_removed saved_listing
     @listing = saved_listing.listing
     @saved_listing = saved_listing
-    @status = saved_listing.status
+    @status = @listing.status
     #set logo
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
