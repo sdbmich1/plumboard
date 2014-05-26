@@ -676,30 +676,37 @@ describe Listing do
   end
 
   describe "send_saved_pixi_removed" do
-    let(:saved_listing) { @user.saved_listings.build FactoryGirl.attributes_for :saved_listing, pixi_id: @listing.pixi_id }
+    let(:user2) { FactoryGirl.create :pixi_user, email: 'test@test.com'}
+    let(:saved_listing) { @user.saved_listings.build FactoryGirl.attributes_for :saved_listing, pixi_id: @listing.pixi_id, user_id: user2.id }
     let(:mail) { UserMailer.send_saved_pixi_removed(saved_listing) }
 
     it 'delivers the email' do
-      expect {
-        @listing.status = 'sold'
-        @listing.save; sleep 4
-      }.to change{ActionMailer::Base.deliveries.length}.by(1)
+      @listing.status = 'sold'
+      @listing.save; sleep 2
+      saved_listing.status = 'sold'
+      saved_listing.save; sleep 2
+      expect(ActionMailer::Base.deliveries.last.subject).to eql('Saved Pixi is Sold/Removed')
     end
 
     it 'should deliver the email' do
       @user_mailer = mock(UserMailer)
       UserMailer.stub(:delay).and_return(UserMailer)
-      UserMailer.should_receive(:send_saved_pixi_removed).with(saved_listing)
       saved_listing.status = 'sold'
       saved_listing.save
+      UserMailer.should_receive(:send_saved_pixi_removed).with(saved_listing)
     end
 
     it 'delivers email to all saved pixi users' do
       expect {
-        create(:saved_listing, user_id: @user.id, pixi_id: @listing.pixi_id); sleep 1
+        saved_listing2 = FactoryGirl.create :saved_listing, pixi_id: @listing.pixi_id, user_id: user2.id
         @listing.status = 'sold'
-        @listing.save; sleep 4
+        @listing.save; sleep 2
+        saved_listing2.status = 'sold'
+        saved_listing2.save; sleep 2
+        saved_listing.status = 'sold'
+        saved_listing.save; sleep 2
       }.to change{ActionMailer::Base.deliveries.length}.by(3)
+
     end
           
     it 'renders the subject' do
@@ -716,6 +723,8 @@ describe Listing do
       saved_listing2 = FactoryGirl.create :saved_listing, user_id: buyer.id, pixi_id: new_listing.pixi_id
       new_listing.status = 'sold'
       new_listing.save
+      saved_listing2.status = 'sold'
+      saved_listing2.save; sleep 2
       expect(ActionMailer::Base.deliveries.last.subject).not_to eql('Saved Pixi is Sold/Removed')
     end
 
