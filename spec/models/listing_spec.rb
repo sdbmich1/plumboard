@@ -686,6 +686,12 @@ describe Listing do
       expect(ActionMailer::Base.deliveries.last.subject).to eql('Saved Pixi is Sold/Removed') 
     end
 
+    it 'sends email to right user' do
+      @listing.status = 'sold'
+      @listing.save; sleep 2
+      expect(ActionMailer::Base.deliveries.last.to).to eql([@saved_listing.user.email])
+    end
+
     it 'delivers email to all saved pixi users' do
       user2 = FactoryGirl.create :pixi_user
       saved_listing2 = FactoryGirl.create(:saved_listing, user_id: user2.id, pixi_id: @listing.pixi_id)
