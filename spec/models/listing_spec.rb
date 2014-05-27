@@ -687,7 +687,7 @@ describe Listing do
     end
 
     it 'sends email to right user' do
-      @listing.status = 'sold'
+      @listing.status = 'removed'
       @listing.save; sleep 2
       expect(ActionMailer::Base.deliveries.last.to).to eql([@saved_listing.user.email])
     end
@@ -696,7 +696,7 @@ describe Listing do
       user2 = FactoryGirl.create :pixi_user
       saved_listing2 = FactoryGirl.create(:saved_listing, user_id: user2.id, pixi_id: @listing.pixi_id)
       expect {
-        @listing.status = 'sold'
+        @listing.status = 'closed'
         @listing.save; sleep 2
       }.to change{ActionMailer::Base.deliveries.length}.by(2)
     end
@@ -716,7 +716,7 @@ describe Listing do
       it 'does not send email to buyer' do
         listing = FactoryGirl.create(:listing, seller_id: @user.id)
         saved_listing = FactoryGirl.create(:saved_listing, user_id: buyer.id, pixi_id: listing.pixi_id)
-        listing.status = 'sold'
+        listing.status = 'inactive'
         listing.buyer_id = buyer.id
         listing.save; sleep 2
         expect(ActionMailer::Base.deliveries.last.subject).not_to eql('Saved Pixi is Sold/Removed')
