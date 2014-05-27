@@ -8,11 +8,24 @@
 	Hi <%= @listing.seller_first_name %>,<br /><br />
 
     	<span style="height:30px;">
-  		<%= @want.user_name %> has expressed interest in your pixi.   
-		Visit <%= posts_url %> to check it out.
+  		Good news! Someone has expressed interest in pixi you are offering for sale.<br />
+        Visit <a href="https://www.pixiboard.com/posts">https://www.pixiboard.com/posts</a> to see the offer.<br /><br />
+        Ok, now what? Well, you can:<br /><br />
+            <ol type = "a">
+                <li>Through the Pixiboard&#153 Message center reply to the post, answer questions, and determine a<br />
+            meet-up spot, or<br />
+                </li>
+
+                <li>Click the blue Bill box on the toolbar in the application to send an invoice to the potential buyer.<br />
+            Use the Comments section to provide additional instructions or details.<br /><br />
+                </li>
+            </ol>
+        Either way, there is a sale to be made.
+
+
 	</span><br /><br />
 
-	<span style="margin-top:20px;">Happy Pixing!</span><br /><br />
+	<span style="margin-top:20px;">Keep on Pixing!</span><br /><br />
 	<span>The Pixiboard Team</span><br /><br /> 	
     	<%= render :partial=>'shared/mail_footer' %>
   </body>
