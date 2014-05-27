@@ -676,60 +676,72 @@ describe Listing do
   end
 
   describe "send_saved_pixi_removed" do
-    let(:user2) { FactoryGirl.create :pixi_user, email: 'test@test.com'}
-    let(:saved_listing) { @user.saved_listings.build FactoryGirl.attributes_for :saved_listing, pixi_id: @listing.pixi_id, user_id: user2.id }
-    let(:mail) { UserMailer.send_saved_pixi_removed(saved_listing) }
+    let(:user) { FactoryGirl.create :pixi_user }
+    let(:buyer) { FactoryGirl.create :pixi_user }
+    before(:each) do
+      @listing = FactoryGirl.create(:listing, seller_id: @user.id)
+      @saved_listing = FactoryGirl.create(:saved_listing, user_id: user.id, pixi_id: @listing.pixi_id)
+    end
 
     it 'delivers the email' do
       @listing.status = 'sold'
       @listing.save; sleep 2
-      saved_listing.status = 'sold'
-      saved_listing.save; sleep 2
-      expect(ActionMailer::Base.deliveries.last.subject).to eql('Saved Pixi is Sold/Removed')
-    end
-
-    it 'should deliver the email' do
-      @user_mailer = mock(UserMailer)
-      UserMailer.stub(:delay).and_return(UserMailer)
-      saved_listing.status = 'sold'
-      saved_listing.save
-      UserMailer.should_receive(:send_saved_pixi_removed).with(saved_listing)
+      expect(ActionMailer::Base.deliveries.last.subject).to eql('Saved Pixi is Sold/Removed') 
     end
 
     it 'delivers email to all saved pixi users' do
+      user2 = FactoryGirl.create :pixi_user
+      saved_listing2 = FactoryGirl.create(:saved_listing, user_id: user2.id, pixi_id: @listing.pixi_id)
       expect {
-        saved_listing2 = FactoryGirl.create :saved_listing, pixi_id: @listing.pixi_id, user_id: user2.id
+        @listing.status = 'sold'
+        @listing.buyer_id = buyer.id
+        @listing.save; sleep 2
+      }.to change{ActionMailer::Base.deliveries.length}.by(3)
+    end
+
+
+    context 'when no saved listings' do
+      it 'does not deliver email' do
+        @listing = FactoryGirl.create(:listing, seller_id: @user.id)
         @listing.status = 'sold'
         @listing.save; sleep 2
-        saved_listing2.status = 'sold'
-        saved_listing2.save; sleep 2
-        saved_listing.status = 'sold'
-        saved_listing.save; sleep 2
-      }.to change{ActionMailer::Base.deliveries.length}.by(3)
-
-    end
-          
-    it 'renders the subject' do
-      expect(mail.subject).to eql('Saved Pixi is Sold/Removed')
+        expect(ActionMailer::Base.deliveries.last.subject).not_to eql('Saved Pixi is Sold/Removed')
+      end
     end
 
-    it 'renders the receiver email' do
-      expect(mail.to).to eql([saved_listing.user.email])
+
+    context 'when buyer saved the listing' do
+      let(:buyer) { FactoryGirl.create :pixi_user }
+
+      it 'does not send email to buyer' do
+        listing = FactoryGirl.create(:listing, seller_id: @user.id)
+        saved_listing = FactoryGirl.create(:saved_listing, user_id: buyer.id, pixi_id: listing.pixi_id)
+        listing.status = 'sold'
+        listing.buyer_id = buyer.id
+        listing.save; sleep 2
+        expect(ActionMailer::Base.deliveries.last.subject).not_to eql('Saved Pixi is Sold/Removed')
+      end
     end
 
-    it 'does not send email to buyer' do
-      buyer = FactoryGirl.create :pixi_user
-      new_listing = FactoryGirl.create :listing, buyer_id: buyer.id 
-      saved_listing2 = FactoryGirl.create :saved_listing, user_id: buyer.id, pixi_id: new_listing.pixi_id
-      new_listing.status = 'sold'
-      new_listing.save
-      saved_listing2.status = 'sold'
-      saved_listing2.save; sleep 2
-      expect(ActionMailer::Base.deliveries.last.subject).not_to eql('Saved Pixi is Sold/Removed')
-    end
+    context 'when checking email content' do
+      let (:mail) { UserMailer.send_saved_pixi_removed(@saved_listing) }
 
-    it 'renders the sender email' do
-      expect(mail.from).to eql(["support@pixiboard.com"])
+      it 'sends the email' do
+        UserMailer.send_saved_pixi_removed(@saved_listing)
+        expect(ActionMailer::Base.deliveries.last.subject).not_to eql('Saved Pixi is Sold/Removed')
+      end
+
+      it 'renders the subject' do
+        expect(mail.subject).to eql('Saved Pixi is Sold/Removed')
+      end
+
+      it 'renders the receiver email' do
+        expect(mail.to).to eql([@saved_listing.user.email])
+      end
+
+      it 'renders the sender email' do
+        expect(mail.from).to eql(['support@pixiboard.com'])
+      end
     end
   end
 
