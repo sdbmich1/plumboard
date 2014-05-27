@@ -188,7 +188,7 @@ class Listing < ListingParent
     SavedListing.update_status pixi_id, status unless active?
   end
 
-  # sends email saved_listing user when saved_listing is removed
+  # sends email to users who saved the listing when listing is removed
   def send_saved_pixi_removed
     saved_listings = SavedListing.find(:all, :conditions => ["pixi_id = ?", pixi_id]) rescue nil 
     saved_listings.each do |saved_listing|

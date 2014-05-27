@@ -676,11 +676,8 @@ describe Listing do
   end
 
   describe "send_saved_pixi_removed" do
-    let(:user) { FactoryGirl.create :pixi_user }
-    let(:buyer) { FactoryGirl.create :pixi_user }
     before(:each) do
-      @listing = FactoryGirl.create(:listing, seller_id: @user.id)
-      @saved_listing = FactoryGirl.create(:saved_listing, user_id: user.id, pixi_id: @listing.pixi_id)
+      @saved_listing = FactoryGirl.create(:saved_listing, user_id: @user.id, pixi_id: @listing.pixi_id)
     end
 
     it 'delivers the email' do
@@ -694,21 +691,18 @@ describe Listing do
       saved_listing2 = FactoryGirl.create(:saved_listing, user_id: user2.id, pixi_id: @listing.pixi_id)
       expect {
         @listing.status = 'sold'
-        @listing.buyer_id = buyer.id
         @listing.save; sleep 2
-      }.to change{ActionMailer::Base.deliveries.length}.by(3)
+      }.to change{ActionMailer::Base.deliveries.length}.by(2)
     end
-
 
     context 'when no saved listings' do
       it 'does not deliver email' do
-        @listing = FactoryGirl.create(:listing, seller_id: @user.id)
-        @listing.status = 'sold'
-        @listing.save; sleep 2
+        listing = FactoryGirl.create(:listing, seller_id: @user.id)
+        listing.status = 'sold'
+        listing.save; sleep 2
         expect(ActionMailer::Base.deliveries.last.subject).not_to eql('Saved Pixi is Sold/Removed')
       end
     end
-
 
     context 'when buyer saved the listing' do
       let(:buyer) { FactoryGirl.create :pixi_user }
@@ -725,11 +719,6 @@ describe Listing do
 
     context 'when checking email content' do
       let (:mail) { UserMailer.send_saved_pixi_removed(@saved_listing) }
-
-      it 'sends the email' do
-        UserMailer.send_saved_pixi_removed(@saved_listing)
-        expect(ActionMailer::Base.deliveries.last.subject).not_to eql('Saved Pixi is Sold/Removed')
-      end
 
       it 'renders the subject' do
         expect(mail.subject).to eql('Saved Pixi is Sold/Removed')
