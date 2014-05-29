@@ -40,7 +40,7 @@ id,name,category_type,status,pixi_type,image_file,original_name
 41,Books,sales,active,NULL,/db/images/text-books.jpg,Books
 42,Household Appliances,sales,active,basic,/db/images/fridge.jpg,Appliances
 43,Electronics: Games,sales,inactive,basic,/db/images/videogames.jpg,Video Games
-44,Electronics: Cell Phones,sales,inactive,basic,sales,/db/images/cell.jpg,Cell Phones
+44,Electronics: Cell Phones,sales,inactive,basic,/db/images/cell.jpg,Cell Phones
 45,Photo & Video,sales,active,basic,/db/images/old-camera.jpg,Photo
 46,Video,sales,inactive,basic,/db/images/old-film.jpg,Video
 47,Stuff,sales,active,basic,/db/images/stuff.jpg
