@@ -266,25 +266,29 @@ describe User do
 
   describe "must have zip" do
     let(:user) { FactoryGirl.build :user }
-
-    it "does not save w/o zip" do
+    before :each do
       picture = user.pictures.build
       picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
+    end
+
+    it "does not save w/o zip" do
       user.save
       user.should_not be_valid
     end
 
     it "does not save with invalid zip" do
-      picture = user.pictures.build
-      picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
       user.home_zip = '99999'
       user.save
       user.should_not be_valid
     end
 
+    it "does not save zip with invalid length" do
+      user.home_zip = '12'
+      user.save
+      user.should_not be_valid
+    end
+
     it "saves with zip" do
-      picture = user.pictures.build
-      picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
       user.home_zip = '94108'
       user.save
       user.should be_valid
@@ -404,7 +408,8 @@ describe User do
   describe 'facebook' do
     let(:user) { FactoryGirl.build :user }
     let(:auth) { OmniAuth.config.mock_auth[:facebook] = OmniAuth::AuthHash.new({
-               provider: 'facebook', uid: "fb-12345", info: { name: "Bob Smith", image: "http://graph.facebook.com/708798320/picture?type=square" }, 
+               provider: 'facebook', uid: "fb-12345", 
+	       info: { name: "Bob Smith", image: "http://graph.facebook.com/708798320/picture?type=square" }, 
 	       extra: { raw_info: { first_name: 'Bob', last_name: 'Smith',
 	                email: 'bob.smith@test.com', birthday: "01/03/1989", gender: 'male' } } }) }
 
@@ -667,6 +672,25 @@ describe User do
       posts.each do |post|
         Post.find_by_id(post.id).should be_nil
       end
+    end
+  end
+
+  describe "exporting as CSV" do
+    let(:headers) { ["Name", "Email", "Home Zip", "Birth Date", "Enrolled", "Last Login", "Gender", "Age"] }
+    let(:now) { Time.now.utc.to_date }
+    let(:age) { now.year - @user.birth_date.year - ((now.month > @user.birth_date.month || (now.month == @user.birth_date.month && now.day >= @user.birth_date.day)) ? 0 : 1) }
+    let(:csv_line) { [@user.name, @user.email, @user.home_zip, @user.birth_dt, @user.nice_date(@user.created_at), @user.nice_date(@user.last_sign_in_at), @user.gender, age] }
+
+    it "exports data as CSV file" do
+      csv_string = User.to_csv
+      csv_string.should include headers.join(',')
+      csv_string.should include csv_line.join(',')
+    end
+
+    it "does not export any user data" do
+      User.destroy_all
+      csv = User.to_csv
+      csv.should include headers.join(',')
     end
   end
 end

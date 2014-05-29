@@ -113,7 +113,7 @@ class User < ActiveRecord::Base
         false
       else
         # check for valid zip
-        if home_zip.to_region 
+        if home_zip.length == 5 && home_zip.to_region 
 	  true 
 	else
           errors.add(:base, 'Must have a valid zip')
@@ -219,11 +219,11 @@ class User < ActiveRecord::Base
       user.password = user.password_confirmation = Devise.friendly_token[0,20]
       user.fb_user = true
       user.gender = data.gender.capitalize rescue nil
-      user.home_zip = LocationManager::get_home_zip(data.location) rescue nil
+      user.home_zip = LocationManager::get_home_zip(access_token.info.location) rescue nil
 
       #add photo 
       picture_from_url user, access_token
-      user.save(:validate => false)
+      user.email.blank? ? false : user.save(:validate => false)
     end
     user
   end
@@ -256,10 +256,6 @@ class User < ActiveRecord::Base
   end
 
   def confirmation_required?
-    super && provider.blank?
-  end
-
-  def email_required?
     super && provider.blank?
   end
 
@@ -358,19 +354,22 @@ class User < ActiveRecord::Base
   end
 
   def self.to_csv
-    CSV.generate do |csv|
-      # header row
-      csv << ["Name", "Email", "Home Zip", "Birth Date", "Enrolled", "Last Login", "Gender", "Age"]
-      # data rows
-      all.each do |user|
-        #find user's age
-        now = Time.now.utc.to_date
-        age = now.year - user.birth_date.year - 
-            ((now.month > user.birth_date.month || (now.month == user.birth_date.month && now.day >= user.birth_date.day)) ? 0 : 1)
+    begin
+      CSV.generate do |csv|
+        # header row
+        csv << ["Name", "Email", "Home Zip", "Birth Date", "Enrolled", "Last Login", "Gender", "Age"]
+        # data rows
+        all.each do |user|
+          #find user's age
+          now = Time.now.utc.to_date
+          age = now.year - user.birth_date.year - 
+              ((now.month > user.birth_date.month || (now.month == user.birth_date.month && now.day >= user.birth_date.day)) ? 0 : 1)
 
-        csv << [user.name, user.email, user.home_zip, user.birth_dt, user.nice_date(user.created_at), 
-                user.nice_date(user.last_sign_in_at), user.gender, age]
+          csv << [user.name, user.email, user.home_zip, user.birth_dt, user.nice_date(user.created_at), 
+                  user.nice_date(user.last_sign_in_at), user.gender, age]
+        end
       end
+    rescue nil
     end
   end
 

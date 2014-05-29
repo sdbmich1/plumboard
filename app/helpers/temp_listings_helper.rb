@@ -15,11 +15,6 @@ module TempListingsHelper
     'Image will be removed. Are you sure?'
   end
 
-  # set different url if pixi is pending
-  def set_pixi_path listing
-    listing.pending? && controller_name == 'pending_listings' ? pending_listing_url(listing) : listing
-  end
-
   # return # of steps to submit new pixi
   def step_count
     @listing.free? ? 2 : !@listing.new_status? ? 2 : 3
@@ -34,5 +29,10 @@ module TempListingsHelper
   def check_pending_pixi listing
     path = (mobile_device? ? 'mobile' : 'shared') + '/pending_listing' 
     render partial: path, locals: {listing: listing} if controller_name == 'pending_listings'
+  end
+
+  # set different url if pixi is pending
+  def set_pixi_path listing
+    listing.pending? && controller_name == 'pending_listings' ? pending_listing_url(listing) : listing
   end
 end
