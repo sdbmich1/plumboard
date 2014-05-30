@@ -100,3 +100,16 @@ def update_pixi_buyers
     listing.save
   end
 end
+
+# load pixi lat/lng based on site location 
+def load_pixi_lat_lng
+  include LocationManager
+
+  Listing.active.each do |p|
+    ll = LocationManager::get_lat_lng_by_loc p.site_name
+    if ll
+      p.lat, p.lng = ll
+      p.save
+    end
+  end
+end

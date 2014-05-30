@@ -3,7 +3,7 @@ class UserObserver < ActiveRecord::Observer
 
   # set default user type
   def before_create usr
-    usr.user_type_code = 'mbr'
+    usr.user_type_code = 'mbr' if usr.user_type_code.blank?
   end
 
   # update points

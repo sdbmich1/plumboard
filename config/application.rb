@@ -25,7 +25,7 @@ module Plumboard
 
     # Activate observers that should always be running.
     # config.active_record.observers = :cacher, :garbage_collector, :forum_observer
-    config.active_record.observers = :transaction_observer, :temp_listing_observer, :user_observer, 
+    config.active_record.observers = :transaction_observer, :user_observer, 
       :listing_observer, :invoice_observer, :post_observer, :comment_observer, :pixi_post_observer, :inquiry_observer, 
       :pixi_want_observer, :saved_listing_observer
 
@@ -71,11 +71,6 @@ module Plumboard
     config.generators do |g|
       g.view_specs false
       g.helper_specs false
-    end
-
-    # setup time zone
-    Timezone::Configure.begin do |c|
-      c.username = 'sdbmich1'
     end
   end
 end

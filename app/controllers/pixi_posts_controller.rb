@@ -4,7 +4,7 @@ class PixiPostsController < ApplicationController
   before_filter :check_permissions, only: [:index]
   before_filter :set_params, only: [:create, :update]
   before_filter :set_zip, only: [:new]
-  before_filter :load_data, only: [:index, :seller]
+  before_filter :load_data, only: [:index, :seller, :pixter]
   autocomplete :site, :name, full: true, scopes: [:cities]
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name
   include ResetDate
@@ -70,6 +70,11 @@ class PixiPostsController < ApplicationController
 
   def seller
     @posts = PixiPost.get_by_seller(@user).get_by_status(@status).paginate(page: @page)
+    respond_with(@posts)
+  end
+
+  def pixter
+    @posts = PixiPost.get_by_pixter(@user).get_by_status(@status).paginate(page: @page)
     respond_with(@posts)
   end
 

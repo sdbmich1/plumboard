@@ -31,7 +31,7 @@ Plumboard::Application.configure do
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for nginx
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = true
+  # config.force_ssl = true
 
   # See everything in the log (default is :info)
   # config.log_level = :debug
@@ -44,7 +44,7 @@ Plumboard::Application.configure do
 
   # Use a different cache store in production
   elasticache = Dalli::ElastiCache.new("pxb-cache01.hwslci.cfg.usw1.cache.amazonaws.com:11211")
-  config.cache_store = :dalli_store, elasticache.servers, {:expires_in => 1.day, :compress => true}
+  config.cache_store = :dalli_store, elasticache.servers, {:expires_in => 1.hour, :compress => true}
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"

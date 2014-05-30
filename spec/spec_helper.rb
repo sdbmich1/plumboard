@@ -22,6 +22,9 @@ Spork.prefork do
   # in spec/support/ and its subdirectories.
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
+  # turn off sphinx
+  ThinkingSphinx::Deltas.suspend!
+
   host = ENV['BALANCED_HOST'] or nil
   options = {}
 

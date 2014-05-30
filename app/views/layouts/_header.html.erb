@@ -23,7 +23,7 @@
     	      <li><%= link_to "Pay", get_unpaid_path, id: 'pay-pixi' %></li>
   	    <% end %>
 
-	    <%= render 'layouts/manage' if can? :manage_items, @user %>
+	    <%= render 'layouts/manage' if can? :manage_pixi_posts, @user %>
 	    <%= render 'layouts/user_menu' %>
           </ul>
 	<% else %>
