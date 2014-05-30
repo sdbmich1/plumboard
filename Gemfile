@@ -21,7 +21,7 @@ gem "mysql2", "~> 0.3.12"
 
 # add paperclip for photos
 gem 'paperclip'
-gem 'delayed_paperclip'
+gem 'delayed_paperclip', '~> 2.7.1'
 
 # add for ajax uploads
 gem 'remotipart', '~> 1.0'
