@@ -15,6 +15,7 @@ class Ability
       can :manage, User
       can :access, '/pending_listings'
       can :manage_items, User
+      can :manage_pixi_posts, User
       can :manage_orders, User
       can :manage_users, User
       can :view_dashboard, User
@@ -55,11 +56,13 @@ class Ability
         can :access, '/pending_listings'
         can :manage, PixiPost
         can :manage_items, User
+        can :manage_pixi_posts, User
         can :manage_orders, User
         can :view_dashboard, User
       end
 
       if user.has_role? :pixter
+        can :manage_pixi_posts, User
         can [:read, :update], PixiPost, status: 'scheduled'
       end
 

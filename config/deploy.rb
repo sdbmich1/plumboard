@@ -203,8 +203,7 @@ namespace :memcached do
   desc "Flushes memcached local instance"
   task :flush, :roles => [:app] do
     # run("cd #{current_path} && rake memcached:flush")
-    run "cd #{latest_release} && RAILS_ENV=#{rails_env} rake memcached:flush"
-    Rails.cache.clear
+    run "cd #{release_path} && RAILS_ENV=#{rails_env} rake memcached:flush"
   end
 end
 
@@ -228,7 +227,7 @@ after 'bundle:install', 'deploy:enable_rubber'
 before 'rubber:config', 'deploy:enable_rubber', 'deploy:enable_rubber_current'
 after 'deploy:update_code', 'deploy:symlink_shared', 'sphinx:stop'
 after "deploy:migrations", "cleanup"
-#after "deploy", "cleanup", "memcached:flush"
+after "deploy", "cleanup", "memcached:flush"
 #after "deploy:update", "deploy:migrations"
 
 task :cleanup, :except => { :no_release => true } do

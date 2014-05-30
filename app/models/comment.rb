@@ -2,7 +2,7 @@ class Comment < ActiveRecord::Base
   attr_accessible :content, :user_id, :pixi_id
 
   belongs_to :user
-  belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id"
+  belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id", touch: true
 
   validates :content, :presence => true 
   validates :pixi_id, :presence => true

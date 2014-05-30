@@ -1,14 +1,13 @@
 source 'http://rubygems.org'
 
 gem 'rails', '3.2.12'
-gem 'rake' 
+gem 'rake', '~> 10.3.1' 
 
 #added faraday gem version 0.8.9 to run smoothly on Mac
 gem 'faraday', '0.8.9'
  
 # use devise for user authenication
-# changed to verison 3.0.4 to run smoothly on Mac
-gem 'devise', '3.0.4'
+gem 'devise'
 
 # add delayed job
 gem 'delayed_job_active_record'
@@ -134,6 +133,9 @@ gem 'bootstrap-sass', '~> 2.3.2.1'
 # add memcached
 gem 'dalli'
 gem 'dalli-elasticache'
+
+#add cache digests for russian doll caching
+gem 'cache_digests', '~> 0.3.1'
 
 # add area
 gem 'area', '~> 0.10.0'

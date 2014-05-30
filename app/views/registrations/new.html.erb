@@ -19,8 +19,12 @@
         </div>
 
     	<div class='mtop mbot'>
-	  <%= f.submit "Register", class: "btn btn-large btn-primary submit-btn", id: 'register-btn', data: {disable_with: "Submitting..."} %>
+	  <div class='left-form mright20'>
+	    <%= f.submit "Register", class: "btn btn-large btn-primary submit-btn", id: 'register-btn', data: {disable_with: "Submitting..."} %>
+	  </div>
+          <div class='pad10 sdescr'>Already have an account? <%= link_to "Sign In", new_user_session_path, class: 'terms-link' %></div>
 	</div>
+	<div class='clear-all'></div>
         <div class='mtop sdescr'>By registering, I accept <%= link_to "Pixiboard's Terms of Service", terms_path, class: 'terms-link' %> and  
 	   <%= link_to "Privacy Policy", privacy_path, class: 'terms-link' %>. We do not share your personal information.</div>
       </div>
