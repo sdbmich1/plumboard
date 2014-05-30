@@ -289,8 +289,7 @@ task :update_categories => :environment do
 
   CSV.foreach(Rails.root.join('db', 'category_data_042214.csv'), :headers => true) do |row|
 
-    attrs = {:id               => row[0],
-             :name             => row[1].titleize,
+    attrs = {:name             => row[1].titleize,
              :category_type    => row[2],
              :status           => row[3],
              :pixi_type        => row[4]}
