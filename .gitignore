@@ -15,6 +15,7 @@
 /tmp
 *.swp
 *.swo
+*.iml
 *~
 .idea/*
 
@@ -23,8 +24,8 @@
 /db/sphinx
 /log/*.pid
 
-# Ignore other files
-database.yml
+# Ignore other vendor files
+/vendor
 
 # Ignore all public files
 /public/system/pictures
@@ -39,6 +40,4 @@ database.yml
 /config/certs/*
 
 .elasticbeanstalk/
-
-Gemfile.lock
 
