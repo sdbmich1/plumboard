@@ -254,6 +254,7 @@ function getLocation(nearby){
 
 // used to find city name
 function getCity(lat, lng) {
+  //url = "https://maps-api-ssl.google.com/maps/api/geocode/json?latlng="+lat+","+lng+"&sensor=true";
   url = "http://maps.googleapis.com/maps/api/geocode/json?latlng="+lat+","+lng+"&sensor=true";
 
   $.ajax(url).done(function(data) {

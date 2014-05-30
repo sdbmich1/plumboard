@@ -10,7 +10,8 @@ module PixiPostsHelper
   # set path based on action
   def set_pixi_post_path
     if %w(edit show).detect {|x| action_name == x} 
-      @post.owner?(@user) ? seller_pixi_posts_path(status: 'active') : pixi_posts_path(status: 'active') 
+      @post.owner?(@user) ? seller_pixi_posts_path(status: 'active') : can?(:manage_items, @user) ? pixi_posts_path(status: 'active') : 
+        pixter_pixi_posts_path(status: 'scheduled')
     else
       root_path
     end
@@ -28,7 +29,7 @@ module PixiPostsHelper
   # define menu access
   def access_pxp_admin_menu?
     if %w(edit show).detect {|x| action_name == x} 
-      !@post.owner?(@user)
+      !@post.owner?(@user) && !@user.is_pixter?
     elsif action_name == 'index' && can?(:manage_items, @user)
       true
     else

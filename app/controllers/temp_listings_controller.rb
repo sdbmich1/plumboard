@@ -111,7 +111,7 @@ class TempListingsController < ApplicationController
   # parse results for active items only
   def get_autocomplete_items(parameters)
     items = super(parameters)
-    items = items.active rescue items
+    items = items.active(false) rescue items
   end
 
   # check if pixipost to enable buyer autocomplete

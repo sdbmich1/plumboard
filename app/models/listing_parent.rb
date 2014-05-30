@@ -1,4 +1,5 @@
 require 'rails_rinku'
+require 'digest/md5'
 class ListingParent < ActiveRecord::Base
   resourcify
   include Area, ResetDate, LocationManager
@@ -46,7 +47,7 @@ class ListingParent < ActiveRecord::Base
   validates_datetime :event_end_time, presence: true, after: :event_start_time, :if => :start_date?
 
   # geocode
-  geocoded_by :post_ip, :latitude => :lat, :longitude => :lng
+  geocoded_by :site_address, :latitude => :lat, :longitude => :lng
   after_validation :geocode
 
   # check if pixi is an event
@@ -232,11 +233,15 @@ class ListingParent < ActiveRecord::Base
   end
 
   # titleize title
-  def nice_title
+  def nice_title prcFlg=true
     unless title.blank?
       str = price.blank? || price == 0 ? '' : ' - $' + price.to_i.to_s
       tt = title.titleize.html_safe rescue title 
-      title.index('$') ? tt : tt + str 
+      if prcFlg
+        title.index('$') ? tt : tt + str 
+      else
+        title.index('$') ? tt.split('$')[0].strip! : tt
+      end
     else
       nil
     end
@@ -388,6 +393,11 @@ class ListingParent < ActiveRecord::Base
 
     # get display date/time
     ResetDate::display_date_by_loc dt, ll rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
+  end
+
+  # get site address
+  def site_address
+    site.contacts.first.full_address rescue site_name
   end
 
   # set json string

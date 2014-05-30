@@ -71,7 +71,7 @@ class Listing < ListingParent
   # get active pixis by region
   def self.active_by_region city, state, pg, range=60
     loc = [city, state].join(', ') if city && state
-    active.where(site_id: Contact.promixity(ip, range, loc, true)).paginate(page: pg) if loc
+    active.where(site_id: Contact.proximity(nil, range, loc, true)).paginate(page: pg) if loc rescue nil
   end
 
   # get pixis by city
@@ -199,6 +199,17 @@ class Listing < ListingParent
   # mark saved pixis if sold or closed
   def sync_saved_pixis
     SavedListing.update_status pixi_id, status unless active?
+  end
+
+  # set remove item list based on pixi type
+  def remove_item_list
+    if job? 
+      ['Filled Position', 'Removed Job']
+    elsif event?  
+      ['Event Cancelled', 'Event Ended']
+    else
+      ['Changed Mind', 'Donated Item', 'Gave Away Item', 'Sold Item']
+    end
   end
 
   # sphinx scopes

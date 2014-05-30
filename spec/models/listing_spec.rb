@@ -240,6 +240,19 @@ describe Listing do
     end
   end
 
+  describe 'site_address' do
+    it 'has site address' do
+      @site = create :site
+      @contact = @site.contacts.create FactoryGirl.attributes_for(:contact)
+      listing = create :listing, seller_id: @user.id, site_id: @site.id
+      expect(listing.site_address).to eq @contact.full_address
+    end
+
+    it 'has no site address' do
+      expect(@listing.site_address).to eq @listing.site_name
+    end
+  end
+
   describe "should return site count > 0" do 
     it { @listing.get_site_count.should_not == 0 } 
   end
@@ -391,6 +404,12 @@ describe Listing do
     it "should not return a nice title" do 
       @listing.title = nil
       @listing.nice_title.should_not be_true 
+    end
+
+    it "returns a nice title w/ $" do 
+      @listing.title = 'Shirt $100'
+      expect(@listing.nice_title(false)).not_to eq 'Shirt $100' 
+      expect(@listing.nice_title(false)).to eq 'Shirt' 
     end
   end
 
@@ -861,9 +880,33 @@ describe Listing do
     end
   end
 
+  describe 'remove_item_list' do
+    it 'is a job' do
+      @cat = FactoryGirl.create(:category, name: 'Job', category_type: 'employment', pixi_type: 'premium') 
+      @listing.category_id = @cat.id
+      expect(@listing.remove_item_list).not_to include('Event Cancelled') 
+      expect(@listing.remove_item_list).to include('Removed Job') 
+      expect(@listing.remove_item_list).not_to include('Changed Mind') 
+    end
+
+    it 'is an event' do
+      @cat = FactoryGirl.create(:category, name: 'Event', category_type: 'event', pixi_type: 'premium') 
+      @listing.category_id = @cat.id
+      expect(@listing.remove_item_list).to include('Event Cancelled') 
+      expect(@listing.remove_item_list).not_to include('Removed Job') 
+      expect(@listing.remove_item_list).not_to include('Changed Mind') 
+    end
+
+    it 'is not a job or event' do
+      expect(@listing.remove_item_list).not_to include('Event Cancelled') 
+      expect(@listing.remove_item_list).not_to include('Removed Job') 
+      expect(@listing.remove_item_list).to include('Changed Mind') 
+    end
+  end
+
   describe "date validations" do
     before do
-      @cat = FactoryGirl.create(:category, name: 'Event', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Event', category_type: 'event', pixi_type: 'premium') 
       @listing.category_id = @cat.id
       @listing.event_end_date = Date.today+3.days 
       @listing.event_start_time = Time.now+2.hours

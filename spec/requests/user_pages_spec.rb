@@ -30,11 +30,13 @@ describe "Users", :type => :feature do
       page.should have_link 'All', href: users_path
       page.should have_link 'Pixans', href: users_path(utype: 'PX')
       page.should have_link 'Pixters', href: users_path(utype: 'PT')
+      page.should have_link 'Export as CSV file', href: users_path(format: 'csv')
       page.should have_content @member.name
       page.should have_content @user.name
       page.should have_content @pixter.name
       page.should have_content @pixan.name
       page.should have_content 'Enrolled'
+      page.should have_content 'Displaying'
     end
 
     it "should display pixans", js: true do 
@@ -60,6 +62,7 @@ describe "Users", :type => :feature do
       page.should_not have_content @pixan.name
       page.should have_content 'Enrolled'
     end
+
 
     it "views user" do
       expect { 

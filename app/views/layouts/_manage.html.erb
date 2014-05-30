@@ -1,9 +1,13 @@
 <li id="fat-menu" class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Manage <b class="caret"></b></a>
   <ul class="dropdown-menu">
-    <li><%= link_to "Pending Orders", pending_listings_path(status: 'pending') %></li>
-    <li><%= link_to "PixiPosts", pixi_posts_path(status: 'active') %></li>
-    <li><%= link_to "Inquiries", inquiries_path(ctype: 'inquiry') %></li>
+    <% if can? :manage_items, @user %>
+      <li><%= link_to "Pending Orders", pending_listings_path(status: 'pending') %></li>
+      <li><%= link_to "PixiPosts", pixi_posts_path(status: 'active') %></li>
+      <li><%= link_to "Inquiries", inquiries_path(ctype: 'inquiry') %></li>
+    <% elsif can? :manage_pixi_posts, @user %>
+      <li><%= link_to "PixiPosts", pixter_pixi_posts_path(status: 'scheduled') %></li>
+    <% end %>
     <% if can? :manage_users, @user %>
       <li><%= link_to "Categories", manage_categories_path %></li>
       <li><%= link_to "Transactions", transactions_path %></li>
