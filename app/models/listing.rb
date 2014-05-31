@@ -191,9 +191,9 @@ class Listing < ListingParent
   # sends email to users who saved the listing when listing is removed
   def send_saved_pixi_removed
     saved_listings = SavedListing.find(:all, :conditions => ["pixi_id = ?", pixi_id]) rescue nil 
+    closed = ['closed', 'sold', 'removed', 'inactive']
     saved_listings.each do |saved_listing|
-      if saved_listing.status == 'closed' or saved_listing.status == 'sold' or 
-          saved_listing.status == 'removed' or saved_listing.status == 'inactive'
+      if closed.detect {|closed| saved_listing.status == closed }
           UserMailer.delay.send_saved_pixi_removed(saved_listing) unless self.buyer_id == saved_listing.user_id
       end
     end
