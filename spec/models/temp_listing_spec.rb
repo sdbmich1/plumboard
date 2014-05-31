@@ -35,13 +35,14 @@ describe TempListing do
   it { should respond_to(:event_end_time) }
   it { should respond_to(:year_built) }
   it { should respond_to(:pixan_id) }
-  it { should respond_to(:job_type) }
+  it { should respond_to(:job_type_code) }
 
   it { should respond_to(:user) }
   it { should respond_to(:site) }
   it { should respond_to(:transaction) }
   it { should respond_to(:pictures) }
   it { should respond_to(:category) }
+  it { should respond_to(:job_type) }
   it { should respond_to(:set_flds) }
   it { should respond_to(:generate_token) }
   it { should respond_to(:site_listings) }
@@ -784,6 +785,18 @@ describe TempListing do
 
     it 'does not find pixi' do
       expect(TempListing.find_pixi(0)).to be_nil
+    end
+  end
+
+  describe 'job_type_name' do
+    it "shows description" do
+      create :job_type
+      @temp_listing.job_type_code = 'CT'
+      expect(@temp_listing.job_type_name).to eq 'Contract'
+    end
+
+    it "does not show description" do
+      expect(@temp_listing.job_type_name).to be_nil
     end
   end
 

@@ -9,7 +9,11 @@
     </div>
     <div class='sm-top gdescr'>
       <div class='item-cat pixi-grey-bkgnd'>
-	<%= ntc listing.price, true %>
+        <% unless listing.job? %>
+	  <%= ntc listing.price, true %>
+	<% else %>
+	  <%= listing.job_type_name %>
+	<% end %>
       </div>
      <div class='item-dt pixi-grey-bkgnd'>
        <%= ts_in_words(listing.created_at) %>

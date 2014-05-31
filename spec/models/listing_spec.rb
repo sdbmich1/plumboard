@@ -35,7 +35,7 @@ describe Listing do
   it { should respond_to(:event_end_time) }
   it { should respond_to(:year_built) }
   it { should respond_to(:pixan_id) }
-  it { should respond_to(:job_type) }
+  it { should respond_to(:job_type_code) }
   it { should respond_to(:explanation) }
 
   it { should respond_to(:user) }
@@ -47,6 +47,7 @@ describe Listing do
   it { should respond_to(:pictures) }
   it { should respond_to(:contacts) }
   it { should respond_to(:category) }
+  it { should respond_to(:job_type) }
   it { should respond_to(:comments) }
   it { should respond_to(:pixi_likes) }
   it { should have_many(:pixi_likes).with_foreign_key('pixi_id') }
@@ -901,6 +902,18 @@ describe Listing do
       expect(@listing.remove_item_list).not_to include('Event Cancelled') 
       expect(@listing.remove_item_list).not_to include('Removed Job') 
       expect(@listing.remove_item_list).to include('Changed Mind') 
+    end
+  end
+
+  describe 'job_type_name' do
+    it "shows description" do
+      create :job_type
+      @listing.job_type_code = 'CT'
+      expect(@listing.job_type_name).to eq 'Contract'
+    end
+
+    it "does not show description" do
+      expect(@listing.job_type_name).to be_nil
     end
   end
 
