@@ -14,6 +14,10 @@ describe JobType do
   it { should validate_presence_of(:status) }
   it { should validate_presence_of(:code) }
 
+  it { should have_many(:listings).with_foreign_key('job_type_code') }
+  it { should have_many(:temp_listings).with_foreign_key('job_type_code') }
+  it { should have_many(:old_listings).with_foreign_key('job_type_code') }
+
   describe "active job_types" do
     before { FactoryGirl.create(:job_type) }
     it { JobType.active.should_not be_nil } 

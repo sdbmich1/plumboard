@@ -188,8 +188,9 @@ feature "Listings" do
 
   describe "View Compensation Pixi" do 
     let(:category) { FactoryGirl.create :category, name: 'Gigs', category_type: 'employment' }
+    let(:job_type) { FactoryGirl.create :job_type }
     let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id, 
-      category_id: category.id, compensation: 'Salary + Equity', price: nil) }
+      category_id: category.id, job_type_code: job_type.code, compensation: 'Salary + Equity', price: nil) }
 
     before(:each) do
       pixi_user = FactoryGirl.create(:pixi_user) 
@@ -203,6 +204,7 @@ feature "Listings" do
       page.should_not have_content "Start Time: #{short_time(listing.event_start_time)}"
       page.should_not have_content "End Time: #{short_time(listing.event_end_time)}"
       page.should_not have_content "Price: #{(listing.price)}"
+      page.should have_content "Job Type: #{(listing.job_type_name)}"
       page.should have_content "Compensation: #{(listing.compensation)}"
     end
   end
@@ -357,7 +359,7 @@ feature "Listings" do
       it "views pixi category page" do
         page.should have_content('Pixis')
         page.should have_content 'Guitar'
-        page.should have_content category.name_title
+        page.should_not have_content 'No pixis found'
       end
     end  
 

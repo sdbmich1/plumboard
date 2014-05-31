@@ -17,7 +17,8 @@
           Price: <%= ntc listing.price %>
         <% end %>
         <% if listing.job? %>
-          Compensation: <%= listing.compensation %>
+          Job Type: <%= listing.job_type_name %><br />
+	  Compensation: <%= listing.compensation %>
         <% end %>
         <% if listing.has_year? && listing.year_built %>
           Year: <%= listing.year_built %>

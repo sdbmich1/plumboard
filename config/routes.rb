@@ -6,7 +6,7 @@ Plumboard::Application.routes.draw do
   devise_scope :user do
     get "signup" => "registrations#new", as: :new_user_registration
     post "signup" => "registrations#create", as: :user_registration
-    get "signout" => "sessions#destroy", as: :destroy_user_session
+    delete "signout" => "sessions#destroy", as: :destroy_user_session
     get '/users/auth/:provider' => 'users/omniauth_callbacks#passthru'
     get '/users/auth/:provider/setup' => 'users/omniauth_callbacks#setup'
   end
@@ -95,7 +95,7 @@ Plumboard::Application.routes.draw do
 
   resources :categories do
     collection do
-      get 'inactive', 'manage', :autocomplete_site_name
+      get 'inactive', 'manage', :autocomplete_site_name, 'category_type'
     end
   end
 

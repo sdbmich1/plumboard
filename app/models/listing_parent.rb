@@ -15,14 +15,15 @@ class ListingParent < ActiveRecord::Base
   MAX_PIXI_PIX = PIXI_KEYS['pixi']['max_pixi_pix']
 
   attr_accessible :buyer_id, :category_id, :description, :title, :seller_id, :status, :price, :show_alias_flg, :show_phone_flg, :alias_name,
-  	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id, :year_built, :pixan_id, :job_type,
-	:edited_by, :edited_dt, :post_ip, :lng, :lat, :event_start_date, :event_end_date, :compensation, :event_start_time, :event_end_time,
-	:explanation, :contacts_attributes
+  	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id, :year_built, :pixan_id, 
+	:job_type_code, :edited_by, :edited_dt, :post_ip, :lng, :lat, :event_start_date, :event_end_date, :compensation, 
+	:event_start_time, :event_end_time, :explanation, :contacts_attributes
 
   belongs_to :user, foreign_key: :seller_id
   belongs_to :site
   belongs_to :category
   belongs_to :transaction
+  belongs_to :job_type, primary_key: 'code', foreign_key: 'job_type_code'
 
   has_many :pictures, :as => :imageable, :dependent => :destroy
   accepts_nested_attributes_for :pictures, :allow_destroy => true
@@ -398,6 +399,11 @@ class ListingParent < ActiveRecord::Base
   # get site address
   def site_address
     site.contacts.first.full_address rescue site_name
+  end
+
+  # get job type name
+  def job_type_name
+    job_type.job_name rescue nil
   end
 
   # set json string
