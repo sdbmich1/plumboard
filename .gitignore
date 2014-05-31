@@ -39,6 +39,3 @@ database.yml
 /config/certs/*
 
 .elasticbeanstalk/
-
-Gemfile.lock
-
