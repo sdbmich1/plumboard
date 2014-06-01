@@ -719,6 +719,18 @@ describe TempListing do
       @temp_listing.category_id = @cat.id
       @temp_listing.job?.should be_true 
     end
+
+    it "is not valid" do
+      @temp_listing.category_id = @cat.id
+      @temp_listing.should_not be_valid
+    end
+
+    it "is valid" do
+      create :job_type
+      @temp_listing.category_id = @cat.id
+      @temp_listing.job_type_code = 'CT'
+      @temp_listing.should be_valid
+    end
   end
 
   describe '.free?' do
