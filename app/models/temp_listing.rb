@@ -54,7 +54,7 @@ class TempListing < ListingParent
 
   # check if pixi is free
   def free?
-    CalcTotal::get_price(self.premium?) == 0.00
+    CalcTotal::get_price(self.premium?) == 0.00 rescue true
   end
 
   # submit order request for review

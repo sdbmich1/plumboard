@@ -4,7 +4,7 @@ function hideComp(){
   $('#job-fld').hide('fast');
   $('#price-fld').show('fast');
   $('#cat-fld').removeClass('span2').addClass('span4');
-  //$('#temp_listing_category_id').removeClass('left-form width120');
+  $('#temp_listing_job_type_code').removeAttr('required'); 
 
   if($('#input-form').length > 0) {
     $('#salary').val('');
@@ -30,6 +30,7 @@ function toggleFields(ctype) {
       $('#comp-fld').show('fast');
       $('#job-fld').show('fast');
       $('#cat-fld').removeClass('span4').addClass('span2');
+      $('#temp_listing_job_type_code').attr('required', 'required');
 
       // reset fields
       if($('#input-form').length > 0) 

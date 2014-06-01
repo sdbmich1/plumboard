@@ -666,6 +666,18 @@ describe Listing do
       @listing.category_id = @cat.id
       @listing.job?.should be_true 
     end
+
+    it "is not valid" do
+      @listing.category_id = @cat.id
+      @listing.should_not be_valid
+    end
+
+    it "is valid" do
+      create :job_type
+      @listing.category_id = @cat.id
+      @listing.job_type_code = 'CT'
+      @listing.should be_valid
+    end
   end
 
   describe '.start_date?' do

@@ -37,6 +37,7 @@ class ListingParent < ActiveRecord::Base
   validates :site_id, :presence => true
   validates :start_date, :presence => true
   validates :category_id, :presence => true
+  validates :job_type_code, :presence => true, if: :job?
   validates :price, allow_blank: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
     		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_PIXI_AMT.to_f }
   validate :must_have_pictures
@@ -306,10 +307,12 @@ class ListingParent < ActiveRecord::Base
       attr = self.attributes  # copy attributes
 
       # remove protected attributes
-      %w(id created_at updated_at).map {|x| attr.delete x}
+      arr = tmpFlg ? %w(id created_at updated_at parent_pixi_id) : %w(id created_at updated_at delta)
+      arr.map {|x| attr.delete x}
 
       # load attributes to new record
-      listing = tmpFlg ? Listing.new(attr) : TempListing.new(attr)
+      listing = tmpFlg ? Listing.where(attr).first_or_initialize : TempListing.where(attr).first_or_initialize
+      # listing = tmpFlg ? Listing.new(attr) : TempListing.new(attr)
       listing.status = 'edit' unless tmpFlg
     end
 

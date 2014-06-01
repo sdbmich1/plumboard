@@ -42,6 +42,7 @@ class TempListingsController < ApplicationController
     @listing = TempListing.new params[:temp_listing]
     respond_with(@listing) do |format|
       if @listing.save
+        flash[:notice] = 'Your pixi has been saved as a draft'
         format.json { render json: {listing: @listing} }
       else
         format.json { render json: { errors: @listing.errors.full_messages }, status: 422 }
