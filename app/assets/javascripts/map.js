@@ -257,25 +257,17 @@ function getCity(lat, lng) {
   //url = "https://maps-api-ssl.google.com/maps/api/geocode/json?latlng="+lat+","+lng+"&sensor=true";
   url = "http://maps.googleapis.com/maps/api/geocode/json?latlng="+lat+","+lng+"&sensor=true";
 
-  $.ajax({
-    type: "GET",
-    url: url,
-    dataType: "json",
-    success: function(data) {
-      for (var i = 0; i < data.results.length; i++) {
-        for (var j = 0; j < data.results[i].address_components.length; j++) {
-	  for (var k = 0; k < data.results[i].address_components[j].types.length; k++) {
-	    if (data.results[i].address_components[j].types[k] === 'locality') {
-	      var city_name = data.results[i].address_components[j].long_name;
-              $('#home_site_name').val(city_name);
-	      console.log(' city name = ' + city_name);
-	    }
+  $.ajax(url).done(function(data) {
+    for (var i = 0; i < data.results.length; i++) {
+      for (var j = 0; j < data.results[i].address_components.length; j++) {
+	for (var k = 0; k < data.results[i].address_components[j].types.length; k++) {
+	  if (data.results[i].address_components[j].types[k] === 'locality') {
+	    var city_name = data.results[i].address_components[j].long_name;
+            $('#home_site_name').val(city_name);
+	    console.log(' city name = ' + city_name);
 	  }
-        }
+	}
       }
-    },
-    error: function(xhr, status, error) {
-      console.log(status);
     }
   });
 }
