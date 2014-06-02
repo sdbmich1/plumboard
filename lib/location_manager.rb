@@ -44,11 +44,18 @@ module LocationManager
   end
 
   # get list of site ids
-  def self.get_site_list loc
-    site = Site.check_site(loc, 'city')
+  def self.get_site_list loc, range=60
+    site = Site.check_site(loc, ['city', 'region'])
     if site
       @contact = site.contacts.first
-      @slist = Contact.get_sites(@contact.city, @contact.state)
+
+      if site.is_city?
+        @slist = Contact.get_sites(@contact.city, @contact.state)
+      else
+        loc = [@contact.city, @contact.state].join(', ') if @contact.city && @contact.state
+        @slist = Contact.proximity(nil, range, loc, true) if loc 
+      end
     end
+    @slist || loc
   end
 end

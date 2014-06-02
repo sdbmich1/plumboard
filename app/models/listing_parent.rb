@@ -1,4 +1,5 @@
 require 'rails_rinku'
+require 'digest/md5'
 class ListingParent < ActiveRecord::Base
   resourcify
   include Area, ResetDate, LocationManager
@@ -14,14 +15,15 @@ class ListingParent < ActiveRecord::Base
   MAX_PIXI_PIX = PIXI_KEYS['pixi']['max_pixi_pix']
 
   attr_accessible :buyer_id, :category_id, :description, :title, :seller_id, :status, :price, :show_alias_flg, :show_phone_flg, :alias_name,
-  	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id, :year_built, :pixan_id, :job_type,
-	:edited_by, :edited_dt, :post_ip, :lng, :lat, :event_start_date, :event_end_date, :compensation, :event_start_time, :event_end_time,
-	:explanation, :contacts_attributes
+  	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id, :year_built, :pixan_id, 
+	:job_type_code, :edited_by, :edited_dt, :post_ip, :lng, :lat, :event_start_date, :event_end_date, :compensation, 
+	:event_start_time, :event_end_time, :explanation, :contacts_attributes
 
   belongs_to :user, foreign_key: :seller_id
   belongs_to :site
   belongs_to :category
   belongs_to :transaction
+  belongs_to :job_type, primary_key: 'code', foreign_key: 'job_type_code'
 
   has_many :pictures, :as => :imageable, :dependent => :destroy
   accepts_nested_attributes_for :pictures, :allow_destroy => true
@@ -35,6 +37,7 @@ class ListingParent < ActiveRecord::Base
   validates :site_id, :presence => true
   validates :start_date, :presence => true
   validates :category_id, :presence => true
+  validates :job_type_code, :presence => true, if: :job?
   validates :price, allow_blank: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
     		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_PIXI_AMT.to_f }
   validate :must_have_pictures
@@ -46,7 +49,7 @@ class ListingParent < ActiveRecord::Base
   validates_datetime :event_end_time, presence: true, after: :event_start_time, :if => :start_date?
 
   # geocode
-  geocoded_by :post_ip, :latitude => :lat, :longitude => :lng
+  geocoded_by :site_address, :latitude => :lat, :longitude => :lng
   after_validation :geocode
 
   # check if pixi is an event
@@ -107,7 +110,7 @@ class ListingParent < ActiveRecord::Base
 
   # eager load assns
   def self.include_list
-    includes(:pictures, :site, :category)
+    includes(:pictures, :site, :category, :job_type)
   end
 
   # find listings by status
@@ -232,11 +235,15 @@ class ListingParent < ActiveRecord::Base
   end
 
   # titleize title
-  def nice_title
+  def nice_title prcFlg=true
     unless title.blank?
       str = price.blank? || price == 0 ? '' : ' - $' + price.to_i.to_s
       tt = title.titleize.html_safe rescue title 
-      title.index('$') ? tt : tt + str 
+      if prcFlg
+        title.index('$') ? tt : tt + str 
+      else
+        title.index('$') ? tt.split('$')[0].strip! : tt
+      end
     else
       nil
     end
@@ -300,10 +307,12 @@ class ListingParent < ActiveRecord::Base
       attr = self.attributes  # copy attributes
 
       # remove protected attributes
-      %w(id created_at updated_at).map {|x| attr.delete x}
+      arr = tmpFlg ? %w(id created_at updated_at parent_pixi_id) : %w(id created_at updated_at delta)
+      arr.map {|x| attr.delete x}
 
       # load attributes to new record
-      listing = tmpFlg ? Listing.new(attr) : TempListing.new(attr)
+      listing = tmpFlg ? Listing.where(attr).first_or_initialize : TempListing.where(attr).first_or_initialize
+      # listing = tmpFlg ? Listing.new(attr) : TempListing.new(attr)
       listing.status = 'edit' unless tmpFlg
     end
 
@@ -388,6 +397,16 @@ class ListingParent < ActiveRecord::Base
 
     # get display date/time
     ResetDate::display_date_by_loc dt, ll rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
+  end
+
+  # get site address
+  def site_address
+    site.contacts.first.full_address rescue site_name
+  end
+
+  # get job type name
+  def job_type_name
+    job_type.job_name rescue nil
   end
 
   # set json string

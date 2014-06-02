@@ -528,6 +528,15 @@ describe User do
     end
   end
 
+  describe 'is_pixter?' do
+    it { @user.is_pixter?.should be_false }
+
+    it 'is true' do
+      @pixter = FactoryGirl.create(:pixi_user, user_type_code: 'PT') 
+      expect(@pixter.is_pixter?).to be_true
+    end
+  end
+
   describe "listing associations" do
     before do
       @buyer = FactoryGirl.create(:pixi_user) 

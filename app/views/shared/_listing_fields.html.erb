@@ -14,9 +14,12 @@
   <div class='span7'>
     <%= f.label :title %><%= f.text_field :title, :placeholder => 'Enter Pixi Title', required: true %>
   </div>
-  <div class='span4'>
+  <div id='cat-fld' class='span4'>
     <%= f.label :category_id, 'Category' %>
     <%= f.collection_select :category_id, Category.active, :id, :name_title, {:prompt => 'Select'}, {class: 'pixi-select', required: true} %>
+  </div>
+  <div class='span2' id='job-fld' style="<%= !listing.job? ? 'display:none' : '' %>"><%= f.label :job_type, 'Job Type' %>
+    <%= f.collection_select :job_type_code, JobType.active, :code, :job_name, {:prompt => 'Select'}, {class: 'pixi-select'} %>
   </div>
 </div>
 <div class='row' id='input-form'>

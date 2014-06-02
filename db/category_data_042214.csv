@@ -6,7 +6,7 @@ id,name,category_type,status,pixi_type,image_file,original_name
 7,Community,sales,inactive,basic,/db/images/Community2.jpg,Community
 8,Beauty,Services,active,NULL,/db/images/beauty.jpg,Beauty
 9,Creative,sales,inactive,basic,/db/images/bulb.png,Creative
-10,Electronics: Computer,sales,active,basic,/db/images/apple-mac.jpg,Computer
+10,Electronics: Computer,sales,inactive,basic,/db/images/apple-mac.jpg,Computer
 11,Cycle,sales,inactive,basic,/db/images/bike2.jpg,Cycle
 12,Events,event,active,basic,/db/images/events.jpg,Event
 13,Financial,sales,inactive,basic,/db/images/financial.jpg,Financial
@@ -23,12 +23,12 @@ id,name,category_type,status,pixi_type,image_file,original_name
 24,Travel,Services,active,NULL,/db/images/travelsuitcase.jpg,Travel
 25,Tickets For Sale,event,active,basic,/db/images/tickets.jpg,Tickets
 26,Lost & Found,Services,active,NULL,/db/images/Lost-and-Found.jpg,Lost & Found
-27,Electronics: Stuff,sales,active,basic,/db/images/tv.jpg,Electronics
+27,Electronics,sales,active,basic,/db/images/electronic.jpg,Electronics
 28,Focus Groups,sales,inactive,basic,/db/images/focus-groups.jpg,Focus Groups
 29,Scholarships,Services,active,NULL,/db/images/photo1.jpg,Scholarships
 30,Music,sales,active,NULL,/db/images/music.jpg,Music
 31,Apparel: Jewelry,sales,inactive,basic,/db/images/bracelet.jpg,Jewelry
-32,Housing: For Sale,asset,active,basic,/db/images/house-for-sale.jpg,Real Estate
+32,Housing: For Sale,asset,active,basic,/db/images/house-for-sale1.jpg,Real Estate
 33,Furniture,sales,active,basic,/db/images/furniture.jpg,Furniture
 34,Apparel: Bags & Such,sales,inactive,basic,/db/images/apparel.jpg,Clothes
 35,Motorcycle,asset,active,basic,/db/images/motorcycle.jpg,Motorcycle
@@ -40,17 +40,17 @@ id,name,category_type,status,pixi_type,image_file,original_name
 41,Books,sales,active,NULL,/db/images/text-books.jpg,Books
 42,Household Appliances,sales,active,basic,/db/images/fridge.jpg,Appliances
 43,Electronics: Games,sales,inactive,basic,/db/images/videogames.jpg,Video Games
-44,Electronics: Cell Phones,sales,active,basic,sales,/db/images/cell.jpg,Cell Phones
+44,Electronics: Cell Phones,sales,inactive,basic,/db/images/cell.jpg,Cell Phones
 45,Photo & Video,sales,active,basic,/db/images/old-camera.jpg,Photo
 46,Video,sales,inactive,basic,/db/images/old-film.jpg,Video
-47,Stuff,sales,active,basic,/db/images/stuff.jpg
-48,Collectibles,asset,active,basic,/db/images/collectibles.jpg
-49,Toys & Games,sales,active,basic,/db/images/rubics-cube2.jpg
-50,Bikes,sales,active,basic,/db/images/bike2.jpg
-51,Apparel,sales,active,basic,/db/images/pile-of-clothes.jpg
-52,Boats,asset,active,basic,/db/images/rowboat.jpg
-53,Antiques,asset,active,basic,/db/images/antique-typewriter.jpg
-54,Service: Financial,sales,inactive,basic,/db/images/financial.jpg
-55,Sports Equipment,sales,active,basic,/db/images/sport1.jpg
-56,Service: Computer,sales,inactive,basic,/db/images/apple-mac.jpg
-57,Electronics: Audio,sales,active,basic,/db/images/turntable.jpg
+47,Stuff,sales,active,basic,/db/images/stuff.jpg,
+48,Collectibles,asset,active,basic,/db/images/collectibles.jpg,
+49,Toys & Games,sales,active,basic,/db/images/rubics-cube2.jpg,
+50,Bikes,sales,active,basic,/db/images/bike2.jpg,
+51,Apparel,sales,active,basic,/db/images/pile-of-clothes.jpg,
+52,Boats,asset,active,basic,/db/images/rowboat.jpg,
+53,Antiques,asset,active,basic,/db/images/antique-typewriter.jpg,
+54,Service: Financial,sales,inactive,basic,/db/images/financial.jpg,
+55,Sports Equipment,sales,active,basic,/db/images/sport1.jpg,
+56,Service: Computer,sales,inactive,basic,/db/images/apple-mac.jpg,
+57,Electronics: Audio,sales,inactive,basic,/db/images/turntable.jpg,

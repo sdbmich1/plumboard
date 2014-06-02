@@ -230,6 +230,39 @@ feature "UserSignins" do
       end
     end
 
+    describe 'registered pixter users' do
+      before(:each) do
+        @user = FactoryGirl.create :pixter, confirmed_at: Time.now 
+        user_login
+      end
+
+      it 'shows content' do
+        page.should have_content(@user.first_name)
+        page.should have_content('Manage')
+        page.should_not have_link('Pending Orders', href: pending_listings_path(status: 'pending'))
+        page.should_not have_link('PixiPosts', href: pixi_posts_path(status: 'active'))
+        page.should have_link('PixiPosts', href: pixter_pixi_posts_path(status: 'scheduled'))
+        page.should_not have_link('Inquiries', href: inquiries_path(ctype: 'inquiry'))
+        page.should_not have_link('Categories', href: manage_categories_path)
+        page.should_not have_link('Transactions', href: transactions_path)
+        page.should_not have_link('Users', href: users_path)
+        page.should have_link('For Seller', href: new_temp_listing_path(pixan_id: @user))
+        page.should have_link('My Pixis', href: seller_listings_path)
+        page.should have_link('My Messages', href: posts_path)
+        page.should have_link('My Invoices', href: sent_invoices_path)
+        page.should have_link('My Accounts', href: new_bank_account_path)
+        page.should have_link('My Settings', href: settings_path)
+        page.should have_link('My PixiPosts', href: seller_pixi_posts_path(status: 'active'))
+        page.should have_link('Sign out', href: destroy_user_session_path)
+        page.should_not have_link('Sign in', href: new_user_session_path)
+      end
+
+      it "displays sign in link after signout" do
+        click_link "Sign out"
+        page.should have_content 'How It Works'
+      end
+    end
+
     describe "displays my accounts link" do
       before(:each) do
         @user = FactoryGirl.create :subscriber, confirmed_at: Time.now 

@@ -28,8 +28,9 @@ class Site < ActiveRecord::Base
   default_scope :order => "name ASC"
   
   # select active sites and remove dups
-  def self.active
-    where(:status => 'active').sort_by { |e| e[:name] }.inject([]) { |m,e| m.last.nil? ? [e] : m.last[:name] == e[:name] ? m : m << e }
+  def self.active regionFlg=true
+    where_stmt = regionFlg ? "status = 'active'" : "status = 'active' AND org_type != 'region'"
+    where(where_stmt).sort_by { |e| e[:name] }.inject([]) { |m,e| m.last.nil? ? [e] : m.last[:name] == e[:name] ? m : m << e }
   end
 
   # select active sites w/ pixis
@@ -62,9 +63,14 @@ class Site < ActiveRecord::Base
     org_type == 'region'
   end
 
-  # check site type
+  # check site type by id
   def self.check_site sid, val
-    where("id = ? and org_type = ?", sid, val).first
+    where(id: sid).check_org_type(val).first
+  end
+
+  # check site type
+  def self.check_org_type val
+    where(org_type: val)
   end
 
   # set json string

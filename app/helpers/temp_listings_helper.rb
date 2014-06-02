@@ -25,10 +25,15 @@ module TempListingsHelper
     (Date.today.year-99..Date.today.year).inject([]){|x,y| x << y}.reverse
   end
 
+  # check controller name
+  def pending_listings?
+    controller_name == 'pending_listings'
+  end
+
   # check if pending listing
   def check_pending_pixi listing
     path = (mobile_device? ? 'mobile' : 'shared') + '/pending_listing' 
-    render partial: path, locals: {listing: listing} if controller_name == 'pending_listings'
+    render partial: path, locals: {listing: listing} if pending_listings?
   end
 
   # set different url if pixi is pending

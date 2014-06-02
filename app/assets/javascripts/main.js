@@ -11,16 +11,6 @@ $.ajaxSetup({
   'success': function() { toggleLoading(); }
 }); 
 
-// hide & reset comp field
-function hideComp(){
-  $('#comp-fld').hide('fast');
-  $('#price-fld').show('fast');
-
-  if($('#input-form').length > 0) {
-    $('#salary').val('');
-  }  
-}
-
 // when the #category id field changes
 $(document).on("change", "select[id*=category_id]", function(evt){
 

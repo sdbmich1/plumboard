@@ -1,18 +1,24 @@
+<% cache ['board', listing] do %>
 <div class="item">
   <div class="center-wrapper">
     <%= link_to listing_path(listing) do %>
       <%= render partial: 'shared/show_picture', locals: {model: listing, psize: 'medium'} %>
     <% end %>
     <div class='sm-top bdescr'>
-      <%= listing.nice_title %>
+      <%= listing.nice_title false %><br /><%= "(#{listing.site_name})" %>
     </div>
     <div class='sm-top gdescr'>
-      <div class='item-cat pixi-grey-bkgnd' data-cat-id="<%= listing.category_id %>">
-        <%= link_to listing.category_name, '#', class: 'pixi-cat', 'data-cat-id'=> listing.category_id %> 
+      <div class='item-cat pixi-grey-bkgnd'>
+        <% unless listing.job? %>
+	  <%= ntc listing.price, true %>
+	<% else %>
+	  <%= listing.job_type_name %>
+	<% end %>
       </div>
      <div class='item-dt pixi-grey-bkgnd'>
-       <%= ts_in_words(listing.updated_at) %>
+       <%= ts_in_words(listing.created_at) %>
       </div>
     </div>
   </div>
 </div>
+<% end %>

@@ -42,6 +42,7 @@ class TempListingsController < ApplicationController
     @listing = TempListing.new params[:temp_listing]
     respond_with(@listing) do |format|
       if @listing.save
+        flash[:notice] = 'Your pixi has been saved as a draft'
         format.json { render json: {listing: @listing} }
       else
         format.json { render json: { errors: @listing.errors.full_messages }, status: 422 }
@@ -111,7 +112,7 @@ class TempListingsController < ApplicationController
   # parse results for active items only
   def get_autocomplete_items(parameters)
     items = super(parameters)
-    items = items.active rescue items
+    items = items.active(false) rescue items
   end
 
   # check if pixipost to enable buyer autocomplete
