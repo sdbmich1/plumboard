@@ -40,10 +40,4 @@
 /config/certs/*
 
 .elasticbeanstalk/
-<<<<<<< HEAD
-=======
-
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
-
-Gemfile.lock
 
