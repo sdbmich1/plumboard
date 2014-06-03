@@ -3,7 +3,7 @@
     <%= link_to category_listings_path(cid: category, loc: @loc), class: 'img-link', 'data-cat-id'=> category.id do %>
       <%= render partial: 'shared/show_picture', locals: {psize: 'thumb', model: category} %>
     <% end %>
-    <div class='sm-top bdescr'>
+    <div class='sm-top catbdescr'>
       <%= show_category_title(category) %>
     </div>
   </div>
