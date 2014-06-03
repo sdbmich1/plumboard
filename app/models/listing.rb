@@ -203,12 +203,14 @@ class Listing < ListingParent
 
   # sends email to users who saved the listing when listing is removed
   def send_saved_pixi_removed
-    saved_listings = SavedListing.find(:all, :conditions => ["pixi_id = ?", pixi_id]) rescue nil 
+    saved_listings = SavedListing.find(:all, :conditions => ["pixi_id = ?", pixi_id]) rescue nil
     closed = ['closed', 'sold', 'removed', 'inactive']
     saved_listings.each do |saved_listing|
       if closed.detect {|closed| saved_listing.status == closed }
           UserMailer.delay.send_saved_pixi_removed(saved_listing) unless self.buyer_id == saved_listing.user_id
       end
+    end
+  end
 
   # set remove item list based on pixi type
   def remove_item_list
@@ -232,5 +234,7 @@ class Listing < ListingParent
 
   sphinx_scope(:by_point) do |lat, lng|
     {:geo => [lat, lng]}
+  end
+end
   end
 end

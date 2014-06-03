@@ -119,7 +119,7 @@ module ListingsHelper
 
   # set string to share content on pinterest
   def pin_share
-    url = "//www.pinterest.com/pin/create/button/?url=" + get_url + "&media=" + get_photo + "&description=Check out this pixi on Pixiboard! " +
+    "//www.pinterest.com/pin/create/button/?url=" + get_url + "&media=" + get_photo + "&description=Check out this pixi on Pixiboard! " +
        @listing.nice_title
   end
 
@@ -186,16 +186,15 @@ module ListingsHelper
 
   # select drop down for remove btn
   def remove_menu listing
-    if listing.job? 
-      items = ['Filled Position', 'Removed Job']
-    elsif listing.event?  
-      items = ['Event Cancelled', 'Event Ended']
-    else
-      items = ['Changed Mind', 'Donated Item', 'Gave Away Item', 'Sold Item']
-    end
-
     # build content tag
-    items.collect {|item| concat(content_tag(:li, link_to(item, listing_path(listing, reason: item), method: :put)))}
+    listing.remove_item_list.collect {|item| concat(content_tag(:li, link_to(item, listing_path(listing, reason: item), method: :put)))}
     return ''
+  end
+
+  def cache_key_for_pixi_panel(listing)
+    wants = listing.wanted_count
+    likes = listing.liked_count
+    saves = listing.saved_count
+    "listings/#{listing.pixi_id}-want-#{wants}-like-#{likes}-save-#{saves}"
   end
 end

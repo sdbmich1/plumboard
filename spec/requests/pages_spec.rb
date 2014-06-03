@@ -11,26 +11,29 @@ describe "Pages" do
 
   describe "Home page" do
     before { visit root_path }
-    it { should have_selector('title', text: full_title('')) }
-    it { should_not have_selector('title', text: '| Home') }
-    it { should_not have_link 'Sign Up', href: new_user_registration_path }
-    it { should_not have_link 'Sign In', href: new_user_session_path }
-    it { should have_link 'Browse', href: categories_path }
-    it { should have_link 'Forgot password?' }
-    it { should have_link 'How It Works', href: howitworks_path }
-    it { should have_link 'Help', href: help_path }
-    it { should have_button 'Sign in' }
-    it { should have_link 'Sign up for free!', href: new_user_registration_path }
-    it { should have_link 'Sign in via', href: user_omniauth_authorize_path(:facebook) }
-    # it { should have_selector '#browse-link', href: categories_path }
-    it { should have_link 'About', href: about_path }
-    it { should have_link 'Privacy', href: privacy_path }
-    it { should have_link 'Terms', href: terms_path }
-    it { should have_link 'Contact', href: contact_path }
-    it { should have_selector('#fb-link', href: 'https://www.facebook.com/pixiboard') }
-    it { should have_selector('#tw-link', href: 'https://twitter.com/pixiboardmagic') }
-    it { should have_selector('#pi-link', href: 'http://www.pinterest.com/pixiboardmagic/') }
-    it { should have_selector('#ins-link', href: 'http://instagram.com/pixiboard') }
+    it 'shows content' do
+      page.should have_selector('title', text: full_title(''))
+      page.should_not have_selector('title', text: '| Home')
+      page.should_not have_link 'Sign Up', href: new_user_registration_path
+      page.should have_content 'Already have an account?'
+      page.should have_link 'Sign In', href: new_user_session_path
+      page.should have_link 'Browse', href: categories_path
+      page.should have_link 'Forgot password?'
+      page.should have_link 'How It Works', href: howitworks_path
+      page.should have_link 'Help', href: help_path
+      page.should_not have_button 'Sign in'
+      page.should_not have_link 'Sign up for free!', href: new_user_registration_path
+      page.should have_link 'Connect via email', href: new_user_registration_path
+      page.should have_link 'Connect via', href: user_omniauth_authorize_path(:facebook)
+      page.should have_link 'About', href: about_path
+      page.should have_link 'Privacy', href: privacy_path
+      page.should have_link 'Terms', href: terms_path
+      page.should have_link 'Contact', href: contact_path
+      page.should have_selector('#fb-link', href: 'https://www.facebook.com/pixiboard')
+      page.should have_selector('#tw-link', href: 'https://twitter.com/pixiboardmagic')
+      page.should have_selector('#pi-link', href: 'http://www.pinterest.com/pixiboardmagic/')
+      page.should have_selector('#ins-link', href: 'http://instagram.com/pixiboard')
+    end
   end
 
   describe "Browse Stuff" do
@@ -68,56 +71,64 @@ describe "Pages" do
       visit help_path 
     end
 
-    it { should_not have_link 'Sign Up', href: new_user_registration_path }
-    it { should_not have_link 'Sign In', href: new_user_session_path }
-    it { should_not have_link 'Forgot password?' }
+    it 'shows content' do
+      page.should_not have_link 'Sign Up', href: new_user_registration_path
+      page.should_not have_link 'Sign In', href: new_user_session_path
+      page.should_not have_link 'Forgot password?'
+    end
   end
 
   describe "Help page" do
     before { visit help_path }
-    it { should have_link 'Sign Up', href: new_user_registration_path }
-    it { should have_link 'Sign In', href: new_user_session_path }
-    it { should_not have_link 'Forgot password?' }
-    it { should have_selector('title', :text => full_title('Help')) }
-    it { should have_selector('.section-hdr',    text: 'PixiPonders') }
-    it { should have_selector('.site-logo', href: root_path) }
-    it { should have_link 'here!', href: contact_path(source: 'support') }
-    it { should_not have_link 'Browse', href: categories_path }
+    it 'shows content' do
+      page.should have_link 'Sign Up', href: new_user_registration_path
+      page.should have_link 'Sign In', href: new_user_session_path
+      page.should_not have_link 'Forgot password?'
+      page.should have_selector('title', :text => full_title('Help'))
+      page.should have_selector('.section-hdr',    text: 'PixiPonders')
+      page.should have_selector('.site-logo', href: root_path)
+      page.should have_link 'here!', href: contact_path(source: 'support')
+      page.should_not have_link 'Browse', href: categories_path
+    end
   end
 
   describe "About page" do
     before { visit about_path }
-    it { should have_link 'Sign Up', href: new_user_registration_path }
-    it { should have_link 'Sign In', href: new_user_session_path }
-    it { should_not have_link 'Forgot password?' }
-    it { should have_selector('.site-logo', href: root_path) }
-    it { should have_selector('.section-hdr',    text: 'About Us') }
-    it { should have_selector('title', text: full_title('About Us')) }
-    it { should have_link 'How It Works', href: howitworks_path }
-    it { should have_link 'Help', href: help_path }
-    it { should_not have_link 'Browse', href: categories_path }
+    it 'shows content' do
+      page.should have_link 'Sign Up', href: new_user_registration_path
+      page.should have_link 'Sign In', href: new_user_session_path
+      page.should_not have_link 'Forgot password?'
+      page.should have_selector('.site-logo', href: root_path)
+      page.should have_selector('.section-hdr',    text: 'About Us')
+      page.should have_selector('title', text: full_title('About Us'))
+      page.should have_link 'How It Works', href: howitworks_path
+      page.should have_link 'Help', href: help_path
+      page.should_not have_link 'Browse', href: categories_path
+    end
   end
 
   describe "Terms page" do
     before { visit terms_path }
-    it { should have_link 'Sign Up', href: new_user_registration_path }
-    it { should have_link 'Sign In', href: new_user_session_path }
-    it { should_not have_link 'Forgot password?' }
-    it { should have_selector('.site-logo', href: root_path) }
-    it { should have_selector('.section-hdr',    text: 'Terms of Service') }
-    it { should have_selector('title', text: full_title('Terms')) }
-    it { should_not have_link 'Browse', href: categories_path }
+    it 'shows content' do
+      page.should have_link 'Sign Up', href: new_user_registration_path
+      page.should have_link 'Sign In', href: new_user_session_path
+      page.should_not have_link 'Forgot password?'
+      page.should have_selector('.site-logo', href: root_path)
+      page.should have_selector('title', text: full_title('Terms'))
+      page.should_not have_link 'Browse', href: categories_path
+    end
   end
 
   describe "Privacy page" do
     before { visit privacy_path } 
-    it { should have_link 'Sign Up', href: new_user_registration_path }
-    it { should have_link 'Sign In', href: new_user_session_path }
-    it { should_not have_link 'Forgot password?' }
-    it { should have_selector('.site-logo', href: root_path) }
-    it { should have_selector('.section-hdr',    text: 'Privacy') }
-    it { should have_selector('title', text: full_title('Privacy')) }
-    it { should_not have_link 'Browse', href: categories_path }
+    it 'shows content' do
+      page.should have_link 'Sign Up', href: new_user_registration_path
+      page.should have_link 'Sign In', href: new_user_session_path
+      page.should_not have_link 'Forgot password?'
+      page.should have_selector('.site-logo', href: root_path)
+      page.should have_selector('title', text: full_title('Privacy'))
+      page.should_not have_link 'Browse', href: categories_path
+    end
   end
 
   describe 'user opens privacy page' do
@@ -127,25 +138,28 @@ describe "Pages" do
       visit privacy_path 
     end
 
-    it { should_not have_link 'Sign Up', href: new_user_registration_path }
-    it { should_not have_link 'Sign In', href: new_user_session_path }
-    it { should have_selector('.site-logo', href: root_path) }
-    it { should have_selector('.section-hdr',    text: 'Privacy') }
-    it { should have_selector('title', text: full_title('Privacy')) }
-    it { should_not have_link 'Browse', href: categories_path }
+    it 'shows content' do
+      page.should_not have_link 'Sign Up', href: new_user_registration_path
+      page.should_not have_link 'Sign In', href: new_user_session_path
+      page.should have_selector('.site-logo', href: root_path)
+      page.should have_selector('title', text: full_title('Privacy'))
+      page.should_not have_link 'Browse', href: categories_path
+    end
   end
 
   describe "How It Works page" do
     before { visit howitworks_path }
-    it { should have_link 'Sign Up', href: new_user_registration_path }
-    it { should have_link 'Sign In', href: new_user_session_path }
-    it { should_not have_link 'How It Works', href: howitworks_path }
-    it { should_not have_link 'Forgot password?' }
-    it { should have_selector('.site-logo', href: root_path) }
-    it { should have_selector('.section-hdr',    text: 'How It Works') }
-    it { should have_selector('title', text: full_title('How It Works')) }
-    it { should have_selector('.pxb-img', visible: true) }
-    it { should have_selector('.vimeo-thumb', visible: true) }
-    it { should_not have_link 'Browse', href: categories_path }
+    it 'shows content' do
+      page.should have_link 'Sign Up', href: new_user_registration_path
+      page.should have_link 'Sign In', href: new_user_session_path
+      page.should_not have_link 'How It Works', href: howitworks_path
+      page.should_not have_link 'Forgot password?'
+      page.should have_selector('.site-logo', href: root_path)
+      page.should have_selector('.section-hdr',    text: 'How It Works')
+      page.should have_selector('title', text: full_title('How It Works'))
+      page.should have_selector('.pxb-img', visible: true)
+      page.should have_selector('.vimeo-thumb', visible: true)
+      page.should_not have_link 'Browse', href: categories_path
+    end
   end
 end

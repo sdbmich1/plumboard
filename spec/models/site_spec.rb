@@ -141,4 +141,17 @@ describe Site do
     end
   end
 
+  describe 'check_org_type' do
+
+    it 'finds site w/ org type' do
+      site = create :site, name: 'Detroit', org_type: 'region'
+      expect(Site.check_org_type(['city','region'])).not_to be_nil
+    end
+
+    it 'does not find site w/ org type' do
+      site = create :site, name: 'Detroit', org_type: 'region'
+      expect(Site.check_org_type(['city'])).to be_empty
+    end
+  end
+
 end

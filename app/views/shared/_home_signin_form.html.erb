@@ -1,0 +1,11 @@
+  <%= form_for("user", :url => user_session_path, :html => { :class => "less-bot"}) do |f| %>
+    <div id='login-text' class='center-wrapper'>
+      <%= link_to user_omniauth_authorize_path(:facebook), id: 'fb-btn', class: "btn btn-primary btn-mask med-top span3 no-float" do %>
+        Connect via <%= image_tag 'icon_facebook.png', class: 'img-icon mleft5' %>
+      <% end %>
+      <h4 class='med-top white-descr'>or</h4>
+      <%= link_to "Connect via email", new_user_registration_path, class: "btn med-top span3 no-float" %>
+      <div class='clear-all'></div>
+      <div class='med-top sdescr white-descr'>Already have an account? <%= link_to "Sign In", new_user_session_path, id: 'notice-btn' %></div>
+    </div>
+  <% end %>

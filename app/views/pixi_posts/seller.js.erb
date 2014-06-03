@@ -1,3 +1,1 @@
-$("#inv_form").html(''); $("#pxp_items").html(''); $("#pxp_btn").html('');
-$("#inv_form").html("<%= escape_javascript( raw render(:partial => "shared/pixi_post_list") ) %>");
-$("#spinner").hide('fast');
+<%= render :partial => 'reload_posts' %>

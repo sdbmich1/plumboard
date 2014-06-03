@@ -36,6 +36,15 @@ describe UsersController do
       do_get 
       assigns(:users).should_not be_nil
     end
+
+    context 'when format is csv' do
+      let(:csv_string) { User.to_csv }
+      
+      it 'should return a csv attachment' do
+        @controller.should_receive(:send_data).with(csv_string).and_return { @controller.render nothing: true }
+        get :index, format: :csv
+      end
+    end
   end
 
   describe 'GET show/:id' do

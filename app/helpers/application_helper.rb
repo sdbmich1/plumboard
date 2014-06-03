@@ -172,8 +172,8 @@ module ApplicationHelper
   end
 
   # convert to currency
-  def ntc val
-    number_to_currency val, delimiter: ","
+  def ntc val, zeroFlg=false
+    val.blank? ? '$0' : number_to_currency(val, :precision => (val.round == val) && zeroFlg ? 0 : 2)
   end
 
   # convert to thousand

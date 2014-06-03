@@ -3,18 +3,20 @@
   <div class='container'>
     <div class='row mtop'>
       <% cache fragment: 'caption' do %>
-      <div class='mtop span7 home-title-grp'>
-        <span class='home-title'><%= PIXI_KEYS['pixi']['caption'] %></span><br />
-        <span class='tag-line'><%= PIXI_KEYS['pixi']['tag_line'] %></span>
-      </div>
+        <div class='mtop span7 home-title-grp'>
+          <span class='home-title'><%= PIXI_KEYS['pixi']['caption'] %></span><br />
+          <span class='tag-line'><%= PIXI_KEYS['pixi']['tag_line'] %></span>
+        </div>
       <% end %>
-      <div class='mtop span4 pull-right div-blk-border round'>
-        <%= render partial: 'shared/signin_form', locals: { rmbrFlg: false } %>
-      </div>
+      <% cache fragment: 'signin' do %>
+        <div class='mtop span4 pull-right div-blk-border round'>
+          <%= render partial: 'shared/home_signin_form', locals: { rmbrFlg: false } %>
+        </div>
+      <% end %>
       <% cache fragment: 'polaroid' do %>
-      <div class='sm-top span4'>
-        <%= link_to image_tag('rsz_polaroid_frame.png'), categories_path, class: 'pixi-cat-link' %>
-      </div>
+        <div class='sm-top span4'>
+          <%= link_to image_tag('rsz_polaroid_frame.png'), categories_path, class: 'pixi-cat-link' %>
+        </div>
       <% end %>
     </div>
   </div>

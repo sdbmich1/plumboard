@@ -2,8 +2,9 @@ class TempListing < ListingParent
   self.table_name = "temp_listings"
   resourcify
 
-  include CalcTotal
+  include CalcTotal, SystemMessenger
   before_create :set_flds
+  after_commit :async_send_notification, :on => :update
 
   attr_accessor :slr_name
   attr_accessible :slr_name
@@ -53,7 +54,7 @@ class TempListing < ListingParent
 
   # check if pixi is free
   def free?
-    CalcTotal::get_price(self.premium?) == 0.00
+    CalcTotal::get_price(self.premium?) == 0.00 rescue true
   end
 
   # submit order request for review
@@ -93,5 +94,20 @@ class TempListing < ListingParent
   # find pixis in draft status
   def self.draft
     include_list.where("status NOT IN ('approved', 'pending')")
+  end
+
+  # add listing to board and process transaction
+  def async_send_notification 
+    case status
+      when 'pending'
+        UserMailer.delay.send_submit_notice(self)
+      when 'approved'
+        post_to_board
+        transaction.process_transaction unless transaction.approved? rescue nil
+      when 'denied'
+        # pxb notice & email messages to user
+        SystemMessenger::send_message user, self, 'deny'
+        UserMailer.delay.send_denial(self)
+    end
   end
 end

@@ -321,6 +321,56 @@ describe PixiPostsController do
     end
   end
 
+  describe 'GET pixter' do
+    before :each do
+      @posts = stub_model(PixiPost)
+      PixiPost.stub_chain(:get_by_pixter, :get_by_status).and_return( @posts )
+      @posts.stub!(:paginate).and_return( @posts )
+      do_get
+    end
+
+    def do_get
+      get :pixter, status: 'active'
+    end
+
+    it "renders the :pixter view" do
+      response.should render_template :pixter
+    end
+
+    it "should assign @posts" do
+      assigns(:posts).should_not be_nil
+    end
+
+    it "should show the requested posts" do
+      response.should be_success
+    end
+
+    it "responds to JSON" do
+      get :pixter, format: :json
+      expect(response).to be_success
+    end
+  end
+
+  describe 'xhr GET pixter' do
+    before(:each) do
+      @posts = stub_model(PixiPost)
+      PixiPost.stub_chain(:get_by_pixter, :get_by_status).and_return( @posts )
+      @posts.stub!(:paginate).and_return( @posts )
+      do_get
+    end
+
+    def do_get
+      xhr :get, :pixter, status: 'active'
+    end
+
+    it "renders the :pixter view" do
+      response.should render_template :pixter
+    end
+
+    it "should assign @posts" do
+      assigns(:posts).should_not be_nil
+    end
+  end
 
   describe "PUT /:id" do
     before (:each) do

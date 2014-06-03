@@ -35,7 +35,7 @@ describe Listing do
   it { should respond_to(:event_end_time) }
   it { should respond_to(:year_built) }
   it { should respond_to(:pixan_id) }
-  it { should respond_to(:job_type) }
+  it { should respond_to(:job_type_code) }
   it { should respond_to(:explanation) }
 
   it { should respond_to(:user) }
@@ -47,6 +47,7 @@ describe Listing do
   it { should respond_to(:pictures) }
   it { should respond_to(:contacts) }
   it { should respond_to(:category) }
+  it { should respond_to(:job_type) }
   it { should respond_to(:comments) }
   it { should respond_to(:pixi_likes) }
   it { should have_many(:pixi_likes).with_foreign_key('pixi_id') }
@@ -189,6 +190,16 @@ describe Listing do
     it { Listing.get_by_city(@listing.category_id, @listing.site_id, 1).should_not be_empty }
   end
 
+  describe "active_by_city" do
+    it { Listing.active_by_city(0, 1, 1).should_not include @listing } 
+    it "finds active pixis by city" do
+      @site = create :site, name: 'Detroit', org_type: 'city'
+      @site.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro', city: 'Detroit', state: 'MI'
+      listing = create(:listing, seller_id: @user.id, site_id: @site.id) 
+      expect(Listing.active_by_city('Detroit', 'MI', 1).count).to eq(1)
+    end
+  end
+
   describe "category_by_site" do
     it { Listing.get_category_by_site(0, 1, 1).should_not include @listing } 
     it { Listing.get_category_by_site(@listing.category_id, @listing.site_id, 1).should_not be_empty }
@@ -227,6 +238,19 @@ describe Listing do
 
     it "should not return site count > 0" do 
       @listing.get_site_count.should == 0  
+    end
+  end
+
+  describe 'site_address' do
+    it 'has site address' do
+      @site = create :site
+      @contact = @site.contacts.create FactoryGirl.attributes_for(:contact)
+      listing = create :listing, seller_id: @user.id, site_id: @site.id
+      expect(listing.site_address).to eq @contact.full_address
+    end
+
+    it 'has no site address' do
+      expect(@listing.site_address).to eq @listing.site_name
     end
   end
 
@@ -381,6 +405,12 @@ describe Listing do
     it "should not return a nice title" do 
       @listing.title = nil
       @listing.nice_title.should_not be_true 
+    end
+
+    it "returns a nice title w/ $" do 
+      @listing.title = 'Shirt $100'
+      expect(@listing.nice_title(false)).not_to eq 'Shirt $100' 
+      expect(@listing.nice_title(false)).to eq 'Shirt' 
     end
   end
 
@@ -635,6 +665,18 @@ describe Listing do
     it "is a job" do
       @listing.category_id = @cat.id
       @listing.job?.should be_true 
+    end
+
+    it "is not valid" do
+      @listing.category_id = @cat.id
+      @listing.should_not be_valid
+    end
+
+    it "is valid" do
+      create :job_type
+      @listing.category_id = @cat.id
+      @listing.job_type_code = 'CT'
+      @listing.should be_valid
     end
   end
 
@@ -917,9 +959,45 @@ describe Listing do
     end
   end
 
+  describe 'remove_item_list' do
+    it 'is a job' do
+      @cat = FactoryGirl.create(:category, name: 'Job', category_type: 'employment', pixi_type: 'premium') 
+      @listing.category_id = @cat.id
+      expect(@listing.remove_item_list).not_to include('Event Cancelled') 
+      expect(@listing.remove_item_list).to include('Removed Job') 
+      expect(@listing.remove_item_list).not_to include('Changed Mind') 
+    end
+
+    it 'is an event' do
+      @cat = FactoryGirl.create(:category, name: 'Event', category_type: 'event', pixi_type: 'premium') 
+      @listing.category_id = @cat.id
+      expect(@listing.remove_item_list).to include('Event Cancelled') 
+      expect(@listing.remove_item_list).not_to include('Removed Job') 
+      expect(@listing.remove_item_list).not_to include('Changed Mind') 
+    end
+
+    it 'is not a job or event' do
+      expect(@listing.remove_item_list).not_to include('Event Cancelled') 
+      expect(@listing.remove_item_list).not_to include('Removed Job') 
+      expect(@listing.remove_item_list).to include('Changed Mind') 
+    end
+  end
+
+  describe 'job_type_name' do
+    it "shows description" do
+      create :job_type
+      @listing.job_type_code = 'CT'
+      expect(@listing.job_type_name).to eq 'Contract'
+    end
+
+    it "does not show description" do
+      expect(@listing.job_type_name).to be_nil
+    end
+  end
+
   describe "date validations" do
     before do
-      @cat = FactoryGirl.create(:category, name: 'Event', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Event', category_type: 'event', pixi_type: 'premium') 
       @listing.category_id = @cat.id
       @listing.event_end_date = Date.today+3.days 
       @listing.event_start_time = Time.now+2.hours

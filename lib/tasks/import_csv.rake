@@ -59,26 +59,26 @@ task :import_sites => :environment do
   end
 end
 
+# loads bay area city data
 task :load_bay_area_cities => :environment do
-
-   CSV.foreach(Rails.root.join('db', 'bay_area_cities_082713.csv'), :headers => true) do |row|
+  CSV.foreach(Rails.root.join('db', 'bay_area_cities_082713.csv'), :headers => true) do |row|
     
-   attrs = {
-	  :name        => row[0],
-		:status		   => 'active',
-		:org_type	   => 'city'
-      }
+    attrs = {
+      :name       => row[0],
+      :status     => 'active',
+      :org_type	   => 'city'
+    }
 
     # add site
     unless site = Site.where(:name => row[0]).first
       new_site = Site.new(attrs)
 
       # set location/contact attributes
-    loc_attrs = { 
-	  :city      => row[0],
-		:county		 => row[1],
-    :state           => 'CA'
-		}
+      loc_attrs = { 
+	:city      => row[0],
+	:county		 => row[1],
+        :state           => 'CA'
+      }
 
       # add contact info for site
       new_site.contacts.build(loc_attrs)
@@ -93,6 +93,7 @@ task :load_bay_area_cities => :environment do
   end
 end
 
+# loads SF neighborhood data
 task :load_sf_neighborhoods => :environment do
 
    CSV.foreach(Rails.root.join('db', 'sf_neighborhoods_082713.csv'), :headers => true) do |row|
@@ -156,6 +157,7 @@ end
 
 
 
+# loads neighborhoods of top 50 cities in US
 task :load_neighborhoods => :environment do
 
    CSV.foreach(Rails.root.join('db', 'DMA_50_neighborhoods_transposed.csv'), :headers => false) do |row|
@@ -209,10 +211,7 @@ task :load_neighborhoods => :environment do
   end
 end
   
-
-      
-
-
+# loads top 50 cities in US
 task :load_cities => :environment do
   CSV.foreach(Rails.root.join('db', 'DMA_50_neighborhoods_transposed.csv'), :headers => false) do |row|
 
@@ -289,11 +288,12 @@ task :update_categories => :environment do
 
   CSV.foreach(Rails.root.join('db', 'category_data_042214.csv'), :headers => true) do |row|
 
-    attrs = {:name             => row[0].titleize,
-             :category_type    => row[1],
-             :status           => row[4]}
+    attrs = {:name             => row[1].titleize,
+             :category_type    => row[2],
+             :status           => row[3],
+             :pixi_type        => row[4]}
 
-    attrs2 = {:original_name => row[3]}
+    attrs2 = {:original_name => row[6]}
 
     #original_name is the original name of the category created by the load_categories task,
     #if it exists. If the category name doesn't exist, original_name is nil. 
@@ -312,7 +312,7 @@ task :update_categories => :environment do
     end
 
     picture = updated_category.pictures.build
-    picture.photo = File.new("#{Rails.root}" + row[2]) if picture
+    picture.photo = File.new("#{Rails.root}" + row[5]) if picture
 
     #save category
     if updated_category.save
@@ -328,7 +328,7 @@ task :update_category_pictures => :environment do
 
   CSV.foreach(Rails.root.join('db', 'category_data_042214.csv'), :headers => true) do |row|
 
-    attrs = {:name             => row[0].titleize}
+    attrs = {:name             => row[1].titleize}
 
     #find category
     updated_category = Category.find(:first, :conditions => ["name = ?", attrs[:name]])
@@ -339,7 +339,7 @@ task :update_category_pictures => :environment do
     end
 
     picture = updated_category.pictures.build
-    picture.photo = File.new("#{Rails.root}" + row[2]) if picture
+    picture.photo = File.new("#{Rails.root}" + row[5]) if picture
 
     #save category
     if updated_category.save
@@ -464,6 +464,39 @@ task :import_faq => :environment do
       puts "Saved faq #{attrs.inspect}"
     else
       puts new_faq.errors
+    end
+  end
+end
+
+# loads regional data for US cities
+task :load_regions => :environment do
+  CSV.foreach(Rails.root.join('db', 'region_data_052414.csv'), :headers => true) do |row|
+    
+    attrs = {
+      :name       => row[0],
+      :status     => 'active',
+      :org_type	  => 'region'
+    }
+
+    # add site
+    unless site = Site.where(:name => row[0]).first
+      new_site = Site.new(attrs)
+
+      # set location/contact attributes
+      loc_attrs = { 
+	:city    => row[1],
+	:state	 => row[2]
+      }
+
+      # add contact info for site
+      new_site.contacts.build(loc_attrs)
+
+      # save site
+      if new_site.save 
+        puts "Saved site #{attrs.inspect}"
+      else
+        puts new_site.errors
+      end
     end
   end
 end

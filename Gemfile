@@ -1,14 +1,13 @@
 source 'http://rubygems.org'
 
 gem 'rails', '3.2.12'
-gem 'rake' 
+gem 'rake', '~> 10.3.1' 
 
 #added faraday gem version 0.8.9 to run smoothly on Mac
 gem 'faraday', '0.8.9'
  
 # use devise for user authenication
-# changed to verison 3.0.4 to run smoothly on Mac
-gem 'devise', '3.0.4'
+gem 'devise'
 
 # add delayed job
 gem 'delayed_job_active_record'
@@ -22,7 +21,7 @@ gem "mysql2", "~> 0.3.12"
 
 # add paperclip for photos
 gem 'paperclip'
-gem 'delayed_paperclip'
+gem 'delayed_paperclip', '~> 2.7.1'
 
 # add for ajax uploads
 gem 'remotipart', '~> 1.0'
@@ -135,6 +134,9 @@ gem 'bootstrap-sass', '~> 2.3.2.1'
 gem 'dalli'
 gem 'dalli-elasticache'
 
+#add cache digests for russian doll caching
+gem 'cache_digests', '~> 0.3.1'
+
 # add area
 gem 'area', '~> 0.10.0'
 
@@ -203,6 +205,7 @@ group :production do
    gem 'rack-google_analytics', :require => "rack/google_analytics"
 end 
 
+gem 'as_csv'
 gem 'open4'
 gem 'gelf'
 gem 'graylog2_exceptions', :git => 'git://github.com/wr0ngway/graylog2_exceptions.git'

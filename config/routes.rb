@@ -6,15 +6,15 @@ Plumboard::Application.routes.draw do
   devise_scope :user do
     get "signup" => "registrations#new", as: :new_user_registration
     post "signup" => "registrations#create", as: :user_registration
-    get "signout" => "sessions#destroy", as: :destroy_user_session
+    delete "signout" => "sessions#destroy", as: :destroy_user_session
     get '/users/auth/:provider' => 'users/omniauth_callbacks#passthru'
     get '/users/auth/:provider/setup' => 'users/omniauth_callbacks#setup'
   end
 
   # resource defs
-  resources :listings, except: [:new, :edit, :create] do
+  resources :listings, except: [:new, :edit, :update, :create] do
     collection do
-      get 'pixi_price', 'seller', 'follower', 'sold', 'category', 'local', 'wanted', 'purchased'
+      get 'get_pixi_price', 'seller', 'follower', 'sold', 'category', 'local', 'wanted', 'purchased'
     end
   end
 
@@ -41,10 +41,7 @@ Plumboard::Application.routes.draw do
 
   resources :pixi_posts do
     collection do
-      get 'seller', :autocomplete_site_name, :autocomplete_user_first_name
-    end
-    member do
-      get 'reschedule'
+      get 'seller', 'pixter', :autocomplete_site_name, :autocomplete_user_first_name
     end
   end
 
@@ -92,7 +89,7 @@ Plumboard::Application.routes.draw do
       get :autocomplete_site_name, :autocomplete_user_first_name, 'unposted', 'pending'
     end
     member do
-      put 'submit'
+      put 'resubmit', 'submit'
     end
   end
 

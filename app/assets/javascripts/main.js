@@ -11,16 +11,6 @@ $.ajaxSetup({
   'success': function() { toggleLoading(); }
 }); 
 
-// hide & reset comp field
-function hideComp(){
-  $('#comp-fld').hide('fast');
-  $('#price-fld').show('fast');
-
-  if($('#input-form').length > 0) {
-    $('#salary').val('');
-  }  
-}
-
 // when the #category id field changes
 $(document).on("change", "select[id*=category_id]", function(evt){
 
@@ -246,7 +236,7 @@ $(document).on('change', '#value5', function() {
 });
 
 // disable btn to prevent double click
-$(document).on("click", "#approve-btn, #px-done-btn", function(showElem){
+$(document).on("click", "#approve-btn, #px-done-btn, #fb-btn", function(showElem){
   toggleLoading();
   $(this).attr('disabled', true);
 });
