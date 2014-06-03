@@ -236,5 +236,3 @@ class Listing < ListingParent
     {:geo => [lat, lng]}
   end
 end
-  end
-end
