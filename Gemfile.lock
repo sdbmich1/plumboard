@@ -21,19 +21,6 @@ GEM
       rack-cache (~> 1.2)
       rack-test (~> 0.6.1)
       sprockets (~> 2.2.1)
-<<<<<<< HEAD
-    active_utils (2.1.1)
-      activesupport (>= 2.3.11)
-      i18n
-    activemerchant (1.43.1)
-      active_utils (~> 2.0, >= 2.0.1)
-      activesupport (>= 2.3.14, < 5.0.0)
-      builder (>= 2.1.2, < 4.0.0)
-      i18n (~> 0.5)
-      json (~> 1.7)
-      money (< 7.0.0)
-      nokogiri (~> 1.4)
-=======
     active_utils (1.0.5)
       activesupport (>= 2.3.11)
       i18n
@@ -45,7 +32,6 @@ GEM
       json (>= 1.5.1)
       money
       nokogiri
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
     activemodel (3.2.12)
       activesupport (= 3.2.12)
       builder (~> 3.0.0)
@@ -60,39 +46,16 @@ GEM
     activesupport (3.2.12)
       i18n (~> 0.6)
       multi_json (~> 1.0)
-<<<<<<< HEAD
-    addressable (2.3.6)
-    area (0.10.0)
-      fastercsv (~> 1.5)
-    arel (3.0.3)
-    as_csv (1.0.2)
-    attr_required (1.0.0)
-=======
     addressable (2.3.2)
     area (0.10.0)
       fastercsv (~> 1.5)
     arel (3.0.2)
     as_csv (1.0.2)
     attr_required (0.0.5)
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
     aws-sdk (1.11.3)
       json (~> 1.4)
       nokogiri (< 1.6.0)
       uuidtools (~> 2.1)
-<<<<<<< HEAD
-    balanced (0.8.2)
-      faraday (~> 0.8.6)
-      faraday_middleware (~> 0.9.0)
-    bcrypt (3.1.7)
-    bcrypt-ruby (3.1.5)
-      bcrypt (>= 3.1.3)
-    better_errors (1.1.0)
-      coderay (>= 1.0.0)
-      erubis (>= 2.6.6)
-    binding_of_caller (0.7.2)
-      debug_inspector (>= 0.0.1)
-    bootstrap-datepicker-rails (1.3.0.2)
-=======
     balanced (0.8.1)
       faraday (>= 0.8.6)
       faraday_middleware (~> 0.9.0)
@@ -104,20 +67,12 @@ GEM
     binding_of_caller (0.7.1)
       debug_inspector (>= 0.0.1)
     bootstrap-datepicker-rails (1.1.1.1)
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
       railties (>= 3.0)
     bootstrap-sass (2.3.2.2)
       sass (~> 3.2)
     bootstrap-will_paginate (0.0.6)
       will_paginate
     builder (3.0.4)
-<<<<<<< HEAD
-    bullet (4.9.0)
-      activesupport
-      uniform_notifier (~> 1.6.0)
-    cancan (1.6.10)
-    capistrano (2.15.5)
-=======
     bullet (4.8.0)
       activesupport
       uniform_notifier (>= 1.4.0)
@@ -126,7 +81,6 @@ GEM
       thread_safe
     cancan (1.6.9)
     capistrano (2.14.1)
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
       highline
       net-scp (>= 1.0.0)
       net-sftp (>= 2.0.0)
@@ -141,20 +95,6 @@ GEM
       rack-test (>= 0.5.4)
       selenium-webdriver (~> 2.0)
       xpath (~> 0.1.4)
-<<<<<<< HEAD
-    celluloid (0.15.2)
-      timers (~> 1.1.0)
-    childprocess (0.5.3)
-      ffi (~> 1.0, >= 1.0.11)
-    chronic (0.10.2)
-    clamp (0.6.3)
-    client_side_validations (3.2.6)
-    climate_control (0.0.3)
-      activesupport (>= 3.0)
-    cocaine (0.5.4)
-      climate_control (>= 0.0.3, < 1.0)
-    coderay (1.1.0)
-=======
     childprocess (0.5.2)
       ffi (~> 1.0, >= 1.0.11)
     chronic (0.9.1)
@@ -165,45 +105,12 @@ GEM
     cocaine (0.5.1)
       climate_control (>= 0.0.3, < 1.0)
     coderay (1.0.8)
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
     coffee-rails (3.2.2)
       coffee-script (>= 2.2.0)
       railties (~> 3.2.0)
     coffee-script (2.2.0)
       coffee-script-source
       execjs
-<<<<<<< HEAD
-    coffee-script-source (1.7.0)
-    combined_time_select (1.0.1)
-    connection_pool (2.0.0)
-    countries (0.9.3)
-      currencies (~> 0.4.2)
-    country_select (1.3.1)
-      countries (= 0.9.3)
-    currencies (0.4.2)
-    daemons (1.1.9)
-    dalli (2.7.1)
-    dalli-elasticache (0.1.1)
-      dalli (>= 1.0.0)
-    database_cleaner (1.2.0)
-    debug_inspector (0.0.2)
-    delayed_job (4.0.1)
-      activesupport (>= 3.0, < 4.2)
-    delayed_job_active_record (4.0.1)
-      activerecord (>= 3.0, < 4.2)
-      delayed_job (>= 3.0, < 4.1)
-    delayed_paperclip (2.7.1)
-      paperclip (>= 3.3)
-    devise (3.0.4)
-      bcrypt-ruby (~> 3.0)
-      orm_adapter (~> 0.1)
-      railties (>= 3.2.6, < 5)
-      warden (~> 1.2.3)
-    devise-async (0.8.0)
-      devise (>= 2.2, < 3.2)
-    diff-lcs (1.2.5)
-    email_spec (1.5.0)
-=======
     coffee-script-source (1.4.0)
     combined_time_select (1.0.1)
     connection_pool (1.0.0)
@@ -230,23 +137,10 @@ GEM
       devise (>= 2.2)
     diff-lcs (1.2.4)
     email_spec (1.4.0)
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
       launchy (~> 2.1)
       mail (~> 2.2)
     erubis (2.7.0)
     eventmachine (1.0.3)
-<<<<<<< HEAD
-    exception_notification (3.0.1)
-      actionmailer (>= 3.0.4)
-    excon (0.21.0)
-    execjs (2.0.2)
-    factory_girl (4.4.0)
-      activesupport (>= 3.0.0)
-    factory_girl_rails (4.4.1)
-      factory_girl (~> 4.4.0)
-      railties (>= 3.0.0)
-    faker (1.3.0)
-=======
     eventmachine (1.0.3-x86-mingw32)
     exception_notification (3.0.1)
       actionmailer (>= 3.0.4)
@@ -259,32 +153,17 @@ GEM
       factory_girl (~> 4.3.0)
       railties (>= 3.0.0)
     faker (1.1.2)
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
       i18n (~> 0.5)
     fakeweb (1.3.0)
     faraday (0.8.9)
       multipart-post (~> 1.2.0)
-<<<<<<< HEAD
-    faraday_middleware (0.9.1)
-      faraday (>= 0.7.4, < 0.10)
-=======
     faraday_middleware (0.9.0)
       faraday (>= 0.7.4, < 0.9)
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
     fastercsv (1.5.5)
     fb_graph (1.8.6)
       httpclient (>= 2.2.0.2)
       rack-oauth2 (>= 0.8.0)
     ffi (1.9.3)
-<<<<<<< HEAD
-    fog (1.11.1)
-      builder
-      excon (~> 0.20)
-      formatador (~> 0.2.0)
-      json (~> 1.7)
-      mime-types
-      net-scp (~> 1.1)
-=======
     ffi (1.9.3-x86-mingw32)
     fog (1.9.0)
       builder
@@ -293,25 +172,12 @@ GEM
       mime-types
       multi_json (~> 1.0)
       net-scp (~> 1.0.4)
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
       net-ssh (>= 2.1.3)
       nokogiri (~> 1.5.0)
       ruby-hmac
     formatador (0.2.4)
     gelf (1.4.0)
       json
-<<<<<<< HEAD
-    geocoder (1.1.9)
-    graylog2-resque (0.5.1)
-      gelf
-      resque
-    guard (2.6.1)
-      formatador (>= 0.2.4)
-      listen (~> 2.7)
-      lumberjack (~> 1.0)
-      pry (>= 0.9.12)
-      thor (>= 0.18.1)
-=======
     geocoder (1.1.8)
     graylog2-resque (0.5.1)
       gelf
@@ -322,7 +188,6 @@ GEM
       lumberjack (>= 1.0.2)
       pry (>= 0.9.10)
       thor (>= 0.14.6)
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
     guard-rspec (3.0.2)
       guard (>= 1.8)
       rspec (~> 2.13)
@@ -330,16 +195,6 @@ GEM
       childprocess (>= 0.2.3)
       guard (>= 1.1)
       spork (>= 0.8.4)
-<<<<<<< HEAD
-    hashie (2.1.1)
-    highline (1.6.21)
-    hike (1.2.3)
-    httparty (0.13.1)
-      json (~> 1.8)
-      multi_xml (>= 0.5.2)
-    httpauth (0.2.1)
-    httpclient (2.3.4.1)
-=======
     hashie (1.2.0)
     highline (1.6.15)
     hike (1.2.3)
@@ -348,30 +203,12 @@ GEM
       multi_xml (>= 0.5.2)
     httpauth (0.2.0)
     httpclient (2.3.2)
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
     i18n (0.6.9)
     innertube (1.1.0)
     journey (1.0.4)
     jquery-rails (3.1.0)
       railties (>= 3.0, < 5.0)
       thor (>= 0.14, < 2.0)
-<<<<<<< HEAD
-    jquery-ui-rails (4.1.2)
-      railties (>= 3.1.0)
-    jquery-ui-themes (0.0.11)
-      httparty
-    json (1.8.1)
-    jwt (0.1.13)
-      multi_json (>= 1.5)
-    launchy (2.4.2)
-      addressable (~> 2.3)
-    libv8 (3.16.14.3)
-    listen (2.7.5)
-      celluloid (>= 0.15.2)
-      rb-fsevent (>= 0.9.3)
-      rb-inotify (>= 0.9)
-    lumberjack (1.0.5)
-=======
     jquery-ui-rails (4.0.2)
       jquery-rails
       railties (>= 3.1.0)
@@ -388,33 +225,12 @@ GEM
       rb-inotify (>= 0.9)
       rb-kqueue (>= 0.2)
     lumberjack (1.0.4)
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
     mail (2.4.4)
       i18n (>= 0.4.0)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     method_source (0.8.2)
     middleware (0.1.0)
-<<<<<<< HEAD
-    mime-types (1.25.1)
-    money (6.1.1)
-      i18n (~> 0.6.4)
-    mono_logger (1.1.0)
-    multi_json (1.10.0)
-    multi_xml (0.5.5)
-    multipart-post (1.2.0)
-    mysql2 (0.3.16)
-    net-scp (1.2.1)
-      net-ssh (>= 2.6.5)
-    net-sftp (2.1.2)
-      net-ssh (>= 2.6.5)
-    net-ssh (2.9.1)
-    net-ssh-gateway (1.2.0)
-      net-ssh (>= 2.6.5)
-    nokogiri (1.5.11)
-    oauth (0.4.7)
-    oauth2 (0.8.1)
-=======
     mime-types (1.23)
     money (5.1.0)
       i18n (~> 0.6.0)
@@ -434,21 +250,14 @@ GEM
     nokogiri (1.5.10-x86-mingw32)
     oauth (0.4.7)
     oauth2 (0.8.0)
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
       faraday (~> 0.8)
       httpauth (~> 0.1)
       jwt (~> 0.1.4)
       multi_json (~> 1.0)
       rack (~> 1.2)
-<<<<<<< HEAD
-    omniauth (1.2.1)
-      hashie (>= 1.2, < 3)
-      rack (~> 1.0)
-=======
     omniauth (1.1.1)
       hashie (~> 1.2)
       rack
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
     omniauth-facebook (1.4.0)
       omniauth-oauth2 (~> 1.0.2)
     omniauth-github (1.0.1)
@@ -463,26 +272,6 @@ GEM
     omniauth-openid (1.0.1)
       omniauth (~> 1.0)
       rack-openid (~> 1.3.1)
-<<<<<<< HEAD
-    omniauth-twitter (1.0.1)
-      multi_json (~> 1.3)
-      omniauth-oauth (~> 1.0)
-    open4 (1.3.4)
-    open_uri_redirections (0.1.4)
-    orm_adapter (0.5.0)
-    paperclip (4.1.1)
-      activemodel (>= 3.0.0)
-      activesupport (>= 3.0.0)
-      cocaine (~> 0.5.3)
-      mime-types
-    parsley-rails (2.0.0.0)
-      railties (>= 3.0.0)
-    polyglot (0.3.4)
-    pry (0.9.12.6)
-      coderay (~> 1.0)
-      method_source (~> 0.8)
-      slop (~> 3.4)
-=======
     omniauth-twitter (0.0.14)
       multi_json (~> 1.3)
       omniauth-oauth (~> 1.0)
@@ -506,7 +295,6 @@ GEM
       method_source (~> 0.8)
       slop (~> 3.4)
       win32console (~> 1.3)
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
     quiet_assets (1.0.2)
       railties (>= 3.1, < 5.0)
     rack (1.4.5)
@@ -514,28 +302,17 @@ GEM
       rack (>= 0.4)
     rack-google_analytics (1.0.2)
       rack
-<<<<<<< HEAD
-    rack-oauth2 (1.0.8)
-      activesupport (>= 2.3)
-      attr_required (>= 0.0.5)
-      httpclient (>= 2.2.0.2)
-=======
     rack-oauth2 (1.0.0)
       activesupport (>= 2.3)
       attr_required (>= 0.0.5)
       httpclient (>= 2.2.0.2)
       i18n
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
       multi_json (>= 1.3.6)
       rack (>= 1.1)
     rack-openid (1.3.1)
       rack (>= 1.1.0)
       ruby-openid (>= 2.1.8)
-<<<<<<< HEAD
-    rack-protection (1.5.3)
-=======
     rack-protection (1.5.0)
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
       rack
     rack-ssl (1.3.4)
       rack
@@ -558,13 +335,6 @@ GEM
       rake (>= 0.8.7)
       rdoc (~> 3.4)
       thor (>= 0.14.6, < 2.0)
-<<<<<<< HEAD
-    rake (10.3.2)
-    rb-fchange (0.0.5)
-      ffi
-    rb-fsevent (0.9.4)
-    rb-inotify (0.9.4)
-=======
     rake (10.3.1)
     rb-fchange (0.0.5)
       ffi
@@ -572,22 +342,10 @@ GEM
     rb-inotify (0.9.1)
       ffi (>= 0.5.0)
     rb-kqueue (0.2.0)
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
       ffi (>= 0.5.0)
     rb-notifu (0.0.4)
     rdoc (3.12.2)
       json (~> 1.4)
-<<<<<<< HEAD
-    redis (3.0.7)
-    redis-namespace (1.4.1)
-      redis (~> 3.0.4)
-    ref (1.0.5)
-    remotipart (1.2.1)
-    resque (1.25.2)
-      mono_logger (~> 1.0)
-      multi_json (~> 1.0)
-      redis-namespace (~> 1.3)
-=======
     redis (3.0.4)
     redis-namespace (1.3.0)
       redis (~> 3.0.0)
@@ -597,22 +355,14 @@ GEM
       mono_logger (~> 1.0)
       multi_json (~> 1.0)
       redis-namespace (~> 1.2)
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
       sinatra (>= 0.9.2)
       vegas (~> 0.1.2)
     rest-client (1.6.7)
       mime-types (>= 1.16)
-<<<<<<< HEAD
-    riddle (1.5.11)
-    rinku (1.7.3)
-    rmagick (2.13.2)
-    rolify (3.4.0)
-=======
     riddle (1.5.7)
     rinku (1.7.2)
     rmagick (2.13.2)
     rolify (3.2.0)
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
     rspec (2.13.0)
       rspec-core (~> 2.13.0)
       rspec-expectations (~> 2.13.0)
@@ -628,11 +378,7 @@ GEM
       rspec-core (~> 2.13.0)
       rspec-expectations (~> 2.13.0)
       rspec-mocks (~> 2.13.0)
-<<<<<<< HEAD
-    rubber (2.8.1)
-=======
     rubber (2.7.3)
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
       capistrano (~> 2.12)
       clamp
       fog (~> 1.6)
@@ -641,19 +387,11 @@ GEM
       open4
       thor
     ruby-hmac (0.4.0)
-<<<<<<< HEAD
-    ruby-openid (2.5.0)
-    rubyzip (1.1.3)
-    rvm-capistrano (1.5.1)
-      capistrano (~> 2.15.4)
-    sass (3.3.7)
-=======
     ruby-openid (2.2.2)
     rubyzip (1.1.2)
     rvm-capistrano (1.4.1)
       capistrano (>= 2.0.0)
     sass (3.2.5)
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
     sass-rails (3.2.5)
       railties (~> 3.2.0)
       sass (>= 3.1.10)
@@ -663,16 +401,6 @@ GEM
       multi_json (~> 1.0)
       rubyzip (~> 1.0)
       websocket (~> 1.0.4)
-<<<<<<< HEAD
-    shoulda-matchers (2.6.1)
-      activesupport (>= 3.0.0)
-    sinatra (1.4.5)
-      rack (~> 1.4)
-      rack-protection (~> 1.4)
-      tilt (~> 1.3, >= 1.3.4)
-    slop (3.5.0)
-    spork (1.0.0rc4)
-=======
     shoulda-matchers (2.5.0)
       activesupport (>= 3.0.0)
     sinatra (1.4.3)
@@ -681,62 +409,27 @@ GEM
       tilt (~> 1.3, >= 1.3.4)
     slop (3.4.6)
     spork (1.0.0rc3)
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
     sprockets (2.2.2)
       hike (~> 1.2)
       multi_json (~> 1.0)
       rack (~> 1.0)
       tilt (~> 1.1, != 1.3.0)
-<<<<<<< HEAD
-    stripe (1.11.0)
-      json (~> 1.8.1)
-      mime-types (~> 1.25)
-=======
     stripe (1.7.9)
       multi_json (>= 1.0.4, < 2)
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
       rest-client (~> 1.4)
     test_after_commit (0.2.3)
     therubyracer (0.12.1)
       libv8 (~> 3.16.14.0)
       ref
-<<<<<<< HEAD
-    thin (1.6.2)
-      daemons (>= 1.0.9)
-      eventmachine (>= 1.0.0)
-      rack (>= 1.0.0)
-    thinking-sphinx (3.0.6)
-=======
     thin (1.5.0)
       daemons (>= 1.0.9)
       eventmachine (>= 0.12.6)
       rack (>= 1.0.0)
     thinking-sphinx (3.0.4)
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
       activerecord (>= 3.1.0)
       builder (>= 2.1.2)
       innertube (>= 1.0.2)
       middleware (>= 0.1.0)
-<<<<<<< HEAD
-      riddle (>= 1.5.9)
-    thor (0.19.1)
-    tilt (1.4.1)
-    timeliness (0.3.7)
-    timers (1.1.0)
-    timezone (0.3.2)
-    treetop (1.4.15)
-      polyglot
-      polyglot (>= 0.3.1)
-    turbo-sprockets-rails3 (0.3.11)
-      railties (> 3.2.8, < 4.0.0)
-      sprockets (>= 2.2.0)
-    tzinfo (0.3.39)
-    uglifier (1.2.3)
-      execjs (>= 0.3.0)
-      multi_json (>= 1.0.2)
-    uniform_notifier (1.6.1)
-    unread (0.3.1)
-=======
       riddle (>= 1.5.7)
     thor (0.19.1)
     thread_safe (0.3.4)
@@ -755,7 +448,6 @@ GEM
       multi_json (>= 1.0.2)
     uniform_notifier (1.5.0)
     unread (0.3.0)
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
       activerecord (>= 3)
     uuidtools (2.1.4)
     validates_timeliness (3.0.14)
@@ -763,15 +455,6 @@ GEM
     vcr (2.5.0)
     vegas (0.1.11)
       rack (>= 1.0.0)
-<<<<<<< HEAD
-    warden (1.2.3)
-      rack (>= 1.0)
-    websocket (1.0.7)
-    whenever (0.9.2)
-      activesupport (>= 2.3.4)
-      chronic (>= 0.6.3)
-    will_paginate (3.0.5)
-=======
     warden (1.2.1)
       rack (>= 1.0)
     wdm (0.1.0)
@@ -781,16 +464,12 @@ GEM
       chronic (>= 0.6.3)
     will_paginate (3.0.4)
     win32console (1.3.2-x86-mingw32)
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
     xpath (0.1.4)
       nokogiri (~> 1.3)
 
 PLATFORMS
   ruby
-<<<<<<< HEAD
-=======
   x86-mingw32
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
 
 DEPENDENCIES
   activemerchant
@@ -804,10 +483,7 @@ DEPENDENCIES
   bootstrap-sass (~> 2.3.2.1)
   bootstrap-will_paginate (= 0.0.6)
   bullet
-<<<<<<< HEAD
-=======
   cache_digests (~> 0.3.1)
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
   cancan
   capistrano
   capistrano-maintenance
@@ -823,11 +499,7 @@ DEPENDENCIES
   database_cleaner
   delayed_job_active_record
   delayed_paperclip (~> 2.7.1)
-<<<<<<< HEAD
-  devise (= 3.0.4)
-=======
   devise
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
   devise-async
   email_spec
   exception_notification (~> 3.0.1)
@@ -861,11 +533,7 @@ DEPENDENCIES
   rack-google_analytics
   rails (= 3.2.12)
   rails3-jquery-autocomplete
-<<<<<<< HEAD
-  rake
-=======
   rake (~> 10.3.1)
->>>>>>> 6a1c4970d668d2c52269faedbbc7549770b9d218
   rb-fchange (= 0.0.5)
   rb-notifu (= 0.0.4)
   remotipart (~> 1.0)
