@@ -164,4 +164,18 @@ class UserMailer < ActionMailer::Base
     # set message details
     mail(:to => "#{saved_listing.user.email}", :subject => "Your Pixi is Saved!")
   end
+
+  #send notice that saved pixi is removed
+  def send_saved_pixi_removed saved_listing
+    @listing = saved_listing.listing
+    @saved_listing = saved_listing
+    @status = @listing.status
+    #set logo
+    attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
+    #set message details
+    mail(:to => "#{saved_listing.user.email}", :subject => "Saved Pixi is Sold/Removed")
+
+  end
+
 end

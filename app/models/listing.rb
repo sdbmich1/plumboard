@@ -3,7 +3,7 @@ class Listing < ListingParent
   include ThinkingSphinx::Scopes
 
   before_create :activate
-  after_commit :sync_saved_pixis, :on => :update
+  after_commit :send_saved_pixi_removed, :sync_saved_pixis, :on => :update
 
   attr_accessor :parent_pixi_id
 
@@ -71,7 +71,7 @@ class Listing < ListingParent
   # get active pixis by region
   def self.active_by_region city, state, pg, range=60
     loc = [city, state].join(', ') if city && state
-    active.where(site_id: Contact.promixity(ip, range, loc, true)).paginate(page: pg) if loc
+    active.where(site_id: Contact.proximity(nil, range, loc, true)).paginate(page: pg) if loc rescue nil
   end
 
   # get pixis by city
@@ -199,6 +199,28 @@ class Listing < ListingParent
   # mark saved pixis if sold or closed
   def sync_saved_pixis
     SavedListing.update_status pixi_id, status unless active?
+  end
+
+  # sends email to users who saved the listing when listing is removed
+  def send_saved_pixi_removed
+    saved_listings = SavedListing.find(:all, :conditions => ["pixi_id = ?", pixi_id]) rescue nil
+    closed = ['closed', 'sold', 'removed', 'inactive']
+    saved_listings.each do |saved_listing|
+      if closed.detect {|closed| saved_listing.status == closed }
+          UserMailer.delay.send_saved_pixi_removed(saved_listing) unless self.buyer_id == saved_listing.user_id
+      end
+    end
+  end
+
+  # set remove item list based on pixi type
+  def remove_item_list
+    if job? 
+      ['Filled Position', 'Removed Job']
+    elsif event?  
+      ['Event Cancelled', 'Event Ended']
+    else
+      ['Changed Mind', 'Donated Item', 'Gave Away Item', 'Sold Item']
+    end
   end
 
   # sphinx scopes

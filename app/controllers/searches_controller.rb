@@ -28,7 +28,7 @@ class SearchesController < ApplicationController
   end
 
   def site
-    @site = LocationManager::get_site_list(@loc) || @loc
+    @site = LocationManager::get_site_list(@loc)
   end
 
   def get_autocomplete_items(parameters)
@@ -51,10 +51,12 @@ class SearchesController < ApplicationController
   # dynamically define search options based on selections
   def search_options
     unless @loc.blank?
-      @cat.blank? ? {with: {site_id: site}, star: true, page: @page} : {with: {category_id: @cat, site_id: site}, star: true, page: @page}
+      @cat.blank? ? {:include => [:pictures, :site, :category], with: {site_id: site}, star: true, page: @page} : 
+        {:include => [:pictures, :site, :category], with: {category_id: @cat, site_id: site}, star: true, page: @page}
     else
       unless @cat.blank?
-        {with: {category_id: @cat}, geo: [@lat, @lng], order: "geodist ASC, @weight DESC", star: true, page: @page}
+        {:include => [:pictures, :site, :category], with: {category_id: @cat}, geo: [@lat, @lng], order: "geodist ASC, @weight DESC", 
+	  star: true, page: @page}
       else
         @lat.blank? ? {star: true, page: @page} : {geo: [@lat, @lng], order: "geodist ASC, @weight DESC", star: true, page: @page}
       end

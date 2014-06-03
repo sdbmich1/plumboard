@@ -3,6 +3,7 @@
   <%= render :partial => 'shared/navbar', locals: { menu_name: set_pixi_post_menu } %>
 <% end %>
 <%= content_for :topcontent do %>
+  <% cache fragment: 'post_caption' do %>
   <div class='container'>
     <div class='row'>
       <div class='med-top mbot span6'>
@@ -13,18 +14,23 @@
       </div>
     </div>
   </div>
+  <% end %>
 <% end %>
 <%= content_for :content do %>
   <div class='container'>
-    <div class='row'>
-      <div class='med-top mbot span6'>
+    <% cache fragment: 'post_tag_line' do %>
+      <div class='row'>
+        <div class='med-top mbot span6'>
           <span class='pxp-title-black'><%= PIXI_POST_TAG_LINE.html_safe %></span>
+        </div>
       </div>
-    </div>
+    <% end %>
     <div class='row v-align'>
+      <% cache fragment: 'post_howitworks' do %>
       <div class='span7'>
         <%= image_tag 'rsz_ppost_howitworks_share.png', class: 'ppost_img' %>
       </div>
+      <% end %>
       <div class='big-top span4'>
         <%= render partial: 'shared/zipcheck' %>
       </div>

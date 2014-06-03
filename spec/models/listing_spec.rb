@@ -35,7 +35,7 @@ describe Listing do
   it { should respond_to(:event_end_time) }
   it { should respond_to(:year_built) }
   it { should respond_to(:pixan_id) }
-  it { should respond_to(:job_type) }
+  it { should respond_to(:job_type_code) }
   it { should respond_to(:explanation) }
 
   it { should respond_to(:user) }
@@ -47,6 +47,7 @@ describe Listing do
   it { should respond_to(:pictures) }
   it { should respond_to(:contacts) }
   it { should respond_to(:category) }
+  it { should respond_to(:job_type) }
   it { should respond_to(:comments) }
   it { should respond_to(:pixi_likes) }
   it { should have_many(:pixi_likes).with_foreign_key('pixi_id') }
@@ -240,6 +241,19 @@ describe Listing do
     end
   end
 
+  describe 'site_address' do
+    it 'has site address' do
+      @site = create :site
+      @contact = @site.contacts.create FactoryGirl.attributes_for(:contact)
+      listing = create :listing, seller_id: @user.id, site_id: @site.id
+      expect(listing.site_address).to eq @contact.full_address
+    end
+
+    it 'has no site address' do
+      expect(@listing.site_address).to eq @listing.site_name
+    end
+  end
+
   describe "should return site count > 0" do 
     it { @listing.get_site_count.should_not == 0 } 
   end
@@ -391,6 +405,12 @@ describe Listing do
     it "should not return a nice title" do 
       @listing.title = nil
       @listing.nice_title.should_not be_true 
+    end
+
+    it "returns a nice title w/ $" do 
+      @listing.title = 'Shirt $100'
+      expect(@listing.nice_title(false)).not_to eq 'Shirt $100' 
+      expect(@listing.nice_title(false)).to eq 'Shirt' 
     end
   end
 
@@ -609,7 +629,7 @@ describe Listing do
     end
 
     it "is not an event" do
-      @listing.event?.should be_false 
+      @listing.event?.should be_false
     end
 
     it "is an event" do
@@ -645,6 +665,18 @@ describe Listing do
     it "is a job" do
       @listing.category_id = @cat.id
       @listing.job?.should be_true 
+    end
+
+    it "is not valid" do
+      @listing.category_id = @cat.id
+      @listing.should_not be_valid
+    end
+
+    it "is valid" do
+      create :job_type
+      @listing.category_id = @cat.id
+      @listing.job_type_code = 'CT'
+      @listing.should be_valid
     end
   end
 
@@ -684,6 +716,72 @@ describe Listing do
       expect(@listing.user_saved?(@usr)).not_to eq(true) 
     end
   end
+
+  describe "send_saved_pixi_removed" do
+    before(:each) do
+      @saved_listing = FactoryGirl.create(:saved_listing, user_id: @user.id, pixi_id: @listing.pixi_id)
+    end
+
+    it 'delivers the email' do
+      @listing.status = 'sold'
+      @listing.save; sleep 2
+      expect(ActionMailer::Base.deliveries.last.subject).to eql('Saved Pixi is Sold/Removed') 
+    end
+
+    it 'sends email to right user' do
+      @listing.status = 'removed'
+      @listing.save; sleep 2
+      expect(ActionMailer::Base.deliveries.last.to).to eql([@saved_listing.user.email])
+    end
+
+    it 'delivers email to all saved pixi users' do
+      user2 = FactoryGirl.create :pixi_user
+      saved_listing2 = FactoryGirl.create(:saved_listing, user_id: user2.id, pixi_id: @listing.pixi_id)
+      expect {
+        @listing.status = 'closed'
+        @listing.save; sleep 2
+      }.to change{ActionMailer::Base.deliveries.length}.by(2)
+    end
+
+    context 'when no saved listings' do
+      it 'does not deliver email' do
+        listing = FactoryGirl.create(:listing, seller_id: @user.id)
+        listing.status = 'sold'
+        listing.save; sleep 2
+        expect(ActionMailer::Base.deliveries.last.subject).not_to eql('Saved Pixi is Sold/Removed')
+      end
+    end
+
+    context 'when buyer saved the listing' do
+      let(:buyer) { FactoryGirl.create :pixi_user }
+
+      it 'does not send email to buyer' do
+        listing = FactoryGirl.create(:listing, seller_id: @user.id)
+        saved_listing = FactoryGirl.create(:saved_listing, user_id: buyer.id, pixi_id: listing.pixi_id)
+        listing.status = 'inactive'
+        listing.buyer_id = buyer.id
+        listing.save; sleep 2
+        expect(ActionMailer::Base.deliveries.last.subject).not_to eql('Saved Pixi is Sold/Removed')
+      end
+    end
+
+    context 'when checking email content' do
+      let (:mail) { UserMailer.send_saved_pixi_removed(@saved_listing) }
+
+      it 'renders the subject' do
+        expect(mail.subject).to eql('Saved Pixi is Sold/Removed')
+      end
+
+      it 'renders the receiver email' do
+        expect(mail.to).to eql([@saved_listing.user.email])
+      end
+
+      it 'renders the sender email' do
+        expect(mail.from).to eql(['support@pixiboard.com'])
+      end
+    end
+  end
+
 
   describe "wanted" do 
     before(:each) do
@@ -861,9 +959,45 @@ describe Listing do
     end
   end
 
+  describe 'remove_item_list' do
+    it 'is a job' do
+      @cat = FactoryGirl.create(:category, name: 'Job', category_type: 'employment', pixi_type: 'premium') 
+      @listing.category_id = @cat.id
+      expect(@listing.remove_item_list).not_to include('Event Cancelled') 
+      expect(@listing.remove_item_list).to include('Removed Job') 
+      expect(@listing.remove_item_list).not_to include('Changed Mind') 
+    end
+
+    it 'is an event' do
+      @cat = FactoryGirl.create(:category, name: 'Event', category_type: 'event', pixi_type: 'premium') 
+      @listing.category_id = @cat.id
+      expect(@listing.remove_item_list).to include('Event Cancelled') 
+      expect(@listing.remove_item_list).not_to include('Removed Job') 
+      expect(@listing.remove_item_list).not_to include('Changed Mind') 
+    end
+
+    it 'is not a job or event' do
+      expect(@listing.remove_item_list).not_to include('Event Cancelled') 
+      expect(@listing.remove_item_list).not_to include('Removed Job') 
+      expect(@listing.remove_item_list).to include('Changed Mind') 
+    end
+  end
+
+  describe 'job_type_name' do
+    it "shows description" do
+      create :job_type
+      @listing.job_type_code = 'CT'
+      expect(@listing.job_type_name).to eq 'Contract'
+    end
+
+    it "does not show description" do
+      expect(@listing.job_type_name).to be_nil
+    end
+  end
+
   describe "date validations" do
     before do
-      @cat = FactoryGirl.create(:category, name: 'Event', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Event', category_type: 'event', pixi_type: 'premium') 
       @listing.category_id = @cat.id
       @listing.event_end_date = Date.today+3.days 
       @listing.event_start_time = Time.now+2.hours

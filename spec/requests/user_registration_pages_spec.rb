@@ -26,6 +26,8 @@ feature "UserRegistrations" do
       before { visit new_user_registration_path }
 
       it 'shows content' do
+        page.should have_content 'Already have an account?'
+        page.should have_link 'Sign In', href: new_user_session_path
         page.should have_link "Pixiboard's Terms of Service", href: terms_path
         page.should have_link 'Privacy Policy', href: privacy_path
       end

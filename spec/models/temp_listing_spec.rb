@@ -35,13 +35,14 @@ describe TempListing do
   it { should respond_to(:event_end_time) }
   it { should respond_to(:year_built) }
   it { should respond_to(:pixan_id) }
-  it { should respond_to(:job_type) }
+  it { should respond_to(:job_type_code) }
 
   it { should respond_to(:user) }
   it { should respond_to(:site) }
   it { should respond_to(:transaction) }
   it { should respond_to(:pictures) }
   it { should respond_to(:category) }
+  it { should respond_to(:job_type) }
   it { should respond_to(:set_flds) }
   it { should respond_to(:generate_token) }
   it { should respond_to(:site_listings) }
@@ -718,6 +719,18 @@ describe TempListing do
       @temp_listing.category_id = @cat.id
       @temp_listing.job?.should be_true 
     end
+
+    it "is not valid" do
+      @temp_listing.category_id = @cat.id
+      @temp_listing.should_not be_valid
+    end
+
+    it "is valid" do
+      create :job_type
+      @temp_listing.category_id = @cat.id
+      @temp_listing.job_type_code = 'CT'
+      @temp_listing.should be_valid
+    end
   end
 
   describe '.free?' do
@@ -764,6 +777,19 @@ describe TempListing do
     end  
   end  
 
+  describe 'site_address' do
+    it 'has site address' do
+      @site = create :site
+      @contact = @site.contacts.create FactoryGirl.attributes_for(:contact)
+      temp_listing = create :temp_listing, seller_id: @user.id, site_id: @site.id
+      expect(temp_listing.site_address).to eq @contact.full_address
+    end
+
+    it 'has no site address' do
+      expect(@temp_listing.site_address).to eq @temp_listing.site_name
+    end
+  end
+
   describe "find_pixi" do
     it 'finds a pixi' do
       expect(TempListing.find_pixi(@temp_listing.pixi_id)).not_to be_nil
@@ -771,6 +797,54 @@ describe TempListing do
 
     it 'does not find pixi' do
       expect(TempListing.find_pixi(0)).to be_nil
+    end
+  end
+
+  describe 'job_type_name' do
+    it "shows description" do
+      create :job_type
+      @temp_listing.job_type_code = 'CT'
+      expect(@temp_listing.job_type_name).to eq 'Contract'
+    end
+
+    it "does not show description" do
+      expect(@temp_listing.job_type_name).to be_nil
+    end
+  end
+
+  describe 'async_send_notifications' do
+    let(:temp_listing) {create :temp_listing_with_transaction, seller_id: @user.id}
+
+    def send_mailer model, msg
+      @mailer = mock(UserMailer)
+      UserMailer.stub!(:delay).and_return(@mailer)
+      @mailer.stub(msg.to_sym).with(model).and_return(@mailer)
+    end
+
+    it 'delivers the submitted pixi message' do
+      temp_listing.status = 'pending'
+      temp_listing.save!
+      send_mailer temp_listing, 'send_submit_notice'
+    end
+
+    it 'adds listing and transaction' do
+      temp_listing.status = 'approved'
+      temp_listing.transaction.amt = 0.0
+      expect {
+	temp_listing.save!
+      }.to change {Listing.count}.by(1)
+      Listing.stub(:create).with(temp_listing.attributes).and_return(true)
+      temp_listing.transaction.status.should == 'approved'
+      temp_listing.transaction.status.should_not == 'pending'
+    end
+
+    it 'delivers the denied pixi message' do
+      create :admin, email: PIXI_EMAIL
+      temp_listing.status = 'denied'
+      temp_listing.save!
+      send_mailer temp_listing, 'send_denial'
+      expect(Post.all.count).to eq(1)
+      SystemMessenger.stub!(:send_system_message).with(@user, temp_listing, 'deny').and_return(true)
     end
   end
 

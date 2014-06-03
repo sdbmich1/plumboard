@@ -169,6 +169,22 @@ namespace :deploy do
   end
 end
 
+namespace :memcached do
+  desc "Flushes memcached local instance"
+  task :flush, :roles => [:app] do
+    # run("cd #{current_path} && rake memcached:flush")
+    run "cd #{release_path} && RAILS_ENV=#{rails_env} rake memcached:flush"
+  end
+end
+
+namespace :whenever do    
+  desc "Update the crontab file for the Whenever Gem."
+  task :update_crontab, :roles => [:app] do
+    puts "\n\n=== Updating the Crontab! ===\n\n"
+    run "cd #{release_path} && #{whenever_command} --update-crontab" 
+  end    
+end
+
 # load in the deploy scripts installed by vulcanize for each rubber module
 Dir["#{File.dirname(__FILE__)}/rubber/deploy-*.rb"].each do |deploy_file|
   load deploy_file
@@ -178,8 +194,10 @@ end
 before 'deploy:setup', 'sphinx:create_sphinx_dir'
 before 'deploy:update_code', 'deploy:enable_rubber'
 after 'deploy:update_code', 'deploy:symlink_shared', 'sphinx:stop'
-after "deploy", "cleanup"
-after "deploy:migrations", "cleanup", "sphinx:sphinx_symlink", "sphinx:configure", "sphinx:rebuild"
+after "deploy:migrations", "cleanup"
+after "deploy", "cleanup", "sphinx:sphinx_symlink", "sphinx:configure", "sphinx:rebuild", "memcached:flush"
+#after "deploy:update", "deploy:migrations"
+
 task :cleanup, :except => { :no_release => true } do
   count = fetch(:keep_releases, 5).to_i
   

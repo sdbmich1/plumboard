@@ -12,6 +12,8 @@ Plumboard::Application.configure do
   # Show full error reports and disable caching
   config.consider_all_requests_local       = true
   config.action_controller.perform_caching = false
+  # config.cache_store = :dalli_store, 'localhost.com:11211',
+  #    { :namespace => 'Plumboard', :expires_in => 1.hour, :compress => true }
 
   # paperclip setting
   Paperclip.options[:command_path] = "/c/Windows/system32/convert"

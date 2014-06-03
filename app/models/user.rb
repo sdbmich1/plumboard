@@ -329,6 +329,11 @@ class User < ActiveRecord::Base
       end
     end
   end
+  
+  # check user is pixter
+  def is_pixter?
+    user_type_code == 'PT' rescue false
+  end
 
   # display user type
   def type_descr

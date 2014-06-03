@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head> 
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+</head>
+  <body> 	
+    <%= render :partial=>'shared/mail_header' %><br /><br />
+	Hi <%= @saved_listing.first_name %>,<br /><br />
+  	Sorry you missed out! Pixi: <%= @listing.title %> 
+    <% if @status == 'removed' or @status == 'inactive' %>
+    is no longer available and has been
+    <% else %>
+    has been <%= @status %> and
+    <% end %>
+    removed from your saved list. <br /><br />
+    <span style="margin-top:10px;">Happy Pixing!</span><br /><br />
+	<span>The Pixiboard Team</span><br /><br /> 	
+    	<center><%= render :partial=>'shared/mail_footer' %></center>
+  </body>
+</html>

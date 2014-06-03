@@ -225,11 +225,13 @@ feature "TempListings" do
         expect{
 		add_data_w_photo
                 select('Jobs', :from => 'temp_listing_category_id')
+                select('Full-Time', :from => 'temp_listing_job_type_code')
                 fill_in 'salary', with: "Competitive"
 	        click_button submit; sleep 3
 	      }.to change(TempListing,:count).by(1)
         page.should have_content "Guitar for Sale" 
         page.should have_content 'Review Your Pixi'
+        page.should have_content "Job Type: Full-Time" 
         page.should have_content "Compensation: Competitive" 
         page.should_not have_content "Price:" 
       end	      
