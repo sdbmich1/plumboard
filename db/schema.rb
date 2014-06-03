@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140508193610) do
+ActiveRecord::Schema.define(:version => 20140531054048) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -254,7 +254,7 @@ ActiveRecord::Schema.define(:version => 20140508193610) do
     t.datetime "event_end_time"
     t.integer  "year_built"
     t.integer  "pixan_id"
-    t.string   "job_type"
+    t.string   "job_type_code"
     t.string   "explanation"
     t.boolean  "delta"
   end
@@ -262,7 +262,7 @@ ActiveRecord::Schema.define(:version => 20140508193610) do
   add_index "listings", ["category_id"], :name => "index_listings_on_category_id"
   add_index "listings", ["end_date", "start_date"], :name => "index_listings_on_end_date_and_start_date"
   add_index "listings", ["event_start_date", "event_end_date"], :name => "index_listings_on_event_start_date_and_event_end_date"
-  add_index "listings", ["job_type"], :name => "index_listings_on_job_type"
+  add_index "listings", ["job_type_code"], :name => "index_listings_on_job_type"
   add_index "listings", ["lng", "lat"], :name => "index_listings_on_lng_and_lat"
   add_index "listings", ["pixan_id"], :name => "index_listings_on_pixan_id"
   add_index "listings", ["pixi_id"], :name => "index_listings_on_pixi_id", :unique => true
@@ -301,7 +301,7 @@ ActiveRecord::Schema.define(:version => 20140508193610) do
     t.datetime "created_at",       :null => false
     t.datetime "updated_at",       :null => false
     t.integer  "pixan_id"
-    t.string   "job_type"
+    t.string   "job_type_code"
     t.string   "explanation"
   end
 
@@ -609,7 +609,7 @@ ActiveRecord::Schema.define(:version => 20140508193610) do
     t.datetime "event_end_time"
     t.integer  "year_built"
     t.integer  "pixan_id"
-    t.string   "job_type"
+    t.string   "job_type_code"
     t.string   "explanation"
   end
 

@@ -64,8 +64,14 @@ class Listing < ListingParent
   end
 
   # get active pixis by city
-  def self.active_by_city city, state, pg
+  def self.active_by_city city, state, pg=1
     active.where(site_id: Contact.get_sites(city, state)).paginate(page: pg)
+  end
+
+  # get active pixis by region
+  def self.active_by_region city, state, pg, range=60
+    loc = [city, state].join(', ') if city && state
+    active.where(site_id: Contact.proximity(nil, range, loc, true)).paginate(page: pg) if loc rescue nil
   end
 
   # get pixis by city
@@ -73,7 +79,14 @@ class Listing < ListingParent
 
     # check if site is a city
     unless loc = Site.check_site(sid, 'city')
-      cid.blank? ? get_by_site(sid, pg) : get_category_by_site(cid, sid, pg)
+      unless loc = Site.check_site(sid, 'region') 
+        cid.blank? ? get_by_site(sid, pg) : get_category_by_site(cid, sid, pg)
+      else
+        unless loc.contacts.blank?
+          city, state = loc.contacts[0].city, loc.contacts[0].state
+          cid.blank? ? active_by_region(city, state, pg) : where('category_id = ?', cid).active_by_region(city, state, pg) 
+	end
+      end
     else
       # get active pixis by site's city and state
       unless loc.contacts.blank?
@@ -196,6 +209,15 @@ class Listing < ListingParent
       if closed.detect {|closed| saved_listing.status == closed }
           UserMailer.delay.send_saved_pixi_removed(saved_listing) unless self.buyer_id == saved_listing.user_id
       end
+
+  # set remove item list based on pixi type
+  def remove_item_list
+    if job? 
+      ['Filled Position', 'Removed Job']
+    elsif event?  
+      ['Event Cancelled', 'Event Ended']
+    else
+      ['Changed Mind', 'Donated Item', 'Gave Away Item', 'Sold Item']
     end
   end
 
