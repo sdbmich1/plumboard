@@ -1,3 +1,51 @@
 Name,City,State
 SF Bay Area,San Francisco,CA
 Metro Detroit Area,Detroit,MI
+New York Metropolitan Area,New York City,NY
+Los Angeles Metropolitan Area,Los Angeles,CA
+Chicagoland,Chicago,IL
+Dallas/Fort Worth Metroplex,Dallas,TX
+Greater Houston,Houston,TX
+Delaware Valley,Philadelphia,PA
+Washington Metropolitan Area,Washington,D.C.
+Miami Metropolitan Area,Miami,FL
+Metro Atlanta,Atlanta,GA
+Greater Boston,Boston,MA
+Valley of the Sun,Phoenix,AZ
+Inland Empire,Riverside,CA
+Seattle Metro,Seattle,WA
+Minneapolis-Saint Paul,Minneapolis,MN
+San Diego County,San Diego,CA
+Tampa Bay Area,Tampa,FL
+Greater St. Louis,St. Louis,MO
+Central Maryland,Baltimore,MD
+Denver Metropolitan Area,Denver,CO
+Pittsburgh Metropolitan Area,Pittsburgh,PA
+Charlotte Metro,Charlotte,NC
+Portland Metropolitan Area,Portland,OR
+Greater San Antonio,San Antonio,TX
+Metro Orlando,Orlando,FL
+Greater Sacramento,Sacramento,CA
+Greater Cincinnati,Cincinnati,OH
+Greater Cleveland,Cleveland,OH
+Kansas City Metropolitan Area,Kansas City,MO
+Las Vegas Metropolitan Area,Las Vegas,NV
+Columbus Metropolitan Area,Columbus,OH
+Greater Indianapolis,Indianapolis,IN
+Greater Austin,Austin,TX
+Nashville Metropolitan Area,Nashville,TN
+Hampton Roads,Virginia Beach,VA
+Providence Metropolitan Area,Providence,RI
+Metro Milwaukee,Milwaukee,WI
+Metro Jacksonville,Jacksonville,FL
+Memphis Metropolitan Area,Memphis,TN
+Oklahoma City Metro,Oklahoma City,OK
+Louisville Metropolitan Area,Louisville,KY
+Richmond Metropolitan Area,Richmond,VA
+New Orleans Metropolitan Area,New Orleans,LA
+Greater Hartford,Hartford,CT
+Research Triangle,Raleigh,NC
+Salt Lake City Metropolitan Area,Salt Lake City,UT
+Greater Birmingham,Birmingham,AL
+Buffalo-Niagara Falls Metropolitan Area,Buffalo,NY
+Rochester Metropolitan Area,Rochester,NY
