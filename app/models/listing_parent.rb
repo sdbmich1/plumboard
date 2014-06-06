@@ -415,4 +415,14 @@ class ListingParent < ActiveRecord::Base
         :category_name, :site_name, :start_dt, :seller_first_name, :med_title], 
       include: {pictures: { only: [:photo_file_name], methods: [:photo_url] }})
   end
+
+  # get pixter name
+  def pixter_name
+    if self.pixi_post?
+      User.find_by_id(self.pixan_id).first_name
+
+    else
+      nil
+    end
+  end
 end

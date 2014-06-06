@@ -164,4 +164,15 @@ class UserMailer < ActionMailer::Base
     # set message details
     mail(:to => "#{saved_listing.user.email}", :subject => "Your Pixi is Saved!")
   end
+
+  #send pixi_post submit notice internally
+  def send_pixipost_request_internal post
+    @post = post
+
+    # set logo
+    attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
+    # set message details
+    mail(:to => "support@pixiboard.com", :subject => "PixiPost Request Submitted")
+  end
 end
