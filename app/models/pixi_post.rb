@@ -199,4 +199,6 @@ class PixiPost < ActiveRecord::Base
       methods: [:seller_name],
       include: {user: { only: [:first_name, :last_name], methods: [:photo] } })
   end
+
+
 end
