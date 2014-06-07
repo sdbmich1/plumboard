@@ -36,7 +36,7 @@ describe TempListingObserver do
 
     it "approves listing" do
       expect {
-	@temp_listing.save!
+	    @temp_listing.save!
       }.to change {Listing.count}.by(1)
       @temp_listing.transaction.status.should == 'approved'
       @temp_listing.transaction.status.should_not == 'pending'
@@ -45,7 +45,7 @@ describe TempListingObserver do
     it "submits listing" do
       @temp_listing.status = 'pending'
       expect {
-	@temp_listing.save!
+	    @temp_listing.save!
       }.to change {Listing.count}.by(0)
       @temp_listing.transaction.status.should_not == 'approved'
       @temp_listing.transaction.status.should == 'pending'

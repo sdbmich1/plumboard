@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+</head>
+<body>
+<%= render :partial=>'shared/mail_header' %><br /><br />
+Hello Fellow Pixans,<br /><br />
+Seller <%= @post.seller_first_name %> has submitted a PixiPost request.<br /><br />
+
+Let's get on it.<br /><br />
+
+
+<span>The Pixiboard Team</span><br /><br />
+<%= render :partial=>'shared/mail_footer' %>
+</body>
+</html>

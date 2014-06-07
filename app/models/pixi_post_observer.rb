@@ -12,6 +12,8 @@ class PixiPostObserver < ActiveRecord::Observer
     update_contact_info post
       
     UserMailer.delay.send_pixipost_request(post) if post.status == 'active'
+    UserMailer.delay.send_pixipost_request_internal(post) if post.status == 'active'
+
   end
 
   # send appointment notice
