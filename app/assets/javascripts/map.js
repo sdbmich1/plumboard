@@ -245,7 +245,7 @@ function getLocation(nearby){
   navigator.geolocation.getCurrentPosition(function(position){ // geoSuccess
 
     // get city name
-    getCity(position.coords.latitude,position.coords.longitude);
+    getCityName(position.coords.latitude,position.coords.longitude);
   }, 
   function(error){       	              
     return false;
@@ -267,6 +267,31 @@ function getCity(lat, lng) {
 	    console.log(' city name = ' + city_name);
 	  }
 	}
+      }
+    }
+  });
+}
+
+function getCityName(lat, lng) {
+  var latlng = new google.maps.LatLng(lat, lng);
+  geocoder = new google.maps.Geocoder();
+
+  geocoder.geocode({'latLng': latlng}, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      if (results[0]) {
+        var arrAddress = results[0].address_components;
+
+        // loop thru results to grab city
+	$.each(arrAddress, function (i, address_component) {
+	  switch(address_component.types[0]) {
+	  case 'locality':
+	    var city_name = address_component.long_name;
+            $('#home_site_name').val(city_name);
+	    break;
+	  default: 
+	    break;
+	  }
+	});
       }
     }
   });

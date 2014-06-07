@@ -62,7 +62,7 @@ Plumboard::Application.configure do
   # Disable delivery errors, bad email addresses will be ignored
   ActionMailer::Base.delivery_method = :smtp
   config.action_mailer.raise_delivery_errors = true
-  config.action_mailer.default_url_options = { :host => 'www.pixiboard.com' }
+  config.action_mailer.default_url_options = { :host => 'test.pixiboard.com' }
 
   # Enable threaded mode
   # config.threadsafe!
