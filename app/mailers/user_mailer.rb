@@ -165,7 +165,7 @@ class UserMailer < ActionMailer::Base
     mail(:to => "#{saved_listing.user.email}", :subject => "Your Pixi is Saved!")
   end
 
-<<<<<<< HEAD
+
   #send pixi_post submit notice internally
   def send_pixipost_request_internal post
     @post = post
@@ -176,7 +176,7 @@ class UserMailer < ActionMailer::Base
     # set message details
     mail(:to => "support@pixiboard.com", :subject => "PixiPost Request Submitted")
   end
-=======
+
   #send notice that saved pixi is removed
   def send_saved_pixi_removed saved_listing
     @listing = saved_listing.listing
@@ -190,5 +190,5 @@ class UserMailer < ActionMailer::Base
 
   end
 
->>>>>>> f92163b349f7ed7a4c6978e2ce05604c73bbf01b
+
 end
