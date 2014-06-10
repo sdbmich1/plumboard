@@ -154,4 +154,94 @@ describe Site do
     end
   end
 
+  describe 'regions' do
+    before(:each) do
+      Geocoder.configure(:timeout => 30)
+      puts("Before statement is working")
+    end
+    
+    cities = {
+      'New York Metropolitan Area' => ['New York', 'CA', 'Brooklyn', 'Queens', 'Manhattan', 'The Bronx', 'Staten Island'],
+        
+      'Los Angeles Metropolitan Area' => ['Los Angeles', 'CA', 'Anaheim', 'Santa Ana', 'Irvine', 'Glendale', 'Huntington Beach', 'Santa Clarita']
+=begin
+      'Chicagoland' => ['Chicago', 'IL', 'Arlington Heights', 'Berwyn', 'Cicero', 'DeKalb', 'Des Plaines', 'Evanston', 'Gary', 'Hammond'],
+      'Dallas/Fort Worth Metroplex' => ['Dallas', 'TX', 'Fort Worth', 'Arlington', 'Plano', 'Irving', 'Frisco', 'McKinney', 'Carrollton', 'Denton', 'Garland', 'Richardson'],
+      'Greater Houston' => ['Houston', 'TX', 'The Woodlands', 'Sugar Land', 'Baytown', 'Conroe'],
+      'Delaware Valley' => ['Philadelphia', 'PA', 'Philadelphia', 'Reading', 'Camden', 'Wilmington'],
+      'Washington Metropolitan Area' => [],
+      'Miami Metropolitan Area' => ['Miami', 'FL', 'Fort Lauderdale', 'Pompano Beach', 'West Palm Beach', 'Miami Beach', 'Boca Raton', 'Deerfield Beach', 'Boynton Beach', 'Delray Beach', 'Homstead', 'Jupiter'],
+      'Metro Atlanta' => ['Atlanta', 'GA', 'Sandy Springs', 'Roswell', 'Johns Creek', 'Alpharetta', 'Marietta', 'Smyrna'],
+      'Greater Boston' => ['Boston', 'MA', 'Boston', 'Cambridge', 'Framingham', 'Quincy'],
+      'Valley of the Sun' => ['Phoenix', 'AZ', 'Mesa', 'Chandler', 'Glendale', 'Scottsdale', 'Gilbert'],
+      'Inland Empire' => ['Riverside', 'CA', 'San Bernardino', 'Fontana', 'Moreno Valley', 'Rancho Cucamonga', 'Ontario', 'Corona', 'Victorville', 'Murrieta', 'Temecula'],
+      'Seattle Metro' =>
+      'Minneapolis-Saint Paaul' =>
+      'San Diego County' =>
+      'Tampa Bay Area' =>
+      'Greater St. Louis' =>
+      'Central Maryland' =>
+      'Denver Metropolitan Area' =>
+      'Pittsburgh Metropolitan Area' =>
+      'Charlotte Metro' =>
+      'Portland Metropolitan Area' =>
+      'Charlotte Metro' =>
+=end
+
+    }
+
+    regions = cities.keys
+    regions.each do |region_name|
+
+      context "checking #{region_name}" do
+        city_array = cities[region_name][2..(cities[region_name].length - 1)] 
+        region_city = cities[region_name][0]
+        region_state = cities[region_name][1]
+        listings = []
+        city_array.each do |city_name|
+          city = FactoryGirl.create :site, name: city_name, org_type: 'city'
+          #lat, lng = Geocoder.coordinates(city_name + ',' + region_state)
+          #city.contacts.create FactoryGirl.attributes_for :contact, city: city_name, state: region_state, lat: lat, lng: lng
+          city.contacts.create FactoryGirl.attributes_for :contact, city: city_name, state: region_state
+          listing = FactoryGirl.create(:listing, site_id: city.id)
+          listing.lat, listing.lng = Geocoder.coordinates(city_name + ',' + region_state)
+          listing.save; sleep 2
+          puts("Listing site name is #{listing.site_name} and coordinates are #{listing.lat}")
+          listings.push(listing)
+        end
+        region = FactoryGirl.create(:site, name: region_name, org_type: 'region')
+        lat, lng = Geocoder.coordinates(region_city + ',' + region_state)
+        region.contacts.create FactoryGirl.attributes_for :contact, city: region_city, state: region_state, lat: lat, lng: lng
+
+        let(:listings) { listings }
+        let(:city_array) { city_array }
+        let(:region_city) { region_city }
+        let(:region_state) { region_state }
+        let(:region) { region }
+
+        it "renders all pixis in its cities" do
+          puts("First listing is #{listings.first.site_name} and coordinates are #{listings.first.lat}")
+          puts("Region contacts are #{region.contacts}")
+          puts("Region coordinates are #{region.contacts.first.lat}")
+          loc = [region_city, region_state].join(', ')
+          l = Listing.active.where(site_id: Contact.proximity(nil, 60, loc, true)).paginate(page: 1)
+          p = Contact.proximity(nil, 60, loc, true)
+          puts("Proximity statement: #{p}")
+          puts("Listing.active statement: #{l}")
+          Listing.active_by_region(region_city, region_state, 1).should include (listings)
+        end
+
+        it "only includes pixis for its cities" do
+          expect(Listing.active_by_region(region_city, region_state, 1).length).to eql(city_array.length + 1)
+        end
+
+        it "renders no pixis when none in any city" do
+          Listing.destroy_all
+          Listing.active_by_region(region_city, region_state, 1).should_not include (listings)
+        end
+      end
+    end
+  end
 end
+
+
