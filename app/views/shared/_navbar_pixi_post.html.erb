@@ -6,7 +6,13 @@
       <%= link_to "Scheduled", pixi_posts_path(status: 'scheduled'), class: 'submenu', id: 'schd-posts', remote: remote? %></li>
     <li class="<%= @status == 'completed' ? 'active' : '' %>">
       <%= link_to "Completed", pixi_posts_path(status: 'completed'), class: 'submenu', id: 'comp-posts', remote: remote? %></li>
-  <% elsif @user.is_pixter? && can?(:manage_pixi_posts, @user) %>
+    <li>
+      <%= link_to "Pixter Report", 'pixi_posts/pixter_report' %>
+    </li>
+
+
+
+<% elsif @user.is_pixter? && can?(:manage_pixi_posts, @user) %>
     <li class="<%= @status == 'scheduled' ? 'active' : '' %>">
       <%= link_to "Scheduled", pixter_pixi_posts_path(status: 'scheduled'), class: 'submenu', id: 'schd-posts', remote: remote? %></li>
     <li class="<%= @status == 'completed' ? 'active' : '' %>">
