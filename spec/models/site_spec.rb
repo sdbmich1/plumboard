@@ -160,15 +160,14 @@ describe Site do
     end
     
     cities = {
-      'New York Metropolitan Area' => ['New York', 'CA', 'Brooklyn', 'Queens', 'Manhattan', 'The Bronx', 'Staten Island'],
-        
+      'New York Metropolitan Area' => ['New York City', 'NY', 'Brooklyn', 'Queens', 'Manhattan', 'The Bronx', 'Staten Island'],
       'Los Angeles Metropolitan Area' => ['Los Angeles', 'CA', 'Anaheim', 'Santa Ana', 'Irvine', 'Glendale', 'Huntington Beach', 'Santa Clarita'],
-      'Chicagoland' => ['Chicago', 'IL', 'Arlington Heights', 'Berwyn', 'Cicero', 'DeKalb', 'Des Plaines', 'Evanston', 'Gary', 'Hammond'],
+      'Chicagoland' => ['Chicago', 'IL', 'Arlington Heights', 'Berwyn', 'Cicero', 'DeKalb', 'Des Plaines', 'Evanston'],
       'Dallas/Fort Worth Metroplex' => ['Dallas', 'TX', 'Fort Worth', 'Arlington', 'Plano', 'Irving', 'Frisco', 'McKinney', 'Carrollton', 'Denton', 'Garland', 'Richardson'],
       'Greater Houston' => ['Houston', 'TX', 'The Woodlands', 'Sugar Land', 'Baytown', 'Conroe'],
       'Delaware Valley' => ['Philadelphia', 'PA', 'Philadelphia', 'Reading'],
       'Washington Metropolitan Area' => ['Washington', 'D.C.', 'Washington'],
-      'Miami Metropolitan Area' => ['Miami', 'FL', 'Fort Lauderdale', 'Pompano Beach', 'West Palm Beach', 'Miami Beach', 'Boca Raton', 'Deerfield Beach', 'Boynton Beach', 'Delray Beach', 'Homstead', 'Jupiter'],
+      'Miami Metropolitan Area' => ['Miami', 'FL', 'Fort Lauderdale', 'Hialeah', 'Miramar', 'Pembroke Pines'],
       'Metro Atlanta' => ['Atlanta', 'GA', 'Sandy Springs', 'Roswell', 'Johns Creek', 'Alpharetta', 'Marietta', 'Smyrna'],
       'Greater Boston' => ['Boston', 'MA', 'Boston', 'Cambridge', 'Framingham', 'Quincy'],
       'Valley of the Sun' => ['Phoenix', 'AZ', 'Mesa', 'Chandler', 'Glendale', 'Scottsdale', 'Gilbert'],
@@ -185,7 +184,7 @@ describe Site do
       'Portland Metropolitan Area' => ['Portland', 'OR', 'Beaverton', 'Gresham', 'Hillsboro'],
       'Greater San Antonio' => ['San Antonio', 'TX', 'New Braunfels', 'Schertz', 'Seguin'],
       'Metro Orlando' => ['Orlando', 'FL', 'Kissimmee', 'Sanford', 'Tavares', 'Winter Park'],
-      'Greater Sacramento' => ['Sacramento', 'CA', 'Arden-Arcade', 'Roseville', 'Yuba City', 'South Lake Tahoe'],
+      'Greater Sacramento' => ['Sacramento', 'CA', 'Roseville', 'Yuba City', 'South Lake Tahoe'],
       'Greater Cincinnati' => ['Cincinnati', 'OH', 'Hamilton', 'Middletown', 'Fairfield', 'Mason'],
       'Greater Cleveland' => ['Cleveland', 'OH', 'Parma', 'Lorain', 'Elyria', 'Lakewood'],
       'Kansas City Metropolitan Area' => ['Kansas City', 'MO', 'Independence', "Lee's Summit", 'Blue Springs'],
@@ -208,7 +207,7 @@ describe Site do
       'Salt Lake City Metropolitan Area' => ['Salt Lake City', 'UT', 'Alta', 'Bluffdale', 'Coalville'],
       'Greater Birmingham' => ['Birmingham', 'AL', 'Hoover', 'Talladega'],
       'Buffalo-Niagara Falls Metropolitan Area' => ['Buffalo', 'NY', 'Niagara Falls', 'Tonawanda', 'North Tonawanda', 'Lackawanna'],
-      'Rochester Metropolitan Area' => ['Rochester', 'NY', 'Canandaigua', 'Geneva']
+      'Rochester Metropolitan Area' => ['Rochester', 'NY', 'Greece', 'Irondequoit']
     }
 
     regions = cities.keys
@@ -216,6 +215,7 @@ describe Site do
 
       context "checking #{region_name}" do
         before(:each, :run => true) do
+            @range = 80 
             @city_array = cities[region_name][2..(cities[region_name].length - 1)] 
             @region_city = cities[region_name][0]
             @region_state = cities[region_name][1]
@@ -235,18 +235,18 @@ describe Site do
 
         it "renders all pixis in its cities", :run => true do
           site_ids = []
-          Listing.active_by_region(@region_city, @region_state, 1).each do |listing|
+          Listing.active_by_region(@region_city, @region_state, 1, @range).each do |listing|
               site_ids.push(listing.site_id)
           end
           expect(site_ids.sort).to eql(@listing_sites)
         end
 
         it "only includes pixis for its cities", :run => true do
-          expect(Listing.active_by_region(@region_city, @region_state, 1).length).to eql(@city_array.length)
+          expect(Listing.active_by_region(@region_city, @region_state, 1, @range).length).to eql(@city_array.length)
         end
 
         it "renders no pixis when none in any city" do
-          expect(Listing.active_by_region(@region_city, @region_state, 1)).to be_nil
+          expect(Listing.active_by_region(@region_city, @region_state, 1, @range)).to be_nil
         end
       end
     end
