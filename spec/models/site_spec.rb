@@ -160,7 +160,6 @@ describe Site do
     end
     
     cities = {
-=begin
       'New York Metropolitan Area' => ['New York', 'CA', 'Brooklyn', 'Queens', 'Manhattan', 'The Bronx', 'Staten Island'],
         
       'Los Angeles Metropolitan Area' => ['Los Angeles', 'CA', 'Anaheim', 'Santa Ana', 'Irvine', 'Glendale', 'Huntington Beach', 'Santa Clarita'],
@@ -174,19 +173,42 @@ describe Site do
       'Greater Boston' => ['Boston', 'MA', 'Boston', 'Cambridge', 'Framingham', 'Quincy'],
       'Valley of the Sun' => ['Phoenix', 'AZ', 'Mesa', 'Chandler', 'Glendale', 'Scottsdale', 'Gilbert'],
       'Inland Empire' => ['Riverside', 'CA', 'San Bernardino', 'Fontana', 'Moreno Valley', 'Rancho Cucamonga', 'Ontario', 'Corona', 'Victorville', 'Murrieta', 'Temecula'],
-=end
-      'Seattle Metro' => ['Seattle', 'WA', 'Tacoma', 'Bellevue', 'Everett']
+      'Seattle Metro' => ['Seattle', 'WA', 'Tacoma', 'Bellevue', 'Everett'],
       'Minneapolis-Saint Paaul' => ['Minneapolis', 'MN', 'Saint Paul', 'Bloomington', 'Brooklyn Park', 'Plymouth'],
       'San Diego County' => ['San Diego', 'CA', 'Carlsbad', 'Chula Vista', 'Escondido', 'Oceanside'],
       'Tampa Bay Area' => ['Tampa', 'FL', 'St. Petersburg', 'Clearwater', 'Brandon'],
-      'Greater St. Louis' => ['St. Louis', 'MO',
-      'Central Maryland' => ['Baltimore', 'MD',
-      'Denver Metropolitan Area' => ['
-      'Pittsburgh Metropolitan Area' =>
-      'Charlotte Metro' =>
-      'Portland Metropolitan Area' =>
-      'Charlotte Metro' =>
-
+      'Greater St. Louis' => ['St. Louis', 'MO', 'Berger', 'Arnold', 'Barnhart', 'Cottleville'],
+      'Central Maryland' => ['Baltimore', 'MD', 'Columbia', 'Towson'],
+      'Denver Metropolitan Area' => ['Denver', 'CO', 'Arvada', 'Aurora', 'Centennial'],
+      'Pittsburgh Metropolitan Area' => ['Pittsburgh', 'PA', 'Indiana', 'Jeannette', 'Latrobe', 'Lower Burrell'],
+      'Charlotte Metro' => ['Charlotte', 'NC', 'Concord', 'Gastonia', 'Cornelius', 'Hickory'],
+      'Portland Metropolitan Area' => ['Portland', 'OR', 'Beaverton', 'Gresham', 'Hillsboro'],
+      'Greater San Antonio' => ['San Antonio', 'TX', 'New Braunfels', 'Schertz', 'Seguin'],
+      'Metro Orlando' => ['Orlando', 'FL', 'Kissimmee', 'Sanford', 'Tavares', 'Winter Park'],
+      'Greater Sacramento' => ['Sacramento', 'CA', 'Arden-Arcade', 'Roseville', 'Yuba City', 'South Lake Tahoe'],
+      'Greater Cincinnati' => ['Cincinnati', 'OH', 'Hamilton', 'Middletown', 'Fairfield', 'Mason'],
+      'Greater Cleveland' => ['Cleveland', 'OH', 'Parma', 'Lorain', 'Elyria', 'Lakewood'],
+      'Kansas City Metropolitan Area' => ['Kansas City', 'MO', 'Independence', "Lee's Summit", 'Blue Springs'],
+      'Las Vegas Metropolitan Area' => ['Las Vegas', 'NV', 'Paradise', 'Henderson', 'Boulder City'],
+      'Columbus Metropolitan Area' => ['Columbus', 'OH', 'Delaware', 'Newark', 'Lancaster', 'London'],
+      'Greater Indianapolis' => ['Indianapolis', 'IN', 'Carmel', 'Greenwood', 'Noblesville'],
+      'Greater Austin' => ['Austin', 'TX', 'Round Rock', 'Cedar Park', 'San Marcos', 'Georgetown'],
+      'Nashville Metropolitan Area' => ['Nashville', 'TN', 'Murfreesboro', 'Franklin', 'Hendersonville'],
+      'Hampton Roads' => ['Virginia Beach', 'VA', 'Norfolk', 'Chesapeake', 'Newport News'],
+      'Providence Metropolitan Area' => ['Providence', 'RI', 'Warwick', 'Cranston'],
+      'Metro Milwaukee' => ['Milwaukee', 'WI', 'Racine', 'Waukesha'],
+      'Metro Jacksonville' => ['Jacksonville', 'FL', 'St. Augustine', 'Fernandina Beach', 'Orange Park'],
+      'Memphis Metropolitan Area' => ['Memphis', 'TN','Bartlett', 'Collierville', 'Germantown'],
+      'Oklahoma City Metro' => ['Oklahoma City', 'OK', 'Norman', 'Edmond', 'Noble'],
+      'Louisville Metropolitan Area' => ['Louisville', 'KY', 'Anchorage', 'Audubon Park'],
+      'Richmond Metropolitan Area' => ['Richmond', 'VA', 'Petersburg', 'Hopewell', 'Colonial Heights'],
+      'New Orleans Metropolitan Area' => ['New Orleans', 'LA', 'Kenner', 'Metairie'],
+      'Greater Hartford' => ['Hartford', 'CT', 'Avon', 'Berlin'],
+      'Research Triangle' => ['Raleigh', 'NC', 'Durham', 'Cary', 'Chapel Hill'],
+      'Salt Lake City Metropolitan Area' => ['Salt Lake City', 'UT', 'Alta', 'Bluffdale', 'Coalville'],
+      'Greater Birmingham' => ['Birmingham', 'AL', 'Hoover', 'Talladega'],
+      'Buffalo-Niagara Falls Metropolitan Area' => ['Buffalo', 'NY', 'Niagara Falls', 'Tonawanda', 'North Tonawanda', 'Lackawanna'],
+      'Rochester Metropolitan Area' => ['Rochester', 'NY', 'Canandaigua', 'Geneva']
     }
 
     regions = cities.keys
@@ -202,10 +224,7 @@ describe Site do
               city = FactoryGirl.create :site, name: city_name, org_type: 'city'
               lat, lng = Geocoder.coordinates(city_name + ',' + @region_state)
               city.contacts.create FactoryGirl.attributes_for :contact, city: city_name, state: @region_state, lat: lat, lng: lng
-              #city.contacts.create FactoryGirl.attributes_for :contact, city: city_name, state: @region_state
               listing = FactoryGirl.create(:listing, site_id: city.id)
-              #listing.lat, listing.lng = Geocoder.coordinates(city_name + ',' + @region_state)
-              #listing.save
               @listing_sites.push(listing.site_id)
             end
             @region = FactoryGirl.create(:site, name: region_name, org_type: 'region')
