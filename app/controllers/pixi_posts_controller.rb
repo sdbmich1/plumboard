@@ -114,4 +114,9 @@ class PixiPostsController < ApplicationController
   def check_permissions
     authorize! :manage, PixiPost
   end
+
+  def pixter_report
+    @pixi_posts = PixiPost.pixter_report
+    respond_with(@pixi_posts)
+  end
 end
