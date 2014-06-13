@@ -299,6 +299,8 @@ function initScroll(cntr, nav, nxt, item) {
         $newElems.animate({ opacity: 1 });
         $container.masonry( 'appended', $newElems, true ); 
       });
+
+      $("#spinner").hide('fast');
     }
   );
 }
