@@ -160,7 +160,7 @@ describe Site do
     end
     
     cities = {
-      'New York Metropolitan Area' => ['New York City', 'NY', 'Brooklyn', 'Queens', 'Manhattan', 'The Bronx', 'Staten Island'],
+      'New York Metropolitan Area' => ['New York City', 'NY', 'Rye', 'New Rochelle', 'Poughkeepsie', 'Newburgh'],
       'Los Angeles Metropolitan Area' => ['Los Angeles', 'CA', 'Anaheim', 'Santa Ana', 'Irvine', 'Glendale', 'Huntington Beach', 'Santa Clarita'],
       'Chicagoland' => ['Chicago', 'IL', 'Arlington Heights', 'Berwyn', 'Cicero', 'DeKalb', 'Des Plaines', 'Evanston'],
       'Dallas/Fort Worth Metroplex' => ['Dallas', 'TX', 'Fort Worth', 'Arlington', 'Plano', 'Irving', 'Frisco', 'McKinney', 'Carrollton', 'Denton', 'Garland', 'Richardson'],
@@ -215,7 +215,7 @@ describe Site do
 
       context "checking #{region_name}" do
         before(:each, :run => true) do
-            @range = 80 
+            @range = 100 
             @city_array = cities[region_name][2..(cities[region_name].length - 1)] 
             @region_city = cities[region_name][0]
             @region_state = cities[region_name][1]
@@ -230,7 +230,6 @@ describe Site do
             @region = FactoryGirl.create(:site, name: region_name, org_type: 'region')
             lat, lng = Geocoder.coordinates(@region_city + ',' + @region_state)
             @region.contacts.create FactoryGirl.attributes_for :contact, city: @region_city, state: @region_state, lat: lat, lng: lng
-
         end
 
         it "renders all pixis in its cities", :run => true do
