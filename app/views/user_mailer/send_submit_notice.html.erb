@@ -8,8 +8,14 @@
 	Hello Fellow Pixans,<br /><br />
 	
     	<span style="height:30px;">
-	  <%= @listing.seller_name %> has submitted a pixi for approval.
-  	</span>
+    <% if @listing.pixi_post? %>
+	    Pixter <%= @listing.pixter_name %> has submited pixi for seller <%= @listing.seller_name %>
+    <% else %>
+        Seller <%= @listing.seller_name %> has submitted a pixi
+    <% end %>
+
+             for approval.
+    </span>
 	<br /><br />
 
 	<span style="margin-top:20px;">Let's get on it!</span><br /><br />

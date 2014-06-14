@@ -199,4 +199,16 @@ class PixiPost < ActiveRecord::Base
       methods: [:seller_name],
       include: {user: { only: [:first_name, :last_name], methods: [:photo] } })
   end
+
+
+  # retrives the data for pixter_report
+  def self.pixter_report start_date = DateTime.now - 30, end_date = DateTime.now, pixter_id = nil
+    pixi_posts = Array.new
+    if pixter_id == nil ? pixi_posts = PixiPost.all : pixi_posts = PixiPost.where(id: pixter_id)
+    end
+    pixi_posts = pixi_posts.keep_if{|elem| ((elem.status == "completed") &&
+      (elem.completed_date >= start_date) && (elem.completed_date <= end_date))}
+    pixi_posts
+  end
+
 end

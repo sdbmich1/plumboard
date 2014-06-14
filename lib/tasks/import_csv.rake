@@ -500,4 +500,22 @@ task :load_regions => :environment do
     end
   end
 end
+#to run all tasks at once
+task :run_all_tasks => :environment do
 
+  #Rake::Task[:import_sites].execute
+  Rake::Task[:load_bay_area_cities].execute
+  Rake::Task[:load_sf_neighborhoods].execute
+  Rake::Task[:load_zip_codes].execute
+  Rake::Task[:load_neighborhoods].execute
+  Rake::Task[:load_cities].execute
+  Rake::Task[:load_categories].execute
+  Rake::Task[:update_categories].execute
+  Rake::Task[:update_category_pictures].execute
+  Rake::Task[:import_point_system].execute
+  Rake::Task[:import_job_type].execute
+  Rake::Task[:import_inquiry_type].execute
+  Rake::Task[:import_user_type].execute
+  Rake::Task[:import_faq].execute
+  Rake::Task[:load_regions].execute
+end

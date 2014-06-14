@@ -26,6 +26,16 @@ describe PixiPostObserver do
       @model.save!
     end
 
+
+    it 'should deliver internal request notice' do
+      @model = user.pixi_posts.build FactoryGirl.attributes_for(:pixi_post, status: 'active')
+      @user_mailer = mock(UserMailer)
+      UserMailer.stub(:delay).and_return(UserMailer)
+      UserMailer.should_receive(:send_pixipost_request_internal).with(@model)
+      @model.save!
+
+    end
+
     it 'updates contact info' do
       @model = user.pixi_posts.build FactoryGirl.attributes_for(:pixi_post, status: 'active')
       @model.save!
