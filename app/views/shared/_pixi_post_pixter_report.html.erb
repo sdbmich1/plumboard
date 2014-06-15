@@ -1,0 +1,28 @@
+<% provide(:title, pg_title) %>
+<%= content_for :subhead do %>
+    <%= render :partial => 'shared/navbar', locals: { menu_name: pg_title } %>
+<% end %>
+<%= content_for :content do %>
+    <div id='inv_form'>
+
+        <% if @user.user_type_code == "AD" %>
+            <select style="float:left;width:33%;">
+                <option> 1 </option>
+                <option> 2 </option>
+                <option> 3 </option>
+            </select>
+        <% end %>
+        <select style="float:left;width:33%;">
+            <option> a </option>
+            <option> b </option>
+            <option> c </option>
+        </select>
+        <select style="float:left;width:33%;">
+            <option> A </option>
+            <option> B </option>
+            <option> C </option>
+        </select>
+
+        <%= render :partial => 'shared/pixi_post_pixter_report_list' %>
+    </div>
+<% end %>

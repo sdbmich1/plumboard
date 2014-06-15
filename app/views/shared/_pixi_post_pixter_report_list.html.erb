@@ -1,0 +1,25 @@
+<% unless !@pixi_posts.blank? %>
+    <table class="table table-hover table-condensed table-bordered">
+        <thead>
+        <tr>
+            <th class='center-wrapper'>Post Date</th>
+            <th class='center-wrapper'>Item Title</th>
+            <th class='center-wrapper'>Customer</th>
+            <th class='center-wrapper'>Pixter</th>
+            <th class='center-wrapper'>Sale Date</th>
+            <th class='center-wrapper'>List Value</th>
+            <th class='center-wrapper'>Sale Value</th>
+            <th class='center-wrapper'>Pixter Revenue</th>
+        </tr>
+        </thead>
+        <tbody>
+        <%= render partial: 'shared/pixi_post_row', collection: @posts, as: :post %>
+        </tbody>
+    </table>
+<% else %>
+    <div class='center-wrapper'>No posts found.</div>
+<% end %>
+
+<div id='pxp-list' class="nav pull-right">
+    <%= will_paginate @posts if @pixi_posts.respond_to?(:total_pages) %>
+</div>

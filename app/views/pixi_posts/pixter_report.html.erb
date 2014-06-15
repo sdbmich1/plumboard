@@ -1,2 +1,3 @@
-<% provide(:title, 'Pixter Report') %>
-
+<% unless @pixi_posts == nil %>
+    <%= render :partial => 'shared/pixi_post_pixter_report', locals: { pg_title: 'PixiPosts' } %>
+<% end %>
