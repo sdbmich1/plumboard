@@ -5,7 +5,7 @@
 </head>
   <body> 	
     	<%= render :partial=>'shared/mail_header' %><br /><br />
-	Hi <%= @user.first_name %>,<br /><br />
+	Hi <%= @user.first_name %>,<br />
     	<h2>Welcome to Pixiboard!</h2>
 
     	<span style="height:10px;">
@@ -14,9 +14,9 @@
 	  Please confirm your account email through the link below:
 	</span><br /><br />
 
-	<%= link_to 'Confirm Your Account', confirmation_url(@user, :confirmation_token => @user.confirmation_token) %><br />
+	<%= link_to 'Confirm Your Account', confirmation_url(@user, :confirmation_token => @user.confirmation_token) %><br /><br />
 
-	<span style="margin-top:20px;">Happy Pixing!</span><br />
+	<span style="margin-top:20px;">Happy Pixing!</span><br /><br />
 	<span>The Pixiboard Team</span><br /><br /> 	
 	<center><%= render :partial=>'shared/mail_footer' %></center>
   </body>

@@ -213,7 +213,7 @@ end
   
 # loads top 50 cities in US
 task :load_cities => :environment do
-  CSV.foreach(Rails.root.join('db', 'DMA_50_neighborhoods_transposed.csv'), :headers => false) do |row|
+  CSV.foreach(Rails.root.join('db', 'DMA_50_suburbs.csv'), :headers => true) do |row|
 
     # converting the row to an array by splitting ','
     row_array = row.split(',');

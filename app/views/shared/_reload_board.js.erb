@@ -4,6 +4,7 @@ var pathName = "<%= set_path_parse %>"
 
 <% if params[:page].to_i > 1 %>
   $("#pxboard").append('<%= escape_javascript(render(partial: "#{set_partial_name}")) %>');
+  $('#footer').hide('fast');
 <% else %>  
   $(".item").remove();
   $("#pxboard").html('<%= escape_javascript(render(partial: "#{set_partial_name}")) %>');
