@@ -3,7 +3,7 @@ class PostsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :load_data, only: [:index, :unread, :sent, :reply, :show]
   before_filter :mark_post, only: [:reply]
-  respond_to :html, :js, :json, :mobile
+  respond_to :html, :js, :xml, :json, :mobile
   layout :page_layout
 
   def index

@@ -52,7 +52,7 @@ class UserMailer < ActionMailer::Base
   def send_inquiry_notice inquiry 
     @inquiry = inquiry
     # test for enviroment
-    if ((Rails.env == 'development') || (Rails.env == 'staging'))
+    if ((Rails.env == 'development') || (Rails.env == 'staging') || (Rails.env == 'test'))
       flag = "[ TEST ]"
     end
 
@@ -145,7 +145,7 @@ class UserMailer < ActionMailer::Base
   def send_submit_notice listing 
     @listing = listing
     # test for enviroment
-    if ((Rails.env == 'development') || (Rails.env == 'staging'))
+    if ((Rails.env == 'development') || (Rails.env == 'staging') || (Rails.env == 'test'))
       flag = "[ TEST ]"
     end
     # set logo
@@ -177,7 +177,7 @@ class UserMailer < ActionMailer::Base
   def send_pixipost_request_internal post
     @post = post
     # test for enviroment
-    if ((Rails.env == 'development') || (Rails.env == 'staging'))
+    if ((Rails.env == 'development') || (Rails.env == 'staging') || (Rails.env == 'test'))
       flag = "[ TEST ]"
     end
     # set logo

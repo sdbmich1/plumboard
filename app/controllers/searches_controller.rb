@@ -58,7 +58,8 @@ class SearchesController < ApplicationController
         {:include => [:pictures, :site, :category], with: {category_id: @cat}, geo: [@lat, @lng], order: "geodist ASC, @weight DESC", 
 	  star: true, page: @page}
       else
-        @lat.blank? ? {star: true, page: @page} : {geo: [@lat, @lng], order: "geodist ASC, @weight DESC", star: true, page: @page}
+        @lat.blank? ? {:include => [:pictures, :site, :category], star: true, page: @page} : 
+	  {:include => [:pictures, :site, :category], geo: [@lat, @lng], order: "geodist ASC, @weight DESC", star: true, page: @page}
       end
     end
   end
