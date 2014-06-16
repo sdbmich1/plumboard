@@ -17,6 +17,12 @@ describe "Users", :type => :feature do
     click_on 'Save Changes'
   end
 
+  def load_user_types
+    create :user_type
+    create :user_type, code: 'SUB', description: 'Subscriber', status: 'active'
+    create :user_type, code: 'PX', description: 'Pixter', status: 'active'
+  end
+
   describe "GET /users" do
     before :each do
       @member =  create(:pixi_user) 
@@ -63,8 +69,8 @@ describe "Users", :type => :feature do
       page.should have_content 'Enrolled'
     end
 
-
-    it "views user" do
+    it "views user", js: true do
+      load_user_types
       expect { 
 	visit user_path(@member)
       }.not_to change(User, :count)
@@ -78,11 +84,13 @@ describe "Users", :type => :feature do
       page.should have_link 'Edit', href: edit_user_path(@member) 
       page.should have_link 'Done', href: users_path(utype: @member.user_type_code) 
       page.should_not have_content @user.name
-    end
 
-    it 'edits member profile' do
       visit edit_user_path(@member)
-      page.should have_content 'Birth Date'
+      expect {
+        select("Subscriber", :from => "ucode")
+        click_submit
+	}.not_to change(@member.contacts, :count).by(1)
+      expect(page).to have_content(@user.first_name)
       expect(page).to have_selector('#ucode', visible: true) 
     end
   end
