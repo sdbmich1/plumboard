@@ -154,4 +154,102 @@ describe Site do
     end
   end
 
+  describe 'regions' do
+    before(:each) do
+      Geocoder.configure(:timeout => 30)
+    end
+    
+    cities = {
+      'New York Metropolitan Area' => ['New York City', 'NY', 'Rye', 'New Rochelle', 'Poughkeepsie', 'Newburgh'],
+      'Los Angeles Metropolitan Area' => ['Los Angeles', 'CA', 'Anaheim', 'Santa Ana', 'Irvine', 'Glendale', 'Huntington Beach', 'Santa Clarita'],
+      'Chicagoland' => ['Chicago', 'IL', 'Arlington Heights', 'Berwyn', 'Cicero', 'DeKalb', 'Des Plaines', 'Evanston'],
+      'Dallas/Fort Worth Metroplex' => ['Dallas', 'TX', 'Fort Worth', 'Arlington', 'Plano', 'Irving', 'Frisco', 'McKinney', 'Carrollton', 'Denton', 'Garland', 'Richardson'],
+      'Greater Houston' => ['Houston', 'TX', 'The Woodlands', 'Sugar Land', 'Baytown', 'Conroe'],
+      'Delaware Valley' => ['Philadelphia', 'PA', 'Philadelphia', 'Reading'],
+      'Washington Metropolitan Area' => ['Washington', 'D.C.', 'Washington'],
+      'Miami Metropolitan Area' => ['Miami', 'FL', 'Fort Lauderdale', 'Hialeah', 'Miramar', 'Pembroke Pines'],
+      'Metro Atlanta' => ['Atlanta', 'GA', 'Sandy Springs', 'Roswell', 'Johns Creek', 'Alpharetta', 'Marietta', 'Smyrna'],
+      'Greater Boston' => ['Boston', 'MA', 'Boston', 'Cambridge', 'Framingham', 'Quincy'],
+      'Valley of the Sun' => ['Phoenix', 'AZ', 'Mesa', 'Chandler', 'Glendale', 'Scottsdale', 'Gilbert'],
+      'Inland Empire' => ['Riverside', 'CA', 'San Bernardino', 'Fontana', 'Moreno Valley', 'Rancho Cucamonga', 'Ontario', 'Corona', 'Victorville', 'Murrieta', 'Temecula'],
+      'Seattle Metro' => ['Seattle', 'WA', 'Tacoma', 'Bellevue', 'Everett'],
+      'Minneapolis-Saint Paaul' => ['Minneapolis', 'MN', 'Saint Paul', 'Bloomington', 'Brooklyn Park', 'Plymouth'],
+      'San Diego County' => ['San Diego', 'CA', 'Carlsbad', 'Chula Vista', 'Escondido', 'Oceanside'],
+      'Tampa Bay Area' => ['Tampa', 'FL', 'St. Petersburg', 'Clearwater', 'Brandon'],
+      'Greater St. Louis' => ['St. Louis', 'MO', 'Berger', 'Arnold', 'Barnhart', 'Cottleville'],
+      'Central Maryland' => ['Baltimore', 'MD', 'Columbia', 'Towson'],
+      'Denver Metropolitan Area' => ['Denver', 'CO', 'Arvada', 'Aurora', 'Centennial'],
+      'Pittsburgh Metropolitan Area' => ['Pittsburgh', 'PA', 'Indiana', 'Jeannette', 'Latrobe', 'Lower Burrell'],
+      'Charlotte Metro' => ['Charlotte', 'NC', 'Concord', 'Gastonia', 'Cornelius', 'Hickory'],
+      'Portland Metropolitan Area' => ['Portland', 'OR', 'Beaverton', 'Gresham', 'Hillsboro'],
+      'Greater San Antonio' => ['San Antonio', 'TX', 'New Braunfels', 'Schertz', 'Seguin'],
+      'Metro Orlando' => ['Orlando', 'FL', 'Kissimmee', 'Sanford', 'Tavares', 'Winter Park'],
+      'Greater Sacramento' => ['Sacramento', 'CA', 'Roseville', 'Yuba City', 'South Lake Tahoe'],
+      'Greater Cincinnati' => ['Cincinnati', 'OH', 'Hamilton', 'Middletown', 'Fairfield', 'Mason'],
+      'Greater Cleveland' => ['Cleveland', 'OH', 'Parma', 'Lorain', 'Elyria', 'Lakewood'],
+      'Kansas City Metropolitan Area' => ['Kansas City', 'MO', 'Independence', "Lee's Summit", 'Blue Springs'],
+      'Las Vegas Metropolitan Area' => ['Las Vegas', 'NV', 'Paradise', 'Henderson', 'Boulder City'],
+      'Columbus Metropolitan Area' => ['Columbus', 'OH', 'Delaware', 'Newark', 'Lancaster', 'London'],
+      'Greater Indianapolis' => ['Indianapolis', 'IN', 'Carmel', 'Greenwood', 'Noblesville'],
+      'Greater Austin' => ['Austin', 'TX', 'Round Rock', 'Cedar Park', 'San Marcos', 'Georgetown'],
+      'Nashville Metropolitan Area' => ['Nashville', 'TN', 'Murfreesboro', 'Franklin', 'Hendersonville'],
+      'Hampton Roads' => ['Virginia Beach', 'VA', 'Norfolk', 'Chesapeake', 'Newport News'],
+      'Providence Metropolitan Area' => ['Providence', 'RI', 'Warwick', 'Cranston'],
+      'Metro Milwaukee' => ['Milwaukee', 'WI', 'Racine', 'Waukesha'],
+      'Metro Jacksonville' => ['Jacksonville', 'FL', 'St. Augustine', 'Fernandina Beach', 'Orange Park'],
+      'Memphis Metropolitan Area' => ['Memphis', 'TN','Bartlett', 'Collierville', 'Germantown'],
+      'Oklahoma City Metro' => ['Oklahoma City', 'OK', 'Norman', 'Edmond', 'Noble'],
+      'Louisville Metropolitan Area' => ['Louisville', 'KY', 'Anchorage', 'Audubon Park'],
+      'Richmond Metropolitan Area' => ['Richmond', 'VA', 'Petersburg', 'Hopewell', 'Colonial Heights'],
+      'New Orleans Metropolitan Area' => ['New Orleans', 'LA', 'Kenner', 'Metairie'],
+      'Greater Hartford' => ['Hartford', 'CT', 'Avon', 'Berlin'],
+      'Research Triangle' => ['Raleigh', 'NC', 'Durham', 'Cary', 'Chapel Hill'],
+      'Salt Lake City Metropolitan Area' => ['Salt Lake City', 'UT', 'Alta', 'Bluffdale', 'Coalville'],
+      'Greater Birmingham' => ['Birmingham', 'AL', 'Hoover', 'Talladega'],
+      'Buffalo-Niagara Falls Metropolitan Area' => ['Buffalo', 'NY', 'Niagara Falls', 'Tonawanda', 'North Tonawanda', 'Lackawanna'],
+      'Rochester Metropolitan Area' => ['Rochester', 'NY', 'Greece', 'Irondequoit']
+    }
+
+    regions = cities.keys
+    regions.each do |region_name|
+
+      context "checking #{region_name}" do
+        before(:each, :run => true) do
+            @range = 100 
+            @city_array = cities[region_name][2..(cities[region_name].length - 1)] 
+            @region_city = cities[region_name][0]
+            @region_state = cities[region_name][1]
+            @listing_sites = []
+            @city_array.each do |city_name|
+              city = FactoryGirl.create :site, name: city_name, org_type: 'city'
+              lat, lng = Geocoder.coordinates(city_name + ',' + @region_state)
+              city.contacts.create FactoryGirl.attributes_for :contact, city: city_name, state: @region_state, lat: lat, lng: lng
+              listing = FactoryGirl.create(:listing, site_id: city.id)
+              @listing_sites.push(listing.site_id)
+            end
+            @region = FactoryGirl.create(:site, name: region_name, org_type: 'region')
+            lat, lng = Geocoder.coordinates(@region_city + ',' + @region_state)
+            @region.contacts.create FactoryGirl.attributes_for :contact, city: @region_city, state: @region_state, lat: lat, lng: lng
+        end
+
+        it "renders all pixis in its cities", :run => true do
+          site_ids = []
+          Listing.active_by_region(@region_city, @region_state, 1, @range).each do |listing|
+              site_ids.push(listing.site_id)
+          end
+          expect(site_ids.sort).to eql(@listing_sites)
+        end
+
+        it "only includes pixis for its cities", :run => true do
+          expect(Listing.active_by_region(@region_city, @region_state, 1, @range).length).to eql(@city_array.length)
+        end
+
+        it "renders no pixis when none in any city" do
+          expect(Listing.active_by_region(@region_city, @region_state, 1, @range)).to be_nil
+        end
+      end
+    end
+  end
 end
+
+
