@@ -1,4 +1,4 @@
-<% cache listing do %>
+<% cache cache_key_for_pixi_item(listing) do %>
 <tr>
   <td class='span1 center-wrapper'>
     <%= render partial: 'shared/show_picture', locals: {model: listing, psize: 'tiny'} %>

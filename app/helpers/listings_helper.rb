@@ -191,6 +191,7 @@ module ListingsHelper
     return ''
   end
 
+  # build dynamic cache key for pixi show page
   def cache_key_for_pixi_panel(listing)
     wants = listing.wanted_count
     likes = listing.liked_count

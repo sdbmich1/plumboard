@@ -1,7 +1,7 @@
 ThinkingSphinx::Index.define :post, :with => :active_record do
   indexes content
-  indexes recipient(:first_name), :as => :first_name, :sortable => true
-  indexes recipient(:last_name), :as => :last_name, :sortable => true
+  indexes [recipient(:first_name), recipient(:last_name)], :as => :recipient_name
+  indexes [user(:first_name), user(:last_name)], :as => :sender_name
   indexes listing(:title), :as => :title, :sortable => true
 
   has :id, :as => :post_id 
