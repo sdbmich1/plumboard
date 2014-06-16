@@ -13,7 +13,10 @@
     $("#notice").html("<%= escape_javascript( raw render('layouts/flash_messages', flash: flash)) %>");
     $("#notice").show(300);
     $("#user_form").html("<%= escape_javascript( raw render(partial: @target)) %>");
-    $("#usr_fname").html("<%= escape_javascript( raw render(partial: 'shared/menu_user_name', locals: {user: @usr})) %>");
+
+    <% if @user == @usr %>
+      $("#usr_fname").html("<%= escape_javascript( raw render(partial: 'shared/menu_user_name', locals: {user: @usr})) %>");
+    <% end %>
   }
 <% end %>
 

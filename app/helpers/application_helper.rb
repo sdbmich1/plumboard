@@ -200,4 +200,10 @@ module ApplicationHelper
   def get_acct_type
     controller_name == 'bank_accounts' ? 'bank' : 'card'
   end
+
+  # build dynamic cache key for pixi show page
+  def cache_key_for_pixi_item(listing)
+    path = listing.pending? && controller_name == 'pending_listings' ? 'pending_listings' : %w(new edit).detect {|x| x == listing.status}.blank? ? 'listings' : 'temp_listings'
+    path + "/#{listing.pixi_id}-user-#{@user.id}-time-{Time.now}"
+  end
 end
