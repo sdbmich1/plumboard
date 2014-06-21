@@ -1,0 +1,14 @@
+<% cache post do %>
+    <tr>
+
+        <td class='span2'><%= post.completed_date %></td>
+        <td class='span2'><%= PixiPost.item_title(post) %></td>
+        <td class='span2'><%= post.seller_name %></td>
+        <td class='span2'><%= post.pixter_name %></td>
+        <td class='span2'><%= !(PixiPost.sale_date(post).nil?)? PixiPost.sale_date(post) : 'Not sold yet' %></td>
+        <td class='span2'><%= PixiPost.listing_value(post) %></td>
+        <td class='span2'><%= !(PixiPost.sale_value(post).nil?)? PixiPost.sale_value(post) : 'Not sold yet' %></td>
+        <td class='span2'><%= !(PixiPost.sale_value(post).nil?)? (PixiPost.sale_value(post) * 6) / 100 : 'Not sold yet' %></td>
+
+    </tr>
+<% end %>

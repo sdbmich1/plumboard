@@ -200,6 +200,25 @@ class PixiPost < ActiveRecord::Base
       include: {user: { only: [:first_name, :last_name], methods: [:photo] } })
   end
 
+  # returns item title
+  def self.item_title pixi_post
+    return (Listing.find_by_pixi_id(pixi_post.pixi_id)).title rescue nil
+  end
+
+  # returns item's sale value
+  def self.sale_value pixi_post
+    return Invoice.find_by_pixi_id(pixi_post.pixi_id).price rescue nil
+  end
+
+  # returns item's sale date
+  def self.sale_date pixi_post
+    return Invoice.find_by_pixi_id(pixi_post.pixi_id).created_at rescue nil
+  end
+
+  # returns item's listing value
+  def self.listing_value pixi_post
+    return Listing.find_by_pixi_id(pixi_post.pixi_id).price rescue nil
+  end
 
   # retrives the data for pixter_report
   def self.pixter_report start_date = DateTime.now - 30, end_date = DateTime.now, pixter_id = nil
