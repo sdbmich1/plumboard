@@ -316,6 +316,11 @@ class User < ActiveRecord::Base
     tm.utc.getlocal.strftime('%m/%d/%Y %l:%M %p') rescue nil
   end
 
+  # define include list
+  def self.include_list
+    includes(:pictures, :preferences)
+  end
+
   # return users by type
   def self.get_by_type val, pg=1
     val.blank? ? all : where(:user_type_code => val)

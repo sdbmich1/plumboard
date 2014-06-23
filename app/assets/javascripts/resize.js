@@ -71,7 +71,7 @@ function adjustWindow() {
   var footerHeight = $('#footer').height();
   var mtop;
 
-  if($('#cat-wrap').length > 0) {
+  if($('#cat-wrap').length > 0 || $('#wrap').length > 0) {
     var footerTop = $('#footer').position().top + footerHeight;
   } else {
     var footerTop = winHeight - footerHeight;

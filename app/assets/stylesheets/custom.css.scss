@@ -152,6 +152,7 @@ p {
 /* Wrapper for page content to push down footer */
 #wrap {
   margin-top: 20px!important;
+  //min-height: 150%;
   @extend .item-hgt;
 
   /* Negative indent footer by it's height */

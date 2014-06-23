@@ -6,16 +6,17 @@ class UsersController < ApplicationController
   respond_to :html, :js, :json, :mobile
 
   def index
-    @users = User.get_by_type(@utype).paginate(page: @page, per_page: 15)
+    @users = User.include_list.get_by_type(@utype).paginate(page: @page, per_page: 15)
     respond_to do |format|
       format.html
+      format.js
       format.csv {send_data User.to_csv}
     end
   end
 
   def show
-    @usr = User.find params[:id]
-    @photo = @usr.pictures
+    @usr = User.include_list.find params[:id]
+    # @photo = @usr.pictures
   end
 
   def edit

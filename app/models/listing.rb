@@ -45,7 +45,7 @@ class Listing < ListingParent
     if Rails.env.development?
       active.paginate page: pg
     else
-      active.where(site_id: Contact.promixity(ip, range)).paginate(page: pg)
+      active.where(site_id: Contact.proximity(ip, range)).paginate(page: pg)
     end
   end
 
@@ -69,7 +69,7 @@ class Listing < ListingParent
   end
 
   # get active pixis by region
-  def self.active_by_region city, state, pg, range=60
+  def self.active_by_region city, state, pg, range=100
     loc = [city, state].join(', ') if city && state
     active.where(site_id: Contact.proximity(nil, range, loc, true)).paginate(page: pg) if loc rescue nil
   end

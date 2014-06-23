@@ -299,6 +299,8 @@ function initScroll(cntr, nav, nxt, item) {
         $newElems.animate({ opacity: 1 });
         $container.masonry( 'appended', $newElems, true ); 
       });
+
+      $("#spinner").hide('fast');
     }
   );
 }
@@ -416,17 +418,18 @@ function processUrl(url) {
 
 // set autocomplete selection value
 $(document).on("railsAutocomplete.select", "#site_name", function(event, data){
- if ($('#recent-link').length > 0) {
-  resetBoard(); // reset board display
- }
+  if ($('#recent-link').length > 0) {
+   resetBoard(); // reset board display
+  }
 });
 
 // set autocomplete selection value
-$(document).on("railsAutocomplete.select", "#buyer_name, #slr_name, #pixan_name", function(event, data){
+$(document).on("railsAutocomplete.select", "#buyer_name, #slr_name, #pixan_name, #search_user", function(event, data){
   var bname = data.item.first_name + ' ' + data.item.last_name;
-  $('#buyer_name').val(bname);
-  $('#slr_name').val(bname);
-  $('#pixan_name').val(bname);
+  $('#pixan_name, #search_user, #slr_name, #buyer_name').val(bname);
+  if ($('#search_user').length > 0) {
+    $('#submit-btn').click();
+  }
 });
 
 // set autocomplete selection value
