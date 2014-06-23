@@ -530,4 +530,51 @@ describe PixiPost do
       expect(@pixi_post.full_address).to be_empty
     end
   end
+
+  describe "item title" do
+    it "should have item title" do
+      @listing = FactoryGirl.build(:listing)
+      @listing.pixi_id = @pixi_post.pixi_id
+      !(PixiPost.item_title(@pixi_post).nil?)
+    end
+
+    it "should not have item title" do
+      PixiPost.item_title(@pixi_post).nil?
+    end
+  end
+
+  describe "item sale value" do
+    it "should have sale value" do
+      @invoice = FactoryGirl.build(:invoice)
+      @invoice.pixi_id = @pixi_post.pixi_id
+      PixiPost.sale_value(@pixi_post) == @invoice.price
+    end
+
+    it "should not have sale value" do
+      PixiPost.sale_value(@pixi_post).nil?
+    end
+  end
+
+  describe "item sale date" do
+    it "should have sale date" do
+      @invoice = FactoryGirl.build(:invoice)
+      @invoice.pixi_id = @pixi_post.pixi_id
+      PixiPost.sale_date(@pixi_post) == @invoice.created_at
+    end
+
+    it "should not have sale date" do
+      PixiPost.sale_date(@pixi_post).nil?
+    end
+  end
+
+  describe "listing value" do
+    it "should have listing value" do
+      @listing = FactoryGirl.build(:listing)
+      @listing.pixi_id = @pixi_post.pixi_id
+      !(PixiPost.listing_value(@pixi_post).nil?)
+    end
+    it "should not have listing value" do
+      PixiPost.listing_value(@pixi_post).nil?
+    end
+  end
 end

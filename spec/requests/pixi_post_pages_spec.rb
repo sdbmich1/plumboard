@@ -115,7 +115,7 @@ feature "PixiPosts" do
       add_data
       user_data_with_state
       expect { 
-	click_button submit; sleep 3
+	      click_button submit; sleep 3
         page.should have_content "PixiPost Request"
         page.should have_content @user.name
       }.to change(PixiPost, :count).by(1)
@@ -659,7 +659,7 @@ feature "PixiPosts" do
         appt_time: Time.now+3.days, description: 'xbox 360'
       @completed = user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: @user.id, appt_date: Time.now+3.days, 
         appt_time: Time.now+3.days, completed_date: Time.now+3.days, pixi_id: @listing.pixi_id, description: 'rocking chair'
-      visit pixter_pixi_posts_path(status: 'scheduled') 
+      visit pixter_pixi_posts_path(status: 'scheduled')
     end
 
     it 'show content' do
@@ -698,6 +698,12 @@ feature "PixiPosts" do
       page.should_not have_content "Scheduled Time"
       page.should have_content "Completed Date"
       page.should have_content "Completed Time"
+    end
+
+    it "show pixter report content" do
+
+      visit pixter_report_pixi_posts_path
+      page.should_not have_content 'No posts found'
     end
 
     it "clicks to open a scheduled pixipost" do
