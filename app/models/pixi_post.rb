@@ -221,7 +221,7 @@ class PixiPost < ActiveRecord::Base
   end
 
   # retrives the data for pixter_report
-  def self.pixter_report start_date = DateTime.now - 30, end_date = DateTime.now, pixter_id = nil
+  def self.pixter_report start_date = Time.now - 30.days, end_date = Time.now, pixter_id = nil
     pixi_posts = Array.new
     pixter_id == nil ? pixi_posts = PixiPost.all : pixi_posts = PixiPost.where(pixan_id: pixter_id)
     pixi_posts = pixi_posts.keep_if{|elem| ((elem.status == "completed") &&

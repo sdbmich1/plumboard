@@ -424,7 +424,7 @@ feature "PixiPosts" do
     it "clicks to open a pixipost" do
       expect { 
         click_on "#{@pixi_post.id}"
-	click_link 'Edit'
+	      click_link 'Edit'
       }.not_to change(PixiPost, :count)
 
       page.should have_selector('title', text: 'Edit PixiPost') 
@@ -434,11 +434,11 @@ feature "PixiPosts" do
       page.should have_button('Save') 
     end
 
-    it "changes a pixi description" do
+    it "changes a pixi description", js: true do
       expect{
         click_on "#{@pixi_post.id}"
-	click_link 'Edit'
-	fill_in 'description', with: "Acoustic bass"
+	      click_link 'Edit'
+	      fill_in 'description', with: "Acoustic bass"
         click_button submit
       }.to change(PixiPost,:count).by(0)
 
@@ -501,7 +501,7 @@ feature "PixiPosts" do
       load_zips
       init_setup editor
       @pixi_post = user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post)
-      @listing = FactoryGirl.create :listing, seller_id: user.id, status: 'active' 
+      @listing = FactoryGirl.create :listing, seller_id: user.id, status: 'active', pixan_id: pixter.id
       visit edit_pixi_post_path(@pixi_post)
     end
 
@@ -509,7 +509,7 @@ feature "PixiPosts" do
       expect{
         fill_in 'cmp-dt', with: Date.tomorrow().strftime('%m/%d/%Y')
         select('1:00 PM', :from => 'cmp-tm')
-	set_pixan
+	      set_pixan
         click_button submit; sleep 2
       }.to change(PixiPost,:count).by(0)
       page.should have_content "Pixi can't be blank"
@@ -658,7 +658,8 @@ feature "PixiPosts" do
       @scheduled = user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: @user.id, appt_date: Time.now+3.days,
         appt_time: Time.now+3.days, description: 'xbox 360'
       @completed = user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: @user.id, appt_date: Time.now+3.days, 
-        appt_time: Time.now+3.days, completed_date: Time.now+3.days, pixi_id: @listing.pixi_id, description: 'rocking chair'
+        appt_time: Time.now+3.days, completed_date: Time.now + 3.days, pixi_id: @listing.pixi_id, description: 'rocking chair',
+        status: 'completed'
       visit pixter_pixi_posts_path(status: 'scheduled')
     end
 
@@ -669,6 +670,7 @@ feature "PixiPosts" do
       page.should_not have_link "Submitted", href: pixter_pixi_posts_path(status: 'active')
       page.should have_link "Scheduled", href: pixter_pixi_posts_path(status: 'scheduled')
       page.should have_link "Completed", href: pixter_pixi_posts_path(status: 'completed')
+      page.should have_link "Pixter Report", href: pixter_report_pixi_posts_path
       page.should_not have_link "Submitted", href: seller_pixi_posts_path(status: 'active')
       page.should_not have_link "Scheduled", href: seller_pixi_posts_path(status: 'scheduled')
       page.should_not have_link "Completed", href: seller_pixi_posts_path(status: 'completed')
@@ -698,12 +700,6 @@ feature "PixiPosts" do
       page.should_not have_content "Scheduled Time"
       page.should have_content "Completed Date"
       page.should have_content "Completed Time"
-    end
-
-    it "show pixter report content" do
-
-      visit pixter_report_pixi_posts_path
-      page.should_not have_content 'No posts found'
     end
 
     it "clicks to open a scheduled pixipost" do
@@ -737,6 +733,26 @@ feature "PixiPosts" do
       page.should have_content @completed.description
       page.should have_content user.name
     end
+
+    it "it should display 'No Posts Found'" do
+      visit pixter_report_pixi_posts_path
+      page.should have_content 'No posts found'
+      page.should
+    end
+
+
+=begin
+    it "it should NOT display 'No Posts Found'" do
+
+      visit pixter_report_pixi_posts_path
+
+      @completed_local = user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: nil, appt_date: Time.now,
+                    appt_time: Time.now, completed_date: Time.now, pixi_id: @listing.pixi_id, description: 'rocking chair',
+                      status: 'completed'
+      sleep 5
+      page.should_not have_content 'No posts found'
+    end
+=end
   end
 
 end
