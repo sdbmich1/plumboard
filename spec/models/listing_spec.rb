@@ -437,7 +437,7 @@ describe Listing do
       @pixan = FactoryGirl.create(:contact_user) 
       @listing.pixan_id = @pixan.id 
     end
-    it { @listing.has_pixi_post?.should be_true }
+    it { @listing.pixi_post?.should be_true }
   end
 
   describe "must have pictures" do 

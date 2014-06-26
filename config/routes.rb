@@ -41,7 +41,10 @@ Plumboard::Application.routes.draw do
 
   resources :pixi_posts do
     collection do
-      get 'seller', 'pixter', :autocomplete_site_name, :autocomplete_user_first_name, 'reschedule', 'pixter_report'
+      get 'seller', 'pixter', 'pixter_report',  :autocomplete_site_name, :autocomplete_user_first_name
+    end
+    member do
+      get 'reschedule'
     end
   end
 

@@ -10,8 +10,8 @@ task :import_sites => :environment do
    attrs = {
       		:institution_id    => row[0].to_i,
 	      	:name              => row[1],
-		:status		   => 'active',
-		:org_type	   => 'school'
+          :status		   => 'active',
+          :org_type	   => 'school'
       }
 
     # filter specialty schools
@@ -35,12 +35,12 @@ task :import_sites => :environment do
 
       # set location/contact attributes
       loc_attrs = { 
-		:address         => row[2],
+        :address         => row[2],
 	     	:city            => row[3],
-          	:state           => row[4],
-	       	:zip             => row[5],
-		:work_phone	 => row[6],
-		:website	 => row[9]
+        :state           => row[4],
+        :zip             => row[5],
+        :work_phone	 => row[6],
+        :website	 => row[9]
 		}
 
       # add contact info for site
@@ -75,8 +75,8 @@ task :load_bay_area_cities => :environment do
 
       # set location/contact attributes
       loc_attrs = { 
-	:city      => row[0],
-	:county		 => row[1],
+        :city      => row[0],
+        :county		 => row[1],
         :state           => 'CA'
       }
 
@@ -140,7 +140,7 @@ task :load_zip_codes => :environment do
 	      	:zip               => row[0],
       		:city	             => row[1],
       		:state	           => row[2],
-		:status		   => 'active'
+          :status		   => 'active'
     }
 
     # create zip
@@ -211,18 +211,13 @@ task :load_neighborhoods => :environment do
   end
 end
   
-# loads top 50 cities in US
-task :load_cities => :environment do
-  CSV.foreach(Rails.root.join('db', 'DMA_50_suburbs.csv'), :headers => true) do |row|
+# method used by tasks to load cities
+def load_cities(row)
 
-    # converting the row to an array by splitting ','
-    row_array = row.split(',');
-
-    # setting the name of the city, state and county
+  # setting the name of the city, state and county
     city   = row[0]
     state  = row[1]
     county = row[2]
-
 
     attrs = {
         :name        => city,
@@ -249,9 +244,26 @@ task :load_cities => :environment do
       else
         puts new_site.errors
       end
-    end
   end
 end
+
+# loads top 50 cities in US
+task :load_top_50_cities => :environment do
+  CSV.foreach(Rails.root.join('db', 'DMA_50_neighborhoods_transposed.csv'), :headers => false) do |row|
+
+    # converting the row to an array by splitting ','
+    row_array = row.split(',');
+    load_cities(row_array)
+  end
+end
+
+#loads suburbs of top 50 regions
+task :load_region_suburbs => :environment do
+  CSV.foreach(Rails.root.join('db', 'DMA_50_suburbs.csv'), :headers => true) do |row|
+    load_cities(row)
+  end
+end
+
 
 task :load_categories => :environment do
 
@@ -260,7 +272,7 @@ task :load_categories => :environment do
     attrs = {
 	      	:name              => row[0].titleize,
       		:category_type     => row[1],
-		:status		   => 'active'
+          :status		   => 'active'
     }
 
     # find or add category
@@ -358,8 +370,8 @@ task :import_point_system => :environment do
     attrs = {
 	      	:value             => row[0],
       		:action_name       => row[1],
-		:category_name	   => row[2],
-		:code	   	   => row[3]
+          :category_name	   => row[2],
+          :code	   	   => row[3]
     }
 
     # add pixi_point
@@ -380,9 +392,9 @@ task :import_job_type => :environment do
   CSV.foreach(Rails.root.join('db', 'JobType_020614.csv'), :headers => true) do |row|
 
     attrs = {
-		:code	   => row[0],
+          :code	   => row[0],
       		:job_name  => row[1],
-		:status	   => 'active'
+          :status	   => 'active'
     }
 
     # add job_type
@@ -403,10 +415,10 @@ task :import_inquiry_type => :environment do
   CSV.foreach(Rails.root.join('db', 'InquiryType_020614.csv'), :headers => true) do |row|
 
     attrs = {
-		:code	       => row[0],
+          :code	       => row[0],
       		:subject       => row[1],
       		:contact_type  => row[2],
-		:status	       => 'active'
+          :status	       => 'active'
     }
 
     # add inquiry_type
@@ -427,9 +439,9 @@ task :import_user_type => :environment do
   CSV.foreach(Rails.root.join('db', 'user_type_040114.csv'), :headers => true) do |row|
 
     attrs = {
-		:code	       => row[0],
+          :code	       => row[0],
       		:description   => row[1],
-		:status	       => 'active'
+          :status	       => 'active'
     }
 
     # add user_type
@@ -453,7 +465,7 @@ task :import_faq => :environment do
       		:subject       => row[0],
       		:description   => row[1],
       		:question_type => 'inquiry',
-		:status	       => 'active'
+          :status	       => 'active'
     }
 
     # add faq
@@ -484,8 +496,8 @@ task :load_regions => :environment do
 
       # set location/contact attributes
       loc_attrs = { 
-	:city    => row[1],
-	:state	 => row[2]
+        :city    => row[1],
+        :state	 => row[2]
       }
 
       # add contact info for site
@@ -508,7 +520,8 @@ task :run_all_tasks => :environment do
   Rake::Task[:load_sf_neighborhoods].execute
   Rake::Task[:load_zip_codes].execute
   Rake::Task[:load_neighborhoods].execute
-  Rake::Task[:load_cities].execute
+  Rake::Task[:load_top_50_cities].execute
+  Rake::Task[:load_region_suburbs].execute
   Rake::Task[:load_categories].execute
   Rake::Task[:update_categories].execute
   Rake::Task[:update_category_pictures].execute

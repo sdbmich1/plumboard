@@ -1,7 +1,9 @@
 <div id='pxp-address' class="div-border">
   <div class='row'>
     <div class='offset3 addr-tbl' style="<%= !post.has_address? ? 'display:none' : '' %>">
-      <% cache ['pxp-address', post] do %>
+
+
+
       <h5 class="grp-hdr">Address Information</h5>
       <table>
       <tr><td class='span3'>
@@ -10,7 +12,7 @@
         <td class='v-align price'><%= link_to 'Change', '#', id: 'edit-addr-btn', class: 'btn' %></td>
       </tr>
       </table>
-      <% end %>
+
     </div>
   </div>
   <div class='sm-top user-tbl' style="<%= post.has_address? ? 'display:none' : '' %>">

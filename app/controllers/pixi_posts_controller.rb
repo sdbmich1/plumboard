@@ -82,6 +82,11 @@ class PixiPostsController < ApplicationController
     @post = PixiPost.reschedule params[:id]
     respond_with(@post)
   end
+
+  def pixter_report
+    @pixi_posts = PixiPost.pixter_report
+    respond_with(@pixi_posts)
+  end
   
   private
 
@@ -115,8 +120,5 @@ class PixiPostsController < ApplicationController
     authorize! :manage, PixiPost
   end
 
-  def pixter_report
-    @pixi_posts = PixiPost.pixter_report
-    respond_with(@pixi_posts)
-  end
+
 end
