@@ -190,6 +190,11 @@ $(document).ready(function(){
       $('#inq-done-btn').attr('disabled', true);
     }
   }
+
+  // hide footer on main board
+  if ($('.item-cat').length > 0) {  
+    $('#footer').hide('fast');
+  }
 });
 
 // masks phone number fields
@@ -271,12 +276,18 @@ function reload_board(element) {
   });
 
  // switchToggle(false);
+ $('#spinner').hide('fast');
 }
+
+var loadingBoard = false; 
 
 // initialize infinite scroll
 function initScroll(cntr, nav, nxt, item) {
   var $container = $(cntr);
-  $container.infinitescroll({
+  loadingBoard = true;
+
+  if(!loadingBoard && ($("#px-nav").is(':visible'))) {
+    $container.infinitescroll({
       navSelector  : nav, 		// selector for the paged navigation (it will be hidden)
       nextSelector : nxt,  		// selector for the NEXT link (ie. page 2)  
       itemSelector : item,          // selector for all items that's retrieve
@@ -301,8 +312,11 @@ function initScroll(cntr, nav, nxt, item) {
       });
 
       $("#spinner").hide('fast');
-    }
-  );
+      loadingBoard = false;
+    });
+  }
+
+  $("#spinner").hide('fast');
 }
 
 // use masonry to layout landing page display
@@ -338,6 +352,14 @@ $(document).on("click", "#cat-link", function(){
   processUrl(url);
 });	
 
+// check for category board
+function set_home_location(loc){
+  console.log('loc name = ' + loc);
+  var url = '/pages/location_name.js?loc_name=' + loc;
+
+  // process ajax call
+  processUrl(url);
+}
 
 // check for text display toggle
 $(document).on("click", ".moreBtn, #more-btn", function(){
@@ -421,6 +443,12 @@ $(document).on("railsAutocomplete.select", "#site_name", function(event, data){
   if ($('#recent-link').length > 0) {
    resetBoard(); // reset board display
   }
+  else if($('#cat-wrap').length > 0) { 
+    var loc = $('#site_id').val(); // grab the selected location 
+    console.log('site id = ' + loc);
+    var url = '/categories/location?' + 'loc=' + loc;
+    processUrl(url);
+  } 
 });
 
 // set autocomplete selection value
@@ -548,7 +576,7 @@ $(document).on("click", ".pixi-cat-link", function() {
 
 // check for location changes
 $(document).on("change", "#site_id, #category_id", function() {
-
+ 
   // reset board
   if($('#px-container').length > 0) {
     resetBoard();

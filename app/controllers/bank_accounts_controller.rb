@@ -42,7 +42,7 @@ class BankAccountsController < ApplicationController
   def destroy
     @account = BankAccount.find params[:id]
     @account.delete_account if @account
-    respond_with(@account, location: root_path)
+    respond_with(@account, location: get_root_path)
   end
 
   private
@@ -70,7 +70,7 @@ class BankAccountsController < ApplicationController
     if !(@target =~ /invoice/i).nil?
       redirect_to new_invoice_path
     else
-      redirect_to root_path
+      redirect_to get_root_path
     end
   end
 

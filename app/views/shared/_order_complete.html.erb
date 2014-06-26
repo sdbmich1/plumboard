@@ -3,11 +3,11 @@
 
   <div class="mtop center-wrapper">
     You should receive a confirmation of your pixi's status soon.
-    <%= 'Your credit card will be charged upon approval.' if amtFlg %>
+    <%= 'Your account will be charged upon approval.' if amtFlg %>
 
     <div class="mtop">Keep on pixing!</div>
     <div class="mtop mbot">
-      <%= link_to "Done", root_path, :class => "btn btn-large btn-primary submit-btn", :id => 'cancel-btn' %>
+      <%= link_to "Done", get_home_path, :class => "btn btn-large btn-primary submit-btn", :id => 'pixi-complete-btn' %>
     </div>
   </div>
 </div>

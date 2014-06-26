@@ -3,6 +3,7 @@ class TempListingsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :check_permissions, only: [:create, :show, :edit, :update, :delete]
   before_filter :load_data, only: [:unposted]
+  before_filter :load_pixi, only: [:edit, :update, :submit, :destroy]
   before_filter :set_params, only: [:create, :update]
   autocomplete :site, :name, :full => true
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name, if: :has_pixan?
@@ -13,22 +14,20 @@ class TempListingsController < ApplicationController
   def new
     @listing = TempListing.new pixan_id: params[:pixan_id]
     @photo = @listing.pictures.build
-  end
-
-  def show
-    @listing = TempListing.find_pixi params[:id]
-    @photo = @listing.pictures if @listing
     respond_with(@listing)
   end
 
+  def show
+    respond_with(@listing = TempListing.find_pixi(params[:id]))
+  end
+
   def edit
-    @listing = TempListing.find_by_pixi_id(params[:id]) || Listing.find_by_pixi_id(params[:id]).dup_pixi(false)
+    @listing ||= Listing.find_by_pixi_id(params[:id]).dup_pixi(false)
     @photo = @listing.pictures.build if @listing
     respond_with(@listing)
   end
 
   def update
-    @listing = TempListing.find_by_pixi_id params[:id]
     respond_with(@listing) do |format|
       if @listing.update_attributes(params[:temp_listing])
         format.json { render json: {listing: @listing} }
@@ -51,7 +50,6 @@ class TempListingsController < ApplicationController
   end
 
   def submit
-    @listing = TempListing.find_by_pixi_id params[:id]
     respond_with(@listing) do |format|
       if @listing.resubmit_order
         format.json { render json: {listing: @listing} }
@@ -63,11 +61,10 @@ class TempListingsController < ApplicationController
   end
 
   def destroy
-    @listing = TempListing.find_by_pixi_id params[:id]
     respond_with(@listing) do |format|
       if @listing.destroy  
-        format.html { redirect_to root_path }
-        format.mobile { redirect_to root_path }
+        format.html { redirect_to get_root_path }
+        format.mobile { redirect_to get_root_path }
 	format.json { head :ok }
       else
         format.html { render action: :show, error: "Pixi was not removed. Please try again." }
@@ -78,16 +75,14 @@ class TempListingsController < ApplicationController
   end
 
   def unposted
-    @listings = TempListing.draft.get_by_seller(@user).paginate(page: @page)
-    respond_with(@listings)
+    respond_with(@listings = TempListing.draft.get_by_seller(@user).paginate(page: @page))
   end
 
   def pending
-    @listings = TempListing.get_by_status('pending').get_by_seller(@user).paginate(page: @page)
-    respond_with(@listings)
+    respond_with(@listings = TempListing.get_by_status('pending').get_by_seller(@user).paginate(page: @page))
   end
   
-  private
+  protected
 
   def page_layout
     mobile_device? ? 'form' : 'application'
@@ -122,5 +117,10 @@ class TempListingsController < ApplicationController
 
   def check_permissions
     authorize! :crud, TempListing
+  end
+
+  # load pixi data
+  def load_pixi
+    @listing = TempListing.find_by_pixi_id params[:id]
   end
 end

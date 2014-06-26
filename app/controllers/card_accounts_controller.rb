@@ -39,7 +39,7 @@ class CardAccountsController < ApplicationController
     @account = CardAccount.find params[:id]
     if @account.delete_card
       flash.now[:notice] = 'Successfully removed account.'
-      redirect_to root_path 
+      redirect_to get_root_path 
     else
       flash.now[:error] = @account.errors
       render nothing: true 

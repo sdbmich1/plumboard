@@ -7,6 +7,6 @@ module PagesHelper
 
   # check if home page
   def home_page?
-    controller_name == 'pages' && action_name == 'home' ? true : false
+    controller_name == 'pages' && %w(home location_name).detect {|x| action_name == x} ? true : false
   end
 end

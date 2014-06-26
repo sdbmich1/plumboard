@@ -190,6 +190,20 @@ describe Listing do
     it { Listing.get_by_city(@listing.category_id, @listing.site_id, 1).should_not be_empty }
   end
 
+  describe "has_enough_pixis?" do
+    it "returns true" do
+      stub_const("MIN_PIXI_COUNT", 0)
+      expect(MIN_PIXI_COUNT).to eq(0)
+      expect(Listing.has_enough_pixis?(@listing.category_id, @listing.site_id, 1)).to be_true
+    end
+
+    it "returns false" do
+      stub_const("MIN_PIXI_COUNT", 500)
+      expect(MIN_PIXI_COUNT).to eq(500)
+      expect(Listing.has_enough_pixis?(@listing.category_id, 1, 1)).not_to be_true
+    end
+  end
+
   describe "active_by_city" do
     it { Listing.active_by_city(0, 1, 1).should_not include @listing } 
     it "finds active pixis by city" do

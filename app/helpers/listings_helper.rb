@@ -52,8 +52,8 @@ module ListingsHelper
 	end
       when 'category'
         '#{category_listings_path page: @listings.next_page, loc: params[:loc], cid: params[:cid]}'
-      when 'location'
-        "#{location_listings_path page: @listings.next_page, loc: params[:loc]}"
+      when 'local'
+        "#{local_listings_path page: @listings.next_page, loc: params[:loc]}"
       else
         '#{listings_path page: @listings.next_page}'
     end
@@ -66,8 +66,8 @@ module ListingsHelper
         controller_name == 'searches' ? 'search_next_page' : 'listing_next_page'
       when 'category'
         'cat_list_next_page'
-      when 'location'
-        'loc_list_next_page'
+      when 'local'
+        controller_name == 'categories' ? 'category_next_page' : 'loc_list_next_page'
       else
         'listing_next_page'
     end
@@ -91,8 +91,8 @@ module ListingsHelper
         controller_name == 'searches' ? "/searches?page=" : '/listings?page='
       when 'category'
         "/listings/category?page="
-      when 'location'
-        "/listings/location?page="
+      when 'local'
+        "/listings/local?page="
       else
         '/listings?page='
     end

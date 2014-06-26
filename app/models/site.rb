@@ -73,6 +73,14 @@ class Site < ActiveRecord::Base
     where(org_type: val)
   end
 
+  # get nearest region
+  def self.get_nearest_region loc, range=60
+    unless site = Site.where(id: Contact.proximity(nil, range, loc, true)).get_by_type('region').first
+      site = Site.where(name: PIXI_LOCALE).first
+    end
+    [site.id, site.name] rescue [0, loc]
+  end
+
   # set json string
   def as_json(options={})
     super(only: [:id, :name])

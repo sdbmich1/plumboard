@@ -90,9 +90,24 @@ feature "TempListings" do
 
     it 'shows content' do
       page.should have_content "Build Your Pixi"
+      @loc = @site.id
+      stub_const("MIN_PIXI_COUNT", 0)
+      expect(MIN_PIXI_COUNT).to eq(0)
       page.should have_selector('.sm-thumb')
       page.should have_selector('#photo')
-      page.should have_link 'Cancel', href: root_path
+      page.should have_selector('#pixi-cancel-btn', href: categories_path(loc: @loc))
+      page.should have_button 'Next'
+    end
+
+    it 'shows content w local listings home' do
+      @loc = @site.id
+      create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, site_id: @loc ) 
+      stub_const("MIN_PIXI_COUNT", 500)
+      expect(MIN_PIXI_COUNT).to eq(500)
+      page.should have_selector('.sm-thumb')
+      page.should have_selector('#photo')
+      expect(Listing.active.count).not_to eq(0)
+      page.should have_selector('#pixi-cancel-btn', href: local_listings_path(loc: @loc))
       page.should have_button 'Next'
     end
 
@@ -279,9 +294,24 @@ feature "TempListings" do
     before { visit edit_temp_listing_path(temp_listing) }
 
     it 'shows content' do
+      @loc = @site.id
+      stub_const("MIN_PIXI_COUNT", 0)
+      expect(MIN_PIXI_COUNT).to eq(0)
       page.should have_selector('.sm-thumb')
       page.should have_selector('#photo')
-      page.should have_link 'Cancel', href: root_path
+      page.should have_selector('#pixi-cancel-btn', href: categories_path(loc: @loc))
+      page.should have_button 'Next'
+    end
+
+    it 'shows content w local listings home' do
+      @loc = @site.id
+      create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, site_id: @loc ) 
+      stub_const("MIN_PIXI_COUNT", 500)
+      expect(MIN_PIXI_COUNT).to eq(500)
+      page.should have_selector('.sm-thumb')
+      page.should have_selector('#photo')
+      expect(Listing.active.count).not_to eq(0)
+      page.should have_selector('#pixi-cancel-btn', href: local_listings_path(loc: @loc))
       page.should have_button 'Next'
     end
 
@@ -443,6 +473,22 @@ feature "TempListings" do
     end
 
     it "deletes a pixi", js: true do
+      @loc = @site.id
+      stub_const("MIN_PIXI_COUNT", 0)
+      expect(MIN_PIXI_COUNT).to eq(0)
+      create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id ) 
+      expect{
+        click_remove_ok; sleep 3;
+      }.to change(TempListing,:count).by(-1)
+      page.should have_content "Home" 
+      page.should_not have_content temp_listing.title
+    end
+
+    it "deletes a pixi w/ local pixi home", js: true do
+      @loc = @site.id
+      create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id ) 
+      stub_const("MIN_PIXI_COUNT", 500)
+      expect(MIN_PIXI_COUNT).to eq(500)
       expect{
         click_remove_ok; sleep 3;
       }.to change(TempListing,:count).by(-1)
@@ -456,7 +502,23 @@ feature "TempListings" do
 	}.not_to change(TempListing, :count)
       page.should have_selector('.big_logo')
       page.should have_content temp_listing.title
-      page.should have_link 'Done', href: root_path
+      @loc = @site.id
+      stub_const("MIN_PIXI_COUNT", 0)
+      expect(MIN_PIXI_COUNT).to eq(0)
+      page.should have_selector('#pixi-complete-btn', href: categories_path(loc: @loc))
+    end
+
+    it "submits a pixi w/ local listings home" do
+      @loc = @site.id
+      create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id ) 
+      stub_const("MIN_PIXI_COUNT", 500)
+      expect(MIN_PIXI_COUNT).to eq(500)
+      expect { 
+	      click_link 'Done!'
+	}.not_to change(TempListing, :count)
+      page.should have_selector('.big_logo')
+      page.should have_content temp_listing.title
+      page.should have_selector('#pixi-complete-btn', href: local_listings_path(loc: @loc))
     end
 
     it "goes back to build a pixi" do

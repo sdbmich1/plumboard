@@ -3,14 +3,15 @@ class ListingsController < ApplicationController
   include PointManager, LocationManager
   before_filter :authenticate_user!, except: [:local, :category]
   before_filter :load_data, only: [:index, :seller, :category, :show, :local]
+  before_filter :load_pixi, only: [:destroy, :pixi_price, :update]
+  before_filter :load_city, only: [:local, :category]
   after_filter :add_points, only: [:show]
   respond_to :html, :json, :js, :mobile
   layout :page_layout
 
   def index
-    @listings = Listing.active_page(@ip, @page)
     @categories = Category.active
-    respond_with(@listings) do |format|
+    respond_with(@listings = Listing.active_page(@ip, @page)) do |format|
       format.json { render json: {user: @user, listings: @listings, categories: @categories} }
     end
   end
@@ -24,7 +25,6 @@ class ListingsController < ApplicationController
   end
 
   def update
-    @listing = Listing.find_by_pixi_id params[:id]
     if @listing.update_attributes(explanation: params[:reason], status: 'removed')
       redirect_to category_listings_path(loc: @listing.site_id, cid: @listing.category_id)
     else
@@ -33,11 +33,10 @@ class ListingsController < ApplicationController
   end
 
   def destroy
-    @listing = Listing.find_by_pixi_id params[:id]
     respond_with(@listing) do |format|
       if @listing.destroy
-        format.html { redirect_to root_path, notice: 'Successfully removed pixi.' }
-        format.mobile { redirect_to root_path, notice: 'Successfully removed pixi.' }
+        format.html { redirect_to get_root_path, notice: 'Successfully removed pixi.' }
+        format.mobile { redirect_to get_root_path, notice: 'Successfully removed pixi.' }
 	format.json { head :ok }
       else
         format.html { render action: :show, error: "Pixi was not removed." }
@@ -48,38 +47,31 @@ class ListingsController < ApplicationController
   end
 
   def seller
-    @listings = Listing.active.get_by_seller(@user).paginate(page: @page)
-    respond_with(@listings)
+    respond_with(@listings = Listing.active.get_by_seller(@user).paginate(page: @page))
   end
 
   def sold
-    @listings = Listing.get_by_seller(@user).get_by_status('sold').paginate(page: @page)
-    respond_with(@listings)
+    respond_with(@listings = Listing.get_by_seller(@user).get_by_status('sold').paginate(page: @page))
   end
 
   def wanted
-    @listings = Listing.wanted_list @user, @page
-    respond_with(@listings)
+    respond_with(@listings = Listing.wanted_list(@user, @page))
   end
 
   def purchased
-    @listings = Listing.get_by_buyer(@user).get_by_status('sold').paginate(page: @page)
-    respond_with(@listings)
+    respond_with(@listings = Listing.get_by_buyer(@user).get_by_status('sold').paginate(page: @page))
   end
 
   def category
-    @listings = Listing.get_by_city @cat, @loc, @page
     @category = Category.find @cat
     respond_with(@listings)
   end
 
   def local
-    @listings = Listing.get_by_city @cat, @loc, @page
     respond_with(@listings)
   end
 
   def pixi_price
-    @listing = Listing.find_by_pixi_id(params[:pixi_id]) if params[:pixi_id]
     @price = @listing.price rescue nil
     respond_with(@price)
   end
@@ -93,7 +85,8 @@ class ListingsController < ApplicationController
   end
 
   def page_layout
-    %w(index category local).detect {|x| action_name == x} ? 'listings' : mobile_device? ? 'form' : action_name == 'show' ? 'pixi' : 'application'
+    %w(index category local).detect {|x| action_name == x} ? 'listings' : mobile_device? ? 'form' : action_name == 'show' ? 'pixi' : 
+      'application'
   end
 
   def add_points
@@ -102,5 +95,13 @@ class ListingsController < ApplicationController
 
   def load_comments
     @comments = @listing.comments.paginate(page: @page, per_page: PIXI_COMMENTS) rescue nil
+  end
+
+  def load_pixi
+    @listing = Listing.find_by_pixi_id params[:id]
+  end
+
+  def load_city
+    @listings = Listing.get_by_city @cat, @loc, @page
   end
 end
