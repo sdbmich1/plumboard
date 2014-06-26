@@ -13,6 +13,7 @@ feature "Categories" do
     login_as(usr, :scope => :user, :run_callbacks => false)
     @user = usr
     @listing = FactoryGirl.create :temp_listing, seller_id: @user.id, status: nil
+    create :listing, category_id: @category.id, seller_id: @user.id
   end
 
   def add_data_w_photo
@@ -145,11 +146,9 @@ feature "Categories" do
         page.should_not have_content @category.name_title
       end
 
-      it 'does not change status to inactive' do
-        create :listing, category_id: @category.id
-        page.should have_content @category.name
+      it 'does not change status to inactive', js:true do
 	expect(@category.has_pixis?).to be_true
-	find('#category_status')['disabled'].should == 'disabled'
+	find('#category_status')['disabled'].should be_true
       end
 
       it 'changes name' do

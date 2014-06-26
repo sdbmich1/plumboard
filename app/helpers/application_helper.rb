@@ -69,7 +69,12 @@ module ApplicationHelper
 
   # set home path
   def get_home_path
-    signed_in? ? categories_path : root_path 
+    signed_in? ? set_home_path : root_path 
+  end
+
+  # set home path based on pixi count
+  def set_home_path
+    Listing.has_enough_pixis?(@cat, @loc, @page) ? categories_path(loc: @loc) : local_listings_path(loc: @loc)
   end
 
   # set image
@@ -112,7 +117,7 @@ module ApplicationHelper
       when 'My Accounts'; render 'shared/navbar_accounts'
       when 'Pending Orders'; render 'shared/navbar_pending'
       when 'Messages'; render 'shared/navbar_posts'
-      when 'Home'; render 'shared/navbar_home'
+      when 'Home'; render 'shared/navbar_home', locals: { loc_name: @loc_name }
       when 'PixiPosts'; render 'shared/navbar_pixi_post'
       when 'My PixiPosts'; render 'shared/navbar_pixi_post'
       when 'Inquiries'; render 'shared/navbar_inquiry'
@@ -201,9 +206,14 @@ module ApplicationHelper
     controller_name == 'bank_accounts' ? 'bank' : 'card'
   end
 
+  # check pending status
+  def is_pending?
+    listing.pending? && controller_name == 'pending_listings'
+  end
+
   # build dynamic cache key for pixi show page
   def cache_key_for_pixi_item(listing)
-    path = listing.pending? && controller_name == 'pending_listings' ? 'pending_listings' : %w(new edit).detect {|x| x == listing.status}.blank? ? 'listings' : 'temp_listings'
+    path = is_pending? ? 'pending_listings' : %w(new edit).detect {|x| x == listing.status}.blank? ? 'listings' : 'temp_listings'
     path + "/#{listing.pixi_id}-user-#{@user.id}-time-{Time.now}"
   end
 end

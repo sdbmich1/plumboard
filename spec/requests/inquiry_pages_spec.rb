@@ -64,16 +64,18 @@ feature "Inquiries" do
       visit contact_path
     end
 
-    it { should have_selector('title', text: 'Contact Us') }
-    it { should have_content 'Contact Us' }
-    it { should have_content 'Pixiboard Relations' }
-    it { should have_content 'First Name' }
-    it { should have_content 'Last Name' }
-    it { should have_content 'Subject' }
-    it { should have_selector('.frm-name', visible: false) }
-    it { should have_selector('#inq_status', visible: false) }
-    it { should have_link('Cancel') }
-    it { should have_button('Submit') }
+    it "shows content" do
+      page.should have_selector('title', text: 'Contact Us')
+      page.should have_content 'Contact Us'
+      page.should have_content 'Pixiboard Relations'
+      page.should have_content 'First Name'
+      page.should have_content 'Last Name'
+      page.should have_content 'Subject'
+      page.should have_selector('.frm-name', visible: false)
+      page.should have_selector('#inq_status', visible: false)
+      page.should have_link('Cancel')
+      page.should have_button('Submit')
+    end
 
     it "adds an inquiry", js: true do
       expect {
@@ -131,18 +133,20 @@ feature "Inquiries" do
       visit contact_path
     end
 
-    it { should have_selector('title', text: 'Contact Us') }
-    it { should have_content 'Contact Us' }
-    it { should have_content 'Pixiboard Relations' }
-    it { should have_selector('#inq_first_name', visible: false) }
-    it { should have_selector('#inq_last_name', visible: false) }
-    it { should have_selector('#inq_email', visible: false) }
-    it { should have_selector('#inq_status', visible: false) }
-    it { should have_content 'Subject' }
-    it { should have_content 'From:' }
-    it { should have_content @user.name }
-    it { should have_link('Cancel') }
-    it { should have_button('Submit') }
+    it "shows content" do
+      page.should have_selector('title', text: 'Contact Us')
+      page.should have_content 'Contact Us'
+      page.should have_content 'Pixiboard Relations'
+      page.should have_selector('#inq_first_name', visible: false)
+      page.should have_selector('#inq_last_name', visible: false)
+      page.should have_selector('#inq_email', visible: false)
+      page.should have_selector('#inq_status', visible: false)
+      page.should have_content 'Subject'
+      page.should have_content 'From:'
+      page.should have_content @user.name
+      page.should have_link('Cancel')
+      page.should have_button('Submit')
+    end
 
     it "adds an inquiry", js: true do
       expect {
@@ -164,17 +168,19 @@ feature "Inquiries" do
       visit contact_path(source: 'support')
     end
 
-    it { should have_content 'Pixiboard Support' }
-    it { should have_selector('title', text: 'Contact Us') }
-    it { should have_selector('#inq_first_name', visible: false) }
-    it { should have_selector('#inq_last_name', visible: false) }
-    it { should have_selector('#inq_email', visible: false) }
-    it { should have_selector('#inq_status', visible: false) }
-    it { should have_content 'Subject' }
-    it { should have_content 'From:' }
-    it { should have_content @user.name }
-    it { should have_link('Cancel') }
-    it { should have_button('Submit') }
+    it "shows content" do
+      page.should have_content 'Pixiboard Support'
+      page.should have_selector('title', text: 'Contact Us')
+      page.should have_selector('#inq_first_name', visible: false)
+      page.should have_selector('#inq_last_name', visible: false)
+      page.should have_selector('#inq_email', visible: false)
+      page.should have_selector('#inq_status', visible: false)
+      page.should have_content 'Subject'
+      page.should have_content 'From:'
+      page.should have_content @user.name
+      page.should have_link('Cancel')
+      page.should have_button('Submit')
+    end
 
     it "adds a support inquiry", js: true do
       expect {
@@ -193,22 +199,25 @@ feature "Inquiries" do
     before do
       add_inquiry_type
       init_setup editor
+      @site = create :site
       @inquiry = @user.inquiries.create FactoryGirl.attributes_for(:inquiry, code: 'OQ')
       @support = @user.inquiries.create FactoryGirl.attributes_for(:inquiry, code: 'WS')
       @closed = @user.inquiries.create FactoryGirl.attributes_for(:inquiry, status: 'closed')
       visit inquiries_path(ctype: 'inquiry') 
     end
 
-    it { should_not have_content('No inquiries found') }
-    it { should have_link 'General', href: inquiries_path(ctype: 'inquiry') }
-    it { should have_link 'Support', href: inquiries_path(ctype: 'support') }
-    it { should have_link 'Closed', href: closed_inquiries_path }
-    it { should have_link("#{@inquiry.id}", href: inquiry_path(@inquiry)) }
-    it { should have_selector('title', text: 'Inquiries') }
-    it { should have_content "Inquiry #" }
-    it { should have_content "User Name" } 
-    it { should_not have_link("#{@support.id}", href: inquiry_path(@support)) }
-    it { should_not have_link("#{@closed.id}", href: inquiry_path(@closed)) }
+    it "shows content" do
+      page.should_not have_content('No inquiries found')
+      page.should have_link 'General', href: inquiries_path(ctype: 'inquiry')
+      page.should have_link 'Support', href: inquiries_path(ctype: 'support')
+      page.should have_link 'Closed', href: closed_inquiries_path
+      page.should have_link("#{@inquiry.id}", href: inquiry_path(@inquiry))
+      page.should have_selector('title', text: 'Inquiries')
+      page.should have_content "Inquiry #"
+      page.should have_content "User Name" 
+      page.should_not have_link("#{@support.id}", href: inquiry_path(@support))
+      page.should_not have_link("#{@closed.id}", href: inquiry_path(@closed))
+    end
 
     it "displays support inquiries", js: true do
       page.find('#support-inq').click
@@ -227,6 +236,10 @@ feature "Inquiries" do
     end
 
     it "clicks to open an inquiry" do
+      @loc = @site.id
+      create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id ) 
+      stub_const("MIN_PIXI_COUNT", 0)
+      expect(MIN_PIXI_COUNT).to eq(0)
       expect { 
         click_on "#{@inquiry.id}"
       }.not_to change(Inquiry, :count)
@@ -237,7 +250,25 @@ feature "Inquiries" do
       page.should have_content @inquiry.user_name
       page.should have_link 'Edit', href: edit_inquiry_path(@inquiry) 
       page.should have_link 'Remove', href: inquiry_path(@inquiry) 
-      page.should have_link 'Done', href: root_path 
+      page.should have_selector('#done-inquiry-btn', href: categories_path(loc: @loc))
+    end
+
+    it "clicks to open an inquiry w/ local listing home" do
+      @loc = @site.id
+      create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id ) 
+      stub_const("MIN_PIXI_COUNT", 500)
+      expect(MIN_PIXI_COUNT).to eq(500)
+      expect { 
+        click_on "#{@inquiry.id}"
+      }.not_to change(Inquiry, :count)
+
+      page.should have_content 'Inquiry Details'
+      page.should have_content "#{@inquiry.id}"
+      page.should have_content @inquiry.comments
+      page.should have_content @inquiry.user_name
+      page.should have_link 'Edit', href: edit_inquiry_path(@inquiry) 
+      page.should have_link 'Remove', href: inquiry_path(@inquiry) 
+      page.should have_selector('#done-inquiry-btn', href: local_listings_path(loc: @loc))
     end
 
     it "cancel remove inquiry", js: true do

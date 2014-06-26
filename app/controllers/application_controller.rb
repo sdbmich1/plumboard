@@ -61,12 +61,13 @@ class ApplicationController < ActionController::Base
 
   def after_sign_in_path_for(resource)
     @user ||= resource
-    session[:return_to] || categories_path(newFlg: @user.new_user?)
+    session[:return_to] || get_root_path # categories_path(newFlg: @user.new_user?)
   end
 
   # set user if signed in 
   def load_settings
     @user = signed_in? ? current_user : User.new
+    @loc ||= LocationManager::get_loc_id(PIXI_LOCALE)
   end
 
   # set store path
@@ -95,8 +96,8 @@ class ApplicationController < ActionController::Base
 
   def render_forbidden_error
     respond_to do |format|
-      format.html { redirect_to root_url, alert: "You cannot access that part of the website." }
-      format.mobile { redirect_to root_url, alert: "You cannot access that part of the website." }
+      format.html { redirect_to get_root_path, alert: "You cannot access that part of the website." }
+      format.mobile { redirect_to get_root_path, alert: "You cannot access that part of the website." }
       format.xml { head :forbidden }
       format.json { head :forbidden }
     end
@@ -130,5 +131,10 @@ class ApplicationController < ActionController::Base
   # set current ability
   def current_ability
     @current_ability ||= Ability.new(current_user)
+  end
+
+  # set root path based on pixi count
+  def get_root_path
+    Listing.has_enough_pixis?(@cat, @loc, @page) ? categories_path(loc: @loc) : local_listings_path(loc: @loc)
   end
 end

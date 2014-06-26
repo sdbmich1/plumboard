@@ -141,6 +141,24 @@ describe Site do
     end
   end
 
+  describe 'get_nearest_region' do
+    before(:each, :run => true) do
+      @site1 = create :site, name: 'Detroit', org_type: 'city'
+      @site1.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro', city: 'Detroit', state: 'MI', zip: '48238'
+      @site2 = create :site, name: 'Metro Detroit', org_type: 'region'
+    end
+
+    it "finds nearest region", :run => true do
+      expect(Site.get_nearest_region('Detroit')).to include('Detroit')
+    end
+
+    it "doesn't find nearest region" do
+      @site2 = create :site, name: 'SF Bay Area', org_type: 'region'
+      expect(Site.get_nearest_region('Detroit')).to include('SF Bay Area')
+      expect(Site.get_nearest_region('')).to include('SF Bay Area')
+    end
+  end
+
   describe 'check_org_type' do
 
     it 'finds site w/ org type' do
