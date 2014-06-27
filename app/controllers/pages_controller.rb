@@ -7,6 +7,21 @@ class PagesController < ApplicationController
     @faqs = Faq.active
   end
 
+  def home
+  end
+
+  def about
+  end
+
+  def privacy
+  end
+
+  def terms
+  end
+
+  def howitworks
+  end
+
   def location_name
     @loc, @loc_name = LocationManager::get_region params[:loc_name]
     respond_with(@loc_name)
