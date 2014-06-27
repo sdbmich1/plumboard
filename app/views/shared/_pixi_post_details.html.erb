@@ -19,7 +19,8 @@
     <tr><td class='span3'># of Items:</td><td><%= post.quantity %></td></tr>
     <tr><td class='span3'>Estimated Value:</td><td><%= number_to_currency(post.value) %></td></tr>
     <tr><td class='span3'>Description: </td><td><%= post.description %><br /></td></tr>
-    <tr class='spaceUnder'><td class='span3'>Submitted: </td><td><%= get_local_date(post.created_at) %></td></tr>
+    <tr class='spaceUnder'><td class='span3'>Submitted: </td><td><%= !(post.created_at.nil?)? post.created_at.strftime("%Y-%m-%d %I:%M%P") :
+                post.created_at%></td></tr>
     <%= render partial: 'shared/pixi_post_response', locals: {post: post, showAddrFlg: showAddrFlg} unless action_name == 'edit' %>
   </table>
   </div>

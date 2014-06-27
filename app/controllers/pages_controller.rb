@@ -1,24 +1,15 @@
 class PagesController < ApplicationController
   respond_to :html, :json, :js, :mobile
   layout :page_layout
+  include LocationManager
   
   def help
     @faqs = Faq.active
   end
 
-  def home
-  end
-
-  def about
-  end
-
-  def privacy
-  end
-
-  def terms
-  end
-
-  def howitworks
+  def location_name
+    @loc, @loc_name = LocationManager::get_region params[:loc_name]
+    respond_with(@loc_name)
   end
 
   protected

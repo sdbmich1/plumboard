@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe "Pages" do
   let(:user) { FactoryGirl.create(:pixi_user) }
+  let(:site) { FactoryGirl.create :site }
   subject { page }
 
   def init_setup usr
@@ -10,14 +11,23 @@ describe "Pages" do
   end
 
   describe "Home page" do
-    before { visit root_path }
+    include ApplicationHelper
+    before :each do
+      create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id ) 
+      @loc = site.id
+      visit root_path 
+    end
+
     it 'shows content' do
+      stub_const("MIN_PIXI_COUNT", 0)
+      expect(MIN_PIXI_COUNT).to eq(0)
       page.should have_selector('title', text: full_title(''))
       page.should_not have_selector('title', text: '| Home')
       page.should_not have_link 'Sign Up', href: new_user_registration_path
       page.should have_content 'Already have an account?'
       page.should have_link 'Sign In', href: new_user_session_path
-      page.should have_link 'Browse', href: categories_path
+      page.should have_selector('#browse-home', href: categories_path(loc: @loc))
+      page.should have_selector('#home-polaroid', href: categories_path(loc: @loc))
       page.should have_link 'Forgot password?'
       page.should have_link 'How It Works', href: howitworks_path
       page.should have_link 'Help', href: help_path
@@ -34,33 +44,13 @@ describe "Pages" do
       page.should have_selector('#pi-link', href: 'http://www.pinterest.com/pixiboardmagic/')
       page.should have_selector('#ins-link', href: 'http://instagram.com/pixiboard')
     end
-  end
 
-  describe "Browse Stuff" do
-    before do
-      @user = create(:contact_user) 
-      @pixi_user = create(:contact_user, first_name: 'Les', last_name: 'Flynn', email: 'lflynn@pixitest.com') 
-      @category = create :category
-      @listing = create(:listing, title: "Wicker Chair", description: "cool chair for sale", seller_id: @user.id, category_id: @category.id) 
-      create :category, name: 'Computer', category_type: 'sales', status: 'active'
-      create :category, name: 'Stuff', category_type: 'sales', status: 'inactive'
-      create(:listing, title: "Wood Coffee Table", description: "cool table for sale", seller_id: @pixi_user.id) 
-      visit root_path 
-    end
-
-    it 'browses categories' do
-      find_link('Browse').click
-      page.should have_content('Home') 
-      page.should have_content(@category.name_title) 
-      page.should have_content('Computer') 
-    end
-
-    it "clicks on a category and logs in" do
-      find_link('Browse').click
-      click_link @category.name_title
-      page.should have_content 'Pixis'
-      page.should have_content @category.name_title
-      page.should have_content @listing.nice_title
+    it 'changes Browse path' do
+      stub_const("MIN_PIXI_COUNT", 500)
+      expect(MIN_PIXI_COUNT).to eq(500)
+      expect(Listing.active.count).to eq(1)
+      page.should have_selector('#browse-home', href: local_listings_path(loc: @loc))
+      page.should have_selector('#home-polaroid', href: local_listings_path(loc: @loc))
     end
   end
 
@@ -88,7 +78,7 @@ describe "Pages" do
       page.should have_selector('.section-hdr',    text: 'PixiPonders')
       page.should have_selector('.site-logo', href: root_path)
       page.should have_link 'here!', href: contact_path(source: 'support')
-      page.should_not have_link 'Browse', href: categories_path
+      page.should_not have_selector('#browse-home', href: categories_path(loc: @loc))
     end
   end
 
@@ -103,7 +93,7 @@ describe "Pages" do
       page.should have_selector('title', text: full_title('About Us'))
       page.should have_link 'How It Works', href: howitworks_path
       page.should have_link 'Help', href: help_path
-      page.should_not have_link 'Browse', href: categories_path
+      page.should_not have_selector('#browse-home', href: categories_path(loc: @loc))
     end
   end
 
@@ -115,7 +105,7 @@ describe "Pages" do
       page.should_not have_link 'Forgot password?'
       page.should have_selector('.site-logo', href: root_path)
       page.should have_selector('title', text: full_title('Terms'))
-      page.should_not have_link 'Browse', href: categories_path
+      page.should_not have_selector('#browse-home', href: categories_path(loc: @loc))
     end
   end
 
@@ -127,7 +117,7 @@ describe "Pages" do
       page.should_not have_link 'Forgot password?'
       page.should have_selector('.site-logo', href: root_path)
       page.should have_selector('title', text: full_title('Privacy'))
-      page.should_not have_link 'Browse', href: categories_path
+      page.should_not have_selector('#browse-home', href: categories_path(loc: @loc))
     end
   end
 
@@ -143,7 +133,7 @@ describe "Pages" do
       page.should_not have_link 'Sign In', href: new_user_session_path
       page.should have_selector('.site-logo', href: root_path)
       page.should have_selector('title', text: full_title('Privacy'))
-      page.should_not have_link 'Browse', href: categories_path
+      page.should_not have_selector('#browse-home', href: categories_path(loc: @loc))
     end
   end
 
@@ -159,7 +149,7 @@ describe "Pages" do
       page.should have_selector('title', text: full_title('How It Works'))
       page.should have_selector('.pxb-img', visible: true)
       page.should have_selector('.vimeo-thumb', visible: true)
-      page.should_not have_link 'Browse', href: categories_path
+      page.should_not have_selector('#browse-home', href: categories_path(loc: @loc))
     end
   end
 end

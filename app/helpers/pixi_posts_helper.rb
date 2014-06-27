@@ -13,7 +13,7 @@ module PixiPostsHelper
       @post.owner?(@user) ? seller_pixi_posts_path(status: 'active') : can?(:manage_items, @user) ? pixi_posts_path(status: 'active') : 
         pixter_pixi_posts_path(status: 'scheduled')
     else
-      root_path
+      get_home_path
     end
   end
 
@@ -28,9 +28,11 @@ module PixiPostsHelper
 
   # define menu access
   def access_pxp_admin_menu?
-    if %w(edit show).detect {|x| action_name == x} 
+    if %w(edit show).detect {|x| action_name == x}
       !@post.owner?(@user) && !@user.is_pixter?
     elsif action_name == 'index' && can?(:manage_items, @user)
+      true
+    elsif action_name == 'pixter_report' && can?(:manage_items, @user)
       true
     else
       false

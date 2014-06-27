@@ -2,20 +2,13 @@
   <div class='row'>
     <div class='float-left width360 sm-bot'>
       <% if linkFlg %>
-        <%= link_to image_tag('px_word_logo.png', class: 'px-logo'), root_path, class: 'site-logo' %>
+        <%= link_to image_tag('px_word_logo.png', class: 'px-logo'), get_home_path, class: 'site-logo' %>
       <% else %>
         <%= image_tag 'px_word_logo.png', class: 'px-logo' %>
       <% end %>
     </div>
-    <div class='mtop nav pull-right'>
-      <%= link_to 'Browse', categories_path, class: 'width120 browse-link' if home_page? %>
-      <%= link_to 'Sign Up', new_user_registration_path, class: 'width120 browse-link' if !home_page? && !signed_in? %>
-      <%= link_to 'Sign In', new_user_session_path, class: 'left-margin browse-link' if !home_page? && !signed_in? %>
-      <%- if devise_mapping.recoverable? && controller_name != 'passwords' && home_page? %>
-        <%= link_to "Forgot password?", new_password_path(resource), class: 'left-margin browse-link' %>
-      <% end -%>
-      <%= link_to 'How It Works', howitworks_path, class: 'left-margin browse-link' unless action_name == 'howitworks' %>
-      <%= link_to 'Help', help_path, class: 'left-margin browse-link' %>
+    <div id='home-pg-hdr' class='mtop nav pull-right'>
+      <%= render 'shared/pg_header_row' %>
     </div>
   </div>
 <% end %>

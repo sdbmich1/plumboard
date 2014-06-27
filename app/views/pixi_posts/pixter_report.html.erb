@@ -1,2 +1,7 @@
-<% provide(:title, 'Pixter Report') %>
-
+<% provide(:title, 'PixiPosts') %>
+<%= content_for :subhead do %>
+    <%= render :partial => 'shared/navbar', locals: { menu_name: 'PixiPosts' } %>
+<% end %>
+<% unless @pixi_posts.nil? %>
+    <%= render :partial => 'shared/pixi_post_pixter_report', locals: { pg_title: 'PixiPosts' } %>
+<% end %>

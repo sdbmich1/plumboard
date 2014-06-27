@@ -1,4 +1,7 @@
 <ul id='nav-site-menu' class="nav pull-right">
+  <%= render partial: 'shared/site_menu', locals: { loc_name: @loc_name, rFlg: false } %>
   <li class='med-top mleft10'><span><%= "Welcome to Pixiboard, #{@user.first_name}!" if @newFlg %></span></li>
 </ul>
-
+<div class="pixi-select pull-right">
+  <%= render partial: 'shared/sites' %>
+</div>

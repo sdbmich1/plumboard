@@ -1,5 +1,6 @@
 class InquiriesController < ApplicationController
   before_filter :authenticate_user!, only: [:index, :show, :edit, :update]
+  before_filter :load_data, only: [:show, :edit, :update, :destroy]
   respond_to :html, :json, :js, :mobile
   layout :page_layout
   
@@ -8,16 +9,7 @@ class InquiriesController < ApplicationController
     @source = params[:source]
   end
 
-  def show
-    @inquiry = Inquiry.find params[:id]
-  end
-
-  def edit
-    @inquiry = Inquiry.find params[:id]
-  end
-
   def update
-    @inquiry = Inquiry.find params[:id]
     @inquiry.update_attributes(params[:inquiry])
     respond_with @inquiry
   end
@@ -34,8 +26,8 @@ class InquiriesController < ApplicationController
     @inquiry = Inquiry.new params[:inquiry]
     respond_with(@inquiry) do |format|
       if @inquiry.save 
-	format.html { redirect_to root_path, notice: 'Your inquiry was successfully submitted.' }
-	format.mobile { redirect_to root_path }
+	format.html { redirect_to get_root_path, notice: 'Your inquiry was successfully submitted.' }
+	format.mobile { redirect_to get_root_path }
         format.json { render json: {inquiry: @inquiry} }
       else
         format.json { render json: { errors: @inquiry.errors.full_messages }, status: 422 }
@@ -44,15 +36,18 @@ class InquiriesController < ApplicationController
   end
 
   def destroy
-    @inquiry = Inquiry.find params[:id]
     @inquiry.destroy
     respond_with(@inquiry)
   end
 
-  private
+  protected
 
   def page_layout
     action_name == 'new' ? 'about' : 'application'
+  end
+
+  def load_data
+    @inquiry = Inquiry.find params[:id]
   end
 
 end

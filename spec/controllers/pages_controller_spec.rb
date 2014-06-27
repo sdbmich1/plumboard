@@ -93,4 +93,37 @@ describe PagesController do
     end
   end
 
+  describe 'xhr GET location_name' do
+    before :each do
+      @loc, @loc_name = 1234, 'SF Bay Area'
+      LocationManager.stub!(:get_region).and_return( [@loc, @loc_name] )
+      do_get
+    end
+
+    def do_get
+      xhr :get, :location_name, loc_name: 'SF'
+    end
+
+    it "should load nothing" do
+      controller.stub!(:render)
+    end
+
+    it "should assign @loc_name" do
+      assigns(:loc_name).should_not be_nil
+    end
+
+    it "should assign @loc" do
+      assigns(:loc).should_not be_nil
+    end
+
+    it "should show the requested location_name" do
+      response.should be_success
+    end
+
+    it "responds to JSON" do
+      get :location_name, :loc_name => 'SF', :format => :json
+      expect(response).to be_success
+    end
+  end
+
 end

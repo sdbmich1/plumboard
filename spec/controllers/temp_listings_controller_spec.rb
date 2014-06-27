@@ -22,9 +22,7 @@ describe TempListingsController do
 
   describe 'GET show/:id' do
     before :each do
-      @photo = stub_model(Picture)
       TempListing.stub!(:find_pixi).and_return( @listing )
-      @listing.stub!(:pictures).and_return( @photo )
     end
 
     def do_get
@@ -44,11 +42,6 @@ describe TempListingsController do
     it "should assign @listing" do
       do_get
       assigns(:listing).should_not be_nil
-    end
-
-    it "should assign @photo" do
-      do_get
-      assigns(:listing).pictures.should_not be_nil
     end
 
     it "show action should render show template" do
@@ -358,9 +351,9 @@ describe TempListingsController do
         assigns(:listing).should_not be_nil 
       end
 
-      it "should render show template" do
+      it "should render nothing" do
         do_submit
-        response.should render_template(:show)
+        controller.stub!(:render)
       end
 
       it "responds to JSON" do

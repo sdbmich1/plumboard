@@ -1,12 +1,11 @@
 <% provide(:title, 'Home') %>
 <%= content_for :subhead do %>
   <div id='nav-home-menu'>
-    <%= render partial: 'shared/navbar', locals: { menu_name: 'Home' } %>
+    <%= render partial: 'shared/navbar', locals: { menu_name: 'Home', loc_name: @loc_name } %>
   </div>
 <% end %>
 
 <%= content_for :content do %>
-  <%= hidden_field_tag 'home_site_name' %>
   <% cache @categories do %>
     <div id="pxboard">
       <%= render partial: 'shared/category', collection: @categories %>

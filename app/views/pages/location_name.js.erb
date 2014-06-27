@@ -1,0 +1,4 @@
+<%= render partial: 'shared/refresh_menu', locals: { rFlg: false } %>
+$("#home-pg-hdr").html("<%= escape_javascript( raw render(partial: 'shared/pg_header_row') ) %>");
+$("#home-pg-pic").html("<%= escape_javascript( raw render(partial: 'shared/home_polaroid') ) %>");
+

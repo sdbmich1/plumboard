@@ -12,9 +12,9 @@ Plumboard::Application.routes.draw do
   end
 
   # resource defs
-  resources :listings, except: [:new, :edit, :update, :create] do
+  resources :listings, except: [:new, :edit, :create] do
     collection do
-      get 'get_pixi_price', 'seller', 'follower', 'sold', 'category', 'local', 'wanted', 'purchased'
+      get 'pixi_price', 'seller', 'follower', 'sold', 'category', 'local', 'wanted', 'purchased'
     end
   end
 
@@ -41,10 +41,10 @@ Plumboard::Application.routes.draw do
 
   resources :pixi_posts do
     collection do
-      get 'seller', 'pixter', :autocomplete_site_name, :autocomplete_user_first_name
+      get 'seller', 'pixter', 'pixter_report',  :autocomplete_site_name, :autocomplete_user_first_name
     end
-    collection do
-      get 'pixter_report'
+    member do
+      get 'reschedule'
     end
   end
 
@@ -98,7 +98,7 @@ Plumboard::Application.routes.draw do
 
   resources :categories do
     collection do
-      get 'inactive', 'manage', :autocomplete_site_name, 'category_type'
+      get 'inactive', 'manage', :autocomplete_site_name, 'category_type', 'location'
     end
   end
 
@@ -124,7 +124,10 @@ Plumboard::Application.routes.draw do
     end
   end
 
-  resources :pages, only: [:index]
+  resources :pages, only: [:index] do
+    get 'location_name', :on => :collection
+  end
+
   resources :pixi_likes, only: [:create, :destroy]
   resources :saved_listings, only: [:create, :index, :destroy]
 

@@ -4,14 +4,17 @@ var pathName = "<%= set_path_parse %>"
 
 <% if params[:page].to_i > 1 %>
   $("#pxboard").append('<%= escape_javascript(render(partial: "#{set_partial_name}")) %>');
-  $('#footer').hide('fast');
 <% else %>  
   $(".item").remove();
   $("#pxboard").html('<%= escape_javascript(render(partial: "#{set_partial_name}")) %>');
 <% end %>  
 
 // update next page link
-$("#px-nav").html("<%= escape_javascript(render(partial: "#{set_init_next_page_path}")) %>");
+<% if model.next_page %>
+  $("#px-nav").html("<%= escape_javascript(render(partial: "#{set_init_next_page_path}")) %>");
+<% else %>
+  $("#px-nav").remove();
+<% end %>
 
 // set next page infinite scroll path
 $('#px-container').infinitescroll({pathParse:[pathName, parms]});
@@ -26,7 +29,7 @@ reload_board(this);
 $('#nearby-map').hide('fast');
 
 // toggle spinner
-$('#spinner').hide(300);
+$('#spinner').hide('fast');
 
 // scroll to top
-$(window).scrollTop(0);
+//$(window).scrollTop(0);

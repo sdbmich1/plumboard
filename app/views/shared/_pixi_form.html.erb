@@ -12,7 +12,7 @@
     </div>
 
     <div class="nav pull-right">
-      <%= link_to 'Cancel', root_path, confirm: msg, class: "btn btn-large" %>
+      <%= link_to 'Cancel', get_home_path, confirm: msg, id: 'pixi-cancel-btn', class: "btn btn-large" %>
       <%= f.submit "Next", class: "btn btn-large btn-primary submit-btn", id: 'build-pixi-btn', data: {disable_with: "Submitting..."} %>
     </div>
   <% end %>
