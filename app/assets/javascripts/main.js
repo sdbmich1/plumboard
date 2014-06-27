@@ -514,7 +514,7 @@ $(document).on("keypress", ".reply_content", function(e){
 
 // submit login form on enter key
 $(document).on("keypress", "#pwd", function(e){
-  keyEnter(e, $(this), '#login-btn');
+  //keyEnter(e, $(this), '#login-btn');
 });
 
 var time_id;

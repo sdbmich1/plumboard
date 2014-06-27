@@ -21,7 +21,7 @@ class RegistrationsController < Devise::RegistrationsController
   end
 
   def after_sign_up_path_for(resource)
-    root_path
+    get_root_path
   end
 
   private

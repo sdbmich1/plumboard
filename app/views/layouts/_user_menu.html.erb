@@ -9,7 +9,7 @@
     <li><%= link_to "My Invoices", sent_invoices_path %></li>
     <li><%= link_to "My Accounts", get_account_path %></li>
     <li><%= link_to "My Settings", settings_path %></li>
-    <% if controller_name == 'listings' %>
+    <% if show_footer_items? %>
       <li class="divider"></li>
       <li><%= link_to "About Pixiboard", about_path %></li>
       <li><%= link_to "Privacy", privacy_path %></li>
