@@ -165,7 +165,7 @@ feature "UserRegistrations" do
     describe "create user" do
       before(:each) do
         visit root_path
-        click_link 'Sign up for free!'
+        click_link 'Connect via email'
       end
 
       it "should create a user" do

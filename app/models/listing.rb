@@ -124,6 +124,11 @@ class Listing < ListingParent
     where(:buyer_id => val)
   end
 
+  # get all active pixis with an end_date less than today and update their statuses to closed
+  def self.close_pixis
+    active.where("end_date < ?", Date.today).update_all(status: 'closed')
+  end
+
   # get invoice
   def get_invoice val
     invoices.where(:id => val).first rescue nil
