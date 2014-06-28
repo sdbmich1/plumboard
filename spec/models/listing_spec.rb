@@ -1115,4 +1115,25 @@ describe Listing do
       end
     end
   end
+
+  describe "close_pixis" do
+    it "should not close pixi if end_date is invalid" do
+      @listing.end_date = nil
+      @listing.save
+      Listing.close_pixis
+      @listing.reload.status.should_not == 'closed'
+    end
+    it "should not close pixi with an end_date >= today" do
+      @listing.end_date = Date.today + 1.days
+      @listing.save
+      Listing.close_pixis
+      @listing.reload.status.should_not == 'closed'
+    end
+    it "should close pixi with an end_date < today" do
+      @listing.end_date = Date.today - 1.days
+      @listing.save
+      Listing.close_pixis
+      @listing.reload.status.should == 'closed'
+    end
+  end
 end
