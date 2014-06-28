@@ -207,13 +207,18 @@ module ApplicationHelper
   end
 
   # check pending status
-  def is_pending?
+  def is_pending? listing
     listing.pending? && controller_name == 'pending_listings'
   end
 
   # build dynamic cache key for pixi show page
   def cache_key_for_pixi_item(listing)
-    path = is_pending? ? 'pending_listings' : %w(new edit).detect {|x| x == listing.status}.blank? ? 'listings' : 'temp_listings'
+    path = is_pending?(listing) ? 'pending_listings' : %w(new edit).detect {|x| x == listing.status}.blank? ? 'listings' : 'temp_listings'
     path + "/#{listing.pixi_id}-user-#{@user.id}-time-{Time.now}"
+  end
+
+  # check for menu display of footer items
+  def show_footer_items?
+    controller_name == 'listings' && %w(index category local).detect {|x| action_name == x} 
   end
 end
