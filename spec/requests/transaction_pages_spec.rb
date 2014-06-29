@@ -237,6 +237,10 @@ feature "Transactions" do
     end
 
     it "sets seller rating", js: true do
+      @site = create :site
+      @loc = @site.id
+      stub_const("MIN_PIXI_COUNT", 0)
+      expect(MIN_PIXI_COUNT).to eq(0)
       expect { 
         credit_card_data '341111111111111', '1234'
         page.should have_content("Purchase Complete")
@@ -246,6 +250,7 @@ feature "Transactions" do
         page.find("#rateit5").click
         page.find('#rating-done-btn').click; sleep 3
       }.to change(Transaction, :count).by(1)
+      page.should have_content "Home" 
     end
   end
 

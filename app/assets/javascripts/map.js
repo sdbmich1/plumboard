@@ -241,13 +241,18 @@ function detectBrowser() {
 
 // get current user location
 function getLocation(nearby){
-  var geoOptions = {maximumAge: 60000, enableHighAccuracy: true, timeout: 30000 };  
+  var geoOptions = {maximumAge: 60000, enableHighAccuracy: true, timeout: 100000 };  
+  if (navigator.geolocation) {
+    console.log("Yes, geolocation is supported.");
+  }
   navigator.geolocation.getCurrentPosition(function(position){ // geoSuccess
 
     // get city name
     getCityName(position.coords.latitude,position.coords.longitude);
   }, 
   function(error){       	              
+    console.log('getLocation failed. ' + error.message);
+    set_home_location('');
     return false;
   }, geoOptions);    
 }
@@ -272,7 +277,10 @@ function getCity(lat, lng) {
   });
 }
 
+// find nearest city based on geocode
 function getCityName(lat, lng) {
+  console.log('lat = ' +  lat);
+  console.log('lng = ' +  lng);
   var latlng = new google.maps.LatLng(lat, lng);
   geocoder = new google.maps.Geocoder();
 
@@ -286,13 +294,21 @@ function getCityName(lat, lng) {
 	  switch(address_component.types[0]) {
 	  case 'locality':
 	    var city_name = address_component.long_name;
+	    console.log('city = ' + city_name);
             $('#home_site_name').val(city_name);
+	    set_home_location(city_name);
 	    break;
 	  default: 
 	    break;
 	  }
 	});
       }
+      else {
+        console.log('No geocoder results found.');
+      }
+    }
+    else {
+      console.log('Geocoder failed due to: ' + status);
     }
   });
 }

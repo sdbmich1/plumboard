@@ -190,6 +190,20 @@ describe Listing do
     it { Listing.get_by_city(@listing.category_id, @listing.site_id, 1).should_not be_empty }
   end
 
+  describe "has_enough_pixis?" do
+    it "returns true" do
+      stub_const("MIN_PIXI_COUNT", 0)
+      expect(MIN_PIXI_COUNT).to eq(0)
+      expect(Listing.has_enough_pixis?(@listing.category_id, @listing.site_id, 1)).to be_true
+    end
+
+    it "returns false" do
+      stub_const("MIN_PIXI_COUNT", 500)
+      expect(MIN_PIXI_COUNT).to eq(500)
+      expect(Listing.has_enough_pixis?(@listing.category_id, 1, 1)).not_to be_true
+    end
+  end
+
   describe "active_by_city" do
     it { Listing.active_by_city(0, 1, 1).should_not include @listing } 
     it "finds active pixis by city" do
@@ -1099,6 +1113,27 @@ describe Listing do
         @listing.event_end_time = nil
         @listing.should_not be_valid
       end
+    end
+  end
+
+  describe "close_pixis" do
+    it "should not close pixi if end_date is invalid" do
+      @listing.end_date = nil
+      @listing.save
+      Listing.close_pixis
+      @listing.reload.status.should_not == 'closed'
+    end
+    it "should not close pixi with an end_date >= today" do
+      @listing.end_date = Date.today + 1.days
+      @listing.save
+      Listing.close_pixis
+      @listing.reload.status.should_not == 'closed'
+    end
+    it "should close pixi with an end_date < today" do
+      @listing.end_date = Date.today - 1.days
+      @listing.save
+      Listing.close_pixis
+      @listing.reload.status.should == 'closed'
     end
   end
 end

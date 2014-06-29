@@ -12,7 +12,7 @@ module LocationManager
   end
 
   # get location id
-  def self.get_loc_id loc_name, zip
+  def self.get_loc_id loc_name, zip=nil
     loc_name ||= zip.to_region(:city => true) if zip
     @loc = Site.find_by_name(loc_name).id rescue nil
   end
@@ -57,5 +57,10 @@ module LocationManager
       end
     end
     @slist || loc
+  end
+
+  # get region
+  def self.get_region loc, range=60
+    Site.get_nearest_region loc, range
   end
 end

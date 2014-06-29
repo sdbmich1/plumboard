@@ -1,6 +1,5 @@
-$("#nav-site-menu").html("<%= escape_javascript( raw render(partial: 'shared/site_menu', locals: { loc_name: @loc_name, rFlg: true }) ) %>");
-$("#search").html("<%= escape_javascript( raw render(partial: 'shared/search') ) %>");
-$("#site_name").val('');
+<%= render partial: 'shared/refresh_menu', locals: { rFlg: true } %>
 $('#pg-title').html('Pixiboard | Pixis');
-<%= render 'shared/reload_board' %>
 
+// reload board
+<%= render partial: 'shared/reload_board', locals: {model: @listings} %>

@@ -334,4 +334,27 @@ describe CategoriesController do
       expect(response).to be_success
     end
   end
+
+  describe 'xhr GET location' do
+    before(:each) do
+      load_categories
+    end
+
+    def do_get
+      xhr :get, :location
+    end
+
+    it "renders the :location view" do
+      response.should render_template :location
+    end
+
+    it "should assign @categories" do
+      assigns(:categories).should == @categories
+    end
+
+    it "loads nothing" do
+      controller.stub!(:render)
+    end
+  end
+
 end

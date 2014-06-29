@@ -1,6 +1,6 @@
 <%= link_to 'Edit', edit_temp_listing_path(listing), class: 'btn btn-large' %>
 <% if listing.edit? %>
-  <%= link_to 'Cancel', root_path, confirm: msg, class: 'btn btn-large' %>
+  <%= link_to 'Cancel', get_home_path, confirm: msg, class: 'btn btn-large' %>
 <% elsif listing.active? %>
   <div class="btn-group">
     <button type="button" class="btn btn-large dropdown-toggle" data-toggle="dropdown">

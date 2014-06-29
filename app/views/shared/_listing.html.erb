@@ -15,8 +15,8 @@
 	  <%= listing.job_type_name %>
 	<% end %>
       </div>
-     <div class='item-dt pixi-grey-bkgnd'>
-       <%= ts_in_words(listing.created_at) %>
+      <div class='item-dt pixi-grey-bkgnd' data-cat-id="<%= listing.category_id %>">
+        <%= link_to listing.category_name, '#', class: 'pixi-cat', 'data-cat-id'=> listing.category_id %>
       </div>
     </div>
   </div>

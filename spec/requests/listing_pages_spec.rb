@@ -363,6 +363,23 @@ feature "Listings" do
       end
     end  
 
+    describe "GET /local" do  
+      let(:category) { FactoryGirl.create :category }
+      let(:site) { FactoryGirl.create :site }
+      let(:listings) { 10.times { FactoryGirl.create(:listing, seller_id: @user.id, category_id: category.id, site_id: site.id) } }
+
+      before(:each) do
+        FactoryGirl.create(:listing, title: "Guitar", seller_id: @user.id, site_id: site.id, category_id: category.id) 
+        visit local_listings_path(cid: category.id, loc: site.id) 
+      end
+      
+      it "views pixi category page" do
+        page.should have_content('Pixis')
+        page.should have_content 'Guitar'
+        page.should_not have_content 'No pixis found'
+      end
+    end  
+
     describe "GET /listings" do  
       let(:temp_listing) { FactoryGirl.create(:temp_listing, title: "Guitar", description: "Lessons", seller_id: @user.id ) }
       let(:listings) { 30.times { FactoryGirl.create(:listing, seller_id: @user.id) } }
@@ -405,15 +422,15 @@ feature "Listings" do
       it "selects a site", js: true do
         fill_autocomplete('site_name', with: 'pixi')
 	set_site_id
-        page.should have_content @listing1.nice_title
-        page.should_not have_content @listing.nice_title
+        page.should have_content @listing1.title
+        page.should_not have_content @listing.title
         page.should have_content @site.name
       end
 
       it "selects categories", js: true do
         select('Music', :from => 'category_id')
         page.should have_content @category.name_title
-        page.should_not have_content @listing1.nice_title
+        page.should_not have_content @listing1.title
         page.should have_content 'Guitar'
       end
     end  
@@ -475,7 +492,7 @@ feature "Listings" do
         page.find('#pending-pixis').click
 	page.should_not have_content @temp_listing.title
 	page.should have_content @pending_listing.title
-	page.should have_content @denied_listing.title
+	page.should_not have_content @denied_listing.title
 	page.should_not have_content @sold_listing.title
 	page.should_not have_content 'No pixis found.'
       end

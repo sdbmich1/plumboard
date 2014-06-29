@@ -163,7 +163,7 @@ p {
   min-height: 100%;
   height: auto !important;
   height: 100%;
-  padding-bottom: 10px;
+  padding-bottom: 60px;
 }
 
 #frame-container {
@@ -174,7 +174,7 @@ p {
 }
 
 #cat-wrap, #home-wrap {
-  min-height: 150%;
+  //min-height: 150%;
   @extend .item-hgt;
 }
 

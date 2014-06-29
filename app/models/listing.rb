@@ -71,7 +71,7 @@ class Listing < ListingParent
   # get active pixis by region
   def self.active_by_region city, state, pg, range=100
     loc = [city, state].join(', ') if city && state
-    active.where(site_id: Contact.proximity(nil, range, loc, true)).paginate(page: pg) if loc rescue nil
+    active.where(site_id: Contact.proximity(nil, range, loc, true)).paginate(page: pg, per_page: 20) if loc rescue nil
   end
 
   # get pixis by city
@@ -101,7 +101,7 @@ class Listing < ListingParent
 
   # get active pixis by site id
   def self.get_by_site sid, pg=1
-    active.where(:site_id => sid).paginate page: pg
+    active.where(:site_id => sid).paginate page: pg, per_page: 20
   end
 
   # get saved list by user
@@ -122,6 +122,11 @@ class Listing < ListingParent
   # find listings by buyer user id
   def self.get_by_buyer val
     where(:buyer_id => val)
+  end
+
+  # get all active pixis with an end_date less than today and update their statuses to closed
+  def self.close_pixis
+    active.where("end_date < ?", Date.today).update_all(status: 'closed')
   end
 
   # get invoice
@@ -190,6 +195,11 @@ class Listing < ListingParent
     saved_listings.where(user_id: usr.id).first
   end
 
+  # return whether region has enough pixis
+  def self.has_enough_pixis? cat, loc, pg=1
+    Listing.get_by_city(cat, loc, pg).size >= MIN_PIXI_COUNT rescue false
+  end
+
   # return wanted users 
   def self.wanted_users pid
     select("users.id, CONCAT(users.first_name, ' ', users.last_name) AS name, users.updated_at, users.created_at")
@@ -222,6 +232,8 @@ class Listing < ListingParent
       ['Changed Mind', 'Donated Item', 'Gave Away Item', 'Sold Item']
     end
   end
+
+
 
   # sphinx scopes
   sphinx_scope(:latest_first) {
