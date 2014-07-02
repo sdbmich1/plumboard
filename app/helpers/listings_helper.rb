@@ -198,4 +198,10 @@ module ListingsHelper
     saves = listing.saved_count
     "listings/#{listing.pixi_id}-want-#{wants}-like-#{likes}-save-#{saves}"
   end
+
+  # get region for show pixi display menu
+  def get_current_region listing
+    loc, loc_name = LocationManager::get_region listing.site_name
+    link_to loc_name, category_listings_path(cid: listing.category_id, loc: loc)
+  end
 end

@@ -1,4 +1,6 @@
 <ul class="nav">
-  <%= render partial: 'shared/site_menu', locals: { loc_name: @listing.site_name, rFlg: false } %><span class="mleft10 divider">|</span>
-  <li><%= link_to @listing.category_name, category_listings_path(cid: @listing.category_id, loc: @listing.site_id) %></li>
+  <li><%= get_current_region @listing %></li> <span class="divider">|</span>
+  <li><%= link_to @listing.site_name, category_listings_path(cid: @listing.category_id, loc: @listing.site_id) %></li>
+  <span class="divider">|</span>
+  <li><%= link_to @listing.category_name, '#' %></li>
 </ul>

@@ -37,9 +37,7 @@ class SearchesController < ApplicationController
   end
  
   def load_data
-    @cat = params[:cid]
-    @loc = params[:loc] if params[:loc]
-    @page = params[:page] || 1
+    @cat, @loc, @page = params[:cid], params[:loc], params[:page] || 1
   end
 
   # specify default search location based on user location
