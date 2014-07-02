@@ -67,7 +67,7 @@ class ApplicationController < ActionController::Base
   # set user if signed in 
   def load_settings
     @user = signed_in? ? current_user : User.new
-    @loc ||= LocationManager::get_loc_id(PIXI_LOCALE)
+    @region ||= LocationManager::get_loc_id(PIXI_LOCALE)
   end
 
   # set store path
@@ -135,6 +135,6 @@ class ApplicationController < ActionController::Base
 
   # set root path based on pixi count
   def get_root_path
-    Listing.has_enough_pixis?(@cat, @loc, @page) ? categories_path(loc: @loc) : local_listings_path(loc: @loc)
+    Listing.has_enough_pixis?(@cat, @region, @page) ? categories_path(loc: @region) : local_listings_path(loc: @region)
   end
 end
