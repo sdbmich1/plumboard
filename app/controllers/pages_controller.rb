@@ -23,7 +23,7 @@ class PagesController < ApplicationController
   end
 
   def location_name
-    @loc, @loc_name = LocationManager::get_region params[:loc_name]
+    @region, @loc_name = LocationManager::get_region params[:loc_name]
     respond_with(@loc_name)
   end
 

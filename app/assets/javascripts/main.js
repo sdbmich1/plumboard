@@ -405,7 +405,7 @@ $(document).on("change", "select[id*=pixi_id]", function() {
   var pid = $(this).val();
 
   if (pid.length > 0 && $('#invoice_buyer_id').length > 0) {
-    var url = '/listings/pixi_price?pixi_id=' + pid;
+    var url = '/listings/pixi_price?id=' + pid;
 
     // reset buyer id
     $('#invoice_buyer_id').val('');
