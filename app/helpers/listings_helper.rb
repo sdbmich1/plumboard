@@ -105,7 +105,8 @@ module ListingsHelper
 
   # get host
   def get_host
-    Rails.env.test? || Rails.env.development? ? "localhost.com:3000" : PIXI_WEB_SITE
+    (Rails.env.test? || Rails.env.development?) ? "localhost:3000" :
+        ((Rails.env.staging?) ? "test.pixiboard.com" : PIXI_WEB_SITE)
   end
    
   # set absolute url for current pixi
