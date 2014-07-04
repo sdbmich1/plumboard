@@ -11,7 +11,36 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140531054048) do
+ActiveRecord::Schema.define(:version => 20140701161248) do
+
+  create_table "admins", :force => true do |t|
+    t.string   "email",                  :default => "", :null => false
+    t.string   "encrypted_password",     :default => "", :null => false
+    t.string   "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer  "sign_in_count",          :default => 0
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string   "current_sign_in_ip"
+    t.string   "last_sign_in_ip"
+    t.string   "confirmation_token"
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.string   "unconfirmed_email"
+    t.integer  "failed_attempts",        :default => 0
+    t.string   "unlock_token"
+    t.datetime "locked_at"
+    t.string   "authentication_token"
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
+  end
+
+  add_index "admins", ["authentication_token"], :name => "index_admins_on_authentication_token", :unique => true
+  add_index "admins", ["confirmation_token"], :name => "index_admins_on_confirmation_token", :unique => true
+  add_index "admins", ["email"], :name => "index_admins_on_email", :unique => true
+  add_index "admins", ["reset_password_token"], :name => "index_admins_on_reset_password_token", :unique => true
+  add_index "admins", ["unlock_token"], :name => "index_admins_on_unlock_token", :unique => true
 
   create_table "bank_accounts", :force => true do |t|
     t.string   "token"
@@ -90,6 +119,18 @@ ActiveRecord::Schema.define(:version => 20140531054048) do
   add_index "contacts", ["contactable_id"], :name => "index_contacts_on_contactable_id"
   add_index "contacts", ["contactable_type"], :name => "index_contacts_on_contactable_type"
   add_index "contacts", ["lng", "lat"], :name => "index_contacts_on_long_and_lat"
+
+  create_table "conversations", :force => true do |t|
+    t.string   "pixi_id"
+    t.integer  "user_id"
+    t.integer  "recipient_id"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
+  add_index "conversations", ["pixi_id"], :name => "index_conversations_on_pixi_id"
+  add_index "conversations", ["recipient_id"], :name => "index_conversations_on_recipient_id"
+  add_index "conversations", ["user_id"], :name => "index_conversations_on_user_id"
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0, :null => false
@@ -185,6 +226,15 @@ ActiveRecord::Schema.define(:version => 20140531054048) do
   end
 
   add_index "job_types", ["code"], :name => "index_job_types_on_code"
+
+  create_table "listing_categories", :force => true do |t|
+    t.integer  "category_id"
+    t.integer  "listing_id"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "listing_categories", ["category_id", "listing_id"], :name => "index_listing_categories_on_category_id_and_listing_id"
 
   create_table "listings", :force => true do |t|
     t.string   "title"
@@ -383,13 +433,15 @@ ActiveRecord::Schema.define(:version => 20140531054048) do
   create_table "posts", :force => true do |t|
     t.integer  "user_id"
     t.text     "content"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
     t.string   "pixi_id"
     t.integer  "recipient_id"
     t.string   "msg_type"
+    t.integer  "conversation_id"
   end
 
+  add_index "posts", ["conversation_id"], :name => "index_posts_on_conversation_id"
   add_index "posts", ["msg_type"], :name => "index_posts_on_msg_type"
   add_index "posts", ["pixi_id"], :name => "index_posts_on_pixi_id"
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id_and_created_at", :unique => true
@@ -471,6 +523,15 @@ ActiveRecord::Schema.define(:version => 20140531054048) do
 
   add_index "saved_listings", ["pixi_id", "user_id"], :name => "index_saved_listings_on_pixi_id_and_user_id"
   add_index "saved_listings", ["status"], :name => "index_saved_listings_on_status"
+
+  create_table "saved_pixis", :force => true do |t|
+    t.string   "pixi_id"
+    t.integer  "user_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "saved_pixis", ["pixi_id", "user_id"], :name => "index_saved_pixis_on_pixi_id_and_user_id"
 
   create_table "sessions", :force => true do |t|
     t.string   "session_id", :null => false

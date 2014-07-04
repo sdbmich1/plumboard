@@ -47,6 +47,8 @@ class User < ActiveRecord::Base
   # define message relationships
   has_many :posts, dependent: :destroy
   has_many :incoming_posts, :foreign_key => "recipient_id", :class_name => "Post", :dependent => :destroy
+  has_many :received_conversations, :foreign_key => "recipient_id", :class_name => "Conversation", :dependent => :destroy
+  has_many :sent_conversations, :foreign_key => "user_id", :class_name => "Conversation", :dependent => :destroy
 
   # define invoice relationships
   has_many :invoices, foreign_key: :seller_id, dependent: :destroy

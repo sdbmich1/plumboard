@@ -8,6 +8,7 @@ class Listing < ListingParent
   attr_accessor :parent_pixi_id
 
   belongs_to :buyer, foreign_key: 'buyer_id', class_name: 'User'
+  has_many :conversations, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :posts, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :invoices, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :comments, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
@@ -167,7 +168,7 @@ class Listing < ListingParent
 
   # return msg count 
   def msg_count
-    posts.size rescue 0
+    conversations.first.posts.size rescue 0
   end
 
   # return whether pixi is liked

@@ -2,7 +2,7 @@ class Post < ActiveRecord::Base
   resourcify
   acts_as_readable :on => :created_at
 
-  attr_accessible :content, :user_id, :pixi_id, :recipient_id, :msg_type
+  attr_accessible :content, :user_id, :pixi_id, :recipient_id, :msg_type, :conversation_id
 
   PIXI_POST = PIXI_KEYS['pixi']['pixi_post']
 
@@ -10,7 +10,9 @@ class Post < ActiveRecord::Base
   belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id"
   belongs_to :recipient, class_name: 'User', foreign_key: :recipient_id
   belongs_to :invoice, foreign_key: 'pixi_id', primary_key: 'pixi_id'
+  belongs_to :conversation
 
+  validates :conversation_id, :presence => true
   validates :content, :presence => true 
   validates :user_id, :presence => true
   validates :pixi_id, :presence => true
@@ -97,8 +99,18 @@ class Post < ActiveRecord::Base
   # add post for invoice creation or payment
   def self.add_post inv, listing, sender, recipient, msg, msgType=''
     if sender && recipient
+
+      #find the corresponding conversation
+      conv = Conversation.find(:first, :conditions => ["pixi_id = ? AND recipient_id = ? AND user_id = ?",
+                                                       inv.pixi_id, recipient, sender]) rescue nil
+
+      # create new conversation if one doesn't already exist
+      if conv.blank?
+        conv = listing.conversations.create pixi_id: listing.pixi_id, user_id: sender, recipient_id: recipient
+      end
+
       # new post
-      post = listing.posts.build recipient_id: recipient, user_id: sender, msg_type: msgType
+      post = conv.posts.build recipient_id: recipient, user_id: sender, msg_type: msgType, pixi_id: conv.pixi_id
 
       # set amount format
       amt = "%0.2f" % inv.amount

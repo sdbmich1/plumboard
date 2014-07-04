@@ -41,6 +41,7 @@ describe Listing do
   it { should respond_to(:user) }
   it { should respond_to(:site) }
   it { should respond_to(:posts) }
+  it { should respond_to(:conversations) }
   it { should respond_to(:invoices) }
   it { should respond_to(:site_listings) }
   it { should respond_to(:transaction) }
@@ -847,7 +848,8 @@ describe Listing do
 
     it "has messages" do
       @recipient = FactoryGirl.create :pixi_user
-      @post = @listing.posts.create user_id: @user.id, recipient_id: @recipient.id
+      @conversation = @listing.conversations.create FactoryGirl.attributes_for :conversation, user_id: @user.id, recipient_id: @recipient.id
+      @post = @conversation.posts.create FactoryGirl.attributes_for :post, user_id: @user.id, recipient_id: @recipient.id, conversation_id: @conversation.id, pixi_id: @listing.pixi_id
       expect(@listing.msg_count).to eq(1)
     end
   end

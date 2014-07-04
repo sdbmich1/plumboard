@@ -192,6 +192,11 @@ FactoryGirl.define do
     recipient
   end
 
+  factory :conversation do
+    user
+    recipient
+  end
+
   factory :invoice do
     comment		'stuff'
     quantity		2

@@ -52,6 +52,8 @@ describe User do
     it { should respond_to(:active_pixi_posts) }
     it { should respond_to(:pixan_pixi_posts) }
 
+    it { should have_many(:received_conversations).class_name('Conversation').with_foreign_key('recipient_id') }
+    it { should have_many(:sent_conversations).class_name('Conversation').with_foreign_key('user_id') }
     it { should have_many(:active_listings).class_name('Listing').with_foreign_key('seller_id')
       .conditions("status='active' AND end_date >= curdate()") }
     it { should have_many(:pixi_posted_listings).class_name('Listing').with_foreign_key('seller_id')
@@ -68,7 +70,7 @@ describe User do
     it { should respond_to(:preferences) }
     it { should have_many(:preferences).dependent(:destroy) }
     it { should accept_nested_attributes_for(:preferences).allow_destroy(true) }
-    it { should belong_to(:user_type).with_foreign_key('code') }
+    it { should belong_to(:user_type).with_foreign_key('user_type_code') }
 
     it { should respond_to(:unpaid_invoice_count) } 
     it { should respond_to(:has_unpaid_invoices?) } 
@@ -660,13 +662,13 @@ describe User do
     let(:listing) { FactoryGirl.create :listing, seller_id: @user.id }
     let(:newer_listing) { FactoryGirl.create :listing, seller_id: @user.id }
     let(:recipient) { FactoryGirl.create :pixi_user, first_name: 'Wilson' }
-
+    let(:conversation) { FactoryGirl.create :conversation, user: @user, recipient: recipient, listing: listing, pixi_id: listing.pixi_id }
     let!(:older_post) do 
-      FactoryGirl.create(:post, user: @user, recipient: recipient, listing: listing, pixi_id: listing.pixi_id, created_at: 1.day.ago)
+      FactoryGirl.create(:post, user: @user, recipient: recipient, listing: listing, pixi_id: listing.pixi_id, created_at: 1.day.ago, conversation_id: conversation.id, conversation: conversation)
     end
 
     let!(:newer_post) do
-      FactoryGirl.create(:post, user: @user, recipient: recipient, listing: newer_listing, pixi_id: newer_listing.pixi_id, created_at: 1.hour.ago)
+      FactoryGirl.create(:post, user: @user, recipient: recipient, listing: newer_listing, pixi_id: newer_listing.pixi_id, created_at: 1.hour.ago, conversation_id: conversation.id, conversation: conversation)
     end
 
     it "should have the right posts in the right order" do
@@ -702,4 +704,6 @@ describe User do
       csv.should include headers.join(',')
     end
   end
+
+
 end

@@ -6,7 +6,8 @@ describe Post do
     @recipient = FactoryGirl.create :pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tom.davis@pixitest.com'
     @buyer = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Smith', email: 'jack.smith99@pixitest.com'
     @listing = FactoryGirl.create :listing, seller_id: @user.id, title: 'Big Guitar'
-    @post = @listing.posts.build FactoryGirl.attributes_for :post, user_id: @user.id, recipient_id: @recipient.id
+    @conversation = @listing.conversations.create FactoryGirl.attributes_for :conversation, user_id: @user.id, recipient_id: @recipient.id
+    @post = @conversation.posts.create FactoryGirl.attributes_for :post, user_id: @user.id, recipient_id: @recipient.id, pixi_id: @listing.pixi_id
   end
    
   subject { @post }
@@ -20,6 +21,8 @@ describe Post do
   it { should respond_to(:listing) }
   it { should respond_to(:recipient) }
   it { should respond_to(:invoice) }
+  it { should respond_to(:conversation) }
+  it { should respond_to(:conversation_id) }
 
   describe "when content is empty" do
     before { @post.content = "" }
@@ -145,6 +148,7 @@ describe Post do
     it "should return true" do
       @person = FactoryGirl.create :pixi_user, first_name: 'Jim', last_name: 'Smith', email: 'jim.smith@pixitest.com'
       @invoice = @person.invoices.build FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
+      @conversation2 = @listing.conversations.create FactoryGirl.attributes_for :conversation, user_id: @person.id, recipient_id: @recipient.id
       Post.send_invoice(@invoice, @listing).should be_true
     end
     
@@ -158,14 +162,15 @@ describe Post do
     before do
       @person = FactoryGirl.create :pixi_user, first_name: 'Jim', last_name: 'Smith', email: 'jim.smith@pixitest.com'
       @invoice = @person.invoices.build FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
+      @conversation2 = @listing.conversations.create FactoryGirl.attributes_for :conversation, user_id: @person.id, recipient_id: @recipient.id
     end
     
     it "should return true" do
-      Post.add_post(@invoice, @listing, @person.id, @recipient.id, msg).should be_true
+      Post.add_post(@invoice, @listing, @person.id, @recipient.id, msg, @conversation2).should be_true
     end
     
     it "should not return true" do
-      Post.add_post(@invoice, @listing, @person.id, nil, msg).should_not be_true
+      Post.add_post(@invoice, @listing, @person.id, nil, msg, @conversation2).should_not be_true
     end
   end
 
@@ -279,6 +284,22 @@ describe Post do
     it "returns true" do 
       @post.msg_type = 'approve' 
       expect(@post.system_msg?).not_to be_nil
+    end
+  end
+
+  describe "checking existence of conversation" do
+    it "has a conversation" do
+      puts("Post conversation is #{@post.conversation}")
+      expect(@post.conversation).not_to be_nil
+    end
+
+    it "is invalid without a conversation" do
+      @post.conversation_id = ""
+      @post.should_not be_valid
+    end
+
+    it "is valid with a conversation" do
+      @post.should be_valid
     end
   end
 end
