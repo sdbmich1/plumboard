@@ -187,6 +187,7 @@ describe Post do
     
     it "should not return true when paid" do
       @new_user = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Wilson', email: 'jack.wilson@pixitest.com'
+      @account = @new_user.bank_accounts.create FactoryGirl.attributes_for :bank_account
       @invoice = @new_user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
       @invoice.status = 'paid'
       @invoice.save
@@ -216,7 +217,7 @@ describe Post do
   end
 
   describe "sender name" do 
-    it { @post.sender_name.should == "Joe Blow" } 
+    it { @post.sender_name.should == (@user.first_name + " " + @user.last_name) }
 
     it "does not return sender name" do 
       @post.user_id = 100 
@@ -289,7 +290,6 @@ describe Post do
 
   describe "checking existence of conversation" do
     it "has a conversation" do
-      puts("Post conversation is #{@post.conversation}")
       expect(@post.conversation).not_to be_nil
     end
 
