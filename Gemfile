@@ -82,6 +82,9 @@ gem 'whenever'
 gem "aws-sdk", "~> 1.11.3"
 #gem 'aws-s3', :require => 'aws/s3'
 
+# picture upload for s3
+gem 's3_direct_upload'
+
 # To use debugger
 # gem 'debugger'
 

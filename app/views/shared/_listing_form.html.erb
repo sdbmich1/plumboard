@@ -1,5 +1,4 @@
-
 <% provide(:title, "#{step_name}") %>
 <div id="listing_form">
-  <%= render partial: 'shared/pixi_form' %>
+  <%= render partial: 'shared/pixi_form', locals: { s3Flg: @user.email == 'sbrown@pixiboard.com' } %>
 </div>

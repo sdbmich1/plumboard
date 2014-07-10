@@ -1,14 +1,5 @@
 <%= render partial: 'shared/edit_photo_form', locals: {model: listing, psize: 'sm-thumb', form: f, remove_photo: true } %>
-<div class='row'>
-  <div class='span2'>Add photo(s)</div>
-  <div id='add-pixi-photo' class='span10'>
-    <output id='list'><%= image_tag 'photo-camera.png', class: 'sm-thumb', id: 'pixi-camera-icon' %></output>
-    <div class='clear-all'></div>
-    <div class='width120 clear-left'>
-    <%= render partial: 'shared/photo', locals: { f: f } %>
-    </div>
-  </div>
-</div>
+<%= render partial: 'shared/display_photo_form', locals: { s3Flg: s3Flg } unless s3Flg %>
 <%= render partial: 'shared/listing_seller_fields', locals: { f: f, listing: listing } if listing.pixi_post? && !listing.edit? %>
 <div class='row'>
   <div class='span7'>
@@ -30,7 +21,7 @@
     <%= f.hidden_field :site_id, id: 'site_id', required: true %>
   </div>
   <div class='span2' id='price-fld' style="<%= listing.job? ? 'display:none' : '' %>"><%= f.label :price, 'Price $' %>
-    <%= f.number_field :price, step: 0.01, size: 10, value: num_display(f.object, "price"), class: 'width120', placeholder: 'Ex. 50.00' %>
+    <%= f.text_field :price, step: 0.01, size: 10, value: num_display(f.object, "price"), class: 'width120', placeholder: 'Ex. 50.00' %>
   </div>
   <div class='span2' id='yr-fld' style="<%= !listing.has_year? ? 'display:none' : '' %>"><%= f.label 'Year' %>
     <%= f.select 'year_built', options_for_select(get_year_ary, :selected => listing.year_built), {:prompt => 'Select'}, 
