@@ -1,16 +1,13 @@
+<div class="div-border">
+  <%= render partial: 'shared/display_photo_form', locals: { s3Flg: s3Flg } if s3Flg %>
+  <div id="notice"><%= render partial: 'layouts/flash_messages', flash: flash %></div>
+  <div id="form_errors"><%= render partial: 'shared/error_messages', locals: { :target => @listing } %></div>
   <%= form_for(@listing, html: { multipart: true, id: 'pixi-form' }, data: {validate: 'parsley'}) do |f| %>
-    <div class="div-border">
-      <div id="notice"><%= render partial: 'layouts/flash_messages', flash: flash %></div>
-      <div id="form_errors">
-        <%= render partial: 'shared/error_messages', locals: { :target => @listing } %>
-      </div>
-
-      <%= render partial: 'shared/listing_fields', locals: { f: f, listing: @listing } %>
-      <%= f.hidden_field :start_date, value: Time.now %>
-      <%= f.hidden_field set_poster_id(@listing), value: @user.id %>
-      <%= f.hidden_field :post_ip, value: @user.current_sign_in_ip %>
+    <%= render partial: 'shared/listing_fields', locals: { f: f, listing: @listing, s3Flg: s3Flg } %>
+    <%= f.hidden_field :start_date, value: Time.now %>
+    <%= f.hidden_field set_poster_id(@listing), value: @user.id %>
+    <%= f.hidden_field :post_ip, value: @user.current_sign_in_ip %>
     </div>
-
     <div class="nav pull-right">
       <%= link_to 'Cancel', get_home_path, confirm: msg, id: 'pixi-cancel-btn', class: "btn btn-large" %>
       <%= f.submit "Next", class: "btn btn-large btn-primary submit-btn", id: 'build-pixi-btn', data: {disable_with: "Submitting..."} %>
