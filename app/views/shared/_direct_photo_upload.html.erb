@@ -1,0 +1,11 @@
+<%= s3_uploader_form callback_url: temp_listings_url, callback_param: "temp_listing[pictures_attributes][]", id: "s3-uploader" do %>
+  <label class="cabinet">
+    <%= file_field_tag :file, multiple: true, id: 'photo', class: 'file' %>
+  </label>
+<% end %>
+<script id="template-upload" type="text/x-tmpl">
+  <div id="file-{%=o.unique_id%}" class="upload">
+    {%=o.name%}
+    <div class="progress"><div class="bar" style="width: 0%"></div></div>
+  </div>
+</script>

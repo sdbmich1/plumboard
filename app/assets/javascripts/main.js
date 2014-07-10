@@ -126,6 +126,11 @@ $(document).ready(function(){
     $('a').tooltip();
   }
 
+  // direct s3 uploader
+  if( $('#s3-uploader').length > 0 ) {
+    $("#s3-uploader").S3Uploader();
+  }
+
   // set location
   if( $('#home_site_name').length > 0 ) {
     getLocation(true);
@@ -806,4 +811,13 @@ $(document).on("change", "#cc_card_year", function() {
 // check if dropdown is open to close
 $(document).on("click", ".navbar li a", function() {
   $('li[class="dropdown open"]').removeClass('open');
+});
+	  
+// check s3 upload
+$(document).on("s3_upload_failed s3_uploads_start", "#s3-uploader", function(e, content) {
+  if(e.type == 's3_uploads_start') {
+    console.log('s3 upload started');
+  } else {
+    console.log(content.filename + " failed to upload : " + content.error_thrown);
+  }
 });

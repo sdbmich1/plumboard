@@ -18,7 +18,9 @@
     </span>
 	<br /><br />
 
-	<span style="margin-top:20px;">Let's get on it!</span><br /><br />
+    <%= link_to("Let's get on it", get_pending_listing_url , html_options = {}) %>
+    <br />
+
 	<span>The Pixiboard Team</span><br /><br /> 	
     	<%= render :partial=>'shared/mail_footer' %>
   </body>

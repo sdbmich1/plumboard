@@ -1,7 +1,8 @@
 class UserMailer < ActionMailer::Base
+  include UserMailerHelper
   default from: '"PixiSupport" <support@pixiboard.com>'
 
-  helper :application, :transactions, :listings, :invoices
+  helper :application, :transactions, :listings, :invoices, :pending_listings, :user_mailer
 
   # send receipts to customers
   def send_transaction_receipt transaction
@@ -51,16 +52,10 @@ class UserMailer < ActionMailer::Base
   # send inquiry response to pxb
   def send_inquiry_notice inquiry 
     @inquiry = inquiry
-    # test for enviroment
-    if ((Rails.env == 'development') || (Rails.env == 'staging') || (Rails.env == 'test'))
-      flag = "[ TEST ]"
-    end
-
     # set logo
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
-
     # set message details
-    mail(:to => "support@pixiboard.com", :subject => flag + ' ' + "Pixiboard Inquiry: #{@inquiry.subject}")
+    mail(:to => "support@pixiboard.com", :subject => env_check + ' ' + "Pixiboard Inquiry: #{@inquiry.subject}")
   end
 
   # send payment receipts to sellers
@@ -144,15 +139,11 @@ class UserMailer < ActionMailer::Base
   # send submit response to pxb
   def send_submit_notice listing 
     @listing = listing
-    # test for enviroment
-    if ((Rails.env == 'development') || (Rails.env == 'staging') || (Rails.env == 'test'))
-      flag = "[ TEST ]"
-    end
     # set logo
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     # set message details
-    mail(:to => "support@pixiboard.com", :subject => flag + ' ' + "Pixi Submitted: #{@listing.nice_title}")
+    mail(:to => "support@pixiboard.com", :subject => env_check + ' ' + "Pixi Submitted: #{@listing.nice_title}")
   end
 
   # set logo image
@@ -175,15 +166,11 @@ class UserMailer < ActionMailer::Base
   #send pixi_post submit notice internally
   def send_pixipost_request_internal post
     @post = post
-    # test for enviroment
-    if ((Rails.env == 'development') || (Rails.env == 'staging') || (Rails.env == 'test'))
-      flag = "[ TEST ]"
-    end
     # set logo
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     # set message details
-    mail(:to => "support@pixiboard.com", :subject => flag + ' ' + "PixiPost Request Submitted")
+    mail(:to => "support@pixiboard.com", :subject => env_check + ' ' + "PixiPost Request Submitted")
   end
 
   #send notice that saved pixi is removed

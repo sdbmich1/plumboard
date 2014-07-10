@@ -7,7 +7,7 @@
 	               :end_year => Date.today.year - 100, :use_short_month => true,
 		       :order => [:month, :day, :year], :prompt => true}, {class: 'width120', required: true } %></div>
 <div><%= f.fields_for :preferences do |form| %>
-       <%= form.number_field :zip, placeholder: 'Home Zip', size: 5, id: 'home_zip', required: true %>
+       <%= form.text_field :zip, placeholder: 'Home Zip', size: 5, id: 'home_zip', class: 'width120', required: true %>
      <% end %>
 </div>
 <% if can? :manage_users, user %>
