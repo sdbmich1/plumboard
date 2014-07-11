@@ -128,7 +128,7 @@ $(document).ready(function(){
 
   // direct s3 uploader
   if( $('#s3-uploader').length > 0 ) {
-    $("#s3-uploader").S3Uploader();
+    $("#s3-uploader").S3Uploader({progress_bar_target: $('#uploads_container')});
   }
 
   // set location
@@ -814,10 +814,19 @@ $(document).on("click", ".navbar li a", function() {
 });
 	  
 // check s3 upload
-$(document).on("s3_upload_failed s3_uploads_start", "#s3-uploader", function(e, content) {
-  if(e.type == 's3_uploads_start') {
-    console.log('s3 upload started');
-  } else {
-    console.log(content.filename + " failed to upload : " + content.error_thrown);
+$(document).on("s3_upload_failed s3_uploads_start s3_upload_complete", "#s3-uploader", function(e, content) {
+  switch(e.type) { 
+    case 's3_uploads_start':
+      console.log('s3 upload started');
+      $('.ttip').hide('fast');
+      break;
+    case 's3_upload_failed':
+      console.log(content.filename + " failed to upload : " + content.error_thrown);
+      break;
+    case 's3_upload_complete':
+      console.log('s3 upload complete ' + content.url);
+      $('.ttip').show('fast');
+      toggleLoading();
+      break;
   }
 });
