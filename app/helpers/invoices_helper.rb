@@ -78,4 +78,9 @@ module InvoicesHelper
     str = inv.owner?(@user) && action_name == 'show' ? 'Less ' : '' rescue ''
     str + 'Convenience Fee'
   end
+
+  # build dynamic cache key for invoice page
+  def cache_key_for_invoice(invoice)
+    "invoice-#{invoice.id}-user-#{@user.id}-time-{Time.now}"
+  end
 end
