@@ -80,7 +80,7 @@ class ListingsController < ApplicationController
 
   def load_data
     @page, @cat, @loc, @loc_name = params[:page] || 1, params[:cid], params[:loc], params[:loc_name]
-    @loc_name ||= LocationManager::get_loc_name request.remote_ip, @loc, @user.home_zip
+    @loc_name ||= LocationManager::get_loc_name(request.remote_ip, @loc || @region, @user.home_zip)
     @loc ||= LocationManager::get_loc_id(@loc_name, @user.home_zip)
   end
 

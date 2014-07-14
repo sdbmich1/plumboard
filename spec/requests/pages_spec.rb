@@ -28,7 +28,7 @@ describe "Pages" do
       page.should have_link 'Sign In', href: new_user_session_path
       page.should have_selector('#browse-home', href: categories_path(loc: @loc))
       page.should have_selector('#home-polaroid', href: categories_path(loc: @loc))
-      page.should have_link 'Forgot password?'
+      page.should_not have_link 'Forgot password?'
       page.should have_link 'How It Works', href: howitworks_path
       page.should have_link 'Help', href: help_path
       page.should_not have_button 'Sign in'
