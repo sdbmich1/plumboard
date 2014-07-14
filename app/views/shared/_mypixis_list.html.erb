@@ -1,0 +1,11 @@
+<% provide(:title, 'My Pixis') %>
+<%= content_for :subhead do %>
+  <%= render :partial => 'shared/navbar', locals: { menu_name: 'My Pixis' } %>
+<% end %>
+
+<%= content_for :content do %>
+  <div id="pendingOrder">
+    <%= render :partial => 'shared/index_list' %>
+  </div>
+<% end %>
+
