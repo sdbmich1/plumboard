@@ -159,7 +159,7 @@ Plumboard::Application.routes.draw do
   end
 
   # specify root route based on user sign in status
-  root to: 'categories#index', :constraints => lambda {|r| r.env["warden"].authenticate? }
+  root to: 'listings#local', :constraints => lambda {|r| r.env["warden"].authenticate? }
   root to: 'pages#home'
 
   # exception handling

@@ -14,6 +14,7 @@ module LocationManager
   # get location id
   def self.get_loc_id loc_name, zip=nil
     loc_name ||= zip.to_region(:city => true) if zip
+    loc_name ||= PIXI_LOCALE
     @loc = Site.find_by_name(loc_name).id rescue nil
   end
 

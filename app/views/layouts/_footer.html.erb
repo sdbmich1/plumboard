@@ -1,3 +1,4 @@
+<% unless signed_in? %>
 <footer class="footer">
   <% cache fragment: 'footer' do %>
   <small class='sm-top'>
@@ -26,3 +27,4 @@
   </nav>
   <% end %>
 </footer>
+<% end %>
