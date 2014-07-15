@@ -8,6 +8,7 @@ class Conversation < ActiveRecord::Base
   belongs_to :recipient, class_name: 'User', foreign_key: :recipient_id
   belongs_to :invoice, foreign_key: 'pixi_id', primary_key: 'pixi_id'
 
+  # user id is person who starts the conversation and sends first post
   validates :user_id, :presence => true
   validates :pixi_id, :presence => true
   validates :recipient_id, :presence => true

@@ -385,6 +385,11 @@ class User < ActiveRecord::Base
     end
   end
 
+  def get_conversations
+    sent_conversations.push(received_conversations) rescue nil
+  end
+
+
   # set sphinx scopes
    sphinx_scope(:first_name) { 
      {:order => 'first_name, last_name ASC'}

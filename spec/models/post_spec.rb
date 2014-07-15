@@ -302,4 +302,84 @@ describe Post do
       @post.should be_valid
     end
   end
+
+  describe "mapping posts to conversations" do
+    it "doesn't create new conversation when posts have conversation already" do
+      Post.map_posts_to_conversations
+      expect(Conversation.all.count).to eq(1)
+    end
+
+    it "doesn't create new conversation when one already exists" do
+      @post.conversation_id = nil
+      @post.save(:validate => false)
+      Post.map_posts_to_conversations
+      expect(Conversation.all.count).to eql(1)
+    end
+
+    it "finds conversation that post is a part of" do
+      Post.first.conversation_id = nil
+      Post.first.save(:validate => false)
+      Post.map_posts_to_conversations
+      expect(Post.first.conversation_id).to eql(@conversation.id)
+    end
+
+    context "creating new conversations with different listing posts" do
+      before(:each) do
+        @listing2 = FactoryGirl.create :listing, seller_id: @recipient.id, title: 'Small Guitar'
+        @post2 = FactoryGirl.build :post, user_id: @user.id, recipient_id: @recipient.id, pixi_id: @listing2.pixi_id
+        @post2.save(:validate => false)
+        @post.conversation_id = nil
+        @post.save(:validate => false)
+        @conversation.recipient_id = nil
+        @conversation.save(:validate => false)
+        Post.map_posts_to_conversations
+        @conversation2 = Conversation.find(:first, :conditions => ["pixi_id = ? AND recipient_id = ?", @post.pixi_id, 
+                                                                   @post.recipient_id])
+        @post = Post.find(:first, :conditions => ["pixi_id = ?", @post.pixi_id])
+        @post2 = Post.find(:first, :conditions => ["pixi_id = ?", @post2.pixi_id])
+      end
+
+      it "only assigns conversation id to corresponding post" do
+        expect(@post2.conversation_id).to_not eql(@conversation2.id)
+        expect(@post.conversation_id).to eql(@conversation2.id)
+      end
+    end
+
+    context "creating new conversations" do
+      before(:each) do
+        @post2 = FactoryGirl.build :post, user_id: @recipient.id, recipient_id: @user.id, pixi_id: @listing.pixi_id
+        @post2.save(:validate => false)
+        @post.conversation_id = nil
+        @post.save(:validate => false)
+        @conversation.recipient_id = nil
+        @conversation.save(:validate => false)
+        Post.map_posts_to_conversations
+        @post = Post.find(:first, :conditions => ["pixi_id = ?", @post.pixi_id])
+        @post2 = Post.find(:first, :conditions => ["pixi_id = ?", @post2.pixi_id])
+        @conversation2 = Conversation.find(:first, :conditions => ["pixi_id = ? AND recipient_id = ?", @post.pixi_id, 
+                                                                   @post.recipient_id])
+      end
+
+      it "creates new conversation when one doesn't already exist" do
+        expect(Conversation.all.count).to eql(2)
+      end
+
+      it "assigns right conversation ids" do
+        expect(@post.conversation_id).to eql(@post2.conversation_id)
+        expect(@post.conversation_id).to eql(@conversation2.id)
+      end
+
+      it "assigns right user id" do
+        expect(@conversation2.user_id).to eql(@post.user_id)
+      end
+
+      it "assigns right recipient id" do
+        expect(@conversation2.recipient_id).to eql(@post.recipient_id)
+      end
+      
+      it "assigns right pixi id" do
+        expect(@conversation2.pixi_id).to eql(@listing.pixi_id)
+      end
+    end
+  end
 end

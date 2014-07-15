@@ -705,5 +705,35 @@ describe User do
     end
   end
 
+  describe "get conversations" do
+    before(:each) do
+      @user = FactoryGirl.create :pixi_user
+      @recipient = FactoryGirl.create :pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tom.davis@pixitest.com'
+      @buyer = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Smith', email: 'jack.smith99@pixitest.com'
+      @listing = FactoryGirl.create :listing, seller_id: @user.id, title: 'Big Guitar'
+      @listing2 = FactoryGirl.create :listing, seller_id: @recipient.id, title: 'Small Guitar'
+      @conversation = @listing.conversations.create FactoryGirl.attributes_for :conversation, user_id: @recipient.id, recipient_id: @user.id
+      @conversation2 = @listing2.conversations.create FactoryGirl.attributes_for :conversation, user_id: @user.id, recipient_id: @recipient.id 
+      @post = @conversation.posts.create FactoryGirl.attributes_for :post, user_id: @recipient.id, recipient_id: @user.id, pixi_id: @listing.pixi_id
+      @post2 = @conversation2.posts.create FactoryGirl.attributes_for :post, user_id: @user.id, recipient_id: @recipient.id, pixi_id: @listing2.pixi_id
 
+    end
+
+    it "gets all conversations for user" do
+      expect(@user.get_conversations.count).to eql(2)
+    end
+
+    it "gets right sent conversations for user" do
+      expect(@user.get_conversations).to include(@conversation2)
+    end
+
+    it "gets right received conversations for user" do
+      expect(@user.get_conversations).to include(@conversation)
+    end
+
+    it "gets no conversations when there are none" do
+      Conversation.destroy_all
+      expect(@user.get_conversations).to eql([])
+    end
+  end
 end
