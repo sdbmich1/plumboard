@@ -229,6 +229,7 @@ feature "UserSignins" do
         page.should have_link('Categories', href: manage_categories_path)
         page.should have_link('Transactions', href: transactions_path)
         page.should have_link('Users', href: users_path)
+        page.should have_link('Pixis', href: listings_path)
 	user_menu_items true
       end
 
@@ -254,6 +255,7 @@ feature "UserSignins" do
         page.should_not have_link('Transactions', href: transactions_path)
         page.should_not have_link('Users', href: users_path)
         page.should have_link('For Seller', href: new_temp_listing_path(pixan_id: @user))
+        page.should_not have_link('Pixis', href: listings_path)
 	user_menu_items true
       end
 
@@ -280,6 +282,7 @@ feature "UserSignins" do
         page.should_not have_link('Transactions', href: transactions_path)
         page.should_not have_link('Users', href: users_path)
         page.should have_link('For Seller', href: new_temp_listing_path(pixan_id: @user))
+        page.should_not have_link('Pixis', href: listings_path)
 	user_menu_items true
       end
 
@@ -319,6 +322,7 @@ feature "UserSignins" do
         page.should_not have_link('Categories', href: manage_categories_path)
         page.should_not have_link('Transactions', href: transactions_path)
         page.should_not have_link('Users', href: users_path)
+        page.should_not have_link('Pixis', href: listings_path)
 	user_menu_items
       end
 
@@ -328,5 +332,4 @@ feature "UserSignins" do
       end
     end
   end
-
 end
