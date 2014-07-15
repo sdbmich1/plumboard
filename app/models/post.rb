@@ -191,7 +191,7 @@ class Post < ActiveRecord::Base
   end
 
   def self.map_posts_to_conversations
-    Post.all.each do |post|
+    Post.order.reverse_order.each do |post|
       if post.conversation_id.nil?
     
         # finds if there is already an existing conversation for the post
@@ -207,16 +207,13 @@ class Post < ActiveRecord::Base
         # create new conversation if one doesn't already exist
         if conv.blank?
           listing = Listing.find(:first, :conditions => ["pixi_id = ?", post.pixi_id])
-          conv = listing.conversations.create pixi_id: listing.pixi_id, user_id: post.user_id, recipient_id: post.recipient_id
+          conv = listing.conversations.create pixi_id: post.pixi_id, user_id: post.user_id, recipient_id: post.recipient_id
         end
 
-        # updates all posts where user is sender
-        Post.update_all(["conversation_id = ?", conv.id], ["pixi_id = ? AND recipient_id = ? AND user_id = ?",
-                                                               post.pixi_id, post.recipient_id, post.user_id])
+        # updates post with conversation id
+        post.conversation_id = conv.id
+        post.save
 
-        # updates all posts where user is recipient
-        Post.update_all(["conversation_id = ?", conv.id], ["pixi_id = ? AND recipient_id = ? AND user_id = ?",
-                                                               post.pixi_id, post.user_id, post.recipient_id])
       end
     end
   end

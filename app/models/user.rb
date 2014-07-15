@@ -386,7 +386,7 @@ class User < ActiveRecord::Base
   end
 
   def get_conversations
-    sent_conversations.push(received_conversations) rescue nil
+    sent_conversations + received_conversations rescue nil
   end
 
 
