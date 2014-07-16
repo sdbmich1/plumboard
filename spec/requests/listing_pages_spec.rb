@@ -4,11 +4,15 @@ feature "Listings" do
   subject { page }
   
   let(:user) { FactoryGirl.create(:contact_user) }
+  let(:pixter) { FactoryGirl.create :pixter, user_type_code: 'PT', confirmed_at: Time.now }
+  let(:admin) { FactoryGirl.create :admin, confirmed_at: Time.now }
   let(:site) { FactoryGirl.create :site }
   let(:site_contact) { site.contacts.create FactoryGirl.attributes_for(:contact) }
   let(:temp_listing) { FactoryGirl.create(:temp_listing, title: "Guitar", description: "Lessons", seller_id: user.id ) }
   let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id,
     site_id: site.id) }
+  let(:pixi_post_listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, 
+    pixan_id: pixter.id, site_id: site.id) }
 
   def init_setup usr
     login_as(usr, :scope => :user, :run_callbacks => false)
@@ -17,6 +21,20 @@ feature "Listings" do
 
   def set_site_id
     page.execute_script %Q{ $('#site_id').val("#{@site.id}") }
+  end
+  
+  def pixi_edit_access listing
+    page.should have_content "Posted By: #{listing.seller_name}"
+    page.should have_link 'Want', href: '#'
+    page.should have_link 'Cool'
+    page.should_not have_link 'Uncool'
+    page.should have_link 'Save'
+    page.should_not have_link 'Unsave'
+    page.should have_selector('#fb-link')
+    page.should have_selector('#tw-link')
+    page.should have_selector('#pin-link')
+    page.should have_button 'Remove'
+    page.should have_link 'Edit', href: edit_temp_listing_path(listing)
   end
 
   def add_region
@@ -74,15 +92,17 @@ feature "Listings" do
     before(:each) do
       pixi_user = FactoryGirl.create(:pixi_user)
       init_setup pixi_user
-      visit listing_path(listing) 
+      visit listing_path(pixi_post_listing) 
     end
 
     it "Contacts a seller", js: true do
       expect{
+          page.should have_link 'Want'
+          page.should have_link 'Cool'
           page.find('#want-btn').click
 	  # page.execute_script("$('#post_form').toggle();")
           page.should have_selector('#contact_content', visible: true) 
-      	  fill_in 'contact_content', with: "I'm interested in this pixi. Please contact me.\n"
+      	  fill_in 'contact_content', with: "I'm love this pixi. Please contact me.\n"
 	  sleep 3
           page.should_not have_link 'Want'
           page.should have_content 'Want'
@@ -93,7 +113,7 @@ feature "Listings" do
 	  sleep 3
       }.to change(Comment,:count).by(1)
 
-      page.should have_content "Comments (#{listing.comments.size})"
+      page.should have_content "Comments (#{pixi_post_listing.comments.size})"
       page.should have_content "Great pixi. I highly recommend it." 
       page.should have_content @user.name 
       expect(page).not_to have_field('#comment_content', with: 'Great pixi')
@@ -259,6 +279,28 @@ feature "Listings" do
       page.should have_link 'Gave Away Item', href: listing_path(listing, reason: 'Gave Away Item')
       page.should have_link 'Sold Item', href: listing_path(listing, reason: 'Sold Item')
       page.should have_link 'Edit', href: edit_temp_listing_path(listing)
+    end
+  end
+
+  describe "Pixter-viewed Pixi" do 
+    before(:each) do
+      init_setup pixter
+      visit listing_path(pixi_post_listing) 
+    end
+
+    it "views pixi page" do
+      pixi_edit_access pixi_post_listing
+    end
+  end
+
+  describe "Admin-viewed Pixi" do 
+    before(:each) do
+      init_setup admin
+      visit listing_path(listing) 
+    end
+
+    it "views pixi page" do
+      pixi_edit_access listing
     end
   end
 

@@ -411,12 +411,15 @@ describe TempListing do
   describe "editable" do 
     before do
       @pixter = create :pixi_user, user_type_code: 'PT'
+      @admin = create :admin, confirmed_at: Time.now
       @user2 = FactoryGirl.create(:pixi_user, first_name: 'Lisa', last_name: 'Harden', email: 'lisaharden@pixitest.com') 
       @temp_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id, pixan_id: @pixter.id) 
     end
 
     it "is editable" do 
       @temp_listing.editable?(@pixter).should be_true 
+      @temp_listing.editable?(@user).should be_true 
+      @temp_listing.editable?(@admin).should be_true 
     end
 
     it "is not editable" do 
