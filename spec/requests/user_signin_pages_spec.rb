@@ -17,22 +17,6 @@ feature "UserSignins" do
     click_button submit
   end
 
-  def add_region
-    stub_const("PIXI_LOCALE", 'Metro Detroit')
-    @user = FactoryGirl.create :pixi_user, confirmed_at: Time.now 
-    @site1 = create :site, name: 'Detroit', org_type: 'city'
-    @site1.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro', city: 'Detroit', state: 'MI', zip: '48238'
-    @site2 = create :site, name: 'Metro Detroit', org_type: 'region'
-    @site2.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro', city: 'Detroit', state: 'MI', zip: '48238'
-    create(:listing, title: "Guitar", description: "Lessons", seller_id: @user.id, site_id: @site1.id) 
-    @loc = @site1.id
-  end
-
-  def set_const val
-    stub_const("MIN_PIXI_COUNT", val)
-    expect(MIN_PIXI_COUNT).to eq(val)
-  end
-
   def user_menu_items showFlg=false
     page.should have_button('Post')
     page.should have_link('By You', href: new_temp_listing_path)
@@ -60,6 +44,7 @@ feature "UserSignins" do
   describe 'home page' do 
     before do 
       add_region
+      @user = FactoryGirl.create :pixi_user, confirmed_at: Time.now 
       visit new_user_session_path
     end
 
@@ -306,8 +291,8 @@ feature "UserSignins" do
 
     describe 'registered subscriber users' do
       before(:each) do
-        @user = FactoryGirl.create :subscriber, confirmed_at: Time.now 
-        user_login
+        sub = FactoryGirl.create :subscriber, confirmed_at: Time.now 
+        init_setup sub
       end
 
       it 'shows content' do

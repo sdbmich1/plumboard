@@ -5,13 +5,7 @@ describe "Pages" do
   let(:site) { FactoryGirl.create :site }
   subject { page }
 
-  def init_setup usr
-    login_as(usr, :scope => :user, :run_callbacks => false)
-    @user = usr
-  end
-
   describe "Home page" do
-    include ApplicationHelper
     before :each do
       create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id ) 
       @loc = site.id
@@ -19,8 +13,7 @@ describe "Pages" do
     end
 
     it 'shows content' do
-      stub_const("MIN_PIXI_COUNT", 0)
-      expect(MIN_PIXI_COUNT).to eq(0)
+      set_const 0
       page.should have_selector('title', text: full_title(''))
       page.should_not have_selector('title', text: '| Home')
       page.should_not have_link 'Sign Up', href: new_user_registration_path
@@ -46,8 +39,7 @@ describe "Pages" do
     end
 
     it 'changes Browse path' do
-      stub_const("MIN_PIXI_COUNT", 500)
-      expect(MIN_PIXI_COUNT).to eq(500)
+      set_const 500
       expect(Listing.active.count).to eq(1)
       page.should have_selector('#browse-home', href: local_listings_path(loc: @loc))
       page.should have_selector('#home-polaroid', href: local_listings_path(loc: @loc))

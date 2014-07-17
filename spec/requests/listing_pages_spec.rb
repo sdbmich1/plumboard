@@ -14,11 +14,6 @@ feature "Listings" do
   let(:pixi_post_listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, 
     pixan_id: pixter.id, site_id: site.id) }
 
-  def init_setup usr
-    login_as(usr, :scope => :user, :run_callbacks => false)
-    @user = usr
-  end
-
   def set_site_id
     page.execute_script %Q{ $('#site_id').val("#{@site.id}") }
   end
@@ -35,17 +30,6 @@ feature "Listings" do
     page.should have_selector('#pin-link')
     page.should have_button 'Remove'
     page.should have_link 'Edit', href: edit_temp_listing_path(listing)
-  end
-
-  def add_region
-    stub_const("PIXI_LOCALE", 'Metro Detroit')
-    @usr = FactoryGirl.create :pixi_user, confirmed_at: Time.now 
-    @site1 = create :site, name: 'Detroit', org_type: 'city'
-    @site1.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro', city: 'Detroit', state: 'MI', zip: '48238'
-    @site2 = create :site, name: 'Metro Detroit', org_type: 'region'
-    @site2.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro', city: 'Detroit', state: 'MI', zip: '48238'
-    @pixi = create(:listing, title: "Guitar", description: "Lessons", seller_id: @usr.id, site_id: @site1.id) 
-    @loc = @site1.id
   end
 
   describe "Opens Pixi View" do 
@@ -85,6 +69,43 @@ feature "Listings" do
       page.should_not have_content "End Time: #{short_time(@pixi.event_end_time)}"
       page.should have_content "Price: "
       page.should_not have_content "Compensation: #{(@pixi.compensation)}"
+    end
+  end
+
+  describe "Non-signed in user" do
+    before(:each) do
+      visit listing_path(pixi_post_listing) 
+    end
+     
+    it "does not contact a seller", js: true do
+      expect{
+          page.find('#want-btn').click
+      	  fill_in 'contact_content', with: "I'm love this pixi. Please contact me.\n"
+      }.not_to change(Post,:count).by(1)
+      page.should have_content 'Sign in'
+    end
+
+    it "does not add Cool", js: true do
+      expect{
+          page.find('#cool-btn').click
+          page.should_not have_link 'Uncool'
+      }.not_to change(PixiLike,:count).by(1)
+      page.should have_content 'Sign in'
+    end
+
+    it "does not add Save", js: true do
+      expect{
+          page.find('#save-btn').click
+          page.should_not have_link 'Unsave'
+      }.not_to change(SavedListing,:count).by(1)
+      page.should have_content 'Sign in'
+    end
+
+    it "does not add comment", js: true do
+      expect{
+      	  fill_in 'comment_content', with: "Great pixi. I highly recommend it.\n" 
+      }.not_to change(Comment,:count).by(1)
+      page.should have_content 'Sign in'
     end
   end
 
