@@ -84,9 +84,9 @@ $(document).on("ajax:complete", '#mark-posts, #post-frm, #comment-doc, .pixi-cat
 // handle 401 ajax error
 $(document).ajaxError( function(e, xhr, options){
   if(xhr.status == 401)
+      console.log('in 401 status error handler');
       // window.location.replace('/users/sign_in');
-      //console.log('in 401 status error handler');
-      window.location.reload();
+      location.reload();
 });	
 
 // process slider
@@ -509,7 +509,7 @@ var keyPress = false;
 
 // submit contact form on enter key
 $(document).on("keypress", "#contact_content", function(e){ 
-   keyEnter(e, $(this), '#contact-btn');
+  keyEnter(e, $(this), '#contact-btn');
 });
 
 // submit comment form on enter key
@@ -736,6 +736,7 @@ function get_item_size() {
 // process Enter key
 function keyEnter(e, $this, str) {
   if (e.keyCode == 13 && !e.shiftKey && !keyPress) {
+    toggleLoading();
     keyPress = true;
     e.preventDefault();
 
