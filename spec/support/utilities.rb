@@ -45,3 +45,25 @@
   def get_invoice_total inv
     inv.owner?(@user) ? inv.amount : inv.amount + inv.get_fee rescue 0
   end
+
+  # add regoin for specs
+  def add_region
+    stub_const("PIXI_LOCALE", 'Metro Detroit')
+    @usr = FactoryGirl.create :pixi_user, confirmed_at: Time.now 
+    @site1 = create :site, name: 'Detroit', org_type: 'city'
+    @site1.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro', city: 'Detroit', state: 'MI', zip: '48238'
+    @site2 = create :site, name: 'Metro Detroit', org_type: 'region'
+    @site2.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro', city: 'Detroit', state: 'MI', zip: '48238'
+    @pixi = create(:listing, title: "Guitar", description: "Lessons", seller_id: @usr.id, site_id: @site1.id) 
+    @loc = @site1.id
+  end
+
+  def init_setup usr
+    login_as(usr, :scope => :user, :run_callbacks => false)
+    @user = usr
+  end
+
+  def set_const val
+    stub_const("MIN_PIXI_COUNT", val)
+    expect(MIN_PIXI_COUNT).to eq(val)
+  end

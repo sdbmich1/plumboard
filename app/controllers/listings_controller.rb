@@ -87,7 +87,7 @@ class ListingsController < ApplicationController
   end
 
   def add_points
-    PointManager::add_points @user, 'vpx'
+    PointManager::add_points @user, 'vpx' if signed_in?
   end
 
   def load_comments

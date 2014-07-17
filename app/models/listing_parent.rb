@@ -205,7 +205,7 @@ class ListingParent < ActiveRecord::Base
 
   # verify pixi can be edited
   def editable? usr
-    (seller?(usr) || pixter?(usr)) && !sold?
+    (seller?(usr) || pixter?(usr) || usr.has_role?(:admin)) && !sold?
   end
 
   # get category name for a listing

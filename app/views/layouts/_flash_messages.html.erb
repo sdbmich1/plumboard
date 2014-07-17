@@ -1,6 +1,7 @@
+<div id='flash_notice'>
 <% flash.each do |type, message| %>
   <% unless message.to_s == 'true' || message.blank? %>
-    <div class="mbot alert <%= bootstrap_class_for(type) %> fade in">
+    <div class="mbot alert <-%= bootstrap_class_for(type) %> fade in">
       <button class="close" data-dismiss="alert">
 	<i class="icon-remove-sign"></i>
       </button>
@@ -8,3 +9,4 @@
     </div>
   <% end %>
 <% end %>
+</div>
