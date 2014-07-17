@@ -226,6 +226,10 @@ describe Listing do
       Listing.get_by_seller(1).should_not be_empty  
     end
 
+    it "gets all listings for admin" do
+      Listing.get_by_seller(0, true).should_not be_empty
+    end
+
     it { Listing.get_by_seller(0).should_not include @listing } 
   end
 
