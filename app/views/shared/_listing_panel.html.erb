@@ -1,10 +1,14 @@
-<% cache cache_key_for_pixi_panel(listing) do %>
-  <%= link_to_if !listing.user_wanted?(@user), 'Want', '#', class: 'btn btn-primary submit-btn width80', id: 'want-btn', 
-  disabled: listing.user_wanted?(@user), title: 'I want this!' %>
+<div class='v-align'>
+  <% if listing.user_wanted?(@user) %>
+      <%= image_tag 'rsz_check-mark-md.png', class: 'checkmark' %><span class='mleft5'>Want</span>
+  <% else %>
+    <%= link_to 'Want', '#', class: 'btn btn-primary submit-btn width80', id: 'want-btn', title: 'Send private message to owner. I want this!' %>
+  <% end %>
+
   <%= link_to set_item_name(listing, 'like'), set_like_path(listing, listing.pixi_id), method: set_item_method(listing, 'like'), 
     class: 'btn btn-primary btn-mask mleft10', id: 'cool-btn', remote: true, title: 'This is cool!' %>
   <span id='cool-cnt'><%= "(#{nth(listing.liked_count)})" %></span>
   <%= link_to set_item_name(listing, 'saved'), set_saved_path(listing, listing.pixi_id), method: set_item_method(listing, 'saved'), 
     class: 'btn btn-primary btn-mask mleft10', id: 'save-btn', remote: true, title: 'Save this for later!' %>
-<% end %>
+</div>
 
