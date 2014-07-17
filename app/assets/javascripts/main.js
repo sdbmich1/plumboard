@@ -484,14 +484,25 @@ $(document).on('click', '#edit-card-btn', function(e) {
 // toggle contact form for show pixi
 $(document).on('click', '#want-btn', function(e) {
   var fld = '#contact_content';
+  var txt;
   $('#post_form').toggle();
 
   // set focus on fld
   $(fld).focus();
   $(fld).val($(fld).val());
 
+  // toggle button display
+  if ($(this).text() == 'Want') {
+    txt = 'Unwant';
+    $(this).removeClass('submit-btn width80').addClass('btn-mask');
+  }
+  else {
+    txt = 'Want';
+    $(this).removeClass('btn-mask').addClass('submit-btn width80');
+  }
+
   // toggle button name
-  $(this).text($(this).text() == 'Want' ? 'Unwant' : 'Want');
+  $(this).text(txt);
 });
 
 var keyPress = false; 

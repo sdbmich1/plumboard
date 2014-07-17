@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 feature "Categories" do
+  let(:user) { FactoryGirl.create(:pixi_user) }
+  let(:site) { FactoryGirl.create :site }
   subject { page }
 
   before(:each) do
@@ -9,9 +11,8 @@ feature "Categories" do
     FactoryGirl.create :category, name: 'Stuff', category_type: 'sales', status: 'inactive'
   end
 
-  def init_setup usr
-    login_as(usr, :scope => :user, :run_callbacks => false)
-    @user = usr
+  def page_setup usr
+    init_setup usr
     @listing = FactoryGirl.create :temp_listing, seller_id: @user.id, status: nil
     create :listing, category_id: @category.id, seller_id: @user.id
   end
@@ -24,7 +25,7 @@ feature "Categories" do
   describe "Show Categories" do 
     before do
       user = FactoryGirl.create :admin
-      init_setup user
+      page_setup user
       visit manage_categories_path 
     end
 
@@ -40,8 +41,8 @@ feature "Categories" do
   describe "Home Page w/ Login" do 
     before do
       user = FactoryGirl.create :pixi_user
-      init_setup user
-      visit root_path 
+      page_setup user
+      visit categories_path 
     end
 
     it 'shows content' do
@@ -58,7 +59,7 @@ feature "Categories" do
 
     before(:each) do
       user = FactoryGirl.create :admin
-      init_setup user
+      page_setup user
       visit manage_categories_path 
     end
 
@@ -83,6 +84,7 @@ feature "Categories" do
         expect { 
 	    add_data_w_photo
 	    fill_in 'category_name', with: 'Boat'
+            select('sales', :from => 'category_category_type')
 	    click_button submit; sleep 3
 	}.to change(Category, :count).by(1)
 
