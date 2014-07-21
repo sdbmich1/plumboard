@@ -1,1 +1,15 @@
-<%= render partial: 'shared/index', locals: { page_title: 'Pixis', atype: 'index' } %>
+<% provide(:title, 'Manage Pixis') %>
+<%= content_for :subhead do %>
+  <%= render :partial => 'shared/navbar', locals: { page_title: 'Manage Pixis', atype: 'local', menu_name: 'Manage Pixis' } %>
+<% end %>
+
+<%= content_for :content do %>
+  <div id="pendingOrder">
+    <%= render :partial => 'shared/index_list' %>
+  </div>
+
+  <div id="sm-top">
+    <%= page_entries_info @listings, :model => 'pixis' %>
+  </div> 
+<% end %>
+

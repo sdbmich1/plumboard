@@ -10,10 +10,7 @@ class ListingsController < ApplicationController
   layout :page_layout
 
   def index
-    @categories = Category.active
-    respond_with(@listings = Listing.active_page(@ip, @page)) do |format|
-      format.json { render json: {user: @user, listings: @listings, categories: @categories} }
-    end
+    respond_with(@listings = Listing.active_without_job_type.paginate(page: @page))
   end
 
   def show
@@ -47,11 +44,11 @@ class ListingsController < ApplicationController
   end
 
   def seller
-    respond_with(@listings = Listing.active.get_by_seller(@user).paginate(page: @page))
+    respond_with(@listings = Listing.active_without_job_type.get_by_seller(@user, is_admin?).paginate(page: @page))
   end
 
   def sold
-    respond_with(@listings = Listing.get_by_seller(@user).get_by_status('sold').paginate(page: @page))
+    respond_with(@listings = Listing.get_by_seller(@user, is_admin?).get_by_status('sold').paginate(page: @page))
   end
 
   def wanted
@@ -85,7 +82,7 @@ class ListingsController < ApplicationController
   end
 
   def page_layout
-    %w(index category local).detect {|x| action_name == x} ? 'listings' : mobile_device? ? 'form' : action_name == 'show' ? 'pixi' : 
+    %w(category local).detect {|x| action_name == x} ? 'listings' : mobile_device? ? 'form' : action_name == 'show' ? 'pixi' : 
       'application'
   end
 
@@ -103,5 +100,9 @@ class ListingsController < ApplicationController
 
   def load_city
     @listings = Listing.get_by_city @cat, @loc, @page
+  end
+ 
+  def is_admin?
+    @user.user_type_code == 'AD'
   end
 end

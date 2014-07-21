@@ -6,16 +6,16 @@
   <div class='offset2'>
     <table>
     <tr><td class='span2 center-wrapper'>
-      <%= render partial: 'shared/show_photo', locals: {model: @transaction.get_invoice_listing, psize: '180x180', file_name:'pixi-photo', 
+      <%= render partial: 'shared/show_photo', locals: {model: model.get_invoice_listing, psize: '180x180', file_name:'pixi-photo', 
           display_cnt: 0} %>
     </td><td class='cal-size'>
-      <div class="hdr"><span class='grp-hdr'><%= @transaction.get_invoice_listing.title %></span></div>
+      <div class="hdr"><span class='grp-hdr'><%= model.pixi_title %></span></div>
     </td>
     </tr>
     <tr><td></td><td>
-      <%= render :partial=>'shared/transaction_details', :locals=>{:transaction=>@transaction, :showAmt=>false} %>
+      <%= render partial: 'shared/transaction_details', locals: {transaction: model, showAmt: false} %>
     </td></tr>
     </table>  
   </div>
-  <%= render partial: 'shared/rating_form', locals: { transaction: @transaction } %>
+  <%= render partial: 'shared/rating_form', locals: { transaction: model } %>
 </div>

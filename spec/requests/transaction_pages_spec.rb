@@ -12,9 +12,8 @@ feature "Transactions" do
     FactoryGirl.create :promo_code
   end
 
-  def init_setup usr
-    login_as(usr, :scope => :user, :run_callbacks => false)
-    @user = usr
+  def page_setup usr
+    init_setup usr
     @listing = FactoryGirl.create :temp_listing, seller_id: @user.id, status: nil
   end
 
@@ -138,7 +137,7 @@ feature "Transactions" do
 
   describe "Manage Free Valid Transactions" do
     before(:each) do 
-      init_setup user
+      page_setup user
       visit_free_txn_path 
     end
 
@@ -183,7 +182,7 @@ feature "Transactions" do
 
   describe "Manage Valid Invoice Transactions - new card" do
     before(:each) do
-      init_setup user
+      page_setup user
       visit_inv_txn_path 
       user_data_with_state
     end
@@ -256,7 +255,7 @@ feature "Transactions" do
 
   describe "Invoice Transactions" do
     before(:each) do
-      init_setup user
+      page_setup user
       @acct = @user.card_accounts.create FactoryGirl.attributes_for(:card_account, status: 'active', expiration_year: Date.today.year-1)
       visit_inv_txn_path 
       user_data_with_state
@@ -286,7 +285,7 @@ feature "Transactions" do
   describe "Valid Transaction data w/ existing card" do
     before(:each) do
       usr = FactoryGirl.create(:contact_user) 
-      init_setup usr
+      page_setup usr
       @acct = @user.card_accounts.create FactoryGirl.attributes_for :card_account, card_no: '1111'
       visit_inv_txn_path 
     end
@@ -331,7 +330,7 @@ feature "Transactions" do
   describe "Valid Invoice Transactions w/ existing card" do
     before(:each) do
       usr = FactoryGirl.create(:contact_user) 
-      init_setup usr
+      page_setup usr
       @acct = @user.card_accounts.create FactoryGirl.attributes_for :card_account, card_no: '1111'
       visit new_card_account_path
     end
@@ -365,7 +364,7 @@ feature "Transactions" do
   describe "Invalid Invoice Transactions" do
     before(:each) do
       usr = FactoryGirl.create(:pixi_user) 
-      init_setup usr
+      page_setup usr
       visit_inv_txn_path 
       user_data_with_state
     end
@@ -428,7 +427,7 @@ feature "Transactions" do
   describe "Valid Pixi Transactions" do
     before(:each) do
       usr = FactoryGirl.create(:pixi_user) 
-      init_setup usr
+      page_setup usr
       visit_txn_path 
       user_data_with_state
     end
@@ -444,7 +443,7 @@ feature "Transactions" do
   describe "Manage Invalid Transactions", :js=>true do
     before(:each) do
       usr = FactoryGirl.create(:pixi_user) 
-      init_setup usr
+      page_setup usr
       visit_txn_path 
     end
 

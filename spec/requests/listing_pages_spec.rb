@@ -32,46 +32,6 @@ feature "Listings" do
     page.should have_link 'Edit', href: edit_temp_listing_path(listing)
   end
 
-  describe "Opens Pixi View" do 
-    before(:each) do
-      add_region
-      pixi_user = FactoryGirl.create(:pixi_user)
-      init_setup pixi_user
-      visit listing_path(@pixi) 
-    end
-     
-    it "views pixi page" do
-      page.should have_content @pixi.nice_title
-      page.should have_content "Posted By: #{@pixi.seller_name}"
-      page.should have_selector('.rateit')
-      page.should have_link 'Want', href: '#'
-      page.should have_link 'Cool'
-      page.should_not have_link 'Uncool'
-      page.should have_link 'Save'
-      page.should_not have_link 'Unsave'
-      page.should have_selector('#fb-link')
-      page.should have_selector('#tw-link')
-      page.should have_selector('#pin-link')
-      page.should_not have_link 'Follow', href: '#'
-      page.should_not have_link @pixi.site_name, href: local_listings_path(loc: @pixi.site_id)
-      page.should have_link @site2.name, href: category_listings_path(cid: @pixi.category_id, loc: @site2.id)
-      page.should have_link @pixi.site_name, href: category_listings_path(cid: @pixi.category_id, loc: @pixi.site_id)
-      page.should have_content @pixi.category_name
-      page.should_not have_link 'Back', href: listings_path
-      page.should_not have_button 'Remove'
-      page.should_not have_link 'Edit', href: edit_temp_listing_path(@pixi)
-      page.should have_content "ID: #{@pixi.pixi_id}"
-      page.should have_content "Posted: #{@pixi.display_date(@pixi.start_date)}"
-      page.should have_content "Updated: #{@pixi.display_date(@pixi.updated_at)}"
-      page.should_not have_content "Start Date: #{short_date(@pixi.event_start_date)}"
-      page.should_not have_content "End Date: #{short_date(@pixi.event_end_date)}"
-      page.should_not have_content "Start Time: #{short_time(@pixi.event_start_time)}"
-      page.should_not have_content "End Time: #{short_time(@pixi.event_end_time)}"
-      page.should have_content "Price: "
-      page.should_not have_content "Compensation: #{(@pixi.compensation)}"
-    end
-  end
-
   describe "Non-signed in user" do
     before(:each) do
       visit listing_path(pixi_post_listing) 
@@ -518,7 +478,31 @@ feature "Listings" do
         page.should_not have_content @listing1.title
         page.should have_content 'Guitar'
       end
-    end  
+    end
+
+    describe "Manage Pixis page" do
+      before do
+        @pixi_user = create :pixi_user
+        @admin_user = create :admin
+        @admin_user.user_type_code = 'AD'
+        @admin_user.save
+        @category = create :category, name: 'Music'
+        @site = create :site, name: 'Berkeley'
+        @listing1 = create :listing, seller_id: @pixi_user.id, title: 'Guitar', description: 'Lessons', category_id: @category.id, site_id: @site.id
+      end
+
+      it "views manage pixis page" do
+        init_setup @admin_user
+        visit listings_path
+
+        page.should have_content 'Manage Pixis'
+
+        page.should have_content 'Guitar'
+        page.should have_content 'Lessons'
+        page.should have_content 'Music'
+        page.should have_content 'Berkeley'
+      end
+    end
 
     describe "My pixis page" do
       let(:listings) { 30.times { create(:listing, seller_id: user.id) } }
@@ -577,7 +561,7 @@ feature "Listings" do
         page.find('#pending-pixis').click
 	page.should_not have_content @temp_listing.title
 	page.should have_content @pending_listing.title
-	page.should_not have_content @denied_listing.title
+	page.should have_content @denied_listing.title
 	page.should_not have_content @sold_listing.title
 	page.should_not have_content 'No pixis found.'
       end

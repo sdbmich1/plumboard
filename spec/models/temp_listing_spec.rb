@@ -164,6 +164,10 @@ describe TempListing do
     it { TempListing.get_by_seller(1).should_not be_empty }
   end
 
+  describe "should include all seller listings for admin" do
+    it { TempListing.get_by_seller(0, true).should include @temp_listing }
+  end
+
   describe "should not include incorrect seller listings" do 
     it { TempListing.get_by_seller(0).should_not include @temp_listing } 
   end
