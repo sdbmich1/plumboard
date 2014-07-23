@@ -217,6 +217,7 @@ describe Invoice do
 
     it "should not verify user is owner" do 
       @invoice.owner?(@buyer).should_not be_true 
+      @invoice.owner?(nil).should_not be_true 
     end
   end
 
