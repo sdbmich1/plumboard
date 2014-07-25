@@ -82,7 +82,7 @@ class ListingsController < ApplicationController
   end
 
   def page_layout
-    %w(index category local).detect {|x| action_name == x} ? 'listings' : mobile_device? ? 'form' : action_name == 'show' ? 'pixi' : 
+    %w(category local).detect {|x| action_name == x} ? 'listings' : mobile_device? ? 'form' : action_name == 'show' ? 'pixi' : 
       'application'
   end
 

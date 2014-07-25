@@ -26,18 +26,12 @@ class TransactionsController < ApplicationController
   end
 
   def show
-    @transaction = Transaction.find params[:id]
     @rating = @user.ratings.build
-    respond_with(@transaction) do |format|
-      format.json { render json: {transaction: @transaction} }
-    end
+    respond_with(@transaction = Transaction.find(params[:id]))
   end
 
   def index
-    @transactions = Transaction.all
-    respond_with(@transactions) do |format|
-      format.json { render json: {transactions: @transactions} }
-    end
+    respond_with(@transactions = Transaction.all)
   end
 
   protected
