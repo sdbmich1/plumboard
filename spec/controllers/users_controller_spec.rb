@@ -112,12 +112,13 @@ describe UsersController do
 
   describe "PUT /:id" do
     before (:each) do
-      controller.stub!(:changing_email).and_return(true)
+      controller.stub_chain(:changing_email, :is_profile?).and_return(true)
+      controller.stub!(:match).and_return(true)
       User.stub!(:find).and_return( @user )
     end
 
     def do_update
-      xhr :put, :update, :id => "1", :user => {'first_name'=>'test', 'last_name' => 'test'}
+      xhr :put, :update, :id => "1", :user => {'first_name'=>'test', 'last_name' => 'test'}, target: 'shared/user_form'
     end
 
     context "with valid params" do

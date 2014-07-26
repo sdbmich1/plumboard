@@ -2,12 +2,8 @@ require 'spec_helper'
 
 describe "Users", :type => :feature do
   subject { page }
-  let(:admin) { FactoryGirl.create(:admin, user_type_code: 'PX') }
-
-  def init_setup usr
-    login_as(usr, :scope => :user, :run_callbacks => false)
-    @user = usr
-  end
+  let(:admin) { create(:admin, user_type_code: 'PX') }
+  let(:user) { create(:pixi_user, user_type_code: 'MBR') }
 
   def click_save
     click_on 'Save Changes'; sleep 3
