@@ -252,8 +252,10 @@ $(document).on("click", "#approve-btn, #px-done-btn, #fb-btn", function(showElem
 });
 
 // show spinner on forms with image uploads
-$(document).on("click", "#build-pixi-btn, #register-btn", function(showElem){
-  toggleLoading();
+$(document).on("click", "#build-pixi-btn", function(showElem){
+  var loc = $('#site_id').val(); // grab the selected location 
+  if(checkLocID(loc))
+    toggleLoading();
 });
 
 // reload masonry on ajax calls to swap data
@@ -448,12 +450,17 @@ $(document).on("railsAutocomplete.select", "#site_name", function(event, data){
   if ($('#recent-link').length > 0) {
    resetBoard(); // reset board display
   }
-  else if($('#cat-wrap').length > 0) { 
+  else {
     var loc = $('#site_id').val(); // grab the selected location 
-    console.log('site id = ' + loc);
-    var url = '/categories/location?' + 'loc=' + loc;
-    processUrl(url);
-  } 
+
+    if($('#cat-wrap').length > 0) { 
+      var url = '/categories/location?' + 'loc=' + loc;
+      processUrl(url);
+    } 
+    else {
+      checkLocID(loc);
+    }
+  }
 });
 
 // set autocomplete selection value
@@ -842,3 +849,19 @@ $(document).on("s3_upload_failed s3_uploads_start s3_upload_complete", "#s3-uplo
       break;
   }
 });
+
+// write flash notice on page dynamically
+function postFlashMsg(id, cls, msg) {
+  var str = '<div class="' + cls + '"><button class="close" data-dismiss="alert"><i class="icon-remove-sign"></i></button>' +
+    msg + '</div>';
+  $(id).append(str);
+}
+
+// check if loc id is set
+function checkLocID(loc) {
+  if(loc.length == 0 && $('#pixi-form').length > 0) {
+    postFlashMsg('#form_errors','error', 'Location is invalid');
+    return false;
+  }
+  return true;
+}

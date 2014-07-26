@@ -6,7 +6,7 @@ require 'whenever/capistrano'
 require 'rvm/capistrano'
 require 'delayed/recipes'
 # require 'capistrano/ext/multistage'
-# require 'capistrano/maintenance'
+require 'capistrano/maintenance'
 
 # set stages
 #set :stages, %w(production staging)
