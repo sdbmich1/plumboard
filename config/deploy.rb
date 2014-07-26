@@ -204,7 +204,6 @@ namespace :memcached do
   task :flush, :roles => [:app] do
     # run("cd #{current_path} && rake memcached:flush")
     run "cd #{latest_release} && RAILS_ENV=#{rails_env} rake memcached:flush"
-    Rails.cache.clear
   end
 end
 
