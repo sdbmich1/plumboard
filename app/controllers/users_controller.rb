@@ -25,7 +25,7 @@ class UsersController < ApplicationController
     changing_email = params[:user][:email] != @usr.email
     if @usr.update_attributes(params[:user])
       if is_profile?  
-        redirect_to settings_path, notice: 'Saved changes successfully'
+        redirect_to get_user_path, notice: 'Saved changes successfully'
       else 
         flash.now[:notice] = flash_msg changing_email
         get_user
@@ -73,6 +73,10 @@ class UsersController < ApplicationController
 
   def is_profile?
     !@target.match(/form/).nil?
+  end
+
+  def get_user_path
+    @usr == @user ? settings_path : @usr
   end
 
   def check_permissions
