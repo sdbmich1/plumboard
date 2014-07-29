@@ -3,7 +3,7 @@
   <%= render partial: 'shared/navbar', locals: { menu_name: 'Invoices' } %>
 <% end %>
 <%= content_for :content do %>
-  <% cache @invoice do %>
+  <% cache [@invoice, @user] do %>
     <div id='inv_form'>
       <%= render partial: 'shared/show_invoice', locals: { invoice: @invoice } %>
     </div>

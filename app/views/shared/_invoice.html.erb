@@ -1,4 +1,4 @@
-<% cache invoice do %>
+<% cache cache_key_for_invoice(invoice) do %>
 <tr>
   <td class='span1 center-wrapper'>
     <%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: invoice.listing} %>

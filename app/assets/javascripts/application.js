@@ -35,4 +35,5 @@
 //= require jquery.masonry.ordered
 //= require jquery.rateit.min
 //= require jquery.remotipart
+//= require s3_direct_upload
 //= require_tree .

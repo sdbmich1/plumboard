@@ -1,8 +1,8 @@
   <div class='width120 center-wrapper mbot'>
-    <%= fields_for "temp_listing[pictures_attributes][]", Picture.new, index: nil do |form| %>
-      <label class="cabinet">
-        <%= form.file_field :photo, { id: "photo", multiple: true, class: 'file' } %>
-      </label>
+    <% if s3Flg %>
+      <%= render partial: 'shared/direct_photo_upload' %>
+    <% else %>
+      <%= render partial: 'shared/photo_form' %>
     <% end %>
     <div class='px-neg-top right-form'>
       <%= render partial: 'shared/tooltip', locals: { msg: 'Hold Shift or CTRL key to select multiple images.' } %>

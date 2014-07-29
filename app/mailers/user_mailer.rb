@@ -46,14 +46,16 @@ class UserMailer < ActionMailer::Base
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     # set message details
-    mail(:to => "#{@inquiry.email}", :subject => "Pixiboard Inquiry Recieved!")
+    mail(:to => "#{@inquiry.email}", :subject => "Pixiboard Inquiry Received!")
   end
 
   # send inquiry response to pxb
   def send_inquiry_notice inquiry 
     @inquiry = inquiry
+
     # set logo
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
     # set message details
     mail(:to => "support@pixiboard.com", :subject => env_check + ' ' + "Pixiboard Inquiry: #{@inquiry.subject}")
   end
@@ -139,6 +141,7 @@ class UserMailer < ActionMailer::Base
   # send submit response to pxb
   def send_submit_notice listing 
     @listing = listing
+
     # set logo
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
@@ -148,14 +151,14 @@ class UserMailer < ActionMailer::Base
 
   # set logo image
   def set_logo_image
-    img = { :data => File.read("#{Rails.root.to_s + '/app/assets/images/px_word_logo.png'}"),
-	    :mime_type => "image/png",
-	    :encoding => "base64" }
+    img = { :data => File.read("#{Rails.root.to_s + '/app/assets/images/px_word_logo.png'}"), :mime_type => "image/png", :encoding => "base64" }
   end
+
   # send saved pixi notice
   def send_save_pixi saved_listing
     @listing = saved_listing.listing
     @saved_listing = saved_listing
+
     # set logo
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
@@ -166,6 +169,7 @@ class UserMailer < ActionMailer::Base
   #send pixi_post submit notice internally
   def send_pixipost_request_internal post
     @post = post
+
     # set logo
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
@@ -178,13 +182,11 @@ class UserMailer < ActionMailer::Base
     @listing = saved_listing.listing
     @saved_listing = saved_listing
     @status = @listing.status
+
     #set logo
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     #set message details
     mail(:to => "#{saved_listing.user.email}", :subject => "Saved Pixi is Sold/Removed")
-
   end
-
-
 end

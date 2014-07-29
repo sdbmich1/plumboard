@@ -194,9 +194,17 @@ module ListingsHelper
 
   # build dynamic cache key for pixi show page
   def cache_key_for_pixi_panel(listing)
-    wants = listing.wanted_count
-    likes = listing.liked_count
-    saves = listing.saved_count
-    "listings/#{listing.pixi_id}-want-#{wants}-like-#{likes}-save-#{saves}"
+    if listing
+      wants, likes, saves = listing.wanted_count, listing.liked_count, listing.saved_count
+      "listings/#{listing.pixi_id}-want-#{wants}-like-#{likes}-save-#{saves}-user-#{@user}"
+    else
+      Time.now.to_s
+    end
+  end
+
+  # get region for show pixi display menu
+  def get_current_region listing
+    loc, loc_name = LocationManager::get_region listing.site_name
+    link_to loc_name, category_listings_path(cid: listing.category_id, loc: loc)
   end
 end

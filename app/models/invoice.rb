@@ -83,17 +83,17 @@ class Invoice < ActiveRecord::Base
 
   # check if invoice owner
   def owner? usr
-    seller_id == usr.id
+    seller_id == usr.id rescue false
   end
 
   # check if invoice is paid
   def paid?
-    status == 'paid'
+    status == 'paid' rescue false
   end
 
   # check if invoice is unpaid
   def unpaid?
-    status == 'unpaid'
+    status == 'unpaid' rescue false
   end
 
   # submit payment request for review

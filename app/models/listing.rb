@@ -41,24 +41,29 @@ class Listing < ListingParent
     active.get_by_site(val).count < SITE_FREE_AMT ? true : false rescue nil
   end
 
+  # used to handle pagination settings
+  def self.set_page pg=1
+    paginate page: pg, per_page: MIN_BOARD_AMT
+  end
+
   # paginate
   def self.active_page ip="127.0.0.1", pg=1, range=25
     if Rails.env.development?
-      active.paginate page: pg
+      active.set_page pg
     else
-      active.where(site_id: Contact.proximity(ip, range)).paginate(page: pg)
+      active.where(site_id: Contact.proximity(ip, range)).set_page pg
     end
   end
 
   # get pixis by category id
   def self.get_by_category cid, pg=1
-    active.where(:category_id => cid).paginate page: pg
+    active.where(:category_id => cid).set_page pg
   end
 
   # get pixis by category & site ids
   def self.get_category_by_site cid, sid, pg=1
     unless sid.blank?
-      active.where('category_id = ? and site_id = ?', cid, sid).paginate page: pg
+      active.where('category_id = ? and site_id = ?', cid, sid).set_page pg
     else
       get_by_category cid, pg
     end
@@ -66,13 +71,13 @@ class Listing < ListingParent
 
   # get active pixis by city
   def self.active_by_city city, state, pg=1
-    active.where(site_id: Contact.get_sites(city, state)).paginate(page: pg)
+    active.where(site_id: Contact.get_sites(city, state)).set_page pg
   end
 
   # get active pixis by region
   def self.active_by_region city, state, pg, range=100
     loc = [city, state].join(', ') if city && state
-    active.where(site_id: Contact.proximity(nil, range, loc, true)).paginate(page: pg, per_page: 20) if loc rescue nil
+    active.where(site_id: Contact.proximity(nil, range, loc, true)).set_page(pg) if loc rescue nil
   end
 
   # get pixis by city
@@ -102,7 +107,7 @@ class Listing < ListingParent
 
   # get active pixis by site id
   def self.get_by_site sid, pg=1
-    active.where(:site_id => sid).paginate page: pg, per_page: 20
+    active.where(:site_id => sid).set_page pg
   end
 
   # get saved list by user

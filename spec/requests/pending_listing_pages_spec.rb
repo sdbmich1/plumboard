@@ -30,6 +30,7 @@ describe "PendingListings", :type => :feature do
       page.should_not have_content('Saved')
       page.should have_link 'Active'
       page.should have_link 'Denied'
+      page.should have_link 'Edit', href: edit_temp_listing_path(listing)
       page.should have_link 'Back', href: pending_listings_path(status: 'pending')
       page.should have_button('Deny')
       page.should have_link 'Improper Content', href: deny_pending_listing_path(listing, reason: 'Improper Content')
@@ -43,6 +44,14 @@ describe "PendingListings", :type => :feature do
     it "Returns to pending order list" do
       click_link 'Back'
       page.should have_content("Pending Orders")
+    end
+
+    it 'edits content' do
+      click_link 'Edit'
+      page.should have_selector('.sm-thumb')
+      page.should have_selector('#photo')
+      page.should have_content 'Build Pixi'
+      page.should have_button 'Next'
     end
 
     it 'Approves an order' do
