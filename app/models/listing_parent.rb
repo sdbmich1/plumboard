@@ -297,7 +297,7 @@ class ListingParent < ActiveRecord::Base
   # delete selected photo
   def delete_photo pid, val=1
     # find selected photo
-    pic = self.pictures.find pid
+    pic = self.pictures.where(id: pid).first
 
     # remove photo if found and not only photo for listing
     result = pic && self.pictures.size > val ? self.pictures.delete(pic) : false

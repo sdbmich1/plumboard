@@ -571,6 +571,7 @@ describe TempListing do
     it "should not delete photo" do 
       pic = temp_listing.pictures.first
       temp_listing.delete_photo(pic.id).should_not be_true
+      temp_listing.delete_photo(5000).should_not be_true
     end
 
     it "should delete photo" do 

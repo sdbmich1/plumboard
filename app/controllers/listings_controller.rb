@@ -60,7 +60,7 @@ class ListingsController < ApplicationController
   end
 
   def category
-    @category = Category.find @cat
+    @category = Category.find @cat rescue nil
     respond_with(@listings)
   end
 
@@ -103,6 +103,6 @@ class ListingsController < ApplicationController
   end
  
   def is_admin?
-    @user.user_type_code == 'AD'
+    @user.user_type_code == 'AD' rescue false
   end
 end
