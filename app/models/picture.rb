@@ -135,12 +135,12 @@ class Picture < ActiveRecord::Base
 
   # local processing
   def process_locally?
-    !Rails.env.test? && USE_LOCAL_PIX.ucase == 'YES'
+    !Rails.env.test? && USE_LOCAL_PIX.upcase == 'YES'
   end
 
   # remote processing
   def process_remotely?
-    !Rails.env.test? && USE_LOCAL_PIX.ucase == 'NO'
+    !Rails.env.test? && USE_LOCAL_PIX.upcase == 'NO'
   end
 
 end
