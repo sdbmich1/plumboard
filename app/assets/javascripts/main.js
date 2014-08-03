@@ -7,8 +7,7 @@ $.ajaxSetup({
 	xhr.setRequestHeader("X-CSRF-Token", token);
   	toggleLoading();
     },
-  'complete': function(){ toggleLoading(); },
-  'success': function() { toggleLoading(); }
+  'complete': function(){ toggleLoading(); }
 }); 
 
 // when the #category id field changes
@@ -125,12 +124,6 @@ $(document).ready(function(){
   if( $('.ttip').length > 0 ) {
     $('a').tooltip();
   }
-
-  // direct s3 uploader
-  if( $('#s3-uploader').length > 0 ) {
-    $("#s3-uploader").S3Uploader({progress_bar_target: $('#uploads_container')});
-  }
-
   // set location
   if( $('#home_site_name').length > 0 ) {
     getLocation(true);
@@ -170,6 +163,10 @@ $(document).ready(function(){
   // initialize slider
   load_slider(true);
 
+  // initialize s3 image upload
+  load_image_uploader();
+
+  // init scroll to top
   $('.scrollup').click(function(){
     $("html, body").animate({ scrollTop: 0 }, 600);
     return false;

@@ -1,23 +1,17 @@
 var px_img;
+var style = 'usr-photo';
 
 // preview image on file upload
 $(document).on("change", "input[type=file]", function(evt){
-    var style = 'usr-photo';
 
-    // render image
-    if($('#usr_photo').length == 0) 
-      { 
-        style = 'sm-thumb'; 
-        if($('#pixi-camera-icon').length != 0) {
-	  px_img = $('#list').html();  
-	}
-      }
+  // check if correct style for image
+  checkStyle();
 
-    // clear files
-    $('#list').empty();  
-
+  //  check if s3 upload
+  if($('.js-s3_file_field').length == 0) {
     handleFileSelect(evt, style);  
-    return false;
+  }
+  return false;
 }); 
 
 // used to select files via file api
@@ -40,24 +34,8 @@ function handleFileSelect(evt, style) {
         return function(e) {
 	  var link = '', ctr = '', etype = 'span';
 
-          /* build image preview based on form type
-          if($('#usr_photo').length == 0) {
-	    var btn_cls = 'btn btn-mini btn-primary mtop sm-bot close-image';
-	    ctr = 'med-top no-left span1 center-wrapper left-form';
-	    style += ' mleft15';
-	    link = '<a href="#" class="' + btn_cls + '">Remove';
-	    etype = 'div';
-	  }
-	  */
-
           // Render thumbnail.
-	  var item = document.createElement(etype);
-          item.innerHTML = ['<img class="', style, '" src="', e.target.result,
-		          '" title="', escape(theFile.name), '"/>', link].join('');
-          $(item).addClass(ctr);
-
-	  // add item		  
-          document.getElementById('list').insertBefore(item, null);
+	  renderThumb(style, link, ctr, etype, e.target.result, theFile.name);
         };
       })(f);
 
@@ -76,14 +54,7 @@ $(document).on("click", ".close-image", function(){
     remove_file($(this).prev().prop('title'));
   }
 
-  var cnt = $('#list').children().length;
-  var cntl = ($('#list').children().length > 1) ? true : false;
-  if(!cntl) {
-    $('#list').html(px_img);  
-  }
-  else {
-    console.log('list count = ' + cnt);
-  }
+  check_file_list();
 });
 
 function remove_file(fname) {
@@ -108,3 +79,35 @@ function remove_file(fname) {
   }
 }
 
+// checks list of files to be uploaded
+function check_file_list() {
+  var cnt = $('#list').children().length;
+  if(cnt > 1) {
+    console.log('list count = ' + cnt);
+  }
+  else {
+    $('#list').html(px_img);  
+    console.log('reload image = ' + cnt);
+  }
+}
+
+function renderThumb(style, link, ctr, etype, src, fileName) {
+  //console.log('rendering thumbnail...');
+  var item = document.createElement(etype);
+
+  // build html for DOM
+  item.innerHTML = ['<img class="', style, '" src="', src,
+    '" title="', escape(fileName), '"/>', link].join('');
+            $(item).addClass(ctr);
+
+  // add item		  
+  document.getElementById('list').insertBefore(item, null);
+}
+
+function checkStyle() {
+  if($('#usr_photo').length == 0) {
+      style = 'sm-thumb'; 
+      if($('#pixi-camera-icon').length != 0) 
+	px_img = $('#list').html();  
+    }
+}

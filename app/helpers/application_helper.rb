@@ -222,4 +222,9 @@ module ApplicationHelper
   def show_footer_items?
     controller_name == 'listings' && %w(index category local).detect {|x| action_name == x} 
   end
+
+  # check if using remote pix
+  def use_remote_pix?
+    USE_LOCAL_PIX.upcase != 'YES'
+  end
 end
