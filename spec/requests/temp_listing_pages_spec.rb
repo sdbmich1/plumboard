@@ -33,6 +33,7 @@ feature "TempListings" do
   def add_data_w_photo
     # script = "$('input[type=file]').show();"
     # page.driver.browser.execute_script(script)
+    # stub_paperclip_attachment(Picture, :picture)
     attach_file('photo', "#{Rails.root}/spec/fixtures/photo.jpg")
     add_data
   end

@@ -7,8 +7,7 @@ $.ajaxSetup({
 	xhr.setRequestHeader("X-CSRF-Token", token);
   	toggleLoading();
     },
-  'complete': function(){ toggleLoading(); },
-  'success': function() { toggleLoading(); }
+  'complete': function(){ toggleLoading(); }
 }); 
 
 // when the #category id field changes
@@ -125,12 +124,6 @@ $(document).ready(function(){
   if( $('.ttip').length > 0 ) {
     $('a').tooltip();
   }
-
-  // direct s3 uploader
-  if( $('#s3-uploader').length > 0 ) {
-    $("#s3-uploader").S3Uploader({progress_bar_target: $('#uploads_container')});
-  }
-
   // set location
   if( $('#home_site_name').length > 0 ) {
     getLocation(true);
@@ -170,6 +163,10 @@ $(document).ready(function(){
   // initialize slider
   load_slider(true);
 
+  // initialize s3 image upload
+  load_image_uploader();
+
+  // init scroll to top
   $('.scrollup').click(function(){
     $("html, body").animate({ scrollTop: 0 }, 600);
     return false;
@@ -811,22 +808,4 @@ $(document).on("change", "#cc_card_year", function() {
 // check if dropdown is open to close
 $(document).on("click", ".navbar li a", function() {
   $('li[class="dropdown open"]').removeClass('open');
-});
-	  
-// check s3 upload
-$(document).on("s3_upload_failed s3_uploads_start s3_upload_complete", "#s3-uploader", function(e, content) {
-  switch(e.type) { 
-    case 's3_uploads_start':
-      console.log('s3 upload started');
-      $('.ttip').hide('fast');
-      break;
-    case 's3_upload_failed':
-      console.log(content.filename + " failed to upload : " + content.error_thrown);
-      break;
-    case 's3_upload_complete':
-      console.log('s3 upload complete ' + content.url);
-      $('.ttip').show('fast');
-      toggleLoading();
-      break;
-  }
 });

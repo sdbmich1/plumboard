@@ -168,8 +168,20 @@ feature "UserRegistrations" do
         click_link 'Connect via email'
       end
 
-      it "should create a user" do
+      it "should create a user - local pix" do
         expect { 
+	  stub_const("USE_LOCAL_PIX", "YES")
+	  user_with_photo
+	  click_button submit; sleep 2 
+	 }.to change(User, :count).by(1)
+
+        page.should have_link 'How It Works', href: howitworks_path 
+        page.should have_content 'A message with a confirmation link has been sent to your email address' 
+      end	
+
+      it "should create a user" do
+	 expect { 
+	  stub_const("USE_LOCAL_PIX", "NO")
 	  user_with_photo
 	  click_button submit; sleep 2 
 	 }.to change(User, :count).by(1)
