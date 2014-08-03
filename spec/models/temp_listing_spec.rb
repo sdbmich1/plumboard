@@ -164,6 +164,10 @@ describe TempListing do
     it { TempListing.get_by_seller(1).should_not be_empty }
   end
 
+  describe "should include all seller listings for admin" do
+    it { TempListing.get_by_seller(0, true).should include @temp_listing }
+  end
+
   describe "should not include incorrect seller listings" do 
     it { TempListing.get_by_seller(0).should_not include @temp_listing } 
   end
@@ -411,12 +415,15 @@ describe TempListing do
   describe "editable" do 
     before do
       @pixter = create :pixi_user, user_type_code: 'PT'
+      @admin = create :admin, confirmed_at: Time.now
       @user2 = FactoryGirl.create(:pixi_user, first_name: 'Lisa', last_name: 'Harden', email: 'lisaharden@pixitest.com') 
       @temp_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id, pixan_id: @pixter.id) 
     end
 
     it "is editable" do 
       @temp_listing.editable?(@pixter).should be_true 
+      @temp_listing.editable?(@user).should be_true 
+      @temp_listing.editable?(@admin).should be_true 
     end
 
     it "is not editable" do 
@@ -564,6 +571,7 @@ describe TempListing do
     it "should not delete photo" do 
       pic = temp_listing.pictures.first
       temp_listing.delete_photo(pic.id).should_not be_true
+      temp_listing.delete_photo(5000).should_not be_true
     end
 
     it "should delete photo" do 

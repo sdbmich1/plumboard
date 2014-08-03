@@ -2,7 +2,7 @@ require 'rails_rinku'
 require 'digest/md5'
 class ListingParent < ActiveRecord::Base
   resourcify
-  include Area, ResetDate, LocationManager
+  include Area, ResetDate, LocationManager, PixiPostsHelper
   self.abstract_class = true
   self.per_page = 20
 
@@ -108,9 +108,19 @@ class ListingParent < ActiveRecord::Base
     include_list.where(where_stmt).reorder('listings.updated_at DESC')
   end
 
+  # see include_list_without_job_type
+  def self.active_without_job_type
+    include_list_without_job_type.where(where_stmt).reorder('listings.updated_at DESC')
+  end    
+
   # eager load assns
   def self.include_list
     includes(:pictures, :site, :category, :job_type)
+  end
+
+  # leaves out job_type to avoid unused eager loading
+  def self.include_list_without_job_type
+    includes(:pictures, :site, :category)
   end
 
   # find listings by status
@@ -119,8 +129,8 @@ class ListingParent < ActiveRecord::Base
   end
 
   # find listings by seller user id
-  def self.get_by_seller val
-    where(:seller_id => val)
+  def self.get_by_seller val, admin_view=false
+    admin_view ? where("seller_id IS NOT NULL") : where(:seller_id => val)
   end
 
   # verify if listing has been paid for
@@ -195,7 +205,7 @@ class ListingParent < ActiveRecord::Base
 
   # verify pixi can be edited
   def editable? usr
-    (seller?(usr) || pixter?(usr)) && !sold?
+    (seller?(usr) || pixter?(usr) || usr.has_role?(:admin)) && !sold?
   end
 
   # get category name for a listing
@@ -287,7 +297,7 @@ class ListingParent < ActiveRecord::Base
   # delete selected photo
   def delete_photo pid, val=1
     # find selected photo
-    pic = self.pictures.find pid
+    pic = self.pictures.where(id: pid).first
 
     # remove photo if found and not only photo for listing
     result = pic && self.pictures.size > val ? self.pictures.delete(pic) : false

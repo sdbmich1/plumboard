@@ -4,69 +4,68 @@ feature "Listings" do
   subject { page }
   
   let(:user) { FactoryGirl.create(:contact_user) }
+  let(:pixter) { FactoryGirl.create :pixter, user_type_code: 'PT', confirmed_at: Time.now }
+  let(:admin) { FactoryGirl.create :admin, confirmed_at: Time.now }
   let(:site) { FactoryGirl.create :site }
   let(:site_contact) { site.contacts.create FactoryGirl.attributes_for(:contact) }
   let(:temp_listing) { FactoryGirl.create(:temp_listing, title: "Guitar", description: "Lessons", seller_id: user.id ) }
   let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id,
     site_id: site.id) }
-
-  def init_setup usr
-    login_as(usr, :scope => :user, :run_callbacks => false)
-    @user = usr
-  end
+  let(:pixi_post_listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, 
+    pixan_id: pixter.id, site_id: site.id) }
 
   def set_site_id
     page.execute_script %Q{ $('#site_id').val("#{@site.id}") }
   end
-
-  def add_region
-    stub_const("PIXI_LOCALE", 'Metro Detroit')
-    @usr = FactoryGirl.create :pixi_user, confirmed_at: Time.now 
-    @site1 = create :site, name: 'Detroit', org_type: 'city'
-    @site1.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro', city: 'Detroit', state: 'MI', zip: '48238'
-    @site2 = create :site, name: 'Metro Detroit', org_type: 'region'
-    @site2.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro', city: 'Detroit', state: 'MI', zip: '48238'
-    @pixi = create(:listing, title: "Guitar", description: "Lessons", seller_id: @usr.id, site_id: @site1.id) 
-    @loc = @site1.id
+  
+  def pixi_edit_access listing
+    page.should have_content "Posted By: #{listing.seller_name}"
+    page.should have_link 'Want', href: '#'
+    page.should have_link 'Cool'
+    page.should_not have_link 'Uncool'
+    page.should have_link 'Save'
+    page.should_not have_link 'Unsave'
+    page.should have_selector('#fb-link')
+    page.should have_selector('#tw-link')
+    page.should have_selector('#pin-link')
+    page.should have_button 'Remove'
+    page.should have_link 'Edit', href: edit_temp_listing_path(listing)
   end
 
-  describe "Opens Pixi View" do 
+  describe "Non-signed in user" do
     before(:each) do
-      add_region
-      pixi_user = FactoryGirl.create(:pixi_user)
-      init_setup pixi_user
-      visit listing_path(@pixi) 
+      visit listing_path(pixi_post_listing) 
     end
      
-    it "views pixi page" do
-      page.should have_content @pixi.nice_title
-      page.should have_content "Posted By: #{@pixi.seller_name}"
-      page.should have_selector('.rateit')
-      page.should have_link 'Want', href: '#'
-      page.should have_link 'Cool'
-      page.should_not have_link 'Uncool'
-      page.should have_link 'Save'
-      page.should_not have_link 'Unsave'
-      page.should have_selector('#fb-link')
-      page.should have_selector('#tw-link')
-      page.should have_selector('#pin-link')
-      page.should_not have_link 'Follow', href: '#'
-      page.should_not have_link @pixi.site_name, href: local_listings_path(loc: @pixi.site_id)
-      page.should have_link @site2.name, href: category_listings_path(cid: @pixi.category_id, loc: @site2.id)
-      page.should have_link @pixi.site_name, href: category_listings_path(cid: @pixi.category_id, loc: @pixi.site_id)
-      page.should have_content @pixi.category_name
-      page.should_not have_link 'Back', href: listings_path
-      page.should_not have_button 'Remove'
-      page.should_not have_link 'Edit', href: edit_temp_listing_path(@pixi)
-      page.should have_content "ID: #{@pixi.pixi_id}"
-      page.should have_content "Posted: #{@pixi.display_date(@pixi.start_date)}"
-      page.should have_content "Updated: #{@pixi.display_date(@pixi.updated_at)}"
-      page.should_not have_content "Start Date: #{short_date(@pixi.event_start_date)}"
-      page.should_not have_content "End Date: #{short_date(@pixi.event_end_date)}"
-      page.should_not have_content "Start Time: #{short_time(@pixi.event_start_time)}"
-      page.should_not have_content "End Time: #{short_time(@pixi.event_end_time)}"
-      page.should have_content "Price: "
-      page.should_not have_content "Compensation: #{(@pixi.compensation)}"
+    it "does not contact a seller", js: true do
+      expect{
+          page.find('#want-btn').click
+      	  fill_in 'contact_content', with: "I'm love this pixi. Please contact me.\n"
+      }.not_to change(Post,:count).by(1)
+      page.should have_content 'Sign in'
+    end
+
+    it "does not add Cool", js: true do
+      expect{
+          page.find('#cool-btn').click
+          page.should_not have_link 'Uncool'
+      }.not_to change(PixiLike,:count).by(1)
+      page.should have_content 'Sign in'
+    end
+
+    it "does not add Save", js: true do
+      expect{
+          page.find('#save-btn').click
+          page.should_not have_link 'Unsave'
+      }.not_to change(SavedListing,:count).by(1)
+      page.should have_content 'Sign in'
+    end
+
+    it "does not add comment", js: true do
+      expect{
+      	  fill_in 'comment_content', with: "Great pixi. I highly recommend it.\n" 
+      }.not_to change(Comment,:count).by(1)
+      page.should have_content 'Sign in'
     end
   end
 
@@ -74,15 +73,17 @@ feature "Listings" do
     before(:each) do
       pixi_user = FactoryGirl.create(:pixi_user)
       init_setup pixi_user
-      visit listing_path(listing) 
+      visit listing_path(pixi_post_listing) 
     end
 
     it "Contacts a seller", js: true do
       expect{
+          page.should have_link 'Want'
+          page.should have_link 'Cool'
           page.find('#want-btn').click
 	  # page.execute_script("$('#post_form').toggle();")
           page.should have_selector('#contact_content', visible: true) 
-      	  fill_in 'contact_content', with: "I'm interested in this pixi. Please contact me.\n"
+      	  fill_in 'contact_content', with: "I'm love this pixi. Please contact me.\n"
 	  sleep 3
           page.should_not have_link 'Want'
           page.should have_content 'Want'
@@ -93,7 +94,7 @@ feature "Listings" do
 	  sleep 3
       }.to change(Comment,:count).by(1)
 
-      page.should have_content "Comments (#{listing.comments.size})"
+      page.should have_content "Comments (#{pixi_post_listing.comments.size})"
       page.should have_content "Great pixi. I highly recommend it." 
       page.should have_content @user.name 
       expect(page).not_to have_field('#comment_content', with: 'Great pixi')
@@ -262,6 +263,28 @@ feature "Listings" do
     end
   end
 
+  describe "Pixter-viewed Pixi" do 
+    before(:each) do
+      init_setup pixter
+      visit listing_path(pixi_post_listing) 
+    end
+
+    it "views pixi page" do
+      pixi_edit_access pixi_post_listing
+    end
+  end
+
+  describe "Admin-viewed Pixi" do 
+    before(:each) do
+      init_setup admin
+      visit listing_path(listing) 
+    end
+
+    it "views pixi page" do
+      pixi_edit_access listing
+    end
+  end
+
   describe "Add Comments" do 
     before(:each) do
       pixi_user = FactoryGirl.create(:pixi_user) 
@@ -332,16 +355,15 @@ feature "Listings" do
       end
 
       describe "Edits active pixi" do
-        before :each do
-          click_link 'Edit'
-	end
-
         it "adds a pixi pic" do
+          click_link 'Edit'; sleep 3
           page.should have_content("Build Your Pixi") 
+          page.should have_selector('#build-pixi-btn')
           expect{
 	    fill_in 'Title', with: 'Rhodes Bass Guitar'
             attach_file('photo', Rails.root.join("spec", "fixtures", "photo0.jpg"))
-            click_button 'Next'
+            page.find('#build-pixi-btn').click
+	    # click_button 'Next'
             page.should have_content 'Review Your Pixi'
             click_link 'Done!'
             page.should have_content 'Rhodes Bass Guitar'
@@ -455,7 +477,31 @@ feature "Listings" do
         page.should_not have_content @listing1.title
         page.should have_content 'Guitar'
       end
-    end  
+    end
+
+    describe "Manage Pixis page" do
+      before do
+        @pixi_user = create :pixi_user
+        @admin_user = create :admin
+        @admin_user.user_type_code = 'AD'
+        @admin_user.save
+        @category = create :category, name: 'Music'
+        @site = create :site, name: 'Berkeley'
+        @listing1 = create :listing, seller_id: @pixi_user.id, title: 'Guitar', description: 'Lessons', category_id: @category.id, site_id: @site.id
+      end
+
+      it "views manage pixis page" do
+        init_setup @admin_user
+        visit listings_path
+
+        page.should have_content 'Manage Pixis'
+
+        page.should have_content 'Guitar'
+        page.should have_content 'Lessons'
+        page.should have_content 'Music'
+        page.should have_content 'Berkeley'
+      end
+    end
 
     describe "My pixis page" do
       let(:listings) { 30.times { create(:listing, seller_id: user.id) } }
@@ -514,7 +560,7 @@ feature "Listings" do
         page.find('#pending-pixis').click
 	page.should_not have_content @temp_listing.title
 	page.should have_content @pending_listing.title
-	page.should_not have_content @denied_listing.title
+	page.should have_content @denied_listing.title
 	page.should_not have_content @sold_listing.title
 	page.should_not have_content 'No pixis found.'
       end

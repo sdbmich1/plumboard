@@ -188,16 +188,20 @@ module ListingsHelper
   # select drop down for remove btn
   def remove_menu listing
     # build content tag
-    listing.remove_item_list.collect {|item| concat(content_tag(:li, link_to(item, listing_path(listing, reason: item), method: :put)))}
+    if controller_name == 'listings'
+      listing.remove_item_list.collect {|item| concat(content_tag(:li, link_to(item, listing_path(listing, reason: item), method: :put)))}
+    end
     return ''
   end
 
   # build dynamic cache key for pixi show page
   def cache_key_for_pixi_panel(listing)
-    wants = listing.wanted_count
-    likes = listing.liked_count
-    saves = listing.saved_count
-    "listings/#{listing.pixi_id}-want-#{wants}-like-#{likes}-save-#{saves}"
+    if listing
+      wants, likes, saves = listing.wanted_count, listing.liked_count, listing.saved_count
+      "listings/#{listing.pixi_id}-want-#{wants}-like-#{likes}-save-#{saves}-user-#{@user}"
+    else
+      Time.now.to_s
+    end
   end
 
   # get region for show pixi display menu

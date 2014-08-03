@@ -380,12 +380,13 @@ feature "TempListings" do
       page.should have_button 'Next'
     end
 
-    it "Changes a pixi title" do
+    it "Changes a pixi title", js: true do
       expect{
 	      fill_in 'Title', with: "Guitar for Sale"
               click_button submit
       }.to change(TempListing,:count).by(0)
-      page.should have_content "Guitar for Sale"
+      page.should_not have_content temp_listing.nice_title
+      page.should have_content 'Guitar For Sale'
       page.should have_content 'Review Your Pixi'
     end
 

@@ -226,6 +226,10 @@ describe Listing do
       Listing.get_by_seller(1).should_not be_empty  
     end
 
+    it "gets all listings for admin" do
+      Listing.get_by_seller(0, true).should_not be_empty
+    end
+
     it { Listing.get_by_seller(0).should_not include @listing } 
   end
 
@@ -370,6 +374,7 @@ describe Listing do
   describe "editable" do 
     before do
       @pixter = create :pixi_user, user_type_code: 'PT'
+      @admin = create :admin, confirmed_at: Time.now
       @user2 = FactoryGirl.create(:pixi_user, first_name: 'Lisa', last_name: 'Harden', email: 'lisaharden@pixitest.com') 
       @listing = FactoryGirl.create(:listing, seller_id: @user.id, pixan_id: @pixter.id) 
       @sold = FactoryGirl.create(:listing, seller_id: @user.id, pixan_id: @pixter.id, status: 'sold') 
@@ -377,10 +382,14 @@ describe Listing do
 
     it "is editable" do 
       @listing.editable?(@pixter).should be_true 
+      @listing.editable?(@user).should be_true 
+      @listing.editable?(@admin).should be_true 
     end
 
     it "sold pixi is not editable" do 
       @sold.editable?(@pixter).should_not be_true 
+      @sold.editable?(@user).should_not be_true 
+      @sold.editable?(@admin).should_not be_true 
     end
 
     it "is not editable" do 
