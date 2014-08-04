@@ -5,5 +5,6 @@ module PaperclipStub
     Picture.any_instance.stub(:save_attached_files).and_return(true)
     Picture.any_instance.stub(:delete_attached_files).and_return(true)
     Picture.any_instance.stub(:post_process).and_return(true)
+    Picture.any_instance.stub(:save).and_return(true)
   end
 end

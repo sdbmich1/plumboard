@@ -355,6 +355,12 @@ class ListingParent < ActiveRecord::Base
       listing.post_ip, listing.lat, listing.lng, listing.edited_by = self.post_ip, self.lat, self.lng, self.edited_by
     end
 
+    # remove any dup in case of cleanup failures
+    if listing.is_a?(TempListing) && listing.new_record?
+      templist = TempListing.where(pixi_id: listing.pixi_id)
+      templist.map! {|t| t.destroy} if templist
+    end
+
     # add dup
     if listing.save
       listing.delete_photo(file_ids, 0) if tmpFlg rescue false

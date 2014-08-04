@@ -77,7 +77,6 @@ Spork.prefork do
       reset_email
       Contact.any_instance.stub(:geocode) { [1,1] }
       Listing.any_instance.stub(:geocode) { [1,1] }
-      Picture.any_instance.stub(:save).and_return(true)
       AWS.stub!
     end
 

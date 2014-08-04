@@ -1,3 +1,5 @@
+require "open-uri"
+require 'open_uri_redirections'
 class Picture < ActiveRecord::Base
   include NameParse
 
@@ -25,7 +27,7 @@ class Picture < ActiveRecord::Base
   # ...and perform after save in background
   after_save do |picture| 
     if picture.processing && process_locally?
-      Picture.delay.processPhotoJob(picture)
+      Picture.processPhotoJob(picture)
     end
   end
 
@@ -102,6 +104,11 @@ class Picture < ActiveRecord::Base
      s3.buckets[S3FileField.config.bucket].objects[direct_upload_url_data[:path]].delete
   end
 
+  # load image from s3 upload folder
+  def picture_from_url
+    self.photo = URI.parse(direct_upload_url) rescue nil
+  end
+
   protected
 
   # Set attachment attributes from the direct upload
@@ -135,7 +142,7 @@ class Picture < ActiveRecord::Base
 
   # local processing
   def process_locally?
-    !Rails.env.test? && USE_LOCAL_PIX.upcase == 'YES'
+    USE_LOCAL_PIX.upcase == 'YES'
   end
 
   # remote processing
