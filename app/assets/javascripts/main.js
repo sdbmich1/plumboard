@@ -828,24 +828,6 @@ $(document).on("change", "#cc_card_year", function() {
 $(document).on("click", ".navbar li a", function() {
   $('li[class="dropdown open"]').removeClass('open');
 });
-	  
-// check s3 upload
-$(document).on("s3_upload_failed s3_uploads_start s3_upload_complete", "#s3-uploader", function(e, content) {
-  switch(e.type) { 
-    case 's3_uploads_start':
-      console.log('s3 upload started');
-      $('.ttip').hide('fast');
-      break;
-    case 's3_upload_failed':
-      console.log(content.filename + " failed to upload : " + content.error_thrown);
-      break;
-    case 's3_upload_complete':
-      console.log('s3 upload complete ' + content.url);
-      $('.ttip').show('fast');
-      toggleLoading();
-      break;
-  }
-});
 
 // write flash notice on page dynamically
 function postFlashMsg(id, cls, msg) {

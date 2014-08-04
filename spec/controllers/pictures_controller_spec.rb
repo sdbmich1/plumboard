@@ -11,11 +11,12 @@ describe PicturesController do
 
   describe 'GET /system' do
     before :each do
-      @picture = mock_model Picture
+      @picture = stub_model Picture
+      fname = Rails.root.join("spec", "fixtures", "photo.jpg")
       Picture.stub!(:find).and_return( @picture )
-      @picture.stub_chain(:photo, :path, :intern).and_return( @picture )
-      controller.stub_chain(:send_file, :style).with(@picture).and_return(:success)
+      controller.stub_chain(:send_file, :style).with(fname).and_return(:success)
       controller.stub!(:style).and_return('original')
+      controller.stub!(:file_name).with(@picture).and_return(fname)
     end
 
     def do_get

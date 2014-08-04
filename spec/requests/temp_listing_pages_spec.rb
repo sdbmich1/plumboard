@@ -10,11 +10,6 @@ feature "TempListings" do
     create_sites
   end
 
-  def init_setup usr
-    login_as(usr, :scope => :user, :run_callbacks => false)
-    @user = usr
-  end
-
   def create_sites
     @site = FactoryGirl.create :site, name: 'Santa Clara University'
     @site1 = FactoryGirl.create :site
