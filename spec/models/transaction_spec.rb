@@ -277,6 +277,7 @@ describe Transaction do
       @transaction.seller_name.should_not be_true
       @transaction.seller_id.should_not be_true
       @transaction.pixi_id.should_not be_true
+      expect(@transaction.pixi_title).not_to eq @listing.title
     end
 
     it "gets invoice pixi" do
@@ -289,12 +290,13 @@ describe Transaction do
       @invoice.transaction.seller_name.should == @seller.name
       @invoice.transaction.seller_id.should == @seller.id
       @invoice.transaction.pixi_id.should == @invoice.pixi_id
+      @invoice.transaction.pixi_title.should == @listing.title
     end
   end
 
   describe "process transaction - Balanced" do
     before do
-      CREDIT_CARD_API = 'balanced'
+      set_payment_const('balanced')
      # @buyer = FactoryGirl.create(:pixi_user, email: 'joedblow@pixitest.com') 
      # @bal_charge = mock('Balanced::Marketplace', id: 1, card: {card_type: 'visa', last_four: '0000'}) 
      # @bal_charge.stub!(:create_buyer).with(email_address: @buyer.email, card_uri: @transaction.token).and_return(@bal_charge)
@@ -325,7 +327,7 @@ describe Transaction do
 
   describe "process transaction - Stripe" do
     before do
-      CREDIT_CARD_API = 'stripe'
+      set_payment_const('stripe')
       @stripe_charge = mock('Stripe::Charge', id: 1, card: {type: 'visa', last4: '0000'})
       @stripe_charge.stub!(:create).with(:amount=>50000, currency: 'usd', card: 'Visa', description: 'test').and_return(@stripe_charge)
       Stripe::Charge.stub!(:create).and_return(@stripe_charge)

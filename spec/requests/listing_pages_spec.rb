@@ -355,16 +355,15 @@ feature "Listings" do
       end
 
       describe "Edits active pixi" do
-        before :each do
-          click_link 'Edit'
-	end
-
         it "adds a pixi pic" do
+          click_link 'Edit'; sleep 3
           page.should have_content("Build Your Pixi") 
+          page.should have_selector('#build-pixi-btn')
           expect{
 	    fill_in 'Title', with: 'Rhodes Bass Guitar'
             attach_file('photo', Rails.root.join("spec", "fixtures", "photo0.jpg"))
-            click_button 'Next'
+            page.find('#build-pixi-btn').click
+	    # click_button 'Next'
             page.should have_content 'Review Your Pixi'
             click_link 'Done!'
             page.should have_content 'Rhodes Bass Guitar'

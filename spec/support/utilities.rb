@@ -58,12 +58,20 @@
     @loc = @site1.id
   end
 
+  # login method for given user
   def init_setup usr
     login_as(usr, :scope => :user, :run_callbacks => false)
     @user = usr
   end
 
+  # set pixi count constant
   def set_const val
     stub_const("MIN_PIXI_COUNT", val)
     expect(MIN_PIXI_COUNT).to eq(val)
+  end
+
+  # set credit card constant
+  def set_payment_const val
+    stub_const("CREDIT_CARD_API", val)
+    expect(CREDIT_CARD_API).to eq(val)
   end

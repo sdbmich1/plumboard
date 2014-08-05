@@ -155,6 +155,11 @@ class Transaction < ActiveRecord::Base
     invoices.first rescue nil
   end
 
+  # get invoice pixi title
+  def pixi_title
+    get_invoice_listing.title rescue nil
+  end
+
   # get invoice seller
   def seller
     get_invoice.seller rescue nil

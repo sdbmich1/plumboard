@@ -1,6 +1,4 @@
 <div class="div-border">
-  <%= render partial: 'shared/display_photo_form', locals: { s3Flg: s3Flg } if s3Flg %>
-  <div id="notice"><%= render partial: 'layouts/flash_messages', flash: flash %></div>
   <div id="form_errors"><%= render partial: 'shared/error_messages', locals: { :target => @listing } %></div>
   <%= form_for(@listing, html: { multipart: true, id: 'pixi-form' }, data: {validate: 'parsley'}) do |f| %>
     <%= render partial: 'shared/listing_fields', locals: { f: f, listing: @listing, s3Flg: s3Flg } %>

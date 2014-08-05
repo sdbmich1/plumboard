@@ -2,34 +2,34 @@ require 'will_paginate/array'
 class UsersController < ApplicationController
   before_filter :authenticate_user!
   before_filter :load_data, :check_permissions, only: [:index, :show]
-  before_filter :load_target, only: [:update]
-  respond_to :html, :js, :json, :mobile
+  before_filter :load_target, :check_update_permissions, only: [:update]
+  before_filter :get_user, only: [:show, :edit, :update]
+  respond_to :html, :js, :json, :mobile, :csv
 
   def index
     @users = User.include_list.get_by_type(@utype).paginate(page: @page, per_page: 15)
     respond_to do |format|
       format.html
-      format.js
+      format.js    
       format.csv {send_data User.to_csv}
     end
   end
 
   def show
-    @usr = User.include_list.find params[:id]
-    # @photo = @usr.pictures
   end
 
   def edit
-    @usr = User.find params[:id]
   end
 
   def update
-    authorize! :update, User
-    @usr = User.find params[:id]
     changing_email = params[:user][:email] != @usr.email
     if @usr.update_attributes(params[:user])
-      flash.now[:notice] = flash_msg changing_email
-      @usr = User.find params[:id]
+      if is_profile?  
+        redirect_to get_user_path, notice: 'Saved changes successfully'
+      else 
+        flash.now[:notice] = flash_msg changing_email
+        get_user
+      end
     else
       respond_with(@usr)
     end
@@ -40,8 +40,7 @@ class UsersController < ApplicationController
   end
 
   def buyer_name
-    @users = User.search query, star: true, :page => params[:page], :per_page => 10
-    respond_with(@users)
+    respond_with(@users = User.search(query, star: true, :page => params[:page], :per_page => 10))
   end
 
   private
@@ -65,12 +64,27 @@ class UsersController < ApplicationController
   end 
 
   def load_data
-    @utype = params[:utype]
-    @page = params[:page] || 1
+    @utype, @page = params[:utype], params[:page] || 1
   end 
+
+  def get_user
+    @usr = User.find params[:id]
+  end
+
+  def is_profile?
+    !@target.match(/form/).nil?
+  end
+
+  def get_user_path
+    @usr == @user ? settings_path : @usr
+  end
 
   def check_permissions
     authorize! :manage, @users
+  end
+
+  def check_update_permissions
+    authorize! :update, User
   end
       
 end
