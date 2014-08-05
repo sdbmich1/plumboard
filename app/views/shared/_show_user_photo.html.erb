@@ -5,5 +5,7 @@
     </output>
   </div>
   <%= render partial: 'shared/user_photo', locals: { f: f } %>
+  <div class='mtop left-form mleft30'>
+    <%= render partial: 'shared/progress_meter' if use_remote_pix? %>
+  </div>
 </div>
-

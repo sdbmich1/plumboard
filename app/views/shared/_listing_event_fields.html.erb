@@ -1,0 +1,21 @@
+<div class='row' id='event-fields' style="<%= !listing.event? ? 'display:none' : '' %>">
+  <div class='span2'> 
+    <%= f.label :event_start_date, 'Start Date', class: 'med-top' %>
+    <%= f.text_field :event_start_date, value: listing.event_start_date, size: 10, id: "start-date", required: listing.event? %>
+  </div>
+  <div class='offset1 span2'>
+    <%= f.label :event_end_date, 'End Date', class: 'med-top' %>
+    <%= f.text_field :event_end_date, :value => listing.event_end_date, size: 10, id: "end-date", required: listing.event?  %>
+  </div>
+  <div class='offset1 span2'>
+    <%= f.label :event_start_time, 'Start Time', class: 'med-top' %>
+    <%= f.time_select :event_start_time, { :combined => true, :default => Time.now.change(:hour => 12), ampm: true, 
+    	  :minute_interval => 15, :time_separator => "" }, :id=>'start-time', :class=>'pixi-select' %>
+  </div>
+  <div class='offset1 span2'>
+    <%= f.label :event_end_time, 'End Time', class: 'med-top' %>
+    <%= f.time_select :event_end_time, { :combined => true, :default => Time.now.change(:hour => 12), ampm: true, 
+    	  :minute_interval => 15, :time_separator => "" }, :id=>'end-time', :class=>'pixi-select' %>
+  </div>
+</div>
+

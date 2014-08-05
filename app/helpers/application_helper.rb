@@ -80,7 +80,7 @@ module ApplicationHelper
   # set image
   def get_image model, file_name
     if model
-      !model.any_pix? ? file_name : model.pictures[0].photo.url
+      !model.any_pix? ? file_name : get_pixi_image(model.pictures[0])
     else
       file_name
     end
@@ -221,5 +221,15 @@ module ApplicationHelper
   # check for menu display of footer items
   def show_footer_items?
     controller_name == 'listings' && %w(index category local).detect {|x| action_name == x} 
+  end
+
+  # check if using remote pix
+  def use_remote_pix?
+    USE_LOCAL_PIX.upcase != 'YES'
+  end
+
+  # check if image exists if not render uploaded image
+  def get_pixi_image pic, size='original'
+    pic.photo.exists? ? pic.photo.url(size.to_sym) : use_remote_pix? ? pic.picture_from_url : nil
   end
 end

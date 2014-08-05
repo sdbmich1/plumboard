@@ -53,6 +53,7 @@ Spork.prefork do
     config.include Rails.application.routes.url_helpers
     config.include(MailerMacros)  
     config.include IntegrationSpecHelper, :type => :request
+    config.include PaperclipStub
 
     config.before(:suite) do
       DatabaseCleaner.clean_with :truncation
@@ -76,6 +77,7 @@ Spork.prefork do
       reset_email
       Contact.any_instance.stub(:geocode) { [1,1] }
       Listing.any_instance.stub(:geocode) { [1,1] }
+      AWS.stub!
     end
 
     config.append_after(:each) do
@@ -94,6 +96,13 @@ Spork.prefork do
   end
 end
 
+Capybara.register_driver :selenium_with_long_timeout do |app|
+  client = Selenium::WebDriver::Remote::Http::Default.new
+  client.timeout = 120
+  Capybara::Selenium::Driver.new(app, :browser => :firefox, :http_client => client)
+end
+
+Capybara.javascript_driver = :selenium_with_long_timeout
 Capybara.default_host = 'http://example.org'
 OmniAuth.config.test_mode = true
 OmniAuth.config.add_mock :facebook, uid: "fb-12345", info: { name: "Bob Smith" }, extra: { raw_info: { first_name: 'Bob', last_name: 'Smith',   

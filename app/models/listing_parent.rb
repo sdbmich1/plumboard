@@ -297,7 +297,7 @@ class ListingParent < ActiveRecord::Base
   # delete selected photo
   def delete_photo pid, val=1
     # find selected photo
-    pic = self.pictures.find pid
+    pic = self.pictures.where(id: pid).first
 
     # remove photo if found and not only photo for listing
     result = pic && self.pictures.size > val ? self.pictures.delete(pic) : false
@@ -353,6 +353,12 @@ class ListingParent < ActiveRecord::Base
       listing.pixan_id, listing.year_built, listing.buyer_id = self.pixan_id, self.year_built, self.buyer_id
       listing.show_phone_flg, listing.start_date, listing.end_date = self.show_phone_flg, self.start_date, self.end_date
       listing.post_ip, listing.lat, listing.lng, listing.edited_by = self.post_ip, self.lat, self.lng, self.edited_by
+    end
+
+    # remove any dup in case of cleanup failures
+    if listing.is_a?(TempListing) && listing.new_record?
+      templist = TempListing.where(pixi_id: listing.pixi_id)
+      templist.map! {|t| t.destroy} if templist
     end
 
     # add dup

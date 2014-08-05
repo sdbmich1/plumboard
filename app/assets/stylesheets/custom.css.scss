@@ -285,7 +285,7 @@ input, select, .uneditable-input {
   @extend .error;
  }
 
-.notice, .alert, .error {
+.notice, .success, .alert, .error {
    margin-top: 10px!important;
    padding: 5px 0 5px 0;
    margin: 7px;
