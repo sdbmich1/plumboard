@@ -81,8 +81,8 @@ module ApplicationHelper
   def get_image model, file_name
     if model
       !model.any_pix? ? file_name : model.pictures[0].photo.url
-    else
-      file_name
+    else 
+     file_name
     end
   end
 
@@ -111,7 +111,7 @@ module ApplicationHelper
     case parse_item(args[0], 'name')
       when 'Invoices'; render partial: 'shared/navbar_invoices', locals: { active: parse_item(args[0], 'action') || 'sent' }
       when 'Categories'; render 'shared/navbar_categories'
-      when 'Pixis'; render partial: 'shared/navbar_pixis', locals: { loc_name: @loc_name }
+      when 'Pixis'; render partial: 'shared/navbar_pixis', locals: { loc_name: @loc_name, rFlg: true, statusFlg: false }
       when 'Pixi'; render 'shared/navbar_show_pixi'
       when 'My Pixis'; render 'shared/navbar_mypixis'
       when 'My Accounts'; render 'shared/navbar_accounts'

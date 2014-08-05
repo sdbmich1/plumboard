@@ -512,6 +512,29 @@ task :load_regions => :environment do
     end
   end
 end
+
+task :load_status_types => :environment do
+
+  StatusType.delete_all
+  CSV.foreach(Rails.root.join('db', 'status_type_072314.csv'), :headers => true) do |row|
+
+    attrs = {
+      :code     => row[0],
+      :hide     => row[1],
+    }
+
+    # add status_type
+    new_status_type = StatusType.new(attrs)
+
+    # save user_type
+    if new_status_type.save 
+      puts "Saved status_type #{attrs.inspect}"
+    else
+      puts new_status_type.errors
+    end
+  end
+end
+
 #to run all tasks at once
 task :run_all_tasks => :environment do
 
@@ -531,4 +554,5 @@ task :run_all_tasks => :environment do
   Rake::Task[:import_user_type].execute
   Rake::Task[:import_faq].execute
   Rake::Task[:load_regions].execute
+  Rake::Task[:load_status_types].execute
 end

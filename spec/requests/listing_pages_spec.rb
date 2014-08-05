@@ -482,25 +482,39 @@ feature "Listings" do
 
     describe "Manage Pixis page" do
       before do
-        @pixi_user = create :pixi_user
-        @admin_user = create :admin
-        @admin_user.user_type_code = 'AD'
-        @admin_user.save
-        @category = create :category, name: 'Music'
-        @site = create :site, name: 'Berkeley'
-        @listing1 = create :listing, seller_id: @pixi_user.id, title: 'Guitar', description: 'Lessons', category_id: @category.id, site_id: @site.id
+        # Make listings
+        pixi_user = create :pixi_user
+        category = create :category, name: 'Music'
+        site = create :site, name: 'Berkeley'
+        30.times do
+          create :listing, seller_id: pixi_user.id, title: 'Guitar', description: 'Lessons', category_id: category.id, site_id: site.id
+        end
+        # Visit page as admin
+        admin_user = create :admin
+        admin_user.user_type_code = 'AD'
+        admin_user.save
+        init_setup admin_user
+      end
+
+      before (:each) do
+        visit listings_path
       end
 
       it "views manage pixis page" do
-        init_setup @admin_user
-        visit listings_path
-
         page.should have_content 'Manage Pixis'
-
         page.should have_content 'Guitar'
         page.should have_content 'Lessons'
         page.should have_content 'Music'
         page.should have_content 'Berkeley'
+      end
+
+      it "has 'next' and 'previous' page links" do
+        page.should have_link "Next"
+        page.should have_link "Previous"
+      end
+
+      it 'should have StatusType dropdown menu' do
+        page.should have_content 'Status'
       end
     end
 
