@@ -339,6 +339,7 @@ feature "Listings" do
       @listing = create :listing, seller_id: editor.id
       @pixi_want = editor.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
       @pixi_like = editor.pixi_likes.create FactoryGirl.attributes_for :pixi_like, pixi_id: @listing.pixi_id
+
       init_setup editor
     end
 
@@ -405,6 +406,10 @@ feature "Listings" do
         page.should have_content 'Guitar'
         page.should_not have_content 'No pixis found'
       end
+
+      it "does not show status type" do
+        page.should_not have_content "Status"
+      end
     end  
 
     describe "GET /local" do  
@@ -421,6 +426,10 @@ feature "Listings" do
         page.should have_content('Pixis')
         page.should have_content 'Guitar'
         page.should_not have_content 'No pixis found'
+      end
+
+      it "does not show status type" do
+        page.should_not have_content "Status"
       end
     end  
 

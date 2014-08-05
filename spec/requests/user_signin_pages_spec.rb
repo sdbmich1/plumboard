@@ -178,6 +178,7 @@ feature "UserSignins" do
 
       it 'shows content' do
         page.should have_content(@user.first_name)
+        page.should_not have_content('Manage')
         page.should have_link('Sign out', href: destroy_user_session_path)
         page.should_not have_link('Orders', href: pending_listings_path)
         page.should_not have_link('Transactions', href: transactions_path)
