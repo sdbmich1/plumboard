@@ -364,4 +364,8 @@ FactoryGirl.define do
     email_msg_flg   	'yes'
     mobile_msg_flg   	'yes'
   end
+
+  factory :status_type do
+    code "active"
+  end
 end
