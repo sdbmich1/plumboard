@@ -54,12 +54,12 @@ class ListingParent < ActiveRecord::Base
 
   # check if pixi is an event
   def event?
-    category.category_type == 'event' rescue nil
+    category.category_type_code == 'event' rescue nil
   end
 
   # check if pixi can have a year
   def has_year?
-    category.category_type == 'asset' rescue nil
+    category.category_type_code == 'asset' rescue nil
   end
 
   # check if event start date exists
@@ -291,7 +291,7 @@ class ListingParent < ActiveRecord::Base
 
   # check if pixi is a job
   def job?
-    category.category_type == 'employment' rescue nil
+    category.category_type_code == 'employment' rescue nil
   end
 
   # delete selected photo

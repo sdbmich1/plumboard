@@ -480,6 +480,30 @@ task :import_faq => :environment do
   end
 end
 
+desc "Loads the category_types"
+task :load_category_types => :environment do
+  CSV.foreach(Rails.root.join('db', 'category_type_071514.csv'), :headers => true) do |row|
+    attrs = {
+      :code => row[0],
+      :status => 'active',
+      :hide => 'false'
+    }
+
+    # find or intialize category_type
+    new_category_type = CategoryType.find_or_initialize_by_code(attrs)
+    #new_category_type = CategoryType.first_or_initialize(attrs)
+
+    # save category_type
+    if new_category_type.save
+      puts "Saved category #{attrs.inspect}"
+    else
+      puts new_category_type.errors
+    end
+  end 
+end
+
+
+
 # loads regional data for US cities
 task :load_regions => :environment do
   CSV.foreach(Rails.root.join('db', 'region_data_052414.csv'), :headers => true) do |row|
@@ -531,4 +555,5 @@ task :run_all_tasks => :environment do
   Rake::Task[:import_user_type].execute
   Rake::Task[:import_faq].execute
   Rake::Task[:load_regions].execute
+  Rake::Task[:load_category_types].execute
 end

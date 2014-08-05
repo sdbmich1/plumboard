@@ -68,7 +68,7 @@ FactoryGirl.define do
 
   factory :category do
     name 		"Foo bar"
-    category_type	"Gigs"
+    category_type_code	"Gigs"
     status 		"active"
     before(:create) {|category| category.pictures.build FactoryGirl.attributes_for(:picture)}
   end
@@ -364,4 +364,18 @@ FactoryGirl.define do
     email_msg_flg   	'yes'
     mobile_msg_flg   	'yes'
   end
+
+  factory :category_type do
+    code "sales"
+    hide "false"
+    status "active"
+  end 
+
+  factory :inactive_category_type, :class => "CategoryType" do
+    code "sales"
+    hide "false"
+    status "inactive"
+  end
+
+
 end
