@@ -4,7 +4,7 @@ class TempListingsController < ApplicationController
   before_filter :check_permissions, only: [:create, :show, :edit, :update, :delete]
   before_filter :load_data, only: [:unposted]
   before_filter :set_params, only: [:create, :update]
-  autocomplete :site, :name, :full => true
+  autocomplete :site, :name, :full => true, :limit => 20
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name, if: :has_pixan?
   include ResetDate
   respond_to :html, :json, :js, :mobile
