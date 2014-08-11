@@ -66,7 +66,7 @@ class Picture < ActiveRecord::Base
   def transliterate_file_name
     extension = File.extname(photo_file_name).gsub(/^\.+/, '')
     filename = photo_file_name.gsub(/\.#{extension}$/, '')
-    self.photo.instance_write(:file_name, "#{NameParse::transliterate(filename)}.#{NameParse::transliterate(extension)}".gsub('//', '/'))
+    self.photo.instance_write(:photo_file_name, "#{NameParse::transliterate(filename)}.#{NameParse::transliterate(extension)}".gsub('//', '/'))
   end
 
   # generate styles (downloads original first)
@@ -107,6 +107,13 @@ class Picture < ActiveRecord::Base
   # load image from s3 upload folder
   def picture_from_url
     self.photo = URI.parse(direct_upload_url) rescue nil
+  end
+
+  # remove space from S3 direct_upload_url
+  def set_file_url url
+    extension = File.extname(url).gsub(/^\.+/, '')
+    filename = url.gsub(/\.#{extension}$/, '')
+    "#{NameParse::parse_url(filename)}.#{NameParse::transliterate(extension)}" rescue url
   end
 
   protected
