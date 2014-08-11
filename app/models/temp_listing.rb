@@ -49,7 +49,7 @@ class TempListing < ListingParent
   # edit order fields to process order
   def edit_flds usr, val, reason=''
     self.status, self.edited_by, self.edited_dt, self.explanation = val, usr.name, Time.now, reason
-    save rescue false
+    save!
   end
 
   # check if pixi is free
@@ -79,9 +79,7 @@ class TempListing < ListingParent
   # add listing to board if approved
   def post_to_board
     if self.status == 'approved'
-      unless dup_pixi(true)
-        Rails.logger.info('Dup Pixi failed on post_to_board')
-      end
+      dup_pixi true
     else
       errors.add :base, "Pixi must be approved prior to posting to board."
       false
