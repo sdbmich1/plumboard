@@ -89,4 +89,18 @@ describe Picture do
       User.picture_from_url(user, auth).should_not be_nil
     end
 
+  describe 'transliterate file name' do
+
+    it 'should transliterate the filename' do
+      pic = Picture.new
+      pic.photo = File.new(Rails.root.join('spec', 'fixtures', %Q{bad file name.png}))
+      expect('bad_file_name.png').to eq pic.photo_file_name
+    end
+
+    it 'transliterates from file url name' do
+      @picture.direct_upload_url = "photos/000/002/036/original/2014-07-25 15.46.36.jpg"
+      expect(@picture.set_file_url(@picture.direct_upload_url)).to eq "photos/000/002/036/original/2014-07-25_15_46_36.jpg"
+    end
+  end
+
 end
