@@ -356,7 +356,7 @@ class ListingParent < ActiveRecord::Base
     end
 
     # remove any dup in case of cleanup failures
-    if listing.is_a?(TempListing) && listing.new_record? && !tmpFlg
+    if listing.is_a?(TempListing) && listing.new_record?
       templist = TempListing.where(pixi_id: listing.pixi_id)
       templist.map! {|t| t.destroy} if templist
     end
@@ -366,7 +366,6 @@ class ListingParent < ActiveRecord::Base
       listing.delete_photo(file_ids, 0) if tmpFlg rescue false
       listing
     else
-      Rails.logger.info(listing.errors.full_messages.to_s)
       false
     end
   end

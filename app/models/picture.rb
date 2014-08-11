@@ -154,7 +154,7 @@ class Picture < ActiveRecord::Base
 
   # remote processing
   def process_remotely?
-    !Rails.env.test? && USE_LOCAL_PIX.upcase == 'NO'
+    !Rails.env.test? && USE_LOCAL_PIX.upcase == 'NO' && imageable_type != 'Listing'
   end
 
 end
