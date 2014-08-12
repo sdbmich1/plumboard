@@ -1,17 +1,15 @@
-<%= form_for @category, url: get_category_path, html: { class: 'uform' } do |f| %>
+<%= form_for @category, url: get_category_path, html: { class: 'uform', id: 'category-form' } do |f| %>
     <div id="form_errors"><%= render partial: 'shared/error_messages', locals: { target: f.object } %></div>
     <%= render partial: 'shared/show_user_photo', locals: { f: f, model: @category, file_name: 'photo-camera.png' } %>
 
     <div class="sm-top span5">
       <div id='signup'>
-	  <label class="control-label">Category Name<label>
 	  <div class='controls'><%= f.text_field :name, :size => 20, placeholder: 'Category Name' %></div>
-	  <label class="control-label">Category Type<label>
-          <div><%= f.select :category_type, options_for_select( ['sales', 'service', 'event', 'asset', 'employment'], 
-	    {:selected=>@category.category_type, :include_blank=>'Select Type'} ) %></div>
-	  <label class="control-label">Pixi Type<label>
+    <span class="control-label">Category Name </span>
+          <div><%= f.collection_select(:category_type_code, CategoryType.active, :code, :proper, {:include_blank => 'Select Category Type'}, {}) %></div>
+    <span class="control-label">Pixi Type</span>
           <div><%= f.select :pixi_type, options_for_select( ['basic', 'premium'], :selected=>@category.pixi_type ) %></div>
-	  <label class="control-label">Status<label>
+    <span class="control-label">Status</span> 
           <div><%= f.select :status, options_for_select( ['active', 'inactive'], :selected=>@category.status ), {}, 
 	    {disabled: @category.has_pixis?} %></div>
       </div>

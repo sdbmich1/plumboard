@@ -1,6 +1,13 @@
+require "open-uri"
+require 'open_uri_redirections'
 class Picture < ActiveRecord::Base
   include NameParse
-  attr_accessible :photo_file_name, :photo_content_type, :photo_file_size, :photo_updated_at, :photo, :processing
+
+  # Environment-specific direct upload url verifier screens for malicious posted upload locations.
+  DIRECT_UPLOAD_URL_FORMAT = %r{\Ahttps:\/\/#{S3FileField.config.bucket}\.#{S3FileField.config.region}\.amazonaws\.com\/(?<path>uploads\/.+\/(?<filename>.+))\z}.freeze
+
+  attr_accessible :photo_file_name, :photo_content_type, :photo_file_size, :photo_updated_at, :photo, :processing, :photo_file_path,
+    :direct_upload_url
   
   has_attached_file :photo, {
        styles: { :large => "300x300>", :medium => "150x150>", :thumb => "100x100>", :small => "60x60>", :tiny => "30x30>" }
@@ -8,25 +15,37 @@ class Picture < ActiveRecord::Base
 
   belongs_to :imageable, :polymorphic => true
 
-  before_create :set_flg
+  before_create :set_flg, if: :process_locally?
+  before_create :set_page_attributes, if: :process_remotely?
   before_post_process :transliterate_file_name
+  after_create :queue_processing, if: :process_remotely?
 
   validates_attachment :photo, 
-    :content_type => { :content_type => ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp'] },
-    :size => { :in => 0..5.megabytes }
+    :content_type => { :content_type => ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp', 'image/tiff'] },
+    :size => { :in => 0..MAX_PIXI_SIZE.megabytes }
 
   # ...and perform after save in background
   after_save do |picture| 
-    if picture.processing && !Rails.env.test?
-      processPhotoJob(picture)
+    if picture.processing && process_locally?
+      Picture.processPhotoJob(picture)
     end
+  end
+
+  # Store an unescaped version of the escaped URL that Amazon returns from direct upload.
+  def direct_upload_url=(escaped_url)
+    write_attribute(:direct_upload_url, (CGI.unescape(escaped_url) rescue nil))
+  end
+
+  # Determines if file requires post-processing (image resizing, etc)
+  def post_process_required?
+    %r{^(image|(x-)?application)/(bmp|gif|jpeg|jpg|pjpeg|tif|png|x-png)$}.match(photo_content_type).present?
   end
 
   # process picture styles
   def processPhotoJob(picture)
     picture.regenerate_styles!
   end
-  handle_asynchronously :processPhotoJob
+  # handle_asynchronously :processPhotoJob
 
   # detect if our photo file has changed
   def photo_changed?
@@ -47,7 +66,7 @@ class Picture < ActiveRecord::Base
   def transliterate_file_name
     extension = File.extname(photo_file_name).gsub(/^\.+/, '')
     filename = photo_file_name.gsub(/\.#{extension}$/, '')
-    self.photo.instance_write(:file_name, "#{NameParse::transliterate(filename)}.#{NameParse::transliterate(extension)}".gsub('//', '/'))
+    self.photo.instance_write(:photo_file_name, "#{NameParse::transliterate(filename)}.#{NameParse::transliterate(extension)}".gsub('//', '/'))
   end
 
   # generate styles (downloads original first)
@@ -65,4 +84,77 @@ class Picture < ActiveRecord::Base
   def as_json(options={})
     { :id=>self.id, :imageable_id=>self.imageable_id, :photo_file_name=>self.photo_file_name, :photo_url=>photo_url } 
   end
+
+   # Final upload processing step
+   def self.transfer_and_cleanup(id)
+     pic = Picture.find(id)
+     direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(pic.direct_upload_url)
+     s3 = AWS::S3.new
+
+     if pic.post_process_required?
+       pic.photo = URI.parse(URI.escape(pic.direct_upload_url))
+     else
+       paperclip_file_path = "photos/#{id}/original/#{direct_upload_url_data[:filename]}"
+       s3.buckets[S3FileField.config.bucket].objects[paperclip_file_path].copy_from(direct_upload_url_data[:path])
+     end
+
+     pic.processing = true
+     pic.save
+
+     s3.buckets[S3FileField.config.bucket].objects[direct_upload_url_data[:path]].delete
+  end
+
+  # load image from s3 upload folder
+  def picture_from_url
+    self.photo = URI.parse(direct_upload_url) rescue nil
+  end
+
+  # remove space from S3 direct_upload_url
+  def set_file_url url
+    extension = File.extname(url).gsub(/^\.+/, '')
+    filename = url.gsub(/\.#{extension}$/, '')
+    "#{NameParse::parse_url(filename)}.#{NameParse::transliterate(extension)}" rescue url
+  end
+
+  protected
+
+  # Set attachment attributes from the direct upload
+  def set_page_attributes
+    tries ||= 5
+    direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
+    s3 = AWS::S3.new
+    
+    direct_upload_head = s3.buckets[S3FileField.config.bucket].objects[direct_upload_url_data[:path]].head
+
+    self.photo_file_name     = direct_upload_url_data[:filename]
+    self.photo_file_size     = direct_upload_head.content_length
+    self.photo_content_type  = direct_upload_head.content_type
+    self.photo_updated_at    = direct_upload_head.last_modified
+    # self.photo_file_path    = direct_upload_head.photo_file_path
+
+  rescue AWS::S3::Errors::NoSuchKey => e
+    tries -= 1
+    if tries > 0
+      sleep(3)
+      retry
+    else
+      false
+    end
+  end
+
+  # Queue file processing
+  def queue_processing
+    Picture.delay.transfer_and_cleanup(id)
+  end
+
+  # local processing
+  def process_locally?
+    USE_LOCAL_PIX.upcase == 'YES'
+  end
+
+  # remote processing
+  def process_remotely?
+    !Rails.env.test? && USE_LOCAL_PIX.upcase == 'NO' && imageable_type != 'Listing'
+  end
+
 end

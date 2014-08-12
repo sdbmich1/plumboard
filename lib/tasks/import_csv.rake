@@ -480,6 +480,30 @@ task :import_faq => :environment do
   end
 end
 
+desc "Loads the category_types"
+task :load_category_types => :environment do
+  CSV.foreach(Rails.root.join('db', 'category_type_071514.csv'), :headers => true) do |row|
+    attrs = {
+      :code => row[0],
+      :status => 'active',
+      :hide => 'false'
+    }
+
+    # find or intialize category_type
+    new_category_type = CategoryType.find_or_initialize_by_code(attrs)
+    #new_category_type = CategoryType.first_or_initialize(attrs)
+
+    # save category_type
+    if new_category_type.save
+      puts "Saved category #{attrs.inspect}"
+    else
+      puts new_category_type.errors
+    end
+  end 
+end
+
+
+
 # loads regional data for US cities
 task :load_regions => :environment do
   CSV.foreach(Rails.root.join('db', 'region_data_052414.csv'), :headers => true) do |row|
@@ -513,6 +537,7 @@ task :load_regions => :environment do
   end
 end
 
+<<<<<<< HEAD
 #loads the data from the db/event_type_071014.csv file into new event_types table.
 task :load_event_types => :environment do
     CSV.foreach(Rails.root.join('db', 'event_type_071014.csv'), :headers => true) do |row|
@@ -532,6 +557,29 @@ task :load_event_types => :environment do
         end
     end
 
+=======
+task :load_status_types => :environment do
+
+  StatusType.delete_all
+  CSV.foreach(Rails.root.join('db', 'status_type_072314.csv'), :headers => true) do |row|
+
+    attrs = {
+      :code     => row[0],
+      :hide     => row[1],
+    }
+
+    # add status_type
+    new_status_type = StatusType.new(attrs)
+
+    # save user_type
+    if new_status_type.save 
+      puts "Saved status_type #{attrs.inspect}"
+    else
+      puts new_status_type.errors
+    end
+  end
+end
+>>>>>>> 405f9a204f66b3fe7a8c00f0bcdd259b6026a41c
 
 #to run all tasks at once
 task :run_all_tasks => :environment do
@@ -552,5 +600,10 @@ task :run_all_tasks => :environment do
   Rake::Task[:import_user_type].execute
   Rake::Task[:import_faq].execute
   Rake::Task[:load_regions].execute
+<<<<<<< HEAD
   Rake::Task[:load_event_types].execute
+=======
+  Rake::Task[:load_status_types].execute
+  Rake::Task[:load_category_types].execute
+>>>>>>> 405f9a204f66b3fe7a8c00f0bcdd259b6026a41c
 end

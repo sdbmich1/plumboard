@@ -10,7 +10,7 @@ class ListingsController < ApplicationController
   layout :page_layout
 
   def index
-    respond_with(@listings = Listing.active_without_job_type.paginate(page: @page))
+    respond_with(@listings = Listing.active_without_job_type.paginate(page: @page, per_page: 15))
   end
 
   def show
@@ -60,7 +60,7 @@ class ListingsController < ApplicationController
   end
 
   def category
-    @category = Category.find @cat
+    @category = Category.find @cat rescue nil
     respond_with(@listings)
   end
 
@@ -103,6 +103,6 @@ class ListingsController < ApplicationController
   end
  
   def is_admin?
-    @user.user_type_code == 'AD'
+    @user.user_type_code == 'AD' rescue false
   end
 end

@@ -20,16 +20,19 @@ describe Picture do
   subject { @picture } 
 
   it { should respond_to(:photo) }
+  it { should respond_to(:processing) }
   it { should respond_to(:photo_file_name) }
+  it { should respond_to(:photo_file_path) }
   it { should respond_to(:photo_content_type) }
   it { should respond_to(:photo_file_size) }
   it { should respond_to(:photo_updated_at) }
   it { should respond_to(:set_default_url) }
+  it { should respond_to(:direct_upload_url) }
 
   it { should respond_to(:imageable) }
   it { should have_attached_file(:photo) }
   it { should validate_attachment_content_type(:photo).
-                      allowing('image/png', 'image/gif', 'image/jpg', 'image/jpeg', 'image/bmp').
+                      allowing('image/png', 'image/gif', 'image/jpg', 'image/jpeg', 'image/bmp', 'image/tiff').
                       rejecting('text/plain', 'text/xml') }
   it { should validate_attachment_size(:photo).less_than(5.megabytes) }
 
@@ -80,4 +83,24 @@ describe Picture do
   describe "regenerate_styles" do
     it { @picture.should respond_to :regenerate_styles }
   end
+
+
+    it 'should return a picture' do
+      User.picture_from_url(user, auth).should_not be_nil
+    end
+
+  describe 'transliterate file name' do
+
+    it 'should transliterate the filename' do
+      pic = Picture.new
+      pic.photo = File.new(Rails.root.join('spec', 'fixtures', %Q{bad file name.png}))
+      expect('bad_file_name.png').to eq pic.photo_file_name
+    end
+
+    it 'transliterates from file url name' do
+      @picture.direct_upload_url = "photos/000/002/036/original/2014-07-25 15.46.36.jpg"
+      expect(@picture.set_file_url(@picture.direct_upload_url)).to eq "photos/000/002/036/original/2014-07-25_15_46_36.jpg"
+    end
+  end
+
 end

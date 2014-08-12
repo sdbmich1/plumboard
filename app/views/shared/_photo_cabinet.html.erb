@@ -1,0 +1,8 @@
+  <label class="cabinet">
+    <% if s3Flg %>
+      <%= form.s3_file_field :photo, { id: keyName, multiple: mFlg, class: 'file js-s3_file_field' } %>
+    <% else %>
+      <%= form.file_field :photo, { id: keyName, multiple: mFlg, class: 'file' } %>
+    <% end %>
+  </label>
+

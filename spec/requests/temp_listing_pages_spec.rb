@@ -10,11 +10,6 @@ feature "TempListings" do
     create_sites
   end
 
-  def init_setup usr
-    login_as(usr, :scope => :user, :run_callbacks => false)
-    @user = usr
-  end
-
   def create_sites
     @site = FactoryGirl.create :site, name: 'Santa Clara University'
     @site1 = FactoryGirl.create :site
@@ -33,6 +28,7 @@ feature "TempListings" do
   def add_data_w_photo
     # script = "$('input[type=file]').show();"
     # page.driver.browser.execute_script(script)
+    # stub_paperclip_attachment(Picture, :picture)
     attach_file('photo', "#{Rails.root}/spec/fixtures/photo.jpg")
     add_data
   end
@@ -379,12 +375,13 @@ feature "TempListings" do
       page.should have_button 'Next'
     end
 
-    it "Changes a pixi title" do
+    it "Changes a pixi title", js: true do
       expect{
 	      fill_in 'Title', with: "Guitar for Sale"
               click_button submit
       }.to change(TempListing,:count).by(0)
-      page.should have_content "Guitar for Sale"
+      page.should_not have_content temp_listing.nice_title
+      page.should have_content 'Guitar For Sale'
       page.should have_content 'Review Your Pixi'
     end
 

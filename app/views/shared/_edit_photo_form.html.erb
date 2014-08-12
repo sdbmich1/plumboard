@@ -4,7 +4,7 @@
   <% for pic in model.pictures %>
       <% unless pic.id.blank? %>
         <div class='span1 center-wrapper'>
-	<div id="<%= pic.id %>" class='inv-pic'><%= image_tag pic.photo.url(:small) %></div>
+	<div id="<%= pic.id %>" class='inv-pic'><%= image_tag get_pixi_image(pic, 'small') %></div>
 	<% if remove_photo %>
 	  <div class='remove-btn'>
 	  <%= link_to picture_path(pic, pixi_id: model.pixi_id), method: :delete, confirm: photo_msg, remote: true, class: 

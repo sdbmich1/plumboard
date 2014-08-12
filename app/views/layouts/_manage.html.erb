@@ -2,7 +2,7 @@
   <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Manage <b class="caret"></b></a>
   <ul class="dropdown-menu">
     <% if can? :manage_items, @user %>
-      <li><%= link_to "Pending Orders", pending_listings_path(status: 'pending') %></li>
+      <li><%= link_to "Pixis", listings_path %></li>
       <li><%= link_to "PixiPosts", pixi_posts_path(status: 'active') %></li>
       <li><%= link_to "Inquiries", inquiries_path(ctype: 'inquiry') %></li>
     <% elsif can? :manage_pixi_posts, @user %>
@@ -12,7 +12,6 @@
       <li><%= link_to "Categories", manage_categories_path %></li>
       <li><%= link_to "Transactions", transactions_path %></li>
       <li><%= link_to "Users", users_path %></li>
-      <li><%= link_to "Pixis", listings_path %></li>
     <% end %>
   </ul>
 </li>

@@ -245,6 +245,7 @@ describe TempListing do
         temp_listing = FactoryGirl.create :temp_listing, show_alias_flg: 'no'
         it { temp_listing.alias?.should_not be_true }
     end
+<<<<<<< HEAD
     
     describe "seller?" do
         let(:user) { FactoryGirl.create :pixi_user }
@@ -258,6 +259,17 @@ describe TempListing do
         it "should not verify user is seller" do
             temp_listing.seller?(user2).should_not be_true
         end
+=======
+  end
+
+  describe "delete photo" do
+    let(:temp_listing) { FactoryGirl.create :temp_listing }
+
+    it "should not delete photo" do 
+      pic = temp_listing.pictures.first
+      temp_listing.delete_photo(pic.id).should_not be_true
+      temp_listing.delete_photo(5000).should_not be_true
+>>>>>>> 405f9a204f66b3fe7a8c00f0bcdd259b6026a41c
     end
     
     describe "should return a short description" do

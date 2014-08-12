@@ -11,7 +11,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(:version => 20140727193506) do
+=======
+ActiveRecord::Schema.define(:version => 20140725170438) do
+>>>>>>> 405f9a204f66b3fe7a8c00f0bcdd259b6026a41c
 
   create_table "bank_accounts", :force => true do |t|
     t.string   "token"
@@ -49,11 +53,19 @@ ActiveRecord::Schema.define(:version => 20140727193506) do
 
   create_table "categories", :force => true do |t|
     t.string   "name"
-    t.string   "category_type"
+    t.string   "category_type_code"
     t.string   "status"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
     t.string   "pixi_type"
+  end
+
+  create_table "category_types", :force => true do |t|
+    t.string   "code"
+    t.string   "status"
+    t.string   "hide"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "comments", :force => true do |t|

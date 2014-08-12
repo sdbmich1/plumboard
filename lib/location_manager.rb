@@ -45,7 +45,7 @@ module LocationManager
   end
 
   # get list of site ids
-  def self.get_site_list loc, range=60
+  def self.get_site_list loc, range=100
     site = Site.check_site(loc, ['city', 'region'])
     if site
       @contact = site.contacts.first

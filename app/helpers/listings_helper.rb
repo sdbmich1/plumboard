@@ -188,7 +188,9 @@ module ListingsHelper
   # select drop down for remove btn
   def remove_menu listing
     # build content tag
-    listing.remove_item_list.collect {|item| concat(content_tag(:li, link_to(item, listing_path(listing, reason: item), method: :put)))}
+    if controller_name == 'listings'
+      listing.remove_item_list.collect {|item| concat(content_tag(:li, link_to(item, listing_path(listing, reason: item), method: :put)))}
+    end
     return ''
   end
 

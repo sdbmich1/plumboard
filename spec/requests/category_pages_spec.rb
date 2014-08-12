@@ -6,9 +6,10 @@ feature "Categories" do
   subject { page }
 
   before(:each) do
-    @category = FactoryGirl.create :category, name: 'Furniture', category_type: 'sales', status: 'active'
-    FactoryGirl.create :category, name: 'Computer', category_type: 'sales', status: 'active'
-    FactoryGirl.create :category, name: 'Stuff', category_type: 'sales', status: 'inactive'
+    @category_type = FactoryGirl.create(:category_type)
+    @category = FactoryGirl.create :category, name: 'Furniture', category_type_code: @category_type, status: 'active'
+    FactoryGirl.create :category, name: 'Computer', category_type_code: @category_type, status: 'active'
+    FactoryGirl.create :category, name: 'Stuff', category_type_code: @category_type, status: 'inactive'
   end
 
   def page_setup usr
@@ -80,11 +81,11 @@ feature "Categories" do
         
       it { should have_button('Save Changes') }
 
-      it 'accepts valid data' do
+      it 'accepts valid data', js: true do
         expect { 
 	    add_data_w_photo
 	    fill_in 'category_name', with: 'Boat'
-            select('sales', :from => 'category_category_type')
+            select('sales', :from => 'category_category_type_code')
 	    click_button submit; sleep 3
 	}.to change(Category, :count).by(1)
 
@@ -106,12 +107,14 @@ feature "Categories" do
           page.should have_content "blank" 
         end
         
-        it 'must have a picture' do
+        it 'must have a picture', js: true do
+          expect {
+            select('sales', :from => 'category_category_type_code')
+            }.not_to change(Category, :count)
           expect { 
 	    fill_in 'category_name', with: 'Boat'
 	    click_button submit }.not_to change(Category, :count)
-
-          page.should have_content "Must have a picture" 
+          page.should have_content "Must have a picture"
         end
       end
 
@@ -123,14 +126,12 @@ feature "Categories" do
       it { should have_content('Stuff') }
     end
 
-    describe 'visits edit page' do
+    describe 'visits edit page', js: true do
       before do
         click_on @category.name_title
       end
 
       it 'shows content' do
-        page.should have_content("Category Name")
-        page.should have_content("Category Type")
         page.should have_button("Save Changes")
       end
 
@@ -153,9 +154,10 @@ feature "Categories" do
 	find('#category_status')['disabled'].should be_true
       end
 
-      it 'changes name' do
+      it 'changes name', js: true do
         expect { 
           fill_in 'category_name', with: 'Technology'
+          select('sales', :from => 'category_category_type_code')
 	  click_button submit }.not_to change(Category, :count)
         page.should have_content 'Technology'
       end

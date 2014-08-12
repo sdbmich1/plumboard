@@ -28,13 +28,13 @@ module ApplicationHelper
   end
 
   # set blank user photo based on gender
-  def showphoto(gender)       
+  def showphoto(gender)
     @photo = gender == "Male" ? "headshot_male.jpg" : "headshot_female.jpg"
   end
 
   # used to toggle breadcrumb images based on current registration step
   def bc_image(bcrumb, val, file1, file2)
-    bcrumb >= val ? file1 : file2     
+    bcrumb >= val ? file1 : file2
   end
 
   # used do determine if search form is displayed
@@ -69,7 +69,7 @@ module ApplicationHelper
 
   # set home path
   def get_home_path
-    signed_in? ? set_home_path : root_path 
+    signed_in? ? set_home_path : root_path
   end
 
   # set home path based on pixi count
@@ -80,7 +80,7 @@ module ApplicationHelper
   # set image
   def get_image model, file_name
     if model
-      !model.any_pix? ? file_name : model.pictures[0].photo.url
+      !model.any_pix? ? file_name : get_pixi_image(model.pictures[0])
     else
       file_name
     end
@@ -91,12 +91,12 @@ module ApplicationHelper
     ptype ? Site.with_new_pixis : Site.active_with_pixis
   end
 
-  # set display date 
+  # set display date
   def get_local_date(tm)
     tm.utc.getlocal.strftime('%m/%d/%Y') if tm
   end
 
-  # set display time 
+  # set display time
   def get_local_time(tm)
     tm.strftime("%l:%M %p") unless tm.blank?
   end
@@ -111,7 +111,7 @@ module ApplicationHelper
     case parse_item(args[0], 'name')
       when 'Invoices'; render partial: 'shared/navbar_invoices', locals: { active: parse_item(args[0], 'action') || 'sent' }
       when 'Categories'; render 'shared/navbar_categories'
-      when 'Pixis'; render partial: 'shared/navbar_pixis', locals: { loc_name: @loc_name }
+      when 'Pixis'; render partial: 'shared/navbar_pixis', locals: { loc_name: @loc_name, rFlg: true, statusFlg: false }
       when 'Pixi'; render 'shared/navbar_show_pixi'
       when 'My Pixis'; render 'shared/navbar_mypixis'
       when 'My Accounts'; render 'shared/navbar_accounts'
@@ -139,10 +139,10 @@ module ApplicationHelper
 
   # set account path based on user has an account
   def get_account_path
-    if @user.has_bank_account? 
+    if @user.has_bank_account?
       @acct = @user.bank_accounts.first
       @acct.new_record? ? new_bank_account_path : bank_account_path(@acct)
-    else 
+    else
       new_bank_account_path
     end
   end
@@ -165,7 +165,7 @@ module ApplicationHelper
 
   # set path based on invoice count
   def get_unpaid_path
-    if @user.unpaid_invoice_count > 0 
+    if @user.unpaid_invoice_count > 0
       @invoice = @user.unpaid_received_invoices.first
       invoice_path(@invoice)
     end
@@ -173,7 +173,7 @@ module ApplicationHelper
 
   # toggle header if str matches
   def toggle_header? title
-    str = 'Pixi|Invoice|Account|Post|Setting|Order|Purchase'  # set match string
+    str = 'Pixi|Invoice|Account|Post|Setting|Order|Purchase' # set match string
     !(title.downcase =~ /^.*\b(#{str.downcase})(s){0,1}\b.*$/i).nil?
   end
 
@@ -220,6 +220,16 @@ module ApplicationHelper
 
   # check for menu display of footer items
   def show_footer_items?
-    controller_name == 'listings' && %w(index category local).detect {|x| action_name == x} 
+    controller_name == 'listings' && %w(index category local).detect {|x| action_name == x}
+  end
+
+  # check if using remote pix
+  def use_remote_pix?
+    USE_LOCAL_PIX.upcase != 'YES'
+  end
+
+  # check if image exists if not render uploaded image
+  def get_pixi_image pic, size='original'
+    pic.photo.exists? ? pic.photo.url(size.to_sym) : use_remote_pix? ? pic.picture_from_url : nil
   end
 end
