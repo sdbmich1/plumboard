@@ -1,4 +1,4 @@
-require 'spec_helper'
+ require 'spec_helper'
 
 describe Listing do
   before(:each) do
@@ -36,6 +36,7 @@ describe Listing do
   it { should respond_to(:year_built) }
   it { should respond_to(:pixan_id) }
   it { should respond_to(:job_type_code) }
+  it { should respond_to(:event_type_code) }
   it { should respond_to(:explanation) }
 
   it { should respond_to(:user) }
@@ -48,6 +49,8 @@ describe Listing do
   it { should respond_to(:contacts) }
   it { should respond_to(:category) }
   it { should respond_to(:job_type) }
+  it { should respond_to(:event_type) }
+  it { should belong_to(:event_type).with_foreign_key('event_type_code') }
   it { should respond_to(:comments) }
   it { should respond_to(:pixi_likes) }
   it { should have_many(:pixi_likes).with_foreign_key('pixi_id') }
@@ -657,7 +660,7 @@ describe Listing do
 
     it "is an event" do
       @listing.category_id = @cat.id
-      @listing.event?.should be_true 
+      @listing.event?.should be_true
     end
   end
 
@@ -1145,4 +1148,31 @@ describe Listing do
       @listing.reload.status.should == 'closed'
     end
   end
+  
+
+
+
+  describe '.event_type' do
+    before do
+        @etype = FactoryGirl.create(:event_type, code: 'party')
+        @listing1 = FactoryGirl.create(:listing)
+        @listing1.category_id = 'event'
+        @listing1.event_type_code = 'party'
+        
+    end
+    
+    it "should be an event" do
+        !(@listing1.event?.nil?)
+    end
+    
+    it "should respond to .event_type" do
+        @listing1.event_type == 'party'
+    end
+    
+    it "etype should respond to listings.first" do
+        !(@etype.listings.first.nil?)
+    end
+    
+  end
+  
 end

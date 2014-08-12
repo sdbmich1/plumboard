@@ -364,4 +364,11 @@ FactoryGirl.define do
     email_msg_flg   	'yes'
     mobile_msg_flg   	'yes'
   end
+  
+  factory :event_type do
+      code		"perform"
+      description		"concert, performance, speaker"
+      status		"active"
+      hide      "false"
+  end
 end

@@ -272,7 +272,7 @@ task :load_categories => :environment do
     attrs = {
 	      	:name              => row[0].titleize,
       		:category_type     => row[1],
-          :status		   => 'active'
+          :status		   => row[2]
     }
 
     # find or add category
@@ -512,6 +512,27 @@ task :load_regions => :environment do
     end
   end
 end
+
+#loads the data from the db/event_type_071014.csv file into new event_types table.
+task :load_event_types => :environment do
+    CSV.foreach(Rails.root.join('db', 'event_type_071014.csv'), :headers => true) do |row|
+        attrs = {
+            :code       => row[0],
+            :description     => row[1],
+            :status	   => 'active',
+            :hide   => 'false'
+        }
+
+            event = EventType.new(attrs)
+            if event.save
+       			 puts "Saved event #{attrs.inspect}"
+      		else
+        		puts event.errors
+            end
+        end
+    end
+
+
 #to run all tasks at once
 task :run_all_tasks => :environment do
 
@@ -531,4 +552,5 @@ task :run_all_tasks => :environment do
   Rake::Task[:import_user_type].execute
   Rake::Task[:import_faq].execute
   Rake::Task[:load_regions].execute
+  Rake::Task[:load_event_types].execute
 end

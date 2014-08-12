@@ -17,7 +17,8 @@ describe EventType do
     it { should validate_presence_of(:code) }
     it { should validate_presence_of(:hide) }
     
-    
+    it { should have_many(:listings).with_foreign_key('event_type_code') }
+    it { should have_many(:temp_listings).with_foreign_key('event_type_code') }
 
     
     describe "load_event_types" do
@@ -28,12 +29,31 @@ describe EventType do
         
         it "should call load_event_types" do
             Rake::Task["load_event_types"].invoke
+            expect !(EventType.first.nil?)
+        end
+     end
+        
+     describe '.event_type' do
+        before do
+            @etype = FactoryGirl.create(:event_type, code: 'party')
+            @listing1 = FactoryGirl.create(:listing)
+            @listing1.category_id = 'event'
+            @listing1.event_type_code = 'party'
+                
         end
         
-        #it { expect { Rake::Task['products:load'].invoke }.not_to raise_exception }
+        it "should be an event" do
+            !(@listing1.event?.nil?)
+        end
         
+        it "should respond to .event_type" do
+            @listing1.event_type == 'party'
+        end
+            
+        it "etype should respond to listings.first" do
+            !(@etype.listings.first.nil?)
+        end
     end
-        
 
     
     describe "active event_types" do

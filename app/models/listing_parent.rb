@@ -16,7 +16,7 @@ class ListingParent < ActiveRecord::Base
 
   attr_accessible :buyer_id, :category_id, :description, :title, :seller_id, :status, :price, :show_alias_flg, :show_phone_flg, :alias_name,
   	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id, :year_built, :pixan_id, 
-	:job_type_code, :edited_by, :edited_dt, :post_ip, :lng, :lat, :event_start_date, :event_end_date, :compensation, 
+	:job_type_code, :event_type_code, :edited_by, :edited_dt, :post_ip, :lng, :lat, :event_start_date, :event_end_date, :compensation,
 	:event_start_time, :event_end_time, :explanation, :contacts_attributes
 
   belongs_to :user, foreign_key: :seller_id
@@ -24,6 +24,7 @@ class ListingParent < ActiveRecord::Base
   belongs_to :category
   belongs_to :transaction
   belongs_to :job_type, primary_key: 'code', foreign_key: 'job_type_code'
+  belongs_to :event_type, primary_key: 'code', foreign_key: 'event_type_code'
 
   has_many :pictures, :as => :imageable, :dependent => :destroy
   accepts_nested_attributes_for :pictures, :allow_destroy => true
@@ -38,6 +39,7 @@ class ListingParent < ActiveRecord::Base
   validates :start_date, :presence => true
   validates :category_id, :presence => true
   validates :job_type_code, :presence => true, if: :job?
+  validates :event_type_code, :presence => true, if: :event?
   validates :price, allow_blank: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
     		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_PIXI_AMT.to_f }
   validate :must_have_pictures
@@ -293,6 +295,7 @@ class ListingParent < ActiveRecord::Base
   def job?
     category.category_type == 'employment' rescue nil
   end
+
 
   # delete selected photo
   def delete_photo pid, val=1

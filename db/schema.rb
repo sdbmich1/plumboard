@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140531054048) do
+ActiveRecord::Schema.define(:version => 20140727193506) do
 
   create_table "bank_accounts", :force => true do |t|
     t.string   "token"
@@ -106,6 +106,15 @@ ActiveRecord::Schema.define(:version => 20140531054048) do
   end
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
+
+  create_table "event_types", :force => true do |t|
+    t.string   "code"
+    t.string   "status"
+    t.string   "hide"
+    t.string   "description"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
 
   create_table "faqs", :force => true do |t|
     t.string   "subject"
@@ -219,11 +228,13 @@ ActiveRecord::Schema.define(:version => 20140531054048) do
     t.string   "job_type_code"
     t.string   "explanation"
     t.boolean  "delta"
+    t.string   "event_type_code"
   end
 
   add_index "listings", ["category_id"], :name => "index_listings_on_category_id"
   add_index "listings", ["end_date", "start_date"], :name => "index_listings_on_end_date_and_start_date"
   add_index "listings", ["event_start_date", "event_end_date"], :name => "index_listings_on_event_start_date_and_event_end_date"
+  add_index "listings", ["event_type_code"], :name => "index_listings_on_event_type_code"
   add_index "listings", ["job_type_code"], :name => "index_listings_on_job_type"
   add_index "listings", ["lng", "lat"], :name => "index_listings_on_lng_and_lat"
   add_index "listings", ["pixan_id"], :name => "index_listings_on_pixan_id"
@@ -265,9 +276,11 @@ ActiveRecord::Schema.define(:version => 20140531054048) do
     t.integer  "pixan_id"
     t.string   "job_type_code"
     t.string   "explanation"
+    t.string   "event_type_code"
   end
 
   add_index "old_listings", ["category_id"], :name => "index_old_listings_on_category_id"
+  add_index "old_listings", ["event_type_code"], :name => "index_old_listings_on_event_type_code"
   add_index "old_listings", ["pixan_id"], :name => "index_old_listings_on_pixan_id"
   add_index "old_listings", ["pixi_id"], :name => "index_old_listings_on_pixi_id"
   add_index "old_listings", ["title"], :name => "index_old_listings_on_title"
@@ -564,8 +577,10 @@ ActiveRecord::Schema.define(:version => 20140531054048) do
     t.integer  "pixan_id"
     t.string   "job_type_code"
     t.string   "explanation"
+    t.string   "event_type_code"
   end
 
+  add_index "temp_listings", ["event_type_code"], :name => "index_temp_listings_on_event_type_code"
   add_index "temp_listings", ["parent_pixi_id"], :name => "index_temp_listings_on_parent_pixi_id"
   add_index "temp_listings", ["pixan_id"], :name => "index_temp_listings_on_pixan_id"
   add_index "temp_listings", ["pixi_id"], :name => "index_temp_listings_on_pixi_id", :unique => true
