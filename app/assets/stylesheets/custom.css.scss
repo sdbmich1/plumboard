@@ -285,7 +285,7 @@ input, select, .uneditable-input {
   @extend .error;
  }
 
-.notice, .alert, .error {
+.notice, .success, .alert, .error {
    margin-top: 10px!important;
    padding: 5px 0 5px 0;
    margin: 7px;
@@ -707,7 +707,7 @@ a#home-link, a.home-link {
 }
 
 #add-pixi-photo .cabinet {
-  margin-left: 0!important;
+  margin-left: 2px!important;
   padding: 0!important;
 }
 

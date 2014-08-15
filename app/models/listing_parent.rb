@@ -2,7 +2,7 @@ require 'rails_rinku'
 require 'digest/md5'
 class ListingParent < ActiveRecord::Base
   resourcify
-  include Area, ResetDate, LocationManager
+  include Area, ResetDate, LocationManager, PixiPostsHelper
   self.abstract_class = true
   self.per_page = 20
 
@@ -16,7 +16,7 @@ class ListingParent < ActiveRecord::Base
 
   attr_accessible :buyer_id, :category_id, :description, :title, :seller_id, :status, :price, :show_alias_flg, :show_phone_flg, :alias_name,
   	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id, :year_built, :pixan_id, 
-	:job_type_code, :edited_by, :edited_dt, :post_ip, :lng, :lat, :event_start_date, :event_end_date, :compensation, 
+	:job_type_code, :event_type_code, :edited_by, :edited_dt, :post_ip, :lng, :lat, :event_start_date, :event_end_date, :compensation,
 	:event_start_time, :event_end_time, :explanation, :contacts_attributes
 
   belongs_to :user, foreign_key: :seller_id
@@ -24,6 +24,7 @@ class ListingParent < ActiveRecord::Base
   belongs_to :category
   belongs_to :transaction
   belongs_to :job_type, primary_key: 'code', foreign_key: 'job_type_code'
+  belongs_to :event_type, primary_key: 'code', foreign_key: 'event_type_code'
 
   has_many :pictures, :as => :imageable, :dependent => :destroy
   accepts_nested_attributes_for :pictures, :allow_destroy => true
@@ -38,6 +39,7 @@ class ListingParent < ActiveRecord::Base
   validates :start_date, :presence => true
   validates :category_id, :presence => true
   validates :job_type_code, :presence => true, if: :job?
+  validates :event_type_code, :presence => true, if: :event?
   validates :price, allow_blank: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
     		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_PIXI_AMT.to_f }
   validate :must_have_pictures
@@ -54,12 +56,12 @@ class ListingParent < ActiveRecord::Base
 
   # check if pixi is an event
   def event?
-    category.category_type == 'event' rescue nil
+    category.category_type_code == 'event' rescue nil
   end
 
   # check if pixi can have a year
   def has_year?
-    category.category_type == 'asset' rescue nil
+    category.category_type_code == 'asset' rescue nil
   end
 
   # check if event start date exists
@@ -108,9 +110,19 @@ class ListingParent < ActiveRecord::Base
     include_list.where(where_stmt).reorder('listings.updated_at DESC')
   end
 
+  # see include_list_without_job_type
+  def self.active_without_job_type
+    include_list_without_job_type.where(where_stmt).reorder('listings.updated_at DESC')
+  end    
+
   # eager load assns
   def self.include_list
     includes(:pictures, :site, :category, :job_type)
+  end
+
+  # leaves out job_type to avoid unused eager loading
+  def self.include_list_without_job_type
+    includes(:pictures, :site, :category)
   end
 
   # find listings by status
@@ -119,8 +131,8 @@ class ListingParent < ActiveRecord::Base
   end
 
   # find listings by seller user id
-  def self.get_by_seller val
-    where(:seller_id => val)
+  def self.get_by_seller val, admin_view=false
+    admin_view ? where("seller_id IS NOT NULL") : where(:seller_id => val)
   end
 
   # verify if listing has been paid for
@@ -195,7 +207,7 @@ class ListingParent < ActiveRecord::Base
 
   # verify pixi can be edited
   def editable? usr
-    (seller?(usr) || pixter?(usr)) && !sold?
+    (seller?(usr) || pixter?(usr) || usr.has_role?(:admin)) && !sold?
   end
 
   # get category name for a listing
@@ -281,13 +293,14 @@ class ListingParent < ActiveRecord::Base
 
   # check if pixi is a job
   def job?
-    category.category_type == 'employment' rescue nil
+    category.category_type_code == 'employment' rescue nil
   end
+
 
   # delete selected photo
   def delete_photo pid, val=1
     # find selected photo
-    pic = self.pictures.find pid
+    pic = self.pictures.where(id: pid).first
 
     # remove photo if found and not only photo for listing
     result = pic && self.pictures.size > val ? self.pictures.delete(pic) : false
@@ -342,6 +355,12 @@ class ListingParent < ActiveRecord::Base
       listing.pixan_id, listing.year_built, listing.buyer_id = self.pixan_id, self.year_built, self.buyer_id
       listing.show_phone_flg, listing.start_date, listing.end_date = self.show_phone_flg, self.start_date, self.end_date
       listing.post_ip, listing.lat, listing.lng, listing.edited_by = self.post_ip, self.lat, self.lng, self.edited_by
+    end
+
+    # remove any dup in case of cleanup failures
+    if listing.is_a?(TempListing) && listing.new_record?
+      templist = TempListing.where(pixi_id: listing.pixi_id)
+      templist.map! {|t| t.destroy} if templist
     end
 
     # add dup

@@ -5,7 +5,7 @@
   </div>
   <div class="sm-top row">
     <%= form_for([resource_name, resource.with_picture], url: registration_path(resource_name), data: {validate: 'parsley'}, 
-      html: { multipart: true, id: 'register-form'}) do |f| %>
+      html: { multipart: true, id: 'register-form', class: 'uform'}) do |f| %>
       <%= render partial: 'shared/error_messages', :locals => { :target => f.object } %>
       <%= render partial: 'shared/show_user_photo', locals: { f: f, model: resource, file_name: 'person_icon.jpg' } %>
 
@@ -13,7 +13,7 @@
         <div id='signup'>
           <%= render partial: 'shared/user_info', locals: { f: f, user: @user } %>
 	  <% if @user.password_required? %>
-    	    <div><%= f.password_field :password, placeholder: 'New password (min. 8 characters)', required: true %></div>
+    	    <div><%= f.password_field :password, placeholder: 'New password (min. 8 characters)', value: nil, required: true %></div>
     	    <div><%= f.password_field :password_confirmation, placeholder: 'Re-enter password', required: true %></div>
 	  <% end %>
         </div>

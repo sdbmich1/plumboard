@@ -1,0 +1,19 @@
+  <div class="mtop center">
+    <p><h1>Sign in</h1></p>
+  </div>
+
+  <div class="row">
+    <div class="mtop span4 offset4">
+      <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
+        <%= render partial: 'shared/signin_form', locals: { rmbrFlg: true } %>
+      <% end %>
+
+      <div class='clear-all'></div>
+      <div class=''>
+        <%- if devise_mapping.recoverable? && controller_name != 'passwords' %>
+          <%= link_to "Forgot password?", new_password_path(resource_name) %><br />
+        <% end -%>
+      </div>
+    </div>
+  </div>
+

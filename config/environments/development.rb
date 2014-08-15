@@ -47,9 +47,9 @@ Plumboard::Application.configure do
 
   # paperclip storage setting
   PAPERCLIP_STORAGE_OPTIONS = {
-	  url: "/system/:class/:attachment/:id/:style/:filename",
-	  path: ":rails_root/public/system/:class/:attachment/:id_partition/:style/:filename" 
-  }
+  	  url: "/system/:class/:attachment/:id/:style/:filename",
+  	  path: ":rails_root/public/system/:class/:attachment/:id_partition/:style/:filename" 
+   }
 
   # facebook ssl setting
   FACEBOOK_SSL_OPTIONS = {:ca_path => "/etc/ssl/certs"}

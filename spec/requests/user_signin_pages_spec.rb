@@ -17,22 +17,6 @@ feature "UserSignins" do
     click_button submit
   end
 
-  def add_region
-    stub_const("PIXI_LOCALE", 'Metro Detroit')
-    @user = FactoryGirl.create :pixi_user, confirmed_at: Time.now 
-    @site1 = create :site, name: 'Detroit', org_type: 'city'
-    @site1.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro', city: 'Detroit', state: 'MI', zip: '48238'
-    @site2 = create :site, name: 'Metro Detroit', org_type: 'region'
-    @site2.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro', city: 'Detroit', state: 'MI', zip: '48238'
-    create(:listing, title: "Guitar", description: "Lessons", seller_id: @user.id, site_id: @site1.id) 
-    @loc = @site1.id
-  end
-
-  def set_const val
-    stub_const("MIN_PIXI_COUNT", val)
-    expect(MIN_PIXI_COUNT).to eq(val)
-  end
-
   def user_menu_items showFlg=false
     page.should have_button('Post')
     page.should have_link('By You', href: new_temp_listing_path)
@@ -60,6 +44,7 @@ feature "UserSignins" do
   describe 'home page' do 
     before do 
       add_region
+      @user = FactoryGirl.create :pixi_user, confirmed_at: Time.now 
       visit new_user_session_path
     end
 
@@ -193,6 +178,7 @@ feature "UserSignins" do
 
       it 'shows content' do
         page.should have_content(@user.first_name)
+        page.should_not have_content('Manage')
         page.should have_link('Sign out', href: destroy_user_session_path)
         page.should_not have_link('Orders', href: pending_listings_path)
         page.should_not have_link('Transactions', href: transactions_path)
@@ -223,12 +209,12 @@ feature "UserSignins" do
       it 'shows content' do
         page.should have_content(@user.first_name)
         page.should have_content('Manage')
-        page.should have_link('Pending Orders', href: pending_listings_path(status: 'pending'))
         page.should have_link('PixiPosts', href: pixi_posts_path(status: 'active'))
         page.should have_link('Inquiries', href: inquiries_path(ctype: 'inquiry'))
         page.should have_link('Categories', href: manage_categories_path)
         page.should have_link('Transactions', href: transactions_path)
         page.should have_link('Users', href: users_path)
+        page.should have_link('Pixis', href: listings_path)
 	user_menu_items true
       end
 
@@ -247,13 +233,13 @@ feature "UserSignins" do
       it 'shows content' do
         page.should have_content(@user.first_name)
         page.should have_content('Manage')
-        page.should have_link('Pending Orders', href: pending_listings_path(status: 'pending'))
         page.should have_link('PixiPosts', href: pixi_posts_path(status: 'active'))
         page.should have_link('Inquiries', href: inquiries_path(ctype: 'inquiry'))
         page.should_not have_link('Categories', href: manage_categories_path)
         page.should_not have_link('Transactions', href: transactions_path)
         page.should_not have_link('Users', href: users_path)
         page.should have_link('For Seller', href: new_temp_listing_path(pixan_id: @user))
+        page.should have_link('Pixis', href: listings_path)
 	user_menu_items true
       end
 
@@ -272,7 +258,6 @@ feature "UserSignins" do
       it 'shows content' do
         page.should have_content(@user.first_name)
         page.should have_content('Manage')
-        page.should_not have_link('Pending Orders', href: pending_listings_path(status: 'pending'))
         page.should_not have_link('PixiPosts', href: pixi_posts_path(status: 'active'))
         page.should have_link('PixiPosts', href: pixter_pixi_posts_path(status: 'scheduled'))
         page.should_not have_link('Inquiries', href: inquiries_path(ctype: 'inquiry'))
@@ -280,6 +265,7 @@ feature "UserSignins" do
         page.should_not have_link('Transactions', href: transactions_path)
         page.should_not have_link('Users', href: users_path)
         page.should have_link('For Seller', href: new_temp_listing_path(pixan_id: @user))
+        page.should_not have_link('Pixis', href: listings_path)
 	user_menu_items true
       end
 
@@ -306,8 +292,8 @@ feature "UserSignins" do
 
     describe 'registered subscriber users' do
       before(:each) do
-        @user = FactoryGirl.create :subscriber, confirmed_at: Time.now 
-        user_login
+        sub = FactoryGirl.create :subscriber, confirmed_at: Time.now 
+        init_setup sub
       end
 
       it 'shows content' do
@@ -315,10 +301,10 @@ feature "UserSignins" do
         page.should_not have_content('Manage')
         page.should_not have_link('PixiPosts', href: pixi_posts_path)
         page.should_not have_link('Inquiries', href: inquiries_path(ctype: 'inquiry'))
-        page.should_not have_link('Pending Orders', href: pending_listings_path(status: 'pending'))
         page.should_not have_link('Categories', href: manage_categories_path)
         page.should_not have_link('Transactions', href: transactions_path)
         page.should_not have_link('Users', href: users_path)
+        page.should_not have_link('Pixis', href: listings_path)
 	user_menu_items
       end
 
@@ -328,5 +314,4 @@ feature "UserSignins" do
       end
     end
   end
-
 end

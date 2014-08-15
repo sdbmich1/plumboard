@@ -3,9 +3,8 @@ class TempListingsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :check_permissions, only: [:create, :show, :edit, :update, :delete]
   before_filter :load_data, only: [:unposted]
-  before_filter :load_pixi, only: [:edit, :update, :submit, :destroy]
   before_filter :set_params, only: [:create, :update]
-  autocomplete :site, :name, :full => true
+  autocomplete :site, :name, :full => true, :limit => 20
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name, if: :has_pixan?
   include ResetDate
   respond_to :html, :json, :js, :mobile
@@ -22,12 +21,13 @@ class TempListingsController < ApplicationController
   end
 
   def edit
-    @listing ||= Listing.find_by_pixi_id(params[:id]).dup_pixi(false)
+    @listing = TempListing.find_by_pixi_id(params[:id]) || Listing.find_by_pixi_id(params[:id]).dup_pixi(false)
     @photo = @listing.pictures.build if @listing
     respond_with(@listing)
   end
 
   def update
+    @listing = TempListing.find_by_pixi_id params[:id]
     respond_with(@listing) do |format|
       if @listing.update_attributes(params[:temp_listing])
         format.json { render json: {listing: @listing} }
@@ -50,6 +50,7 @@ class TempListingsController < ApplicationController
   end
 
   def submit
+    @listing = TempListing.find_by_pixi_id params[:id]
     respond_with(@listing) do |format|
       if @listing.resubmit_order
         format.json { render json: {listing: @listing} }
@@ -61,6 +62,7 @@ class TempListingsController < ApplicationController
   end
 
   def destroy
+    @listing = TempListing.find_by_pixi_id params[:id]
     respond_with(@listing) do |format|
       if @listing.destroy  
         format.html { redirect_to get_root_path }
@@ -117,10 +119,5 @@ class TempListingsController < ApplicationController
 
   def check_permissions
     authorize! :crud, TempListing
-  end
-
-  # load pixi data
-  def load_pixi
-    @listing = TempListing.find_by_pixi_id params[:id]
   end
 end

@@ -23,4 +23,15 @@ module NameParse
 
     return s
   end
+
+  # parse url string for correctness
+  def self.parse_url str
+
+    # use array to substitute invalid url characters
+    r = [[' ','_'], ['.','_']]
+    r.each {|rep| str.gsub!(rep[0], rep[1])}
+
+    # return parsed url
+    str
+  end
 end

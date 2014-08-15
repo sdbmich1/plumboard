@@ -1,4 +1,4 @@
-require 'spec_helper'
+ require 'spec_helper'
 
 describe Listing do
   before(:each) do
@@ -36,6 +36,7 @@ describe Listing do
   it { should respond_to(:year_built) }
   it { should respond_to(:pixan_id) }
   it { should respond_to(:job_type_code) }
+  it { should respond_to(:event_type_code) }
   it { should respond_to(:explanation) }
 
   it { should respond_to(:user) }
@@ -48,6 +49,8 @@ describe Listing do
   it { should respond_to(:contacts) }
   it { should respond_to(:category) }
   it { should respond_to(:job_type) }
+  it { should respond_to(:event_type) }
+  it { should belong_to(:event_type).with_foreign_key('event_type_code') }
   it { should respond_to(:comments) }
   it { should respond_to(:pixi_likes) }
   it { should have_many(:pixi_likes).with_foreign_key('pixi_id') }
@@ -226,6 +229,10 @@ describe Listing do
       Listing.get_by_seller(1).should_not be_empty  
     end
 
+    it "gets all listings for admin" do
+      Listing.get_by_seller(0, true).should_not be_empty
+    end
+
     it { Listing.get_by_seller(0).should_not include @listing } 
   end
 
@@ -370,6 +377,7 @@ describe Listing do
   describe "editable" do 
     before do
       @pixter = create :pixi_user, user_type_code: 'PT'
+      @admin = create :admin, confirmed_at: Time.now
       @user2 = FactoryGirl.create(:pixi_user, first_name: 'Lisa', last_name: 'Harden', email: 'lisaharden@pixitest.com') 
       @listing = FactoryGirl.create(:listing, seller_id: @user.id, pixan_id: @pixter.id) 
       @sold = FactoryGirl.create(:listing, seller_id: @user.id, pixan_id: @pixter.id, status: 'sold') 
@@ -377,10 +385,14 @@ describe Listing do
 
     it "is editable" do 
       @listing.editable?(@pixter).should be_true 
+      @listing.editable?(@user).should be_true 
+      @listing.editable?(@admin).should be_true 
     end
 
     it "sold pixi is not editable" do 
       @sold.editable?(@pixter).should_not be_true 
+      @sold.editable?(@user).should_not be_true 
+      @sold.editable?(@admin).should_not be_true 
     end
 
     it "is not editable" do 
@@ -648,7 +660,7 @@ describe Listing do
 
     it "is an event" do
       @listing.category_id = @cat.id
-      @listing.event?.should be_true 
+      @listing.event?.should be_true
     end
   end
 
@@ -1136,4 +1148,31 @@ describe Listing do
       @listing.reload.status.should == 'closed'
     end
   end
+  
+
+
+
+  describe '.event_type' do
+    before do
+        @etype = FactoryGirl.create(:event_type, code: 'party')
+        @listing1 = FactoryGirl.create(:listing)
+        @listing1.category_id = 'event'
+        @listing1.event_type_code = 'party'
+        
+    end
+    
+    it "should be an event" do
+        !(@listing1.event?.nil?)
+    end
+    
+    it "should respond to .event_type" do
+        @listing1.event_type == 'party'
+    end
+    
+    it "etype should respond to listings.first" do
+        !(@etype.listings.first.nil?)
+    end
+    
+  end
+  
 end
