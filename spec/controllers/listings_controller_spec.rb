@@ -471,9 +471,8 @@ describe ListingsController do
       it "renders the edit form" do 
         Listing.stub(:find_by_pixi_id) { mock_listing(:update_attributes => false) }
         do_update
-	response.should render_template(:show)
+	      response.should render_template(:show)
       end
     end
-  end
-
+    end
 end

@@ -17,7 +17,6 @@ $(document).on("change", "select[id*=category_id]", function(evt){
   // check if pixi form
   if($('#pixi-form').length > 0) {
     var cid = $(this).val();
-
     if (cid.length > 0) {
       var url = '/categories/category_type?id=' + cid;
 
@@ -25,7 +24,7 @@ $(document).on("change", "select[id*=category_id]", function(evt){
       processUrl(url);
     }
   }
-}); 
+});
 
 // paginate on click
 var pstr = "#inq-list .pagination a, #pendingOrder .pagination a, #post_form .pagination a, #comment-list .pagination a," +

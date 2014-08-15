@@ -305,7 +305,6 @@ class ListingParent < ActiveRecord::Base
 
     unless listing
       attr = self.attributes  # copy attributes
-
       # remove protected attributes
       arr = tmpFlg ? %w(id created_at updated_at parent_pixi_id) : %w(id created_at updated_at delta)
       arr.map {|x| attr.delete x}

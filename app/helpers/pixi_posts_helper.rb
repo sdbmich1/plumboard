@@ -76,5 +76,16 @@ module PixiPostsHelper
   # check user can edit post
   def can_edit? post
     (post.owner?(@user) && !post.has_appt? && !post.is_completed?) || can?(:manage_items, @user)
-  end 
+  end
+
+  # test helper
+  def pixter_report_total
+    total = 0
+    for elem in @pixi_posts
+      if (!PixiPost.sale_value(elem).nil?)
+        total += PixiPost.sale_value(elem)
+      end
+    end
+    total
+  end
 end

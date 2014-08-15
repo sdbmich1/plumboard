@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140531054048) do
+ActiveRecord::Schema.define(:version => 20140630004217) do
 
   create_table "bank_accounts", :force => true do |t|
     t.string   "token"
@@ -90,6 +90,14 @@ ActiveRecord::Schema.define(:version => 20140531054048) do
   add_index "contacts", ["contactable_id"], :name => "index_contacts_on_contactable_id"
   add_index "contacts", ["contactable_type"], :name => "index_contacts_on_contactable_type"
   add_index "contacts", ["lng", "lat"], :name => "index_contacts_on_long_and_lat"
+
+  create_table "date_ranges", :force => true do |t|
+    t.string   "name"
+    t.string   "status"
+    t.string   "hide"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0, :null => false

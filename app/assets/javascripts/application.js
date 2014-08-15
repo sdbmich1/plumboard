@@ -36,3 +36,4 @@
 //= require jquery.rateit.min
 //= require jquery.remotipart
 //= require_tree .
+//= require pixter_report

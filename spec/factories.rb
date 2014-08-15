@@ -73,6 +73,11 @@ FactoryGirl.define do
     before(:create) {|category| category.pictures.build FactoryGirl.attributes_for(:picture)}
   end
 
+  factory :date_range do
+    name "Last Month"
+    status "active"
+  end
+
   factory :contact do
     address          "123 Elm"
     city            "LA"

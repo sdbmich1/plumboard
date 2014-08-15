@@ -512,6 +512,24 @@ task :load_regions => :environment do
     end
   end
 end
+
+#load date range
+task :load_date_range => :environment do
+  DateRange.delete_all
+  CSV.foreach(Rails.root.join('db', 'import_date_range.csv'), :headers => true) do |row|
+    attrs = {
+        :name => row[0]
+    }
+    new_date_range = DateRange.new(attrs)
+    # save date_range
+    if new_date_range.save
+      puts "Saved date_range #{attrs.inspect}"
+    else
+      puts new_date_range.errors
+    end
+  end
+end
+
 #to run all tasks at once
 task :run_all_tasks => :environment do
 

@@ -7,7 +7,7 @@
     <li class="<%= @status == 'completed' ? 'active' : '' %>">
       <%= link_to "Completed", pixi_posts_path(status: 'completed'), class: 'submenu', id: 'comp-posts', remote: remote? %></li>
     <li class="<%= action_name == 'pixter_report' ? 'active' : '' %>">
-      <%= link_to "Admin Pixter Report", pixter_report_pixi_posts_path, class: 'submenu', id: 'pixter-report' %>
+      <%= link_to "Pixter Report", pixter_report_pixi_posts_path, class: 'submenu', id: 'pixter-report' %>
     </li>
 
 
