@@ -42,6 +42,6 @@ class PicturesController < ApplicationController
   end
 
   def file_name pic
-    pic.photo.exists? ? pic.photo.path(style) : pic.picture_from_url
+    pic.photo.exists? ? pic.photo.path(style) : pic.picture_from_url rescue 'rsz_pixi_top_logo.png'
   end
 end
