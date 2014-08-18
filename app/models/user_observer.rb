@@ -17,13 +17,14 @@ class UserObserver < ActiveRecord::Observer
         when 'PX'; role = 'editor'
         when 'PT'; role = 'pixter'
         when 'AD'; role = 'admin'
+        when 'SP'; role = 'support'
 	else
 	  role = 'member'
       end
 
       # set role
       unless role == 'member'
-        usr.add_role(role.to_sym) if usr.roles.find_by_name(role.to_s.camelize).blank? rescue nil
+        usr.add_role(role.to_sym) unless usr.has_role? role.to_sym
       end
     end
   end

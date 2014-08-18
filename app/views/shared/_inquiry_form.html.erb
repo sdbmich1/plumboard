@@ -7,7 +7,7 @@
     </div>
     <div class='row'>
       <div style="<%= signed_in? ? '' : 'display:none' %>">
-        <div class='offset2 span6 sm-bot frm-name'><label>From:<span class='mleft10'><%= @user.name %></label></span></div>
+        <div class='offset2 span6 sm-bot frm-name'><label>From:<span class='mleft10'><%= get_sender_name %></label></span></div>
       </div>
     </div>
     <div class='sm-top user-tbl' style="<%= signed_in? ? 'display:none' : '' %>">

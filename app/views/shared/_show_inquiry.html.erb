@@ -4,7 +4,7 @@
   <div class="mtop pull-right">
     <%= link_to 'Remove', inquiry, method: :delete, confirm: 'Delete this inquiry?', class: 'btn btn-large', id: 'rm-btn' %>
     <%= link_to 'Edit', edit_inquiry_path(inquiry), class: 'btn btn-large' %>
-    <%= link_to 'Done', get_home_path, id: 'done-inquiry-btn', class: 'btn btn-large btn-primary submit-btn' %>
+    <%= link_to 'Done', inquiries_path(ctype: 'inquiry'), id: 'done-inquiry-btn', class: 'btn btn-large btn-primary submit-btn' %>
   </div>
 </div>
 

@@ -12,14 +12,9 @@ feature "Inquiries" do
     fill_in 'inq_email', with: @user.email
   end
 
-  def init_setup usr
-    login_as(usr, :scope => :user, :run_callbacks => false)
-    @user = usr
-  end
-
-  def add_inquiry_type
+  def add_inquiry_type icode='OQ', ctype='inquiry'
     @support_type = FactoryGirl.create :inquiry_type
-    @iq_type = FactoryGirl.create :inquiry_type, subject: 'Other Questions', code: 'OQ', contact_type: 'inquiry'
+    @iq_type = FactoryGirl.create :inquiry_type, subject: 'Other Questions', code: icode, contact_type: ctype
   end
 
   def inquiry_data
@@ -127,8 +122,7 @@ feature "Inquiries" do
 
   describe 'Visit Contact Us Page - signed in users' do
     before(:each) do
-      login_as(user, :scope => :user, :run_callbacks => false)
-      @user = user
+      init_setup user
       add_inquiry_type
       visit contact_path
     end
@@ -162,9 +156,8 @@ feature "Inquiries" do
 
   describe 'Visit Contact Us Page - support users' do
     before(:each) do
-      login_as(user, :scope => :user, :run_callbacks => false)
-      @user = user
-      add_inquiry_type
+      init_setup user
+      add_inquiry_type 'OT', 'support'
       visit contact_path(source: 'support')
     end
 
@@ -293,13 +286,14 @@ feature "Inquiries" do
 
   describe "Editor edits a Inquiry" do 
     before do
-      login_as(editor, :scope => :user, :run_callbacks => false)
-      @user = user
+      init_setup editor
       @inquiry = @user.inquiries.create FactoryGirl.attributes_for(:inquiry)
       visit edit_inquiry_path(@inquiry)
     end
 
     it "opens edit page" do
+      page.should have_content @inquiry.user_name
+      page.should_not have_content @user.name
       page.should have_selector('title', text: 'Edit Inquiry') 
       page.should have_link 'Cancel'
       page.should have_selector('#inq_status', visible: true) 
@@ -316,7 +310,7 @@ feature "Inquiries" do
       page.should have_content 'Closed'
       page.should have_link 'Edit', href: edit_inquiry_path(@inquiry) 
       page.should have_link 'Remove', href: inquiry_path(@inquiry) 
-      page.should have_link 'Done', href: root_path 
+      page.should have_link 'Done', href: inquiries_path(ctype: 'inquiry') 
     end
 
     it "cancels inquiry edit", js: true do

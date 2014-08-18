@@ -357,8 +357,9 @@ feature "TempListings" do
     it "should not delete last picture from listing", js: true do
       expect { 
 	      click_remove_ok; sleep 4
-      }.not_to change(temp_listing.pictures,:count).by(-1)
-      page.should have_content 'Pixi must have at least one image'
+	      click_button submit
+      }.to change(temp_listing.pictures,:count).by(-1)
+      page.should have_content 'Must have at least one picture'
     end
   end
 

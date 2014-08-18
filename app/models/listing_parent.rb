@@ -205,7 +205,7 @@ class ListingParent < ActiveRecord::Base
 
   # verify pixi can be edited
   def editable? usr
-    (seller?(usr) || pixter?(usr) || usr.has_role?(:admin)) && !sold?
+    (seller?(usr) || pixter?(usr) || usr.has_role?(:admin)) || usr.has_role?(:support) && !sold?
   end
 
   # get category name for a listing
@@ -341,7 +341,7 @@ class ListingParent < ActiveRecord::Base
       end
 
       # add photo
-      listing.pictures.build(:photo => pic.photo)
+      listing.pictures.build(:photo => pic.photo, :dup_flg => true)
     end
 
     # update fields

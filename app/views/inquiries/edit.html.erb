@@ -3,8 +3,10 @@
   <%= render :partial => 'shared/navbar', locals: { menu_name: 'Inquiries' } %>
 <% end %>
 <%= content_for :content do %>
-  <div id='inquiry_frm' class='div-border'>
-    <%= render partial: 'shared/inquiry_form', locals: { svcFlg: false } %>
+  <div id='inv_form'>
+    <div class='div-border'>
+      <%= render partial: 'shared/inquiry_form', locals: { svcFlg: false } %>
+    </div>
   </div>
 <% end %>
 
