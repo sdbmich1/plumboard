@@ -7,7 +7,7 @@ class Picture < ActiveRecord::Base
   DIRECT_UPLOAD_URL_FORMAT = %r{\Ahttps:\/\/#{S3FileField.config.bucket}\.#{S3FileField.config.region}\.amazonaws\.com\/(?<path>uploads\/.+\/(?<filename>.+))\z}.freeze
 
   attr_accessible :photo_file_name, :photo_content_type, :photo_file_size, :photo_updated_at, :photo, :processing, :photo_file_path,
-    :direct_upload_url
+    :direct_upload_url, :dup_flg
   
   has_attached_file :photo, {
        styles: { :large => "300x300>", :medium => "150x150>", :thumb => "100x100>", :small => "60x60>", :tiny => "30x30>" }
@@ -27,7 +27,7 @@ class Picture < ActiveRecord::Base
   # ...and perform after save in background
   after_save do |picture| 
     if picture.processing && process_locally?
-      Picture.processPhotoJob(picture)
+      processPhotoJob(picture)
     end
   end
 
@@ -154,7 +154,7 @@ class Picture < ActiveRecord::Base
 
   # remote processing
   def process_remotely?
-    !Rails.env.test? && USE_LOCAL_PIX.upcase == 'NO' && imageable_type != 'Listing'
+    !Rails.env.test? && USE_LOCAL_PIX.upcase == 'NO' && imageable_type != 'Listing' && !dup_flg
   end
 
 end

@@ -30,7 +30,7 @@ class PixiPost < ActiveRecord::Base
   validates_date :preferred_date, presence: true, on_or_after: :min_start_date, unless: :is_admin?
   validates_date :alt_date, allow_blank: true, on_or_after: :min_start_date, unless: :is_admin?
   validates_date :appt_date, on_or_after: :today, presence: true, if: :can_set_appt?
-  validates_date :completed_date, on_or_after: :today, presence: true, if: :has_pixi?
+  validates_date :completed_date, presence: true, if: :has_pixi?
   validates_datetime :alt_time, presence: true, unless: "alt_date.nil?"
   validates_datetime :appt_time, presence: true, unless: "appt_date.nil?"
 

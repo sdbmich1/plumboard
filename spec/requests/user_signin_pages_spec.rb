@@ -41,6 +41,21 @@ feature "UserSignins" do
     page.should have_link('Help', href: help_path )
   end
 
+  def pixter_menu_items
+    page.should have_content(@user.first_name)
+    page.should have_content('Manage')
+    page.should_not have_link('Pending Orders', href: pending_listings_path(status: 'pending'))
+    page.should_not have_link('PixiPosts', href: pixi_posts_path(status: 'active'))
+    page.should have_link('PixiPosts', href: pixter_pixi_posts_path(status: 'scheduled'))
+    page.should_not have_link('Inquiries', href: inquiries_path(ctype: 'inquiry'))
+    page.should_not have_link('Categories', href: manage_categories_path)
+    page.should_not have_link('Transactions', href: transactions_path)
+    page.should_not have_link('Users', href: users_path)
+    page.should have_link('For Seller', href: new_temp_listing_path(pixan_id: @user))
+    page.should_not have_link('Pixis', href: listings_path)
+    user_menu_items true
+  end
+
   describe 'home page' do 
     before do 
       add_region
@@ -257,18 +272,23 @@ feature "UserSignins" do
       end
 
       it 'shows content' do
-        page.should have_content(@user.first_name)
-        page.should have_content('Manage')
-        page.should_not have_link('Pending Orders', href: pending_listings_path(status: 'pending'))
-        page.should_not have_link('PixiPosts', href: pixi_posts_path(status: 'active'))
-        page.should have_link('PixiPosts', href: pixter_pixi_posts_path(status: 'scheduled'))
-        page.should_not have_link('Inquiries', href: inquiries_path(ctype: 'inquiry'))
-        page.should_not have_link('Categories', href: manage_categories_path)
-        page.should_not have_link('Transactions', href: transactions_path)
-        page.should_not have_link('Users', href: users_path)
-        page.should have_link('For Seller', href: new_temp_listing_path(pixan_id: @user))
-        page.should_not have_link('Pixis', href: listings_path)
-	user_menu_items true
+        pixter_menu_items
+      end
+
+      it "displays sign in link after signout" do
+        click_link "Sign out"
+        page.should have_content 'How It Works'
+      end
+    end
+
+    describe 'registered support users' do
+      before(:each) do
+        @user = FactoryGirl.create :support, confirmed_at: Time.now 
+        user_login
+      end
+
+      it 'shows content' do
+        pixter_menu_items
       end
 
       it "displays sign in link after signout" do
