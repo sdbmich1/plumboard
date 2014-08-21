@@ -66,6 +66,11 @@ class Ability
         can [:read, :update], PixiPost, status: 'scheduled'
       end
 
+      if user.has_role? :support
+        can :manage_pixi_posts, User
+        can [:read, :update], PixiPost, status: 'scheduled'
+      end
+
       if user.has_role? :subscriber
         can :view_dashboard, User
       end

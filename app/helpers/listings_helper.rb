@@ -181,7 +181,7 @@ module ListingsHelper
 
   # set pixi poster
   def set_poster_id listing
-    poster = listing.pixi_post? ? 'pixan_id' : 'seller_id'
+    poster = listing.pixi_post? && !@user.is_member? ? 'pixan_id' : 'seller_id'
     poster.to_sym
   end
 

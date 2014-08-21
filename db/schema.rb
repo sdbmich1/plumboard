@@ -11,15 +11,36 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-<<<<<<< HEAD
-ActiveRecord::Schema.define(:version => 20140630004217) do
-=======
-<<<<<<< HEAD
-ActiveRecord::Schema.define(:version => 20140727193506) do
-=======
-ActiveRecord::Schema.define(:version => 20140725170438) do
->>>>>>> 405f9a204f66b3fe7a8c00f0bcdd259b6026a41c
->>>>>>> 0b74a90a09177daeb23bb777fc4a2340547f4711
+ActiveRecord::Schema.define(:version => 20140817233223) do
+
+  create_table "admins", :force => true do |t|
+    t.string   "email",                  :default => "", :null => false
+    t.string   "encrypted_password",     :default => "", :null => false
+    t.string   "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer  "sign_in_count",          :default => 0
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string   "current_sign_in_ip"
+    t.string   "last_sign_in_ip"
+    t.string   "confirmation_token"
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.string   "unconfirmed_email"
+    t.integer  "failed_attempts",        :default => 0
+    t.string   "unlock_token"
+    t.datetime "locked_at"
+    t.string   "authentication_token"
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
+  end
+
+  add_index "admins", ["authentication_token"], :name => "index_admins_on_authentication_token", :unique => true
+  add_index "admins", ["confirmation_token"], :name => "index_admins_on_confirmation_token", :unique => true
+  add_index "admins", ["email"], :name => "index_admins_on_email", :unique => true
+  add_index "admins", ["reset_password_token"], :name => "index_admins_on_reset_password_token", :unique => true
+  add_index "admins", ["unlock_token"], :name => "index_admins_on_unlock_token", :unique => true
 
   create_table "bank_accounts", :force => true do |t|
     t.string   "token"
@@ -106,14 +127,6 @@ ActiveRecord::Schema.define(:version => 20140725170438) do
   add_index "contacts", ["contactable_id"], :name => "index_contacts_on_contactable_id"
   add_index "contacts", ["contactable_type"], :name => "index_contacts_on_contactable_type"
   add_index "contacts", ["lng", "lat"], :name => "index_contacts_on_long_and_lat"
-
-  create_table "date_ranges", :force => true do |t|
-    t.string   "name"
-    t.string   "status"
-    t.string   "hide"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0, :null => false
@@ -219,6 +232,15 @@ ActiveRecord::Schema.define(:version => 20140725170438) do
 
   add_index "job_types", ["code"], :name => "index_job_types_on_code"
 
+  create_table "listing_categories", :force => true do |t|
+    t.integer  "category_id"
+    t.integer  "listing_id"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "listing_categories", ["category_id", "listing_id"], :name => "index_listing_categories_on_category_id_and_listing_id"
+
   create_table "listings", :force => true do |t|
     t.string   "title"
     t.integer  "category_id"
@@ -321,7 +343,12 @@ ActiveRecord::Schema.define(:version => 20140725170438) do
     t.integer  "photo_file_size"
     t.datetime "photo_updated_at"
     t.boolean  "processing"
+    t.string   "direct_upload_url"
+    t.string   "photo_file_path"
+    t.boolean  "dup_flg"
   end
+
+  add_index "pictures", ["processing"], :name => "index_pictures_on_processing"
 
   create_table "pixi_likes", :force => true do |t|
     t.integer  "user_id"
@@ -508,6 +535,15 @@ ActiveRecord::Schema.define(:version => 20140725170438) do
 
   add_index "saved_listings", ["pixi_id", "user_id"], :name => "index_saved_listings_on_pixi_id_and_user_id"
   add_index "saved_listings", ["status"], :name => "index_saved_listings_on_status"
+
+  create_table "saved_pixis", :force => true do |t|
+    t.string   "pixi_id"
+    t.integer  "user_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "saved_pixis", ["pixi_id", "user_id"], :name => "index_saved_pixis_on_pixi_id_and_user_id"
 
   create_table "sessions", :force => true do |t|
     t.string   "session_id", :null => false
