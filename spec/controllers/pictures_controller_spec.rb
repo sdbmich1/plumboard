@@ -62,7 +62,7 @@ describe PicturesController do
 
     context "success" do
       before :each do
-        @listing.stub!(:delete_photo).with('1').and_return(true)
+        @listing.stub!(:delete_photo).with('1', 0).and_return(true)
       end
 
       it "should load the requested listing" do
@@ -92,7 +92,7 @@ describe PicturesController do
 
     context 'failure' do
       before :each do
-        @listing.stub!(:delete_photo).with('1').and_return(false) 
+        @listing.stub!(:delete_photo).with('1', 0).and_return(false) 
       end
 
       it "should assign listing" do

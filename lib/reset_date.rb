@@ -43,4 +43,26 @@ module ResetDate
     val == 0 ? tm : tm.advance(hours: val)
     tm.strftime('%m/%d/%Y %l:%M %p') rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
   end
+
+  # returns start_date and end_date based on passed date_range
+  def self.get_date_range date_range
+    case date_range
+      when "Last 7 Days"
+        [Time.now - 7.days, Time.now]
+      when "Last 15 Days"
+        [Time.now - 15.days, Time.now]
+      when "This Month"
+        [Time.now.at_beginning_of_month, Time.now]
+      when "Last Month"
+        [(Time.now - 1.month).at_beginning_of_month, (Time.now - 1.month).at_end_of_month]
+      when "This Quarter"
+        [Time.now.beginning_of_quarter, Time.now]
+      when "Last Quarter"
+        [(Time.now - 90.days).beginning_of_quarter, (Time.now - 90.days).end_of_quarter]
+      when "This Year"
+        [Time.now.at_beginning_of_year, Time.now]
+      else
+        [Time.now - 30.days, Time.now]
+    end
+  end
 end

@@ -378,6 +378,7 @@ describe Listing do
     before do
       @pixter = create :pixi_user, user_type_code: 'PT'
       @admin = create :admin, confirmed_at: Time.now
+      @support = create :support, confirmed_at: Time.now
       @user2 = FactoryGirl.create(:pixi_user, first_name: 'Lisa', last_name: 'Harden', email: 'lisaharden@pixitest.com') 
       @listing = FactoryGirl.create(:listing, seller_id: @user.id, pixan_id: @pixter.id) 
       @sold = FactoryGirl.create(:listing, seller_id: @user.id, pixan_id: @pixter.id, status: 'sold') 
@@ -387,6 +388,7 @@ describe Listing do
       @listing.editable?(@pixter).should be_true 
       @listing.editable?(@user).should be_true 
       @listing.editable?(@admin).should be_true 
+      @listing.editable?(@support).should be_true 
     end
 
     it "sold pixi is not editable" do 

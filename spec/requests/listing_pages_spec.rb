@@ -553,7 +553,7 @@ feature "Listings" do
         visit seller_listings_path 
       end
       
-      it "views my pixis page" do
+      it "views my pixis page", js: true do
         page.should have_content('My Pixis')
         page.should_not have_content('No pixis found')
         page.should have_link 'Active', href: seller_listings_path
@@ -565,7 +565,7 @@ feature "Listings" do
         page.should have_link 'Wanted', href: wanted_listings_path
       end
 
-      describe "pagination" do
+      describe "pagination", js: true do
         it "should list each listing" do
           @user.pixis.paginate(page: 1).each do |listing|
             page.should have_selector('td', text: listing.title)

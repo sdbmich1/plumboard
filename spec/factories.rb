@@ -40,6 +40,10 @@ FactoryGirl.define do
     after(:create) {|usr| usr.add_role(:pixter)}
   end
 
+  factory :support, :class => "User", :parent => :pixi_user do
+    after(:create) {|usr| usr.add_role(:support)}
+  end
+
   factory :subscriber, :class => "User", :parent => :pixi_user do
     after(:create) {|usr| usr.add_role(:subscriber)}
   end
@@ -67,10 +71,15 @@ FactoryGirl.define do
   end
 
   factory :category do
-    name "Foo bar"
-    category_type_code  "Gigs"
-    status "active"
+    name 		"Foo bar"
+    category_type_code	"Gigs"
+    status 		"active"
     before(:create) {|category| category.pictures.build FactoryGirl.attributes_for(:picture)}
+  end
+
+  factory :date_range do
+    name "Last Month"
+    status "active"
   end
 
   factory :contact do
@@ -138,7 +147,7 @@ FactoryGirl.define do
     factory :listing_with_sites do
       after(:create) do |listing, x|
         FactoryGirl.create_list(:site_listing, x.sites_count, :listing => listing)
-x.reload
+        x.reload
       end
     end
 
@@ -146,6 +155,12 @@ x.reload
       after(:create) do |listing|
         listing.posts.build FactoryGirl.attributes_for(:post, :pixi_id => listing.pixi_id)
       end
+    end
+  end
+
+  factory :listing_with_pictures, :class => "Listing", :parent => :listing_parent do
+    before(:create) do |listing|
+      2.times { listing.pictures.build FactoryGirl.attributes_for(:picture) }
     end
   end
 

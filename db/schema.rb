@@ -11,7 +11,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(:version => 20140727193506) do
+=======
+ActiveRecord::Schema.define(:version => 20140817233223) do
+>>>>>>> f787c3c3ce5f6df612070b8253b8af8b04fb5ea2
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -345,6 +349,10 @@ ActiveRecord::Schema.define(:version => 20140727193506) do
     t.boolean  "processing"
     t.string   "direct_upload_url"
     t.string   "photo_file_path"
+<<<<<<< HEAD
+=======
+    t.boolean  "dup_flg"
+>>>>>>> f787c3c3ce5f6df612070b8253b8af8b04fb5ea2
   end
 
   add_index "pictures", ["processing"], :name => "index_pictures_on_processing"

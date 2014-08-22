@@ -1,11 +1,9 @@
 require 'csv'
 
 desc "Import data from csv file"
-
-
 task :import_sites => :environment do
 
-   CSV.foreach(Rails.root.join('db', 'Accreditation_2011_12.csv'), :headers => true) do |row|
+  CSV.foreach(Rails.root.join('db', 'Accreditation_2011_12.csv'), :headers => true) do |row|
     
    attrs = {
       		:institution_id    => row[0].to_i,
@@ -36,7 +34,7 @@ task :import_sites => :environment do
       # set location/contact attributes
       loc_attrs = { 
         :address         => row[2],
-	     	:city            => row[3],
+	:city            => row[3],
         :state           => row[4],
         :zip             => row[5],
         :work_phone	 => row[6],
@@ -531,6 +529,23 @@ task :load_regions => :environment do
       else
         puts new_site.errors
       end
+    end
+  end
+end
+
+#load date range
+task :load_date_range => :environment do
+  DateRange.delete_all
+  CSV.foreach(Rails.root.join('db', 'import_date_range.csv'), :headers => true) do |row|
+    attrs = {
+        :name => row[0]
+    }
+    new_date_range = DateRange.new(attrs)
+    # save date_range
+    if new_date_range.save
+      puts "Saved date_range #{attrs.inspect}"
+    else
+      puts new_date_range.errors
     end
   end
 end

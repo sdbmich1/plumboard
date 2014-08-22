@@ -38,3 +38,4 @@
 //= require s3_file_field
 //= require s3_image_upload
 //= require_tree .
+//= require pixter_report

@@ -4,7 +4,8 @@ class PixiPostsController < ApplicationController
   before_filter :check_permissions, only: [:index]
   before_filter :set_params, only: [:create, :update]
   before_filter :set_zip, only: [:new]
-  before_filter :load_data, only: [:index, :seller, :pixter]
+  before_filter :load_data, only: [:index, :seller, :pixter, :pixter_report]
+  before_filter :ajax?, only: [:pixter_report]
   autocomplete :site, :name, full: true, scopes: [:cities]
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name
   include ResetDate
@@ -59,7 +60,7 @@ class PixiPostsController < ApplicationController
       if @post.destroy  
         format.html { redirect_to seller_pixi_posts_path(status: 'active') }
         format.mobile { redirect_to seller_pixi_posts_path(status: 'active') }
-	format.json { head :ok }
+	      format.json { head :ok }
       else
         format.html { render action: :show, error: "PixiPost was not removed. Please try again." }
         format.mobile { render action: :show, error: "PixiPost was not removed. Please try again." }
@@ -84,11 +85,21 @@ class PixiPostsController < ApplicationController
   end
 
   def pixter_report
-    @pixi_posts = PixiPost.pixter_report
-    respond_with(@pixi_posts)
+    @date_range, @pixter_id = params[:date_range], set_pixter_id
+    @start_date, @end_date = ResetDate::get_date_range(@date_range)
+    @pixi_posts = PixiPost.pixter_report(@start_date, @end_date, @pixter_id).paginate(page: @page, per_page: 15)
+    respond_to do |format|
+      format.html
+      format.js
+      format.csv {send_data PixiPost.to_csv(@pixi_posts), filename: 'pixter_report_' + Date.today.to_s + '.csv'}
+    end
   end
   
   private
+  # sets pixter_id for pixter_report based on admin / pixter?
+  def set_pixter_id
+    (!@user.is_pixter?) ? params[:pixter_id] : @user.id
+  end
 
   def page_layout
     mobile_device? ? 'form' : 'application'
@@ -118,6 +129,10 @@ class PixiPostsController < ApplicationController
 
   def check_permissions
     authorize! :manage, PixiPost
+  end
+
+  def ajax?
+    @xhr_flag = request.xhr?
   end
 
 

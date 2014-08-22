@@ -2,6 +2,10 @@
 <%= content_for :subhead do %>
     <%= render :partial => 'shared/navbar', locals: { menu_name: 'PixiPosts' } %>
 <% end %>
-<% unless @pixi_posts.nil? %>
+<%= content_for :content do %>
     <%= render :partial => 'shared/pixi_post_pixter_report', locals: { pg_title: 'PixiPosts' } %>
 <% end %>
+
+
+
+
