@@ -154,9 +154,9 @@ Plumboard::Application.routes.draw do
   get "/settings/password", to: "settings#password" 
 
   # specify routes for devise user after sign-in
-  namespace :user do
-    root :to => "users#show", :as => :user_root
-  end
+  # namespace :user do
+  #  root :to => "users#show", :as => :user_root
+  # end
 
   # specify root route based on user sign in status
   root to: 'listings#local', :constraints => lambda {|r| r.env["warden"].authenticate? }

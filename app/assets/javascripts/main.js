@@ -84,8 +84,8 @@ $(document).on("ajax:complete", '#mark-posts, #post-frm, #comment-doc, .pixi-cat
 $(document).ajaxError( function(e, xhr, options){
   if(xhr.status == 401)
       console.log('in 401 status error handler');
-      // window.location.replace('/users/sign_in');
-      location.reload();
+      window.location.replace('/users/sign_in');
+      // location.reload();
 });	
 
 // process slider
@@ -498,11 +498,11 @@ $(document).on('click', '#want-btn', function(e) {
   // toggle button display
   if ($(this).text() == 'Want') {
     txt = 'Unwant';
-    $(this).removeClass('submit-btn width80').addClass('btn-mask');
+    $(this).removeClass('submit-btn width100').addClass('btn-mask');
   }
   else {
     txt = 'Want';
-    $(this).removeClass('btn-mask').addClass('submit-btn width80');
+    $(this).removeClass('btn-mask').addClass('submit-btn width100');
   }
 
   // toggle button name
@@ -760,7 +760,6 @@ function keySelectEnter(e, $this) {
   if (e.keyCode == 13 && !e.shiftKey && !keyPress) {
     keyPress = true;
     e.preventDefault();
-    //console.log('in keySelectEnter');
 
     var keyEvent = $.Event("keydown");          
     keyEvent.which = 40;

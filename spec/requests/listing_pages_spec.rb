@@ -14,6 +14,13 @@ feature "Listings" do
   let(:pixi_post_listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, 
     pixan_id: pixter.id, site_id: site.id) }
 
+  
+  def user_login
+    fill_in "user_email", :with => user.email
+    fill_in "pwd", :with => user.password
+    click_button "Sign in"
+  end
+
   def set_site_id
     page.execute_script %Q{ $('#site_id').val("#{@site.id}") }
   end
@@ -39,8 +46,8 @@ feature "Listings" do
      
     it "does not contact a seller", js: true do
       expect{
-          page.find('#want-btn').click
-      	  fill_in 'contact_content', with: "I'm love this pixi. Please contact me.\n"
+          click_link 'Want'
+          # page.find('#want-btn').click
       }.not_to change(Post,:count).by(1)
       page.should have_content 'Sign in'
     end
@@ -63,9 +70,12 @@ feature "Listings" do
 
     it "does not add comment", js: true do
       expect{
-      	  fill_in 'comment_content', with: "Great pixi. I highly recommend it.\n" 
+          page.find('#add-comment-btn').click
       }.not_to change(Comment,:count).by(1)
       page.should have_content 'Sign in'
+      sleep 2;
+      user_login
+      page.should have_content pixi_post_listing.nice_title
     end
   end
 

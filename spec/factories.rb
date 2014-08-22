@@ -364,7 +364,6 @@ x.reload
     email_msg_flg 'yes'
     mobile_msg_flg 'yes'
   end
-<<<<<<< HEAD
   
   factory :event_type do
       code		"perform"
@@ -372,8 +371,6 @@ x.reload
       status		"active"
       hide      "false"
   end
-end
-=======
 
   factory :category_type do
     code "sales"
@@ -391,4 +388,3 @@ end
     code "active"
   end
 end
->>>>>>> 405f9a204f66b3fe7a8c00f0bcdd259b6026a41c

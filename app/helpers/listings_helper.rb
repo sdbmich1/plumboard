@@ -151,6 +151,21 @@ module ListingsHelper
     end
   end
 
+  # set path based on signed in status
+  def set_want_path pid
+    signed_in? ? '#' : post_path(id: pid)
+  end
+
+  # set want id based on signed in status
+  def set_want_id
+    signed_in? ? 'want-btn' : ''
+  end
+
+  # set want message
+  def want_msg
+    'I want this! Send private message to owner.'
+  end
+
   # set method based on item existance and type 
   def set_item_method model, val
     if val == 'like'
