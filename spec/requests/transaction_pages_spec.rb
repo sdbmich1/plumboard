@@ -191,6 +191,7 @@ feature "Transactions" do
       page.should have_selector('title', text: 'PixiPay')
       page.should have_content "Invoice # #{@invoice.id} from #{@seller.name}"
       page.should have_content @invoice.pixi_title
+      page.should have_selector('.ttip', visible: true)
       page.should have_content "Total Due"
       page.should have_selector('.addr-tbl', visible: false)
       page.should have_selector('#edit-txn-addr', visible: false)

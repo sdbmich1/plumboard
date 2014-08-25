@@ -69,6 +69,9 @@ set :bundle_without, [:development, :test, :staging] if Rubber.env == 'productio
 set :whenever_command, "bundle exec whenever"
 set :whenever_roles, :app 
 
+# set delayed job role
+set :delayed_job_server_role, :worker
+
 # Allow us to do N hosts at a time for all tasks - useful when trying
 # to figure out which host in a large set is down:
 # RUBBER_ENV=production MAX_HOSTS=1 cap invoke COMMAND=hostname
@@ -226,7 +229,7 @@ after 'deploy:update_code', 'deploy:enable_rubber'
 after 'bundle:install', 'deploy:enable_rubber'
 before 'rubber:config', 'deploy:enable_rubber', 'deploy:enable_rubber_current'
 after 'deploy:update_code', 'deploy:symlink_shared', 'sphinx:stop'
-after "deploy:migrations", "cleanup"
+#after "deploy:migrations", "cleanup"
 #after "deploy", "cleanup", "memcached:flush"
 after "deploy:update", "deploy:migrations"
 
