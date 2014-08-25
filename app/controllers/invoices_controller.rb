@@ -11,32 +11,27 @@ class InvoicesController < ApplicationController
   layout :page_layout
 
   def new
-    @invoice = Invoice.load_new @user
+    respond_with(@invoice = Invoice.load_new(@user))
   end
    
   def index
-    @invoices = Invoice.all.paginate(page: @page)
-    respond_with(@invoices)
+    respond_with(@invoices = Invoice.all.paginate(page: @page))
   end
    
   def sent
-    @invoices = Invoice.get_invoices(@user).paginate(page: @page)
-    respond_with(@invoices)
+    respond_with(@invoices = Invoice.get_invoices(@user).paginate(page: @page))
   end
    
   def received
-    @invoices = Invoice.get_buyer_invoices(@user).paginate(page: @page)
-    respond_with(@invoices)
+    respond_with(@invoices = Invoice.get_buyer_invoices(@user).paginate(page: @page))
   end
 
   def show
-    @invoice = Invoice.find params[:id]
-    respond_with(@invoice)
+    respond_with(@invoice = Invoice.find(params[:id]))
   end
 
   def edit
-    @invoice = Invoice.find params[:id]
-    respond_with(@invoice)
+    respond_with(@invoice = Invoice.find(params[:id]))
   end
 
   def update

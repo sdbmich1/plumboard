@@ -1,19 +1,21 @@
 class InquiriesController < ApplicationController
   before_filter :authenticate_user!, only: [:index, :show, :edit, :update]
+  before_filter :load_source, only: [:new, :edit, :show]
+  before_filter :load_data, only: [:index, :closed]
   respond_to :html, :json, :js, :mobile
   layout :page_layout
   
   def new
     @inquiry = signed_in? ? @user.inquiries.build : Inquiry.new
-    @source = params[:source]
+    respond_with(@inquiry)
   end
 
   def show
-    @inquiry = Inquiry.find params[:id]
+    respond_with(@inquiry = Inquiry.find(params[:id]))
   end
 
   def edit
-    @inquiry = Inquiry.find params[:id]
+    respond_with(@inquiry = Inquiry.find(params[:id]))
   end
 
   def update
@@ -23,7 +25,7 @@ class InquiriesController < ApplicationController
   end
 
   def index
-    respond_with(@inquiries = Inquiry.get_by_contact_type(params[:ctype]).paginate(page: @page))
+    respond_with(@inquiries = Inquiry.get_by_contact_type(@code).paginate(page: @page))
   end
   
   def closed
@@ -53,6 +55,15 @@ class InquiriesController < ApplicationController
 
   def page_layout
     action_name == 'new' ? 'about' : 'application'
+  end
+   
+  def load_source
+    @source = params[:source]
+  end
+   
+  def load_data
+    @page = params[:page] || 1
+    @code = params[:ctype] if action_name == 'index'
   end
 
 end

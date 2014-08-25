@@ -1147,4 +1147,70 @@ describe Listing do
       @listing.reload.status.should == 'closed'
     end
   end
+
+  describe 'async_send_notifications' do
+
+    def send_mailer model, msg
+      @mailer = mock(UserMailer)
+      UserMailer.stub!(:delay).and_return(@mailer)
+      @mailer.stub(msg.to_sym).with(model).and_return(@mailer)
+    end
+
+    it 'adds abp pixi points' do
+      create(:listing, seller_id: @user.id)
+      expect(@user.user_pixi_points.count).not_to eq(0)
+      @user.user_pixi_points.find_by_code('abp').code.should == 'abp'
+      @user.user_pixi_points.find_by_code('app').should be_nil
+    end
+
+    it 'adds app pixi points' do
+      @category = create(:category, pixi_type: 'premium')
+      create(:listing, category_id: @category.id, seller_id: @user.id)
+      expect(@user.user_pixi_points.count).not_to eq(0)
+      @user.user_pixi_points.find_by_code('app').code.should == 'app'
+    end
+
+    it 'delivers the submitted pixi message' do
+      listing = create(:listing, seller_id: @user.id)
+      send_mailer listing, 'send_approval'
+    end
+
+    it 'removes temp_listing after create' do
+      temp_listing = create(:temp_listing, seller_id: @user.id)
+      pid = temp_listing.pixi_id
+      listing = create(:listing, seller_id: @user.id, pixi_id: temp_listing.pixi_id)
+      expect(TempListing.where(pixi_id: pid).count).to eq 0
+    end
+
+    it 'delivers pixi message' do
+      create :admin, email: PIXI_EMAIL
+      listing = create(:listing, seller_id: @user.id)
+      send_mailer listing, 'send_approval'
+      expect(Post.all.count).not_to eq(0)
+      SystemMessenger.stub!(:send_system_message).with(@user, listing, 'approve').and_return(true)
+    end
+  end
+
+  describe 'set_invoice_status' do
+    before do 
+      @buyer = FactoryGirl.create(:pixi_user)
+      @buyer2 = FactoryGirl.create(:pixi_user)
+      @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id) 
+      @invoice2 = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer2.id) 
+    end
+
+    it 'sets invoice status to removed' do
+      expect {
+        create(:saved_listing, user_id: @buyer.id, pixi_id: @listing.pixi_id); sleep 1
+        @listing.status = 'removed'
+        @listing.save
+      }.to change{ Invoice.where(:status => 'removed').count }.by(2)
+    end
+
+    it 'does not set invoice status' do
+      @listing.status = 'sold'
+      @listing.save
+      expect(@invoice.status).not_to eq 'removed'
+    end
+  end
 end

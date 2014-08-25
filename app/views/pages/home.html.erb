@@ -5,18 +5,15 @@
     <div class='row mtop'>
       <% cache fragment: 'caption' do %>
         <div class='mtop span7 home-title-grp'>
-          <span class='home-title'><%= PIXI_KEYS['pixi']['caption'] %></span><br />
+          <span class='home-title-white'><%= PIXI_KEYS['pixi']['caption'] %></span><br />
           <span class='tag-line'><%= PIXI_KEYS['pixi']['tag_line'] %></span>
         </div>
       <% end %>
       <% cache fragment: 'signin' do %>
-        <div class='mtop span4 pull-right div-blk-border round'>
+        <div class='mtop span4 pull-right div-clear-border round'>
           <%= render partial: 'shared/home_signin_form', locals: { rmbrFlg: false } %>
         </div>
       <% end %>
-      <div id='home-pg-pic' class='sm-top span4'>
-	<%= render 'shared/home_polaroid' %>
-      </div>
     </div>
   </div>
 <% end %>

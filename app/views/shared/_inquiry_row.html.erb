@@ -5,5 +5,5 @@
   <td><div class='center-wrapper'><%= inquiry.subject %></div></td>
   <td><%= inquiry.comments %></td>
   <td class='center-wrapper'><%= inquiry.status.titleize %></td>
-  <td class='span1 center-wrapper'><%= link_to 'Details', inquiry, class: 'btn btn-small' %></td>
+  <td class='span1 center-wrapper'><%= link_to 'Details', set_inquiry_path(inquiry), class: 'btn btn-small', remote: true %></td>
 </tr>
