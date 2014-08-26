@@ -7,6 +7,7 @@ $.ajaxSetup({
 	xhr.setRequestHeader("X-CSRF-Token", token);
   	toggleLoading();
     },
+  'success': function(){ toggleLoading(); },
   'complete': function(){ toggleLoading(); }
 }); 
 
