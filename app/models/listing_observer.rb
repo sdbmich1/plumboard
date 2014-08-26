@@ -23,7 +23,7 @@ class ListingObserver < ActiveRecord::Observer
 
   # remove temp pixi
   def delete_temp_pixi model
-    TempListing.where(:pixi_id => model.pixi_id).destroy_all rescue nil
+    TempListing.destroy_all(pixi_id: model.pixi_id) rescue nil
   end
 
   # send system message to user

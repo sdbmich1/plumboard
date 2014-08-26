@@ -241,9 +241,9 @@ feature "Inquiries" do
       page.should have_content "#{@inquiry.id}"
       page.should have_content @inquiry.comments
       page.should have_content @inquiry.user_name
-      page.should have_link 'Edit', href: edit_inquiry_path(@inquiry) 
-      page.should have_link 'Remove', href: inquiry_path(@inquiry) 
-      page.should have_selector('#done-inquiry-btn', href: categories_path(loc: @loc))
+      page.should have_link 'Edit', href: edit_inquiry_path(@inquiry, source: 'inquiry') 
+      page.should have_link 'Remove', href: @inquiry 
+      page.should have_selector('#done-inquiry-btn', href: inquiries_path(ctype: 'inquiry'))
     end
 
     it "clicks to open an inquiry w/ local listing home" do
@@ -259,9 +259,9 @@ feature "Inquiries" do
       page.should have_content "#{@inquiry.id}"
       page.should have_content @inquiry.comments
       page.should have_content @inquiry.user_name
-      page.should have_link 'Edit', href: edit_inquiry_path(@inquiry) 
-      page.should have_link 'Remove', href: inquiry_path(@inquiry) 
-      page.should have_selector('#done-inquiry-btn', href: local_listings_path(loc: @loc))
+      page.should have_link 'Edit', href: edit_inquiry_path(@inquiry, source: 'inquiry') 
+      page.should have_link 'Remove', href: inquiry_path(@inquiry)
+      page.should have_selector('#done-inquiry-btn', href: inquiries_path(ctype: 'inquiry'))
     end
 
     it "cancel remove inquiry", js: true do
@@ -282,16 +282,28 @@ feature "Inquiries" do
       page.should have_content "Inquiries" 
       page.should have_content "No inquiries found." 
     end
+
+    it 'shows a closed inquiry', js: true do
+      page.find('#closed-inq').click
+      expect { 
+        click_on "#{@closed.id}"
+      }.not_to change(Inquiry, :count)
+      page.should_not have_link 'Edit', href: edit_inquiry_path(@inquiry, source: 'inquiry') 
+      page.should have_link('Done', href: inquiries_path(ctype: 'inquiry'))
+      page.should have_link('Remove')
+    end
   end
 
   describe "Editor edits a Inquiry" do 
     before do
       init_setup editor
+      create :inquiry_type
       @inquiry = @user.inquiries.create FactoryGirl.attributes_for(:inquiry)
-      visit edit_inquiry_path(@inquiry)
+      visit edit_inquiry_path(@inquiry, source: 'support')
     end
 
     it "opens edit page" do
+      page.should have_content 'Pixiboard Support'
       page.should have_content @inquiry.user_name
       page.should_not have_content @user.name
       page.should have_selector('title', text: 'Edit Inquiry') 
@@ -308,7 +320,7 @@ feature "Inquiries" do
 
       page.should have_content 'Inquiry Details'
       page.should have_content 'Closed'
-      page.should have_link 'Edit', href: edit_inquiry_path(@inquiry) 
+      page.should have_link 'Edit', href: edit_inquiry_path(@inquiry, source: 'support') 
       page.should have_link 'Remove', href: inquiry_path(@inquiry) 
       page.should have_link 'Done', href: inquiries_path(ctype: 'inquiry') 
     end

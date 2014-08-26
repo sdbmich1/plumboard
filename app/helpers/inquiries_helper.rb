@@ -24,4 +24,9 @@ module InquiriesHelper
     action_name == 'new' ? @user.name : @inquiry.user_name
   end
 
+  # set inquiry path based on action name
+  def set_inquiry_path inquiry
+    action_name == 'closed' ? inquiry : inquiry_path(inquiry, source: @code)
+  end
+
 end

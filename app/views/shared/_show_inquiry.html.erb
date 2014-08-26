@@ -3,7 +3,9 @@
   <%= render partial: 'shared/inquiry_details', locals: {inquiry: inquiry} %>
   <div class="mtop pull-right">
     <%= link_to 'Remove', inquiry, method: :delete, confirm: 'Delete this inquiry?', class: 'btn btn-large', id: 'rm-btn' %>
-    <%= link_to 'Edit', edit_inquiry_path(inquiry), class: 'btn btn-large' %>
+    <% if @source %>
+      <%= link_to 'Edit', edit_inquiry_path(inquiry, source: @source), class: 'btn btn-large' %>
+    <% end %>
     <%= link_to 'Done', inquiries_path(ctype: 'inquiry'), id: 'done-inquiry-btn', class: 'btn btn-large btn-primary submit-btn' %>
   </div>
 </div>
