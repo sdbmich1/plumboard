@@ -25,7 +25,7 @@ class InvoiceObserver < ActiveRecord::Observer
         fee = CalcTotal::get_convenience_fee model.amount, model.listing.pixan_id
 
         # process payment
-        result = model.bank_account.credit_account(model.amount - fee)
+        result = model.bank_account.credit_account(model.amount - fee) rescue nil
 
         # record payment
 	if result
