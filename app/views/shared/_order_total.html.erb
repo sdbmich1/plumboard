@@ -2,7 +2,7 @@
 
 <% if @order %>
   <% if @order[:sales_tax].to_f > 0.0 %>
-    <tr><td>Sales Tax</td><td></td>
+    <tr><td>Sales Tax</td><td> </td>
   	<td class="price"><%= ntc(@order[:sales_tax].to_f) %></td>
     </tr>
   <% end %>
@@ -12,7 +12,7 @@
   <%= render partial: 'shared/show_conv_fee', locals: {showColFlg: false, invoice: invoice} if show_help? %>
   <tr class='title-str'>
   	<td class='order-total'><%= show_title(paid) %></td>
-  	<td></td>
+  	<td> </td>
   	<td class='order-total price'><%= ntc(@transaction.amt) %></td>
   </tr>
 <% end %>

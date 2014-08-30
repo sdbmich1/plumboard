@@ -232,4 +232,9 @@ module ApplicationHelper
   def get_pixi_image pic, size='original'
     pic.photo.exists? ? pic.photo.url(size.to_sym) : use_remote_pix? ? pic.picture_from_url : 'rsz_pixi_top_logo.png'
   end
+
+  # check for model errors
+  def check_errors? model
+    model.errors.any? rescue false
+  end
 end

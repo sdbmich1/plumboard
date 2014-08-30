@@ -1,8 +1,8 @@
 module PostsHelper
 
   # add new post for listing
-  def setup_post(listing)
-    listing ? listing.posts.build : Post.new
+  def setup_post(model)
+    model ? model.posts.build : Post.new
   end
 
   # toggle msg sender or recipient based on send flg

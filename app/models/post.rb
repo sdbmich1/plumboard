@@ -150,7 +150,7 @@ class Post < ActiveRecord::Base
   # check if invoice is due
   def due_invoice? usr
     if invoice
-      !invoice.owner?(usr) && invoice.unpaid? && invoice.buyer_name == usr.name ? true : false
+      !invoice.owner?(usr) && invoice(true).unpaid? && invoice.buyer_name == usr.name ? true : false
     else
       false
     end
