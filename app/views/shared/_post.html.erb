@@ -6,7 +6,7 @@
       <%= set_poster(post, sentFlg).name %>
     </div>
     <div>
-      RE: <%= link_to post.pixi_title, post.listing, class: '' %>
+      RE: <%= link_to post.pixi_title, post.listing, class: 'terms-link' %>
       <%= image_tag set_msg_icon(post), class: 'left-form' unless post.sender? @user %>
     </div>
     <div>

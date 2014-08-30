@@ -114,7 +114,7 @@ class Invoice < ActiveRecord::Base
       txn_fee = CalcTotal::get_convenience_fee amount, pixan_id
 
       # process payment
-      result = bank_account.credit_account (amount - txn_fee)
+      result = bank_account.credit_account(amount - txn_fee) rescue 0
     else
       false
     end
