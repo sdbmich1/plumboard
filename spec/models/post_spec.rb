@@ -98,6 +98,12 @@ describe Post do
       Post.get_posts(@recipient).should_not be_nil 
     end
 
+    it "should not return an inactive post - get_posts" do
+      @post.recipient_status = 'removed'
+      @post.save
+      Post.get_posts(@recipient).count.should == 0
+    end
+
     it "should not return a post - get_posts" do 
       Post.get_posts(@user).should be_empty 
     end
@@ -323,6 +329,22 @@ describe Post do
       expect(Post.first.conversation_id).to eql(@conversation.id)
     end
 
+    it "adds active status to posts" do
+      Post.map_posts_to_conversations
+      Post.all.each do |post|
+          expect(post.status).to eq('active')
+          expect(post.recipient_status).to eq('active')
+      end
+    end
+
+    it "has active status for conversations" do
+      Post.map_posts_to_conversations
+      Conversation.all.each do |conv|
+          expect(conv.status).to eq('active')
+          expect(conv.recipient_status).to eq('active')
+      end
+    end
+
     context "creating new conversations with different listing posts" do
       before(:each) do
         @listing2 = FactoryGirl.create :listing, seller_id: @recipient.id, title: 'Small Guitar'
@@ -354,10 +376,12 @@ describe Post do
         @conversation.recipient_id = nil
         @conversation.save(:validate => false)
         Post.map_posts_to_conversations
-        @post = Post.find(:first, :conditions => ["pixi_id = ?", @post.pixi_id])
-        @post2 = Post.find(:first, :conditions => ["pixi_id = ?", @post2.pixi_id])
+        @post = Post.find(:first, :conditions => ["pixi_id = ? AND user_id = ?", @post.pixi_id, @user.id])
+        @post2 = Post.find(:first, :conditions => ["pixi_id = ? AND user_id = ?", @post2.pixi_id, @recipient.id])
         @conversation2 = Conversation.find(:first, :conditions => ["pixi_id = ? AND recipient_id = ?", @post.pixi_id, 
                                                                    @post.recipient_id])
+        @user_id = @conversation2.user_id
+        @recipient_id = @conversation2.recipient_id
       end
 
       it "creates new conversation when one doesn't already exist" do
@@ -370,15 +394,66 @@ describe Post do
       end
 
       it "assigns right user id" do
-        expect(@conversation2.user_id).to eql(@post.user_id)
+        expect(@user_id).to eql(@post.user_id)
       end
 
       it "assigns right recipient id" do
-        expect(@conversation2.recipient_id).to eql(@post.recipient_id)
+        expect(@recipient_id).to eql(@post.recipient_id)
       end
       
       it "assigns right pixi id" do
         expect(@conversation2.pixi_id).to eql(@listing.pixi_id)
+      end
+    end
+  end
+
+  describe "removing posts" do
+
+    context "removing user's post" do
+
+      it "returns true if successful" do
+        @result = Post.remove_post(@post, @user)
+        expect(@result).to eql(true)
+      end
+
+      it "returns false if unsuccessful" do
+        @post.stub(:update_attributes).and_return(false)
+        @result = Post.remove_post(@post, @user)
+        expect(@result).to eql(false)
+      end
+
+      it "sets user's status to removed" do
+        @result = Post.remove_post(@post, @user)
+        expect(@post.status).to eql('removed')
+      end
+
+      it "does not set recipient_status to be removed" do
+        @result = Post.remove_post(@post, @user)
+        expect(@post.recipient_status).to eql("active")
+      end
+    end
+
+    context "removing recipient's post" do
+
+      it "returns true if successful" do
+        @result = Post.remove_post(@post, @recipient)
+        expect(@result).to eql(true)
+      end
+
+      it "returns false if unsuccessful" do
+        @post.stub(:update_attributes).and_return(false)
+        @result = Post.remove_post(@post, @recipient)
+        expect(@result).to eql(false)
+      end
+
+      it "sets user's status to removed" do
+        @result = Post.remove_post(@post, @recipient)
+        expect(@post.recipient_status).to eql('removed')
+      end
+
+      it "does not set recipient_status to be removed" do
+        @result = Post.remove_post(@post, @recipient)
+        expect(@post.status).to eql("active")
       end
     end
   end

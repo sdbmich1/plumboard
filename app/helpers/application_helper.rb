@@ -117,6 +117,7 @@ module ApplicationHelper
       when 'My Accounts'; render 'shared/navbar_accounts'
       when 'Pending Orders'; render 'shared/navbar_pending'
       when 'Messages'; render 'shared/navbar_posts'
+      when 'Conversations'; render 'shared/navbar_conversations'
       when 'Home'; render 'shared/navbar_home', locals: { loc_name: @loc_name }
       when 'PixiPosts'; render 'shared/navbar_pixi_post'
       when 'My PixiPosts'; render 'shared/navbar_pixi_post'

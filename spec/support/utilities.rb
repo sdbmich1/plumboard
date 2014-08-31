@@ -75,3 +75,9 @@
     stub_const("CREDIT_CARD_API", val)
     expect(CREDIT_CARD_API).to eq(val)
   end
+
+  # check if user has bank account to determine correct routing
+  def get_invoice_path
+    form = 'shared/invoice_form'
+    @user.has_bank_account? ? new_invoice_path : new_bank_account_path(target: form)
+  end

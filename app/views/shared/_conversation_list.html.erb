@@ -1,0 +1,12 @@
+<% unless @conversations.blank? %>
+  <ol class="posts">
+    <%= render partial: 'shared/conversation', collection: @conversations, locals: { sentFlg: sentFlg } %>
+  </ol>
+<% else %>
+  <div class='center-wrapper'>No conversations found.</div>
+<% end %>
+
+<div id='post-list' class="nav pull-right">
+  <%= will_paginate @conversations, page_links: false if @conversations.respond_to?(:total_pages) %>
+</div> 
+

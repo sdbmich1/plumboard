@@ -1,15 +1,15 @@
 <div class='span9 left-form no-left'>  
-  <%= form_for setup_post(@user), url: reply_posts_path(id: post), id: 'post-frm', method: :post, remote: true do |f| %> 
+  <%= form_for @post, url: reply_conversations_path(id: conversation.id), id: 'post-frm', method: :post, remote: true do |f| %> 
     <div id="notice" style="display:none"></div>
     <div id="form_errors">
       <%= render partial: 'shared/error_messages', :locals => { :target => f.object } %>
     </div>
-    <%= f.hidden_field 'pixi_id', value: post.pixi_id %>
-    <%= f.hidden_field 'recipient_id', value: post.user_id %>
-    <%= f.hidden_field 'user_id', value: post.recipient_id %>
+    <%= f.hidden_field 'pixi_id', value: conversation.pixi_id %>
+    <%= f.hidden_field 'recipient_id', value: conversation.other_user(@user).id %>
+    <%= f.hidden_field 'user_id', value: @user.id %>
     <div class="reply_form">
-      <%= f.text_area 'content', placeholder: 'Type something and click reply to send...', id: 'reply_content' %>  
-      <%= f.submit 'Reply', class: "btn btn-medium btn-primary submit-btn", id: 'reply-btn' %>
+      <%= f.text_area 'content', placeholder: 'Type here to reply...', id: 'reply_content', rows: "5" %>  
+      <%= f.submit 'Send', class: "btn btn-medium btn-primary submit-btn", id: 'reply-btn' %>
     </div>
   <% end %>
 </div>  

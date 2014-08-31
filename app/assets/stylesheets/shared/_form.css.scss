@@ -45,9 +45,30 @@ $pixiBlue: #026FB7;
   margin-right: 5px;
 }
 
+.sender-conv {
+  font-weight: bold;
+  font: 15px arial, sans-serif;
+  display: inline;
+  vertical-align: left;
+  line-height: 20px;
+  margin-right: 5px;
+}
+
+.listing-conv {
+  font: 10px arial, sans-serif;
+  color: black;
+  font-weight: bold;
+}
+
 .content, #fcontent {
   display: block;
   margin-top: -5px!important;
+}
+
+.content-conv, #fcontent {
+  display: block;
+  margin-top: -5px!important;
+  margin-left: 20px;
 }
 
 .gray-content {
@@ -60,6 +81,12 @@ $pixiBlue: #026FB7;
   color: $grayLight;
   margin-bottom: 10px;
 }
+
+.timestamp-conv {
+  color: $grayLight;
+  font-size: x-small;
+}
+
 
 form#search_btn {margin-bottom: -5px!important;}
 form#new_post {margin-bottom: -0px!important;}

@@ -121,6 +121,11 @@ function load_slider(cntl) {
 
 $(document).ready(function(){
 
+  // accordion for pixichat
+  $( "#accordion" ).accordion({
+    heightStyle: "content",
+  });
+
   // enable tooltip
   if( $('.ttip').length > 0 ) {
     $('a').tooltip();

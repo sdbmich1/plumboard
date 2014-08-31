@@ -1,4 +1,4 @@
-<%= link_to posts_path, id: "notice-btn", title: 'Messages' do %>
+<%= link_to conversations_path, id: "notice-btn", title: 'Messages' do %>
   <div id="msg_Container">
     <div class="msg_bubble"><%= get_unread_count(@user) %></div>
   </div>

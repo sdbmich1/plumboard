@@ -1,0 +1,26 @@
+<% unless conversation.posts.blank? %>    
+  <div>
+    <h4>
+  <%= link_to conversation.listing.title, conversation.listing, class: '' %>
+    </h4>
+  </div>
+  <div id='accordion'>
+    <%= render partial: 'shared/post', collection: @posts, locals: { sentFlg: sentFlg } %>
+  </div>
+  <div>
+    <table>
+      <tr>
+      <%= render partial: 'shared/reply', locals: { post: @post, sentFlg: sentFlg, conversation: conversation } unless conversation.posts.first.system_msg? %>
+      </tr>
+      <% if conversation.invoice != nil && conversation.invoice.status == 'unpaid' && conversation.invoice.buyer == @user %>
+        <tr><%= link_to "Pay", invoice_path(conversation.invoice.id), class: 'btn btn-small' %></tr>
+      <% end %>
+      <% if conversation.can_bill? @user %> 
+        <tr><%= link_to "Bill", get_invoice_path, class: 'btn btn-small' %></tr>
+      <% end %>
+      <tr><%= link_to "Delete", remove_conversation_path(conversation.id), :method => :put, confirm: 'Delete this conversation?', class: 'btn btn-small' %></tr>
+    </table>
+  </div>
+<% else %>
+  <div class='center-wrapper'>No messages found.</div>
+<% end %>

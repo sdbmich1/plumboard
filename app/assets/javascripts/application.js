@@ -12,6 +12,7 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require jquery-ui
 //= require jquery.ui.all
 //= require jquery.bxslider.min
 //= require jquery.masonry.min

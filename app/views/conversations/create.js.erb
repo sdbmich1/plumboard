@@ -1,0 +1,22 @@
+<% if @conversation.errors.any? %>
+  $("#form_errors").html("<%= escape_javascript( render(partial: 'shared/error_messages', locals: {target: @conversation})) %>");
+  $("#flash_notice").hide(300);
+<% else %>
+  var url = '/listings/' + "<%= params[:post][:pixi_id] %>"
+
+  // check for mobile
+  if($('#seller-post').length > 0) {
+    goToUrl(url, true);
+    uiLoading(false);
+  }
+  else {
+    $('#post_form').toggle();
+    postFlashMsg('#flash_notice','success', 'Successfully sent message to seller');
+    $("#px-panel").html("<%= escape_javascript( render(partial: 'shared/listing_panel', locals: {listing: @listing}) ) %>");
+    $("#post_form").html("<%= escape_javascript( raw render(partial: 'shared/contact', locals: {listing: @listing}) ) %>");
+    $("#comment_form").html("<%= escape_javascript( render(partial: 'shared/comments', locals: {listing: @listing}) ) %>");
+  }
+<% end %>
+
+$('#spinner').hide(300);
+

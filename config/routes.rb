@@ -28,8 +28,21 @@ Plumboard::Application.routes.draw do
   end
 
   resources :posts, except: [:new, :edit, :update] do
+    member do
+      put 'remove'
+    end
     collection do
       get 'unread', 'sent', 'mark'
+      post 'reply'
+    end
+  end
+
+  resources :conversations, except: [:new, :edit, :update] do
+    member do
+      put 'remove'
+    end
+    collection do
+      get 'sent'
       post 'reply'
     end
   end

@@ -1,0 +1,48 @@
+<% cache conversation do %>
+<li id="<%= conversation.id %>">
+  <%= render partial: 'shared/show_photo', locals: {model: set_poster(conversation, sentFlg), file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
+  <div class='span10'>
+    <div class='sender'>
+      <%= set_poster(conversation, sentFlg).name %>
+    </div>
+    <div>
+      <% if conversation.replied_conv?(@user) %> 
+        RE:
+      <% end %>
+      <%= link_to conversation.listing.title, conversation.listing, class: '' %>
+      <% if conversation.posts.count > 1 %> (<%= conversation.posts.count %>) <% end %>
+      <%= image_tag set_msg_icon(conversation.posts.first), class: 'left-form' unless conversation.posts.first.sender? @user %>
+    </div>
+    <div>
+      <span class="content">
+        <% if conversation.any_unread? @user %>
+          <b><%= conversation.posts.first.full_content %></b>
+        <% else %> 
+            <%= conversation.posts.first.full_content %>
+        <% end %>
+      </span>
+      <span class="timestamp">
+      <%= short_date(conversation.posts.first.created_at) %> at <%= short_time(conversation.posts.first.created_at) %>
+      </span>
+      <table>
+       <td> 
+         <%= link_to "Show Conversation", conversation_path(conversation.id, conversation: { pixi_id: conversation.pixi_id } ), class: 'btn btn-small' %>
+       <td>
+        <% if conversation.invoice != nil && conversation.invoice.status == 'unpaid' && conversation.invoice.buyer == @user %>
+          <%= link_to "Pay", invoice_path(conversation.invoice.id), class: 'btn btn-small' %>
+        <% end %>
+      </td>
+      <td>
+        <% if conversation.can_bill? @user %> 
+          <%= link_to "Bill", get_invoice_path, class: 'btn btn-small' %>
+        <% end %>
+      </td>
+      <td>
+        <%= link_to "Delete", remove_conversation_path(conversation.id), :method => :put, confirm: 'Delete this conversation?', class: 'btn btn-small' %>
+      </td>
+    </table>
+    </div>
+  </div>
+  <div class='clear-all'></div>
+</li>
+<% end %>

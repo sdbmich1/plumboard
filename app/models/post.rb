@@ -2,9 +2,11 @@ class Post < ActiveRecord::Base
   resourcify
   acts_as_readable :on => :created_at
 
-  attr_accessible :content, :user_id, :pixi_id, :recipient_id, :msg_type, :conversation_id
+  attr_accessible :content, :user_id, :pixi_id, :recipient_id, :msg_type, :conversation_id, :status, :recipient_status
 
   PIXI_POST = PIXI_KEYS['pixi']['pixi_post']
+
+  before_create :activate
 
   belongs_to :user
   belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id"
@@ -19,6 +21,27 @@ class Post < ActiveRecord::Base
   validates :recipient_id, :presence => true
 
   default_scope order: 'posts.created_at DESC'
+
+  # set active status
+  def activate
+    if self.status != 'removed'
+      self.status = 'active'
+    end
+    if self.recipient_status != 'removed'
+      self.recipient_status = 'active'
+    end
+    self
+  end
+
+  # select active posts
+  def self.active
+    include_list.where("status = 'active' OR recipient_status = 'active'")
+  end
+
+  # eager load assns
+  def self.include_list
+    includes(:user, :listing, :recipient, :invoice, :conversation)
+  end
 
   # load default content
   def self.load_new listing
@@ -73,17 +96,19 @@ class Post < ActiveRecord::Base
 
   # set list of included assns for eager loading
   def self.inc_list
-    includes(:invoice => [:listing, :buyer, :seller], :listing => [:pictures], :user => [:pictures], :recipient => [:pictures])
+    active.includes(:invoice => [:listing, :buyer, :seller], :listing => [:pictures], :user => [:pictures], :recipient => [:pictures])
   end
 
   # get sent posts for user
   def self.get_sent_posts usr
-    inc_list.where(:user_id=>usr)
+    # inc_list.where(:user_id=>usr)
+    inc_list.where("user_id = ? AND status = ?", usr, 'active')
   end
 
   # get posts for recipient
   def self.get_posts usr
-    inc_list.where(:recipient_id=>usr)
+    # inc_list.where(:recipient_id=>usr)
+    inc_list.where("recipient_id = ? AND recipient_status = ?", usr, 'active')
   end
 
   # get unread posts for recipient
@@ -101,8 +126,8 @@ class Post < ActiveRecord::Base
     if sender && recipient
 
       #find the corresponding conversation
-      conv = Conversation.find(:first, :conditions => ["pixi_id = ? AND recipient_id = ? AND user_id = ?",
-                                                       inv.pixi_id, recipient, sender]) rescue nil
+      conv = Conversation.find(:first, :conditions => ["pixi_id = ? AND recipient_id = ? AND user_id = ? AND status = ?",
+                                                       inv.pixi_id, recipient, sender, 'active']) rescue nil
 
       # create new conversation if one doesn't already exist
       if conv.blank?
@@ -192,6 +217,8 @@ class Post < ActiveRecord::Base
 
   def self.map_posts_to_conversations
     Post.order.reverse_order.each do |post|
+      post.status = 'active'
+      post.recipient_status = 'active'
       if post.conversation_id.nil?
     
         # finds if there is already an existing conversation for the post
@@ -208,12 +235,32 @@ class Post < ActiveRecord::Base
         if conv.blank?
           listing = Listing.find(:first, :conditions => ["pixi_id = ?", post.pixi_id])
           conv = listing.conversations.create pixi_id: post.pixi_id, user_id: post.user_id, recipient_id: post.recipient_id
+        elsif conv.status != 'active' || conv.recipient_status != 'active'
+          conv.status = 'active'
+          conv.recipient_status = 'active'
+          conv.save
         end
 
         # updates post with conversation id
         post.conversation_id = conv.id
-        post.save
 
+      end
+      post.save
+    end
+  end
+
+  def self.remove_post post, user 
+    if user.id == post.user_id
+      if post.update_attributes(status: 'removed')
+        return true
+      else
+        return false
+      end
+    elsif user.id == post.recipient_id 
+      if post.update_attributes(recipient_status: 'removed')
+        return true
+      else
+        return false
       end
     end
   end
