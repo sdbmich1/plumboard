@@ -138,6 +138,7 @@ Plumboard::Application.routes.draw do
   get "/terms", to: "pages#terms" 
   get "/howitworks", to: "pages#howitworks" 
   get "/welcome", to: "pages#welcome" 
+  get "/giveaway", to: "pages#giveaway" 
   get "/support", to: "inquiries#support" 
   get "/contact", to: "inquiries#new" 
   get '/system/:class/:attachment/:id/:style/:filename', :to => 'pictures#asset'

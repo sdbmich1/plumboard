@@ -6,6 +6,9 @@
   </small>
   <nav>
     <ul class='sm-top'>
+      <% unless PIXI_CONTEST == 'NO' %>
+        <li><%= link_to "Giveaway Rules", giveaway_path, class: 'pixi-link' %></li>
+      <% end %>
       <li><%= link_to "About", about_path, class: 'pixi-link' %></li>
       <li><%= link_to "Privacy", privacy_path, class: 'pixi-link' %></li>
       <li><%= link_to "Terms", terms_path, class: 'pixi-link' %></li>
