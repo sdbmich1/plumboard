@@ -1,5 +1,1 @@
-<% provide(:title, 'Privacy') %>
-<%= render partial: 'shared/pg_header', locals: { linkFlg: true } %>
-<%= content_for :content do %>
-  <%= render :file => 'public/pixi_privacy', :formats => [:html], :layout => nil %>
-<% end %>
+<%= render partial: 'site_details', locals: { page_title: 'Privacy', file_name: 'public/pixi_privacy' } %>
