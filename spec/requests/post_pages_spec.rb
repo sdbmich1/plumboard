@@ -93,7 +93,7 @@ feature "Messages" do
 
       it "opens pay invoice page" do
         click_on 'Pay'
-        page.should have_content 'Total Due'
+        page.should have_content 'Amount Due'
       end
     end
      
