@@ -13,6 +13,6 @@
     </div>
   <% end %>
 </div>  
-<% unless sentFlg %>
-  <%= render partial: 'shared/pay_invoice', locals: { invoice: post.invoice } if invoice_due?(post) && post.inv_msg? %>
+<% if !sentFlg && invoice_due?(post) && post.inv_msg? %>
+  <%= render partial: 'shared/pay_invoice', locals: { invoice: post.invoice } %> 
 <% end %>
