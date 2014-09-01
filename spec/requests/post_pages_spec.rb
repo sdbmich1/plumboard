@@ -51,8 +51,8 @@ feature "Messages" do
   describe 'Received messages' do
     before :each do
       add_post
-      visit listings_path 
-      click_on 'notice-btn'
+      visit posts_path 
+      # click_on 'notice-btn'
     end
 
     it 'shows content' do
