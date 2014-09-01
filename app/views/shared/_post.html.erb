@@ -1,4 +1,4 @@
-<% cache post do %>
+<% cache cache_key_for_posts(post) do %>
 <li id="<%= post.id %>">
   <%= render partial: 'shared/show_photo', locals: {model: set_poster(post, sentFlg), file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
   <div class='span10'>

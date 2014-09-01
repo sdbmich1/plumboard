@@ -20,6 +20,15 @@ module PostsHelper
     post.due_invoice?(@user) && post.inv_msg? 
   end
 
+  # set cache key based on invoice if found
+  def cache_key_for_posts post
+    if post.invoice
+      "posts/#{post.id}-#{post.id}-#{post.invoice.updated_at.to_i}"
+    else
+      post
+    end
+  end
+
   # set mobile tab themes
   def get_theme val
     case action_name
