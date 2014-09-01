@@ -9,7 +9,7 @@ class Post < ActiveRecord::Base
   belongs_to :user
   belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id"
   belongs_to :recipient, class_name: 'User', foreign_key: :recipient_id
-  belongs_to :invoice, foreign_key: 'pixi_id', primary_key: 'pixi_id', touch: true
+  belongs_to :invoice, foreign_key: 'pixi_id', primary_key: 'pixi_id'
 
   validates :content, :presence => true 
   validates :user_id, :presence => true
@@ -149,8 +149,8 @@ class Post < ActiveRecord::Base
 
   # check if invoice is due
   def due_invoice? usr
-    if invoice && !invoice.owner?(usr)
-      Invoice.where("pixi_id = ? AND status = 'unpaid'", pixi_id).first
+    if invoice
+      !invoice.owner?(usr) && invoice.unpaid? && invoice.buyer_name == usr.name ? true : false
     else
       false
     end
