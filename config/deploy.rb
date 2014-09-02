@@ -8,7 +8,7 @@ require 'delayed/recipes'
 # require 'capistrano/maintenance'
 
 # Automatically precompile assets
-set :assets_role, [:app]
+set :assets_role, [:app, :worker]
 load "deploy/assets"
 
 # set stages
@@ -230,7 +230,7 @@ after 'bundle:install', 'deploy:enable_rubber'
 before 'rubber:config', 'deploy:enable_rubber', 'deploy:enable_rubber_current'
 after 'deploy:update_code', 'deploy:symlink_shared', 'sphinx:stop'
 #after "deploy:migrations", "cleanup"
-#after "deploy", "cleanup", "memcached:flush"
+after "deploy", "cleanup", "memcached:flush"
 after "deploy:update", "deploy:migrations"
 
 task :cleanup, :except => { :no_release => true } do
