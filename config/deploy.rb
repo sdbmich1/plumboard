@@ -53,7 +53,7 @@ set :password, nil
 set :use_sudo, false
 
 # How many old releases should be kept around when running "cleanup" task
-set :keep_releases, 3
+set :keep_releases, 5
 
 # Lets us work with staging instances without having to checkin config files
 # (instance*.yml + rubber*.yml) for a deploy.  This gives us the
