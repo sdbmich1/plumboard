@@ -50,7 +50,7 @@ Plumboard::Application.configure do
   config.cache_store = :dalli_store, elasticache.servers, {:expires_in => 1.hour, :compress => true}
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server
-  config.action_controller.asset_host = "http://assets%d.pixiboard.com"
+  config.action_controller.asset_host = "e1aqqzq37ik30h.cloudfront.net"
 
   # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
   # config.assets.precompile += %w( search.js )
