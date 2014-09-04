@@ -50,7 +50,6 @@ feature "Conversations" do
       page.should_not have_link('Mark All Read', href: mark_posts_path)
       page.should have_content 'No conversations found.'
       page.should_not have_link('Delete', href: remove_conversation_path(@conversation))
-      # page.should_not have_link('Bill', href: get_invoice_path) 
       page.should_not have_link('Pay', href: invoice_path(@conversation.id)) 
       page.should_not have_button('Reply')
     end
@@ -120,7 +119,6 @@ feature "Conversations" do
 
     it "routes to bill" do
       click_on 'Bill'
-      page.should have_content 'Setup Your Payment Account'
     end
   end
      
@@ -157,7 +155,7 @@ feature "Conversations" do
     before :each do
       add_conversation
       visit conversations_path 
-      click_on 'Show Conversation'
+      click_on 'Show'
     end
     
     it 'shows content' do
@@ -169,7 +167,7 @@ feature "Conversations" do
 
     it "can go back to received page" do
       click_on 'Received'
-      page.should have_link('Show Conversation', href: conversation_path(@conversation.id, conversation: { pixi_id: @conversation.pixi_id } ))
+      page.should have_link('Show', href: conversation_path(@conversation.id, conversation: { pixi_id: @conversation.pixi_id } ))
     end
 
     it "can go back to sent page" do

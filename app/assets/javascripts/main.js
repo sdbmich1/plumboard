@@ -124,6 +124,7 @@ $(document).ready(function(){
   // accordion for pixichat
   $( "#accordion" ).accordion({
     heightStyle: "content",
+    header: "table",
   });
 
   // enable tooltip

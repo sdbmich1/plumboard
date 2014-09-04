@@ -1,25 +1,31 @@
 <% unless conversation.posts.blank? %>    
   <div>
-    <h4>
-  <%= link_to conversation.listing.title, conversation.listing, class: '' %>
-    </h4>
+    <table>
+      <tr>
+        <td width="99%">
+          <%= render partial: 'shared/show_photo', locals: {model: conversation.other_user(@user), file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
+          <h4>
+            &nbsp;
+            <%= link_to conversation.listing.title, conversation.listing, class: '' %>
+          </h4>
+        </td>
+        <td align="right">
+          <% if conversation.invoice != nil && conversation.invoice.status == 'unpaid' && conversation.invoice.buyer == @user %>
+              <td><%= link_to "Pay", invoice_path(conversation.invoice.id), class: 'btn btn-small' %></td>
+          <% end %>
+          <% if conversation.can_bill? @user %> 
+            <td><%= link_to "Bill", get_invoice_path, class: 'btn btn-small' %></td>
+          <% end %>
+          <td><%= link_to "Delete", remove_conversation_path(conversation.id), :method => :put, confirm: 'Delete this conversation?', class: 'btn btn-small' %></td>
+        </td>
+      </tr>
+    </table>
   </div>
   <div id='accordion'>
     <%= render partial: 'shared/post', collection: @posts, locals: { sentFlg: sentFlg } %>
   </div>
   <div>
-    <table>
-      <tr>
-      <%= render partial: 'shared/reply', locals: { post: @post, sentFlg: sentFlg, conversation: conversation } unless conversation.posts.first.system_msg? %>
-      </tr>
-      <% if conversation.invoice != nil && conversation.invoice.status == 'unpaid' && conversation.invoice.buyer == @user %>
-        <tr><%= link_to "Pay", invoice_path(conversation.invoice.id), class: 'btn btn-small' %></tr>
-      <% end %>
-      <% if conversation.can_bill? @user %> 
-        <tr><%= link_to "Bill", get_invoice_path, class: 'btn btn-small' %></tr>
-      <% end %>
-      <tr><%= link_to "Delete", remove_conversation_path(conversation.id), :method => :put, confirm: 'Delete this conversation?', class: 'btn btn-small' %></tr>
-    </table>
+    <%= render partial: 'shared/reply', locals: { post: @post, sentFlg: sentFlg, conversation: conversation } unless conversation.posts.first.system_msg? %>
   </div>
 <% else %>
   <div class='center-wrapper'>No messages found.</div>

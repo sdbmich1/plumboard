@@ -54,6 +54,11 @@ class Post < ActiveRecord::Base
     Rinku.auto_link(descr) if descr
   end
 
+  def summary_custom num
+    descr = content.length < num ? content.html_safe : content.html_safe[0..num] rescue nil
+    Rinku.auto_link(descr) if descr
+  end
+
   # add hyperlinks to content
   def full_content
     Rinku.auto_link(content.html_safe) rescue nil
