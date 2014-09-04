@@ -8,7 +8,7 @@ require 'delayed/recipes'
 # require 'capistrano/maintenance'
 
 # Automatically precompile assets
-set :assets_role, [:app]
+set :assets_role, [:app, :worker]
 load "deploy/assets"
 
 # set stages
@@ -53,7 +53,7 @@ set :password, nil
 set :use_sudo, false
 
 # How many old releases should be kept around when running "cleanup" task
-set :keep_releases, 3
+set :keep_releases, 5
 
 # Lets us work with staging instances without having to checkin config files
 # (instance*.yml + rubber*.yml) for a deploy.  This gives us the
@@ -230,7 +230,7 @@ after 'bundle:install', 'deploy:enable_rubber'
 before 'rubber:config', 'deploy:enable_rubber', 'deploy:enable_rubber_current'
 after 'deploy:update_code', 'deploy:symlink_shared', 'sphinx:stop'
 #after "deploy:migrations", "cleanup"
-#after "deploy", "cleanup", "memcached:flush"
+after "deploy", "cleanup", "memcached:flush"
 after "deploy:update", "deploy:migrations"
 
 task :cleanup, :except => { :no_release => true } do

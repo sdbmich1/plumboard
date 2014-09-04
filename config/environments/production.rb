@@ -20,9 +20,6 @@ Plumboard::Application.configure do
   # Generate digests for assets URLs
   config.assets.digest = true
 
-  # enable asset pipeline
-  config.assets.enabled = true
-
   # Defaults to nil and saved in location specified by config.assets.prefix
   # config.assets.manifest = YOUR_PATH
 
@@ -50,7 +47,7 @@ Plumboard::Application.configure do
   config.cache_store = :dalli_store, elasticache.servers, {:expires_in => 1.hour, :compress => true}
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server
-  config.action_controller.asset_host = "http://assets%d.pixiboard.com"
+  # config.action_controller.asset_host = "http://assets.example.com"
 
   # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
   # config.assets.precompile += %w( search.js )
@@ -82,9 +79,8 @@ Plumboard::Application.configure do
   # set paperclip aws settings
   PAPERCLIP_STORAGE_OPTIONS = {:storage => :s3, 
                                :s3_credentials => YAML.load_file("#{Rails.root}/config/aws.yml")[Rails.env],
-                               :s3_protocol => :http,
-			       :url => ":asset_host",
-	  		#       :url => ":s3_domain_url",
+                               :s3_protocol => :https,
+	  		       :url => ":s3_domain_url",
 			       path: ":attachment/:id_partition/:style/:filename"}
 
   # facebook ssl setting
