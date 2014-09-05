@@ -16,7 +16,7 @@
         <% end %>
         <%= link_to conversation.listing.title, conversation.listing, class: '' %>
         <% if conversation.posts.count > 1 %> (<%= conversation.posts.count %>) <% end %>
-        <%= image_tag set_msg_icon(conversation.posts.first), class: 'left-form' unless conversation.posts.first.sender? @user %>
+        <%= image_tag set_msg_icon(conversation.posts.first), class: 'left-form'  %>
       </div>
     <td width="30%">
       <span class="content">
@@ -43,19 +43,19 @@
     <td>
       <table>
        <td> 
-         <%= link_to "Show", conversation_path(conversation.id, conversation: { pixi_id: conversation.pixi_id } ), class: 'btn btn-small' %>
+         <%= link_to image_tag('show-icon.png'), conversation_path(conversation.id, conversation: { pixi_id: conversation.pixi_id } ), class: 'btn btn-small', id: 'conv-show-btn' %>
        <td>
         <% if conversation.invoice != nil && conversation.invoice.status == 'unpaid' && conversation.invoice.buyer == @user %>
-          <%= link_to "Pay", invoice_path(conversation.invoice.id), class: 'btn btn-small' %>
+          <%= link_to image_tag('pay-icon.png'), invoice_path(conversation.invoice.id), class: 'btn btn-small', id: 'conv-pay-btn' %>
         <% end %>
        </td>
        <td>
          <% if conversation.can_bill? @user %> 
-           <%= link_to "Bill", get_invoice_path, class: 'btn btn-small' %>
+           <%= link_to image_tag('bill-icon.png'), get_invoice_path, class: 'btn btn-small', id: 'conv-bill-btn' %>
          <% end %>
         </td>
         <td>
-          <%= link_to "Delete", remove_conversation_path(conversation.id), :method => :put, confirm: 'Delete this conversation?', class: 'btn btn-small' %>
+          <%= link_to image_tag('trash-icon.png'), remove_conversation_path(conversation.id), :method => :put, confirm: 'Delete this conversation?', class: 'btn btn-small', id: 'conv-trash-btn' %>
         </td>
       </table>
     </td>

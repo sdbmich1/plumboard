@@ -49,8 +49,8 @@ feature "Conversations" do
       page.should have_link('Received', href: conversations_path)
       page.should_not have_link('Mark All Read', href: mark_posts_path)
       page.should have_content 'No conversations found.'
-      page.should_not have_link('Delete', href: remove_conversation_path(@conversation))
-      page.should_not have_link('Pay', href: invoice_path(@conversation.id)) 
+      page.should_not have_selector('#conv-trash-btn') 
+      page.should_not have_selector('#conv-pay-btn') 
       page.should_not have_button('Reply')
     end
   end
@@ -68,9 +68,9 @@ feature "Conversations" do
       page.should have_link('Sent', href: sent_conversations_path)
       page.should have_link('Received', href: conversations_path)
       page.should have_link('Mark All Read', href: mark_posts_path)
-      page.should have_link('Delete', href: remove_conversation_path(@conversation.id)) 
-      page.should have_link('Bill', href: get_invoice_path) 
-      page.should_not have_link('Pay', href: invoice_path(@conversation.id)) 
+      page.should have_selector('#conv-trash-btn') 
+      page.should have_selector('#conv-bill-btn') 
+      page.should_not have_selector('#conv-pay-btn') 
     end
 
     it "marks all posts read", js: true do
@@ -84,10 +84,11 @@ feature "Conversations" do
         visit conversations_path
       end
 
-      it { should have_link('Pay', href: invoice_path(@conversation.invoice.id)) }
+      it { should have_selector('#conv-pay-btn') }
 
       it "opens pay invoice page" do
-        click_on 'Pay'
+        page.should have_selector('#conv-pay-btn') 
+        page.find('#conv-pay-btn').click
         page.should have_content 'Amount Due'
       end
     end
@@ -107,19 +108,16 @@ feature "Conversations" do
       page.should have_content @conversation.user.name
       page.should have_content @conversation.listing.title
       page.should have_content @post.content
-      page.should have_link('Pay', href: invoice_path(@conversation.invoice.id)) 
-      page.should have_link('Delete', href: remove_conversation_path(@conversation.id)) 
+      page.should have_selector('#conv-trash-btn') 
+      page.should have_selector('#conv-pay-btn') 
     end
 
     it "pays an invoice" do
-      page.should have_link('Pay', href: invoice_path(@conversation.invoice.id)) 
-      click_on 'Pay'
+      page.should have_selector('#conv-pay-btn') 
+      page.find('#conv-pay-btn').click
       page.should have_content 'Amount Due'
     end
 
-    it "routes to bill" do
-      click_on 'Bill'
-    end
   end
      
   describe 'No sent conversations' do
@@ -155,19 +153,19 @@ feature "Conversations" do
     before :each do
       add_conversation
       visit conversations_path 
-      click_on 'Show'
+      sleep 5
+      page.find("#conv-show-btn", :visible => true).click
     end
     
     it 'shows content' do
       page.should have_content @conversation.user.name
       page.should have_content @conversation.listing.title
       page.should have_content @post.content
-      page.should have_link('Delete', href: remove_conversation_path(@conversation.id)) 
     end
 
     it "can go back to received page" do
       click_on 'Received'
-      page.should have_link('Show', href: conversation_path(@conversation.id, conversation: { pixi_id: @conversation.pixi_id } ))
+      page.should have_selector('#conv-show-btn') 
     end
 
     it "can go back to sent page" do

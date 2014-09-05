@@ -89,6 +89,8 @@ feature "Listings" do
           page.should have_content 'Want'
       }.to change(Post,:count).by(1)
 
+      expect(Conversation.count).to eql(2)
+
       expect{
       	  fill_in 'comment_content', with: "Great pixi. I highly recommend it.\n" 
 	  sleep 3
