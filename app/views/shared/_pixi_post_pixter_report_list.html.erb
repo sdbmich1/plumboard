@@ -1,25 +1,59 @@
+<div class="btn-group pull-right">
+    <button type="button" class="btn btn-small dropdown-toggle width120" data-toggle="dropdown">
+        Export Options<span class="caret icon-white"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+        <li><%= link_to 'Export as CSV file', pixter_report_pixi_posts_path(date_range: @date_range, pixter_id: @pixter_id, format: "csv"),
+                        id: 'csv-exp-btn'  %></li>
+    </ul>
+</div>
 <% unless @pixi_posts.blank? %>
-    <table class="table table-hover table-condensed table-bordered">
+    <div class = "clear-all"></div>
+
+    <div class='mtop center-wrapper mbot'>
+        <% if @pixter_id.nil? %>
+            <h2> Pixter Report for all Pixters </h2>
+        <% else %>
+            <h2> Pixter Report for <%= User.find_by_id(@pixter_id).first_name %> </h2>
+        <% end %>
+        <h2>For period: <%= @start_date.strftime("%m/%d/%Y") %>
+        to <%= @end_date.strftime("%m/%d/%Y") %></h2>
+    </div>
+
+    <table class="border-collapse: collapse table table-hover table-condensed table-bordered ">
         <thead>
-        <tr>
-            <th class='center-wrapper'>Post Date</th>
-            <th class='center-wrapper'>Item Title</th>
-            <th class='center-wrapper'>Customer</th>
-            <th class='center-wrapper'>Pixter</th>
-            <th class='center-wrapper'>Sale Date</th>
-            <th class='center-wrapper'>List Value</th>
-            <th class='center-wrapper'>Sale Value</th>
-            <th class='center-wrapper'>Pixter Revenue</th>
-        </tr>
+            <tr>
+                <th class='center-wrapper'>Post Date</th>
+                <th class='center-wrapper'>Item Title</th>
+                <th class='center-wrapper'>Customer</th>
+                <th class='center-wrapper'>Pixter</th>
+                <th class='center-wrapper'>Sale Date</th>
+                <th class='center-wrapper'>List Value</th>
+                <th class='center-wrapper'>Sale Value</th>
+                <th class='center-wrapper'>Pixter Revenue</th>
+            </tr>
         </thead>
         <tbody>
-        <%= render partial: 'shared/pixi_post_pixter_report_row', collection: @pixi_posts, as: :post %>
+            <%= render partial: 'shared/pixi_post_pixter_report_row', collection: @pixi_posts, as: :post %>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class = 'center-wrapper'> Total </td>
+                <td class = 'center-wrapper price'> <%= ntc(pixter_report_total) %></td>
+                <td class = 'center-wrapper price'><%= ntc(pixter_report_total * 6 / 100) %></td>
+            </tr>
         </tbody>
+
     </table>
+    <div id='pxp-list' class="nav pull-right">
+        <%= will_paginate @pixi_posts if @pixi_posts.respond_to?(:total_pages) %>
+    </div>
 <% else %>
     <div class='center-wrapper'>No posts found</div>
 <% end %>
 
-<div id='pxp-list' class="nav pull-right">
-    <%= will_paginate @posts if @pixi_posts.respond_to?(:total_pages) %>
-</div>
+
+

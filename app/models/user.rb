@@ -339,7 +339,17 @@ class User < ActiveRecord::Base
   
   # check user is pixter
   def is_pixter?
-    user_type_code == 'PT' rescue false
+    user_type_code.upcase == 'PT' rescue false
+  end
+  
+  # check user is member
+  def is_member?
+    user_type_code.upcase == 'MBR' rescue false
+  end
+  
+  # check user is support
+  def is_support?
+    user_type_code.upcase == 'SP' rescue false
   end
 
   # display user type

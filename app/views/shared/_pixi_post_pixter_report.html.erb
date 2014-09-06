@@ -1,13 +1,17 @@
-<%= content_for :content do %>
-    <div id='inv_form'>
+<div id="inv_form">
+    <% if !@xhr_flag %>
+        <% if access_pxp_admin_menu? %>
+            <%= render :partial => 'shared/get_pixter_list' %>
+        <% end %>
+        <%= render :partial => 'shared/date_range_list' %>
+    <% end %>
 
-        
 
-
-
+    <div id="px-rpt">
         <%= render :partial => 'shared/pixi_post_pixter_report_list' %>
     </div>
-<% end %>
+</div>
+
 
 
 

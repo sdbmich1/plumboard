@@ -24,5 +24,11 @@ namespace :manage_server do
   task :close_expired_pixis => :environment do
     Listing.close_pixis
   end
+
+  # pick fb sweepstakes winner
+  task :pick_sweepstakes_winner => :environment do
+    entrants = User.where(fb_user: true).order("RAND()")
+    puts "The winner is #{entrants.first.name}. Email: #{entrants.first.email}"
+  end
 end
 

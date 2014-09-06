@@ -1,8 +1,5 @@
-  <div>
-    <%= f.fields_for :pictures do |form| %>
-      <label class="cabinet"> 
-        <%= form.file_field :photo, { id: "user_pic", class: "file" } %>
-      </label>
-    <% end %>
-  </div>
-
+<div>
+  <%= f.fields_for :pictures do |form| %>
+    <%= render partial: 'shared/photo_cabinet', locals: { form: form, s3Flg: use_remote_pix?, keyName: 'user_pic', mFlg: false } %>
+  <% end %>
+</div>

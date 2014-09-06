@@ -1,10 +1,11 @@
 <div class="div-border">
-  <%= render partial: 'shared/display_photo_form', locals: { s3Flg: s3Flg } if s3Flg %>
   <div id="form_errors"><%= render partial: 'shared/error_messages', locals: { :target => @listing } %></div>
   <%= form_for(@listing, html: { multipart: true, id: 'pixi-form' }, data: {validate: 'parsley'}) do |f| %>
     <%= render partial: 'shared/listing_fields', locals: { f: f, listing: @listing, s3Flg: s3Flg } %>
     <%= f.hidden_field :start_date, value: Time.now %>
-    <%= f.hidden_field set_poster_id(@listing), value: @user.id %>
+    <% unless @user.is_support? %>
+      <%= f.hidden_field set_poster_id(@listing), value: @user.id %>
+    <% end %>
     <%= f.hidden_field :post_ip, value: @user.current_sign_in_ip %>
     </div>
     <div class="nav pull-right">

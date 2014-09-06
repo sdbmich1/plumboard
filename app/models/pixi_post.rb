@@ -30,7 +30,7 @@ class PixiPost < ActiveRecord::Base
   validates_date :preferred_date, presence: true, on_or_after: :min_start_date, unless: :is_admin?
   validates_date :alt_date, allow_blank: true, on_or_after: :min_start_date, unless: :is_admin?
   validates_date :appt_date, on_or_after: :today, presence: true, if: :can_set_appt?
-  validates_date :completed_date, on_or_after: :today, presence: true, if: :has_pixi?
+  validates_date :completed_date, presence: true, if: :has_pixi?
   validates_datetime :alt_time, presence: true, unless: "alt_date.nil?"
   validates_datetime :appt_time, presence: true, unless: "appt_date.nil?"
 
@@ -221,13 +221,36 @@ class PixiPost < ActiveRecord::Base
   end
 
   # retrives the data for pixter_report
-  def self.pixter_report start_date = Time.now - 30.days, end_date = Time.now, pixter_id = nil
+  def self.pixter_report start_date, end_date, pixter_id
     pixi_posts = Array.new
-    pixter_id == nil ? pixi_posts = PixiPost.all : pixi_posts = PixiPost.where(pixan_id: pixter_id)
+    pixi_posts = pixter_id.nil? ? PixiPost.includes(:user, :pixan).all : PixiPost.includes(:user, :pixan).where(pixan_id: pixter_id)
     pixi_posts = pixi_posts.keep_if{|elem| ((elem.status == "completed") &&
-    (elem.completed_date >= start_date) && (elem.completed_date <= end_date))}
-    pixi_posts
+                  (elem.completed_date >= start_date) && (elem.completed_date <= end_date))}
+    pixi_posts_final = Array.new
+    counter = 0
+    for elem in pixi_posts do
+      pixi_posts_final[counter] = [elem.completed_date, PixiPost.item_title(elem), elem.seller_name,
+                                   elem.pixter_name, !(PixiPost.sale_date(elem).nil?)? PixiPost.sale_date(elem)
+                                    : 'Not sold yet', PixiPost.listing_value(elem), !(PixiPost.sale_value(elem).nil?)?
+                                    PixiPost.sale_value(elem) : 'Not sold yet', !(PixiPost.sale_value(elem).nil?)?
+                                    (PixiPost.sale_value(elem) * 6) / 100 : 'Not sold yet']
+      counter = counter + 1
+    end
+    pixi_posts_final
   end
 
+  def self.to_csv pixi_posts
+    begin
+      CSV.generate do |csv|
+        # header row
+        csv << ["Post Date", "Item Title", "Customer", "Pixter", "Sale Date", "List Value", "Sale Value", "Pixter Revenue"]
+        # data rows
+        for elem in pixi_posts
+          csv << [elem[0].strftime("%F"), elem[1], elem[2], elem[3], elem[4], elem[5], elem[6], elem[7]]
+        end
+      end
+    rescue nil
+    end
+  end
 
 end

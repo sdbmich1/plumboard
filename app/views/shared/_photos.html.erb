@@ -4,9 +4,9 @@
     <% for pic in model.pictures %>
       <div>
         <% if controller_name == 'temp_listings' %>
-          <%= image_tag pic.photo.url, class: 'lrg_pic_frame' unless pic.photo_file_name.blank? %>
+          <%= image_tag get_pixi_image(pic), class: 'lrg_pic_frame' if pic.photo? %>
         <% else %>
-          <%= image_tag pic.photo.url(:large), class: 'lrg_pic_frame', title: 'Pin it @ Pinterest' unless pic.photo_file_name.blank? %>
+          <%= image_tag get_pixi_image(pic, 'large'), class: 'lrg_pic_frame', title: 'Pin it @ Pinterest' if pic.photo? %>
         <% end %>
      </div>
     <% end %>

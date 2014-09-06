@@ -1,1 +1,3 @@
-<%= render 'refresh_page' %>
+$("#pendingOrder").html("<%= escape_javascript( raw render(:partial => 'shared/index_list') ) %>");
+$("#sm-top").html("<%= escape_javascript( raw page_entries_info @listings, :model => 'pixis' ) %>");
+$("#spinner").hide('fast');

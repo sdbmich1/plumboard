@@ -71,14 +71,14 @@ class Invoice < ActiveRecord::Base
   def self.get_invoices usr
     includes(:buyer, :listing => :pictures).joins(:listing)
     .where(:listings => {:status => ['active', 'sold']})
-    .where(:seller_id => usr.id)
+    .where("invoices.seller_id = ? AND invoices.status != ?", usr.id, 'removed')
   end
 
   # get invoices for given buyer
   def self.get_buyer_invoices usr
     includes(:seller, :listing => :pictures)
     .where(:listings => {:status => ['active', 'sold']})
-    .where(:buyer_id => usr.id)
+    .where("invoices.buyer_id = ? AND invoices.status != ?", usr.id, 'removed')
   end
 
   # check if invoice owner
@@ -114,7 +114,7 @@ class Invoice < ActiveRecord::Base
       txn_fee = CalcTotal::get_convenience_fee amount, pixan_id
 
       # process payment
-      result = bank_account.credit_account (amount - txn_fee)
+      result = bank_account.credit_account(amount - txn_fee) rescue 0
     else
       false
     end

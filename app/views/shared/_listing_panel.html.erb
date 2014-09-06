@@ -1,8 +1,13 @@
 <div class='v-align'>
   <% if listing.user_wanted?(@user) %>
-      <%= image_tag 'rsz_check-mark-md.png', class: 'checkmark' %><span class='mleft5'>Want</span>
+    <%= image_tag 'rsz_check-mark-md.png', class: 'checkmark' %><span class='mleft5'>Want</span>
   <% else %>
-    <%= link_to 'Want', '#', class: 'btn btn-primary submit-btn width80', id: 'want-btn', title: 'Send private message to owner. I want this!' %>
+    <% unless signed_in? %>
+      <%= link_to 'Want', set_want_path(listing.pixi_id), class: 'btn btn-primary submit-btn width100', id: set_want_id, title: want_msg, 
+        remote: !signed_in? %>
+    <% else %>
+      <div id='post_form'><%= render partial: 'shared/contact', locals: { listing: listing } %></div>
+    <% end %>
   <% end %>
 
   <%= link_to set_item_name(listing, 'like'), set_like_path(listing, listing.pixi_id), method: set_item_method(listing, 'like'), 

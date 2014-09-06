@@ -9,7 +9,7 @@ describe Category do
 
   it { should respond_to(:name) }
   it { should respond_to(:status) }
-  it { should respond_to(:category_type) }
+  it { should respond_to(:category_type_code) }
   it { should respond_to(:pixi_type) }
   it { should respond_to(:listings) }
   it { should respond_to(:temp_listings) }
@@ -37,14 +37,14 @@ describe Category do
     it { @category.status.should == "active" }
   end
 
-  describe "when category_type is empty" do
-    before { @category.category_type = "" }
+  describe "when category_type_code is empty" do
+    before { @category.category_type_code = "" }
     it { should_not be_valid }
   end
 
-  describe "when category_type is entered" do
-    before { @category.category_type = "gigs" }
-    it { @category.category_type.should == "gigs" }
+  describe "when category_type_code is entered" do
+    before { @category.category_type_code = "gigs" }
+    it { @category.category_type_code.should == "gigs" }
   end
 
   describe "active categories" do

@@ -98,14 +98,6 @@ describe "Users", :type => :feature do
       visit settings_path 
     end
 
-    it "should not add a large pic", js: true do
-      expect{
-        attach_file('user_pic', Rails.root.join("spec", "fixtures", "photo2.png"))
-        click_on 'Save Changes'
-      }.not_to change(@user.pictures,:count).by(1)
-    #  page.should have_content("Pictures photo file size must be in between 0")
-    end
-
     it "empty first name should not change a profile", js: true do
       expect(page).not_to have_selector('#ucode', visible: true) 
       expect { 
@@ -175,7 +167,7 @@ describe "Users", :type => :feature do
       @user.reload.home_zip.should == '94111' 
     end
 
-    it "Changes profile file pic", js: true do
+    it "Changes profile file pic" do
       expect{
               attach_file('user_pic', Rails.root.join("spec", "fixtures", "photo0.jpg"))
 	      click_save

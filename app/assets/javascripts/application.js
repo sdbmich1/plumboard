@@ -36,5 +36,7 @@
 //= require jquery.masonry.ordered
 //= require jquery.rateit.min
 //= require jquery.remotipart
-//= require s3_direct_upload
+//= require s3_file_field
+//= require s3_image_upload
 //= require_tree .
+//= require pixter_report

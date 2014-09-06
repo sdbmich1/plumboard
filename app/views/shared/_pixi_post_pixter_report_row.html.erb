@@ -1,14 +1,13 @@
-<% cache post do %>
-    <tr>
+<tr>
 
-        <td class='span2'><%= post.completed_date %></td>
-        <td class='span2'><%= PixiPost.item_title(post) %></td>
-        <td class='span2'><%= post.seller_name %></td>
-        <td class='span2'><%= post.pixter_name %></td>
-        <td class='span2'><%= !(PixiPost.sale_date(post).nil?)? PixiPost.sale_date(post) : 'Not sold yet' %></td>
-        <td class='span2'><%= PixiPost.listing_value(post) %></td>
-        <td class='span2'><%= !(PixiPost.sale_value(post).nil?)? PixiPost.sale_value(post) : 'Not sold yet' %></td>
-        <td class='span2'><%= !(PixiPost.sale_value(post).nil?)? (PixiPost.sale_value(post) * 6) / 100 : 'Not sold yet' %></td>
+        <td class='center-wrapper'><%= short_date(post[0]) %></td>
+        <td class='center-wrapper'><%= post[1] %></td>
+        <td class='center-wrapper'><%= post[2] %></td>
+        <td class='center-wrapper'><%= post[3] %></td>
+        <td class='center-wrapper'><%= post[4] %></td>
+        <td class='center-wrapper price'><%= !(post[5] == "Not sold yet")? ntc(post[5]) : post[5] %></div></td>
+        <td class='center-wrapper price'><%= !(post[6] == "Not sold yet")? ntc(post[6]) : post[6] %></div></td>
+        <td class='center-wrapper price'><%= !(post[7] == "Not sold yet")? ntc(post[7]) : post[7] %></td>
+</tr>
 
-    </tr>
-<% end %>
+

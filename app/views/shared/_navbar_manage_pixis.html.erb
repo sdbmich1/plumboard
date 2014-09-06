@@ -1,6 +1,1 @@
-<ul class="nav">
-  <li class="active"><%= link_to "Active", listings_path, class: 'submenu', id: 'active-manage-pixis', remote: true %></li>
-  <li><%= link_to "Sold", sold_listings_path, class: 'submenu', id: 'sold-manage-pixis', remote: true %></li>
-  <li><%= link_to "Closed", '#', class: 'submenu', id: 'closed-manage-pixis', remote: true %></li>
-  <li><%= link_to "Removed", '#', class: 'submenu', id: 'removed-manage-pixis', remote: true %></li>
-</ul>
+<%= render partial: 'shared/navbar_pixis', locals: { page_title: 'Pixis', atype: 'local', loc_name: PIXI_LOCALE, rFlg: false, statusFlg: true } %>

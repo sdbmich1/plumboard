@@ -14,6 +14,13 @@ feature "Listings" do
   let(:pixi_post_listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, 
     pixan_id: pixter.id, site_id: site.id) }
 
+  
+  def user_login
+    fill_in "user_email", :with => user.email
+    fill_in "pwd", :with => user.password
+    click_button "Sign in"
+  end
+
   def set_site_id
     page.execute_script %Q{ $('#site_id').val("#{@site.id}") }
   end
@@ -39,8 +46,8 @@ feature "Listings" do
      
     it "does not contact a seller", js: true do
       expect{
-          page.find('#want-btn').click
-      	  fill_in 'contact_content', with: "I'm love this pixi. Please contact me.\n"
+          click_link 'Want'
+          # page.find('#want-btn').click
       }.not_to change(Post,:count).by(1)
       page.should have_content 'Sign in'
     end
@@ -63,9 +70,12 @@ feature "Listings" do
 
     it "does not add comment", js: true do
       expect{
-      	  fill_in 'comment_content', with: "Great pixi. I highly recommend it.\n" 
+          page.find('#add-comment-btn').click
       }.not_to change(Comment,:count).by(1)
       page.should have_content 'Sign in'
+      sleep 2;
+      user_login
+      page.should have_content pixi_post_listing.nice_title
     end
   end
 
@@ -341,6 +351,7 @@ feature "Listings" do
       @listing = create :listing, seller_id: editor.id
       @pixi_want = editor.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
       @pixi_like = editor.pixi_likes.create FactoryGirl.attributes_for :pixi_like, pixi_id: @listing.pixi_id
+
       init_setup editor
     end
 
@@ -357,16 +368,15 @@ feature "Listings" do
       end
 
       describe "Edits active pixi" do
-        before :each do
-          click_link 'Edit'
-	end
-
         it "adds a pixi pic" do
+          click_link 'Edit'; sleep 3
           page.should have_content("Build Your Pixi") 
+          page.should have_selector('#build-pixi-btn')
           expect{
 	    fill_in 'Title', with: 'Rhodes Bass Guitar'
             attach_file('photo', Rails.root.join("spec", "fixtures", "photo0.jpg"))
-            click_button 'Next'
+            page.find('#build-pixi-btn').click
+	    # click_button 'Next'
             page.should have_content 'Review Your Pixi'
             click_link 'Done!'
             page.should have_content 'Rhodes Bass Guitar'
@@ -408,6 +418,10 @@ feature "Listings" do
         page.should have_content 'Guitar'
         page.should_not have_content 'No pixis found'
       end
+
+      it "does not show status type" do
+        page.should_not have_content "Status"
+      end
     end  
 
     describe "GET /local" do  
@@ -424,6 +438,10 @@ feature "Listings" do
         page.should have_content('Pixis')
         page.should have_content 'Guitar'
         page.should_not have_content 'No pixis found'
+      end
+
+      it "does not show status type" do
+        page.should_not have_content "Status"
       end
     end  
 
@@ -484,25 +502,39 @@ feature "Listings" do
 
     describe "Manage Pixis page" do
       before do
-        @pixi_user = create :pixi_user
-        @admin_user = create :admin
-        @admin_user.user_type_code = 'AD'
-        @admin_user.save
-        @category = create :category, name: 'Music'
-        @site = create :site, name: 'Berkeley'
-        @listing1 = create :listing, seller_id: @pixi_user.id, title: 'Guitar', description: 'Lessons', category_id: @category.id, site_id: @site.id
+        # Make listings
+        pixi_user = create :pixi_user
+        category = create :category, name: 'Music'
+        site = create :site, name: 'Berkeley'
+        30.times do
+          create :listing, seller_id: pixi_user.id, title: 'Guitar', description: 'Lessons', category_id: category.id, site_id: site.id
+        end
+        # Visit page as admin
+        admin_user = create :admin
+        admin_user.user_type_code = 'AD'
+        admin_user.save
+        init_setup admin_user
+      end
+
+      before (:each) do
+        visit listings_path
       end
 
       it "views manage pixis page" do
-        init_setup @admin_user
-        visit listings_path
-
         page.should have_content 'Manage Pixis'
-
         page.should have_content 'Guitar'
         page.should have_content 'Lessons'
         page.should have_content 'Music'
         page.should have_content 'Berkeley'
+      end
+
+      it "has 'next' and 'previous' page links" do
+        page.should have_link "Next"
+        page.should have_link "Previous"
+      end
+
+      it 'should have StatusType dropdown menu' do
+        page.should have_content 'Status'
       end
     end
 
@@ -523,7 +555,7 @@ feature "Listings" do
         visit seller_listings_path 
       end
       
-      it "views my pixis page" do
+      it "views my pixis page", js: true do
         page.should have_content('My Pixis')
         page.should_not have_content('No pixis found')
         page.should have_link 'Active', href: seller_listings_path
@@ -535,7 +567,7 @@ feature "Listings" do
         page.should have_link 'Wanted', href: wanted_listings_path
       end
 
-      describe "pagination" do
+      describe "pagination", js: true do
         it "should list each listing" do
           @user.pixis.paginate(page: 1).each do |listing|
             page.should have_selector('td', text: listing.title)

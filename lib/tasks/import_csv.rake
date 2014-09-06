@@ -1,11 +1,9 @@
 require 'csv'
 
 desc "Import data from csv file"
-
-
 task :import_sites => :environment do
 
-   CSV.foreach(Rails.root.join('db', 'Accreditation_2011_12.csv'), :headers => true) do |row|
+  CSV.foreach(Rails.root.join('db', 'Accreditation_2011_12.csv'), :headers => true) do |row|
     
    attrs = {
       		:institution_id    => row[0].to_i,
@@ -36,7 +34,7 @@ task :import_sites => :environment do
       # set location/contact attributes
       loc_attrs = { 
         :address         => row[2],
-	     	:city            => row[3],
+	:city            => row[3],
         :state           => row[4],
         :zip             => row[5],
         :work_phone	 => row[6],
@@ -272,7 +270,7 @@ task :load_categories => :environment do
     attrs = {
 	      	:name              => row[0].titleize,
       		:category_type     => row[1],
-          :status		   => 'active'
+          :status		   => row[2]
     }
 
     # find or add category
@@ -480,6 +478,28 @@ task :import_faq => :environment do
   end
 end
 
+desc "Loads the category_types"
+task :load_category_types => :environment do
+  CSV.foreach(Rails.root.join('db', 'category_type_071514.csv'), :headers => true) do |row|
+    attrs = {
+      :code => row[0],
+      :status => 'active',
+      :hide => 'false'
+    }
+
+    # find or intialize category_type
+    new_category_type = CategoryType.find_or_initialize_by_code(attrs)
+    #new_category_type = CategoryType.first_or_initialize(attrs)
+
+    # save category_type
+    if new_category_type.save
+      puts "Saved category #{attrs.inspect}"
+    else
+      puts new_category_type.errors
+    end
+  end 
+end
+
 # loads regional data for US cities
 task :load_regions => :environment do
   CSV.foreach(Rails.root.join('db', 'region_data_052414.csv'), :headers => true) do |row|
@@ -512,6 +532,65 @@ task :load_regions => :environment do
     end
   end
 end
+
+#load date range
+task :load_date_range => :environment do
+  DateRange.delete_all
+  CSV.foreach(Rails.root.join('db', 'import_date_range.csv'), :headers => true) do |row|
+    attrs = {
+        :name => row[0]
+    }
+    new_date_range = DateRange.new(attrs)
+    # save date_range
+    if new_date_range.save
+      puts "Saved date_range #{attrs.inspect}"
+    else
+      puts new_date_range.errors
+    end
+  end
+end
+
+#loads the data from the db/event_type_071014.csv file into new event_types table.
+task :load_event_types => :environment do
+    CSV.foreach(Rails.root.join('db', 'event_type_071014.csv'), :headers => true) do |row|
+        attrs = {
+            :code       => row[0],
+            :description     => row[1],
+            :status	   => 'active',
+            :hide   => 'false'
+        }
+
+            event = EventType.new(attrs)
+            if event.save
+       			 puts "Saved event #{attrs.inspect}"
+      		else
+        		puts event.errors
+            end
+        end
+    end
+
+task :load_status_types => :environment do
+
+  StatusType.delete_all
+  CSV.foreach(Rails.root.join('db', 'status_type_072314.csv'), :headers => true) do |row|
+
+    attrs = {
+      :code     => row[0],
+      :hide     => row[1],
+    }
+
+    # add status_type
+    new_status_type = StatusType.new(attrs)
+
+    # save user_type
+    if new_status_type.save 
+      puts "Saved status_type #{attrs.inspect}"
+    else
+      puts new_status_type.errors
+    end
+  end
+end
+
 #to run all tasks at once
 task :run_all_tasks => :environment do
 
@@ -531,4 +610,7 @@ task :run_all_tasks => :environment do
   Rake::Task[:import_user_type].execute
   Rake::Task[:import_faq].execute
   Rake::Task[:load_regions].execute
+  Rake::Task[:load_event_types].execute
+  Rake::Task[:load_status_types].execute
+  Rake::Task[:load_category_types].execute
 end

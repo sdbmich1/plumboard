@@ -7,8 +7,8 @@ $.ajaxSetup({
 	xhr.setRequestHeader("X-CSRF-Token", token);
   	toggleLoading();
     },
-  'complete': function(){ toggleLoading(); },
-  'success': function() { toggleLoading(); }
+  'success': function(){ toggleLoading(); },
+  'complete': function(){ toggleLoading(); }
 }); 
 
 // when the #category id field changes
@@ -17,7 +17,6 @@ $(document).on("change", "select[id*=category_id]", function(evt){
   // check if pixi form
   if($('#pixi-form').length > 0) {
     var cid = $(this).val();
-
     if (cid.length > 0) {
       var url = '/categories/category_type?id=' + cid;
 
@@ -25,11 +24,11 @@ $(document).on("change", "select[id*=category_id]", function(evt){
       processUrl(url);
     }
   }
-}); 
+});
 
 // paginate on click
 var pstr = "#inq-list .pagination a, #pendingOrder .pagination a, #post_form .pagination a, #comment-list .pagination a," +
-  "#post-list .pagination a, #user-list .pagination a, #inv-list .pagination a, #faq-list .pagination a, #pxp-list .pagination a";
+  "#post-list .pagination a, #user-list .pagination a, #inv-list .pagination a, #faq-list .pagination a, #pxp-list .pagination a, #pixi-list .pagination a";
 
 $(document).on("click", pstr, function(){
   toggleLoading();
@@ -85,8 +84,8 @@ $(document).on("ajax:complete", '#mark-posts, #post-frm, #comment-doc, .pixi-cat
 $(document).ajaxError( function(e, xhr, options){
   if(xhr.status == 401)
       console.log('in 401 status error handler');
-      // window.location.replace('/users/sign_in');
-      location.reload();
+      window.location.replace('/users/sign_in');
+      // location.reload();
 });	
 
 // process slider
@@ -131,12 +130,6 @@ $(document).ready(function(){
   if( $('.ttip').length > 0 ) {
     $('a').tooltip();
   }
-
-  // direct s3 uploader
-  if( $('#s3-uploader').length > 0 ) {
-    $("#s3-uploader").S3Uploader({progress_bar_target: $('#uploads_container')});
-  }
-
   // set location
   if( $('#home_site_name').length > 0 ) {
     getLocation(true);
@@ -176,6 +169,10 @@ $(document).ready(function(){
   // initialize slider
   load_slider(true);
 
+  // initialize s3 image upload
+  load_image_uploader();
+
+  // init scroll to top
   $('.scrollup').click(function(){
     $("html, body").animate({ scrollTop: 0 }, 600);
     return false;
@@ -507,11 +504,11 @@ $(document).on('click', '#want-btn', function(e) {
   // toggle button display
   if ($(this).text() == 'Want') {
     txt = 'Unwant';
-    $(this).removeClass('submit-btn width80').addClass('btn-mask');
+    $(this).removeClass('submit-btn width100').addClass('btn-mask');
   }
   else {
     txt = 'Want';
-    $(this).removeClass('btn-mask').addClass('submit-btn width80');
+    $(this).removeClass('btn-mask').addClass('submit-btn width100');
   }
 
   // toggle button name
@@ -769,7 +766,6 @@ function keySelectEnter(e, $this) {
   if (e.keyCode == 13 && !e.shiftKey && !keyPress) {
     keyPress = true;
     e.preventDefault();
-    //console.log('in keySelectEnter');
 
     var keyEvent = $.Event("keydown");          
     keyEvent.which = 40;
@@ -836,24 +832,6 @@ $(document).on("change", "#cc_card_year", function() {
 // check if dropdown is open to close
 $(document).on("click", ".navbar li a", function() {
   $('li[class="dropdown open"]').removeClass('open');
-});
-	  
-// check s3 upload
-$(document).on("s3_upload_failed s3_uploads_start s3_upload_complete", "#s3-uploader", function(e, content) {
-  switch(e.type) { 
-    case 's3_uploads_start':
-      console.log('s3 upload started');
-      $('.ttip').hide('fast');
-      break;
-    case 's3_upload_failed':
-      console.log(content.filename + " failed to upload : " + content.error_thrown);
-      break;
-    case 's3_upload_complete':
-      console.log('s3 upload complete ' + content.url);
-      $('.ttip').show('fast');
-      toggleLoading();
-      break;
-  }
 });
 
 // write flash notice on page dynamically

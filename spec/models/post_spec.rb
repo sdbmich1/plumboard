@@ -199,6 +199,14 @@ describe Post do
       @invoice.save
       @post.due_invoice?(@recipient).should_not be_true
     end
+    
+    it "should not return true when removed" do
+      @new_user = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Wilson', email: 'jack.wilson@pixitest.com'
+      @invoice = @new_user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
+      @listing.status = 'removed'
+      @listing.save; sleep 1
+      @post.due_invoice?(@recipient).should_not be_true
+    end
   end
 
   describe "pay_invoice" do 

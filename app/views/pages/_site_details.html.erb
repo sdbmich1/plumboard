@@ -1,0 +1,6 @@
+<% provide(:title, page_title) %>
+<%= render partial: 'shared/pg_header', locals: { linkFlg: true } %>
+<%= content_for :content do %>
+  <%= render :file => file_name, :formats => [:html], :layout => nil %>
+<% end %>
+

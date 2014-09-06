@@ -151,6 +151,7 @@ Plumboard::Application.routes.draw do
   get "/terms", to: "pages#terms" 
   get "/howitworks", to: "pages#howitworks" 
   get "/welcome", to: "pages#welcome" 
+  get "/giveaway", to: "pages#giveaway" 
   get "/support", to: "inquiries#support" 
   get "/contact", to: "inquiries#new" 
   get '/system/:class/:attachment/:id/:style/:filename', :to => 'pictures#asset'
@@ -167,9 +168,9 @@ Plumboard::Application.routes.draw do
   get "/settings/password", to: "settings#password" 
 
   # specify routes for devise user after sign-in
-  namespace :user do
-    root :to => "users#show", :as => :user_root
-  end
+  # namespace :user do
+  #  root :to => "users#show", :as => :user_root
+  # end
 
   # specify root route based on user sign in status
   root to: 'listings#local', :constraints => lambda {|r| r.env["warden"].authenticate? }

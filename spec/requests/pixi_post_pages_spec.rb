@@ -1,10 +1,13 @@
 require 'spec_helper'
+require 'rake'
 
 feature "PixiPosts" do
   subject { page }
   let(:user) { FactoryGirl.create(:pixi_user) }
   let(:contact_user) { FactoryGirl.create(:contact_user) }
+  let(:admin) {FactoryGirl.create :admin, user_type_code: 'AD', confirmed_at: Time.now}
   let(:pixter) { FactoryGirl.create :pixter, user_type_code: 'PT', confirmed_at: Time.now }
+  let(:pixter2) { FactoryGirl.create :pixter, user_type_code: 'PT', confirmed_at: Time.now }
   let(:editor) { FactoryGirl.create :editor, first_name: 'Steve', user_type_code: 'PX', confirmed_at: Time.now }
   let(:submit) { "Save" }
 
@@ -99,7 +102,7 @@ feature "PixiPosts" do
       visit new_pixi_post_path(zip: '94103') 
     end
 
-    it 'show content' do
+    it 'show content', js: true do
       page.should have_content "PixiPost"
       page.should have_content "Requested By: "
       page.should have_content @user.name
@@ -657,13 +660,13 @@ feature "PixiPosts" do
       @pixi_post = user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post, description: 'tire rims')
       @scheduled = user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: @user.id, appt_date: Time.now+3.days,
         appt_time: Time.now+3.days, description: 'xbox 360'
-      @completed = user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: @user.id, appt_date: Time.now+3.days, 
+      @completed = user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: @user.id, appt_date: Time.now+3.days,
         appt_time: Time.now+3.days, completed_date: Time.now + 3.days, pixi_id: @listing.pixi_id, description: 'rocking chair',
         status: 'completed'
       visit pixter_pixi_posts_path(status: 'scheduled')
     end
 
-    it 'show content' do
+    it 'show content', js: true do
       page.should_not have_content 'No posts found'
       page.should have_selector('title', text: 'PixiPosts')
       page.should_not have_selector('title', text: 'My PixiPosts')
@@ -733,26 +736,138 @@ feature "PixiPosts" do
       page.should have_content @completed.description
       page.should have_content user.name
     end
-
-    it "it should display 'No Posts Found'" do
-      visit pixter_report_pixi_posts_path
-      page.should have_content 'No posts found'
-      page.should
-    end
-
-
-=begin
-    it "it should NOT display 'No Posts Found'" do
-
-      visit pixter_report_pixi_posts_path
-
-      @completed_local = user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: nil, appt_date: Time.now,
-                    appt_time: Time.now, completed_date: Time.now, pixi_id: @listing.pixi_id, description: 'rocking chair',
-                      status: 'completed'
-      sleep 5
-      page.should_not have_content 'No posts found'
-    end
-=end
   end
 
+  describe "pixter visits Pixter Report WITHOUT posts" do
+    before do
+      init_setup pixter
+      visit pixter_report_pixi_posts_path
+    end
+
+    it "it should display 'No Posts Found'", js: true do
+      page.should have_content 'No posts found'
+    end
+    it "should have a selector for date range", js: true do
+      page.should have_selector('#date_range_name', visible: true)
+    end
+    it "should not have a selector for pixter list", js: true do
+      page.should_not have_selector('#user_id', visible: true)
+    end
+    it "should not have a link Export to CSV", js: true do
+      page.should_not have_link('#csv-exp', visible: true)
+    end
+    it "should not have content 'Pixter Report for'", js: true do
+      page.should_not have_content("Pixter Report for")
+    end
+  end
+
+  describe "pixter visits Pixter Report WITH posts" do
+    before do
+      init_setup pixter
+      @listing_completed = FactoryGirl.create :listing, seller_id: user.id, pixan_id: @user.id
+      @listing_sold = FactoryGirl.create :listing, seller_id: user.id, pixan_id: @user.id, status: 'sold'
+      @invoice = FactoryGirl.create :invoice, pixi_id: @listing_sold.pixi_id, buyer_id: user.id, seller_id: user.id
+      @completed = user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: @user.id, appt_date: Time.now,
+              appt_time: Time.now, completed_date: Time.now, pixi_id: @listing_completed.pixi_id, description: 'rocking chair',
+              status: 'completed'
+      @sold = user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: @user.id, appt_date: Time.now,
+              appt_time: Time.now, completed_date: Time.now, pixi_id: @listing_sold.pixi_id, description: 'rocking chair',
+              status: 'sold'
+      visit pixter_report_pixi_posts_path
+    end
+    it "should not have a content 'no posts found'", js: true do
+      page.should_not have_content 'No posts found'
+    end
+    it "should contain the pixter name", js: true do
+      page.should have_content @user.name
+    end
+    it "should have sale value", js: true do
+      page.should have_content @invoice.price
+    end
+  end
+
+  describe "admin visits Pixter Report WITHOUT posts" do
+    before do
+      init_setup admin
+      visit pixter_report_pixi_posts_path
+    end
+
+    it "it should display 'No Posts Found'", js: true do
+      page.should have_content 'No posts found'
+    end
+    it "should have a selector for date range", js: true do
+      page.should have_selector('#date_range_name', visible: true)
+    end
+    it "should have a selector for pixter list", js: true do
+      page.should have_selector('#user_id', visible: true)
+    end
+    it "should not have a link Export to CSV", js: true do
+      page.should_not have_link('#csv-exp', visible: true)
+    end
+    it "should no have content 'Pixter Report for'", js: true do
+      page.should_not have_content("Pixter Report for")
+    end
+  end
+
+  describe "admin visits Pixter Report WITH posts" do
+    before do
+      init_setup admin
+      @date_range = FactoryGirl.create :date_range
+      @listing_completed_pt1 = FactoryGirl.create :listing, seller_id: user.id, pixan_id: pixter.id
+      @listing_completed_pt2 = FactoryGirl.create :listing, seller_id: user.id, pixan_id: pixter2.id
+      @completed_pt1 = user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: pixter.id, appt_date: Time.now,
+                     appt_time: Time.now, completed_date: Time.now, pixi_id: @listing_completed_pt1.pixi_id, description: 'rocking chair',
+                     status: 'completed'
+      @completed_pt2 = user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: pixter2.id, appt_date: Time.now,
+                     appt_time: Time.now, completed_date: Time.now, pixi_id: @listing_completed_pt2.pixi_id, description: 'rocking chair',
+                     status: 'completed'
+      visit pixter_report_pixi_posts_path
+    end
+
+    it "should have both pixters' names", js: true do
+      ((page.should have_content pixter.name)&&(page.should have_content pixter2.name))
+    end
+
+    it "should only have pixter1's name", js: true do
+      select(pixter.first_name, :from => 'user_id')
+      ((page.should have_content pixter.name)&&(page.should_not have_content pixter2.name))
+    end
+
+    it "should have No Posts Found content", js: true do
+      #expect DateRange.all.count == 1
+      page.should have_selector('#date_range_name', visible: true)
+      select("Last Month", :from => 'date_range_name')
+      page.should_not have_content("No Posts Found")
+    end
+  end
+
+  describe "pagination" do
+    before do
+      init_setup admin
+      @listing_completed = FactoryGirl.create :listing, seller_id: user.id, pixan_id: pixter.id
+      30.times {
+        user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: pixter.id, appt_date: Time.now,
+            appt_time: Time.now, completed_date: Time.now, pixi_id: @listing_completed.pixi_id, description: 'rocking chair',
+                status: 'completed'
+      }
+
+      visit pixter_report_pixi_posts_path
+    end
+    it "should paginate", js: true do
+      page.should_not have_content 'No posts found'
+      expect (PixiPost.where(user_id: user.id).count == 30)
+    end
+
+    it { should have_selector('div.pagination') }
+
+    it "should list each pixipost" do
+      PixiPost.paginate(page: 1).each do |pixipost|
+        page.should have_selector('li', text: PixiPost.sale_date(pixipost).to_s)
+      end
+    end
+  end
 end
+
+
+
+

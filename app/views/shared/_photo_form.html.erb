@@ -1,6 +1,4 @@
-    <%= fields_for "temp_listing[pictures_attributes][]", Picture.new, index: nil do |form| %>
-      <label class="cabinet">
-        <%= form.file_field :photo, { id: "photo", multiple: true, class: 'file' } %>
-      </label>
-    <% end %>
+<%= fields_for "temp_listing[pictures_attributes][]", Picture.new, index: nil do |form| %>
+  <%= render partial: 'shared/photo_cabinet', locals: { form: form, s3Flg: s3Flg, keyName: 'photo', mFlg: true } %>
+<% end %>
 

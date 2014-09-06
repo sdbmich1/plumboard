@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140804191852) do
+ActiveRecord::Schema.define(:version => 20140817233223) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -78,11 +78,19 @@ ActiveRecord::Schema.define(:version => 20140804191852) do
 
   create_table "categories", :force => true do |t|
     t.string   "name"
-    t.string   "category_type"
+    t.string   "category_type_code"
     t.string   "status"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
     t.string   "pixi_type"
+  end
+
+  create_table "category_types", :force => true do |t|
+    t.string   "code"
+    t.string   "status"
+    t.string   "hide"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "comments", :force => true do |t|
@@ -136,6 +144,14 @@ ActiveRecord::Schema.define(:version => 20140804191852) do
   add_index "conversations", ["status"], :name => "index_conversations_on_status"
   add_index "conversations", ["user_id"], :name => "index_conversations_on_user_id"
 
+  create_table "date_ranges", :force => true do |t|
+    t.string   "name"
+    t.string   "status"
+    t.string   "hide"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0, :null => false
     t.integer  "attempts",   :default => 0, :null => false
@@ -151,6 +167,15 @@ ActiveRecord::Schema.define(:version => 20140804191852) do
   end
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
+
+  create_table "event_types", :force => true do |t|
+    t.string   "code"
+    t.string   "status"
+    t.string   "hide"
+    t.string   "description"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
 
   create_table "faqs", :force => true do |t|
     t.string   "subject"
@@ -273,11 +298,13 @@ ActiveRecord::Schema.define(:version => 20140804191852) do
     t.string   "job_type_code"
     t.string   "explanation"
     t.boolean  "delta"
+    t.string   "event_type_code"
   end
 
   add_index "listings", ["category_id"], :name => "index_listings_on_category_id"
   add_index "listings", ["end_date", "start_date"], :name => "index_listings_on_end_date_and_start_date"
   add_index "listings", ["event_start_date", "event_end_date"], :name => "index_listings_on_event_start_date_and_event_end_date"
+  add_index "listings", ["event_type_code"], :name => "index_listings_on_event_type_code"
   add_index "listings", ["job_type_code"], :name => "index_listings_on_job_type"
   add_index "listings", ["lng", "lat"], :name => "index_listings_on_lng_and_lat"
   add_index "listings", ["pixan_id"], :name => "index_listings_on_pixan_id"
@@ -319,9 +346,11 @@ ActiveRecord::Schema.define(:version => 20140804191852) do
     t.integer  "pixan_id"
     t.string   "job_type_code"
     t.string   "explanation"
+    t.string   "event_type_code"
   end
 
   add_index "old_listings", ["category_id"], :name => "index_old_listings_on_category_id"
+  add_index "old_listings", ["event_type_code"], :name => "index_old_listings_on_event_type_code"
   add_index "old_listings", ["pixan_id"], :name => "index_old_listings_on_pixan_id"
   add_index "old_listings", ["pixi_id"], :name => "index_old_listings_on_pixi_id"
   add_index "old_listings", ["title"], :name => "index_old_listings_on_title"
@@ -338,7 +367,12 @@ ActiveRecord::Schema.define(:version => 20140804191852) do
     t.integer  "photo_file_size"
     t.datetime "photo_updated_at"
     t.boolean  "processing"
+    t.string   "direct_upload_url"
+    t.string   "photo_file_path"
+    t.boolean  "dup_flg"
   end
+
+  add_index "pictures", ["processing"], :name => "index_pictures_on_processing"
 
   create_table "pixi_likes", :force => true do |t|
     t.integer  "user_id"
@@ -633,8 +667,10 @@ ActiveRecord::Schema.define(:version => 20140804191852) do
     t.integer  "pixan_id"
     t.string   "job_type_code"
     t.string   "explanation"
+    t.string   "event_type_code"
   end
 
+  add_index "temp_listings", ["event_type_code"], :name => "index_temp_listings_on_event_type_code"
   add_index "temp_listings", ["parent_pixi_id"], :name => "index_temp_listings_on_parent_pixi_id"
   add_index "temp_listings", ["pixan_id"], :name => "index_temp_listings_on_pixan_id"
   add_index "temp_listings", ["pixi_id"], :name => "index_temp_listings_on_pixi_id", :unique => true

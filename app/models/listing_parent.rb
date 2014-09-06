@@ -16,7 +16,7 @@ class ListingParent < ActiveRecord::Base
 
   attr_accessible :buyer_id, :category_id, :description, :title, :seller_id, :status, :price, :show_alias_flg, :show_phone_flg, :alias_name,
   	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id, :year_built, :pixan_id, 
-	:job_type_code, :edited_by, :edited_dt, :post_ip, :lng, :lat, :event_start_date, :event_end_date, :compensation, 
+	:job_type_code, :event_type_code, :edited_by, :edited_dt, :post_ip, :lng, :lat, :event_start_date, :event_end_date, :compensation,
 	:event_start_time, :event_end_time, :explanation, :contacts_attributes
 
   belongs_to :user, foreign_key: :seller_id
@@ -24,6 +24,7 @@ class ListingParent < ActiveRecord::Base
   belongs_to :category
   belongs_to :transaction
   belongs_to :job_type, primary_key: 'code', foreign_key: 'job_type_code'
+  belongs_to :event_type, primary_key: 'code', foreign_key: 'event_type_code'
 
   has_many :pictures, :as => :imageable, :dependent => :destroy
   accepts_nested_attributes_for :pictures, :allow_destroy => true
@@ -38,6 +39,7 @@ class ListingParent < ActiveRecord::Base
   validates :start_date, :presence => true
   validates :category_id, :presence => true
   validates :job_type_code, :presence => true, if: :job?
+  validates :event_type_code, :presence => true, if: :event?
   validates :price, allow_blank: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
     		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_PIXI_AMT.to_f }
   validate :must_have_pictures
@@ -54,12 +56,12 @@ class ListingParent < ActiveRecord::Base
 
   # check if pixi is an event
   def event?
-    category.category_type == 'event' rescue nil
+    category.category_type_code == 'event' rescue nil
   end
 
   # check if pixi can have a year
   def has_year?
-    category.category_type == 'asset' rescue nil
+    category.category_type_code == 'asset' rescue nil
   end
 
   # check if event start date exists
@@ -205,7 +207,7 @@ class ListingParent < ActiveRecord::Base
 
   # verify pixi can be edited
   def editable? usr
-    (seller?(usr) || pixter?(usr) || usr.has_role?(:admin)) && !sold?
+    (seller?(usr) || pixter?(usr) || usr.has_role?(:admin)) || usr.has_role?(:support) && !sold?
   end
 
   # get category name for a listing
@@ -291,13 +293,14 @@ class ListingParent < ActiveRecord::Base
 
   # check if pixi is a job
   def job?
-    category.category_type == 'employment' rescue nil
+    category.category_type_code == 'employment' rescue nil
   end
+
 
   # delete selected photo
   def delete_photo pid, val=1
     # find selected photo
-    pic = self.pictures.find pid
+    pic = self.pictures.where(id: pid).first
 
     # remove photo if found and not only photo for listing
     result = pic && self.pictures.size > val ? self.pictures.delete(pic) : false
@@ -315,7 +318,6 @@ class ListingParent < ActiveRecord::Base
 
     unless listing
       attr = self.attributes  # copy attributes
-
       # remove protected attributes
       arr = tmpFlg ? %w(id created_at updated_at parent_pixi_id) : %w(id created_at updated_at delta)
       arr.map {|x| attr.delete x}
@@ -341,7 +343,7 @@ class ListingParent < ActiveRecord::Base
       end
 
       # add photo
-      listing.pictures.build(:photo => pic.photo)
+      listing.pictures.build(:photo => pic.photo, :dup_flg => true)
     end
 
     # update fields
@@ -353,6 +355,12 @@ class ListingParent < ActiveRecord::Base
       listing.pixan_id, listing.year_built, listing.buyer_id = self.pixan_id, self.year_built, self.buyer_id
       listing.show_phone_flg, listing.start_date, listing.end_date = self.show_phone_flg, self.start_date, self.end_date
       listing.post_ip, listing.lat, listing.lng, listing.edited_by = self.post_ip, self.lat, self.lng, self.edited_by
+    end
+
+    # remove any dup in case of cleanup failures
+    if listing.is_a?(TempListing) && listing.new_record?
+      templist = TempListing.where(pixi_id: listing.pixi_id)
+      templist.map! {|t| t.destroy} if templist
     end
 
     # add dup

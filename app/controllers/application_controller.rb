@@ -61,7 +61,7 @@ class ApplicationController < ActionController::Base
 
   def after_sign_in_path_for(resource)
     @user ||= resource
-    session[:return_to] || get_root_path # categories_path(newFlg: @user.new_user?)
+    session[:back_to] || session[:return_to] || get_root_path # categories_path(newFlg: @user.new_user?)
   end
 
   # set user if signed in 
@@ -73,6 +73,7 @@ class ApplicationController < ActionController::Base
   # set store path
   def store_location
     session[:return_to] = request.fullpath
+    session[:back_to] = nil
   end
 
   # clear stored path

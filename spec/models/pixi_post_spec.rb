@@ -466,6 +466,12 @@ describe PixiPost do
         @post.should be_valid
       end
 
+      it "has valid old completed date w/ old alt date" do
+        @post.completed_date = Time.now-3.days
+        @post.alt_date = Time.now-3.days
+        @post.should be_valid
+      end
+
       it "has valid completed date w/ old appt date" do
         @pixan = FactoryGirl.create :pixi_user
 	@post.pixan_id = @pixan.id

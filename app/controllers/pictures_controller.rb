@@ -4,9 +4,7 @@ class PicturesController < ApplicationController
 
   def asset
     @picture = Picture.find(params[:id])
-
-    #check permissions before delivering asset
-    send_file @picture.photo.path(style), type: @picture.photo_content_type, disposition: 'inline'
+    send_file file_name(@picture), type: @picture.photo_content_type, disposition: 'inline'
   end
 
   def display
@@ -30,9 +28,9 @@ class PicturesController < ApplicationController
 
   def destroy
     @listing = TempListing.find_by_pixi_id params[:pixi_id]
-    if @listing.delete_photo(params[:id])
+    if @listing.delete_photo(params[:id], 0)
       flash.now[:notice] = "Successfully removed image."
-      @listing = TempListing.find_by_pixi_id params[:pixi_id]
+      @listing = @listing.pictures(true)
     end
   end
 
@@ -41,5 +39,9 @@ class PicturesController < ApplicationController
   def style
     params[:style].gsub!(/\.\./, '')
     params[:style].intern
+  end
+
+  def file_name pic
+    pic.photo.exists? ? pic.photo.path(style) : pic.picture_from_url rescue 'rsz_pixi_top_logo.png'
   end
 end

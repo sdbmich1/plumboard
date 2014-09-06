@@ -83,7 +83,7 @@ gem "aws-sdk", "~> 1.11.3"
 #gem 'aws-s3', :require => 'aws/s3'
 
 # picture upload for s3
-gem 's3_direct_upload'
+gem 's3_file_field', github: 'lastobelus/s3_file_field', ref: 'b7ebbbbae7c84435020dd509d5dec48d78d90c14'
 
 # To use debugger
 # gem 'debugger'

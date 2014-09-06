@@ -14,7 +14,7 @@
         <% if conversation.replied_conv?(@user) %> 
           RE:
         <% end %>
-        <%= link_to conversation.listing.title, conversation.listing, class: '' %>
+        <%= link_to conversation.listing.title, conversation.listing, class: 'terms-link' %>
         <% if conversation.posts.count > 1 %> (<%= conversation.posts.count %>) <% end %>
         <%= image_tag set_msg_icon(conversation.posts.first), class: 'left-form'  %>
       </div>

@@ -1,36 +1,34 @@
-<% cache post do %>
-  <% if post.content != nil %>
-    <li id="<%= post.id %>">
-    <table>
-      <tr>
-        <td width="20%"> 
-          <b>
-            <% if set_poster(post, sentFlg).name == @user.name %>
-              Me
-            <% else %>
-              <%= set_poster(post, sentFlg).name %>
-            <% end %>
-          </b>
-        </td>
-        <td width="68%">
-          <% if post.content.length > 35 %>
-            <%= post.summary_custom(35) %>...
-          <% else %>
-            <%= post.summary_custom(35) %>
-          <% end %>
-        </td>          
-        <td align="right">
-          <div style="float:right;">
-            <span class="timestamp-conv">
-              (<%= short_date(post.created_at) %> at <%= short_time(post.created_at) %>)
-            </span>
-          </div>
-        </td>
-      </table>
-      <div> 
-        <span class="content-conv"> <%= post.full_content %></span>
+<% if post.content != nil %>
+<li id="<%= post.id %>">
+<table>
+  <tr>
+    <td width="20%"> 
+      <b>
+        <% if set_poster(post, sentFlg).name == @user.name %>
+          Me
+        <% else %>
+          <%= set_poster(post, sentFlg).name %>
+        <% end %>
+      </b>
+    </td>
+    <td width="68%">
+      <% if post.content.length > 35 %>
+        <%= post.summary_custom(35) %>...
+      <% else %>
+        <%= post.summary_custom(35) %>
+      <% end %>
+    </td>          
+    <td align="right">
+      <div style="float:right;">
+        <span class="timestamp-conv">
+          (<%= short_date(post.created_at) %> at <%= short_time(post.created_at) %>)
+        </span>
       </div>
-      <div class='clear-all'></div>
-    </li>
-  <% end %>
+    </td>
+  </table>
+  <div> 
+    <span class="content-conv"> <%= post.full_content %></span>
+  </div>
+  <div class='clear-all'></div>
+</li>
 <% end %>

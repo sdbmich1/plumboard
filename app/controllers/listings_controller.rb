@@ -1,16 +1,16 @@
 require 'will_paginate/array' 
 class ListingsController < ApplicationController
   include PointManager, LocationManager
-  before_filter :authenticate_user!, except: [:local, :category]
+  before_filter :authenticate_user!, except: [:local, :category, :show]
   before_filter :load_data, only: [:index, :seller, :category, :show, :local]
   before_filter :load_pixi, only: [:destroy, :pixi_price, :update]
   before_filter :load_city, only: [:local, :category]
-  after_filter :add_points, only: [:show]
+  after_filter :add_points, :set_session, only: [:show]
   respond_to :html, :json, :js, :mobile
   layout :page_layout
 
   def index
-    respond_with(@listings = Listing.active_without_job_type.paginate(page: @page))
+    respond_with(@listings = Listing.active_without_job_type.paginate(page: @page, per_page: 15))
   end
 
   def show
@@ -60,7 +60,7 @@ class ListingsController < ApplicationController
   end
 
   def category
-    @category = Category.find @cat
+    @category = Category.find @cat rescue nil
     respond_with(@listings)
   end
 
@@ -103,6 +103,10 @@ class ListingsController < ApplicationController
   end
  
   def is_admin?
-    @user.user_type_code == 'AD'
+    @user.user_type_code == 'AD' rescue false
+  end
+
+  def set_session
+    session[:back_to] = request.path unless signed_in?
   end
 end

@@ -1,7 +1,10 @@
 <ul id='nav-site-menu' class="nav pull-right">
-  <%= render partial: 'shared/site_menu', locals: { loc_name: loc_name, rFlg: true } %>
+  <%= render partial: 'shared/site_menu', locals: { loc_name: loc_name, rFlg: rFlg } %>
 </ul>
 <div class="pixi-select pull-right">
+  <% if statusFlg %>
+    <%= collection_select :status_type, :id, StatusType.find(:all), :id, :code, {selected: @status_type, include_blank: 'Status'}, {class: 'span2 cat-select'} %>
+  <% end %>
   <%= render partial: 'shared/category_list', locals: { ptype: false } %>
   <%= render partial: 'shared/sites' %>
 </div>

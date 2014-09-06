@@ -36,7 +36,7 @@ describe ListingsController do
   describe 'GET index' do
     before(:each) do
       @listings = stub_model(Listing)
-      Listing.stub!(:active_page).and_return(@listings)
+      Listing.stub_chain(:active_without_job_type, :paginate).and_return(@listings)
       controller.stub_chain(:load_data, :get_location).and_return(:success)
       do_get
     end
@@ -54,7 +54,7 @@ describe ListingsController do
     end
 
     it "should render the correct layout" do
-      response.should render_template("layouts/listings")
+      response.should render_template("layouts/application")
     end
 
     it "responds to JSON" do
@@ -66,7 +66,7 @@ describe ListingsController do
   describe 'xhr GET index' do
     before(:each) do
       @listings = mock("listings")
-      Listing.stub!(:active_page).and_return(@listings)
+      Listing.stub_chain(:active_without_job_type, :paginate).and_return(@listings)
       controller.stub_chain(:load_data, :get_location).and_return(:success)
       do_get
     end
@@ -471,9 +471,8 @@ describe ListingsController do
       it "renders the edit form" do 
         Listing.stub(:find_by_pixi_id) { mock_listing(:update_attributes => false) }
         do_update
-	response.should render_template(:show)
+	      response.should render_template(:show)
       end
     end
-  end
-
+    end
 end

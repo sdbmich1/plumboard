@@ -1,6 +1,6 @@
 class Category < ActiveRecord::Base
   resourcify
-  attr_accessible :category_type, :name, :status, :pixi_type, :pictures_attributes
+  attr_accessible :category_type_code, :name, :status, :pixi_type, :pictures_attributes
 
   has_many :subcategories
   has_many :listings
@@ -8,11 +8,12 @@ class Category < ActiveRecord::Base
   has_many :active_listings, class_name: 'Listing', :conditions => "status = 'active' AND end_date >= curdate()"
 
   has_many :pictures, :as => :imageable, :dependent => :destroy
+  belongs_to :category_type, primary_key: 'code', foreign_key: 'category_type_code'
   accepts_nested_attributes_for :pictures, :allow_destroy => true, :reject_if => :all_blank
 
   validates :name, :presence => true
   validates :status, :presence => true
-  validates :category_type, :presence => true
+  validates :category_type_code, :presence => true
   validate :must_have_picture
 
   default_scope :order => "name ASC"
