@@ -5,7 +5,7 @@ class Invoice < ActiveRecord::Base
 
   attr_accessor :buyer_name, :tmp_buyer_id
   attr_accessible :amount, :buyer_id, :comment, :pixi_id, :price, :quantity, :seller_id, :status, :buyer_name,
-    :sales_tax, :tax_total, :subtotal, :inv_date, :transaction_id, :bank_account_id, :tmp_buyer_id
+    :sales_tax, :tax_total, :subtotal, :inv_date, :transaction_id, :bank_account_id, :tmp_buyer_id, :ship_amt, :other_amt
 
   belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id"
   belongs_to :seller, foreign_key: "seller_id", class_name: "User"
@@ -25,6 +25,8 @@ class Invoice < ActiveRecord::Base
   validates :quantity, presence: true, :numericality => { greater_than: 0, less_than_or_equal_to: MAX_INV_QTY.to_i }    
   validates :sales_tax, allow_blank: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
     		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_SALES_TAX.to_i }
+  validates :ship_amt, allow_blank: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
+    		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_SHIP_AMT.to_i }
 
   default_scope order: 'invoices.created_at DESC'
 
@@ -94,6 +96,11 @@ class Invoice < ActiveRecord::Base
   # check if invoice is unpaid
   def unpaid?
     status == 'unpaid' rescue false
+  end
+
+  # check if invoice has shipping
+  def has_shipping?
+    !ship_amt.blank? rescue false
   end
 
   # submit payment request for review

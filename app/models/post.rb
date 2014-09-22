@@ -54,8 +54,9 @@ class Post < ActiveRecord::Base
     Rinku.auto_link(descr) if descr
   end
 
-  def summary_custom num
+  def summary_custom num, showTailFlg=false
     descr = content.length < num ? content.html_safe : content.html_safe[0..num] rescue nil
+    descr = showTailFlg ? descr + '...' : descr
     Rinku.auto_link(descr) if descr
   end
 

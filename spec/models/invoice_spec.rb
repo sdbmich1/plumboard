@@ -24,6 +24,8 @@ describe Invoice do
   it { should respond_to(:inv_date) }
   it { should respond_to(:buyer_name) }
   it { should respond_to(:subtotal) }
+  it { should respond_to(:ship_amt) }
+  it { should respond_to(:other_amt) }
   it { should respond_to(:bank_account_id) }
 
   it { should respond_to(:seller) }
@@ -37,7 +39,7 @@ describe Invoice do
   it { should allow_value(50.00).for(:price) }
   it { should allow_value(5000).for(:price) }
   it { should_not allow_value('').for(:price) }
-  it { should_not allow_value(500000).for(:price) }
+  it { should_not allow_value(50000000).for(:price) }
   it { should_not allow_value(5000.001).for(:price) }
   it { should_not allow_value(-5000.00).for(:price) }
   it { should_not allow_value('$5000.0').for(:price) }
@@ -49,6 +51,14 @@ describe Invoice do
   it { should_not allow_value(50.001).for(:sales_tax) }
   it { should_not allow_value(-5.00).for(:sales_tax) }
   it { should_not allow_value('50.0%').for(:sales_tax) }
+
+  it { should allow_value(50.00).for(:ship_amt) }
+  it { should allow_value(400).for(:ship_amt) }
+  it { should_not allow_value(500000).for(:ship_amt) }
+  it { should_not allow_value(5000.001).for(:ship_amt) }
+  it { should_not allow_value(-5000.00).for(:ship_amt) }
+  it { should_not allow_value('$5000.0').for(:ship_amt) }
+  it { should_not allow_value('50.0%').for(:ship_amt) }
   
   describe "when seller_id is empty" do
     before { @invoice.seller_id = "" }
@@ -199,7 +209,7 @@ describe Invoice do
     end
   end
 
-  describe "unpaid" do 
+  describe "unpaid?" do 
     it "should verify invoice is unpaid" do 
       @invoice.unpaid?.should be_true 
     end
@@ -207,6 +217,17 @@ describe Invoice do
     it "should not verify invoice is unpaid" do 
       @invoice.status = 'paid'
       @invoice.unpaid?.should_not be_true 
+    end
+  end
+
+  describe "has_shipping?" do 
+    it "verifies invoice doesn't have shipping" do 
+      @invoice.has_shipping?.should_not be_true 
+    end
+
+    it "verifies invoice has_shipping" do 
+      @invoice.ship_amt = 4.99
+      @invoice.has_shipping?.should be_true 
     end
   end
 

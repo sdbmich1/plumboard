@@ -1,8 +1,7 @@
-ThinkingSphinx::Index.define :listing, :with => :active_record, :delta => true do
+ThinkingSphinx::Index.define :temp_listing, :with => :active_record, :delta => true do
   indexes :title, :sortable => true
   indexes :description
   indexes [user(:first_name), user(:last_name)], :as => :name
-  indexes [buyer(:first_name), buyer(:last_name)], :as => :buyer_name
 
   has :id, :as => :listing_id 
   has category(:id), :as => :category_id
@@ -12,5 +11,5 @@ ThinkingSphinx::Index.define :listing, :with => :active_record, :delta => true d
   has :status
   has compensation
   has lat, lng
-  where "(listings.status = 'active') AND (listings.end_date >= curdate()) " 
+  where "(temp_listings.status IN ('pending', 'edit', 'new'))"
 end

@@ -3,11 +3,13 @@
     <table>
       <tr>
         <td width="97%">
-          <%= render partial: 'shared/show_photo', locals: {model: conversation.other_user(@user), file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
+          <% if conversation.listing != nil %>
+          <%= render partial: 'shared/show_photo', locals: {model: conversation.listing, file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
           <h4>
             &nbsp;
-            <%= link_to conversation.listing.title, conversation.listing, class: '' %>
+            <%= link_to conversation.pixi_title, conversation.listing, class: 'terms-link' %>
           </h4>
+          <% end %>
         </td>
         <td align="right">
           <% if conversation.invoice != nil && conversation.invoice.status == 'unpaid' && conversation.invoice.buyer == @user %>
@@ -16,7 +18,8 @@
           <% if conversation.can_bill? @user %> 
             <td><%= link_to image_tag('bill-icon.png'), get_invoice_path, class: 'btn btn-small' %></td>
           <% end %>
-          <td><%= link_to image_tag('trash-icon.png'), remove_conversation_path(conversation.id), :method => :put, confirm: 'Delete this conversation?', class: 'btn btn-small' %></td>
+          <td><%= link_to image_tag('trash-icon.png'), remove_conversation_path(conversation.id), :method => :put, confirm: 
+	    'Delete this conversation?', class: 'btn btn-small' %></td>
         </td>
       </tr>
     </table>
@@ -25,7 +28,7 @@
     <%= render partial: 'shared/post', collection: @posts, locals: { sentFlg: sentFlg } %>
   </div>
   <div>
-    <%= render partial: 'shared/reply', locals: { post: @post, sentFlg: sentFlg, conversation: conversation } unless conversation.posts.first.system_msg? %>
+    <%= render partial: 'shared/reply', locals: { post: @post, sentFlg: sentFlg, conversation: @conversation } unless @conversation.system_msg? %>
   </div>
 <% else %>
   <div class='center-wrapper'>No messages found.</div>

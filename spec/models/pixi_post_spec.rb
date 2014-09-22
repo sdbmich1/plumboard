@@ -537,50 +537,83 @@ describe PixiPost do
     end
   end
 
-  describe "item title" do
-    it "should have item title" do
-      @listing = FactoryGirl.build(:listing)
-      @listing.pixi_id = @pixi_post.pixi_id
-      !(PixiPost.item_title(@pixi_post).nil?)
+  describe "item title and value" do
+    let(:pixan) { FactoryGirl.create :pixi_user }
+    it "should have item title and value" do
+      @listing = FactoryGirl.create(:listing, seller_id: @user.id)
+      @pixi_post.pixi_id = @listing.pixi_id
+      @pixi_post.pixan_id = pixan.id
+      @pixi_post.completed_date = Time.now+3.days
+      @pixi_post.appt_date = @pixi_post.appt_time = Time.now-3.days
+      @pixi_post.save!
+      expect(PixiPost.item_title(@pixi_post)).not_to be_nil
+      expect(PixiPost.listing_value(@pixi_post)).not_to be_nil
     end
 
-    it "should not have item title" do
-      PixiPost.item_title(@pixi_post).nil?
+    it "should not have item title or value" do
+      expect(PixiPost.item_title(@pixi_post)).to be_nil
+      expect(PixiPost.listing_value(@pixi_post)).to be_nil
     end
   end
 
-  describe "item sale value" do
-    it "should have sale value" do
-      @invoice = FactoryGirl.build(:invoice)
-      @invoice.pixi_id = @pixi_post.pixi_id
-      PixiPost.sale_value(@pixi_post) == @invoice.price
+  describe "item sale value and date" do
+    let(:pixan) { FactoryGirl.create :pixi_user }
+    before :each do 
+       @buyer = create(:pixi_user) 
+       @listing = FactoryGirl.create(:listing, seller_id: @user.id)
+       @account = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account
+       @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id)
     end
 
-    it "should not have sale value" do
-      PixiPost.sale_value(@pixi_post).nil?
+    it "should have sale value and date" do
+      @pixi_post.pixi_id = @invoice.pixi_id
+      @pixi_post.pixan_id = pixan.id
+      @pixi_post.completed_date = Time.now+3.days
+      @pixi_post.appt_date = @pixi_post.appt_time = Time.now-3.days
+      @pixi_post.save!
+      expect(PixiPost.sale_value(@pixi_post)).to eq @invoice.price
+      expect(PixiPost.sale_date(@pixi_post).to_date).to eq @invoice.created_at.to_date
+    end
+
+    it "should not have sale value or date" do
+      expect(PixiPost.sale_value(@pixi_post)).not_to eq @invoice.price
+      expect(PixiPost.sale_date(@pixi_post)).not_to eq @invoice.created_at
     end
   end
 
-  describe "item sale date" do
-    it "should have sale date" do
-      @invoice = FactoryGirl.build(:invoice)
-      @invoice.pixi_id = @pixi_post.pixi_id
-      PixiPost.sale_date(@pixi_post) == @invoice.created_at
+  describe 'pixter_report' do
+    include ResetDate
+    let(:user) { FactoryGirl.create :pixi_user }
+    before :each do
+      @listing_completed = FactoryGirl.create :listing, seller_id: user.id, pixan_id: @user.id
+      @listing_sold = FactoryGirl.create :listing, seller_id: user.id, pixan_id: @user.id, status: 'sold'
+      @invoice = FactoryGirl.create :invoice, pixi_id: @listing_sold.pixi_id, buyer_id: user.id, seller_id: user.id
+      @completed = user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: @user.id, appt_date: Time.now,
+              appt_time: Time.now, completed_date: Time.now, pixi_id: @listing_completed.pixi_id, description: 'rocking chair',
+              status: 'completed'
+      @sold = user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: @user.id, appt_date: Time.now,
+              appt_time: Time.now, completed_date: Time.now, pixi_id: @listing_sold.pixi_id, description: 'rocking chair',
+              status: 'sold'
     end
 
-    it "should not have sale date" do
-      PixiPost.sale_date(@pixi_post).nil?
+    it 'returns all pixter report data' do
+      start_dt, end_dt = ResetDate::get_date_range 'This Year'
+      expect(PixiPost.pixter_report(start_dt, end_dt, nil)).not_to be_nil
     end
-  end
 
-  describe "listing value" do
-    it "should have listing value" do
-      @listing = FactoryGirl.build(:listing)
-      @listing.pixi_id = @pixi_post.pixi_id
-      !(PixiPost.listing_value(@pixi_post).nil?)
+    it 'returns user pixter report data' do
+      start_dt, end_dt = ResetDate::get_date_range 'This Year'
+      expect(PixiPost.pixter_report(start_dt, end_dt, @user)).not_to be_nil
     end
-    it "should not have listing value" do
-      PixiPost.listing_value(@pixi_post).nil?
+
+    it 'does not return all pixter report data' do
+      start_dt, end_dt = Date.tomorrow, Date.tomorrow
+      expect(PixiPost.pixter_report(start_dt, end_dt, nil)).to be_blank
+    end
+
+    it 'does not return user pixter report data' do
+      start_dt, end_dt = ResetDate::get_date_range 'This Year'
+      expect(PixiPost.pixter_report(start_dt, end_dt, user)).to be_blank
     end
   end
 end

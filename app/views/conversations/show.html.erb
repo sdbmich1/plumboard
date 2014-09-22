@@ -1,6 +1,6 @@
-<% provide(:title, 'Conversations') %>
+<% provide(:title, @conversation.pixi_title) %>
 <%= content_for :subhead do %>
-  <%= render partial: 'shared/navbar', locals: { menu_name: 'Conversations' } %>
+  <%= render partial: 'shared/navbar', locals: { menu_name: 'Messages' } %>
 <% end %>
 <%= content_for :content do %>
   <% cache [@conversation, @user] do %>

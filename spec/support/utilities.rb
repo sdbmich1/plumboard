@@ -81,3 +81,8 @@
     form = 'shared/invoice_form'
     @user.has_bank_account? ? new_invoice_path : new_bank_account_path(target: form)
   end
+
+  # get invoice fee based on user
+  def get_invoice_fee inv
+    inv.owner?(@user) ? inv.get_fee(true) : inv.get_fee rescue 0
+  end

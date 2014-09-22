@@ -79,7 +79,6 @@ describe Conversation do
     end
 
     describe "removing conversations" do
-
       context "removing user's conversation" do
 
         it "returns true if successful" do
@@ -268,4 +267,38 @@ describe Conversation do
         end
       end
     end
+
+  describe "content_msg" do 
+
+    it "returns a long message" do 
+      @post.content = "a" * 100 
+      @post.save!
+      @conversation.content_msg.length.should be > 35 
+    end
+
+    it "does not return a long message" do 
+      @conversation.posts.first.content = "a" * 20 
+      @conversation.save!
+      @conversation.content_msg.length.should_not be > 35 
+    end
+  end
+
+  describe "system_msg?" do 
+    it { expect(@conversation.system_msg?).to be_nil } 
+
+    it "returns true" do 
+      @post.msg_type = 'approve' 
+      @post.save!
+      expect(@conversation.system_msg?).not_to be_nil
+    end
+  end
+
+  describe "pixi_title" do 
+    it { @conversation.pixi_title.should_not be_empty } 
+
+    it "should not find correct pixi_title" do 
+      @conversation.pixi_id = '100' 
+      @conversation.pixi_title.should be_nil 
+    end
+  end
 end

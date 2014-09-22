@@ -2,7 +2,7 @@ require 'rails_rinku'
 require 'digest/md5'
 class ListingParent < ActiveRecord::Base
   resourcify
-  include Area, ResetDate, LocationManager, PixiPostsHelper
+  include Area, ResetDate, LocationManager, PixiPostsHelper, NameParse
   self.abstract_class = true
   self.per_page = 20
 
@@ -250,7 +250,7 @@ class ListingParent < ActiveRecord::Base
   def nice_title prcFlg=true
     unless title.blank?
       str = price.blank? || price == 0 ? '' : ' - $' + price.to_i.to_s
-      tt = title.titleize.html_safe rescue title 
+      tt = prcFlg ? title.split(' ').map(&:capitalize).join(' ').html_safe : title.titleize.html_safe rescue title 
       if prcFlg
         title.index('$') ? tt : tt + str 
       else
@@ -262,13 +262,13 @@ class ListingParent < ActiveRecord::Base
   end
 
   # short title
-  def short_title
-    nice_title.length < 14 ? nice_title : nice_title[0..14] + '...' rescue nil
+  def short_title val=14
+    nice_title.length < val ? nice_title : nice_title[0..val] + '...' rescue nil
   end
 
   # med title
   def med_title
-    nice_title.length < 25 ? nice_title : nice_title[0..25] + '...' rescue nil
+    short_title 25
   end
 
   # set end date to x days after start to denote when listing is no longer displayed on network
@@ -295,7 +295,6 @@ class ListingParent < ActiveRecord::Base
   def job?
     category.category_type_code == 'employment' rescue nil
   end
-
 
   # delete selected photo
   def delete_photo pid, val=1
@@ -438,7 +437,6 @@ class ListingParent < ActiveRecord::Base
   def pixter_name
     if self.pixi_post?
       User.find_by_id(self.pixan_id).first_name
-
     else
       nil
     end

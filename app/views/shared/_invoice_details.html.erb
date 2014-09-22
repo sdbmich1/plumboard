@@ -14,6 +14,12 @@
     <td class="width120"><div class='price'><%= get_sales_tax %>%</div></td>
     <td class="width120"><div class='price'><%= ntc(@invoice.tax_total) %></div></td>
   </tr>
+  <tr>
+    <td></td>
+    <td><div class='price'>Shipping</div></td>
+    <td></td>
+    <td class="width120"><div class='price'><%= ntc(@invoice.ship_amt) %></div></td>
+  </tr>
   <%= render partial: 'shared/show_conv_fee', locals: {showColFlg: true, invoice: @invoice} unless @invoice.owner?(@user) %>
   <tr>
     <td></td>

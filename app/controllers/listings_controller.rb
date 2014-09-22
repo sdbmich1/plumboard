@@ -23,7 +23,7 @@ class ListingsController < ApplicationController
 
   def update
     if @listing.update_attributes(explanation: params[:reason], status: 'removed')
-      redirect_to category_listings_path(loc: @listing.site_id, cid: @listing.category_id)
+      redirect_to get_root_path
     else
       render action: :show, error: "Pixi was not removed. Please try again."
     end

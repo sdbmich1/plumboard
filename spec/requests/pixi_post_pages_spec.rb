@@ -22,11 +22,6 @@ feature "PixiPosts" do
     @zip = create :pixi_post_zip, zip: '94103'
   end
 
-  def init_setup usr
-    login_as(usr, :scope => :user, :run_callbacks => false)
-    @user = usr
-  end
-
   def click_cancel_ok
     click_link 'Cancel'
     page.driver.browser.switch_to.alert.accept
@@ -867,7 +862,3 @@ feature "PixiPosts" do
     end
   end
 end
-
-
-
-

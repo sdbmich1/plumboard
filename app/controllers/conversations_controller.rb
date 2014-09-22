@@ -7,8 +7,7 @@ class ConversationsController < ApplicationController
   layout :page_layout
 
   def index
-    @conversations = Conversation.get_specific_conversations(@user, "received").paginate(page: @page, per_page: @per_page)
-    respond_with(@conversations)
+    respond_with(@conversations = Conversation.get_specific_conversations(@user, "received").paginate(page: @page, per_page: @per_page))
   end
 
   def create
@@ -24,8 +23,7 @@ class ConversationsController < ApplicationController
   end
 
   def sent
-    @conversations = Conversation.get_specific_conversations(@user, "sent").paginate(page: @page, per_page: @per_page)
-    respond_with(@conversations)
+    respond_with(@conversations = Conversation.get_specific_conversations(@user, "sent").paginate(page: @page, per_page: @per_page))
   end
 
   def destroy
@@ -46,7 +44,6 @@ class ConversationsController < ApplicationController
   end
 
   def reply 
-    #find the corresponding conversation
     @conversation = Conversation.find(params[:id])
 
     if @conversation
@@ -63,10 +60,9 @@ class ConversationsController < ApplicationController
   end
 
   def show
-    @conversation = Conversation.find(params[:id])
+    @conversation = Conversation.inc_show_list.find(params[:id])
     if @conversation
-      @posts = @conversation.posts
-      @post = @conversation.posts.build
+      @posts, @post = @conversation.posts, @conversation.posts.build
       respond_with(@conversation)
     end
   end
@@ -79,7 +75,7 @@ class ConversationsController < ApplicationController
 
   def load_data
     @page = params[:page] || 1
-    @per_page = params[:per_page] || 5
+    @per_page = params[:per_page] || 10
   end
 
   def mark_post

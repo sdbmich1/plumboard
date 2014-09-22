@@ -40,7 +40,7 @@ class CategoriesController < ApplicationController
   end
 
   def category_type
-    @cat_type = @category.category_type rescue nil
+    @cat_type = @category.category_type_code rescue nil
     respond_with(@cat_type)
   end
 

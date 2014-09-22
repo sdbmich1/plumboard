@@ -6,6 +6,11 @@
   	<td class="price"><%= ntc(@order[:sales_tax].to_f) %></td>
     </tr>
   <% end %>
+  <% if @order[:ship_amt].to_f > 0.0 %>
+    <tr><td>Shipping</td><td> </td>
+  	<td class="price"><%= ntc(@order[:ship_amt].to_f) %></td>
+    </tr>
+  <% end %>
 <% end %>
 
 <% if @transaction %>

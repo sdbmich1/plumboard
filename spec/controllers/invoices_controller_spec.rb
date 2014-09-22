@@ -57,7 +57,7 @@ describe InvoicesController do
     end
 
     it "responds to JSON" do
-      @expected = { :invoices  => @invoices }.to_json
+      @expected = @invoices.to_json
       get  :index, format: :json
       response.body.should == @expected
     end
@@ -437,6 +437,61 @@ describe InvoicesController do
         post :create, :invoice => { 'pixi_id'=>'test', 'comment'=>'test' }, format: :json
         # expect(response).to be_success
 	response.status.should_not eq(0)
+      end
+    end
+  end
+
+  describe "PUT /remove/:id" do
+    before (:each) do
+      Invoice.stub!(:find).and_return( @invoice )
+    end
+
+    def do_remove
+      put :remove, :id => "1"
+    end
+
+    context "with valid params" do
+      before (:each) do
+        @invoice.stub(:update_attribute).and_return(true)
+      end
+
+      it "should load the requested invoice" do
+        Invoice.stub(:find) { @invoice }
+        do_remove
+      end
+
+      it "should update the requested invoice" do
+        Invoice.stub(:find).with("1") { mock_invoice }
+	mock_invoice.should_receive(:update_attribute).with({:status=>"removed"})
+        do_remove
+      end
+
+      it "should assign @invoice" do
+        Invoice.stub(:find) { mock_invoice(:update_attribute => true) }
+        do_remove
+        assigns(:invoice).should_not be_nil 
+      end
+
+      it "redirects to the updated invoice" do
+        do_remove
+        response.should be_redirect
+      end
+    end
+
+    context "with invalid params" do
+    
+      before (:each) do
+        @invoice.stub(:update_attribute).and_return(false)
+      end
+
+      it "should load the requested invoice" do
+        Invoice.stub(:find) { @invoice }
+        do_remove
+      end
+
+      it "should assign @invoice" do
+        Invoice.stub(:find) { mock_invoice(:update_attribute => false) }
+        do_remove
       end
     end
   end

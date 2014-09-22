@@ -487,7 +487,7 @@ describe PixiPostsController do
       @pixi_posts = mock("pixi_posts")
       PixiPost.stub!(:get_by_type).and_return(@pixi_posts)
       @pixi_posts.stub!(:paginate).and_return(@pixi_posts)
-      controller.stub!(:set_pixter_id).and_return(:success)
+      controller.stub_chain(:init_vars, :set_pixter_id).and_return(:success)
       #@user.stub!(:is_pixter?).and_return(true)
     end
 

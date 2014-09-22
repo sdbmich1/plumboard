@@ -28,6 +28,7 @@
 //= require map
 //= require transaction
 //= require payment
+//= require pixter_report
 //= require si.files
 //= require autocomplete-rails
 //= require jquery.ui.autocomplete.html.js
@@ -39,4 +40,3 @@
 //= require s3_file_field
 //= require s3_image_upload
 //= require_tree .
-//= require pixter_report

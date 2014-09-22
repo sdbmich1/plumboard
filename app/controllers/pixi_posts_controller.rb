@@ -5,7 +5,7 @@ class PixiPostsController < ApplicationController
   before_filter :set_params, only: [:create, :update]
   before_filter :set_zip, only: [:new]
   before_filter :load_data, only: [:index, :seller, :pixter, :pixter_report]
-  before_filter :ajax?, only: [:pixter_report]
+  before_filter :init_vars, :ajax?, only: [:pixter_report]
   autocomplete :site, :name, full: true, scopes: [:cities]
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name
   include ResetDate
@@ -13,8 +13,7 @@ class PixiPostsController < ApplicationController
   layout :page_layout
 
   def new
-    @post = PixiPost.load_new @user, @zip
-    respond_with(@post)
+    respond_with(@post = PixiPost.load_new(@user, @zip))
   end
 
   def create
@@ -29,8 +28,7 @@ class PixiPostsController < ApplicationController
   end
 
   def edit
-    @post = PixiPost.find params[:id]
-    respond_with(@post)
+    respond_with(@post = PixiPost.find(params[:id]))
   end
 
   def update
@@ -45,13 +43,11 @@ class PixiPostsController < ApplicationController
   end
 
   def show
-    @post = PixiPost.find params[:id]
-    respond_with(@post)
+    respond_with(@post = PixiPost.find(params[:id]))
   end
 
   def index
-    @posts = PixiPost.get_by_status(@status).paginate(page: @page)
-    respond_with(@posts)
+    respond_with(@posts = PixiPost.get_by_status(@status).paginate(page: @page))
   end
 
   def destroy
@@ -70,23 +66,18 @@ class PixiPostsController < ApplicationController
   end
 
   def seller
-    @posts = PixiPost.get_by_seller(@user).get_by_status(@status).paginate(page: @page)
-    respond_with(@posts)
+    respond_with(@posts = PixiPost.get_by_seller(@user).get_by_status(@status).paginate(page: @page))
   end
 
   def pixter
-    @posts = PixiPost.get_by_pixter(@user).get_by_status(@status).paginate(page: @page)
-    respond_with(@posts)
+    respond_with(@posts = PixiPost.get_by_pixter(@user).get_by_status(@status).paginate(page: @page))
   end
 
   def reschedule
-    @post = PixiPost.reschedule params[:id]
-    respond_with(@post)
+    respond_with(@post = PixiPost.reschedule(params[:id]))
   end
 
   def pixter_report
-    @date_range, @pixter_id = params[:date_range], set_pixter_id
-    @start_date, @end_date = ResetDate::get_date_range(@date_range)
     @pixi_posts = PixiPost.pixter_report(@start_date, @end_date, @pixter_id).paginate(page: @page, per_page: 15)
     respond_to do |format|
       format.html
@@ -96,6 +87,7 @@ class PixiPostsController < ApplicationController
   end
   
   private
+
   # sets pixter_id for pixter_report based on admin / pixter?
   def set_pixter_id
     (!@user.is_pixter?) ? params[:pixter_id] : @user.id
@@ -106,8 +98,7 @@ class PixiPostsController < ApplicationController
   end
 
   def load_data
-    @page = params[:page] || 1
-    @status = params[:status]
+    @page, @status = params[:page] || 1, params[:status]
   end
 
   def set_zip
@@ -135,5 +126,9 @@ class PixiPostsController < ApplicationController
     @xhr_flag = request.xhr?
   end
 
+  def init_vars
+    @date_range, @pixter_id = params[:date_range], set_pixter_id
+    @start_date, @end_date = ResetDate::get_date_range(@date_range)
+  end
 
 end

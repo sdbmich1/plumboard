@@ -1,9 +1,9 @@
-<% provide(:title, 'Conversations') %>
+<% provide(:title, 'Messages') %>
 <%= content_for :subhead do %>
-  <%= render partial: 'shared/navbar', locals: { menu_name: 'Conversations' } %>
+  <%= render partial: 'shared/navbar', locals: { menu_name: 'Messages' } %>
 <% end %>
 <%= content_for :content do %>
-  <div id='post-frm' class='span10'>
+  <div id='post-frm'>
     <%= render partial: 'shared/conversations', locals: { sentFlg: false } %>
   </div>
 <% end %>

@@ -63,7 +63,7 @@ feature "Conversations" do
     end
 
     it 'shows content' do
-      page.should have_selector('title', :text => full_title('Conversations'))
+      page.should have_selector('title', :text => full_title('Messages'))
       page.should have_content @conversation.user.name
       page.should have_link('Sent', href: sent_conversations_path)
       page.should have_link('Received', href: conversations_path)
@@ -165,6 +165,7 @@ feature "Conversations" do
 
     it "can go back to received page" do
       click_on 'Received'
+      sleep 5
       page.should have_selector('#conv-show-btn') 
     end
 

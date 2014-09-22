@@ -10,13 +10,20 @@
     <td class="width120"><%= f.text_field :subtotal, id: 'inv_amt', value: num_display(f.object, "subtotal"), readonly: true, class: 'price' %>
     </td>
   </tr>
-  <tr>
     <td></td>
     <td><div class='price'><span>Sales Tax (%)</span><%= render partial: 'shared/tooltip', locals: { msg: SALES_TAX_MSG } %></div></td>
     <td class="width120"><%= f.text_field :sales_tax, in: 0..MAX_SALES_TAX, step: 0.01, id: 'inv_tax', class: 'price' %></td>
     <td class="width120">
       <%= f.text_field :tax_total, readonly: true, id: 'inv_tax_total', value: num_display(f.object, "tax_total"), class: 'price' %></td>
   </tr>
+  <tr>
+    <td></td>
+    <td><div class='price'><span>Shipping</span><%= render partial: 'shared/tooltip', locals: { msg: 'Enter shipping amount' } %></div></td>
+    <td></td>
+    <td class="width120"><%= f.text_field :ship_amt, in: 0..MAX_SHIP_AMT, step: 0.01, id: 'ship_amt', value: num_display(f.object, "ship_amt"), 
+      class: 'price' %></td>
+  </tr>
+  <tr>
   <tr>
     <td></td>
     <td></td>

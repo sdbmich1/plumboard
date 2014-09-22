@@ -1,5 +1,6 @@
 require "open-uri"
 require 'open_uri_redirections'
+require "nokogiri"
 class Picture < ActiveRecord::Base
   include NameParse
 
@@ -106,7 +107,8 @@ class Picture < ActiveRecord::Base
 
   # load image from s3 upload folder
   def picture_from_url
-    self.photo = URI.parse(direct_upload_url) rescue nil
+    response = open(direct_upload_url) rescue nil
+    self.photo = URI.parse(direct_upload_url) if response rescue nil
   end
 
   # remove space from S3 direct_upload_url

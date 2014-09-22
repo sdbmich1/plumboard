@@ -233,7 +233,7 @@ class PixiPost < ActiveRecord::Base
                                    elem.pixter_name, !(PixiPost.sale_date(elem).nil?)? PixiPost.sale_date(elem)
                                     : 'Not sold yet', PixiPost.listing_value(elem), !(PixiPost.sale_value(elem).nil?)?
                                     PixiPost.sale_value(elem) : 'Not sold yet', !(PixiPost.sale_value(elem).nil?)?
-                                    (PixiPost.sale_value(elem) * 6) / 100 : 'Not sold yet']
+                                    (PixiPost.sale_value(elem) * PIXTER_PERCENT) / 100 : 'Not sold yet']
       counter = counter + 1
     end
     pixi_posts_final

@@ -35,11 +35,11 @@ feature "Transactions" do
         "item1" => 'New Pixi Post', "quantity1" => 1, cnt: 1, qtyCnt: 1, "price1" => 5.00, transaction_type: 'pixi'
   end
 
-  def visit_inv_txn_path
+  def visit_inv_txn_path ship=nil
     add_invoice
     visit new_transaction_path id: @invoice.pixi_id, promo_code: '', title: "Invoice # #{@invoice.id}", seller: @seller.name,
         "item1" => @invoice.pixi_title, "quantity1" => 1, cnt: 1, qtyCnt: 1, "price1" => 100.00, transaction_type: 'invoice',
-	"sales_tax"=> 8.25, "invoice_id"=> @invoice.id
+	"sales_tax"=> 8.25, "invoice_id"=> @invoice.id, "ship_amt"=> ship
   end
 
   def user_data
@@ -180,6 +180,31 @@ feature "Transactions" do
     end
   end
 
+  describe "Manage Valid Invoice Transactions w/ shipping" do
+    before(:each) do
+      page_setup user
+      visit_inv_txn_path 9.99
+      user_data_with_state
+    end
+
+    it 'shows content' do
+      page.should have_selector('title', text: 'PixiPay')
+      page.should have_content "Invoice # #{@invoice.id} from #{@seller.name}"
+      page.should have_content @invoice.pixi_title
+      page.should have_selector('.ttip', visible: true)
+      page.should have_content "Total Due"
+      page.should have_content "Shipping"
+      page.should have_content @invoice.ship_amt
+    end
+
+    it "creates shipping transaction with valid visa card", :js=>true do
+      expect { 
+        credit_card_data '4111111111111111'
+        page.should have_content("Purchase Complete")
+      }.to change(Transaction, :count).by(1)
+    end
+  end
+
   describe "Manage Valid Invoice Transactions - new card" do
     before(:each) do
       page_setup user
@@ -193,6 +218,7 @@ feature "Transactions" do
       page.should have_content @invoice.pixi_title
       page.should have_selector('.ttip', visible: true)
       page.should have_content "Total Due"
+      page.should_not have_content "Shipping"
       page.should have_selector('.addr-tbl', visible: false)
       page.should have_selector('#edit-txn-addr', visible: false)
       page.should_not have_content "Payment Information"

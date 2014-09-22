@@ -272,16 +272,18 @@ describe ConversationsController do
 
   describe 'GET show conversation' do
      before (:each) do
-      Conversation.stub!(:find).and_return( @conversation )
-      @conversation.stub_chain(:posts, :build).and_return(@post)
-      @conversation.stub!(:posts).and_return(@post)
+      @posts = mock_model(Post)
+      Conversation.stub_chain(:inc_show_list, :find).and_return( @conversation )
+      @conversation.stub!(:posts).and_return(@posts)
       @user = mock_model(User, :id => 3)
       @post = mock_model(Post, :id => 2, :pixi_id => 1, :user_id => 3)
+      @conversation.stub_chain(:posts, :build).and_return(@post)
       @conversation = mock_model(Conversation, :id => 1, :pixi_id => 1, :user_id => 3)
+      controller.stub_chain(:load_data, :mark_post).and_return(:success)
     end
 
-    def do_show
-      xhr :get, :show, id: '1'
+    def do_show val='1'
+      xhr :get, :show, id: val
     end
 
     context "with valid params" do
@@ -302,7 +304,7 @@ describe ConversationsController do
       end
 
       it "should assign @conversation" do
-        Conversation.stub(:find) { mock_conversation }
+        Conversation.stub!(:find) { mock_conversation }
         @conversation.stub_chain(:posts, :build).and_return( mock_post )
         @conversation.stub(:posts).and_return( mock_post )
         do_show
@@ -323,27 +325,6 @@ describe ConversationsController do
         @conversation.stub(:posts).and_return( mock_post )
         do_show
         assigns(:post).should_not be_nil 
-      end
-    end
-
-    context "with invalid params" do
-    
-      before (:each) do
-        Conversation.stub!(:find).and_return(nil)
-      end
-
-      it "should not load the requested conversation" do
-        do_show
-      end
-
-      it "should not assign @conversation" do
-        do_show
-        assigns(:conversation).should be_nil 
-      end
-
-      it "renders nothing" do 
-        do_show
-        response.body.should == ""
       end
     end
   end

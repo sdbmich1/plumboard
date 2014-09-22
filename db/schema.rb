@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140817233223) do
+ActiveRecord::Schema.define(:version => 20140920191435) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -239,6 +239,8 @@ ActiveRecord::Schema.define(:version => 20140817233223) do
     t.integer  "transaction_id"
     t.integer  "bank_account_id"
     t.boolean  "delta"
+    t.float    "ship_amt"
+    t.float    "other_amt"
   end
 
   add_index "invoices", ["bank_account_id"], :name => "index_invoices_on_bank_account_id"
@@ -623,6 +625,13 @@ ActiveRecord::Schema.define(:version => 20140817233223) do
     t.string "status"
   end
 
+  create_table "status_types", :force => true do |t|
+    t.string   "code"
+    t.string   "hide"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
   create_table "subcategories", :force => true do |t|
     t.string   "name"
     t.integer  "category_id"
@@ -668,6 +677,7 @@ ActiveRecord::Schema.define(:version => 20140817233223) do
     t.string   "job_type_code"
     t.string   "explanation"
     t.string   "event_type_code"
+    t.boolean  "delta"
   end
 
   add_index "temp_listings", ["event_type_code"], :name => "index_temp_listings_on_event_type_code"

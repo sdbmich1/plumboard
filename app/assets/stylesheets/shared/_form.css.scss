@@ -24,7 +24,7 @@ $pixiBlue: #026FB7;
 
 .posts {
   list-style: none;
-  font-size: 10px!important;
+  font-size: 12px!important;
   margin: 5px 0 0 0;
 
   li {
@@ -65,9 +65,14 @@ $pixiBlue: #026FB7;
   margin-top: -5px!important;
 }
 
-.content-conv, #fcontent {
+.dblock {
+  display: block;
+}
+
+.content-conv {
   display: block;
   margin-top: -5px!important;
+  font-size: 12px!important;
   margin-left: 20px;
 }
 
@@ -87,7 +92,6 @@ $pixiBlue: #026FB7;
   font-size: x-small;
   text-align: right;
 }
-
 
 form#search_btn {margin-bottom: -5px!important;}
 form#new_post {margin-bottom: -0px!important;}
@@ -141,6 +145,7 @@ form#new_post {margin-bottom: -0px!important;}
   border: 1px solid $pixiBlue; }
 
 .mright { margin-right: 10px!important }
+.mright5 { margin-right: 5px!important }
 .mright20 { margin-right: 20px!important }
 .sm-top { margin-top: 5px!important }  
 .xneg-top { margin-top: -40px!important }  
@@ -303,4 +308,8 @@ tr.spaceUnder > td
   height: 14px; 
   background: blue; 
   width: 0%;
+}
+
+.font-bold {
+  font-weight: bold;  
 }

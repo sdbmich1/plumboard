@@ -570,10 +570,9 @@ a.btn-mask {
 }
  
 #reply_content {
-  height: 30px!important;
+  height: 60px!important;
   width: 90%!important;
   margin-bottom: 0!important;
-  @extend #post_content;
 }
 
 @mixin listing_text {

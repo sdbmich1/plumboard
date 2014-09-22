@@ -14,6 +14,8 @@ class Conversation < ActiveRecord::Base
   validates :pixi_id, :presence => true
   validates :recipient_id, :presence => true
 
+  # default_scope order: 'created_at DESC'
+
   # set active status
   def activate
     if self.status != 'removed'
@@ -42,7 +44,6 @@ class Conversation < ActiveRecord::Base
     return false
   end
 
-
   # returns the other user that is a part of this conversation
   def other_user usr
     if usr.id == user_id
@@ -52,13 +53,27 @@ class Conversation < ActiveRecord::Base
     end
   end
 
-
   # checks whether user can bill
   def can_bill? usr
     if listing.status != 'active' || invoice != nil || (invoice != nil && invoice.status != 'unpaid')
       return false
     end
     listing.seller_id == usr.id
+  end
+
+  # pixi title
+  def pixi_title
+    listing.title rescue nil
+  end
+
+  # check for system message
+  def system_msg?
+    posts.first.system_msg? rescue nil
+  end
+
+  # set content display
+  def content_msg val=35
+    posts.first.content.length > val ? posts.first.summary_custom(val) + '...' : posts.first.summary_custom(val) rescue nil
   end
 
   # returns whether conversation has any associated unread posts
@@ -71,7 +86,6 @@ class Conversation < ActiveRecord::Base
     return false
   end
 
-
   # select active conversations
   def self.active
     include_list.where("status = 'active' OR recipient_status = 'active'")
@@ -79,13 +93,12 @@ class Conversation < ActiveRecord::Base
 
   # eager load assns
   def self.include_list
-    includes(:user, :listing, :recipient, :invoice)
+    includes(:posts, :user, :recipient)
   end
 
   # get all conversations for user where status or recipient status is active
   def self.get_conversations usr
-    #inc_list.where(:recipient_id=>usr or :user_id => usr)
-    active.inc_list.where("recipient_id = ? OR user_id = ?", usr, usr.id);
+    inc_list.active.where("recipient_id = ? OR user_id = ?", usr, usr.id)
   end
 
   # get conversations where user has sent/received at least one message in conversation and conversation is active
@@ -109,12 +122,18 @@ class Conversation < ActiveRecord::Base
         end
       end
     end
-    return convos.where(["id in (?)", conv_ids]) 
+    return convos.where(["id in (?)", conv_ids]).sort_by {|x| x.posts.first.created_at }.reverse 
   end
 
   # set list of included assns for eager loading
   def self.inc_list
-    includes(:invoice => [:listing, :buyer, :seller], :listing => [:pictures], :user => [:pictures], :recipient => [:pictures], :posts => [:user, :recipient])
+    # includes(:invoice => [:listing, :buyer, :seller], 
+    includes(:listing, :invoice => [:buyer, :seller], :user => [:pictures], :recipient => [:pictures])
+  end
+
+  # set list of included assns for eager loading
+  def self.inc_show_list
+    includes(:posts => {:user => :pictures})
   end
 
   def self.remove_conv conv, user 
@@ -145,5 +164,10 @@ class Conversation < ActiveRecord::Base
       end
       post.save
     end
+  end
+
+  # return create date
+  def create_dt
+    !posts.blank? ? posts.first.created_at : Date.today
   end
 end

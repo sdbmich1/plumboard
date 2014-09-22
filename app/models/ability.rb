@@ -36,7 +36,7 @@ class Ability
         listing.try(:user) == user
       end
 
-      can [:crud, :sent], Invoice, :seller_id => user.id
+      can [:crud, :sent, :remove], Invoice, :seller_id => user.id
       can [:show, :received], Invoice, :buyer_id => user.id
 
       can :crud, BankAccount do |acct|

@@ -474,5 +474,5 @@ describe ListingsController do
 	      response.should render_template(:show)
       end
     end
-    end
+  end
 end
