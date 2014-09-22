@@ -1,0 +1,1455 @@
+2.7.3 (02/12/2014)
+
+Improvements:
+============
+
+[core] Be more aggressive about saving iptables rules to guard against unexpected shutdowns. <9c62aa1#
+
+
+2.7.2 (02/12/2014)
+
+*SECURITY WARNING*: Versions of rubber prior to this release will not save your iptables rules.  Upon reboot of your
+server, it will load with a clear set of rules, effectively making every port on your server publicly accessible.
+
+Who is affected?
+
+Anyone not using EC2.  The EC2 code path uses EC2 security groups.  All other providers use iptables.
+
+How do I fix it?
+
+Upgrade to rubber 2.7.2 and run `cap rubber:setup_security_groups`, which will both refresh the iptables rules and
+set up the files needed to persist and releoad rules.
+
+
+Improvements:
+============
+
+[base] Upgraded from ruby-build 20131220.1 to 20140210. <a1288ac>
+
+Bug Fixes:
+=========
+
+[core] Save and restore iptables rules upon reboot. <72526aa>
+
+
+2.7.1 (02/04/2014)
+
+Improvements:
+============
+
+[redis] Upgraded from redis 2.8.4 to 2.8.5. <630c671>
+
+Bug Fixes:
+=========
+
+[core] Fixed a permissions problem with some files in the gem.
+
+
+2.7.0 (02/03/2014)
+
+New Features:
+============
+
+[core] Added a new @delayed_post option to template preambles to defer executing a command until all templates have been processed. <41cae48>
+[delay_job] Added a new Delayed::Job role. <c7e33f5>
+[discourse] Added a new Discourse role that will take care of deploying the Discourse forum software and dependencies. <f01eeac>
+[ffmpeg] Added a new ffmpeg role. <23ba011>
+[newrelic] Added a new role for setting up the NewRelic system daemons. <7bc89ce>
+
+Improvements:
+============
+
+[core] Force shut down vSphere VMs when destroying an instance so the process isn't blocked if the machine doesn't shut down gracefully. <12bf770>
+[elasticsearch] Upgraded ElasticSearch from 0.19.12 to 0.90.10 and switched to the official deb packages. <a399316, 804bd1f, 4ca29e2>
+[graylog] Upgraded from graylog 0.9.6p1 to 0.20.0-rc1.1 <3476003, 4ca29e2>
+[memcached] Added a monit template. <87763e9>
+[memcached] Allow specifying the location of the PID file. <31bc9fb>
+[memcached] Major overhaul of the memcached template to modernize it. <8757cf8, 4307270, 8cebb56, ae8d89a>
+[mongodb] Monit will restart mongodb if the PID file doesn't exist. <7a57c3e>
+[redis] Upgraded from redis 2.6.16 to 2.8.4 <3877205, 644e6ee>
+[solr] Major overhaul of the solr template to modernize it. <a45046d, 2fc4779, 02e04b0, 676256d>
+
+Bug Fixes:
+=========
+
+[core] Fixed issue with calling cap rubber:setup_security_groups on multiple hosts. <bb17621>
+[core] Fixed volume creation on non-EC2 providers. <c49df54>
+[elasticsearch] Remove the elasticsearch-head plugin before attempting to reinstall it. <6438b68>
+[mysql] Delete all blank users initially to prevent issues with using a host value of '%'. <e75974a>
+[passenger_nginx] Added missing 'nginx_log_dir' setting to rubber-passenger_nginx.yml. <e6c3cdf>
+[passenger_nginx] Rebuild Passenger/Nginx when Ruby version changes. <fbb1e54>
+[solr] Fixed some typos in the Solr configuration. <a45046d>
+[unicorn] Fixed unicorn process management script. <c56a93c>
+
+
+2.6.5 (01/07/2014)
+
+Bug Fixes:
+=========
+
+[base] Update instance name for DigitalOcean: Ubuntu 12.04.3 x64. <0d57e12>
+[core] Fix vagrant 1.4.x sending array of ssh keys. <70fe6b6>
+
+
+2.6.4 (12/23/2013)
+
+Improvements:
+============
+
+[base] Upgraded ruby-build from 20131122.1 to 20131220.1. <c869c00>
+[base] Upgraded default ruby from 1.9.3-p448 to 1.9.3-p484. <d843c0c>
+
+Bug Fixes:
+=========
+
+[core] :only => { :primary => true } getting clobbered <a9814c9>
+[core] Clear out potentially cached state upon initialization if initializing Rubber twice in the same runtime. <1d9fe51>
+
+
+2.6.3 (11/19/2013)
+
+Improvements:
+============
+
+[core] Drastically improved the speed of repeated configuration lookups.
+[core] Fixed a potential issue uploading backups to S3 if the bucket name contains the '.' character. <7ea9f39>
+
+Bug Fixes:
+=========
+
+[core] Fixed creating EBS volumes (issue #417). <a7d47c5>
+
+
+2.6.2 (11/07/2013)
+
+Improvements:
+============
+
+[memcached]  Added configuration of max memcached memory size through rubber var 'memcached_max_mem'. <ba28c39>
+[cassandra] Quote all `rubber_env.host` in Monit config template in case hostname conflicts with monit keyword. <61bd9b1>
+[graphite] Quote all `rubber_env.host` in Monit config template in case hostname conflicts with monit keyword. <61bd9b1>
+[elasticsearch] Quote all `rubber_env.host` in Monit config template in case hostname conflicts with monit keyword. <61bd9b1>
+[graylog] Quote all `rubber_env.host` in Monit config template in case hostname conflicts with monit keyword. <61bd9b1>
+[jetty] Quote all `rubber_env.host` in Monit config template in case hostname conflicts with monit keyword. <61bd9b1>
+[mongrel] Quote all `rubber_env.host` in Monit config template in case hostname conflicts with monit keyword. <61bd9b1>
+[redis] Quote all `rubber_env.host` in Monit config template in case hostname conflicts with monit keyword. <61bd9b1>
+[sphinx] Quote all `rubber_env.host` in Monit config template in case hostname conflicts with monit keyword. <61bd9b1>
+[torquebox] Quote all `rubber_env.host` in Monit config template in case hostname conflicts with monit keyword. <61bd9b1>
+[zookeeper] Quote all `rubber_env.host` in Monit config template in case hostname conflicts with monit keyword. <61bd9b1>
+
+Bug Fixes:
+=========
+
+[base] Fixed unknown method 'known_roles' when running create_staging. <44167c4>
+[core] Fixed ip_address deprecation for digital ocean. <62d2e90>
+[core] Fixed a thread safety issue in Capistrano via a monkey-patch. <f3f9086>
+
+
+2.6.1 (11/06/2013)
+
+Improvements:
+============
+
+[core] Don't try to connect to the fog compute or storage providers until we actually need them. <5536511>
+
+Bug Fixes:
+=========
+
+[core] Fixed a bug attaching EBS volumes, introduced by a recent refactoring. <51d2619>
+[core] Fixed setup_remote_aliases to work when an SSH gateway is in place. <3a776f9>
+
+
+2.6.0 (11/05/2013)
+
+New Features:
+============
+
+[core] Added a new provider for vSphere.  See https://github.com/rubber/rubber/wiki/Providers for configuration details.
+
+Improvements:
+============
+
+[base] Upgraded to ruby-build 20131030 <214423d>
+[base] Enhances database.yml to respond to active environment, not just 'production' <3843caf>
+
+
+2.5.5 (10/16/2013)
+
+New Features:
+============
+
+[base, core, postgresql] Added a uniform way of handling private network address blocks <61c5e0c>
+[core] Added cleanup hook for 'vagrant destroy' for Vagrant version >= 1.3.0. <2a3c441>
+
+Improvements:
+============
+
+[base] Vagrant base config now sets up key file for rubber to SSH into the machine <40c6c3c>
+[base] Default staging_roles config now reflects the cluster more accurately <255a8e9>
+[core] Only modify /etc/hosts on rubber:refresh if an IP address has actually changed <fe5e28e>
+[core] Support iptables rules without port definitions <de744c1>
+
+Bug Fixes:
+=========
+
+[core] Fixed a problem with tasks using the `:only` option being overwritten by rubber internally (#397) <d3ae2fa>
+[core] Don't install fog 1.16.0 until we're able to sort out API compatiblities with it <346c99b>
+[core] Presen the $REBOOT value across multiple calls to `maybe_reboot` <f03dc22>
+[web_tools] Proxied service hostnames should not have underscores since that would be an invalid hostname <055919f>
+
+
+2.5.4 (09/26/2013)
+
+Improvements:
+============
+
+[base] Upgdate AWS region options <9857010>
+[base] Upgrade ruby-build to 20130923 <5c053cb>
+[core] Far more efficient multi-port IPTables rules <1b13728, e15eb86>
+[core] Handle new platforms, such as Mac, more gracefully <74d5831>
+[redis] Upgraded redis from 2.6.13 to 2.6.16 <b18a89f>
+[web_tools] Handle more redirect scenarios for proxied services <c73bcce>
+
+Bug Fixes:
+=========
+
+[core] Fixed fail-fast behavior with nohup on AWS operations <cc1e299>
+[core] Wait up until 2 minutes for EC2 tag creation <3b6819a>
+[core] Set AWS region options for S3 <3bd20cd>
+[passenger_nginx] Removed conflicting passenger_min_instances configuration <cd7b006>
+[passenger_nginx] Added missing nginx_log_dir config <4684b26>
+[redis] Fixed redis download link <8a2a47d>
+
+
+2.5.3 (07/11/2013)
+
+Improvements:
+============
+
+[base] Upgraded to ruby-build 20130628 and Ruby 1.9.3-p448. <caa9e06>
+[base] Updated Digitial Ocean default zone info and image_id. <11502d2>
+[base, core] Re-install the VirtualBox add-ons when upgrading the kernel in a Vagrant instance so you can package VMs properly.
+[core] Ensure the SSH public key is installed for the user account if one is set. <75e7f20>
+
+Bug Fixes:
+=========
+
+[core] Allow the Vagrant plugin to interact with the local ruby installation when RVM is used. <98a061a>
+[core] Make sure we note the Vagrant provider was used in the instance file. <d1573fe>
+
+
+2.5.2 (06/13/2013)
+
+Bug Fixes:
+=========
+
+[core] Do not use the embedded Vagrant ruby installation by default.
+
+
+2.5.1 (06/09/2013)
+-----------------
+
+New Features:
+============
+
+[browsermob_proxy] Added a BrowserMob Proxy template.
+[selenium_grid_hub] Added a Selenium Grid hub template.
+
+Improvements:
+============
+
+[graylog] Use JDK 7 instead of JDK 6.
+[jetty] Use JDK 7 instead of JDK 6.
+
+Bug Fixes:
+=========
+
+[core] Refresh already created instances in Vagrant so firewall rules are adjusted for any modified roles.
+[core] Better handling of serial_tasks when no instances have a defined role.
+[graylog] Fixed loading graylog-web in any environment other than "production."
+
+
+2.5.0 (06/03/2013)
+-----------------
+
+New Features:
+============
+
+[core] Added support for using Rubber as a Vagrant provisioner.  Now you can run Rubber easily against local VMs.
+[core] Don't pass nil SSH key file entries to Capistrano because it hides the error message and makes things really hard to track down.
+
+
+2.4.2 (06/01/2013)
+------------------
+
+Bug Fixes:
+=========
+
+[core, base] Tweaked the asset precompilation interop code to work in all cases now <c24b72e>
+
+
+2.4.1 (05/30/2013)
+------------------
+
+Bug Fixes:
+=========
+
+[core] Fixed a problem with transforming templates that reference the "current" directory as part of a deploy <21e3b92>
+[sidekiq] Only try to silence sidekiq if current_path actually exists <f20bd94>
+
+
+2.4.0 (05/24/2013)
+------------------
+
+New Features:
+============
+
+[core] DigitalOcean is now supported as a cloud provider
+[core] Added a "generic" cloud provider for connecting to dedicated hardware, VMs, and otherwise unsupported cloud providers
+
+Bug Fixes:
+=========
+
+[core] Trigger rubber:config after deploy:update_code so machines with both a DB and the asset pipeline can bootstrap properly <dc5d0b2>
+
+
+2.3.1 (05/12/2013)
+------------------
+
+Bug Fixes:
+=========
+
+[mysql] Use more common percona-toolkit package. <e40b323>
+
+
+2.3.0 (05/11/2013)
+------------------
+
+New Features:
+============
+
+[core] Added a --fakeroot option to rake rubber:config task to aid in debbugging rubber templates. <20e3fb0>
+[collectd] Added a :status task to check the status of a remote service. <55f593a>
+[graphite] Added a :status task to check the status of a remote service. <55f593a>
+[memcached] Added a :status task to check the status of a remote service. <55f593a>
+[mongodb] Added a :status task to check the status of a remote service. <55f593a>
+[monit] Added a :status task to check the status of a remote service. <55f593a>
+[nginx] Added a :status task to check the status of a remote service. <55f593a>
+[unicorn] Added a :status task to check the status of a remote service. <55f593a>
+
+Improvements:
+============
+
+[base] Upgraded from ruby-build 20130222 to 20130501. <4ea28f8>
+[base] Configure Capistrano to compile assets on the `app` role, not the `web` one, in order to better match a typical Rubber project layout. <9c8096e>
+[core] Allow customizing Capistrano config that rubber has traditionally taken ownership of. <ff69b52>
+[graphite] Removed redundant ping check. <9950dc4>
+[memcached] Added a rotate_logs cron job for memached. <f4d49ac>
+[mongodb] Added a rotate_logs cron job for MongoDB. <b93665d>
+[nginx] Allow configuration of the nginx log directory. <f4ef26f>
+[nginx] Removed "text/html" from the gzip config to get rid of a warning message. <2429a7d>
+[passenger_nginx] Upgraded to Passenger 3.0.19 and nginx 1.2.8. <48fd214, 9a8d81c>
+[passenger_nginx] Added HTTP_X_QUEUE_START CGI param to work better with NewRelic. <48fd214>
+[redis] Upgrade to redis 2.6.13 <9fb33e2>
+
+Bug Fixes:
+=========
+
+[base] Fixed a typo in the cloud storage example configuration. <409137b>
+[core] Honor the `host` option in the rubber:config rake task. <9477b8b>
+[core] Fixed an issue with `symbolize_keys` and nested hashes that was resulting in broken MX record requests for Route 53. <13fdffd>
+[core] Fixed an issue with vulcanizing multiple templates at once. <abca6e3>
+[core] Fixed a problem with newer Capistrano/HighLine causing role names to be serialized incorrectly in an instance file. <9ea1fa6>
+[elasticsearch] The upstart script lies about the service status, causing us to think the service is running when it isn't and thus preventing proper start up. <81aab0e>
+[graphite] The upstart script lies about the service status, causing us to think the service is running when it isn't and thus preventing proper start up. <d92f077>
+[mongodb] The upstart script lies about the service status, causing us to think the service is running when it isn't and thus preventing proper start up. <d92f077>
+[mysql] Maatkit is now part of percona-tools, so our package name was outdated. <2e8d5f6>
+[redis] The upstart script lies about the service status, causing us to think the service is running when it isn't and thus preventing proper start up. <d92f077>
+[torquebox] The upstart script lies about the service status, causing us to think the service is running when it isn't and thus preventing proper start up. <d92f077>
+
+
+2.2.4 (03/05/2013)
+------------------
+
+Bug Fixes:
+=========
+[mysql] Reverted the service status check since it returns a success status code even if MySQL isn't running.
+
+
+2.2.3 (03/04/2013)
+------------------
+
+Improvements:
+============
+[base] Updated the default set of gemsources
+[base] Updated to the latest Ubuntu 12.0.4 LTS AMI
+
+Bug Fixes:
+=========
+[all] Don't fail starting a service if it's already running.
+
+
+2.2.2 (02/22/2013)
+------------------
+
+Improvements:
+============
+[base] Updated to ruby-build 20130222 to get the latest MRI and JRuby security releases <401da62>
+[memcached] Switched from memcache-client to dalli for the client gem, as dalli is actually maintained and overall better <2cfc235>
+
+Bug Fixes:
+=========
+[base]  Fixed #287: Failure converting from RVM to ruby-build <c787fdf>
+[sidekiq] Fixed #281: sidekiq refuses to run with stdin: is not a tty error <45697bf>
+[sidekiq] Fixed monit config for Sidekiq, which shouldn't be using binstubs <3f28b6d>
+
+
+2.2.1 (02/11/2013)
+------------------
+
+Improvements:
+============
+
+[core] Push alias changes in local instance.yml files to cloud tags <1adebd0>
+[core] Namespaced capistrano role tasks <48fb78e>
+[base] Moved security group configuration to rubber.yml <ccc9f3e>
+
+Bug Fixes:
+=========
+[core] Added support for lambdas in role options for optional tasks <72ff4b9>
+[core] Added support for lambdas in role options for serial tasks <35716a6>
+
+
+2.2.0 (02/08/2013)
+------------------
+
+New Features:
+============
+
+[core] Switched license to Apache Software License version 2
+[base] Replaced RVM with ruby-build.
+[base] Add ability to obfuscate rubber secret file (MRI only) <c9d8aac>
+[postgresql] basic slave promotion for postgresql <8b96f71>
+[sidekiq] Added a sidekiq template. <bc31d00>
+[solr] Added a Solr 4 template <8a5b041>
+[torquebox] Added support for logging to Graylog2 from TorqueBox. <b2685d5>
+
+Improvements:
+============
+
+[core] Upgraded to net-ssh 2.6, as it supposedly fixes all the connection problems we've been seeing with 2.5.x. <9b32ecb>
+[core] Allow the rubber:start task to start multiple instances <432f95e>
+[core] Allow rubber:stop to manage multiple instances <7dd6ea2>
+[core] Improve logging and handling of instance validation <c3e5e9b>
+[base] Bumped up to the latest Ruby 1.9.3-p385 release. <140abd1>
+[base] update ubuntu ami to latest 12.04, make default instance size c1.medium to improve initial user experience <a270c7b>
+[complete_passenger, complete_passenger_nginx, complete_unicorn_nginx] remove db template dependancy from complete_* templates <5be6300>
+[complete_unicorn_nginx] complete_unicorn_nginx template doesn't need haproxy <54faef3>
+[elasticsearch] Upgraded Elastic Search from 0.19.3 to 0.19.12. <96e5aa0>
+[graphite] Added a monit file for graphite. <87eafab>
+[graphite] Added more control to graphite config. <8a2b84e>
+[graphite] Allow re-mounting the graphite storage directory elsewhere since it can fill the root store rather quickly. <80f5527>
+[graphite] Hook up ping data from collectd to graphite. <e8d466b>
+[graphite] Migrate graphite_web to uwsgi <aaebea8>
+[graphite] Upgraded graphite from 0.9.9 to 0.9.10. <733937f>
+[passenger, torquebox] Be a bit safer about assets & CDNs by default. <197eb93>
+[passenger] bump passenger version <9fde4bf>
+[redis] Upgrade redis from 2.4.16 to 2.4.18. <d1a9e06>
+[sphinx] Updated sphinx custom_install task to use correct download url and changed version to latest stable release <b61df24>
+[torquebox] We no longer need to restart TorqueBox completely on deploy, since the memory leak & deploy race condition requiring it have been removed. <636c78f>
+[torquebox] Upgraded from TorqueBox 2.2.0 to 2.3.0. <a95554c>
+
+Bug Fixes:
+=========
+
+[core] Set up the elastic IP when it doesn't match the instance's current external IP <ea960c9>
+[core] Fix reboot behavior so SSH connections are re-established upon reboot. <d77ce29>
+[core] Fixed some Ruby 1.8.7 compatibility issues.
+[core] Fix syntax error in start_instances() <d23ad3c>
+[core] Clean up broken method call in stopping instances <dd90c5f>
+[core] Bugfix: net-ssh requires :keys to be an array, not string <74f10d3>
+[core] Fix threading for start_instances() <a0c3930>
+[apache] Added missing packages to make SendFile work on Apache. <6c7f84e>
+[base] quote account number to allow for leading 0s in rubber.yml<b46b674>
+[complete_unicorn_nginx] unicorn_nginx template does not exist <52953fa>
+[graphite] Bugfix: Graphite depends on collectd. <5f7de4a>
+[graphite] Move graphite nginx config to nginx role <c92e8d3>
+[resque] resque only has its own roles now, so fix to make sure resque_worker role gets vulcanized <7dbca27>
+[torquebox] TorqueBox should not reference Passenger at all. <9db2dff>
+
+
+2.1.2 (10/05/2012)
+------------------
+
+New Features:
+============
+
+[core] Allowing marking of a config variable as overriding the ones that come before it, so that non-scalar values (lists/maps) get overridden instead of combined <3d66fc8>
+[core] Allow erb in rubber*.yml <60e6394>
+
+
+2.1.1 (10/02/2012)
+------------------
+
+New Features:
+============
+
+[base] add ability to override by environment in rubber*.yml <f4c4af3>
+[couchbase, monit] add couchbase template <550dff4>
+
+Improvements:
+============
+
+[core] Updated sudo_script to sudo to any user. <288ef5d>
+[apache, jenkins] create an apache bootstrap so jenkins template doesn't have to duplicate logic <5862791>
+[complete_passenger, passenger] do a rolling passenger restart by tieing into apache rolling restart <065d757>
+[complete_passenger] dont do health check over ssl by default (Fails with self signed cert) <a5a8da7>
+[graylog] Updated graylog from 0.9.6 to 0.9.6p1. <864795c>
+[graylog] Use puma instead of passenger for graylog-web, since it works much better with JRuby. <7419705>
+[jenkins] Added support for backing up Jenkins. <a44162d>
+[jenkins] Fixed Jenkins config. <bbaa6f4>
+[jenkins] Make sure we have the header module enabled for the config to work. <93d03d8>
+[passenger] Bumped rubber from 3.0.12 to 3.0.15. <bc408f1>
+[passenger_nginx] Updated Nginx config to improve performance of asset pipeline. <7184327>
+[torquebox] Updated TorqueBox config from 2.0.3 to 2.1.0. <13a0268>
+
+Bug Fixes:
+=========
+
+[core] fix merging of alias records <d314857>
+[core] Refactor to avoid fog deprecation, fixes #222 <43ea42f>
+[core] assign defaults for partial records in rubber-dns.yml when running setup_dns_records <a72a701>
+[monit] monit check for resque scheduler - fixes #221 <34a4fde>
+[mysql] Delete anonymous MySQL user when bootstrapping the db. Fixes #185 (pull request #212) <ce84ff2>
+[torquebox] Always use the rubber system JRuby with Torquebox. <9c03a02>
+
+
+2.1.0 (08/20/2012)
+------------------
+
+New Features:
+============
+
+[unicorn] Added unicorn, complete_unicorn template, thanks messick!
+
+Improvements:
+============
+
+[redis] Bumped the redis version from 2.4.12 to 2.4.16. <ab6923e>
+[zookeeper] bumped up zookeeper to 3.3.6 <409dbac>
+[nginx, passenger_nginx, resque] Add nginx web_tools proxies with same strategy as apache, thanks messick!
+[core] updated fog ~> 1.5
+
+Bug Fixes:
+=========
+
+[base] allow port specific source_group rules in security_groups, allow source_groups to refer to groups in other projects <b6dba33>
+[postgresql] Added sudo flag to change $HOME when running Postgresql commands, thanks infamouse <b3ff1ff>
+[core] Handle finding a host for an empty domain, fixes #199 <6ba2181>
+[core] with stopping exec queue, mdadm will not be able to create RAID array, thanks messick! <5662653>
+[core] more friendly split for arguments, fixes #196 <5af6777>
+[core] We need to close a file before we can unlink it in JRuby >= 1.7. <beb7bf0>
+[core] call fatal, not fail method - fixes #204 <56fb7dd>
+
+
+2.0.8 (08/01/2012)
+------------------
+
+[core] fix update of dns for instances <f57145c>
+[core] Merge commits shouldn't be in the changelog. <bdff81a>
+[core] Another typo fix. <bcc2381>
+[core] Fixed a typo. <2c8ec30>
+[core] Simplified new features in 2.0.6 release to highlight what was added. <a9a1ba1>
+
+2.0.7 (08/01/2012)
+------------------
+
+[core] remove useless log msg <09c1a16>
+[core] fix deprecation msg <c52c35f>
+[core] uncomment the code that updates dns <df46f39>
+
+2.0.6 (08/01/2012)
+------------------
+
+New Features:
+============
+Added a template for resque-scheduler.
+
+Improvements:
+============
+[core] multi-host rubber:reboot <56ef06f>
+[core] update nettica to work with new rubber-dns.yml format <1bfa525>
+[base] format change to better support multi-value records like MX, round robin A, etc refactor to better handle route53/zerigo differences in fog add export_dns_records to allow dumping from provider to a rubber-dns.yml format <7c806cf>
+[base] update base ami <be8c0f4>
+
+Bug Fixes:
+=========
+[core] isolate security groups from global namespace so having a key with the same name as a capistrano role doesn't cause problems <41ba2cf>
+[core] make cron logs more user friendly and prevent exponential explosion of files in log dir due to interaction with rubber:util:rotate_logs <7e11a7f>
+[core] fix nettica support (fix super call, credentials) <14fd048>
+[core] don't attempt to read a non-existant instance file in cloud storage <c4d11ac>
+[core] Avoid error if localtime file already exists <cff1fb4>
+[base] whitelist ssh-related variables in sudoers so capistrano tasks can take advantage of ssh-agent forwarding <1009e7b>
+[collectd] add to env variable whitelist rather than overwrite it <dff23f7>
+[elasticsearch] Ensure unzip package present for elasticsearch <40af636>
+[graphite] fix for multiple targets in graph defn <b72c469>
+[jenkins] removed hardcoded application, thanks to scotterc for finding this <b5b26b4>
+[jenkins] sun-java6 fails on Ubuntu 10.04 <88779a9>
+[passenger] Removed the code to remove config.ru from Rails apps as it's no longer needed in Passenger 3. <517d23e>
+[postgresql] Fixed an issue with PostgreSQL messing with casing on us. <72e63b5>
+[resque] connect to redis_master role, rather than just redis <f778dc8>
+[resque] explicitly make Rubber.root a string <c0852b2>
+[resque] placeholder config for dev <d855381>
+[resque] rails_env was changed to Rubber.env a while ago I believe <2376db2>
+[torquebox] Ensure unzip package present for torquebox <7f4d7aa>
+[zookeeper] fix zookeeper server ids <3273b53>
+
+2.0.5 (06/12/2012)
+------------------
+
+New Features:
+============
+
+[torquebox] Initial work on a TorqueBox template. <160557b>
+[torquebox] Merge pull request #154 from wr0ngway/add_torquebox <d750ecb>
+[torquebox] [torquebox] Bumped to TorqueBox 2.0.3 from 2.0.2. <2851768>
+[torquebox] [torquebox] Do rolling deploys with TorqueBox so the site doesn't go down when deploying. <8582889>
+
+Bug Fixes:
+=========
+
+[core] force older version of net-ssh till issues get resolved <5b8c2f7>
+[core] Fix typo causing Ubuntu 11+ to time out waiting for incorrect volume id <cf1dfa4>
+[core] Merge pull request #168 from akremer/fstab_fix <9d2e6fc>
+[core] Restore fstab.bak if EBS times out <b27cc79>
+[apache] use dash instead of another subdomain level for web tool proxy hosts to prevent ssl complaints with wildcard certs <8237bac>
+[cassandra, collectd, elasticsearch, graphite, graylog, jenkins, mongodb, mysql_cluster, redis, zookeeper] be more strict in selecting role directory during bootstrap <f8818e4>
+[complete_passenger_nginx] Changed passenger_nginx role dependencies so that web_tools can be run on a separate instance. <8a3cefb>
+[complete_passenger_nginx] Merge pull request #166 from rwc9u/web_tools_nginx_multi_instance <44ec7e1>
+[passenger_nginx] Changed nginx.conf to only include the tools.conf on an instance that has the web_tools role. See the following thread where this change was discussed: <376428f>
+[passenger_nginx] Merge pull request #165 from rwc9u/web_tools_nginx <88ab69a>
+
+
+2.0.4 (05/15/2012)
+------------------
+
+Bug Fixes:
+=========
+
+[apache] make sure admin uis know we are ssl so they generate correct urls <b6409da>
+[collectd] fix syntax error <205a07a>
+[resque] use puma to run resque server as a rackup with rails environment loaded so resque-retry can find job classes <518eb27>
+
+
+2.0.3 (05/11/2012)
+------------------
+
+New Features:
+============
+
+[core] Support for Route53 ALIAS records so the zone apex can be pointed at ELB groups
+
+Improvements:
+============
+
+[core] Auto-add domain name to host records in Route 53 so user-facing config is much simpler
+[passenger] Upgraded to Passenger 3.0.12 from 3.0.11
+
+Bug Fixes:
+=========
+
+[core] Fixed an issue with wildcard hosts in Route 53.
+[core] Fixed an issue with creating an MX record in Route 53 (NB: we still cannot create multiple MX records).
+[collect] Fixed an issue deploying if a graphite_server doesn't exist in the cluster
+
+
+2.0.2 (05/08/2012)
+------------------
+
+New Features:
+============
+
+[graylog] Added an admin UI for ElasticSearch
+
+Improvements:
+============
+
+[base] Use ntpd instead of cron for syncing time
+[core] Auto-reboot for kernel updates on initial instance bootstrap rather than prompting the user to reboot
+[redis] Upgraded to redis 2.4.12 from 2.4.11
+
+Bug Fixes:
+=========
+
+[core] Fixed issue with Route 53 DNS not updating records properly
+[core] Wait for EBS volumes to be fully attached before trying to format them
+[core] Fixed issue with running `rubber config` locally
+[collectd] Made the runner executable
+[graphite] Fixed some broken URLs in the dashboard
+[passenger] Fixed issue with using a path to config.ru before capistrano completed setting it up.
+[resque] Replaced a hard-coded reference to the resque-pool PID file with the rubber configured one
+[resque] Append to the resque-pool.log file rather than overwrite it 
+[zookeeper] Fixed the detection of an existing zookeeper installation
+
+
+
+2.0.1 (04/29/2012)
+------------------
+
+New Features:
+============
+
+[base] Added the ability to supply additional arguments to RVM (e.g., to install additional patches or modify compile arguments)
+[graphite] Added a simple graphite dashboard suitable for TV display
+
+Improvements:
+============
+
+[redis] Upgraded to redis 2.4.11 from 2.4.6
+[base] Upgraded to RVM 1.13.0 from 1.10.2
+[base] Upgraded to Ubuntu 12.04
+
+Bug Fixes:
+=========
+
+[base] Assorted fixes/workarounds for 12.04
+[collectd] Fixed an issue with libperl and collectd
+[redis] Fixed an issue with the redis role not installing the zip packaged, needed for backup
+
+
+2.0.0 (04/24/2012)
+------------------
+
+New Features:
+============
+
+Refactored cloud layer to use fog, implement rubber use of aws/s3 with fog
+Abstract out s3 to go through rubber cloud layer (fog)
+Allow simpledb, s3 or alternate file for instance storage, with backups to same
+Added Graylog recipe
+Added Elasticsearch recipe
+Added Unicorn recipe [Thanks Alex Kremer]
+Added Graphite recipe
+Added Collectd recipe
+Added Graylog to complete_passenger template
+Make collectd/graphite default instead of munin
+Use resque-pool to manage resque workers
+Option to reboot if neccessary after package update
+Added a rubber binary and used it for running everything (cron, etc, removed dependency on rake)
+Added JRuby support
+
+
+Improvements:
+============
+
+Start using upstart for all daemons (complete_passenger_postgresql, resque, graylog) 
+Better discovery of roles, default staging instance to these roles
+Replace global RUBBER_* vars in ruby with Rubber.*
+Bump image to latest 10.04
+check harder when determining project roles <7570d47> [Matt Conway]
+Cleanup crosscutting templates (monit, munin, collectd) to be self contained
+Remove hard dependency on nettica and lazy load it
+Upgraded config for PostgreSQL 9.1. [Thanks Kevin Menard]
+Upgraded to redis 2.4. [Thanks Kevin Menard]
+Bump rvm/ruby/rake/rubygems versions
+Bump passenger version
+Asset pipeline support for rails 3.1, cleanup some rails detection issues
+Extract fog dns from zerigo to allow other providers
+Respawn cap/rake with bundler if needed
+Proxy services on their own tools subhost to avoid issues with rewriting paths in CSS and JS [Thanks Kevin Menard]
+Automate web tools proxy mappings for IP aliases in /etc/host, dns, and web_tools index and vhosts files
+Added a rails template for creating a rails app to test rubber
+Include instance_type in rubber:describe
+Replaced zerigo_dns gem usage with fog [Thanks Kevin Menard]
+Changed PostgreSQL defaults to make better use of memory for shared_buffers
+
+
+Bug Fixes:
+==========
+
+fix mongo monit to remove pidfile or mongo won't start
+fix mongo bootstrap
+make start/stop consistent, only restart when bootstrap necessary
+fix redis bootstrap
+fix resque_web bootstrap
+update redis to use upstart, thereby removing hackish dual install
+fix rvm installer url
+add back in base postgresql role
+fix db backup host
+validate config set, create image bucket on bundle
+made setup_remote_aliases update /etc/hosts for each host directly, preserve ordering to be consistent with setup_local_aliases
+Fix volume mounting [Thanks Alex Kremer]
+We shouldn't have a dependency on plpythonu. [Thanks Kevin Menard]
+Fixes to nginx/passenger [Thanks Ajay Kumar G]
+make sure open4 gets bundled
+fix create_staging for pre-existing instance
+Ensure Zerigo makes calls using XML in 3.1 [Thanks Alex Kremer]
+Fix suggestion in rubber.yml on how to list availability zones. [Thanks Maxim Chernyak aka hakunin]
+Locked the default version of Ruby down to a particular patch release so by default an entire cluster will use the same ruby [Thanks Kevin Menard]
+Ruby 1.9.3 fixes with nginx
+
+1.15.0 (09/13/2011)
+-------------------
+
+New Features:
+============
+
+Added PostgreSQL streaming replication configuration (thanks Kevin Menard)
+Added the ability to specify mount options for volumes (thanks Alex Kremer)
+Added a minimal Passenger nginx configuration (thanks Will Koehler)
+Added SSL support for nginx-passenger (thanks Michael Glass)
+Added staging environment support fon nginx-passenger (thanks Michael Glass)
+
+Improvements:
+============
+
+Resque-web now runs as an unpriviliged user (thanks Scott Carleton)
+Better error message when having issues loading the Zerigo gem (thanks Rupert Meese)
+Upgraded Passenger to 3.0.9 (thanks Kevin Menard)
+Upgraded Redis to 2.2.13 (thanks Kevin Menard)
+Better .gemrc file setup (thanks Kevin Menard)
+
+Bug Fixes:
+==========
+
+Fixed an issue with setting up redis on Ubuntu 11.04 (thanks Kevin Menard)
+Fixed an issue with mysql-proxy not being added to the correct run level (thanks Alex Kremer)
+Fixed a typo in the passenger_nginx module name (thanks Alex Kremer)
+Fixed an issue with the munin generated Web site location (thanks Will Koehler)
+Fixed the open4 require issue (thanks Will Koehler)w
+Fixed a bunch of nginx-related issues (thanks Will Koehler)
+Fixed an environmental issue running ntpdate (thanks Will Koehler)
+Fixed compatibility issues with the Psych parser used in Ruby 1.9.2 (thanks Kevin Menard)
+Fixed timing issue with multiple resque workers starting (thanks Matt Conway)
+Fixed an issue with hostnames that happen to be monit commands (thanks Michael Glass)
+
+1.14.1 (06/02/2011)
+-------------------
+
+Upgraded the version of RVM installed by default
+Switched from using our own installation method to using the new RVM installer
+
+1.14.0 (06/02/2011)
+-------------------
+
+Projects using bundler will now run rake with bundle exec
+Added ability to lockdown the version of rake that RVM will install (vulcanize base for the changes)
+Added the image type and ID for each instance to the instance file
+Fixed an issue with LVM groups keeping physical volumes in /etc/fstab
+Fixed an issue using the mysql2 adapter with the stock MySQL config
+Disable ri and rdoc generation on new hosts
+
+1.13.2
+-----
+
+fix npe <184cbac> [Matt Conway]
+Merge pull request #61 from dzinevich/e173588f4018bc118785bd3806d262ce3bdd033d <0bfb5c2> [Kevin Menard]
+make workaround so ebs works with 11.04 <e173588> [Denis Zinevich]
+
+1.13.1
+-----
+
+allow specifying a common role dependency for all instances <f49b662> [Matt Conway]
+allow one to specify HOSTand ROLES when testing rake rubber:config in dev <56b3c8c> [Matt Conway]
+Merged pull request #57 from drync/no_rvmrc. <9aee319> [Matt Conway]
+Exclude .rvmrc from NO_SCM deploys <3fa1502> [Savanah Cummings]
+
+1.13.0
+-----
+
+Forgot target roles for start/stop/restart <9b916e8> [Alex Kremer]
+Fix enabling multiverse on newer canonical AMIs (ie Maverick) <dcf81fa> [Alex Kremer]
+Initial commit of MongoDB Template <c4f7640> [Alex Kremer]
+allow FORCE on destroy_all <0db9347> [Matt Conway]
+Removing a function that wasn't meant to be committed :( <8538041> [Jordan Brock]
+Added support for changing the region end point, using the EC2 gem "server" key. <326448f> [Jordan Brock]
+
+1.13.0
+-----
+
+Forgot target roles for start/stop/restart <9b916e8> [Alex Kremer]
+Fix enabling multiverse on newer canonical AMIs (ie Maverick) <dcf81fa> [Alex Kremer]
+Initial commit of MongoDB Template <c4f7640> [Alex Kremer]
+allow FORCE on destroy_all <0db9347> [Matt Conway]
+Removing a function that wasn't meant to be committed :( <8538041> [Jordan Brock]
+Added support for changing the region end point, using the EC2 gem "server" key. <326448f> [Jordan Brock]
+
+1.12.2
+-----
+
+improve commit filter for changelog <6298227> [Matt Conway]
+don't delete security groups when answer is negative <fbba5de> [Matt Conway]
+fix enabling root user for create/refresh with multiple instances <db5a227> [Matt Conway]
+latest stable ami <84da0eb> [Matt Conway]
+
+1.12.1
+-----
+
+Revert "Allow backing up and restoring multiple databases in a given environment." <e382e9b> [Matt Conway]
+Merge branch 'master' of github.com:wr0ngway/rubber <ea26d35> [Matt Conway]
+hopefully fix task my_release <21a41d5> [Matt Conway]
+Allow backing up and restoring multiple databases in a given environment. <add1ef6> [Kevin Menard]
+fix for ruby 1.8.7 <16bb626> [Matt Conway]
+
+1.12.0
+-----
+
+Regenerate gemspec for version 1.12.0 <ff2307d> [Matt Conway]
+Merge branch 'master' into multi_instance_creation <984f62b> [Matt Conway]
+add ranges to filters, add filter validation <ac1ee6d> [Matt Conway]
+don't override default_run_options we don't set <f8b672a> [Matt Conway]
+initial version allowing one to create/destroy multiple instances with a single command <6f5b5a8> [Matt Conway]
+fix passenger version check <68ac0cd> [Matt Conway]
+
+1.11.0
+-----
+
+Regenerate gemspec for version 1.11.0 <1358116> [Kevin Menard]
+We've been using RVM for a while now, so time to kill that warning message. <1d29137> [Kevin Menard]
+Make the generated Rakefile play nicer with bundler and rubber transformation. <90f6702> [Kevin Menard]
+Truly make the DBPASS field optional. <ba0aa56> [Kevin Menard]
+Allow creation of LVM volumes over ephemeral devices. <319e80b> [Kevin Menard]
+Bumped passenger version. <d4b4950> [Kevin Menard]
+add detach volume <9daa912> [Matt Conway]
+fix passing of passwd to mysqldump <143d467> [Matt Conway]
+Added new feature to lock down the version of RubyGems installed on a cluster by RVM. <652f908> [Kevin Menard]
+Bumped the version of RVM so we can get the latest security fix releases of Ruby. <9fb2383> [Kevin Menard]
+Merge branch 'master' of github.com:wr0ngway/rubber <58d3209> [Kevin Menard]
+Upgraded redis to 2.2.1. <aa0aa31> [Kevin Menard]
+Bumped Passenger to version 3.0.3. <cad658a> [Kevin Menard]
+sphinx default port has changed to 9312 <eee2bd0> [Nick Plante]
+Merge branch 'master' of https://github.com/wr0ngway/rubber <2ff0188> [Nick Plante]
+fix file write for db restoration <15fe2e0> [Nick Plante]
+
+1.10.2
+-----
+
+Regenerate gemspec for version 1.10.2 <4f49701> [Kevin Menard]
+Merge branch 'master' of github.com:wr0ngway/rubber <e32671f> [Kevin Menard]
+Fixed issue #41: rvm installation exits prematurely. <8a4bced> [Kevin Menard]
+Fixed issue #28: postgresql with password fails <97270e3> [Kevin Menard]
+fix file write for db restoration <51b1117> [Matt Conway]
+Bumped passenger version. <2547950> [Kevin Menard]
+Note that a release had been yanked. <d636389> [Kevin Menard]
+
+1.10.1
+-----
+
+Regenerate gemspec for version 1.10.1 <8a178a9> [Kevin Menard]
+Changed the redis configuration so we can do replication. <4ce546d> [Kevin Menard]
+prevent long running compile from timing out ssh connection, better version checks, hack to prevent rvm breaking path <64299e2> [Matt Conway]
+update rvm ver <e60b946> [Matt Conway]
+sleep to prevent race condition between ps/nohup, longer sleep between dots <84c362c> [Matt Conway]
+stop setting constants in erb templates to silence warnings <ab74f24> [Matt Conway]
+use psych if there <1cbf64d> [Matt Conway]
+
+1.10.0 (yanked due to bug in creating gem with RubyGems 1.5.0)
+-----
+
+Regenerate gemspec for version 1.10.0 <c8d5535> [Matt Conway]
+Add FILTER_ROLES and negation to both FILTER and FILTER_ROLES <a2f4574> [Matt Conway]
+fix some tests <e038b16> [Matt Conway]
+Merge branch 'master' of github.com:wr0ngway/rubber <a9a6b09> [Matt Conway]
+allow one to ignore security group sync <4d42438> [Matt Conway]
+allow redis to bgsave when memory is tight <c928458> [Matt Conway]
+
+1.9.1
+-----
+
+Regenerate gemspec for version 1.9.1 <efaf38c> [Kevin Menard]
+Added a sample snippet for creating LVM volumes. <42f09ec> [Kevin Menard]
+
+1.9.0
+-----
+
+Regenerate gemspec for version 1.9.0 <5d296e4> [Kevin Menard]
+Added the ability to set up LVM volumes. <89e865c> [Kevin Menard]
+Fixed a typo. <26eda95> [Kevin Menard]
+Merge branch 'master' of https://github.com/bpaul/rubber into bpaul-master <91fc6ff> [Kevin Menard]
+Merge branch 'master' of https://github.com/jcrumpton/rubber into jcrumpton-master <a4a3f24> [Kevin Menard]
+Merge branch 'master' of github.com:wr0ngway/rubber <ef88020> [Matt Conway]
+specify raid metadata level and admin email <c841ee2> [Matt Conway]
+extra error checking to make it easier to see yml failures <c89e97a> [Matt Conway]
+fix pub key docs <9c69976> [Matt Conway]
+fix postgresql recipe roles <873a3b9> [Matt Conway]
+A couple of Sphinx updates: Updated the location of the download on sphinxsearch.com Bumped the default version to 0.9.9 <d6695c3> [Barry Paul]
+fixed typo <45b8a07> [James Crumpton]
+It's no longer gemcutter:release. <f04deb1> [Kevin Menard]
+
+1.8.0
+-----
+
+Regenerate gemspec for version 1.8.0 <1a924f5> [Kevin Menard]
+Bumped the version of Passenger to 3.0.1. <c419f34> [Kevin Menard]
+Bumped the version of RVM. <52c9891> [Kevin Menard]
+Merge branch 'tags_support' <3396ceb> [Kevin Menard]
+Handle Amazon being slow to update. <e89a7ae> [Kevin Menard]
+Added a comment to help people that change their ServerName from the default. <71ce99a> [Kevin Menard]
+We need this perl package for the postgres munin plugins. <4ae9e6c> [Kevin Menard]
+We need a newer amazon-ec2 for tags support. <90b20ba> [Kevin Menard]
+Added support for creating and updating tags on EC2 instances. <d29eda9> [Kevin Menard]
+Merge branch 'master' of github.com:wr0ngway/rubber <5ca9ce0> [Kevin Menard]
+Fixed issue with RVM, ruby 1.9.2, and passenger munin plugins. <623400b> [Kevin Menard]
+Set up munin for PostgreSQL. <4f9874e> [Kevin Menard]
+Fixes for raiding ephemeral drives <7a0c0d2> [Matt Conway]
+Watch attachment status for more reliable ebs mounts <44ebdae> [Matt Conway]
+Updated config for PostgreSQL 9. <9ade749> [Kevin Menard]
+Don't show Passenger 3 friendly error pages in production. <126093a> [Kevin Menard]
+Updated config for redis 2.0. <f4ed84a> [Kevin Menard]
+Support installation of redis 2.0. <e340091> [Kevin Menard]
+Merge branch 'master' of https://github.com/caike/rubber <4269178> [Kevin Menard]
+Fixed bug with RVM ruby location and updated to the latest version. <bd8805b> [Kevin Menard]
+Improved passenger 3 setup. <b72c5c0> [Kevin Menard]
+Changes passenger generator to use version 3.0.0 and removes deprecated option. <b64f623> [Kristopher Murata]
+Skipping SSL certificate check on wget to github due to wget bug. More info: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=409938 <3d0562e> [caike souza]
+Merge branch 'master' of github.com:wr0ngway/rubber <48269b5> [Matt Conway]
+allow rubber:config in test as well as dev <8954cd6> [Matt Conway]
+
+1.7.2
+-----
+
+'primary' hash key needs to be a string not a symbol <d7075f2> [richard]
+'primary' hash key needs to be a string not a symbol <be6a610> [richard]
+
+1.7.1
+-----
+
+Merge branch 'master' of github.com:wr0ngway/rubber <9cd568a> [Kevin Menard]
+Updated resque worker management script to allow monit to forcibly shut down workers. <f15bd59> [Kevin Menard]
+Updated to a version of RVM that works. <e14629c> [Kevin Menard]
+I am an idiot for removing this.  This is necessary for Rails 3 apps to work with Rubber as a plugin. <1666e58> [Kevin Menard]
+
+1.7.0
+-----
+
+Better support for Windows in some cases. <a8f3192> [Kevin Menard]
+Enhanced describe_bundles. <6f2b1f4> [Kevin Menard]
+Added support for starting EC2 instances with EBS root devices. <9296921> [Kevin Menard]
+Added support for stopping EC2 instances with EBS root devices. <a2a70ec> [Kevin Menard]
+Added reboot command for rebooting stuck EC2 instances. <1d29437> [Kevin Menard]
+
+1.6.3
+-----
+
+Much better way to get an instance's internal IP. <dcf97a3> [Kevin Menard]
+
+1.6.2
+-----
+
+Fixed rake gems:install issue with Rails 2. <73c47a8> [Kevin Menard]
+RVM bump. <14b52bc> [Kevin Menard]
+Use the latest Ubuntu AMIs. <7a15b0d> [Kevin Menard]
+We shouldn't try to SSH into Windows machines. <f921685> [Kevin Menard]
+
+1.6.1
+-----
+
+Fixed issue with Rakefile generation for Rails 2.x. <f239f0e> [Kevin Menard]
+Fixed RVM installation. <79dcf17> [Kevin Menard]
+Bump the version of RVM. <324e939> [Kevin Menard]
+
+1.6.0
+-----
+
+Merge branch 'master' of github.com:wr0ngway/rubber <51a016c> [Matt Conway]
+stop loading rails within rubber as bundler in rails3 breaks everything by setting ENV[GEM_PATH], you may need to update your templates to use RUBBER_ENV/ROOT instead of RAILS_ENV/ROOT <8f4a0db> [Matt Conway]
+fix changelog gen <c5a8d83> [Matt Conway]
+Fix the API name for 32-bit medium CPU instance. <ec415ce> [Kevin Menard]
+
+1.5.11
+-----
+
+Handle timeout better for initial connect <fd582da> [Matt Conway]
+
+1.5.10
+-----
+
+fix passenger references to gem home to always point to global (rvm) one <51f1f8a> [Matt Conway]
+
+1.5.9
+-----
+
+fix find to handle filenames with spaces, prune bundle from permissions change <56b72ae> [Matt Conway]
+
+1.5.8
+-----
+
+use canonical bundler deploy <299a405> [Matt Conway]
+new amis, update to rails 3 final <d59b889> [Matt Conway]
+update to rvm 1.0.1 <b8e57df> [Matt Conway]
+try alternate timeout for instance connection hang issue <e72a881> [Matt Conway]
+quote env vars to keep crontab happy <1240818> [Matt Conway]
+
+1.5.7
+-----
+
+allow access to calling generator so can determine stuff like fake_root <fa6354c> [Matt Conway]
+refactor create using refresh <12df4c4> [Matt Conway]
+save config in refresh <cdb8344> [Matt Conway]
+
+1.5.6
+-----
+
+Merge branch 'master' of github.com:wr0ngway/rubber <9d6ca8a> [Matt Conway]
+force unattended apt-get for some rare cases <94fa160> [Matt Conway]
+fixed typo <2382e8d> [Matt Conway]
+mongrel custom_install should be rvm agnostic <b620f71> [Matt Conway]
+setup_gem_sources should precede install_gems on rvm <52f9d48> [Matt Conway]
+Restore DynDNS update support <80f3c0e> [Matt Conway]
+update munin conf for new ubuntu package <672db55> [Matt Conway]
+exclude unneeded/large files during noscm deploy <286c8da> [Matt Conway]
+Merge branch 'master' of github.com:wr0ngway/rubber <3da29cb> [Matt Conway]
+use specific rvm version to stop rubber breaking everytime they change stuff <71cba60> [Matt Conway]
+Don't try to set up SSH access on Windows hosts. <e1df646> [Kevin Menard]
+increase ulimit for cassandra <e45bae1> [Matt Conway]
+
+1.5.5
+-----
+
+only existingg config files should be listed to fix non-existing env yml when doing a push_config <9fbb7ba> [Matt Conway]
+
+1.5.4
+-----
+
+add an environment specific rubber.yml file <8f8366e> [Matt Conway]
+set ruby ver to more stable 1.9.2 (rvm currently maps it to preview3, but will map it to actual 1.9.2 when released) <5fa8763> [Matt Conway]
+extra test <0ff8aba> [Matt Conway]
+fix some test failures <9ac276b> [Matt Conway]
+Merge branch 'master' into merge <6599fcb> [Matt Conway]
+add missing stuff from create to refresh to aid in sertting instance details for a partially failed create <a7ac958> [Matt Conway]
+clean string from instance arch to remove newlines <1b1052f> [Matt Conway]
+tell bundler to not install dev/test gems <a3a7d3b> [Matt Conway]
+use correct path for passenger ruby for newer rvm <dcff158> [Matt Conway]
+fix wget params for cassandra <d521eb1> [Matt Conway]
+set rvmrc before installing <df111ef> [Matt Conway]
+
+1.5.3
+-----
+
+Don't do a rake gems:install if bundler is in use. <511cac1> [Kevin Menard]
+Don't require rubber to be used as a plugin for Rails 2. <60165e3> [Kevin Menard]
+
+1.5.2
+-----
+
+New release. <fad9bbb> [Kevin Menard]
+Fixed issue with dependent modules in Rails 2 generator. <84a0259> [Kevin Menard]
+Fixed an issue with mysqldump and empty passwords. <708f053> [Kevin Menard]
+Removed unnecessary puts statement. <0e81cdc> [Kevin Menard]
+Fix for incomplete path. <b18743f> [Kevin Menard]
+Ubuntu changed the location of its service command, so we can't rely on any given path for it. <e82e7b1> [Kevin Menard]
+
+1.5.1
+-----
+
+Fixed a problem with installing gems listed in environment.rb. <aa2b516> [Kevin Menard]
+
+1.5.0
+-----
+
+Added a warning message about upgrading rubber and RVM. <0d30207> [Kevin Menard]
+New rubber version. <0d786b5> [Kevin Menard]
+Fixed issues in using rubber for non-Rails projects. <0f32f2c> [Kevin Menard]
+Support optional files in templates.yml for Rails 2 apps, too. <56cd5e2> [Kevin Menard]
+Fixed an issue with vulcanize on Rails 2. <0151382> [Kevin Menard]
+Added ability to diverge template behavior for Rails 2 & Rails 3. <682e40f> [Kevin Menard]
+Fixed a spacing bug. <7e56d16> [Kevin Menard]
+Added utility methods to clean things up a bit. <97f50cd> [Kevin Menard]
+Install gems for Rails 2. <ab3fa74> [Kevin Menard]
+Avoiding adding dependencies that screw up Rails 2 & Rails 3. <22c3008> [Kevin Menard]
+Updated vulcanize to work with both Rails 2 and Rails 3. <c2f3ceb> [Kevin Menard]
+Symlink generators directory for Rails 2.x support. <30a0b41> [Kevin Menard]
+Prevent conflict with Zerigo loading in ActiveSupport. <fe9438d> [Kevin Menard]
+fix resque roles <ed5491b> [Matt Conway]
+cleanup some monit patterns <66f1bb0> [Matt Conway]
+fix environment in resque web monit <45336ce> [Matt Conway]
+Updated gemspec <3638682> [Matt Conway]
+more rigorous stopping of stuff to prevent errors in create_staging <5c2425d> [Matt Conway]
+fix postgres backup <d92e1de> [Matt Conway]
+better directory aliases <0169b47> [Matt Conway]
+munin package doesn't seem to be creating directory <e2a9ca2> [Matt Conway]
+fix updating existing zerigo record <cb5bfdd> [Matt Conway]
+Merge branch 'cassandra' into rails3 <400e814> [Matt Conway]
+postgresql working for a single master configuration <269cb7a> [Matt Conway]
+extracted out helper method for prompting from non-capistrano code <27c77e0> [Matt Conway]
+calculate dependencies as a separate step <b304f9c> [Matt Conway]
+avoid multiple deploy:update_code <eec7c55> [Matt Conway]
+Merge branch 'rails3' into postgresql <2b8f728> [Matt Conway]
+replace init.d scripts with call to service <69a34a4> [Matt Conway]
+monit nowe needs mailserver set <61d3710> [Matt Conway]
+fix rvm environment issue that breaks initial rake fcall from rubber:config <e6bdec2> [Matt Conway]
+updated to lucid 10.04 <5238701> [Matt Conway]
+only add gem if rubber not a plugin <a09102a> [Matt Conway]
+set ssh connection timeout <39dbc45> [Matt Conway]
+only add rubber to gemfile in base template <d04f306> [Matt Conway]
+allow loading of initial schema <c431688> [Matt Conway]
+working cassandra <9402a7a> [Matt Conway]
+Merge branch 'rails3' into cassandra <4965a07> [Matt Conway]
+Don't rely on ":on_error => :continue" due to capistrano bug https://capistrano.lighthouseapp.com/projects/8716/tickets/110-using-on_error-continue-doesnt-work-when-chaining-callbacks <2d5415e> [Matt Conway]
+fix redis boostrap <3113246> [Matt Conway]
+some fixes to resque process management <68c43c5> [Matt Conway]
+refactor, make worker management smoother <c1c35e3> [Matt Conway]
+allow calling generator helpers <35a9f0e> [Matt Conway]
+set exe <b3c6c47> [Matt Conway]
+mv files for rails3 <68a5bb2> [Matt Conway]
+Merge remote branch 'origin/new_resque' into rails3 <151c3bf> [Matt Conway]
+Better handling of resque worker queues. <c288253> [Kevin Menard]
+Redis version bump. <74ed93a> [Kevin Menard]
+Merge branch 'master' into rails3 <13bf17a> [Matt Conway]
+initial incomplete cassandra support <b0beaf4> [Matt Conway]
+initial incomplete postgres support <4eff243> [Matt Conway]
+version bump <1f00825> [Matt Conway]
+fix railties dependency <b302bcd> [Matt Conway]
+Merge branch 'master' into rails3 <6c11203> [Matt Conway]
+Set rubber version to the one being installed by Gemfile <29a3fdf> [Matt Conway]
+make sure ec2 config directory exists <50878d5> [Matt Conway]
+Add rubber to gemfile when generating if needed <ef0a279> [Matt Conway]
+version bump <ad08522> [Matt Conway]
+ec2 tools need system ruby as they don't currently work with 1.9 <015dfaa> [Matt Conway]
+use RUBBER_ENV to select DB so task can be used with staging, etc <120bf11> [Matt Conway]
+new version <a013cce> [Matt Conway]
+new version <9ee1a64> [Matt Conway]
+regenerated gemspec <0c96963> [Matt Conway]
+make sure ec2-ami-tools is installed on canonical ami for rubber:bundle <ca1dc3d> [Matt Conway]
+get vulcanize helper script working in rails3 <a14f59e> [Matt Conway]
+copy file permissions too so executable files work <f579248> [Matt Conway]
+fix rvm environment for cron/munin <58fb2e6> [Matt Conway]
+handle prescence of config.ru, fix bundle install, minor other tweaks <8fbc50f> [Matt Conway]
+fix passenger/rvm activation <8739480> [Matt Conway]
+enable passenger support in rvm <e99e5c5> [Matt Conway]
+more rails3 support, using rvm to select ruby runtime, make run/sudo load profile to get rvm environment <ef1afa7> [Matt Conway]
+initial rails3 changes <9a30414> [Matt Conway]
+optional rakefile for non-rails projects <c45931a> [Matt Conway]
+mv new template since sam's changes <3f6689a> [Matt Conway]
+Merge branch 'sam-mcingvale/master' into rails3 <df7ecd7> [Matt Conway]
+Fixed template issues <8916817> [Sam McIngvale]
+Preliminary Rails 3 generator changes <412cfb4> [Sam McIngvale]
+
+1.3.2
+-----
+
+fix to mkdir command which failed on rubber:create_staging <6a0d513> [Matt Conway]
+fix for ruby1.9 <6e08329> [Matt Conway]
+fix for ruby1.9 <4e92c69> [Matt Conway]
+
+1.3.1
+-----
+
+make sure ec2 config dir exists before writing to it <39f51d1> [Matt Conway]
+make sure ec2-ami-tools is installed on canonical ami for rubber:bundle <62cb4ba> [Matt Conway]
+make passenger not unload app by default <d580cd9> [Matt Conway]
+ensure wget overwrites when rerunning after failed get <69102dc> [Matt Conway]
+remove uneeded dependency <97b68ac> [Matt Conway]
+
+1.3.0
+-----
+
+fix release process <4e1243b> [Matt Conway]
+more tests <6a70bb5> [Matt Conway]
+Merge branch 'master' into zerigo_api_1_1 <9d5fb10> [Matt Conway]
+Merge branch 'master' into canonical_ami <b40f95a> [Matt Conway]
+preserver backwards compatbility with sysklog in older ubuntu images <daf3283> [Matt Conway]
+Bump rubygems version. <60509fb> [Kevin Menard]
+Redis version bump. <89ca8ee> [Kevin Menard]
+Merge branch 'master' into canonical_ami <fc62f2e> [Matt Conway]
+ruby 1.9 fix for to_a (thanks to rlewis) <19fa3c1> [Matt Conway]
+Fixed compatibility issues with Ruby 1.9.x <d037136> [Matt Conway]
+Merge branch 'jrhicks/master' <b28fa6a> [Matt Conway]
+disable debian.cnf copy <fdbbf8c> [Matt Conway]
+prevent backups when generating apparmor config file <2cc50b6> [Matt Conway]
+cleanup remote ruby script execution <86da61e> [Matt Conway]
+fix force flag, add backup flag for disabling backups (e.g. in /etc/*.d directories) <9e749fd> [Matt Conway]
+prevent ubuntu 9.10 ec2-init script from changing hostname <739a495> [Matt Conway]
+fix monit config for new version in ubuntu 9.10 <6df5a33> [Matt Conway]
+move mysql reconfigure to common mysql bootstrap <4ce6255> [Matt Conway]
+fix mysql deploy for new ubuntu <7ef0ae7> [Matt Conway]
+Ubuntu using rsyslog now <904f225> [Matt Conway]
+update to latest rubygems <7722ba6> [Matt Conway]
+use sudo everywhere in case users don't want to run as root <8b19367> [Matt Conway]
+allow root login to canonical amis <d04b7f1> [Matt Conway]
+Switch to canonical AMIs <4cd540e> [Matt Conway]
+fix 404, use zone.id <2219de4> [Matt Conway]
+Merge branch 'zerigo_api_1_1' of github.com:wr0ngway/rubber into zerigo_api_1_1 <23f7b70> [Matt Conway]
+no need for customer id in new zerigo api <e91589a> [Matt Conway]
+using zerigo api v1.1 <1aecee3> [Matt Conway]
+no need for customer id in new zerigo api <45c4258> [Matt Conway]
+using zerigo api v1.1 <8784286> [Matt Conway]
+Only proxy app roles since mongrel may be used by non-app roles. <3dd218d> [Kevin Menard]
+Only proxy app roles since passenger may be used for non-app roles, too. <13a7f49> [Kevin Menard]
+Add capistrano task to move data from deploy client to production server.  cap rubber:mysql:local_to_ec2 <628920d> [Jeffrey Hicks]
+Added mysql cap commands rubber:mysql:backup and rubber:mysql:restore_s3 <2f3c535> [Jeffrey Hicks]
+Added mysql client headers to mysql package to allow compilation of mysql <89c5a38> [Jeffrey Hicks]
+Passenger bump. <d09934e> [Kevin Menard]
+Use full path to ruby in case munin's path doesn't work due to non-login shell. <c9ec151> [Kevin Menard]
+
+1.2.1
+-----
+
+Jeweler will release to gemcutter. <5ab598f> [Kevin Menard]
+Work around issue with capistrano 2.5.16. <ce9617b> [Kevin Menard]
+Bumped to the latest version of redis. <e32f072> [Kevin Menard]
+Bumped to latest version of passenger. <251f2ee> [Kevin Menard]
+
+1.2.0
+-----
+
+Added Windows support. <e3c883e> [Kevin Menard]
+The libmysql-ruby package seems to not work with the latest Ruby enterprise edition, so re-install the gem to be safe. <931b19d> [Kevin Menard]
+Bumped to the latest ruby enterprise edition. <0ab3557> [Kevin Menard]
+Added example spot instance request configuration. <239b2f4> [Kevin Menard]
+Updated to the latest version of redis. <9723864> [Kevin Menard]
+Updated to the latest version of passenger. <5f152fc> [Kevin Menard]
+Fixed rake failing due to Test::Unit 2.0 being installed. <a579dc2> [Kevin Menard]
+Jeweler is available on gemcutter. <b5539b5> [Kevin Menard]
+Merge branch 'master' of github.com:wr0ngway/rubber <5efd21d> [Kevin Menard]
+Added support for spot instances. <a995d14> [Kevin Menard]
+Task to move around static IP addresses. <9612eb9> [Matt Conway]
+Merge branch 'master' of github.com:wr0ngway/rubber <3d66204> [Kevin Menard]
+Make it easier to override jetty options. <96d566e> [Kevin Menard]
+
+1.1.7
+-----
+
+Merge branch 'master' of github.com:wr0ngway/rubber <cb39353> [Matt Conway]
+fix for new security group param name in amazon-ec2 <a9f9b19> [Matt Conway]
+Only raise an exception if there's a problem. <890837b> [nirvdrum]
+Merge remote branch 'nirvdrum/resque2' <09fd5b8> [Matt Conway]
+Merge remote branch 'nirvdrum/master' <0c99d7d> [Matt Conway]
+use rubygems for crontab too <08d1d51> [Matt Conway]
+munin needs a mailer for notifications <d933a8c> [Matt Conway]
+Switched to the Jetty Hightide distribution to get JSP, JTA, and a few other niceties. <6d1b1a9> [Kevin Menard]
+Bumped passenger version. <79feda0> [Kevin Menard]
+Allow a configurable number of resque workers. <0587b40> [Kevin Menard]
+Added support for resque. <67ae003> [Kevin Menard]
+
+1.1.6
+-----
+
+stop using helper method to install ree as it uses different path for 64bit pkg <fbdeab3> [Matt Conway]
+remind about bootstrap <fd2e593> [Matt Conway]
+fix setting of rails vars <cd7206d> [Matt Conway]
+Merge remote branch 'nirvdrum/master' into pull <b902618> [Matt Conway]
+add passenger memory stats munin plugin <de6bb9a> [Matt Conway]
+setup path so that we select correct ruby globally <8365a70> [Matt Conway]
+sort display order of tools <4a7a9a0> [Matt Conway]
+fix arithmetic for server slicing in serial_task <4bbd9e7> [Matt Conway]
+Upgraded to the latest version of redis. <a62955f> [Kevin Menard]
+Merge branch 'wr0ngway/master' <09046af> [Kevin Menard]
+escape percents in crontab <a299c3b> [Matt Conway]
+fix ruby prefix path for passenger munin plugin <af9488d> [Matt Conway]
+fix config reference in munin example <50e563d> [Matt Conway]
+enable rubygems at system level for munin plugins <df32e3e> [Matt Conway]
+env should use rubygems by default <c2467cc> [Matt Conway]
+make default bucket name be dns friendly <b58fbbe> [Matt Conway]
+fix sphinx crontab to sudo using configured user <3fe8b6f> [Matt Conway]
+fix being able to reference cluster config (instance.yml) from within rubber.yml <08fecec> [Matt Conway]
+Fixed monit conf file. <d84d287> [Kevin Menard]
+git-core is fine on modern Ubuntu AMIs. <16eda00> [Kevin Menard]
+Added a jetty generator. <5c18774> [Kevin Menard]
+
+1.1.5
+-----
+
+strip out blank security_groups to make it easier to conditionally define them in rubber.yml <f75f1a3> [Matt Conway]
+add some feedback for add/remove role <bafe1bb> [Matt Conway]
+prevent backup from sometimes trying to upload a directory to s3 <f8c7951> [Matt Conway]
+make passenger template depend on apache <b970183> [Matt Conway]
+
+1.1.4
+-----
+
+role should be passenger, role dependencies handle the association from app -> passenger <fc9472f> [Matt Conway]
+new version of REE <e347a82> [Matt Conway]
+
+1.1.3
+-----
+
+use correct path for passenger when using enterprise ruby or not <20a8542> [Matt Conway]
+add ability to grab default roles from rubber.yml at instance creation time <8817d78> [Matt Conway]
+add gemcutter, simplify changelog <44d989b> [Matt Conway]
+update to latest 9.04 ami <5043937> [Matt Conway]
+initial redis module <bb3a6b2> [Matt Conway]
+monitor postfix <6303745> [Matt Conway]
+switch to gemcutter <aead58a> [Matt Conway]
+add changelog generation <06475d9> [Matt Conway]
+
+1.1.2
+-----
+
+fix ver <e32a665> [Matt Conway]
+fix ver <f5c5172> [Matt Conway]
+remove bad code <16306dc> [Matt Conway]
+
+1.1.1
+-----
+
+prevent reading from env before it is created (infinite loop) <b3255cb> [Matt Conway]
+fix gemcutter task <7372e7b> [Matt Conway]
+ignore gems <a879638> [Matt Conway]
+
+1.1.0
+-----
+
+add setup of arbitrary dns records via nettica or zerigo apis <61ca87e> [Matt Conway]
+command for backing up arbitrary directories <d984451> [Matt Conway]
+helper for installing rubber gems locally <51e926b> [Matt Conway]
+add lib for rails initiliazer, fix bad char in description for gemcutter, add task for pushing to gemcutter <0ab8d80> [Matt Conway]
+refactor dns classes to allow setting up other dns records from rubber.yml <937629c> [Matt Conway]
+add rails/init.rb to gemspec, automate gemcutter gem creation <c9c3e52> [Matt Conway]
+update REE to 1.8.7-20090928 <59888ec> [Matt Conway]
+add gemcutter source <ae8aabb> [Matt Conway]
+add forwarded ip address <735c9c7> [Matt Conway]
+Merge branch 'master' of git@github.com:wr0ngway/rubber <4b1159b> [Matt Conway]
+fix apache roles <83f602c> [Matt Conway]
+better error message for missing image on destroy <53e8cf2> [Matt Conway]
+don't check status when getting single host <d01a79c> [Matt Conway]
+fix bad encoding char for gemcutter <c5290c2> [Matt Conway]
+
+1.0.2
+-----
+
+add some error checking <ad2c6a3> [Matt Conway]
+add error msg for auth failure <7ca7bec> [Matt Conway]
+fix setting of ip in zerigo <8ca947a> [Matt Conway]
+more todos <a13e97a> [Matt Conway]
+version bump <6c80a34> [Matt Conway]
+
+1.0.1
+-----
+
+Backed out guessing of appname
+
+1.0
+---
+
+Force depedency on amazon-ec2 v0.5.0
+Prevent ec2 disconnect while bundling a custom AMI
+Add some extra metadata to instance config
+Guess appname in rubber.yml (project root dirname)
+Configure https by default (snakeoil certs) for nginx, apache, web_tools
+Added role_dependencies to make it easier to aggregate modules/roles into a coherent whole
+Added apache version of webtools for people using passenger
+Added add/remove_role to cap tasks
+Added gemsource to rubber.yml and made task for it add/remove as neccessary
+Many other cleanups and refactorings
+Upgrade system packages on bootstrap
+Use a rubygems helper script to skip installing gems that are already installed
+Added isolation of security groups (multiple apps/environments in single account isolated from each other with security groups
+Added hook for installing gems configured in rails environment.rb
+Added support for Ruby Enterprise Edition
+Full working, consistent support for Passenger (complete_passenger_mysql)
+Fix variable interpolation (relative paths to other variables from within nested data structures in rubber*.yml)
+Consistent config (breaking config changes, many rubber*.yml variables renamed/moved)
+Added vulcanize helper script for running vulcanize generator outside of rails
+Use rubber with non-rails projects (RUBBER_* instead of RAILS_*)
+Use rubber as a gem (or as a plugin still)
+Add zerigo as a dns provider - has a free plan with rest api
+Massive refactoring and cleanup.
+  broke up recipes into multiple files.
+  Extracted ec2 logic into its own class (allows rubber to work with other cloud providers like maybe slicehost)
+
+Pre 1.0
+-------
+
+You probably shouldn't be using these versions
+

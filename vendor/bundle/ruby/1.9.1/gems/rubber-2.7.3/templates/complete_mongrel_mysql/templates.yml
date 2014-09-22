@@ -1,0 +1,6 @@
+description: A fairly complete and scalable mysql deployment setup
+dependent_templates:
+  - minimal_mysql
+  - monit
+  - collectd
+  - graphite

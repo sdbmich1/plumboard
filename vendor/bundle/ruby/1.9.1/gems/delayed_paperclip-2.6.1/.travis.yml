@@ -1,0 +1,27 @@
+language: ruby
+rvm:
+  - 2.0.0
+  - 1.9.3
+  - rbx-19mode
+
+matrix:
+  allow_failures:
+    - rvm: rbx-19mode
+
+services:
+  - redis
+
+script:
+- bundle exec rake clean test spec
+
+notifications:
+  email:
+    - james@jamesrgifford.com
+    - scott@artsicle.com
+
+gemfile:
+  - gemfiles/rails3.gemfile
+  - gemfiles/rails3_1.gemfile
+  - gemfiles/rails3_2.gemfile
+
+

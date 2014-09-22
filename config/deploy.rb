@@ -70,7 +70,7 @@ set :whenever_command, "bundle exec whenever"
 set :whenever_roles, :app 
 
 # set delayed job role
-set :delayed_job_server_role, :worker
+# set :delayed_job_server_role, :worker
 
 # Allow us to do N hosts at a time for all tasks - useful when trying
 # to figure out which host in a large set is down:

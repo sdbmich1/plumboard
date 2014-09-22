@@ -1,0 +1,73 @@
+require 'spec_helper'
+
+module Bullet
+  module Notification
+    describe Base do
+      subject { Base.new(Post, [:comments, :votes]) }
+
+      context "#title" do
+        it "should raise NoMethodError" do
+          expect { subject.title }.to raise_error(NoMethodError)
+        end
+      end
+
+      context "#body" do
+        it "should raise NoMethodError" do
+          expect { subject.body }.to raise_error(NoMethodError)
+        end
+      end
+
+      context "#whoami" do
+        it "should display user name" do
+          user = `whoami`.chomp
+          expect(subject.whoami).to eq("user: #{user}")
+        end
+      end
+
+      context "#body_with_caller" do
+        it "should return body" do
+          allow(subject).to receive(:body).and_return("body")
+          expect(subject.body_with_caller).to eq("body")
+        end
+      end
+
+      context "#standard_notice" do
+        it "should return title + body" do
+          allow(subject).to receive(:title).and_return("title")
+          allow(subject).to receive(:body).and_return("body")
+          expect(subject.standard_notice).to eq("title\nbody")
+        end
+      end
+
+      context "#full_notice" do
+        it "should return whoami + url + title + body_with_caller" do
+          allow(subject).to receive(:whoami).and_return("whoami")
+          allow(subject).to receive(:url).and_return("url")
+          allow(subject).to receive(:title).and_return("title")
+          allow(subject).to receive(:body_with_caller).and_return("body_with_caller")
+          expect(subject.full_notice).to eq("whoami\nurl\ntitle\nbody_with_caller")
+        end
+      end
+
+      context "#notify_inline" do
+        it "should send full_notice to notifier" do
+          notifier = double
+          allow(subject).to receive(:notifier).and_return(notifier)
+          allow(subject).to receive(:full_notice).and_return("full_notice")
+          expect(notifier).to receive(:inline_notify).with("full_notice")
+          subject.notify_inline
+        end
+      end
+
+      context "#notify_out_of_channel" do
+        it "should send full_out_of_channel to notifier" do
+          notifier = double
+          allow(subject).to receive(:notifier).and_return(notifier)
+          allow(subject).to receive(:full_notice).and_return("full_notice")
+          expect(notifier).to receive(:out_of_channel_notify).with("full_notice")
+          subject.notify_out_of_channel
+        end
+      end
+    end
+  end
+end
