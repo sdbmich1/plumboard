@@ -54,6 +54,7 @@ describe PicturesController do
       log_in_test_user
       @listing = stub_model(TempListing, :id=>1, site_id: 1, seller_id: 1, pixi_id: '1', title: "Guitar for Sale", description: "Guitar for Sale")
       TempListing.stub!(:find_by_pixi_id).and_return( @listing )
+      @listing.stub!(:reload).and_return(@listing)
     end
 
     def do_delete
