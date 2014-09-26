@@ -1,4 +1,4 @@
-require 'spec_helper'
+ require 'spec_helper'
 
 describe Listing do
   before(:each) do
@@ -36,11 +36,13 @@ describe Listing do
   it { should respond_to(:year_built) }
   it { should respond_to(:pixan_id) }
   it { should respond_to(:job_type_code) }
+  it { should respond_to(:event_type_code) }
   it { should respond_to(:explanation) }
 
   it { should respond_to(:user) }
   it { should respond_to(:site) }
   it { should respond_to(:posts) }
+  it { should respond_to(:conversations) }
   it { should respond_to(:invoices) }
   it { should respond_to(:site_listings) }
   it { should respond_to(:transaction) }
@@ -48,6 +50,8 @@ describe Listing do
   it { should respond_to(:contacts) }
   it { should respond_to(:category) }
   it { should respond_to(:job_type) }
+  it { should respond_to(:event_type) }
+  it { should belong_to(:event_type).with_foreign_key('event_type_code') }
   it { should respond_to(:comments) }
   it { should respond_to(:pixi_likes) }
   it { should have_many(:pixi_likes).with_foreign_key('pixi_id') }
@@ -435,6 +439,7 @@ describe Listing do
     before do
       @pixter = create :pixi_user, user_type_code: 'PT'
       @admin = create :admin, confirmed_at: Time.now
+      @support = create :support, confirmed_at: Time.now
       @user2 = FactoryGirl.create(:pixi_user, first_name: 'Lisa', last_name: 'Harden', email: 'lisaharden@pixitest.com') 
       @listing = FactoryGirl.create(:listing, seller_id: @user.id, pixan_id: @pixter.id) 
       @sold = FactoryGirl.create(:listing, seller_id: @user.id, pixan_id: @pixter.id, status: 'sold') 
@@ -444,6 +449,7 @@ describe Listing do
       @listing.editable?(@pixter).should be_true 
       @listing.editable?(@user).should be_true 
       @listing.editable?(@admin).should be_true 
+      @listing.editable?(@support).should be_true 
     end
 
     it "sold pixi is not editable" do 
@@ -717,7 +723,7 @@ describe Listing do
 
     it "is an event" do
       @listing.category_id = @cat.id
-      @listing.event?.should be_true 
+      @listing.event?.should be_true
     end
   end
 
@@ -916,7 +922,8 @@ describe Listing do
 
     it "has messages" do
       @recipient = FactoryGirl.create :pixi_user
-      @post = @listing.posts.create user_id: @user.id, recipient_id: @recipient.id
+      @conversation = @listing.conversations.create FactoryGirl.attributes_for :conversation, user_id: @user.id, recipient_id: @recipient.id
+      @post = @conversation.posts.create FactoryGirl.attributes_for :post, user_id: @user.id, recipient_id: @recipient.id, conversation_id: @conversation.id, pixi_id: @listing.pixi_id
       expect(@listing.msg_count).to eq(1)
     end
   end
@@ -1203,6 +1210,93 @@ describe Listing do
       @listing.save
       Listing.close_pixis
       @listing.reload.status.should == 'closed'
+    end
+  end
+
+  describe '.event_type' do
+    before do
+        @etype = FactoryGirl.create(:event_type, code: 'party')
+        @listing1 = FactoryGirl.create(:listing)
+        @listing1.category_id = 'event'
+        @listing1.event_type_code = 'party'
+    end
+    
+    it "should be an event" do
+        !(@listing1.event?.nil?)
+    end
+    
+    it "should respond to .event_type" do
+        @listing1.event_type == 'party'
+    end
+    
+    it "etype should respond to listings.first" do
+        !(@etype.listings.first.nil?)
+    end
+  end
+  
+  describe 'async_send_notifications' do
+
+    def send_mailer model, msg
+      @mailer = mock(UserMailer)
+      UserMailer.stub!(:delay).and_return(@mailer)
+      @mailer.stub(msg.to_sym).with(model).and_return(@mailer)
+    end
+
+    it 'adds abp pixi points' do
+      create(:listing, seller_id: @user.id)
+      expect(@user.user_pixi_points.count).not_to eq(0)
+      @user.user_pixi_points.find_by_code('abp').code.should == 'abp'
+      @user.user_pixi_points.find_by_code('app').should be_nil
+    end
+
+    it 'adds app pixi points' do
+      @category = create(:category, pixi_type: 'premium')
+      create(:listing, category_id: @category.id, seller_id: @user.id)
+      expect(@user.user_pixi_points.count).not_to eq(0)
+      @user.user_pixi_points.find_by_code('app').code.should == 'app'
+    end
+
+    it 'delivers the submitted pixi message' do
+      listing = create(:listing, seller_id: @user.id)
+      send_mailer listing, 'send_approval'
+    end
+
+    it 'removes temp_listing after create' do
+      temp_listing = create(:temp_listing, seller_id: @user.id)
+      pid = temp_listing.pixi_id
+      listing = create(:listing, seller_id: @user.id, pixi_id: temp_listing.pixi_id)
+      expect(TempListing.where(pixi_id: pid).count).to eq 0
+    end
+
+    it 'delivers pixi message' do
+      create :admin, email: PIXI_EMAIL
+      listing = create(:listing, seller_id: @user.id)
+      send_mailer listing, 'send_approval'
+      expect(Post.all.count).not_to eq(0)
+      SystemMessenger.stub!(:send_system_message).with(@user, listing, 'approve').and_return(true)
+    end
+  end
+
+  describe 'set_invoice_status' do
+    before do 
+      @buyer = FactoryGirl.create(:pixi_user)
+      @buyer2 = FactoryGirl.create(:pixi_user)
+      @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id) 
+      @invoice2 = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer2.id) 
+    end
+
+    it 'sets invoice status to removed' do
+      expect {
+        create(:saved_listing, user_id: @buyer.id, pixi_id: @listing.pixi_id); sleep 1
+        @listing.status = 'removed'
+        @listing.save
+      }.to change{ Invoice.where(:status => 'removed').count }.by(2)
+    end
+
+    it 'does not set invoice status' do
+      @listing.status = 'sold'
+      @listing.save
+      expect(@invoice.status).not_to eq 'removed'
     end
   end
 end

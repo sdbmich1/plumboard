@@ -3,11 +3,13 @@ class Listing < ListingParent
   include ThinkingSphinx::Scopes
 
   before_create :activate
-  after_commit :send_saved_pixi_removed, :sync_saved_pixis, :on => :update
+  after_commit :async_send_notification, :on => :create
+  after_commit :send_saved_pixi_removed, :sync_saved_pixis, :set_invoice_status, :on => :update
 
   attr_accessor :parent_pixi_id
 
   belongs_to :buyer, foreign_key: 'buyer_id', class_name: 'User'
+  has_many :conversations, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :posts, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :invoices, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :comments, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
@@ -131,7 +133,7 @@ class Listing < ListingParent
 
   # return msg count 
   def msg_count
-    posts.size rescue 0
+    conversations.first.posts.size rescue 0
   end
 
   # return whether pixi is liked
@@ -161,7 +163,7 @@ class Listing < ListingParent
 
   # return whether region has enough pixis
   def self.has_enough_pixis? cat, loc, pg=1
-    Listing.get_by_city(cat, loc, pg).size >= MIN_PIXI_COUNT rescue false
+    get_by_city(cat, loc, pg).size >= MIN_PIXI_COUNT rescue false
   end
 
   # return wanted users 
@@ -177,12 +179,40 @@ class Listing < ListingParent
 
   # sends email to users who saved the listing when listing is removed
   def send_saved_pixi_removed
-    saved_listings = SavedListing.find(:all, :conditions => ["pixi_id = ?", pixi_id]) rescue nil
-    closed = ['closed', 'sold', 'removed', 'inactive']
+    closed = ['closed', 'sold', 'removed', 'inactive', 'expired']
+    saved_listings = SavedListing.where(pixi_id: pixi_id) rescue nil
     saved_listings.each do |saved_listing|
       if closed.detect {|closed| saved_listing.status == closed }
-          UserMailer.delay.send_saved_pixi_removed(saved_listing) unless self.buyer_id == saved_listing.user_id
+        UserMailer.delay.send_saved_pixi_removed(saved_listing) unless self.buyer_id == saved_listing.user_id
       end
+    end
+  end
+
+  # sends notifications after pixi is posted to board
+  def async_send_notification 
+    # update points
+    ptype = self.premium? ? 'app' : 'abp'
+    PointManager::add_points self.user, ptype if self.user
+
+    # send system message to user
+    SystemMessenger::send_message self.user, self, 'approve' rescue nil
+
+    # remove temp pixi
+    delete_temp_pixi self.pixi_id
+
+    # send approval message
+    UserMailer.delay.send_approval(self)
+  end
+
+  # remove temp pixi
+  def delete_temp_pixi pid
+    TempListing.destroy_all(pixi_id: pid) rescue nil
+  end
+
+  # toggle invoice status on removing pixi from board
+  def set_invoice_status
+    if %w(expired removed inactive closed).detect { |x| x == self.status }
+      Invoice.where("pixi_id = ? AND status = ?", self.pixi_id, 'unpaid').update_all(status: 'removed')
     end
   end
 

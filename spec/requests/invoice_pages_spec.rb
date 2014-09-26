@@ -236,12 +236,14 @@ feature "Invoices" do
     it 'removes invoice', js: true  do
       page.should have_link("#{@invoice.id}", href: invoice_path(@invoice)) 
       visit invoice_path(@invoice)
-      page.should have_link('Remove', href: invoice_path(@invoice)) 
+      page.should have_link('Remove', href: remove_invoice_path(@invoice)) 
       click_remove_cancel
-      page.should have_link('Remove', href: invoice_path(@invoice)) 
+      page.should have_link('Remove', href: remove_invoice_path(@invoice)) 
 
       click_remove_ok
+      sleep 2
       page.should_not have_link("#{@invoice.id}", href: invoice_path(@invoice)) 
+      expect(Invoice.find(@invoice.id).status).to eq('removed')
     end
   end
 
@@ -359,6 +361,26 @@ feature "Invoices" do
 	  click_button 'Send'
           page.should have_content "Sales tax must be less than or equal to 100" 
         end
+        
+        it 'should not accept bad shipping amt' do
+	  select_buyer
+	  select_pixi
+	  set_buyer_id
+          fill_in 'inv_price', with: "40"
+          fill_in 'ship_amt', with: "R0"
+	  click_button 'Send'
+          page.should have_content "is not a number" 
+        end
+        
+        it 'does not accept invalid shipping amt' do
+	  select_buyer
+	  select_pixi
+	  set_buyer_id
+          fill_in 'inv_price', with: "40"
+          fill_in 'ship_amt', with: 5000
+	  click_button 'Send'
+          page.should have_content " must be less than or equal to" 
+        end
       end
 
       describe 'valid invoices', js: true do
@@ -382,6 +404,22 @@ feature "Invoices" do
 	  }.to change(Invoice, :count).by(1)
 
 	  page.should have_content "Status" 
+	  page.should have_content "Bob Jones" 
+        end
+        
+        it 'accepts invoice w/ shipping' do
+	  select_buyer
+	  select_pixi
+	  set_buyer_id
+          fill_in 'inv_price', with: "40"
+          fill_in 'ship_amt', with: "9.99"
+	  expect { 
+	    click_button 'Send'; sleep 3
+	  }.to change(Invoice, :count).by(1)
+
+	  page.should have_content "Status" 
+	  page.should have_content "Shipping" 
+	  page.should have_content "9.99" 
 	  page.should have_content "Bob Jones" 
         end
 

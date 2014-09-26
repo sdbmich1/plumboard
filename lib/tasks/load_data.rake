@@ -58,7 +58,7 @@ end
 
 def update_pixis
   pixis = Listing.active
-  pixis.map! {|p| p.end_date = Time.now+30.days; p.job_type_code = 'FT' if p.job?; p.save!}
+  pixis.map! {|p| p.end_date = Time.now+30.days unless p.event?; p.job_type_code = 'FT' if p.job?; p.save!}
 end
 
 def updateCategoryType

@@ -2,7 +2,7 @@ require 'rails_rinku'
 require 'digest/md5'
 class ListingParent < ActiveRecord::Base
   resourcify
-  include Area, ResetDate, LocationManager, PixiPostsHelper
+  include Area, ResetDate, LocationManager, PixiPostsHelper, NameParse
   self.abstract_class = true
   self.per_page = 20
 
@@ -16,7 +16,7 @@ class ListingParent < ActiveRecord::Base
 
   attr_accessible :buyer_id, :category_id, :description, :title, :seller_id, :status, :price, :show_alias_flg, :show_phone_flg, :alias_name,
   	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id, :year_built, :pixan_id, 
-	:job_type_code, :edited_by, :edited_dt, :post_ip, :lng, :lat, :event_start_date, :event_end_date, :compensation, 
+	:job_type_code, :event_type_code, :edited_by, :edited_dt, :post_ip, :lng, :lat, :event_start_date, :event_end_date, :compensation,
 	:event_start_time, :event_end_time, :explanation, :contacts_attributes
 
   belongs_to :user, foreign_key: :seller_id
@@ -24,6 +24,7 @@ class ListingParent < ActiveRecord::Base
   belongs_to :category
   belongs_to :transaction
   belongs_to :job_type, primary_key: 'code', foreign_key: 'job_type_code'
+  belongs_to :event_type, primary_key: 'code', foreign_key: 'event_type_code'
 
   has_many :pictures, :as => :imageable, :dependent => :destroy
   accepts_nested_attributes_for :pictures, :allow_destroy => true
@@ -38,6 +39,7 @@ class ListingParent < ActiveRecord::Base
   validates :start_date, :presence => true
   validates :category_id, :presence => true
   validates :job_type_code, :presence => true, if: :job?
+  validates :event_type_code, :presence => true, if: :event?
   validates :price, allow_blank: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
     		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_PIXI_AMT.to_f }
   validate :must_have_pictures
@@ -219,7 +221,7 @@ class ListingParent < ActiveRecord::Base
 
   # verify pixi can be edited
   def editable? usr
-    (seller?(usr) || pixter?(usr) || usr.has_role?(:admin)) && !sold?
+    (seller?(usr) || pixter?(usr) || usr.has_role?(:admin)) || usr.has_role?(:support) && !sold?
   end
 
   # get category name for a listing
@@ -262,7 +264,7 @@ class ListingParent < ActiveRecord::Base
   def nice_title prcFlg=true
     unless title.blank?
       str = price.blank? || price == 0 ? '' : ' - $' + price.to_i.to_s
-      tt = title.titleize.html_safe rescue title 
+      tt = prcFlg ? title.split(' ').map(&:capitalize).join(' ').html_safe : title.titleize.html_safe rescue title 
       if prcFlg
         title.index('$') ? tt : tt + str 
       else
@@ -274,13 +276,13 @@ class ListingParent < ActiveRecord::Base
   end
 
   # short title
-  def short_title
-    nice_title.length < 14 ? nice_title : nice_title[0..14] + '...' rescue nil
+  def short_title val=14
+    nice_title.length < val ? nice_title : nice_title[0..val] + '...' rescue nil
   end
 
   # med title
   def med_title
-    nice_title.length < 25 ? nice_title : nice_title[0..25] + '...' rescue nil
+    short_title 25
   end
 
   # set end date to x days after start to denote when listing is no longer displayed on network
@@ -329,7 +331,6 @@ class ListingParent < ActiveRecord::Base
 
     unless listing
       attr = self.attributes  # copy attributes
-
       # remove protected attributes
       arr = tmpFlg ? %w(id created_at updated_at parent_pixi_id) : %w(id created_at updated_at delta)
       arr.map {|x| attr.delete x}
@@ -355,7 +356,7 @@ class ListingParent < ActiveRecord::Base
       end
 
       # add photo
-      listing.pictures.build(:photo => pic.photo)
+      listing.pictures.build(:photo => pic.photo, :dup_flg => true)
     end
 
     # update fields

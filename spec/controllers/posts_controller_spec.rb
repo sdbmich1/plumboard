@@ -306,4 +306,68 @@ describe PostsController do
       end
     end
   end
+
+  describe 'PUT remove post' do
+     before (:each) do
+      Post.stub!(:find).and_return( @conversation )
+      @user = mock_model(User, :id => 3)
+      @post = mock_model(Post, :id => 1, :pixi_id => 1, :user_id => 3)
+    end
+
+    def do_remove
+      xhr :put, :remove, id: '1'
+    end
+
+    context "with valid params" do
+      before (:each) do
+        Post.stub!(:remove_post).and_return(true)
+      end
+
+      it "should load the requested post" do
+        Post.stub(:find) { @post }
+        do_remove
+      end
+
+      it "should update the requested post" do
+        Post.stub(:find).with("1") { @post }
+        Post.should_receive(:remove_post)
+        do_remove
+      end
+
+      it "should assign @post" do
+        Post.stub(:find) { mock_post }
+        do_remove
+        assigns(:post).should_not be_nil 
+      end
+
+      it "redirects to the updated conversations" do
+        do_remove
+        response.should be_redirect
+      end
+    end
+
+    context "with invalid params" do
+    
+      before (:each) do
+        Post.stub!(:remove_post).and_return(false)
+      end
+
+      it "should load the requested conversation" do
+        Post.stub(:find) { @post }
+        do_remove
+      end
+
+      it "should assign @conversation" do
+        Post.stub(:find) { mock_post(:update_attributes => false) }
+        do_remove
+        assigns(:post).should_not be_nil 
+      end
+
+      it "renders nothing" do 
+        Post.stub(:find) { mock_post(:update_attributes => false) }
+        do_remove
+        response.body.should == " "
+      end
+    end
+  end
 end

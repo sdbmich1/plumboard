@@ -18,6 +18,7 @@
 *.iml
 *~
 .idea/*
+.DS_Store
 
 # Ignore all sphinx files
 /config/*.conf

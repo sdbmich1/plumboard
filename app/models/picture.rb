@@ -1,5 +1,6 @@
 require "open-uri"
 require 'open_uri_redirections'
+require "nokogiri"
 class Picture < ActiveRecord::Base
   include NameParse
 
@@ -7,7 +8,7 @@ class Picture < ActiveRecord::Base
   DIRECT_UPLOAD_URL_FORMAT = %r{\Ahttps:\/\/#{S3FileField.config.bucket}\.#{S3FileField.config.region}\.amazonaws\.com\/(?<path>uploads\/.+\/(?<filename>.+))\z}.freeze
 
   attr_accessible :photo_file_name, :photo_content_type, :photo_file_size, :photo_updated_at, :photo, :processing, :photo_file_path,
-    :direct_upload_url
+    :direct_upload_url, :dup_flg
   
   has_attached_file :photo, {
        styles: { :large => "300x300>", :medium => "150x150>", :thumb => "100x100>", :small => "60x60>", :tiny => "30x30>" }
@@ -27,7 +28,7 @@ class Picture < ActiveRecord::Base
   # ...and perform after save in background
   after_save do |picture| 
     if picture.processing && process_locally?
-      Picture.processPhotoJob(picture)
+      processPhotoJob(picture)
     end
   end
 
@@ -66,7 +67,7 @@ class Picture < ActiveRecord::Base
   def transliterate_file_name
     extension = File.extname(photo_file_name).gsub(/^\.+/, '')
     filename = photo_file_name.gsub(/\.#{extension}$/, '')
-    self.photo.instance_write(:file_name, "#{NameParse::transliterate(filename)}.#{NameParse::transliterate(extension)}".gsub('//', '/'))
+    self.photo.instance_write(:photo_file_name, "#{NameParse::transliterate(filename)}.#{NameParse::transliterate(extension)}".gsub('//', '/'))
   end
 
   # generate styles (downloads original first)
@@ -106,7 +107,15 @@ class Picture < ActiveRecord::Base
 
   # load image from s3 upload folder
   def picture_from_url
-    self.photo = URI.parse(direct_upload_url) rescue nil
+    response = open(direct_upload_url) rescue nil
+    self.photo = URI.parse(direct_upload_url) if response rescue nil
+  end
+
+  # remove space from S3 direct_upload_url
+  def set_file_url url
+    extension = File.extname(url).gsub(/^\.+/, '')
+    filename = url.gsub(/\.#{extension}$/, '')
+    "#{NameParse::parse_url(filename)}.#{NameParse::transliterate(extension)}" rescue url
   end
 
   protected
@@ -147,7 +156,7 @@ class Picture < ActiveRecord::Base
 
   # remote processing
   def process_remotely?
-    !Rails.env.test? && USE_LOCAL_PIX.upcase == 'NO'
+    !Rails.env.test? && USE_LOCAL_PIX.upcase == 'NO' && imageable_type != 'User' && !dup_flg
   end
 
 end

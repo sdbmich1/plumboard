@@ -4,7 +4,8 @@ class PixiPostsController < ApplicationController
   before_filter :check_permissions, only: [:index]
   before_filter :set_params, only: [:create, :update]
   before_filter :set_zip, only: [:new]
-  before_filter :load_data, only: [:index, :seller, :pixter]
+  before_filter :load_data, only: [:index, :seller, :pixter, :pixter_report]
+  before_filter :init_vars, :ajax?, only: [:pixter_report]
   autocomplete :site, :name, full: true, scopes: [:cities]
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name
   include ResetDate
@@ -12,8 +13,7 @@ class PixiPostsController < ApplicationController
   layout :page_layout
 
   def new
-    @post = PixiPost.load_new @user, @zip
-    respond_with(@post)
+    respond_with(@post = PixiPost.load_new(@user, @zip))
   end
 
   def create
@@ -28,8 +28,7 @@ class PixiPostsController < ApplicationController
   end
 
   def edit
-    @post = PixiPost.find params[:id]
-    respond_with(@post)
+    respond_with(@post = PixiPost.find(params[:id]))
   end
 
   def update
@@ -44,13 +43,11 @@ class PixiPostsController < ApplicationController
   end
 
   def show
-    @post = PixiPost.find params[:id]
-    respond_with(@post)
+    respond_with(@post = PixiPost.find(params[:id]))
   end
 
   def index
-    @posts = PixiPost.get_by_status(@status).paginate(page: @page)
-    respond_with(@posts)
+    respond_with(@posts = PixiPost.get_by_status(@status).paginate(page: @page))
   end
 
   def destroy
@@ -59,7 +56,7 @@ class PixiPostsController < ApplicationController
       if @post.destroy  
         format.html { redirect_to seller_pixi_posts_path(status: 'active') }
         format.mobile { redirect_to seller_pixi_posts_path(status: 'active') }
-	format.json { head :ok }
+	      format.json { head :ok }
       else
         format.html { render action: :show, error: "PixiPost was not removed. Please try again." }
         format.mobile { render action: :show, error: "PixiPost was not removed. Please try again." }
@@ -69,34 +66,39 @@ class PixiPostsController < ApplicationController
   end
 
   def seller
-    @posts = PixiPost.get_by_seller(@user).get_by_status(@status).paginate(page: @page)
-    respond_with(@posts)
+    respond_with(@posts = PixiPost.get_by_seller(@user).get_by_status(@status).paginate(page: @page))
   end
 
   def pixter
-    @posts = PixiPost.get_by_pixter(@user).get_by_status(@status).paginate(page: @page)
-    respond_with(@posts)
+    respond_with(@posts = PixiPost.get_by_pixter(@user).get_by_status(@status).paginate(page: @page))
   end
 
   def reschedule
-    @post = PixiPost.reschedule params[:id]
-    respond_with(@post)
+    respond_with(@post = PixiPost.reschedule(params[:id]))
   end
 
   def pixter_report
-    @pixi_posts = PixiPost.pixter_report
-    respond_with(@pixi_posts)
+    @pixi_posts = PixiPost.pixter_report(@start_date, @end_date, @pixter_id).paginate(page: @page, per_page: 15)
+    respond_to do |format|
+      format.html
+      format.js
+      format.csv {send_data PixiPost.to_csv(@pixi_posts), filename: 'pixter_report_' + Date.today.to_s + '.csv'}
+    end
   end
   
   private
+
+  # sets pixter_id for pixter_report based on admin / pixter?
+  def set_pixter_id
+    (!@user.is_pixter?) ? params[:pixter_id] : @user.id
+  end
 
   def page_layout
     mobile_device? ? 'form' : 'application'
   end
 
   def load_data
-    @page = params[:page] || 1
-    @status = params[:status]
+    @page, @status = params[:page] || 1, params[:status]
   end
 
   def set_zip
@@ -120,5 +122,13 @@ class PixiPostsController < ApplicationController
     authorize! :manage, PixiPost
   end
 
+  def ajax?
+    @xhr_flag = request.xhr?
+  end
+
+  def init_vars
+    @date_range, @pixter_id = params[:date_range], set_pixter_id
+    @start_date, @end_date = ResetDate::get_date_range(@date_range)
+  end
 
 end

@@ -65,7 +65,7 @@ class Transaction < ActiveRecord::Base
 
   # add each transaction item
   def add_details item, qty, val
-    if item && qty && val
+    if item && val
       item_detail = self.transaction_details.build rescue nil
       item_detail.item_name, item_detail.quantity, item_detail.price = item, qty, val if item_detail
     end
@@ -220,7 +220,6 @@ class Transaction < ActiveRecord::Base
       self.status = 'approved'
       save!  
     else
-      Rails.logger.info 'Txn invalid no result = ' + self.errors.full_messages.to_s
       false
     end
   end

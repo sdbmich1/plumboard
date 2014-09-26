@@ -1,4 +1,15 @@
 GIT
+  remote: git://github.com/lastobelus/s3_file_field.git
+  revision: b7ebbbbae7c84435020dd509d5dec48d78d90c14
+  ref: b7ebbbbae7c84435020dd509d5dec48d78d90c14
+  specs:
+    s3_file_field (1.2.1)
+      coffee-rails (>= 3.2.1)
+      jquery-fileupload-rails (~> 0.4.1)
+      rails (>= 3.2)
+      sass-rails (>= 3.2.5)
+
+GIT
   remote: git://github.com/wr0ngway/graylog2_exceptions.git
   revision: 797924acd1aa89852605230812d8cfd27da90969
   specs:
@@ -178,7 +189,7 @@ GEM
     formatador (0.2.4)
     gelf (1.4.0)
       json
-    geocoder (1.2.4)
+    geocoder (1.1.8)
     graylog2-resque (0.5.1)
       gelf
       resque
@@ -394,11 +405,6 @@ GEM
     rubyzip (1.1.6)
     rvm-capistrano (1.4.1)
       capistrano (>= 2.0.0)
-    s3_file_field (1.2.1)
-      coffee-rails (>= 3.2.1)
-      jquery-fileupload-rails (~> 0.4.1)
-      rails (>= 3.2)
-      sass-rails (>= 3.2.5)
     sass (3.2.5)
     sass-rails (3.2.5)
       railties (~> 3.2.0)
@@ -519,7 +525,7 @@ DEPENDENCIES
   faraday (= 0.8.9)
   fb_graph (~> 1.8.4)
   gelf
-  geocoder (~> 1.2.4)
+  geocoder (~> 1.1.8)
   graylog2-resque
   graylog2_exceptions!
   guard-rspec (= 3.0.2)
@@ -552,9 +558,9 @@ DEPENDENCIES
   rspec-rails (= 2.13.0)
   rubber
   rvm-capistrano
-  s3_file_field
+  s3_file_field!
   sass-rails (= 3.2.5)
-  selenium-webdriver (= 2.43.0)
+  selenium-webdriver (~> 2.43.0)
   shoulda-matchers
   spork (~> 1.0rc)
   stripe

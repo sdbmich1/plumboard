@@ -44,6 +44,7 @@ function load_image_uploader() {
 	    goUpload = fileErrorHandler($progress, uploadFile.name + ' is too large, max size is 5MB');
 	  }
 
+	  // begin processing
 	  if (goUpload == true && j < maxFiles) {
             $progress.show('fast');
             j = j + 1;  // increment file counter
@@ -72,7 +73,7 @@ function load_image_uploader() {
 	  $('.progress .meter').css('width', progress + '%');
         },
         fail: function(e, data) {
-	  alert('File upload error: ' + data.failReason);
+	  alert('File upload error: ' + data.files[0].error);
           hideIndicator($progress);
         },
         stop: function(e, data) {

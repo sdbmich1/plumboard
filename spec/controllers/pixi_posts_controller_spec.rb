@@ -481,4 +481,32 @@ describe PixiPostsController do
       end
     end
   end
+
+  describe 'GET pixter_report' do
+    before(:each) do
+      @pixi_posts = mock("pixi_posts")
+      PixiPost.stub!(:get_by_type).and_return(@pixi_posts)
+      @pixi_posts.stub!(:paginate).and_return(@pixi_posts)
+      controller.stub_chain(:init_vars, :set_pixter_id).and_return(:success)
+      #@user.stub!(:is_pixter?).and_return(true)
+    end
+
+    def do_get
+      get :pixter_report
+    end
+
+    it "renders the :pixter_report view" do
+      do_get
+      response.should render_template :pixter_report
+    end
+
+    context 'when format is csv' do
+      let(:csv_string) { PixiPost.to_csv(csv_string) }
+
+      it 'should return a csv attachment' do
+        @controller.should_receive(:send_data).with(csv_string).and_return { @controller.render nothing: true }
+        get :pixter_report, format: :csv
+      end
+    end
+  end
 end

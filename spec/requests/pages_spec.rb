@@ -9,24 +9,26 @@ describe "Pages" do
     before :each do
       create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id ) 
       @loc = site.id
-      visit root_path 
     end
 
     it 'shows content' do
       set_const 0
+      stub_const('PIXI_CONTEST','YES')
+      visit root_path 
       page.should have_selector('title', text: full_title(''))
       page.should_not have_selector('title', text: '| Home')
       page.should_not have_link 'Sign Up', href: new_user_registration_path
       page.should have_content 'Already have an account?'
       page.should have_link 'Sign In', href: new_user_session_path
       page.should have_selector('#browse-home', href: categories_path(loc: @loc))
-      page.should have_selector('#home-polaroid', href: categories_path(loc: @loc))
+      page.should_not have_selector('#home-polaroid', href: categories_path(loc: @loc))
       page.should_not have_link 'Forgot password?'
       page.should have_link 'How It Works', href: howitworks_path
       page.should have_link 'Help', href: help_path
       page.should_not have_button 'Sign in'
       page.should_not have_link 'Sign up for free!', href: new_user_registration_path
       page.should have_link 'Connect via email', href: new_user_registration_path
+      page.should have_link 'Giveaway Rules', href: giveaway_path
       page.should have_link 'Connect via', href: user_omniauth_authorize_path(:facebook)
       page.should have_link 'About', href: about_path
       page.should have_link 'Privacy', href: privacy_path
@@ -40,9 +42,14 @@ describe "Pages" do
 
     it 'changes Browse path' do
       set_const 500
+      stub_const("PIXI_CONTEST",'NO')
+      visit root_path 
       expect(Listing.active.count).to eq(1)
+      expect(PIXI_CONTEST).to eq 'NO'
+      sleep 2
+      page.should_not have_link 'Giveaway Rules', href: giveaway_path
       page.should have_selector('#browse-home', href: local_listings_path(loc: @loc))
-      page.should have_selector('#home-polaroid', href: local_listings_path(loc: @loc))
+      page.should_not have_selector('#home-polaroid', href: local_listings_path(loc: @loc))
     end
   end
 
@@ -109,6 +116,18 @@ describe "Pages" do
       page.should_not have_link 'Forgot password?'
       page.should have_selector('.site-logo', href: root_path)
       page.should have_selector('title', text: full_title('Privacy'))
+      page.should_not have_selector('#browse-home', href: categories_path(loc: @loc))
+    end
+  end
+
+  describe "Giveaway page" do
+    before { visit giveaway_path } 
+    it 'shows content' do
+      page.should have_link 'Sign Up', href: new_user_registration_path
+      page.should have_link 'Sign In', href: new_user_session_path
+      page.should_not have_link 'Forgot password?'
+      page.should have_selector('.site-logo', href: root_path)
+      page.should have_selector('title', text: full_title('Giveaway Rules'))
       page.should_not have_selector('#browse-home', href: categories_path(loc: @loc))
     end
   end

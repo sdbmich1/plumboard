@@ -36,7 +36,7 @@ class Ability
         listing.try(:user) == user
       end
 
-      can [:crud, :sent], Invoice, :seller_id => user.id
+      can [:crud, :sent, :remove], Invoice, :seller_id => user.id
       can [:show, :received], Invoice, :buyer_id => user.id
 
       can :crud, BankAccount do |acct|
@@ -62,6 +62,11 @@ class Ability
       end
 
       if user.has_role? :pixter
+        can :manage_pixi_posts, User
+        can [:read, :update], PixiPost, status: 'scheduled'
+      end
+
+      if user.has_role? :support
         can :manage_pixi_posts, User
         can [:read, :update], PixiPost, status: 'scheduled'
       end

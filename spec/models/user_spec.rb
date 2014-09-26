@@ -52,6 +52,8 @@ describe User do
     it { should respond_to(:active_pixi_posts) }
     it { should respond_to(:pixan_pixi_posts) }
 
+    it { should have_many(:received_conversations).class_name('Conversation').with_foreign_key('recipient_id') }
+    it { should have_many(:sent_conversations).class_name('Conversation').with_foreign_key('user_id') }
     it { should have_many(:active_listings).class_name('Listing').with_foreign_key('seller_id')
       .conditions("status='active' AND end_date >= curdate()") }
     it { should have_many(:pixi_posted_listings).class_name('Listing').with_foreign_key('seller_id')
@@ -68,7 +70,7 @@ describe User do
     it { should respond_to(:preferences) }
     it { should have_many(:preferences).dependent(:destroy) }
     it { should accept_nested_attributes_for(:preferences).allow_destroy(true) }
-    it { should belong_to(:user_type).with_foreign_key('code') }
+    it { should belong_to(:user_type).with_foreign_key('user_type_code') }
 
     it { should respond_to(:unpaid_invoice_count) } 
     it { should respond_to(:has_unpaid_invoices?) } 
@@ -537,6 +539,24 @@ describe User do
     end
   end
 
+  describe 'is_member?' do
+    it { @user.is_member?.should be_true }
+
+    it 'is false' do
+      @pixter = FactoryGirl.create(:pixi_user, user_type_code: 'PT') 
+      expect(@pixter.is_member?).to be_false
+    end
+  end
+
+  describe 'is_support?' do
+    it { @user.is_support?.should be_false }
+
+    it 'is true' do
+      @support = FactoryGirl.create(:pixi_user, user_type_code: 'SP') 
+      expect(@support.is_support?).to be_true
+    end
+  end
+
   describe "listing associations" do
     before do
       @buyer = FactoryGirl.create(:pixi_user) 
@@ -660,13 +680,13 @@ describe User do
     let(:listing) { FactoryGirl.create :listing, seller_id: @user.id }
     let(:newer_listing) { FactoryGirl.create :listing, seller_id: @user.id }
     let(:recipient) { FactoryGirl.create :pixi_user, first_name: 'Wilson' }
-
+    let(:conversation) { FactoryGirl.create :conversation, user: @user, recipient: recipient, listing: listing, pixi_id: listing.pixi_id }
     let!(:older_post) do 
-      FactoryGirl.create(:post, user: @user, recipient: recipient, listing: listing, pixi_id: listing.pixi_id, created_at: 1.day.ago)
+      FactoryGirl.create(:post, user: @user, recipient: recipient, listing: listing, pixi_id: listing.pixi_id, created_at: 1.day.ago, conversation_id: conversation.id, conversation: conversation)
     end
 
     let!(:newer_post) do
-      FactoryGirl.create(:post, user: @user, recipient: recipient, listing: newer_listing, pixi_id: newer_listing.pixi_id, created_at: 1.hour.ago)
+      FactoryGirl.create(:post, user: @user, recipient: recipient, listing: newer_listing, pixi_id: newer_listing.pixi_id, created_at: 1.hour.ago, conversation_id: conversation.id, conversation: conversation)
     end
 
     it "should have the right posts in the right order" do
@@ -700,6 +720,38 @@ describe User do
       User.destroy_all
       csv = User.to_csv
       csv.should include headers.join(',')
+    end
+  end
+
+  describe "get conversations" do
+    before(:each) do
+      @user = FactoryGirl.create :pixi_user
+      @recipient = FactoryGirl.create :pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tom.davis@pixitest.com'
+      @buyer = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Smith', email: 'jack.smith99@pixitest.com'
+      @listing = FactoryGirl.create :listing, seller_id: @user.id, title: 'Big Guitar'
+      @listing2 = FactoryGirl.create :listing, seller_id: @recipient.id, title: 'Small Guitar'
+      @conversation = @listing.conversations.create FactoryGirl.attributes_for :conversation, user_id: @recipient.id, recipient_id: @user.id
+      @conversation2 = @listing2.conversations.create FactoryGirl.attributes_for :conversation, user_id: @user.id, recipient_id: @recipient.id 
+      @post = @conversation.posts.create FactoryGirl.attributes_for :post, user_id: @recipient.id, recipient_id: @user.id, pixi_id: @listing.pixi_id
+      @post2 = @conversation2.posts.create FactoryGirl.attributes_for :post, user_id: @user.id, recipient_id: @recipient.id, pixi_id: @listing2.pixi_id
+
+    end
+
+    it "gets all conversations for user" do
+      expect(@user.get_conversations.count).to eql(2)
+    end
+
+    it "gets right sent conversations for user" do
+      expect(@user.get_conversations).to include(@conversation2)
+    end
+
+    it "gets right received conversations for user" do
+      expect(@user.get_conversations).to include(@conversation)
+    end
+
+    it "gets no conversations when there are none" do
+      Conversation.destroy_all
+      expect(@user.get_conversations).to eql([])
     end
   end
 end

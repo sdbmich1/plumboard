@@ -1,0 +1,61 @@
+<% cache conversation do %>
+<li id="<%= conversation.id %>">
+  <div class='row'>
+    <div class='span1'>
+      <%= render partial: 'shared/show_photo', locals: {model: conversation.other_user(@user), file_name: "myimage", psize: '80x80', 
+        display_cnt: 0 } %>
+    </div>
+    <div class='span2 no-left'>
+      <span class="<%= conversation.any_unread?(@user) ? 'font-bold' : '' %>"><%= conversation.other_user(@user).name %>
+        <% if conversation.posts.count > 1 %> (<%= conversation.posts.count %>) <% end %></span>
+    </div>
+    <div class='span3 no-left'>
+      <div>
+        <%= image_tag set_msg_icon(conversation.posts.first), class: 'left-form mright5' %>
+        <% if conversation.replied_conv?(@user) %> 
+          RE:
+        <% end %>
+        <%= link_to conversation.listing.title, conversation.listing, class: 'terms-link' %>
+      </div>
+    </div>
+    <div class='span3'>
+      <span class="dblock">
+        <span class="<%= conversation.any_unread?(@user) ? 'font-bold' : '' %>"><%= conversation.content_msg %></span>
+      </span>
+    </div>
+    <div class='span1'>
+      <span class="timestamp">
+        <% if conversation.create_dt.to_date == Date.today %>
+          <%= short_time(conversation.create_dt) %>
+        <% else %>
+          <%= short_date(conversation.create_dt) %>
+        <% end %>
+      </span>
+    </div>
+    <div class='span2'>
+      <table>
+        <td> 
+          <%= link_to image_tag('show-icon.png'), conversation_path(conversation.id, conversation: { pixi_id: conversation.pixi_id } ), 
+	   class: 'btn btn-small', id: 'conv-show-btn', title: 'Open' %>
+        </td>
+        <td>
+          <% if conversation.invoice != nil && conversation.invoice.status == 'unpaid' && conversation.invoice.buyer == @user %>
+            <%= link_to image_tag('pay-icon.png'), invoice_path(conversation.invoice.id), class: 'btn btn-small', id: 'conv-pay-btn', 
+	      title: 'Pay' %>
+          <% end %>
+        </td>
+        <td>
+          <% if conversation.can_bill? @user %> 
+            <%= link_to image_tag('bill-icon.png'), get_invoice_path, class: 'btn btn-small', id: 'conv-bill-btn', title: 'Bill' %>
+          <% end %>
+        </td>
+        <td>
+          <%= link_to image_tag('trash-icon.png'), remove_conversation_path(conversation.id), :method => :put, confirm: 
+	    'Delete this conversation?', class: 'btn btn-small', id: 'conv-trash-btn', title: 'Delete' %>
+        </td>
+      </table>
+    </div>
+  </div>
+  <div class='clear-all'></div>
+</li>
+<% end %>

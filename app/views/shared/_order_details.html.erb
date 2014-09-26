@@ -8,7 +8,7 @@
   	  <tr>
   		<td class='width320'><%= order['item'+i.to_s] %></td>
   		<td class="price"><%= order['quantity'+i.to_s] %></td>
-  		<td class="price"><%= number_to_currency(order['price'+i.to_s].to_f * order['quantity'+i.to_s].to_i) %></td>
+  		<td class="price"><%= ntc(order['price'+i.to_s].to_f * order['quantity'+i.to_s].to_i) %></td>
   	  </tr>
   	<% end %>
   <% end %>

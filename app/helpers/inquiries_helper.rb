@@ -12,7 +12,21 @@ module InquiriesHelper
 
   # set user info
   def get_info method
-    signed_in? ? @user.send(method) : ''
+    if action_name == 'new'
+      signed_in? ? @user.send(method) : ''
+    else
+      @inquiry.send(method) rescue ''
+    end
+  end
+
+  # get sender name
+  def get_sender_name
+    action_name == 'new' ? @user.name : @inquiry.user_name
+  end
+
+  # set inquiry path based on action name
+  def set_inquiry_path inquiry
+    action_name == 'closed' ? inquiry : inquiry_path(inquiry, source: @code)
   end
 
 end

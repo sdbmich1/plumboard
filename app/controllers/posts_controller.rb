@@ -38,14 +38,22 @@ class PostsController < ApplicationController
   end
 
   def create
-    @post = Post.new params[:post]
-    respond_with(@post) do |format|
-      if @post.save
-	reload_data params[:post][:pixi_id]
-        format.json { render json: {post: @post} }
-      else
-        format.json { render json: { errors: @post.errors.full_messages }, status: 422 }
+    @conversation = Conversation.find(:first, :conditions => ["pixi_id = ? AND recipient_id = ? AND user_id = ? AND status = ?",
+                                      params[:post][:pixi_id], params[:post][:recipient_id], params[:post][:user_id], 'active']) rescue nil
+      
+    if @conversation
+      @post = @conversation.posts.build params[:post]
+      respond_with(@post) do |format|
+        if @post.save
+          reload_data params[:post][:pixi_id]
+          format.json { render json: {post: @post} }
+        else
+          format.json { render json: { errors: @post.errors.full_messages }, status: 422 }
+        end
       end
+    else 
+      flash[:error] = "Could not create new message, please try again."
+      render :nothing => true
     end
   end
 
@@ -53,6 +61,18 @@ class PostsController < ApplicationController
     @post = Post.find params[:id]
     @post.destroy  
     respond_with(@post)
+  end
+
+  # soft deletes a post
+  def remove
+    @post = Post.find params[:id]
+
+    if Post.remove_post(@post, @user)
+      redirect_to conversations_path
+    else
+      flash[:error] = "Post was not removed. Please try again."
+      render :nothing => true
+    end
   end
    
   private

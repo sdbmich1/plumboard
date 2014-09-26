@@ -83,7 +83,7 @@ gem "aws-sdk", "~> 1.11.3"
 #gem 'aws-s3', :require => 'aws/s3'
 
 # picture upload for s3
-gem 's3_file_field'
+gem 's3_file_field', github: 'lastobelus/s3_file_field', ref: 'b7ebbbbae7c84435020dd509d5dec48d78d90c14'
 
 # To use debugger
 # gem 'debugger'
@@ -121,7 +121,7 @@ gem 'timezone', '~> 0.3.2'
 gem 'country_select'
 
 # add geocoder
-gem "geocoder", "~> 1.2.4"
+gem "geocoder", "~> 1.1.8"
 
 # add images
 gem "rmagick", "~> 2.13.1"
@@ -187,7 +187,7 @@ group :test do
   gem 'launchy'
   gem "database_cleaner"
   gem 'connection_pool'
-  gem 'selenium-webdriver', '2.43.0'
+  gem 'selenium-webdriver', '~> 2.43.0'
   gem 'shoulda-matchers'
   # gem "webmock", "~> 1.11.0"
   gem "fakeweb", "~> 1.3"

@@ -6,8 +6,8 @@ body {
 }
 
 .home-container {
-  height: 480px;
-  background: url("rsz_city-skyline-background.png");
+  height: 540px;
+  background: url("pxb_hp_image_final.jpg");
   background-size: 100% 100%;
 }
 
@@ -36,4 +36,12 @@ body {
 .div-blk-border {  
   border: 1px solid #000000; padding: 10px; margin-bottom: 10px; 
   background-color: #000000;
+}
+
+.div-clear-border {  
+  border: 1px; padding: 10px; margin-bottom: 10px; 
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, .65);
+  border-color: rgb(0, 0, 0);
+  border-color: rgba(0, 0, 0, .65);
 }

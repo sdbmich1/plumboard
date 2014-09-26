@@ -17,6 +17,9 @@ module CalcTotal
      
     # check for sales tax
     @amt += order[:sales_tax].to_f if order[:sales_tax]
+     
+    # check for shipping
+    @amt += order[:ship_amt].to_f if order[:ship_amt]
 
     # return total order amount
     grand_total

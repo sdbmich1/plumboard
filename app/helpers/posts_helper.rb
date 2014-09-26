@@ -2,7 +2,13 @@ module PostsHelper
 
   # add new post for listing
   def setup_post(listing)
-    listing ? listing.posts.build : Post.new
+
+    # create new conversation
+    conv = listing.conversations.create pixi_id: listing.pixi_id, user_id: @user.id, recipient_id: listing.seller_id
+
+    # new post
+    post = conv.posts.build 
+    return post
   end
 
   # toggle msg sender or recipient based on send flg
@@ -18,6 +24,15 @@ module PostsHelper
   # set read / unread icon
   def invoice_due? post
     post.due_invoice?(@user) && post.inv_msg? 
+  end
+
+  # set cache key based on invoice if found
+  def cache_key_for_posts post
+    if post.invoice
+      "posts/#{post.id}-#{post.id}-#{post.invoice.updated_at.to_i}"
+    else
+      post
+    end
   end
 
   # set mobile tab themes

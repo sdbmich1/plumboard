@@ -1,13 +1,13 @@
 module NameParse
 
-  def self.transliterate(str)
+  def self.transliterate str, hFlg=true 
     # Based on permalink_fu by Rick Olsen
 
     # Escape str by transliterating to UTF-8 with Iconv
     s = str.encode("UTF-8", :invalid => :replace, :undef => :replace, :replace => "")
 
     # Downcase string
-    s.downcase!
+    s.downcase! if hFlg
 
     # Remove apostrophes so isn't changes to isnt
     s.gsub!(/'/, '')
@@ -19,8 +19,19 @@ module NameParse
     s.strip!
 
     # Replace groups of spaces with single hyphen
-    s.gsub!(/\ +/, '-')
+    s.gsub!(/\ +/, '-') if hFlg
 
     return s
+  end
+
+  # parse url string for correctness
+  def self.parse_url str
+
+    # use array to substitute invalid url characters
+    r = [[' ','_'], ['.','_']]
+    r.each {|rep| str.gsub!(rep[0], rep[1])}
+
+    # return parsed url
+    str
   end
 end

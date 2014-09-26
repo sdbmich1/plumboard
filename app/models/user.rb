@@ -47,6 +47,8 @@ class User < ActiveRecord::Base
   # define message relationships
   has_many :posts, dependent: :destroy
   has_many :incoming_posts, :foreign_key => "recipient_id", :class_name => "Post", :dependent => :destroy
+  has_many :received_conversations, :foreign_key => "recipient_id", :class_name => "Conversation", :dependent => :destroy
+  has_many :sent_conversations, :foreign_key => "user_id", :class_name => "Conversation", :dependent => :destroy
 
   # define invoice relationships
   has_many :invoices, foreign_key: :seller_id, dependent: :destroy
@@ -337,7 +339,17 @@ class User < ActiveRecord::Base
   
   # check user is pixter
   def is_pixter?
-    user_type_code == 'PT' rescue false
+    user_type_code.upcase == 'PT' rescue false
+  end
+  
+  # check user is member
+  def is_member?
+    user_type_code.upcase == 'MBR' rescue false
+  end
+  
+  # check user is support
+  def is_support?
+    user_type_code.upcase == 'SP' rescue false
   end
 
   # display user type
@@ -382,6 +394,11 @@ class User < ActiveRecord::Base
     rescue nil
     end
   end
+
+  def get_conversations
+    sent_conversations + received_conversations rescue nil
+  end
+
 
   # set sphinx scopes
    sphinx_scope(:first_name) { 

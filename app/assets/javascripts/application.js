@@ -12,6 +12,7 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require jquery-ui
 //= require jquery.ui.all
 //= require jquery.bxslider.min
 //= require jquery.masonry.min
@@ -27,6 +28,7 @@
 //= require map
 //= require transaction
 //= require payment
+//= require pixter_report
 //= require si.files
 //= require autocomplete-rails
 //= require jquery.ui.autocomplete.html.js

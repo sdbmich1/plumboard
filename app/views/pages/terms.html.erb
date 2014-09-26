@@ -1,5 +1,1 @@
-<% provide(:title, 'Terms') %>
-<%= render partial: 'shared/pg_header', locals: { linkFlg: true } %>
-<%= content_for :content do %>
-  <%= render :file => 'public/pixi_terms', :formats => [:html], :layout => nil %>
-<% end %>
+<%= render partial: 'site_details', locals: { page_title: 'Terms', file_name: 'public/pixi_terms' } %>

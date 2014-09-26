@@ -10,7 +10,7 @@ var pathName = "<%= set_path_parse %>"
 <% end %>  
 
 // update next page link
-<% if model.next_page %>
+<% if model && model.next_page %>
   $("#px-nav").html("<%= escape_javascript(render(partial: "#{set_init_next_page_path}")) %>");
 <% else %>
   $("#px-nav").remove();

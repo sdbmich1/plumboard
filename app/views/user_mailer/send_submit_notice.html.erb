@@ -13,10 +13,10 @@
     <% else %>
         Seller <%= @listing.seller_name %> has submitted a pixi
     <% end %>
-
-             for approval.
+        for approval.
     </span>
-	<br /><br />
+	<br />
+    <br />
 
     <%= link_to("Let's get on it", get_pending_listing_url , html_options = {}) %>
     <br />

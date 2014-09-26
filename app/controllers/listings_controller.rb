@@ -1,16 +1,16 @@
 require 'will_paginate/array' 
 class ListingsController < ApplicationController
-  include PointManager, LocationManager, NameParse
-  before_filter :authenticate_user!, except: [:local, :category]
-  before_filter :load_data, only: [:index, :seller, :category, :show, :local, :invoiced]
+  include PointManager, LocationManager
+  before_filter :authenticate_user!, except: [:local, :category, :show]
+  before_filter :load_data, only: [:index, :seller, :category, :show, :local]
   before_filter :load_pixi, only: [:destroy, :pixi_price, :update]
   before_filter :load_city, only: [:local, :category]
-  after_filter :add_points, only: [:show]
+  after_filter :add_points, :set_session, only: [:show]
   respond_to :html, :json, :js, :mobile
   layout :page_layout
 
   def index
-    respond_with(@listings = Listing.check_category_and_location(@status, @cat, @loc, @page).paginate(page: @page, per_page: 15))
+    respond_with(@listings = Listing.active_without_job_type.paginate(page: @page, per_page: 15))
   end
 
   def show
@@ -23,7 +23,7 @@ class ListingsController < ApplicationController
 
   def update
     if @listing.update_attributes(explanation: params[:reason], status: 'removed')
-      redirect_to category_listings_path(loc: @listing.site_id, cid: @listing.category_id)
+      redirect_to get_root_path
     else
       render action: :show, error: "Pixi was not removed. Please try again."
     end
@@ -44,11 +44,11 @@ class ListingsController < ApplicationController
   end
 
   def seller
-    respond_with(@listings = Listing.active_without_job_type.get_by_seller(@user).paginate(page: @page))
+    respond_with(@listings = Listing.active_without_job_type.get_by_seller(@user, is_admin?).paginate(page: @page))
   end
 
   def sold
-    respond_with(@listings = Listing.get_by_seller(@user).get_by_status('sold').paginate(page: @page))
+    respond_with(@listings = Listing.get_by_seller(@user, is_admin?).get_by_status('sold').paginate(page: @page))
   end
 
   def wanted
@@ -73,15 +73,10 @@ class ListingsController < ApplicationController
     respond_with(@price)
   end
 
-  def invoiced
-    respond_with(@listings = Listing.check_invoiced_category_and_location(@cat, @loc, @page).paginate(page: @page))
-  end
-
   protected
 
   def load_data
     @page, @cat, @loc, @loc_name = params[:page] || 1, params[:cid], params[:loc], params[:loc_name]
-    @status = NameParse::transliterate params[:status] if params[:status]
     @loc_name ||= LocationManager::get_loc_name(request.remote_ip, @loc || @region, @user.home_zip)
     @loc ||= LocationManager::get_loc_id(@loc_name, @user.home_zip)
   end
@@ -105,5 +100,13 @@ class ListingsController < ApplicationController
 
   def load_city
     @listings = Listing.get_by_city @cat, @loc, @page
+  end
+ 
+  def is_admin?
+    @user.user_type_code == 'AD' rescue false
+  end
+
+  def set_session
+    session[:back_to] = request.path unless signed_in?
   end
 end

@@ -1,0 +1,21 @@
+<% if @post.errors.any? %>
+  $("#notice").hide(300);
+
+  if($('#post-list-item').length == 0) {
+    $("#form_errors").html("<%= escape_javascript( render(partial: 'shared/error_messages', locals: {target: @post})) %>"); }
+<% else %>
+  $("#notice").html("<%= escape_javascript(flash[:notice])%>");
+  $("#notice").show(300);
+
+  // check for mobile
+  if($('#post-list-item').length > 0) {
+    goToUrl('/conversations', true);
+  }
+  else {
+    $("#post-frm").html("<%= escape_javascript( raw render(partial: "shared/show_conversation", locals: { sentFlg: false }) ) %>");
+    $("#msg-link").html("<%= escape_javascript( raw render(partial: 'shared/msg_indicator') ) %>");
+  }
+<% end %>
+
+$("#spinner").hide('fast'); 
+

@@ -5,13 +5,28 @@
     <th>Price</th>
   </tr>
   <% items.each do |item| %>
- 	 <% unless item.price.blank? %>
-  	  <tr>
-  		<td><%= item.item_name %></td>
-  		<td style='text-align: right'><%= item.quantity %></td>
-  		<td style='text-align: right'><%= number_to_currency(item.price.to_f * item.quantity.to_i) %></td>
-  	  </tr>
-  	 <% end %>
+    <% unless item.price.blank? %>
+      <tr>
+  	<td><%= item.item_name %></td>
+  	<td style='text-align: right'><%= item.quantity %></td>
+  	<td style='text-align: right'><div class='price'><%= ntc(item.price.to_f * item.quantity.to_i) %></div></td>
+      </tr>
+    <% end %>
+  <% end %>
+  <% if paid && invoice %>
+    <% unless invoice.sales_tax.blank? %>
+      <tr>
+  	<td>Sales Tax</td>
+  	<td style='text-align: right'><%= invoice.sales_tax %>%</td>
+  	<td style='text-align: right'><div class='price'><%= ntc(invoice.tax_total) %></div></td>
+      </tr>
+    <% end %>
+    <% unless invoice.ship_amt.blank? %>
+      <tr>
+  	<td>Shipping</td><td></td>
+  	<td style='text-align: right'><div class='price'><%= ntc(invoice.ship_amt) %></div></td>
+      </tr>
+    <% end %>
   <% end %>
   <%= render partial: 'shared/order_total', :locals=>{paid: paid, invoice: invoice} %>
 </table>

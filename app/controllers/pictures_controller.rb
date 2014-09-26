@@ -28,9 +28,9 @@ class PicturesController < ApplicationController
 
   def destroy
     @listing = TempListing.find_by_pixi_id params[:pixi_id]
-    if @listing.delete_photo(params[:id])
+    if @listing.delete_photo(params[:id], 0)
       flash.now[:notice] = "Successfully removed image."
-      @listing = TempListing.find_by_pixi_id params[:pixi_id]
+      @listing = @listing.pictures(true)
     end
   end
 
@@ -42,6 +42,6 @@ class PicturesController < ApplicationController
   end
 
   def file_name pic
-    pic.photo.exists? ? pic.photo.path(style) : pic.picture_from_url
+    pic.photo.exists? ? pic.photo.path(style) : pic.picture_from_url rescue 'rsz_pixi_top_logo.png'
   end
 end

@@ -24,12 +24,26 @@ Plumboard::Application.routes.draw do
     end
     member do
       get 'pay'
+      put 'remove'
     end
   end
 
   resources :posts, except: [:new, :edit, :update] do
+    member do
+      put 'remove'
+    end
     collection do
       get 'unread', 'sent', 'mark'
+      post 'reply'
+    end
+  end
+
+  resources :conversations, except: [:new, :edit, :update] do
+    member do
+      put 'remove'
+    end
+    collection do
+      get 'sent'
       post 'reply'
     end
   end
@@ -142,6 +156,7 @@ Plumboard::Application.routes.draw do
   get "/terms", to: "pages#terms" 
   get "/howitworks", to: "pages#howitworks" 
   get "/welcome", to: "pages#welcome" 
+  get "/giveaway", to: "pages#giveaway" 
   get "/support", to: "inquiries#support" 
   get "/contact", to: "inquiries#new" 
   get '/system/:class/:attachment/:id/:style/:filename', :to => 'pictures#asset'
@@ -158,9 +173,9 @@ Plumboard::Application.routes.draw do
   get "/settings/password", to: "settings#password" 
 
   # specify routes for devise user after sign-in
-  namespace :user do
-    root :to => "users#show", :as => :user_root
-  end
+  # namespace :user do
+  #  root :to => "users#show", :as => :user_root
+  # end
 
   # specify root route based on user sign in status
   root to: 'listings#local', :constraints => lambda {|r| r.env["warden"].authenticate? }

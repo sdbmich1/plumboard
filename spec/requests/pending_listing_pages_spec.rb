@@ -52,6 +52,13 @@ describe "PendingListings", :type => :feature do
       page.should have_selector('#photo')
       page.should have_content 'Build Pixi'
       page.should have_button 'Next'
+      expect{
+	      fill_in 'Description', with: "Acoustic bass"
+              click_button 'Next'
+      }.to change(TempListing,:count).by(0)
+      page.should have_content 'Review Your Pixi'
+      page.should_not have_content @user.name
+      page.should have_content listing.seller_name
     end
 
     it 'Approves an order' do

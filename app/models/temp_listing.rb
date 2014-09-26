@@ -21,6 +21,12 @@ class TempListing < ListingParent
 
   # set fields upon creation
   def set_flds
+    # parse non-ascii chars
+    encoding_options = {:invalid => :replace, :undef => :replace, :replace => '', :UNIVERSAL_NEWLINE_DECORATOR => true}
+    self.title.encode!(Encoding.find('ASCII'), encoding_options)
+    self.description.encode!(Encoding.find('ASCII'), encoding_options)
+
+    # set as new if empty
     self.status = 'new' if status.blank?
 
     # generate unique pixi key

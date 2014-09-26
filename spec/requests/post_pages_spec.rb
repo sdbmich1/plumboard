@@ -16,9 +16,9 @@ feature "Messages" do
     sleep 3
   end
 
-  def add_invoice
+  def add_invoice code='unpaid'
     @seller = FactoryGirl.create(:pixi_user, first_name: 'Kim', last_name: 'Harris', email: 'kimmy@pixitest.com')
-    @invoice = @seller.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @user.id)
+    @invoice = @seller.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @user.id, status: code)
   end
    
   def add_post
@@ -51,8 +51,8 @@ feature "Messages" do
   describe 'Received messages' do
     before :each do
       add_post
-      visit listings_path 
-      click_on 'notice-btn'
+      visit posts_path 
+      # click_on 'notice-btn'
     end
 
     it 'shows content' do
@@ -93,7 +93,35 @@ feature "Messages" do
 
       it "opens pay invoice page" do
         click_on 'Pay'
-        page.should have_content 'Total Due'
+        page.should have_content 'Amount Due'
+      end
+    end
+     
+    describe 'removed invoice' do
+      before :each do
+        add_post
+        add_invoice
+        @listing.status = 'removed'
+	@listing.save; sleep 2
+	visit posts_path
+      end
+
+      it "does not show pay button for removed pixi" do
+	expect(Invoice.where(status: 'removed').count).to eq 1
+        page.should_not have_button('Pay')
+      end
+    end
+     
+    describe 'paid invoice' do
+      before :each do
+        add_post
+        add_invoice 'paid'
+	visit posts_path
+      end
+
+      it "does not show pay button for paid pixi" do
+	expect(Invoice.where(status: 'paid').count).to eq 1
+        page.should_not have_button('Pay')
       end
     end
   end

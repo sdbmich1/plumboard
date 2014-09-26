@@ -12,6 +12,7 @@
   <%= hidden_field_tag 'quantity1', invoice.quantity %>
   <%= hidden_field_tag 'sales_tax', invoice.tax_total %>
   <%= hidden_field_tag 'price1', invoice.price %>
+  <%= hidden_field_tag 'ship_amt', invoice.ship_amt %>
   <%= hidden_field_tag 'inv_total', invoice.amount %>
   <%= hidden_field_tag 'transaction_type', 'invoice' %>
   <%= submit_tag('Pay', class: pay_btn_cls, id: 'pay-btn') %>

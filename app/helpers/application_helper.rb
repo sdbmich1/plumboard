@@ -44,7 +44,7 @@ module ApplicationHelper
       when 'listings'; render 'shared/search' if action_name != 'show'
       when 'posts'; render 'shared/search_posts'
       when 'users'; render 'shared/search_users'
-      when 'pending_listings'; render 'shared/search_pending'
+      when 'pending_listings'; render 'shared/search' if action_name != 'show'
     end
   end
 
@@ -116,7 +116,8 @@ module ApplicationHelper
       when 'My Pixis'; render 'shared/navbar_mypixis'
       when 'My Accounts'; render 'shared/navbar_accounts'
       when 'Pending Orders'; render 'shared/navbar_pending'
-      when 'Messages'; render 'shared/navbar_posts'
+      # when 'Messages'; render 'shared/navbar_posts'
+      when 'Messages'; render 'shared/navbar_conversations'
       when 'Home'; render 'shared/navbar_home', locals: { loc_name: @loc_name }
       when 'PixiPosts'; render 'shared/navbar_pixi_post'
       when 'My PixiPosts'; render 'shared/navbar_pixi_post'
@@ -215,7 +216,7 @@ module ApplicationHelper
   # build dynamic cache key for pixi show page
   def cache_key_for_pixi_item(listing)
     path = is_pending?(listing) ? 'pending_listings' : %w(new edit).detect {|x| x == listing.status}.blank? ? 'listings' : 'temp_listings'
-    path + "/#{listing.pixi_id}-user-#{@user.id}-time-{Time.now}"
+    path + "/#{listing.pixi_id}-#{listing.title}-#{listing.updated_at.to_i}-user-#{@user.id}"
   end
 
   # check for menu display of footer items
@@ -230,6 +231,11 @@ module ApplicationHelper
 
   # check if image exists if not render uploaded image
   def get_pixi_image pic, size='original'
-    pic.photo.exists? ? pic.photo.url(size.to_sym) : use_remote_pix? ? pic.picture_from_url : nil
+    pic.photo.exists? ? pic.photo.url(size.to_sym) : use_remote_pix? ? pic.picture_from_url : 'rsz_pixi_top_logo.png'
+  end
+
+  # check for model errors
+  def check_errors? model
+    model.errors.any? rescue false
   end
 end
