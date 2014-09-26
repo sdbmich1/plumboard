@@ -121,7 +121,7 @@ gem 'timezone', '~> 0.3.2'
 gem 'country_select'
 
 # add geocoder
-gem "geocoder", "~> 1.1.8"
+gem "geocoder", "~> 1.2.4"
 
 # add images
 gem "rmagick", "~> 2.13.1"
@@ -187,7 +187,7 @@ group :test do
   gem 'launchy'
   gem "database_cleaner"
   gem 'connection_pool'
-  gem 'selenium-webdriver', '~> 2.41.0'
+  gem 'selenium-webdriver', '2.43.0'
   gem 'shoulda-matchers'
   # gem "webmock", "~> 1.11.0"
   gem "fakeweb", "~> 1.3"

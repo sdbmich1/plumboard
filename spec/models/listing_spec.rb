@@ -187,7 +187,60 @@ describe Listing do
 
   describe "get_by_city" do
     it { Listing.get_by_city(0, 1, 1).should_not include @listing } 
-    it { Listing.get_by_city(@listing.category_id, @listing.site_id, 1).should_not be_empty }
+    it "should be able to toggle get_active" do
+      @listing.status = 'expired'
+      @listing.save
+      Listing.get_by_city(@listing.category_id, @listing.site_id, 1, true).should be_empty
+      Listing.get_by_city(@listing.category_id, @listing.site_id, 1, false).should_not be_empty
+    end
+  end
+
+  describe "active_invoices" do
+    it 'should not get listings if none are invoiced' do
+      @listing.status = 'active'
+      @listing.save
+      Listing.active.should_not be_empty
+      Listing.active_invoices.should be_empty
+    end
+
+    it 'should get listings' do
+      @buyer = FactoryGirl.create(:pixi_user)
+      @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id, status: 'active')
+      Listing.active_invoices.should_not be_empty
+    end
+  end
+
+  describe "check_category_and_location" do
+    it "should get all listings of given status if category and location are not specified" do
+      Listing.check_category_and_location('active', nil, nil).should_not be_empty
+    end
+
+    it "should get listing when category and location are specified" do      
+      Listing.check_category_and_location('active', @listing.category_id, @listing.site_id).should_not be_empty
+    end
+
+    it "should not return anything if no listings meet the parameters" do
+      Listing.check_category_and_location('removed', 100, 900).should be_empty
+    end
+  end
+
+  describe "check_invoiced_category_and_location" do
+    before do
+      @buyer = FactoryGirl.create(:pixi_user)
+      @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id, status: 'active')
+    end      
+
+    it "should get all listings of given status if category and location are not specified" do
+      Listing.check_invoiced_category_and_location(nil, nil).should_not be_empty
+    end
+
+    it "should get listing when category and location are specified" do      
+      Listing.check_invoiced_category_and_location(@listing.category_id, @listing.site_id).should_not be_empty
+    end
+
+    it "should not return anything if no listings meet the parameters" do
+      Listing.check_invoiced_category_and_location(100, 900).should be_empty
+    end
   end
 
   describe "has_enough_pixis?" do
@@ -223,14 +276,21 @@ describe Listing do
     it "includes seller listings" do 
       @listing.seller_id = 1
       @listing.save
-      Listing.get_by_seller(1).should_not be_empty  
+      @user.uid = 1
+      @user.save
+      Listing.get_by_seller(@user).should_not be_empty  
+    end
+
+    it "does not get all listings for non-admin" do
+      Listing.get_by_seller(@user).should_not include @listing
     end
 
     it "gets all listings for admin" do
-      Listing.get_by_seller(0, true).should_not be_empty
+      @user.user_type_code = "AD"
+      @user.uid = 0
+      @user.save
+      Listing.get_by_seller(@user).should_not be_empty
     end
-
-    it { Listing.get_by_seller(0).should_not include @listing } 
   end
 
   describe "buyer listings" do 

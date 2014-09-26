@@ -450,10 +450,13 @@ $(document).on("railsAutocomplete.select", "#site_name", function(event, data){
   else {
     var loc = $('#site_id').val(); // grab the selected location 
 
-    if($('#cat-wrap').length > 0) { 
+    if ($('#cat-wrap').length > 0) { 
       var url = '/categories/location?' + 'loc=' + loc;
       processUrl(url);
     } 
+    else if ($('#status_type').length > 0) {
+      get_pixi_url();
+    }
     else {
       checkLocID(loc);
     }
@@ -600,6 +603,9 @@ $(document).on("change", "#site_id, #category_id", function() {
   // reset board
   if($('#px-container').length > 0) {
     resetBoard();
+  }
+  else if ($('#status_type').length > 0) {
+    get_pixi_url();
   }
   
   //prevent the default behavior of the click event

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140725170438) do
+ActiveRecord::Schema.define(:version => 20140725172510) do
 
   create_table "bank_accounts", :force => true do |t|
     t.string   "token"
@@ -292,7 +292,11 @@ ActiveRecord::Schema.define(:version => 20140725170438) do
     t.integer  "photo_file_size"
     t.datetime "photo_updated_at"
     t.boolean  "processing"
+    t.string   "direct_upload_url"
+    t.string   "photo_file_path"
   end
+
+  add_index "pictures", ["processing"], :name => "index_pictures_on_processing"
 
   create_table "pixi_likes", :force => true do |t|
     t.integer  "user_id"
@@ -526,6 +530,13 @@ ActiveRecord::Schema.define(:version => 20140725170438) do
     t.float  "sortkey"
     t.string "hide"
     t.string "status"
+  end
+
+  create_table "status_types", :force => true do |t|
+    t.string   "code"
+    t.string   "hide"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "subcategories", :force => true do |t|

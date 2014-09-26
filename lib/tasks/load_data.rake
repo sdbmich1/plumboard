@@ -33,6 +33,10 @@ namespace :db do
   task :load_roles, [:role] => [:environment] do |t, args|
     Role.create!(:name => args.role)
   end
+
+  task :load_lat_lng => :environment do
+    load_contact_lat_lng
+  end
 end
 
 def set_keys
@@ -110,6 +114,21 @@ def load_pixi_lat_lng
     if ll
       p.lat, p.lng = ll
       p.save
+    end
+  end
+end
+
+def load_contact_lat_lng
+  include LocationManager
+
+  Site.where("name like 'Berkeley%'").each do |p|
+    ll = LocationManager::get_lat_lng_by_loc p.name
+    p.contacts.each do |c|
+      if ll
+        puts "lat, lng: ", ll
+        c.lat, c.lng = ll
+        c.save
+      end
     end
   end
 end

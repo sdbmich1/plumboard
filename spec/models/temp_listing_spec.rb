@@ -1012,4 +1012,34 @@ describe TempListing do
       end
     end
   end
+
+  describe "get_by_city" do
+    it "should get listings" do
+      @listings = FactoryGirl.create(:temp_listing)
+      @listings.status = 'pending'
+      @listings.save
+      TempListing.get_by_city(0, 1, 1, false).should_not include @listings
+      TempListing.get_by_city(@listings.category_id, @listings.site_id, 1, false).should_not be_empty
+    end
+  end
+
+  describe "check_category_and_location" do
+    before do
+      @listings = FactoryGirl.create(:temp_listing)
+      @listings.status = 'pending'
+      @listings.save
+    end
+
+    it "should get all listings of given status if category and location are not specified" do
+      TempListing.check_category_and_location('pending', nil, nil).should_not be_empty
+    end
+
+    it "should get listing when category and location are specified" do      
+      TempListing.check_category_and_location('pending', @listings.category_id, @listings.site_id).should_not be_empty
+    end
+
+    it "should not return anything if no listings meet the parameters" do
+      TempListing.check_category_and_location('removed', 100, 900).should be_empty
+    end
+  end
 end

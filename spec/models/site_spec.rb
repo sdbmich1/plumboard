@@ -171,6 +171,17 @@ describe Site do
       expect(Site.check_org_type(['city'])).to be_empty
     end
   end
+  
+  describe 'get_site' do
+    it 'should return site' do
+      site = create :site, name: 'Berkeley', org_type: 'city'
+      Site.get_site(site.id).first.name.should == 'Berkeley'
+    end
+
+    it 'should not return invalid site' do
+      expect(Site.get_site(123456789)).to be_empty
+    end
+  end
 
   describe 'regions' do
     before(:each) do

@@ -2,13 +2,17 @@ require 'will_paginate/array'
 class TempListingsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :check_permissions, only: [:create, :show, :edit, :update, :delete]
-  before_filter :load_data, only: [:unposted]
+  before_filter :load_data, only: [:index, :unposted]
   before_filter :set_params, only: [:create, :update]
   autocomplete :site, :name, :full => true
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name, if: :has_pixan?
   include ResetDate
   respond_to :html, :json, :js, :mobile
   layout :page_layout
+
+  def index
+    respond_with(@listings = TempListing.check_category_and_location(@status, @cat, @loc, @page).paginate(page: @page, per_page: 15))
+  end
 
   def new
     @listing = TempListing.new pixan_id: params[:pixan_id]
@@ -91,7 +95,10 @@ class TempListingsController < ApplicationController
   end
 
   def load_data
-    @page = params[:page] || 1
+    @page, @cat, @loc, @loc_name = params[:page] || 1, params[:cid], params[:loc], params[:loc_name]
+    @status = NameParse::transliterate params[:status] if params[:status]
+    @loc_name ||= LocationManager::get_loc_name(request.remote_ip, @loc || @region, @user.home_zip)
+    @loc ||= LocationManager::get_loc_id(@loc_name, @user.home_zip)
   end
 
   # parse fields to adjust formatting

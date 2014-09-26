@@ -3,7 +3,8 @@
 </ul>
 <div class="pixi-select pull-right">
   <% if statusFlg %>
-    <%= collection_select :status_type, :id, StatusType.find(:all), :id, :code, {selected: @status_type, include_blank: 'Status'}, {class: 'span2 cat-select'} %>
+    <%= collection_select :status_type, :id, StatusType.all, :code, :code, {selected: @status, include_blank: 'status'},
+    {id: 'status_type', class: 'span2 cat-select'} %>
   <% end %>
   <%= render partial: 'shared/category_list', locals: { ptype: false } %>
   <%= render partial: 'shared/sites' %>

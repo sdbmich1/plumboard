@@ -15,6 +15,14 @@ describe ListingsController do
       get("/listings/seller").should route_to("listings#seller")
     end
 
+    it "routes to #invoiced" do
+      get("/listings/invoiced").should route_to("listings#invoiced")
+    end
+
+    it "routes to #update" do
+      put("/listings/1").should route_to("listings#update", :id => "1")
+    end
+
     it "does route to #destroy" do
       delete("/listings/1").should route_to("listings#destroy", :id => "1")
     end
@@ -25,10 +33,6 @@ describe ListingsController do
 
     it "does not expose a create listing route" do
       post("/listings/create").should_not route_to("listings#create")
-    end
-
-    it "does not expose a update listing route" do
-      put("/listings/1").should_not route_to("listings#update", :id => "1")
     end
 
     it "does not route to #edit" do
