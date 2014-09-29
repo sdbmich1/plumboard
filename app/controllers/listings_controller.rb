@@ -106,9 +106,7 @@ class ListingsController < ApplicationController
   def load_city
     @listings = Listing.get_by_city @cat, @loc, @page
   end
-<<<<<<< HEAD
-=======
- 
+
   def is_admin?
     @user.user_type_code == 'AD' rescue false
   end
@@ -116,5 +114,4 @@ class ListingsController < ApplicationController
   def set_session
     session[:back_to] = request.path unless signed_in?
   end
->>>>>>> b123f6de6c7ab288b39c81c550508137c3184e5e
 end
