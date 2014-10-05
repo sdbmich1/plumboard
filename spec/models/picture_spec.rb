@@ -84,10 +84,27 @@ describe Picture do
     it { @picture.should respond_to :regenerate_styles }
   end
 
-
-    it 'should return a picture' do
-      User.picture_from_url(user, auth).should_not be_nil
+  describe 'picture from url' do
+    it 'does not return picture url' do
+      expect(@picture.picture_from_url).to be_nil
     end
+
+    it 'returns a picture url' do
+      @picture.direct_upload_url = "http://pixiboard.com"
+      expect(@picture.picture_from_url).not_to be_nil
+    end
+  end
+
+  describe 'set file url' do
+    it 'does not return set_file_url' do
+      expect(@picture.set_file_url(nil)).to be_nil
+    end
+
+    it 'returns a set_file_url' do
+      url = "photos/000/002/036/original/photo.jpg"
+      expect(@picture.set_file_url(url)).not_to be_nil
+    end
+  end
 
   describe 'transliterate file name' do
 

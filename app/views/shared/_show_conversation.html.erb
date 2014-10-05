@@ -1,4 +1,5 @@
-<% unless conversation.posts.blank? %>    
+<% unless conversation.blank? %>    
+  <% unless conversation.posts.blank? %>    
   <div>
     <table>
       <tr>
@@ -27,9 +28,11 @@
   <div id='accordion'>
     <%= render partial: 'shared/post', collection: @posts, locals: { sentFlg: sentFlg } %>
   </div>
-  <div>
-    <%= render partial: 'shared/reply', locals: { post: @post, sentFlg: sentFlg, conversation: @conversation } unless @conversation.system_msg? %>
+  <div class='sm-top'>
+    <%= render partial: 'shared/reply', locals: { post: @post, sentFlg: sentFlg, conversation: conversation } unless 
+       conversation.system_msg? %>
   </div>
-<% else %>
-  <div class='center-wrapper'>No messages found.</div>
+  <% end %>
+  <% else %>
+    <div class='center-wrapper'>No messages found.</div>
 <% end %>

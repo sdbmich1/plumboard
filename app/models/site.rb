@@ -68,6 +68,11 @@ class Site < ActiveRecord::Base
     where(id: sid).check_org_type(val).first
   end
 
+  # get site by id
+  def self.get_site sid
+    where(id: sid)
+  end
+
   # check site type
   def self.check_org_type val
     where(org_type: val)

@@ -14,7 +14,7 @@ Plumboard::Application.routes.draw do
   # resource defs
   resources :listings, except: [:new, :edit, :create] do
     collection do
-      get 'pixi_price', 'seller', 'follower', 'sold', 'category', 'local', 'wanted', 'purchased'
+      get 'pixi_price', 'seller', 'follower', 'sold', 'category', 'local', 'wanted', 'purchased', 'invoiced'
     end
   end
 
@@ -101,9 +101,9 @@ Plumboard::Application.routes.draw do
   resources :comments, only: [:index, :new, :create]
   resources :ratings, only: [:index, :new, :create]
 
-  resources :temp_listings, except: [:index] do
+  resources :temp_listings do
     collection do
-      get :autocomplete_site_name, :autocomplete_user_first_name, 'unposted', 'pending'
+      get :autocomplete_site_name, :autocomplete_user_first_name, 'unposted', 'pending', 'invoiced'
     end
     member do
       put 'resubmit', 'submit'
@@ -117,6 +117,10 @@ Plumboard::Application.routes.draw do
   end
 
   resources :pending_listings, except: [:new, :edit, :update, :create, :destroy] do
+    collection do
+      get 'invoiced'
+    end
+
     member do
       put 'approve', 'deny'
     end
@@ -175,6 +179,7 @@ Plumboard::Application.routes.draw do
 
   # specify root route based on user sign in status
   root to: 'listings#local', :constraints => lambda {|r| r.env["warden"].authenticate? }
+  root to: 'listings#invoiced', :constraints => lambda {|r| r.env["warden"].authenticate? }
   root to: 'pages#home'
 
   # exception handling

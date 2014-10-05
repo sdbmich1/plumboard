@@ -11,7 +11,8 @@ class Picture < ActiveRecord::Base
     :direct_upload_url, :dup_flg
   
   has_attached_file :photo, {
-       styles: { :large => "300x300>", :medium => "150x150>", :thumb => "100x100>", :small => "60x60>", :tiny => "30x30>" }
+       styles: { :large => "300x300>", :medium => "150x150>", :thumb => "100x100>", :small => "60x60>", :tiny => "30x30>" },
+       convert_options: { :all => "-auto-orient" }
      }.merge(PAPERCLIP_STORAGE_OPTIONS)
 
   belongs_to :imageable, :polymorphic => true
@@ -46,7 +47,7 @@ class Picture < ActiveRecord::Base
   def processPhotoJob(picture)
     picture.regenerate_styles!
   end
-  # handle_asynchronously :processPhotoJob
+  handle_asynchronously :processPhotoJob
 
   # detect if our photo file has changed
   def photo_changed?
@@ -65,13 +66,19 @@ class Picture < ActiveRecord::Base
 
   # remove space from filename
   def transliterate_file_name
-    extension = File.extname(photo_file_name).gsub(/^\.+/, '')
-    filename = photo_file_name.gsub(/\.#{extension}$/, '')
-    self.photo.instance_write(:photo_file_name, "#{NameParse::transliterate(filename)}.#{NameParse::transliterate(extension)}".gsub('//', '/'))
+    unless photo_file_name.blank?
+      extension = File.extname(photo_file_name).gsub(/^\.+/, '') rescue nil
+      if extension
+        filename = photo_file_name.gsub(/\.#{extension}$/, '')
+        self.photo.instance_write(:photo_file_name, "#{NameParse::transliterate(filename)}.#{NameParse::transliterate(extension)}"
+          .gsub('//', '/'))
+      end
+    end
   end
 
   # generate styles (downloads original first)
   def regenerate_styles!
+    return unless (!processing)
     self.photo.reprocess! 
     self.processing = false   
     self.save(validations: false)
@@ -79,7 +86,7 @@ class Picture < ActiveRecord::Base
 
   # get url for json
   def photo_url
-    photo.url
+    photo.url rescue nil
   end 
 
   def as_json(options={})
@@ -113,6 +120,7 @@ class Picture < ActiveRecord::Base
 
   # remove space from S3 direct_upload_url
   def set_file_url url
+    return nil if url.blank?
     extension = File.extname(url).gsub(/^\.+/, '')
     filename = url.gsub(/\.#{extension}$/, '')
     "#{NameParse::parse_url(filename)}.#{NameParse::transliterate(extension)}" rescue url
@@ -126,13 +134,15 @@ class Picture < ActiveRecord::Base
     direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
     s3 = AWS::S3.new
     
-    direct_upload_head = s3.buckets[S3FileField.config.bucket].objects[direct_upload_url_data[:path]].head
+    direct_upload_head = s3.buckets[S3FileField.config.bucket].objects[direct_upload_url_data[:path]].head rescue nil
 
-    self.photo_file_name     = direct_upload_url_data[:filename]
-    self.photo_file_size     = direct_upload_head.content_length
-    self.photo_content_type  = direct_upload_head.content_type
-    self.photo_updated_at    = direct_upload_head.last_modified
+    unless direct_upload_head.blank?
+      self.photo_file_name     = direct_upload_url_data[:filename]
+      self.photo_file_size     = direct_upload_head.content_length
+      self.photo_content_type  = direct_upload_head.content_type
+      self.photo_updated_at    = direct_upload_head.last_modified
     # self.photo_file_path    = direct_upload_head.photo_file_path
+    end
 
   rescue AWS::S3::Errors::NoSuchKey => e
     tries -= 1

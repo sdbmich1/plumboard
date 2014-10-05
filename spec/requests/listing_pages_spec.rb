@@ -193,10 +193,11 @@ feature "Listings" do
   end
 
   describe "View Event Pixi" do 
-    let(:category) { FactoryGirl.create :category, name: 'Event', category_type: 'event' }
+    let(:event_type) { create :event_type }
+    let(:category) { FactoryGirl.create :category, name: 'Event', category_type_code: 'event' }
     let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id, 
       category_id: category.id, event_start_date: Date.tomorrow, event_end_date: Date.tomorrow, event_start_time: Time.now+2.hours, 
-      event_end_time: Time.now+3.hours ) }
+      event_end_time: Time.now+3.hours, event_type_code: event_type.code ) }
 
     before(:each) do
       pixi_user = FactoryGirl.create(:pixi_user) 
@@ -209,7 +210,7 @@ feature "Listings" do
       page.should have_content "End Date: #{short_date(listing.event_end_date)}"
       page.should have_content "Start Time: #{short_time(listing.event_start_time)}"
       page.should have_content "End Time: #{short_time(listing.event_end_time)}"
-      page.should have_content "Price: "
+      page.should have_content "Event Type: #{listing.event_type_descr}"
       page.should_not have_content "Compensation: #{(listing.compensation)}"
     end
 
@@ -221,8 +222,37 @@ feature "Listings" do
     end
   end
 
+  describe "View Sold Pixi" do 
+    let(:sold_listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id,
+      site_id: site.id, status: 'sold') }
+    before(:each) do
+      init_setup user
+      visit listing_path(sold_listing) 
+    end
+
+    it "views pixi page" do
+      page.should have_content "Posted By: #{sold_listing.seller_name}"
+      page.should_not have_selector('#contact_content')
+      page.should_not have_selector('#comment_content')
+      page.should_not have_selector('#want-btn')
+      page.should_not have_selector('#cool-btn')
+      page.should_not have_selector('#save-btn')
+      page.should_not have_selector('#fb-link')
+      page.should_not have_selector('#tw-link')
+      page.should_not have_selector('#pin-link')
+      page.should_not have_link 'Follow', href: '#'
+      page.should have_content "Want (#{sold_listing.wanted_count})"
+      page.should have_content "Cool (#{sold_listing.liked_count})"
+      page.should have_content "Saved (#{sold_listing.saved_count})"
+      page.should have_content "Comments (#{sold_listing.comments.size})"
+      page.should_not have_link 'Cancel', href: root_path
+      page.should_not have_button 'Remove'
+      page.should_not have_link 'Edit', href: edit_temp_listing_path(sold_listing)
+    end
+  end
+
   describe "View Compensation Pixi" do 
-    let(:category) { FactoryGirl.create :category, name: 'Gigs', category_type: 'employment' }
+    let(:category) { FactoryGirl.create :category, name: 'Gigs', category_type_code: 'employment' }
     let(:job_type) { FactoryGirl.create :job_type }
     let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id, 
       category_id: category.id, job_type_code: job_type.code, compensation: 'Salary + Equity', price: nil) }
@@ -486,7 +516,7 @@ feature "Listings" do
 
       it "selects a site", js: true do
         fill_autocomplete('site_name', with: 'pixi')
-	set_site_id
+	      set_site_id
         page.should have_content @listing1.title
         page.should_not have_content @listing.title
         page.should have_content @site.name
@@ -502,29 +532,24 @@ feature "Listings" do
 
     describe "Manage Pixis page" do
       before do
-        # Make listings
         pixi_user = create :pixi_user
-        category = create :category, name: 'Music'
-        site = create :site, name: 'Berkeley'
-        30.times do
-          create :listing, seller_id: pixi_user.id, title: 'Guitar', description: 'Lessons', category_id: category.id, site_id: site.id
+        @category = create :category, name: 'Music'
+        @site = create :site, name: 'Berkeley'
+        16.times do
+          @listing = create :listing, seller_id: pixi_user.id, status: 'active', title: 'Guitar', description: 'Lessons', category_id: @category.id, site_id: @site.id
         end
         # Visit page as admin
         admin_user = create :admin
         admin_user.user_type_code = 'AD'
         admin_user.save
         init_setup admin_user
+        visit listings_path(status: 'active')
       end
 
-      before (:each) do
-        visit listings_path
-      end
-
-      it "views manage pixis page" do
+      it "should display all active listings when category or location are not specified", js: true do
         page.should have_content 'Manage Pixis'
         page.should have_content 'Guitar'
         page.should have_content 'Lessons'
-        page.should have_content 'Music'
         page.should have_content 'Berkeley'
       end
 
@@ -533,8 +558,152 @@ feature "Listings" do
         page.should have_link "Previous"
       end
 
-      it 'should have StatusType dropdown menu' do
-        page.should have_content 'Status'
+      it "has export CSV button" do
+        page.should have_link 'Export as CSV file', href: listings_path(format: 'csv')
+      end
+    end
+
+    describe "Manage Pixis page statuses: " do
+      before do
+        @category = create :category, name: 'Music'
+        @site = create :site, name: 'Berkeley'
+        admin_user = create :admin
+        admin_user.user_type_code = 'AD'
+        admin_user.save
+        init_setup admin_user
+      end
+
+      it "views pending listings", js: true do
+        pending_listing = create :temp_listing, seller_id: @user.id, title: 'Pending Listing', category_id: @category.id, site_id: @site.id
+        pending_listing.status = 'pending'
+        pending_listing.save!
+        expect(TempListing.where("status = 'pending'").count).to eq 1
+        visit pending_listings_path(status: 'pending', loc: @site.id, cid: @category.id)
+        page.should have_content 'Pending Listing'
+        page.should_not have_content 'Active Listing'
+        page.should_not have_content 'Draft Listing'
+        page.should_not have_content 'Expired Listing'
+        page.should_not have_content 'Sold Listing'
+        page.should_not have_content 'Removed Listing'
+        page.should_not have_content 'Denied Listing'
+        page.should_not have_content 'Invoiced Listing'
+        page.should_not have_content 'No pixis found.'
+      end
+
+      it "views active listings", js: true do
+        active_listing = create :listing, seller_id: @user.id, title: 'Active Listing', category_id: @category.id, site_id: @site.id
+        active_listing.status = 'active'
+        active_listing.save!
+        visit listings_path(status: 'active', loc: @site.id, cid: @category.id)
+        page.should_not have_content 'Pending Listing'
+        page.should have_content 'Active Listing'
+        page.should_not have_content 'Draft Listing'
+        page.should_not have_content 'Expired Listing'
+        page.should_not have_content 'Sold Listing'
+        page.should_not have_content 'Removed Listing'
+        page.should_not have_content 'Denied Listing'
+        page.should_not have_content 'Invoiced Listing'
+        page.should_not have_content 'No pixis found.'
+      end
+
+      it "views draft listings", js: true do
+        draft_listing = create :temp_listing, seller_id: @user.id, title: 'Draft Listing', category_id: @category.id, site_id: @site.id
+        draft_listing.status = 'edit'
+        draft_listing.save!
+        visit unposted_temp_listings_path(status: 'new/edit', loc: @site.id, cid: @category.id)
+        page.should_not have_content 'Pending Listing'
+        page.should_not have_content 'Active Listing'
+        page.should have_content 'Draft Listing'
+        page.should_not have_content 'Expired Listing'
+        page.should_not have_content 'Sold Listing'
+        page.should_not have_content 'Removed Listing'
+        page.should_not have_content 'Denied Listing'
+        page.should_not have_content 'Invoiced Listing'
+        page.should_not have_content 'No pixis found.'
+      end
+
+      it "views expired listings", js: true do
+        expired_listing = create :listing, seller_id: @user.id, title: 'Expired Listing', category_id: @category.id, site_id: @site.id
+        expired_listing.status = 'expired'
+        expired_listing.save!
+        expect(Listing.where("status = 'expired'").count).to eq 1
+        visit listings_path(status: 'expired', loc: @site.id, cid: @category.id)
+        page.should_not have_content 'Pending Listing'
+        page.should_not have_content 'Active Listing'
+        page.should_not have_content 'Draft Listing'
+        page.should have_content 'Expired Listing'
+        page.should_not have_content 'Sold Listing'
+        page.should_not have_content 'Removed Listing'
+        page.should_not have_content 'Denied Listing'
+        page.should_not have_content 'Invoiced Listing'
+        page.should_not have_content 'No pixis found.'
+      end
+
+      it "views sold listings", js: true do
+        sold_listing = create :listing, seller_id: @user.id, title: 'Sold Listing', category_id: @category.id, site_id: @site.id
+        sold_listing.status = 'sold'
+        sold_listing.save!
+        expect(Listing.where("status = 'sold'").count).to eq 1
+        visit listings_path(status: 'sold', loc: @site.id, cid: @category.id)
+        page.should_not have_content 'Pending Listing'
+        page.should_not have_content 'Active Listing'
+        page.should_not have_content 'Draft Listing'
+        page.should_not have_content 'Expired Listing'
+        page.should have_content 'Sold Listing'
+        page.should_not have_content 'Removed Listing'
+        page.should_not have_content 'Denied Listing'
+        page.should_not have_content 'Invoiced Listing'
+        page.should_not have_content 'No pixis found.'
+      end
+
+      it "views removed listings", js: true do
+        removed_listing = create :listing, seller_id: @user.id, title: 'Removed Listing', category_id: @category.id, site_id: @site.id
+        removed_listing.status = 'removed'
+        removed_listing.save!
+        expect(Listing.where("status = 'removed'").count).to eq 1
+        visit listings_path(status: 'removed', loc: @site.id, cid: @category.id)
+        page.should_not have_content 'Pending Listing'
+        page.should_not have_content 'Active Listing'
+        page.should_not have_content 'Draft Listing'
+        page.should_not have_content 'Expired Listing'
+        page.should_not have_content 'Sold Listing'
+        page.should have_content 'Removed Listing'
+        page.should_not have_content 'Denied Listing'
+        page.should_not have_content 'Invoiced Listing'
+        page.should_not have_content 'No pixis found.'
+      end
+
+      it "views denied listings", js: true do
+        denied_listing = create :listing, seller_id: @user.id, title: 'Denied Listing', category_id: @category.id, site_id: @site.id
+        denied_listing.status = 'denied'
+        denied_listing.save!
+        expect(Listing.where("status = 'denied'").count).to eq 1
+        visit listings_path(status: 'denied', loc: @site.id, cid: @category.id)
+        page.should_not have_content 'Pending Listing'
+        page.should_not have_content 'Active Listing'
+        page.should_not have_content 'Draft Listing'
+        page.should_not have_content 'Expired Listing'
+        page.should_not have_content 'Sold Listing'
+        page.should_not have_content 'Removed Listing'
+        page.should have_content 'Denied Listing'
+        page.should_not have_content 'Invoiced Listing'
+        page.should_not have_content 'No pixis found.'
+      end
+
+      it "views invoiced listings", js: true do
+        invoiced_listing = create :listing, seller_id: @user.id, title: 'Invoiced Listing', category_id: @category.id, site_id: @site.id
+        buyer = FactoryGirl.create(:pixi_user)
+        invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: invoiced_listing.pixi_id, buyer_id: buyer.id, status: 'active')
+        visit invoiced_listings_path(status: 'active', loc: @site.id, cid: @category.id)
+        page.should_not have_content 'Pending Listing'
+        page.should_not have_content 'Active Listing'
+        page.should_not have_content 'Draft Listing'
+        page.should_not have_content 'Expired Listing'
+        page.should_not have_content 'Sold Listing'
+        page.should_not have_content 'Removed Listing'
+        page.should_not have_content 'Denied Listing'
+        page.should have_content 'Invoiced Listing'
+        page.should_not have_content 'No pixis found.'
       end
     end
 
@@ -577,51 +746,50 @@ feature "Listings" do
 
       it "displays sold listings", js: true do
         page.find('#sold-pixis').click
-	page.should_not have_content listing.title
-	page.should have_content @sold_listing.title
-	page.should_not have_content @purchased_listing.title
-	page.should_not have_content 'No pixis found.'
+        page.should_not have_content listing.title
+        page.should have_content @sold_listing.title
+        page.should_not have_content @purchased_listing.title
+        page.should_not have_content 'No pixis found.'
       end
 
       it "displays draft listings", js: true do
         page.find('#draft-pixis').click
-	page.should have_content @temp_listing.title
-	page.should_not have_content @pending_listing.title
-	page.should_not have_content @denied_listing.title
-	page.should_not have_content 'No pixis found.'
+        page.should have_content @temp_listing.title
+        page.should_not have_content @pending_listing.title
+        page.should_not have_content @denied_listing.title
+        page.should_not have_content 'No pixis found.'
       end
 
       it "displays pending listings", js: true do
         page.find('#pending-pixis').click
-	page.should_not have_content @temp_listing.title
-	page.should have_content @pending_listing.title
-	page.should have_content @denied_listing.title
-	page.should_not have_content @sold_listing.title
-	page.should_not have_content 'No pixis found.'
+        page.should_not have_content @temp_listing.title
+        page.should have_content @pending_listing.title
+        page.should have_content @denied_listing.title
+        page.should_not have_content @sold_listing.title
+        page.should_not have_content 'No pixis found.'
       end
 
       it "displays saved listings", js: true do
         page.find('#saved-pixis').click
-	page.should have_content listing.title
-	page.should_not have_content @sold_listing.title
-	page.should_not have_content 'No pixis found.'
+        page.should have_content listing.title
+        page.should_not have_content @sold_listing.title
+        page.should_not have_content 'No pixis found.'
       end
 
       it "display wanted listings", js: true do
         page.find('#wanted-pixis').click
-	page.should have_content listing.title
-	page.should_not have_content @sold_listing.title
-	page.should_not have_content 'No pixis found.'
+        page.should have_content listing.title
+        page.should_not have_content @sold_listing.title
+        page.should_not have_content 'No pixis found.'
       end
 
       it "display purchased listings", js: true do
         page.find('#purchased-pixis').click
-	page.should_not have_content listing.title
-	page.should_not have_content @sold_listing.title
-	page.should have_content @purchased_listing.title
-	page.should_not have_content 'No pixis found.'
+        page.should_not have_content listing.title
+        page.should_not have_content @sold_listing.title
+        page.should have_content @purchased_listing.title
+        page.should_not have_content 'No pixis found.'
       end
     end
   end
-
 end

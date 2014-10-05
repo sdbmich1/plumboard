@@ -36,7 +36,8 @@ describe ListingsController do
   describe 'GET index' do
     before(:each) do
       @listings = stub_model(Listing)
-      Listing.stub_chain(:active_without_job_type, :paginate).and_return(@listings)
+      Listing.stub_chain(:get_by_status).and_return(@listings)
+      @listings.stub!(:paginate).and_return( @listings )
       controller.stub_chain(:load_data, :get_location).and_return(:success)
       do_get
     end
@@ -66,7 +67,8 @@ describe ListingsController do
   describe 'xhr GET index' do
     before(:each) do
       @listings = mock("listings")
-      Listing.stub_chain(:active_without_job_type, :paginate).and_return(@listings)
+      Listing.stub_chain(:get_by_status).and_return(@listings)
+      @listings.stub!(:paginate).and_return( @listings )
       controller.stub_chain(:load_data, :get_location).and_return(:success)
       do_get
     end
@@ -473,6 +475,32 @@ describe ListingsController do
         do_update
 	      response.should render_template(:show)
       end
+    end
+  end
+
+  describe 'GET invoiced' do
+    before(:each) do
+      @listings = stub_model(Listing)
+      Listing.stub_chain(:invoiced, :paginate).and_return(@listings)
+      controller.stub_chain(:load_data, :get_location).and_return(:success)
+      do_get
+    end
+
+    def do_get
+      xhr :get, :invoiced
+    end
+
+    it "renders the :invoiced view" do
+      response.should render_template :invoiced
+    end
+
+    it "should assign @listings" do
+      assigns(:listings).should_not be_nil
+    end
+
+    it "responds to JSON" do
+      xhr :get, :invoiced, :format => 'json'
+      expect(response).to be_success
     end
   end
 end

@@ -1,5 +1,6 @@
 class SessionsController < Devise::SessionsController
   layout :page_layout
+  respond_to :html, :js, :json, :mobile
 
   def create
     resource = warden.authenticate!(scope: resource_name, recall: "#{controller_path}#new")

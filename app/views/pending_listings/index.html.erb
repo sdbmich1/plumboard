@@ -1,10 +1,1 @@
-<% provide(:title, 'Pending Orders') %>
-<%= content_for :subhead do %>
-  <%= render partial: 'shared/navbar', locals: { menu_name: 'Pending Orders' } %>
-<% end %>
-<%= content_for :content do %>
-  <div id="pendingOrder">
-    <%= render :partial => 'shared/index_list' %>
-  </div>
-<% end %>
-
+<%= render partial: 'shared/manage_pixis' %>

@@ -8,7 +8,7 @@ class Contact < ActiveRecord::Base
 
   validates :city, :presence => true, :format => { :with => name_regex }
   validates :state, :presence => true
-  validates :zip, allow_blank: true, length: {is: 5}
+  validates :zip, allow_blank: true, length: {in: 5..15}
   validates :home_phone, allow_blank: true, length: {in: 10..15}
   validates :mobile_phone, allow_blank: true, length: {in: 10..15}
   validates :work_phone, allow_blank: true, length: {in: 10..15}

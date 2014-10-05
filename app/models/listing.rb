@@ -42,11 +42,6 @@ class Listing < ListingParent
     active.get_by_site(val).count < SITE_FREE_AMT ? true : false rescue nil
   end
 
-  # used to handle pagination settings
-  def self.set_page pg=1
-    paginate page: pg, per_page: MIN_BOARD_AMT
-  end
-
   # paginate
   def self.active_page ip="127.0.0.1", pg=1, range=25
     if Rails.env.development?
@@ -61,54 +56,9 @@ class Listing < ListingParent
     active.where(:category_id => cid).set_page pg
   end
 
-  # get pixis by category & site ids
-  def self.get_category_by_site cid, sid, pg=1
-    unless sid.blank?
-      active.where('category_id = ? and site_id = ?', cid, sid).set_page pg
-    else
-      get_by_category cid, pg
-    end
-  end
-
-  # get active pixis by city
-  def self.active_by_city city, state, pg=1
-    active.where(site_id: Contact.get_sites(city, state)).set_page pg
-  end
-
-  # get active pixis by region
-  def self.active_by_region city, state, pg, range=100
-    loc = [city, state].join(', ') if city && state
-    active.where(site_id: Contact.proximity(nil, range, loc, true)).set_page(pg) if loc rescue nil
-  end
-
-  # get pixis by city
-  def self.get_by_city cid, sid, pg=1
-
-    # check if site is a city
-    unless loc = Site.check_site(sid, 'city')
-      unless loc = Site.check_site(sid, 'region') 
-        cid.blank? ? get_by_site(sid, pg) : get_category_by_site(cid, sid, pg)
-      else
-        unless loc.contacts.blank?
-          city, state = loc.contacts[0].city, loc.contacts[0].state
-          cid.blank? ? active_by_region(city, state, pg) : where('category_id = ?', cid).active_by_region(city, state, pg) 
-	end
-      end
-    else
-      # get active pixis by site's city and state
-      unless loc.contacts.blank?
-        city, state = loc.contacts[0].city, loc.contacts[0].state
-        cid.blank? ? active_by_city(city, state, pg) : where('category_id = ?', cid).active_by_city(city, state, pg) 
-      else
-        # get pixis by ids
-        cid.blank? ? get_by_site(sid, pg) : get_category_by_site(cid, sid, pg)
-      end
-    end
-  end
-
-  # get active pixis by site id
-  def self.get_by_site sid, pg=1
-    active.where(:site_id => sid).set_page pg
+  # get all active pixis that have at least one unpaid invoice and no sold invoices
+  def self.active_invoices
+    active.joins(:invoices).where("invoices.status = 'active'")
   end
 
   # get saved list by user
@@ -134,6 +84,15 @@ class Listing < ListingParent
   # get all active pixis with an end_date less than today and update their statuses to closed
   def self.close_pixis
     active.where("end_date < ?", Date.today).update_all(status: 'closed')
+  end
+
+  # get invoiced listings by status and, if provided, category and location
+  def self.check_invoiced_category_and_location cid, loc, pg=1
+    if cid.blank? or loc.blank?
+      active_invoices
+    else
+      active_invoices.get_by_city(cid, loc, pg, false)
+    end
   end
 
   # get invoice

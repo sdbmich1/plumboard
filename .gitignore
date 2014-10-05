@@ -19,6 +19,8 @@
 *~
 .idea/*
 .DS_Store
+Thumbs.db
+db/Accreditation_2011_12.csv
 
 # Ignore all sphinx files
 /config/*.conf

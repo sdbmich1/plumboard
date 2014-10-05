@@ -54,6 +54,11 @@ class ListingParent < ActiveRecord::Base
   geocoded_by :site_address, :latitude => :lat, :longitude => :lng
   after_validation :geocode
 
+  # used to handle pagination settings
+  def self.set_page pg=1
+    paginate page: pg, per_page: MIN_BOARD_AMT
+  end
+
   # check if pixi is an event
   def event?
     category.category_type_code == 'event' rescue nil
@@ -130,9 +135,14 @@ class ListingParent < ActiveRecord::Base
     include_list.where(:status => val).order('updated_at DESC')
   end
 
-  # find listings by seller user id
-  def self.get_by_seller val, admin_view=false
-    admin_view ? where("seller_id IS NOT NULL") : where(:seller_id => val)
+  # find all listings where a given user is the seller, or all listings if the user is an admin
+  def self.get_by_seller user
+    user.is_admin? ? where("seller_id IS NOT NULL") : where(:seller_id => user.id)
+  end
+
+  # get listings by status and, if provided, category and location
+  def self.check_category_and_location status, cid, loc, pg=1
+    get_by_status(status).get_by_city(cid, loc, pg, false)
   end
 
   # verify if listing has been paid for
@@ -207,7 +217,7 @@ class ListingParent < ActiveRecord::Base
 
   # verify pixi can be edited
   def editable? usr
-    (seller?(usr) || pixter?(usr) || usr.has_role?(:admin)) || usr.has_role?(:support) && !sold?
+    sold? ? false : (seller?(usr) || pixter?(usr) || usr.has_role?(:admin)) || usr.has_role?(:support)
   end
 
   # get category name for a listing
@@ -440,5 +450,75 @@ class ListingParent < ActiveRecord::Base
     else
       nil
     end
+  end
+
+  # get active pixis by region
+  def self.active_by_region city, state, pg, get_active=true, range=100
+    loc = [city, state].join(', ') if city && state
+    if get_active
+      active.where(site_id: Contact.proximity(nil, range, loc, true)).set_page(pg) if loc rescue nil
+    else
+      where(site_id: Contact.proximity(nil, range, loc, true)).set_page(pg) if loc rescue nil
+    end
+  end
+
+  # get active pixis by city
+  def self.active_by_city city, state, pg=1, get_active=true
+    if get_active
+      active.where(site_id: Contact.get_sites(city, state)).set_page pg
+    else
+      where(site_id: Contact.get_sites(city, state)).set_page pg
+    end
+  end
+
+  # get pixis by city
+  def self.get_by_city cid, sid, pg=1, get_active=true
+    # check if site is a city
+    unless loc = Site.check_site(sid, 'city')
+      unless loc = Site.check_site(sid, 'region') 
+        cid.blank? ? get_by_site(sid, pg, get_active) : get_category_by_site(cid, sid, pg, get_active)
+      else
+        unless loc.contacts.blank?
+          city, state = loc.contacts[0].city, loc.contacts[0].state
+          cid.blank? ? active_by_region(city, state, pg, get_active) : where('category_id = ?', cid).active_by_region(city, state, pg, get_active) 
+        end
+      end
+    else
+      # get active pixis by site's city and state
+      unless loc.contacts.blank?
+        city, state = loc.contacts[0].city, loc.contacts[0].state
+        cid.blank? ? active_by_city(city, state, pg, get_active) : where('category_id = ?', cid).active_by_city(city, state, pg, get_active) 
+      else
+        # get pixis by ids
+        cid.blank? ? get_by_site(sid, pg, get_active) : get_category_by_site(cid, sid, pg, get_active)
+      end
+    end
+  end
+
+  # get active pixis by site id
+  def self.get_by_site sid, pg=1, get_active=true
+    if get_active
+      active.where(:site_id => sid).set_page pg
+    else
+      where(:site_id => sid).set_page pg
+    end
+  end
+
+  # get pixis by category & site ids
+  def self.get_category_by_site cid, sid, pg=1, get_active=true
+    unless sid.blank?
+      if get_active
+        active.where('category_id = ? and site_id = ?', cid, sid).set_page pg
+      else
+        where('category_id = ? and site_id = ?', cid, sid).set_page pg
+      end
+    else
+      get_by_category cid, get_active, pg
+    end
+  end
+
+  # titleize description
+  def event_type_descr
+    event_type.description.titleize rescue nil
   end
 end

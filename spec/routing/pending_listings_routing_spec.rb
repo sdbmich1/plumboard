@@ -19,6 +19,10 @@ describe PendingListingsController do
       put("/pending_listings/1/deny").should route_to("pending_listings#deny", :id => "1")
     end
 
+    it "routes to #invoiced" do
+      get("/pending_listings/invoiced").should route_to("pending_listings#invoiced")
+    end
+
     it "should not route to #edit" do
       get("/pending_listings/1/edit").should_not route_to("pending_listings#edit", :id => "1")
     end

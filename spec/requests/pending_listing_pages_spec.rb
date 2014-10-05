@@ -16,7 +16,7 @@ describe "PendingListings", :type => :feature do
   end
 
   describe "Review Pending Orders" do 
-    before { visit pending_listing_path(listing) }
+    before { visit pending_listing_path(listing, status: 'pending') }
 
     it 'shows content' do
       page.should have_selector('title', text: 'Review Pending Order')
@@ -105,29 +105,21 @@ describe "PendingListings", :type => :feature do
       @px_user = create :editor, email: 'jsnow@pxb.com'
       init_setup @px_user
       @pending_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id, status: 'pending', title: 'Snare Drum') 
-      @denied_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id, status: 'denied', title: 'Xbox 360') 
-      visit pending_listings_path(status: 'pending') 
     end
 
     it 'shows content' do
+      visit pending_listings_path(status: 'pending')
       page.should have_content('Pending Orders')
       page.should_not have_content('No pixis found')
       page.should have_selector('#denied-pixis')
       page.should have_selector('#pending-pixis')
       page.should have_link 'Active'
       page.should have_link 'Denied'
-      page.should_not have_content(@denied_listing.title)
       page.should have_content(@pending_listing.title)
     end
-
-    it "displays denied listings", js: true do
-      click_link 'Denied'
-      page.should_not have_content('No pixis found')
-      page.should have_content @denied_listing.title
-      page.should_not have_content @pending_listing.title
-    end
-
+    
     it "paginate should list each listing" do
+      visit pending_listings_path(status: 'pending')
       @user.temp_listings.get_by_status('pending').paginate(page: 1).each do |listing|
         page.should have_selector('td', text: listing.title)
       end
