@@ -37,7 +37,6 @@ db/Accreditation_2011_12.csv
 # ignore yml files
 /config/*.yml
 /config/rubber/*.yml
-/config/rubber
 
 # ignore secrets folder
 /config/secrets/*
