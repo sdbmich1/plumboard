@@ -193,10 +193,11 @@ feature "Listings" do
   end
 
   describe "View Event Pixi" do 
-    let(:category) { FactoryGirl.create :category, name: 'Event', category_type: 'event' }
+    let(:event_type) { create :event_type }
+    let(:category) { FactoryGirl.create :category, name: 'Event', category_type_code: 'event' }
     let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id, 
       category_id: category.id, event_start_date: Date.tomorrow, event_end_date: Date.tomorrow, event_start_time: Time.now+2.hours, 
-      event_end_time: Time.now+3.hours ) }
+      event_end_time: Time.now+3.hours, event_type_code: event_type.code ) }
 
     before(:each) do
       pixi_user = FactoryGirl.create(:pixi_user) 
@@ -209,7 +210,7 @@ feature "Listings" do
       page.should have_content "End Date: #{short_date(listing.event_end_date)}"
       page.should have_content "Start Time: #{short_time(listing.event_start_time)}"
       page.should have_content "End Time: #{short_time(listing.event_end_time)}"
-      page.should have_content "Price: "
+      page.should have_content "Event Type: #{listing.event_type_descr}"
       page.should_not have_content "Compensation: #{(listing.compensation)}"
     end
 
@@ -221,8 +222,37 @@ feature "Listings" do
     end
   end
 
+  describe "View Sold Pixi" do 
+    let(:sold_listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id,
+      site_id: site.id, status: 'sold') }
+    before(:each) do
+      init_setup user
+      visit listing_path(sold_listing) 
+    end
+
+    it "views pixi page" do
+      page.should have_content "Posted By: #{sold_listing.seller_name}"
+      page.should_not have_selector('#contact_content')
+      page.should_not have_selector('#comment_content')
+      page.should_not have_selector('#want-btn')
+      page.should_not have_selector('#cool-btn')
+      page.should_not have_selector('#save-btn')
+      page.should_not have_selector('#fb-link')
+      page.should_not have_selector('#tw-link')
+      page.should_not have_selector('#pin-link')
+      page.should_not have_link 'Follow', href: '#'
+      page.should have_content "Want (#{sold_listing.wanted_count})"
+      page.should have_content "Cool (#{sold_listing.liked_count})"
+      page.should have_content "Saved (#{sold_listing.saved_count})"
+      page.should have_content "Comments (#{sold_listing.comments.size})"
+      page.should_not have_link 'Cancel', href: root_path
+      page.should_not have_button 'Remove'
+      page.should_not have_link 'Edit', href: edit_temp_listing_path(sold_listing)
+    end
+  end
+
   describe "View Compensation Pixi" do 
-    let(:category) { FactoryGirl.create :category, name: 'Gigs', category_type: 'employment' }
+    let(:category) { FactoryGirl.create :category, name: 'Gigs', category_type_code: 'employment' }
     let(:job_type) { FactoryGirl.create :job_type }
     let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id, 
       category_id: category.id, job_type_code: job_type.code, compensation: 'Salary + Equity', price: nil) }

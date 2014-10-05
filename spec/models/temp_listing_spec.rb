@@ -35,6 +35,7 @@ describe TempListing do
   it { should respond_to(:event_end_time) }
   it { should respond_to(:year_built) }
   it { should respond_to(:pixan_id) }
+  it { should respond_to(:event_type_code) }
   it { should respond_to(:job_type_code) }
 
   it { should respond_to(:user) }
@@ -43,6 +44,7 @@ describe TempListing do
   it { should respond_to(:pictures) }
   it { should respond_to(:category) }
   it { should respond_to(:job_type) }
+  it { should respond_to(:event_type) }
   it { should respond_to(:set_flds) }
   it { should respond_to(:generate_token) }
   it { should respond_to(:site_listings) }
@@ -1045,6 +1047,36 @@ describe TempListing do
 
     it "should not return anything if no listings meet the parameters" do
       TempListing.check_category_and_location('removed', 100, 900).should be_empty
+    end
+  end
+
+  describe '.event_type' do
+    before do
+      @etype = FactoryGirl.create(:event_type, code: 'party', description: 'Parties, Galas, and Gatherings')
+      @cat = FactoryGirl.create(:category, name: 'Events', category_type_code: 'event')
+      @listing1 = FactoryGirl.create(:temp_listing, seller_id: @user.id)
+      @listing1.category_id = @cat.id
+      @listing1.event_type_code = 'party'
+    end
+    
+    it "should be an event" do
+      expect(@listing1.event?).to be_true
+    end
+    
+    it "should respond to .event_type" do
+      expect(@listing1.event_type_code).to eq 'party'
+    end
+    
+    it "should respond to .event_type" do
+      expect(@temp_listing.event_type_code).not_to eq 'party'
+    end
+
+    it "shows event_type description" do
+      expect(@listing1.event_type_descr).to eq @etype.description.titleize
+    end
+
+    it "does not show event_type description" do
+      expect(@temp_listing.event_type_descr).to be_nil
     end
   end
 end

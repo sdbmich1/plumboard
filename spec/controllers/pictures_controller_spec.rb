@@ -63,6 +63,7 @@ describe PicturesController do
     context "success" do
       before :each do
         @listing.stub!(:delete_photo).with('1', 0).and_return(true)
+	@listing.stub!(:reload).and_return(@listing)
       end
 
       it "should load the requested listing" do

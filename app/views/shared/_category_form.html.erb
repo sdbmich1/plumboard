@@ -6,7 +6,7 @@
       <div id='signup'>
 	  <div class='controls'><%= f.text_field :name, :size => 20, placeholder: 'Category Name' %></div>
     <span class="control-label">Category Name </span>
-          <div><%= f.collection_select(:category_type_code, CategoryType.active, :code, :proper, {:include_blank => 'Select Category Type'}, {}) %></div>
+          <div><%= f.collection_select(:category_type_code, CategoryType.active, :code, :code, {:include_blank => 'Select Category Type'}, {}) %></div>
     <span class="control-label">Pixi Type</span>
           <div><%= f.select :pixi_type, options_for_select( ['basic', 'premium'], :selected=>@category.pixi_type ) %></div>
     <span class="control-label">Status</span> 

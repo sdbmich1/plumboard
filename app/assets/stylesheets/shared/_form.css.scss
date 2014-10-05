@@ -14,6 +14,10 @@ $pixiBlue: #026FB7;
   color: $pixiBlue; 
 }
 
+.pixi-gray-color { 
+  color: $grayLight;
+}
+
 .pixi-bkgnd { background-color: $pixiOrange }
 .pixi-lt-bkgnd { background-color: #fde9d9 }
 .pixi-blue-bkgnd { background-color: $pixiBlue }
@@ -116,6 +120,10 @@ form#new_post {margin-bottom: -0px!important;}
 
 .mleft15 {
   margin-left: 15px!important;
+}
+
+.mleft20 {
+  margin-left: 20px!important;
 }
 
 .mleft30 {
@@ -312,4 +320,13 @@ tr.spaceUnder > td
 
 .font-bold {
   font-weight: bold;  
+}
+
+.ui-accordion .ui-accordion-content {
+  border-top-left-radius: 0px !important;
+  border-top-right-radius: 0px !important;
+  border-bottom-left-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+  border-left: 0px !important;
+  border-right: 0px !important;
 }

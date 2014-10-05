@@ -163,7 +163,7 @@ module ListingsHelper
 
   # set want message
   def want_msg
-    'I want this! Send private message to owner.'
+    PIXI_WANT_MSG rescue 'I want this!'
   end
 
   # set method based on item existance and type 

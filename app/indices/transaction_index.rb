@@ -6,6 +6,7 @@ ThinkingSphinx::Index.define :transaction, :with => :active_record do
   indexes :description, :sortable => true
   indexes :payment_type
 
-  has :id, :home_phone, :created_at, :updated_at, :amt, :status, :convenience_fee
+  has :id, :as => :transaction_id 
+  has :home_phone, :created_at, :updated_at, :amt, :status, :convenience_fee
 end
 

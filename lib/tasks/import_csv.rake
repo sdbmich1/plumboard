@@ -26,6 +26,9 @@ task :import_sites => :environment do
     Planned Trade global Colegio Labs Tutor Escuela Employment Care Aviation Puerto Instituto Surgical Helicopter Make-up Marketing Company Chaplain
     ZMS ORT Mildred Cultural Scool Beis Paralegal Cosmetic Religion Somatic Inovatech Hospice Height Golf Firenze Dietetic 
     Bais Professional Language Theatre Limit).detect { |x| x =~ /^.*\b(#{row[1]})\b.*$/i }
+    
+    # skip record if specialty school
+    next if spec_site
 
     # add site
     unless site = Site.where(:name => row[1]).first || spec_site
@@ -48,7 +51,7 @@ task :import_sites => :environment do
       if new_site.save 
         puts "Saved site #{attrs.inspect}"
       else
-        puts new_site.errors
+        puts "Error: #{new_site.errors.full_messages.first}"
       end
     end
 
@@ -125,7 +128,7 @@ task :load_sf_neighborhoods => :environment do
       if new_site.save 
         puts "Saved site #{attrs.inspect}"
       else
-        puts new_site.errors
+        puts "Error: #{new_site.errors.full_messages.first}"
       end
     end
   end
@@ -269,8 +272,8 @@ task :load_categories => :environment do
 
     attrs = {
 	      	:name              => row[0].titleize,
-      		:category_type     => row[1],
-          :status		   => row[2]
+      		:category_type_code     => row[1],
+          :status		   => 'active'
     }
 
     # find or add category
@@ -299,7 +302,7 @@ task :update_categories => :environment do
   CSV.foreach(Rails.root.join('db', 'category_data_042214.csv'), :headers => true) do |row|
 
     attrs = {:name             => row[1].titleize,
-             :category_type    => row[2],
+             :category_type_code    => row[2],
              :status           => row[3],
              :pixi_type        => row[4]}
 
@@ -594,13 +597,14 @@ end
 #to run all tasks at once
 task :run_all_tasks => :environment do
 
-  #Rake::Task[:import_sites].execute
+  Rake::Task[:import_sites].execute
   Rake::Task[:load_bay_area_cities].execute
   Rake::Task[:load_sf_neighborhoods].execute
   Rake::Task[:load_zip_codes].execute
   Rake::Task[:load_neighborhoods].execute
   Rake::Task[:load_top_50_cities].execute
   Rake::Task[:load_region_suburbs].execute
+  Rake::Task[:load_category_types].execute
   Rake::Task[:load_categories].execute
   Rake::Task[:update_categories].execute
   Rake::Task[:update_category_pictures].execute
@@ -612,5 +616,4 @@ task :run_all_tasks => :environment do
   Rake::Task[:load_regions].execute
   Rake::Task[:load_event_types].execute
   Rake::Task[:load_status_types].execute
-  Rake::Task[:load_category_types].execute
 end

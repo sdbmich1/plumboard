@@ -557,6 +557,15 @@ describe User do
     end
   end
 
+  describe 'is_admin?' do
+    it { @user.is_admin?.should be_false }
+
+    it 'is true' do
+      @admin = FactoryGirl.create(:pixi_user, user_type_code: 'AD') 
+      expect(@admin.is_admin?).to be_true
+    end
+  end
+
   describe "listing associations" do
     before do
       @buyer = FactoryGirl.create(:pixi_user) 

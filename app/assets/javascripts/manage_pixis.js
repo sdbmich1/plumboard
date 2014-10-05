@@ -1,3 +1,4 @@
+// toggle url for manage pixis process based on status type
 function get_pixi_url() {
   var site_id = $("#site_id").val();
   var category_id = $("#category_id").val();

@@ -1215,22 +1215,31 @@ describe Listing do
 
   describe '.event_type' do
     before do
-        @etype = FactoryGirl.create(:event_type, code: 'party')
-        @listing1 = FactoryGirl.create(:listing)
-        @listing1.category_id = 'event'
-        @listing1.event_type_code = 'party'
+      @etype = FactoryGirl.create(:event_type, code: 'party', description: 'Parties, Galas, and Gatherings')
+      @cat = FactoryGirl.create(:category, name: 'Events', category_type_code: 'event')
+      @listing1 = FactoryGirl.create(:listing, seller_id: @user.id)
+      @listing1.category_id = @cat.id
+      @listing1.event_type_code = 'party'
     end
     
     it "should be an event" do
-        !(@listing1.event?.nil?)
+      expect(@listing1.event?).to be_true
     end
     
     it "should respond to .event_type" do
-        @listing1.event_type == 'party'
+      expect(@listing1.event_type_code).to eq 'party'
     end
     
-    it "etype should respond to listings.first" do
-        !(@etype.listings.first.nil?)
+    it "should respond to .event_type" do
+      expect(@listing.event_type_code).not_to eq 'party'
+    end
+
+    it "shows event_type description" do
+      expect(@listing1.event_type_descr).to eq @etype.description.titleize
+    end
+
+    it "does not show event_type description" do
+      expect(@listing.event_type_descr).to be_nil
     end
   end
   

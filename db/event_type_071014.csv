@@ -2,7 +2,7 @@ code,description,status
 perform,"concert, performance, speaker",active
 session,"classes, sessions, workshops",active
 fund,fundraiser,active
-match,team game/match/session/challenge,active
+sport,sports events,active
 other,other activities,active
 party,party/private social gathering,active
 pubent,"fairs, festivals, public entertainment",active

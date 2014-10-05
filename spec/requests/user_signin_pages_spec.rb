@@ -35,7 +35,7 @@ feature "UserSignins" do
   end
 
   def about_menu
-    page.should have_link('About Pixiboard', href: about_path)
+    page.should have_link('About', href: about_path)
     page.should have_link('Privacy', href: privacy_path)
     page.should have_link('Terms', href: terms_path )
     page.should have_link('Help', href: help_path )
@@ -125,7 +125,7 @@ feature "UserSignins" do
 
         page.should have_link('Sign out', href: destroy_user_session_path)
         page.should have_content "Home"
-	page.should_not have_content 'About Pixiboard'
+	page.should_not have_content 'About'
       end
 
       scenario 'signs-in from home page to local pixi page' do

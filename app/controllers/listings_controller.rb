@@ -1,7 +1,7 @@
 require 'will_paginate/array' 
 class ListingsController < ApplicationController
   include PointManager, LocationManager, NameParse
-  before_filter :authenticate_user!, except: [:local, :category]
+  before_filter :authenticate_user!, except: [:local, :category, :show]
   before_filter :load_data, only: [:index, :seller, :category, :show, :local, :invoiced]
   before_filter :load_pixi, only: [:destroy, :pixi_price, :update]
   before_filter :load_city, only: [:local, :category]
@@ -106,15 +106,8 @@ class ListingsController < ApplicationController
   def load_city
     @listings = Listing.get_by_city @cat, @loc, @page
   end
-<<<<<<< HEAD
-=======
- 
-  def is_admin?
-    @user.user_type_code == 'AD' rescue false
-  end
 
   def set_session
     session[:back_to] = request.path unless signed_in?
   end
->>>>>>> b123f6de6c7ab288b39c81c550508137c3184e5e
 end

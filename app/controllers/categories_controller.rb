@@ -82,6 +82,6 @@ class CategoriesController < ApplicationController
 
   # load category
   def load_category
-    @category = Category.find params[:id]
+    @category = Category.find params[:id] rescue nil
   end
 end

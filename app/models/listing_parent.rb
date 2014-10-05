@@ -142,11 +142,7 @@ class ListingParent < ActiveRecord::Base
 
   # get listings by status and, if provided, category and location
   def self.check_category_and_location status, cid, loc, pg=1
-    if cid.blank? or loc.blank?
-      get_by_status(status)
-    else
-      get_by_status(status).get_by_city(cid, loc, pg, false)
-    end
+    get_by_status(status).get_by_city(cid, loc, pg, false)
   end
 
   # verify if listing has been paid for
@@ -221,7 +217,7 @@ class ListingParent < ActiveRecord::Base
 
   # verify pixi can be edited
   def editable? usr
-    (seller?(usr) || pixter?(usr) || usr.has_role?(:admin)) || usr.has_role?(:support) && !sold?
+    sold? ? false : (seller?(usr) || pixter?(usr) || usr.has_role?(:admin)) || usr.has_role?(:support)
   end
 
   # get category name for a listing
@@ -457,7 +453,7 @@ class ListingParent < ActiveRecord::Base
   end
 
   # get active pixis by region
-  def self.active_by_region city, state, pg, range=100, get_active=true
+  def self.active_by_region city, state, pg, get_active=true, range=100
     loc = [city, state].join(', ') if city && state
     if get_active
       active.where(site_id: Contact.proximity(nil, range, loc, true)).set_page(pg) if loc rescue nil
@@ -508,7 +504,7 @@ class ListingParent < ActiveRecord::Base
     end
   end
 
-# get pixis by category & site ids
+  # get pixis by category & site ids
   def self.get_category_by_site cid, sid, pg=1, get_active=true
     unless sid.blank?
       if get_active
@@ -519,5 +515,10 @@ class ListingParent < ActiveRecord::Base
     else
       get_by_category cid, get_active, pg
     end
+  end
+
+  # titleize description
+  def event_type_descr
+    event_type.description.titleize rescue nil
   end
 end

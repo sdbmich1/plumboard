@@ -1,12 +1,12 @@
 <% if post.content != nil %>
 <li id="<%= post.id %>">
 <table>
-  <tr>
-    <td width="6%"> 
+  <tr class='row'>
+    <td class="span1"> 
       <%= render partial: 'shared/show_photo', locals: {model: set_poster(post, sentFlg), file_name: "myimage", psize: '80x80', 
         display_cnt: 0 } %>
     </td>
-    <td width="20%"> 
+    <td class="span3 no-left"> 
       <b>
         <% if set_poster(post, sentFlg).name == @user.name %>
           Me
@@ -15,11 +15,11 @@
         <% end %>
       </b>
     </td>
-    <td width="57%">
-      <%= post.summary_custom(60, true) %>
+    <td class="span5 no-left">
+      <span class='pixi-gray-color'><%= post.summary_custom(60, true) %></span>
     </td>          
-    <td align="right">
-      <div class='pull-right'>
+    <td class="span4">
+      <div class='right-form'>
         <span class="timestamp">
         <% if post.created_at.to_date == Date.today %>
 	  <%= short_time(post.created_at) %>

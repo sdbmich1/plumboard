@@ -5,17 +5,15 @@
           <div class='span3'>End Date: <%= short_date listing.event_end_date %></div>
           <div class='span2'>Start Time: <%= short_time listing.event_start_time %></div>
           <div class='offset1 span2 mbot'>End Time: <%= short_time listing.event_end_time %></div>
+          <div class='span4 mbot'>Event Type: <%= listing.event_type_descr %></div><br />
         <% end %>
       </div>
   </div>
 
   <div class="row">
-    <div class="span11 mbot">
+    <div class="span12 mbot">
         <%= simple_format(listing.summary) %><br />
 
-        <% if listing.price %>
-          Price: <%= ntc listing.price %>
-        <% end %>
         <% if listing.job? %>
           Job Type: <%= listing.job_type_name %><br />
 	  Compensation: <%= listing.compensation %>
