@@ -77,7 +77,6 @@ $pixiBlue: #026FB7;
   display: block;
   margin-top: -5px!important;
   font-size: 12px!important;
-  margin-left: 20px;
 }
 
 .gray-content {
@@ -109,31 +108,16 @@ form#new_post {margin-bottom: -0px!important;}
 .v-top { vertical-align: top }
 .left-form {float: left;}
 .right-form {float: right;}
+.mauto {width: 20%; margin: 0 auto}
 
-.mleft5 {
-  margin-left: 5px!important;
-}
-
-.mleft10 {
-  margin-left: 10px!important;
-}
-
-.mleft15 {
-  margin-left: 15px!important;
-}
-
-.mleft20 {
-  margin-left: 20px!important;
-}
-
-.mleft30 {
-  margin-left: 30px!important;
-}
-
-.mleft-pct {
-  margin-left: 10%!important;
-}
-
+.mleft5 {margin-left: 5px!important;}
+.mleft10 {margin-left: 10px!important;}
+.mleft15 {margin-left: 15px!important;}
+.mleft20 {margin-left: 20px!important;}
+.mleft30 {margin-left: 30px!important;}
+.mleft40 {margin-left: 40px!important;}
+.mleft-pct {margin-left: 10%!important;}
+  
 /* submit button */
 .signin-btn { color: white!important; font-weight: bold; background: $pixiOrange!important; border: $pixiOrange!important; 
   height: 29px!important; text-align: center; vertical-align: middle; padding-top: 6px; padding-left: 22px; padding-right: 22px;}
@@ -329,4 +313,28 @@ tr.spaceUnder > td
   border-bottom-right-radius: 0px !important;
   border-left: 0px !important;
   border-right: 0px !important;
+}
+
+.ui-accordion-header-active {
+  border-top-left-radius: 0px !important;
+  border-top-right-radius: 0px !important;
+  border-bottom: none;
+  border-right: 0px !important;
+  border-left: 0px !important;
+}
+
+.ui-accordion-header.ui-state-default a {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.active-msg-text {
+  color: white !important;
+}
+.ui-accordion-header.ui-state-active { 
+  color: black !important; 
+  .span5 .no-left .hdr-content {
+    color: white;
+  }
 }

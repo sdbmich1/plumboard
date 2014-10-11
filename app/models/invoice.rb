@@ -53,13 +53,17 @@ class Invoice < ActiveRecord::Base
   end
 
   # load new invoice with most recent pixi data
-  def self.load_new usr
+  def self.load_new usr, buyer_id, pixi_id
     if usr && usr.has_pixis?
       # get most recent pixi
-      pixi = usr.active_listings.first
+      pixi = usr.active_listings.first if usr.active_listings.size == 1
 
       # load invoice with pixi data
-      inv = usr.invoices.build pixi_id: pixi.pixi_id, price: pixi.price, subtotal: pixi.price, amount: pixi.price
+      inv = usr.invoices.build buyer_id: buyer_id
+
+      # set pixi id if possible
+      inv.pixi_id = !pixi_id.blank? ? pixi_id : !pixi.blank? ? pixi.id : nil rescue nil
+      inv.price, inv.subtotal, inv.amount = inv.listing.price, inv.listing.price, inv.listing.price if inv.listing
     end
     inv
   end

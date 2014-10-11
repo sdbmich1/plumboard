@@ -15,6 +15,11 @@ feature "Conversations" do
     @seller = FactoryGirl.create(:pixi_user, first_name: 'Kim', last_name: 'Harris', email: 'kimmy@pixitest.com')
     @invoice = @seller.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @user.id)
   end
+
+  def paid_invoice
+    @seller = FactoryGirl.create(:pixi_user, first_name: 'Kim', last_name: 'Harris', email: 'kimmy@pixitest.com')
+    @invoice = @seller.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @user.id, status: 'paid')
+  end
    
   def add_post conv
     @post_reply = conv.posts.create FactoryGirl.attributes_for :post, user_id: @user.id, recipient_id: @sender.id, pixi_id: @listing.pixi_id
@@ -71,11 +76,24 @@ feature "Conversations" do
       page.should have_selector('#conv-trash-btn') 
       page.should have_selector('#conv-bill-btn') 
       page.should_not have_selector('#conv-pay-btn') 
+      page.should_not have_selector('#conv-show-btn') 
     end
 
     it "marks all posts read", js: true do
       click_on 'Mark All Read'
       page.should have_css('li.active a') 
+    end
+     
+    describe 'show messages' do
+      before :each do
+        visit conversations_path
+      end
+
+      it "opens messages page" do
+        page.should have_selector('#conv-show-btn') 
+        page.find('#conv-show-btn').click
+        page.should have_content @conversation.listing.title
+      end
     end
      
     describe 'pay invoice' do
@@ -84,13 +102,20 @@ feature "Conversations" do
         visit conversations_path
       end
 
-      it { should have_selector('#conv-pay-btn') }
-
       it "opens pay invoice page" do
         page.should have_selector('#conv-pay-btn') 
         page.find('#conv-pay-btn').click
         page.should have_content 'Amount Due'
       end
+    end
+     
+    describe 'paid invoice' do
+      before :each do
+        paid_invoice
+        visit conversations_path
+      end
+
+      it { should_not have_selector('#conv-pay-btn') }
     end
   end
      

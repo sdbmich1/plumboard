@@ -117,10 +117,6 @@ Plumboard::Application.routes.draw do
   end
 
   resources :pending_listings, except: [:new, :edit, :update, :create, :destroy] do
-    collection do
-      get 'invoiced'
-    end
-
     member do
       put 'approve', 'deny'
     end
@@ -179,7 +175,6 @@ Plumboard::Application.routes.draw do
 
   # specify root route based on user sign in status
   root to: 'listings#local', :constraints => lambda {|r| r.env["warden"].authenticate? }
-  root to: 'listings#invoiced', :constraints => lambda {|r| r.env["warden"].authenticate? }
   root to: 'pages#home'
 
   # exception handling

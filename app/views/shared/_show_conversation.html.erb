@@ -1,5 +1,8 @@
-<% unless conversation.blank? %>    
-  <% unless conversation.posts.blank? %>    
+<div class='pull-right mbot'>
+  <%= image_tag('rsz_pixichat_logo_hort.png', class: 'ppay-logo') %>
+</div>
+<div class='clear-all'></div>
+<% unless conversation.blank? || conversation.posts.blank? %>    
   <div>
     <table>
       <tr>
@@ -13,26 +16,28 @@
           <% end %>
         </td>
         <td align="right">
-          <% if conversation.invoice != nil && conversation.invoice.status == 'unpaid' && conversation.invoice.buyer == @user %>
+          <% if conversation.due_invoice? @user %>
               <td><%= link_to image_tag('pay-icon.png'), invoice_path(conversation.invoice.id), class: 'btn btn-small' %></td>
           <% end %>
           <% if conversation.can_bill? @user %> 
-            <td><%= link_to image_tag('bill-icon.png'), get_invoice_path, class: 'btn btn-small' %></td>
+            <td><%= link_to image_tag('bill-icon.png'), get_invoice_path(conversation.other_user(@user).id, conversation.pixi_id), 
+	      class: 'btn btn-small', title: 'Bill' %></td>
           <% end %>
           <td><%= link_to image_tag('trash-icon.png'), remove_conversation_path(conversation.id), :method => :put, confirm: 
-	    'Delete this conversation?', class: 'btn btn-small' %></td>
+	    'Delete this conversation?', class: 'btn btn-small', title: 'Delete' %></td>
         </td>
       </tr>
     </table>
   </div>
   <div id='accordion'>
-    <%= render partial: 'shared/post', collection: @posts, locals: { sentFlg: sentFlg } %>
+    <%= render partial: 'shared/post', collection: @posts.reorder('created_at ASC'), locals: { sentFlg: sentFlg } %>
   </div>
   <div class='sm-top'>
     <%= render partial: 'shared/reply', locals: { post: @post, sentFlg: sentFlg, conversation: conversation } unless 
        conversation.system_msg? %>
   </div>
-  <% end %>
-  <% else %>
+<% else %>
+  <div class='span12 sm-top'>
     <div class='center-wrapper'>No messages found.</div>
+  </div>
 <% end %>

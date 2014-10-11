@@ -16,6 +16,12 @@ module PostsHelper
     sentFlg ? post.recipient : post.user
   end
 
+  # get name of message poster
+  def get_poster_name post, sentFlg
+    pname = set_poster(post, sentFlg).name rescue nil
+    pname == @user.name ? 'Me' : pname
+  end
+
   # set read / unread icon
   def set_msg_icon post
     post.unread?(@user) ? 'pixi_blank16.png' : 'pixi_orange16.png'

@@ -297,7 +297,7 @@ GEM
       activesupport (>= 3.0.0)
       cocaine (~> 0.5.0)
       mime-types
-    parsley-rails (1.2.4.0)
+    parsley-rails (2.0.5.0)
       railties (>= 3.0.0)
     polyglot (0.3.3)
     pry (0.9.12.2)
@@ -542,7 +542,7 @@ DEPENDENCIES
   open4
   open_uri_redirections
   paperclip
-  parsley-rails
+  parsley-rails (~> 2.0.5.0)
   quiet_assets
   rack-google_analytics
   rails (= 3.2.12)

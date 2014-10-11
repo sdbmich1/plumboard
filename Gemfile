@@ -144,7 +144,7 @@ gem 'cache_digests', '~> 0.3.1'
 gem 'area', '~> 0.10.0'
 
 # client validation
-gem "parsley-rails"
+gem "parsley-rails", '~> 2.0.5.0'
 
 # handle https uri
 gem 'open_uri_redirections'

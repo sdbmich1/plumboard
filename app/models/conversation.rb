@@ -52,10 +52,15 @@ class Conversation < ActiveRecord::Base
       return user
     end
   end
+  
+  # checks whether invoice for user is due
+  def due_invoice? usr
+    listing.active? && invoice != nil && invoice.unpaid? && invoice.buyer == usr
+  end
 
   # checks whether user can bill
   def can_bill? usr
-    if listing.status != 'active' || invoice != nil || (invoice != nil && invoice.status != 'unpaid')
+    if !listing.active? || invoice != nil || (invoice != nil && !invoice.unpaid?)
       return false
     end
     listing.seller_id == usr.id

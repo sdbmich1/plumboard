@@ -3,7 +3,9 @@
     <%= render partial: 'shared/conversation', collection: @conversations, locals: { sentFlg: sentFlg } %>
   </ol>
 <% else %>
-  <div class='center-wrapper'>No conversations found.</div>
+  <div class='span12 sm-top'>
+    <div class='center-wrapper'>No conversations found.</div>
+  </div>
 <% end %>
 
 <div id='post-list' class="nav pull-right">

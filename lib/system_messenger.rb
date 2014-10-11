@@ -10,7 +10,8 @@ module SystemMessenger
       end
 
       # send message
-      sender.posts.create(pixi_id: listing.pixi_id, recipient_id: usr.id, content: msg, msg_type: msg_type)
+      conv = listing.conversations.create pixi_id: listing.pixi_id, user_id: sender.id, recipient_id: usr.id
+      conv.posts.create(pixi_id: listing.pixi_id, recipient_id: usr.id, content: msg, msg_type: msg_type, user_id: sender.id)
     end
   end
 end

@@ -8,11 +8,6 @@ feature "Invoices" do
     create_buyers
   end
 
-  def init_setup usr
-    login_as(usr, :scope => :user, :run_callbacks => false)
-    @user = usr
-  end
-
   def create_buyers
     @buyer = FactoryGirl.create(:pixi_user, first_name: 'Phil', last_name: 'Hayes') 
     @buyer1 = FactoryGirl.create(:pixi_user, first_name: 'Bob', last_name: 'Jones', email: 'bjones@pixitest.com') 
@@ -444,10 +439,10 @@ feature "Invoices" do
       init_setup user
       init_data
       @buyer.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
-      visit new_invoice_path 
     end
         
     it 'invoice w/ wanted buyers', js: true do
+      visit new_invoice_path 
       select_pixi
       page.should have_selector "#buyer_name"
       page.execute_script("$('#buyer_name').toggle();")
@@ -460,6 +455,20 @@ feature "Invoices" do
       }.to change(Invoice, :count).by(1)
 
       page.should have_content "Status" 
+      page.should have_content @buyer.name
+    end
+        
+    it 'invoice w/ selected buyer & pixi' do
+      visit new_invoice_path(buyer_id: @buyer.id, pixi_id: @listing.pixi_id)
+      page.should have_selector "#buyer_name"
+      page.should have_selector "#tmp_buyer_id"
+      page.should have_content @buyer.name
+      page.should have_content @listing.title
+      expect { 
+	    click_button 'Send'; sleep 3
+      }.to change(Invoice, :count).by(1)
+
+      page.should have_content "Convenience Fee" 
       page.should have_content @buyer.name
     end
   end

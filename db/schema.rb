@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140920191435) do
+ActiveRecord::Schema.define(:version => 20141007054238) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -680,9 +680,6 @@ ActiveRecord::Schema.define(:version => 20140920191435) do
     t.boolean  "delta"
   end
 
-  add_index "temp_listings", ["event_type_code"], :name => "index_temp_listings_on_event_type_code"
-  add_index "temp_listings", ["parent_pixi_id"], :name => "index_temp_listings_on_parent_pixi_id"
-  add_index "temp_listings", ["pixan_id"], :name => "index_temp_listings_on_pixan_id"
   add_index "temp_listings", ["pixi_id"], :name => "index_temp_listings_on_pixi_id", :unique => true
   add_index "temp_listings", ["status"], :name => "index_temp_listings_on_status"
 
