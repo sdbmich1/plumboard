@@ -27,6 +27,11 @@ module PostsHelper
     post.unread?(@user) ? 'pixi_blank16.png' : 'pixi_orange16.png'
   end
 
+  # set font weight based on message status
+  def set_user_font model
+    model.unread?(@user) ? 'font-bold' : '' rescue ''
+  end
+
   # set read / unread icon
   def invoice_due? post
     post.due_invoice?(@user) && post.inv_msg? 

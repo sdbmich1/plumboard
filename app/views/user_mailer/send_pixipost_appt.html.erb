@@ -10,7 +10,7 @@
 	Your Pixter, <%= @post.pixter_name %> will arrive at
 	<%= @post.full_address %> at the specified time to post your pixi(s).<br /><br />
 
-	Visit <%= seller_pixi_posts_url(status: 'scheduled') %> to view or change your appointment.
+	Click <%= link_to 'View My PixiPosts', seller_pixi_posts_url(status: 'scheduled') %> to view or change your appointment.
 	<br /><br />
 
 	<span style="margin-top:20px;">Keep on Pixing!</span><br /><br />

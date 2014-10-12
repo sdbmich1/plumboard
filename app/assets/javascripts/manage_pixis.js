@@ -25,7 +25,7 @@ function get_pixi_url() {
       url = "../listings?status='removed'&loc=" + site_id + "&cid=" + category_id;
       break;
     case "denied":
-      url = "../listings?status='denied'&loc=" + site_id + "&cid=" + category_id;
+      url = "../pending_listings?status='denied'&loc=" + site_id + "&cid=" + category_id;
       break;
     case "invoiced":
       url = "../listings/invoiced?loc=" + site_id + "&cid=" + category_id;

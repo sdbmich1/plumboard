@@ -1,3 +1,4 @@
+<% unless conversation.listing.blank? %>
 <% cache conversation do %>
 <li id="<%= conversation.id %>">
   <div class='row'>
@@ -50,4 +51,5 @@
   </div>
   <div class='clear-all'></div>
 </li>
+<% end %>
 <% end %>

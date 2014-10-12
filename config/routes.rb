@@ -30,7 +30,7 @@ Plumboard::Application.routes.draw do
 
   resources :posts, except: [:new, :edit, :update] do
     member do
-      put 'remove'
+      put 'remove', 'mark_read'
     end
     collection do
       get 'unread', 'sent', 'mark'

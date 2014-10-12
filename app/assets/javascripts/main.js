@@ -132,6 +132,11 @@ $(document).ready(function(){
     activate: function(e, ui) {
       ui.newHeader.find(".hdr-content").hide('fast');
       ui.oldHeader.find(".hdr-content").show('fast');
+
+      // mark message as read
+      var pid = $('.conv-msg').attr('data-pid');
+      var url = '/posts/' + pid + '/mark_read';
+      processUrl(url, 'PUT');
     }
   });
 
@@ -408,9 +413,14 @@ $(document).on("click", ".moreBtn, #more-btn", function(){
 });	
 
 // process url calls
-function processUrl(url) {
+function processUrl(url, ptype) {
+  if (typeof ptype === "undefined" || ptype === null) { 
+    ptype = "GET"; 
+  }
+
   $.ajax({
     url: url,
+    type: ptype,
     dataType: 'script',
     'beforeSend': function() {
       toggleLoading();

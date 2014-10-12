@@ -1,5 +1,5 @@
-<% if post && post.content != nil %>
-<li id="<%= post.id %>">
+<% if post && !post.content.blank? %>
+<li id="<%= post.id %>" class='conv-msg' data-pid="<%= post.id %>">
 <table>
   <tr class='row'>
     <td class="span1"> 
@@ -7,7 +7,7 @@
         display_cnt: 0 } %>
     </td>
     <td class="span3 no-left"> 
-      <span class='font-bold'><%= get_poster_name(post, sentFlg) %></span>
+      <span class="<%= set_user_font(post) %>"><%= get_poster_name(post, sentFlg) %></span>
     </td>
     <td class="span5 no-left">
       <span class='pixi-gray-color hdr-content'><%= post.full_content %></span>

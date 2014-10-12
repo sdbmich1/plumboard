@@ -858,7 +858,6 @@ describe TempListing do
       temp_listing.status = 'denied'
       temp_listing.save!
       send_mailer temp_listing, 'send_denial'
-      expect(Post.all.count).to eq(1)
       SystemMessenger.stub!(:send_system_message).with(@user, temp_listing, 'deny').and_return(true)
     end
   end

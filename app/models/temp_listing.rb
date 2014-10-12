@@ -112,8 +112,8 @@ class TempListing < ListingParent
         transaction.process_transaction unless transaction.approved? rescue nil
       when 'denied'
         # pxb notice & email messages to user
-        SystemMessenger::send_message user, self, 'deny'
         UserMailer.delay.send_denial(self)
+        SystemMessenger::send_message user, self, 'deny'
     end
   end
 end

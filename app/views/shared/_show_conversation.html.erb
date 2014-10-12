@@ -7,12 +7,9 @@
     <table>
       <tr>
         <td width="97%">
-          <% if conversation.listing != nil %>
-          <%= render partial: 'shared/show_photo', locals: {model: conversation.listing, file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
-          <h4>
-            &nbsp;
-            <%= link_to conversation.pixi_title, conversation.listing, class: 'terms-link' %>
-          </h4>
+          <% unless conversation.listing.blank? %>
+            <%= render partial: 'shared/show_photo', locals: {model: conversation.listing, file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
+            <h4>&nbsp;  <%= link_to conversation.pixi_title, conversation.listing, class: 'terms-link' %></h4>
           <% end %>
         </td>
         <td align="right">

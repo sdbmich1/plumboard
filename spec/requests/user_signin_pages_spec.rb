@@ -36,6 +36,7 @@ feature "UserSignins" do
 
   def about_menu
     page.should have_link('About', href: about_path)
+    page.should have_link('Contact', href: contact_path)
     page.should have_link('Privacy', href: privacy_path)
     page.should have_link('Terms', href: terms_path )
     page.should have_link('Help', href: help_path )

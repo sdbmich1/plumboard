@@ -12,6 +12,11 @@ class StatusType < ActiveRecord::Base
 
   # return all unhidden types
   def self.unhidden
-    where("hide <> 'yes'")
+    where("hide <> 'yes' OR hide IS NULL")
+  end
+
+  # titleize code
+  def code_title
+    code.titleize rescue nil
   end
 end
