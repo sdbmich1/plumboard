@@ -1,4 +1,4 @@
-<% unless conversation.listing.blank? %>
+<% if conv_exists? conversation %>
 <% cache conversation do %>
 <li id="<%= conversation.id %>">
   <div class='row'>

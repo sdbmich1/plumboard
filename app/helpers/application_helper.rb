@@ -238,4 +238,9 @@ module ApplicationHelper
   def check_errors? model
     model.errors.any? rescue false
   end
+
+  # check if next page exists
+  def next_page? model
+    model.next_page rescue false
+  end
 end

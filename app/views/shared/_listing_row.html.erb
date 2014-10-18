@@ -1,7 +1,7 @@
 <% cache cache_key_for_pixi_item(listing) do %>
 <tr>
   <td class='span1 center-wrapper'>
-    <%= render partial: 'shared/show_picture', locals: {model: listing, psize: 'tiny'} %>
+    <%= render partial: 'shared/show_temp_pixi_image', locals: {model: listing, pix_size: 'tiny', img_size: 'usr-sm-photo'} %>
   </td>
   <td class='span2'><%= link_to listing.title, set_pixi_path(listing), class: 'pending_title' %></td>
   <td class='span2'><%= listing.category_name %></td>

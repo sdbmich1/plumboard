@@ -29,20 +29,6 @@ class ListingsController < ApplicationController
     end
   end
 
-  def destroy
-    respond_with(@listing) do |format|
-      if @listing.destroy
-        format.html { redirect_to get_root_path, notice: 'Successfully removed pixi.' }
-        format.mobile { redirect_to get_root_path, notice: 'Successfully removed pixi.' }
-	format.json { head :ok }
-      else
-        format.html { render action: :show, error: "Pixi was not removed." }
-        format.mobile { render action: :show, error: "Pixi was not removed." }
-        format.json { render json: { errors: @listing.errors.full_messages }, status: 422 }
-      end
-    end
-  end
-
   def seller
     respond_with(@listings = Listing.active_without_job_type.get_by_seller(@user).paginate(page: @page))
   end

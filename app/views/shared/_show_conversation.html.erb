@@ -2,15 +2,13 @@
   <%= image_tag('rsz_pixichat_logo_hort.png', class: 'ppay-logo') %>
 </div>
 <div class='clear-all'></div>
-<% unless conversation.blank? || conversation.posts.blank? %>    
+<% if conv_exists? conversation %>    
   <div>
     <table>
       <tr>
         <td width="97%">
-          <% unless conversation.listing.blank? %>
             <%= render partial: 'shared/show_photo', locals: {model: conversation.listing, file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
             <h4>&nbsp;  <%= link_to conversation.pixi_title, conversation.listing, class: 'terms-link' %></h4>
-          <% end %>
         </td>
         <td align="right">
           <% if conversation.due_invoice? @user %>
@@ -27,7 +25,7 @@
     </table>
   </div>
   <div id='accordion'>
-    <%= render partial: 'shared/post', collection: @posts.reorder('created_at ASC'), locals: { sentFlg: sentFlg } %>
+    <%= render partial: 'shared/post', collection: @posts.reorder('created_at ASC'), locals: { sentFlg: sentFlg } if @posts %>
   </div>
   <div class='sm-top'>
     <%= render partial: 'shared/reply', locals: { post: @post, sentFlg: sentFlg, conversation: conversation } unless 

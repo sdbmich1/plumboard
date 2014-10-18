@@ -1,8 +1,12 @@
 <% cache ['board', listing] do %>
 <div class="item">
   <div class="center-wrapper">
-    <%= link_to listing_path(listing) do %>
-      <%= render partial: 'shared/show_picture', locals: {model: listing, psize: 'medium'} %>
+    <% if temp_listing?(listing) %>
+      <%= render partial: 'shared/show_photo', locals: {model: listing, psize: '180x180', file_name:'pixi-image', display_cnt: 0} %>
+    <% else %>
+      <%= link_to listing_path(listing) do %>
+        <%= render partial: 'shared/show_picture', locals: {model: listing, psize: 'medium'} %>
+      <% end %>
     <% end %>
     <div class='sm-top bdescr'>
       <%= listing.nice_title false %><br /><%= "(#{listing.site_name})" %>

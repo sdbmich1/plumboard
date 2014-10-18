@@ -35,6 +35,6 @@ class Contact < ActiveRecord::Base
   # get proximity
   def self.proximity ip, range=25, pos=nil, geoFlg=false
     val = geoFlg && pos ? pos : ip
-    near(val, range).get_by_type('Site').map(&:contactable_id).uniq
+    near(val, range).get_by_type('Site').map(&:contactable_id).uniq rescue nil
   end
 end

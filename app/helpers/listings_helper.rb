@@ -224,4 +224,9 @@ module ListingsHelper
     loc, loc_name = LocationManager::get_region listing.site_name
     link_to loc_name, category_listings_path(cid: listing.category_id, loc: loc)
   end
+
+  # check model type
+  def temp_listing? model
+    model.is_a? TempListing
+  end
 end

@@ -25,4 +25,9 @@ module ConversationHelper
     model.other_user(@user).name + msgs rescue nil
   end
 
+  # check for existence
+  def conv_exists? conversation
+    !conversation.blank? && !conversation.listing.blank? && !conversation.posts.blank? rescue nil
+  end
+
 end

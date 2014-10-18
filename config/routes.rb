@@ -12,7 +12,7 @@ Plumboard::Application.routes.draw do
   end
 
   # resource defs
-  resources :listings, except: [:new, :edit, :create] do
+  resources :listings, except: [:new, :edit, :create, :destroy] do
     collection do
       get 'pixi_price', 'seller', 'follower', 'sold', 'category', 'local', 'wanted', 'purchased', 'invoiced'
     end
