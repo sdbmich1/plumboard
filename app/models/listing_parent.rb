@@ -259,7 +259,7 @@ class ListingParent < ActiveRecord::Base
   # titleize title
   def nice_title prcFlg=true
     unless title.blank?
-      str = price.blank? || price == 0 ? '' : ' - $' + price.to_i.to_s
+      str = price.blank? || price == 0 ? '' : ' - '
       tt = prcFlg ? title.split(' ').map(&:capitalize).join(' ').html_safe : title.titleize.html_safe rescue title 
       if prcFlg
         title.index('$') ? tt : tt + str 

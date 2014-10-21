@@ -829,6 +829,7 @@ describe TempListing do
 
   describe 'async_send_notifications' do
     let(:temp_listing) {create :temp_listing_with_transaction, seller_id: @user.id}
+    let(:denied_listing) {create :temp_listing_with_transaction, seller_id: @user.id, status: 'denied'}
 
     def send_mailer model, msg
       @mailer = mock(UserMailer)
@@ -840,6 +841,17 @@ describe TempListing do
       temp_listing.status = 'pending'
       temp_listing.save!
       send_mailer temp_listing, 'send_submit_notice'
+    end
+
+    it 'delivers the submitted pixi message for denied pixi' do
+      denied_listing.status = 'pending'
+      denied_listing.save!
+      send_mailer denied_listing, 'send_submit_notice'
+      denied_listing.status = 'approved'
+      denied_listing.transaction.amt = 0.0
+      expect {
+	denied_listing.save!
+      }.to change {Listing.count}.by(1)
     end
 
     it 'adds listing and transaction' do
