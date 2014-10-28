@@ -677,36 +677,8 @@ feature "Listings" do
       end
     end
 
-    describe "My pixis page" do
-      let(:listings) { 30.times { create(:listing, seller_id: user.id) } }
-      before do
-        @other_user = create :pixi_user, email: 'john.doe@pxb.com'
-        px_user = create :pixi_user, email: 'jsnow@pxb.com'
-        init_setup px_user
-        @listing = create(:listing, seller_id: @user.id) 
-        @temp_listing = create(:temp_listing, seller_id: @user.id) 
-        @pending_listing = create(:temp_listing, seller_id: @user.id, status: 'pending', title: 'Snare Drum') 
-        @denied_listing = create(:temp_listing, seller_id: @user.id, status: 'denied', title: 'Xbox 360') 
-        @sold_listing = create(:listing, seller_id: @user.id, title: 'Leather Briefcase', status: 'sold') 
-        @purchased_listing = create(:listing, seller_id: @other_user.id, buyer_id: @user.id, title: 'Comfy Green Chair', status: 'sold') 
-        @user.pixi_wants.create FactoryGirl.attributes_for :pixi_like, pixi_id: listing.pixi_id
-        @user.saved_listings.create FactoryGirl.attributes_for :saved_listing, pixi_id: listing.pixi_id
-        visit seller_listings_path 
-      end
-      
-      it "views my pixis page", js: true do
-        page.should have_content('My Pixis')
-        page.should_not have_content('No pixis found')
-        page.should have_link 'Active', href: seller_listings_path
-        page.should have_link 'Draft', href: unposted_temp_listings_path
-        page.should have_link 'Pending', href: pending_temp_listings_path
-        page.should have_link 'Purchased', href: purchased_listings_path
-        page.should have_link 'Sold', href: sold_listings_path
-        page.should have_link 'Saved', href: saved_listings_path
-        page.should have_link 'Wanted', href: wanted_listings_path
-      end
-
-      describe "pagination", js: true do
+      describe "My Pixis pagination", js: true do
+        let(:listings) { 30.times { create(:listing, seller_id: user.id) } }
         it "should list each listing" do
           @user.pixis.paginate(page: 1).each do |listing|
             page.should have_selector('td', text: listing.title)
@@ -714,8 +686,59 @@ feature "Listings" do
         end
       end
 
+    describe "My pixis page" do
+      before do
+        @other_user = create :pixi_user, email: 'john.doe@pxb.com'
+        px_user = create :pixi_user, email: 'jsnow@pxb.com'
+        init_setup px_user
+        @listing = create(:listing, seller_id: @user.id) 
+        @temp_listing = create(:temp_listing, seller_id: @user.id) 
+        # First couple may not be necessary?
+        @pending_listing = create(:temp_listing, seller_id: @user.id, title: 'Snare Drum') 
+        @pending_listing.status = 'pending'
+        @pending_listing.save!
+        @denied_listing = create(:listing, seller_id: @user.id, title: 'Xbox 360')
+        @denied_listing.status = 'denied'
+        @denied_listing.save!
+        @purchased_listing = create(:listing, seller_id: @other_user.id, buyer_id: @user.id, title: 'Comfy Green Chair') 
+        @purchased_listing.status = 'sold'
+        @purchased_listing.save!
+        @active_listing = create(:listing, seller_id: @user.id, title: 'Bookshelf')
+        @active_listing.status = 'active'
+        @active_listing.save!
+        @sold_listing = create(:listing, seller_id: @user.id, title: 'Leather Briefcase') 
+        @sold_listing.status = 'sold'
+        @sold_listing.save!
+        @expired_listing = create(:listing, seller_id: @user.id, title: 'TV')
+        @expired_listing.status = 'expired'
+        @expired_listing.save!
+        @user.pixi_wants.create FactoryGirl.attributes_for :pixi_like, pixi_id: listing.pixi_id
+        @user.saved_listings.create FactoryGirl.attributes_for :saved_listing, pixi_id: listing.pixi_id
+      end
+      
+      it "views my pixis page", js: true do
+        visit seller_listings_path
+        page.should have_content('My Pixis')
+        page.should have_link 'Active', href: seller_listings_path(status: 'active')
+        page.should have_link 'Draft', href: unposted_temp_listings_path
+        page.should have_link 'Pending', href: pending_temp_listings_path
+        page.should have_link 'Purchased', href: purchased_listings_path
+        page.should have_link 'Sold', href: seller_listings_path(status: 'sold')
+        page.should have_link 'Saved', href: saved_listings_path
+        page.should have_link 'Wanted', href: wanted_listings_path
+        page.should have_link 'Expired', href: seller_listings_path(status: 'expired')
+      end
+
+      it "displays active listings", js: true do
+        visit seller_listings_path(status: 'active')
+        page.should have_content @active_listing.title
+        page.should_not have_content @sold_listing.title
+        page.should_not have_content @purchased_listing.title
+        page.should_not have_content 'No pixis found.'
+      end
+
       it "displays sold listings", js: true do
-        page.find('#sold-pixis').click
+        visit seller_listings_path(status: 'sold')
         page.should_not have_content listing.title
         page.should have_content @sold_listing.title
         page.should_not have_content @purchased_listing.title
@@ -723,7 +746,7 @@ feature "Listings" do
       end
 
       it "displays draft listings", js: true do
-        page.find('#draft-pixis').click
+        visit unposted_temp_listings_path
         page.should have_content @temp_listing.title
         page.should_not have_content @pending_listing.title
         page.should_not have_content @denied_listing.title
@@ -731,34 +754,86 @@ feature "Listings" do
       end
 
       it "displays pending listings", js: true do
-        page.find('#pending-pixis').click
+        visit pending_temp_listings_path
         page.should_not have_content @temp_listing.title
         page.should have_content @pending_listing.title
-        page.should have_content @denied_listing.title
         page.should_not have_content @sold_listing.title
         page.should_not have_content 'No pixis found.'
       end
 
       it "displays saved listings", js: true do
-        page.find('#saved-pixis').click
+        visit saved_listings_path
         page.should have_content listing.title
         page.should_not have_content @sold_listing.title
         page.should_not have_content 'No pixis found.'
       end
 
       it "display wanted listings", js: true do
-        page.find('#wanted-pixis').click
+        visit wanted_listings_path
         page.should have_content listing.title
         page.should_not have_content @sold_listing.title
         page.should_not have_content 'No pixis found.'
       end
 
       it "display purchased listings", js: true do
-        page.find('#purchased-pixis').click
+        visit purchased_listings_path
         page.should_not have_content listing.title
         page.should_not have_content @sold_listing.title
         page.should have_content @purchased_listing.title
         page.should_not have_content 'No pixis found.'
+      end
+
+      it "display expired listings", js: true do
+        visit seller_listings_path(status: 'expired')
+        page.should_not have_content listing.title
+        page.should_not have_content @sold_listing.title
+        page.should have_content @expired_listing.title
+        page.should_not have_content 'No pixis found.'
+      end
+    end
+
+    describe "Repost button" do
+      before do
+        @active_listing = create(:listing, seller_id: @user.id, title: 'Bookshelf')
+        @active_listing.status = 'active'
+        @active_listing.save!
+        @sold_listing = create(:listing, seller_id: @user.id, title: 'Leather Briefcase') 
+        @sold_listing.status = 'sold'
+        @sold_listing.save!
+        @expired_listing = create(:listing, seller_id: @user.id, title: 'TV')
+        @expired_listing.status = 'expired'
+        @expired_listing.save!
+      end
+
+      it "should appear for expired pixi" do
+        visit listing_path(@expired_listing)
+        page.should have_link 'Repost!', href: repost_listing_path(@expired_listing)
+      end
+
+      it "should appear for sold pixi" do
+        visit listing_path(@sold_listing)
+        page.should have_link 'Repost!', href: repost_listing_path(@sold_listing)
+      end
+
+      it "should not appear for pixi with other status" do
+        visit listing_path(@active_listing)
+        page.should_not have_link 'Repost!', href: repost_listing_path(@active_listing)
+      end
+
+      it "reposts an expired pixi", js: true do
+        visit listing_path(@expired_listing)
+        click_link 'Repost!'
+        page.should have_content 'Pixis'    # should go back to home page
+        visit listing_path(@expired_listing)
+        page.should_not have_link 'Repost!', href: repost_listing_path(@expired_listing)   # pixi shouldn't be expired anymore
+      end
+
+      it "reposts a sold pixi", js: true do
+        visit listing_path(@sold_listing)
+        click_link 'Repost!'
+        page.should have_content 'Pixis'    # should go back to home page
+        visit listing_path(@sold_listing)
+        page.should_not have_link 'Repost!', href: repost_listing_path(@sold_listing)   # pixi shouldn't be expired anymore
       end
     end
   end

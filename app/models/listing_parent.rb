@@ -194,6 +194,11 @@ class ListingParent < ActiveRecord::Base
     status == 'removed'
   end
 
+  # verify if listing is removed
+  def expired?
+    status == 'expired'
+  end
+
   # verify if alias is used
   def alias?
     show_alias_flg == 'yes'
@@ -324,7 +329,7 @@ class ListingParent < ActiveRecord::Base
   end
 
   # duplicate pixi between models
-  def dup_pixi tmpFlg
+  def dup_pixi tmpFlg, repost=false
     
     # check for temp or active pixi based on flag
     listing = tmpFlg ? Listing.find_pixi(self.pixi_id) : TempListing.find_pixi(self.pixi_id)
@@ -351,7 +356,7 @@ class ListingParent < ActiveRecord::Base
     self.pictures.each do |pic|
 
       # check if listing & photo already exists for pixi edit
-      if tmpFlg && !listing.new_record? 
+      if tmpFlg && !listing.new_record?
         next if listing.pictures.where(:photo_file_name => pic.photo_file_name).first
       end
 
@@ -368,6 +373,11 @@ class ListingParent < ActiveRecord::Base
       listing.pixan_id, listing.year_built, listing.buyer_id = self.pixan_id, self.year_built, self.buyer_id
       listing.show_phone_flg, listing.start_date, listing.end_date = self.show_phone_flg, self.start_date, self.end_date
       listing.post_ip, listing.lat, listing.lng, listing.edited_by = self.post_ip, self.lat, self.lng, self.edited_by
+      listing.pixi_id = self.pixi_id
+    end
+
+    if listing.is_a?(Listing) && repost
+      listing.generate_token
     end
 
     # remove any dup in case of cleanup failures
@@ -457,7 +467,7 @@ class ListingParent < ActiveRecord::Base
   end
 
   # get active pixis by region
-  def self.active_by_region city, state, pg, range=100, get_active=true
+  def self.active_by_region city, state, pg=1, get_active=true, range=100
     loc = [city, state].join(', ') if city && state
     if get_active
       active.where(site_id: Contact.proximity(nil, range, loc, true)).set_page(pg) if loc rescue nil
@@ -518,6 +528,26 @@ class ListingParent < ActiveRecord::Base
       end
     else
       get_by_category cid, get_active, pg
+    end
+  end
+
+  # set unique key
+  def generate_token
+    begin
+      token = SecureRandom.urlsafe_base64
+    end while TempListing.where(:pixi_id => token).exists?
+
+    self.pixi_id = token
+  end
+
+  def repost
+    if expired?
+      self.status = 'active'
+      self.save!
+    elsif sold?
+      dup_pixi true, true
+    else
+      false
     end
   end
 end

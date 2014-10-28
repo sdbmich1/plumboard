@@ -19,6 +19,10 @@ describe ListingsController do
       get("/listings/invoiced").should route_to("listings#invoiced")
     end
 
+    it "routes to #repost" do
+      put("/listings/1/repost").should route_to("listings#repost", :id => "1")
+    end
+
     it "routes to #update" do
       put("/listings/1").should route_to("listings#update", :id => "1")
     end

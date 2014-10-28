@@ -399,6 +399,10 @@ class User < ActiveRecord::Base
     sent_conversations + received_conversations rescue nil
   end
 
+  def is_admin?
+    user_type_code == 'AD' rescue false
+  end
+
 
   # set sphinx scopes
    sphinx_scope(:first_name) { 

@@ -1299,4 +1299,34 @@ describe Listing do
       expect(@invoice.status).not_to eq 'removed'
     end
   end
+
+  describe 'expired?' do
+    it 'should return true' do
+      @listing.status = 'expired'
+      @listing.expired?.should be_true
+    end
+
+    it 'should not return true' do
+      @listing.expired?.should_not be_true
+    end
+  end
+
+  describe 'repost' do
+    it 'sets status to active if listing is expired' do
+      @listing.status = 'expired'
+      @listing.repost
+      @listing.active?.should be_true
+    end
+
+    it 'calls dup_pixi if listing is sold' do
+      @listing.status = 'sold'
+      new_listing = @listing.repost
+      new_listing.active?.should be_true
+    end
+
+    it 'returns false if listing is not expired/sold' do
+      @listing.status = 'active'
+      @listing.repost.should be_false
+    end
+  end
 end

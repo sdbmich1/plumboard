@@ -10,15 +10,6 @@ class TempListing < ListingParent
   attr_accessible :slr_name
   has_many :site_listings, :foreign_key => :listing_id, :dependent => :destroy
 
-  # set unique key
-  def generate_token
-    begin
-      token = SecureRandom.urlsafe_base64
-    end while TempListing.where(:pixi_id => token).exists?
-
-    self.pixi_id = token
-  end
-
   # set fields upon creation
   def set_flds
     # parse non-ascii chars

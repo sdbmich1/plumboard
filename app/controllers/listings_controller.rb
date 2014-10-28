@@ -3,7 +3,7 @@ class ListingsController < ApplicationController
   include PointManager, LocationManager, NameParse
   before_filter :authenticate_user!, except: [:local, :category]
   before_filter :load_data, only: [:index, :seller, :category, :show, :local, :invoiced]
-  before_filter :load_pixi, only: [:destroy, :pixi_price, :update]
+  before_filter :load_pixi, only: [:destroy, :pixi_price, :repost, :update]
   before_filter :load_city, only: [:local, :category]
   after_filter :add_points, :set_session, only: [:show]
   respond_to :html, :json, :js, :mobile
@@ -34,7 +34,7 @@ class ListingsController < ApplicationController
       if @listing.destroy
         format.html { redirect_to get_root_path, notice: 'Successfully removed pixi.' }
         format.mobile { redirect_to get_root_path, notice: 'Successfully removed pixi.' }
-	format.json { head :ok }
+        format.json { head :ok }
       else
         format.html { render action: :show, error: "Pixi was not removed." }
         format.mobile { render action: :show, error: "Pixi was not removed." }
@@ -44,7 +44,7 @@ class ListingsController < ApplicationController
   end
 
   def seller
-    respond_with(@listings = Listing.active_without_job_type.get_by_seller(@user).paginate(page: @page))
+    respond_with(@listings = Listing.get_by_seller(@user).get_by_status(@status).paginate(page: @page))
   end
 
   def sold
@@ -77,6 +77,14 @@ class ListingsController < ApplicationController
     respond_with(@listings = Listing.check_invoiced_category_and_location(@cat, @loc, @page).paginate(page: @page))
   end
 
+  def repost
+    if @listing && @listing.repost
+      redirect_to get_root_path
+    else
+      render :show, notice: "Repost was not successful."
+    end
+  end
+
   protected
 
   def load_data
@@ -105,10 +113,6 @@ class ListingsController < ApplicationController
 
   def load_city
     @listings = Listing.get_by_city @cat, @loc, @page
-  end
-
-  def is_admin?
-    @user.user_type_code == 'AD' rescue false
   end
 
   def set_session

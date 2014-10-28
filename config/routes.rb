@@ -14,7 +14,10 @@ Plumboard::Application.routes.draw do
   # resource defs
   resources :listings, except: [:new, :edit, :create] do
     collection do
-      get 'pixi_price', 'seller', 'follower', 'sold', 'category', 'local', 'wanted', 'purchased', 'invoiced'
+      get 'pixi_price', 'seller', 'follower', 'category', 'local', 'wanted', 'purchased', 'invoiced'
+    end
+    member do
+      put 'repost'
     end
   end
 
@@ -179,7 +182,6 @@ Plumboard::Application.routes.draw do
 
   # specify root route based on user sign in status
   root to: 'listings#local', :constraints => lambda {|r| r.env["warden"].authenticate? }
-  root to: 'listings#invoiced', :constraints => lambda {|r| r.env["warden"].authenticate? }
   root to: 'pages#home'
 
   # exception handling

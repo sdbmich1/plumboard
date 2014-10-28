@@ -468,8 +468,8 @@ describe TempListing do
       expect(@dup_listing.wanted_count).to eq(1)
       expect(@dup_listing.liked_count).to eq(1)
       expect(@dup_listing.pictures.count).to be > 1
-      expect(TempListing.where(pixi_id: @listing.pixi_id).count).to eq(0)
-      expect(TempListing.where("title like 'Super%'").count).to eq(0)
+      expect(TempListing.where(pixi_id: @listing.pixi_id).count).to eq(1)
+      expect(TempListing.where("title like 'Super%'").count).to eq(1)
       expect(Listing.where(pixi_id: @listing.pixi_id).count).to eq(1)
       expect(Listing.where("title like 'Super%'").count).to eq(1)
     end
@@ -516,7 +516,6 @@ describe TempListing do
       expect(@dup_listing.wanted_count).to eq(1)
       expect(@dup_listing.liked_count).to eq(1)
       # expect(@dup_listing.pictures.count).to eq 1
-      expect(TempListing.where(pixi_id: @listing.pixi_id).count).to eq(0)
       expect(TempListing.where("title like 'Super%'").count).to eq(0)
       expect(Listing.where(pixi_id: @listing.pixi_id).count).to eq(1)
       expect(Listing.where("title like 'Super%'").count).to eq(1)
@@ -1045,6 +1044,13 @@ describe TempListing do
 
     it "should not return anything if no listings meet the parameters" do
       TempListing.check_category_and_location('removed', 100, 900).should be_empty
+    end
+  end
+
+  describe 'repost' do
+    it 'should return false' do
+      @temp_listing.status = 'pending'
+      @temp_listing.repost.should be_false
     end
   end
 end

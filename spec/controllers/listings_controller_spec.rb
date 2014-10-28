@@ -153,7 +153,7 @@ describe ListingsController do
   describe 'GET seller' do
     before :each do
       @listings = stub_model(Listing)
-      Listing.stub_chain(:active, :get_by_seller).and_return( @listings )
+      Listing.stub_chain(:get_by_seller, :get_by_status).and_return( @listings )
       @listings.stub!(:paginate).and_return( @listings )
       do_get
     end
@@ -182,33 +182,58 @@ describe ListingsController do
     end
   end
 
-  describe 'GET sold' do
+  describe "PUT /repost/:id" do
+    def do_repost
+      put :repost, :id => "1"
+    end
+
     before :each do
-      @listings = stub_model(Listing)
-      Listing.stub_chain(:get_by_seller, :get_by_status).and_return( @listings )
-      @listings.stub!(:paginate).and_return( @listings )
-      do_get
+      Listing.stub(:find_by_pixi_id).and_return(@listing)
     end
 
-    def do_get
-      xhr :get, :sold
+    context "success" do
+      before :each do
+        @listing.stub!(:repost).and_return(true)
+      end
+
+      it "should load the requested listing" do
+        Listing.stub(:find_by_pixi_id) { @listing }
+        do_repost
+      end
+
+      it "should update the requested listing" do
+        Listing.stub(:find_by_pixi_id).with("1") { mock_listing }
+        mock_listing.should_receive(:repost).and_return(:success)
+        do_repost
+      end
+
+      it "should assign @listing" do
+        Listing.stub(:find_by_pixi_id) { mock_listing(:repost => true) }
+        do_repost
+        assigns(:listing).should_not be_nil 
+      end
+
+      it "redirects the page" do
+        do_repost
+        response.should be_redirect
+      end
     end
 
-    it "renders the :sold view" do
-      response.should render_template :sold
-    end
+    context 'failure' do
+      before :each do
+        @listing.stub!(:repost).and_return(false) 
+      end
 
-    it "should assign @listings" do
-      assigns(:listings).should_not be_nil
-    end
+      it "should assign listing" do
+        Listing.stub(:find_by_pixi_id) { mock_listing(:repost => false) }
+        do_repost
+        assigns(:listing).should_not be_nil 
+      end
 
-    it "should show the requested listings" do
-      response.should be_success
-    end
-
-    it "responds to JSON" do
-      get :sold, format: :json
-      expect(response).to be_success
+      it "should render show template" do
+        do_repost
+        response.should render_template(:show)
+      end
     end
   end
 

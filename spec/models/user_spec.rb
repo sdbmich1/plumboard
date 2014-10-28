@@ -754,4 +754,18 @@ describe User do
       expect(@user.get_conversations).to eql([])
     end
   end
+
+  describe "is_admin?" do
+    it "returns true for admin" do
+      @user = FactoryGirl.create :admin
+      @user.user_type_code = 'AD'
+      @user.save!
+      expect(@user.is_admin?).to be_true
+    end
+
+    it "returns false for non-admin" do
+      @user = FactoryGirl.create :pixi_user
+      expect(@user.is_admin?).to be_false
+    end
+  end
 end
