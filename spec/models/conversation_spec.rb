@@ -219,23 +219,27 @@ describe Conversation do
       context 'getting specific conversations' do
         it "gets sent conversations" do
           Conversation.get_specific_conversations(@user, "sent").should include(@conversation)
+          Conversation.usr_msg?(@conversation, @user).should be_true
           expect(Conversation.get_specific_conversations(@user, "sent").count).to eql(1)
         end
 
         it "only gets active sent conversations" do
           @conversation.status = 'removed'
           @conversation.save
+          Conversation.usr_msg?(@conversation, @user).should_not be_true
           Conversation.get_specific_conversations(@user, "sent").should_not include(@conversation)
         end
 
         it "gets received conversations" do
           Conversation.get_specific_conversations(@user, "received").should include(@conversation2)
+          Conversation.usr_msg?(@conversation2, @user).should be_true
           expect(Conversation.get_specific_conversations(@user, "received").count).to eql(1)
         end
 
         it "only gets active received conversations" do
           @conversation2.recipient_status = 'removed'
           @conversation2.save
+          Conversation.usr_msg?(@conversation2, @user).should_not be_true
           Conversation.get_specific_conversations(@user, "received").should_not include(@conversation2)
         end
       end
@@ -299,6 +303,20 @@ describe Conversation do
     it "should not find correct pixi_title" do 
       @conversation.pixi_id = '100' 
       @conversation.pixi_title.should be_nil 
+    end
+  end
+
+  describe "invoice_id" do 
+    it 'returns invoice id' do
+      @invoice = @user.invoices.build FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
+      sleep 2;
+      @invoice.save
+      @conversation.invoice_id.should_not be_nil  
+    end
+
+    it "should not find correct invoice_id" do 
+      @conversation.pixi_id = '100' 
+      @conversation.invoice_id.should be_nil 
     end
   end
 
@@ -372,6 +390,42 @@ describe Conversation do
       @listing.status = 'sold'
       @listing.save; sleep 1
       @conversation.can_bill?(@recipient).should_not be_true
+    end
+  end
+
+  describe 'create_dt' do
+    it "does not show local updated date" do
+      @conversation.created_at = nil
+      expect(@conversation.create_dt.to_i).to eq Time.now.to_i
+    end
+
+    it "show current created date" do
+      expect(@conversation.create_dt).not_to eq @conversation.created_at
+    end
+
+    it "shows local created date" do
+      @listing.lat, @listing.lng = 35.1498, -90.0492
+      @listing.save
+      expect(@conversation.create_dt.to_i).to eq Time.now.to_i
+      expect(@conversation.create_dt).not_to eq @conversation.created_at
+    end
+  end
+
+  describe 'active_post_count' do
+    it 'returns count > 0' do
+      expect(@conversation.active_post_count(@user)).not_to eq 0
+    end
+
+    it 'returns count = 0 for user' do
+      @post.status = 'removed'
+      @post.save
+      expect(@conversation.active_post_count(@user)).to eq 0
+    end
+
+    it 'returns count = 0 for recipient' do
+      @post.recipient_status = 'removed'
+      @post.save
+      expect(@conversation.active_post_count(@recipient)).to eq 0
     end
   end
 end

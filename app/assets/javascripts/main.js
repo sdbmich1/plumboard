@@ -125,6 +125,7 @@ function load_slider(cntl) {
 $(document).ready(function(){
 
   // accordion for pixichat
+<<<<<<< HEAD
   $( "#accordion" ).accordion({
     heightStyle: "content",
     header: "table",
@@ -139,6 +140,14 @@ $(document).ready(function(){
       processUrl(url, 'PUT');
     }
   });
+=======
+  open_accordion(false);
+
+  // select last accordion panel on window load
+  window.onload = function () {
+    open_panel();
+  }
+>>>>>>> 8d123b2ca2bcc78b216b48b03feb00212292f272
 
   // select last accordion panel on window load
   window.onload = function () {
@@ -849,4 +858,54 @@ function checkPrice(price) {
     return false;
   }
   return true;
+}
+
+// open accordion
+function open_accordion(pFlg) {
+  $( "#accordion" ).accordion({
+    heightStyle: "content",
+    header: "table",
+    active: 'none',
+    activate: function(e, ui) {
+      ui.newHeader.find(".hdr-content").hide('fast');
+      ui.oldHeader.find(".hdr-content").show('fast');
+
+      // mark message as read
+      var pid = $('.conv-msg').attr('data-pid');
+      var url = '/posts/' + pid + '/mark_read';
+      processUrl(url, 'PUT');
+    }
+  });
+
+  // open last panel if needed
+  if(pFlg)
+    open_panel();
+}
+
+// open last panel
+function open_panel () {
+  if($('#accordion').length > 0)
+    $("#accordion").accordion('option', "active", -1 );
+}
+
+// remove post message
+$(document).on("click", '.msg-trash-btn', function(){
+  var pid = $('.conv-msg').attr('data-pid');
+  var status = $('.conv-msg').attr('data-status');
+  var url = '/posts/' + pid + '/remove.js?status=' + status;
+  processUrl(url);
+});
+
+// used to process put & post methods
+function updateUrl(url, destUrl, pType, method) {
+  $.ajax({
+    url: url, 
+    type: pType,
+    dataType: "json",
+    data: {"_method": method},
+    success: function(data) {
+      toggleLoading();	
+      processUrl(destUrl);  // refresh page
+    }
+  });
 }

@@ -11,7 +11,8 @@ class InvoicesController < ApplicationController
   layout :page_layout
 
   def new
-    respond_with(@invoice = Invoice.load_new(@user, params[:buyer_id], params[:pixi_id]))
+    @invoice = Invoice.load_new(@user, params[:buyer_id], params[:pixi_id])
+    redirect_to sent_invoices_path, notice: NO_INV_PIXI_MSG unless @invoice
   end
    
   def index

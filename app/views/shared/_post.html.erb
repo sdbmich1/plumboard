@@ -1,5 +1,5 @@
 <% if post && !post.content.blank? %>
-<li id="<%= post.id %>" class='conv-msg' data-pid="<%= post.id %>">
+<li id="<%= post.id %>" class='conv-msg' data-pid="<%= post.id %>" data-status="<%= @status %>" data-cid="<%= @conversation.id %>">
 <table>
   <tr class='row'>
     <td class="span1"> 
@@ -10,12 +10,15 @@
       <span class="<%= set_user_font(post) %>"><%= get_poster_name(post, sentFlg) %></span>
     </td>
     <td class="span5 no-left">
-      <span class='pixi-gray-color hdr-content'><%= post.full_content %></span>
+      <span class='pixi-gray-color hdr-content'><%= post.summary(60, true) %></span>
     </td>          
     <td class="span4">
       <div class='right-form'>
         <span class="timestamp"><%= "#{show_timestamp(post.created_at)} (#{time_ago_in_words(post.created_at)} ago)" %></span>
       </div>
+    </td>
+    <td class='span1' align='right'>
+      <%= link_to image_tag('trash-icon.png'), '#', confirm: 'Delete this message?', class: 'btn btn-small msg-trash-btn', title: 'Delete' %>
     </td>
   </table>
   <div class='span11'> 

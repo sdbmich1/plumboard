@@ -2,7 +2,7 @@ module ConversationHelper
 
   # set font weight based on message status
   def set_font_weight model
-    model.any_unread?(@user) ? 'font-bold' : '' rescue ''
+    model.any_unread?(@user) && @status == 'received' ? 'font-bold' : '' rescue ''
   end
 
   # display timestamp
@@ -20,7 +20,7 @@ module ConversationHelper
 
   # show messenger name and message count
   def show_msgr_name model
-    cnt = model.posts.count rescue 0
+    cnt = model.active_post_count(@user) rescue 0
     msgs = cnt > 0 ? " (#{cnt})" : ""
     model.other_user(@user).name + msgs rescue nil
   end

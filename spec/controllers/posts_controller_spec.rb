@@ -15,6 +15,12 @@ describe PostsController do
     end
   end
 
+  def mock_conversation(stubs={})
+    (@mock_conversation ||= mock_model(Conversation, stubs).as_null_object).tap do |conversation|
+      conversation.stub(stubs) unless stubs.empty?
+    end
+  end
+
   def mock_post(stubs={})
     (@mock_post ||= mock_model(Post, stubs).as_null_object).tap do |post|
       post.stub(stubs) unless stubs.empty?
@@ -31,7 +37,9 @@ describe PostsController do
 
   describe "POST create" do
     before :each do
-      Post.stub!(:new).and_return(@post)
+      @conversation = stub_model Conversation
+      Conversation.stub!(:find).and_return(@conversation)
+      @conversation.stub_chain(:posts, :build).and_return(@post)
     end
     
     def do_create
@@ -117,35 +125,6 @@ describe PostsController do
     end
   end
 
-  describe 'GET sent' do
-
-    before :each do
-      @posts = stub_model(Post)
-      Post.stub!(:get_sent_posts).and_return( @posts )
-      @posts.stub!(:paginate).and_return( @posts )
-    end
-
-    def do_get
-      xhr :get, :sent
-    end
-
-    it "should load the requested posts" do
-      Post.stub!(:get_sent_posts).and_return( @posts )
-      do_get
-      assigns(:posts).should_not be_nil 
-    end
-
-    it "should render nothing" do
-      do_get
-      controller.stub!(:render)
-    end
-
-    it "responds to JSON" do
-      get :sent, format: :json
-      expect(response).to be_success
-    end
-  end
-
   describe "GET /mark" do
     before :each do
       @post = mock_model Post
@@ -167,6 +146,7 @@ describe PostsController do
       @post = mock_model Post
       Post.stub!(:find).and_return( @post )
       @post.stub_chain(:mark_as_read!, :for, :unread?).with(@user).and_return(true)
+      @post.stub!(:unread?).and_return(true)
     end
     
     def do_mark
@@ -179,165 +159,21 @@ describe PostsController do
     end
   end
 
-  describe "GET /show" do
-    before :each do
-      @posts = mock("posts")
-      Post.stub!(:get_posts).and_return( @posts )
-      @posts.stub!(:paginate).and_return( @posts )
-    end
-    
-    def do_get
-      xhr :get, :show, :id => 'reply', :page => '2'
-    end
-
-    it "should load the requested posts" do
-      @user.stub(:incoming_posts).and_return(@posts)
-      do_get
-      assigns(:posts).should_not be_nil 
-    end
-
-    it "show action should render show template" do
-      do_get
-      response.should render_template(:show)
-    end
-  end
-
-  describe 'xhr GET index' do
-
-    before :each do
-      @posts = stub_model(Post)
-      Post.stub!(:get_posts).and_return( @posts )
-      @posts.stub!(:paginate).and_return( @posts )
-    end
-
-    def do_get
-      xhr :get, :index
-    end
-
-    it "should load the requested posts" do
-      Post.stub!(:get_posts).and_return( @posts )
-      do_get
-      assigns(:posts).should_not be_nil 
-    end
-
-    it "index action should render index template" do
-      do_get
-      response.should render_template(:index)
-    end
-
-    it "responds to JSON" do
-      get :index, format: :json
-      expect(response).to be_success
-    end
-  end
-
-  describe 'GET index' do
-
-    before :each do
-      @posts = stub_model(Post)
-      Post.stub!(:get_posts).and_return( @posts )
-      @posts.stub!(:paginate).and_return( @posts )
-    end
-
-    def do_get
-      get :index
-    end
-
-    it "should load the requested posts" do
-      Post.stub!(:get_posts).and_return( @posts )
-      do_get
-      assigns(:posts).should_not be_nil 
-    end
-
-    it "index action should render index template" do
-      do_get
-      response.should render_template(:index)
-    end
-  end
-
-  describe "POST reply" do
-    before :each do
-      @post = mock_model Post
-      controller.stub!(:mark_post).and_return(:success)
-    end
-    
-    def do_reply
-      xhr :post, :reply, id: '1', post: { pixi_id: '1', 'content'=>'test' }
-    end
-
-    context 'failure' do
-      
-      before :each do
-        Post.stub!(:save).and_return(false)
-        do_reply
-      end
-
-      it "should assign @post" do
-        assigns(:post).should_not be_nil 
-      end
-
-      it "should render nothing" do
-	controller.stub!(:render)
-      end
-
-      it "responds to JSON" do
-        post :reply, :format=>:json
-	response.status.should_not eq(200)
-      end
-    end
-
-    context 'success' do
-
-      before do
-        Post.stub!(:save).and_return(true)
-        @user.stub_chain(:reload, :incoming_posts).and_return( @posts )
-        @posts.stub!(:paginate).and_return( @posts )
-      end
-       
-      it "should load the requested post" do
-        Post.stub(:new).with({'pixi_id'=>'1', 'content'=>'test' }) { mock_post(:save => true) }
-        do_reply
-      end
-
-      it "should assign @post" do
-        do_reply
-        assigns(:post).should_not be_nil 
-      end
-
-      it "should load the requested posts" do
-        Post.stub(:get_unread).with(@user).and_return(@posts)
-        do_reply
-        assigns(:posts).should == @posts
-      end
-
-      it "should change post count" do
-        lambda do
-          do_reply
-          should change(Post, :count).by(1)
-        end
-      end
-
-      it "responds to JSON" do
-        post :reply, id: '1', post: { pixi_id: '1', 'content'=>'test' }, format: :json
-	response.status.should_not eq(0)
-      end
-    end
-  end
-
-  describe 'PUT remove post' do
+  describe 'GET remove post' do
      before (:each) do
-      Post.stub!(:find).and_return( @conversation )
       @user = mock_model(User, :id => 3)
-      @post = mock_model(Post, :id => 1, :pixi_id => 1, :user_id => 3)
+      @post = mock_model(Post, :id => 1, :pixi_id => 1, :user_id => 3, conversation_id: 1)
+      Post.stub!(:find).and_return( @post )
     end
 
     def do_remove
-      xhr :put, :remove, id: '1'
+      xhr :get, :remove, id: '1'
     end
 
     context "with valid params" do
       before (:each) do
-        Post.stub!(:remove_post).and_return(true)
+        @post.stub!(:remove_post).and_return(true)
+        controller.stub!(:set_redirect_path).and_return('/conversations')
       end
 
       it "should load the requested post" do
@@ -347,7 +183,7 @@ describe PostsController do
 
       it "should update the requested post" do
         Post.stub(:find).with("1") { @post }
-        Post.should_receive(:remove_post)
+        @post.should_receive(:remove_post)
         do_remove
       end
 
@@ -357,7 +193,7 @@ describe PostsController do
         assigns(:post).should_not be_nil 
       end
 
-      it "redirects to the updated conversations" do
+      it "redirects to the updated message or conversations" do
         do_remove
         response.should be_redirect
       end
@@ -366,15 +202,15 @@ describe PostsController do
     context "with invalid params" do
     
       before (:each) do
-        Post.stub!(:remove_post).and_return(false)
+        @post.stub!(:remove_post).and_return(false)
       end
 
-      it "should load the requested conversation" do
+      it "should load the requested post" do
         Post.stub(:find) { @post }
         do_remove
       end
 
-      it "should assign @conversation" do
+      it "should assign @post" do
         Post.stub(:find) { mock_post(:update_attributes => false) }
         do_remove
         assigns(:post).should_not be_nil 
@@ -383,7 +219,7 @@ describe PostsController do
       it "renders nothing" do 
         Post.stub(:find) { mock_post(:update_attributes => false) }
         do_remove
-        response.body.should == " "
+        controller.stub!(:render)
       end
     end
   end

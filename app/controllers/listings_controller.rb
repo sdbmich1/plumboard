@@ -3,7 +3,7 @@ class ListingsController < ApplicationController
   include PointManager, LocationManager, NameParse
   before_filter :authenticate_user!, except: [:local, :category, :show]
   before_filter :load_data, only: [:index, :seller, :category, :show, :local, :invoiced]
-  before_filter :load_pixi, only: [:destroy, :pixi_price, :repost, :update]
+  before_filter :load_pixi, only: [:pixi_price, :repost, :update]
   before_filter :load_city, only: [:local, :category]
   after_filter :add_points, :set_session, only: [:show]
   respond_to :html, :json, :js, :mobile
@@ -26,20 +26,6 @@ class ListingsController < ApplicationController
       redirect_to get_root_path
     else
       render action: :show, error: "Pixi was not removed. Please try again."
-    end
-  end
-
-  def destroy
-    respond_with(@listing) do |format|
-      if @listing.destroy
-        format.html { redirect_to get_root_path, notice: 'Successfully removed pixi.' }
-        format.mobile { redirect_to get_root_path, notice: 'Successfully removed pixi.' }
-        format.json { head :ok }
-      else
-        format.html { render action: :show, error: "Pixi was not removed." }
-        format.mobile { render action: :show, error: "Pixi was not removed." }
-        format.json { render json: { errors: @listing.errors.full_messages }, status: 422 }
-      end
     end
   end
 

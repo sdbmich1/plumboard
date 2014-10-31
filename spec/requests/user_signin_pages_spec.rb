@@ -25,7 +25,7 @@ feature "UserSignins" do
       page.should have_link('For Seller', href: new_temp_listing_path(pixan_id: @user))
     end
     page.should have_link('My Pixis', href: seller_listings_path)
-    page.should have_link('My Messages', href: posts_path)
+    page.should have_link('My Messages', href: conversations_path(status: 'received'))
     page.should have_link('My Invoices', href: sent_invoices_path)
     page.should have_link('My Accounts', href: new_bank_account_path)
     page.should have_link('My Settings', href: settings_path)
@@ -117,6 +117,7 @@ feature "UserSignins" do
       end
 
       scenario 'signs-in from home page' do
+        omniauth
         set_const 0
         expect {
           visit root_path
@@ -130,6 +131,7 @@ feature "UserSignins" do
       end
 
       scenario 'signs-in from home page to local pixi page' do
+        omniauth
         set_const 500
         expect {
           visit root_path

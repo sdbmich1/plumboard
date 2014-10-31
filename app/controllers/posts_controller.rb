@@ -1,37 +1,13 @@
 require 'will_paginate/array' 
 class PostsController < ApplicationController
   before_filter :authenticate_user!
-  before_filter :load_data, only: [:index, :unread, :sent, :reply, :show]
-  before_filter :mark_post, only: [:reply, :mark_read]
+  before_filter :load_data, only: [:unread]
+  before_filter :mark_post, only: [:mark_read]
   respond_to :html, :js, :xml, :json, :mobile
   layout :page_layout
 
-  def index
-    respond_with(@posts = Post.get_posts(@user).paginate(page: @page, per_page: @per_page))
-  end
-
-  def reply
-    @post = Post.new params[:post]
-    respond_with(@post) do |format|
-      if @post.save
-        @posts = @user.reload.incoming_posts.paginate(page: @page, per_page: @per_page) 
-        format.json { render json: {posts: @posts} }
-      else
-        format.json { render json: { errors: @post.errors.full_messages }, status: 422 }
-      end
-    end
-  end
-
-  def show
-    respond_with(@posts = Post.get_posts(@user).paginate(page: @page, per_page: @per_page))
-  end
-
   def mark
     Post.mark_as_read! :all, :for => @user
-  end
-
-  def sent
-    respond_with(@posts = Post.get_sent_posts(@user).paginate(page: @page, per_page: @per_page))
   end
 
   def create
@@ -63,9 +39,8 @@ class PostsController < ApplicationController
   # soft deletes a post
   def remove
     @post = Post.find params[:id]
-
-    if Post.remove_post(@post, @user)
-      redirect_to conversations_path
+    if @post.remove_post(@user)
+      redirect_to set_redirect_path(params[:status]), notice: 'Message removed successfully' 
     else
       flash[:error] = "Post was not removed. Please try again."
       render :nothing => true
@@ -95,5 +70,15 @@ class PostsController < ApplicationController
     @listing = Listing.find_pixi pid
     @comments = @listing.comments.paginate page: @page, per_page: PIXI_COMMENTS if @listing
     @user.pixi_wants.create(pixi_id: pid) # add to user's wanted list
+  end
+
+  def set_redirect_path status='received'
+    @conversation = @post.conversation.reload
+    if @conversation && @conversation.active_post_count(@user) > 0 
+      @posts, @post = @conversation.posts.active_status(@user), @conversation.posts.build
+      conversation_path(@conversation)
+    else
+      conversations_path(status: status)
+    end
   end
 end

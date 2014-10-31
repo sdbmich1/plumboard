@@ -65,16 +65,19 @@ feature "Invoices" do
     # fill_in 'invoice_comment', with: "Thanks for your business."
   end
 
-  def init_data
+  def init_data pxpFlg=true
     @person = FactoryGirl.create(:pixi_user, first_name: 'Kim', last_name: 'Harris') 
-    @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
-    @pxp_listing = FactoryGirl.create(:listing, seller_id: @user.id, pixan_id: @person.id) 
+    @listing = FactoryGirl.create(:listing, seller_id: @user.id)
+    if pxpFlg
+      @pxp_listing = FactoryGirl.create(:listing, seller_id: @user.id, pixan_id: @person.id)
+    end
     @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
   end
 
-  def add_paid_invoice
-    init_data
+  def add_paid_invoice pxpFlg=true
+    init_data pxpFlg
     @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id, status: 'paid')  
+    @listing.status = 'sold'; @listing.save(validate: false)
   end
 
   def add_invoices
@@ -458,18 +461,37 @@ feature "Invoices" do
       page.should have_content "Status" 
       page.should have_content @buyer.name
     end
-        
-    it 'invoice w/ selected buyer & pixi' do
+
+    it 'invoice w/ selected buyer & pixi', js: true do
       visit new_invoice_path(buyer_id: @buyer.id, pixi_id: @listing.pixi_id)
+      sleep 0.5;
       page.should have_selector "#buyer_name"
-      page.should have_selector "#tmp_buyer_id"
-      page.should have_content @buyer.name
+      # page.should have_selector "#tmp_buyer_id"
       page.should have_content @listing.title
       expect { 
 	    click_button 'Send'; sleep 3
       }.to change(Invoice, :count).by(1)
 
       page.should have_content "Convenience Fee" 
+      page.should have_content @buyer.name
+    end
+  end
+
+  describe "Check Sold Invoices" do
+    before do
+      init_setup user
+      add_paid_invoice false
+      @buyer.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
+      sleep 2;
+    end
+        
+    it 'invoice w/ selected buyer & sold pixi', js: true do
+      expect(@user.has_pixis?).to be_false
+      visit new_invoice_path(buyer_id: @buyer.id, pixi_id: @listing.pixi_id)
+      page.should_not have_selector "#buyer_name"
+      page.should have_content "Status"
+      page.should have_content NO_INV_PIXI_MSG
+      page.should have_content @listing.title
       page.should have_content @buyer.name
     end
   end

@@ -10,17 +10,7 @@
             <%= render partial: 'shared/show_photo', locals: {model: conversation.listing, file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
             <h4>&nbsp;  <%= link_to conversation.pixi_title, conversation.listing, class: 'terms-link' %></h4>
         </td>
-        <td align="right">
-          <% if conversation.due_invoice? @user %>
-              <td><%= link_to image_tag('pay-icon.png'), invoice_path(conversation.invoice.id), class: 'btn btn-small' %></td>
-          <% end %>
-          <% if conversation.can_bill? @user %> 
-            <td><%= link_to image_tag('bill-icon.png'), get_invoice_path(conversation.other_user(@user).id, conversation.pixi_id), 
-	      class: 'btn btn-small', title: 'Bill' %></td>
-          <% end %>
-          <td><%= link_to image_tag('trash-icon.png'), remove_conversation_path(conversation.id), :method => :put, confirm: 
-	    'Delete this conversation?', class: 'btn btn-small', title: 'Delete' %></td>
-        </td>
+        <%= render partial: 'shared/conversation_icons', locals: { conversation: conversation } %>
       </tr>
     </table>
   </div>
@@ -28,8 +18,7 @@
     <%= render partial: 'shared/post', collection: @posts.reorder('created_at ASC'), locals: { sentFlg: sentFlg } if @posts %>
   </div>
   <div class='sm-top'>
-    <%= render partial: 'shared/reply', locals: { post: @post, sentFlg: sentFlg, conversation: conversation } unless 
-       conversation.system_msg? %>
+    <%= render partial: 'shared/reply', locals: { post: @post, sentFlg: sentFlg, conversation: conversation } unless conversation.system_msg? %>
   </div>
 <% else %>
   <div class='span12 sm-top'>

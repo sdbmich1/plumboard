@@ -37,6 +37,10 @@ namespace :db do
   task :load_lat_lng, [:site] => [:environment] do |t, args|
     load_contact_lat_lng args.site
   end
+  
+  task :fix_txn_details_price => :environment do
+    update_txn_detail_price
+  end
 end
 
 def set_keys
@@ -57,8 +61,8 @@ def process_record listing
 end
 
 def update_pixis
-  pixis = Listing.active
-  pixis.map! {|p| p.end_date = Time.now+30.days unless p.event?; p.job_type_code = 'FT' if p.job?; p.save!}
+  pixis = Listing.where(status: 'active').where(category_id: Category.where("category_type_code != 'event'")).update_all(end_date: Time.now+90.days)
+  # pixis.map! {|p| p.end_date = Time.now+30.days unless p.event?; p.job_type_code = 'FT' if p.job?; p.save!}
 end
 
 def updateCategoryType
@@ -86,18 +90,17 @@ def update_sites
 end
 
 def update_contactable_type
-  contacts = Contact.where("contactable_type like '%Organization%'")
-  contacts.map! { |s| s.contactable_type = 'Site'; s.save }
+  contacts = Contact.where("contactable_type like '%Organization%'").update_all(contactable_type = 'Site')
+  # contacts.map! { |s| s.contactable_type = 'Site'; s.save }
 end
 
 def update_points
-  PixiPoint.all.each {|p| p.value *= 10; p.save}
+  # PixiPoint.find_each {|p| p.value *= 10; p.save}
+  PixiPoint.update_all("value=value*10")
 end
 
 def update_pixi_buyers
-  invoices = Invoice.where(status: 'paid')
-
-  invoices.each do |i|
+  Invoice.where(status: 'paid').find_each do |i|
     listing = i.listing
     puts listing.title
     listing.buyer_id = i.buyer_id
@@ -109,7 +112,7 @@ end
 def load_pixi_lat_lng
   include LocationManager
 
-  Listing.active.each do |p|
+  Listing.active.find_each do |p|
     ll = LocationManager::get_lat_lng_by_loc p.site_name
     if ll
       p.lat, p.lng = ll
@@ -122,13 +125,32 @@ def load_contact_lat_lng loc
   include LocationManager
   loc = loc + '%'
 
-  Site.where("name like ?", loc).each do |p|
+  Site.where("name like ?", loc).find_each do |p|
     ll = LocationManager::get_lat_lng_by_loc p.name
-    p.contacts.each do |c|
+    p.contacts.find_each do |c|
       if ll
         puts "lat, lng: ", ll
         c.lat, c.lng = ll
         c.save
+      end
+    end
+  end
+end
+
+# update price for txn details to correct coding error
+def update_txn_detail_price
+  Transaction.find_each do |txn|
+    # get price
+    if txn.get_invoice
+      price = txn.get_invoice.price
+
+      # load txn details
+      td = txn.transaction_details.first
+
+      # set price
+      unless price.blank?
+        td.price = price
+        td.save
       end
     end
   end

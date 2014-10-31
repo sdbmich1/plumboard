@@ -30,6 +30,13 @@ feature "Conversations" do
     @post = @conversation.posts.create FactoryGirl.attributes_for :post, user_id: @sender.id, recipient_id: @user.id, pixi_id: @listing.pixi_id
   end
 
+  def add_system_conversation
+    @support = FactoryGirl.create(:pixi_user, first_name: 'Pixiboard', last_name: 'Support', email: 'support@pixiboard.com')
+    @conversation = @listing.conversations.create FactoryGirl.attributes_for :conversation, user_id: @support.id, recipient_id: @user.id
+    @post = @conversation.posts.create FactoryGirl.attributes_for :post, user_id: @support.id, recipient_id: @user.id, pixi_id: @listing.pixi_id, 
+      msg_type: 'system'
+  end
+
   def send_reply
     expect{
       fill_in 'reply_content', with: "I'm interested in this pixi. Please contact me." 
@@ -42,6 +49,10 @@ feature "Conversations" do
     sleep 3
   end
 
+  def click_remove_ok
+    page.driver.browser.switch_to.alert.accept
+  end
+
   describe 'Received conversations w no conversations' do
     before :each do
       visit listings_path 
@@ -50,8 +61,8 @@ feature "Conversations" do
 
     it 'shows content' do
       @conversation = @listing.conversations.create FactoryGirl.attributes_for :conversation, user_id: @sender.id, recipient_id: @user.id
-      page.should have_link('Sent', href: sent_conversations_path)
-      page.should have_link('Received', href: conversations_path)
+      page.should have_link('Sent', href: conversations_path(status: 'sent'))
+      page.should have_link('Received', href: conversations_path(status: 'received'))
       page.should_not have_link('Mark All Read', href: mark_posts_path)
       page.should have_content 'No conversations found.'
       page.should_not have_selector('#conv-trash-btn') 
@@ -70,8 +81,8 @@ feature "Conversations" do
     it 'shows content' do
       page.should have_selector('title', :text => full_title('Messages'))
       page.should have_content @conversation.user.name
-      page.should have_link('Sent', href: sent_conversations_path)
-      page.should have_link('Received', href: conversations_path)
+      page.should have_link('Sent', href: conversations_path(status: 'sent'))
+      page.should have_link('Received', href: conversations_path(status: 'received'))
       page.should have_link('Mark All Read', href: mark_posts_path)
       page.should have_selector('#conv-trash-btn') 
       page.should have_selector('#conv-bill-btn') 
@@ -86,26 +97,55 @@ feature "Conversations" do
      
     describe 'show messages' do
       before :each do
-        visit conversations_path
+        visit conversations_path(status: 'received')
       end
 
       it "opens messages page" do
         page.should have_selector('#conv-show-btn') 
         page.find('#conv-show-btn').click
-        page.should have_content @conversation.listing.title
+        page.should have_content @conversation.pixi_title
       end
     end
      
     describe 'pay invoice' do
       before :each do
         add_invoice
-        visit conversations_path
+        visit conversations_path(status: 'received')
       end
 
       it "opens pay invoice page" do
         page.should have_selector('#conv-pay-btn') 
         page.find('#conv-pay-btn').click
         page.should have_content 'Amount Due'
+      end
+    end
+     
+    describe 'paid invoice' do
+      before :each do
+        paid_invoice
+        visit conversations_path(status: 'received')
+      end
+
+<<<<<<< HEAD
+=======
+      it { should_not have_selector('#conv-pay-btn') }
+    end
+     
+    describe 'paid invoice after opening messages' do
+      before :each do
+        add_invoice
+        visit conversations_path(status: 'received')
+	sleep 5;
+      end
+
+>>>>>>> 8d123b2ca2bcc78b216b48b03feb00212292f272
+      it "opens pay invoice page" do
+        page.should have_selector('#conv-pay-btn') 
+	@invoice.status = 'paid'; @invoice.save
+	sleep 3;
+        page.find('#conv-pay-btn').click
+        page.should have_content 'Amount Due'
+        page.should_not have_content 'Unpaid'
       end
     end
      
@@ -123,7 +163,7 @@ feature "Conversations" do
     before :each do
       add_conversation
       add_invoice
-      visit conversations_path 
+      visit conversations_path(status: 'received')
       click_on 'Sent'
       click_on 'Received'
     end
@@ -147,7 +187,7 @@ feature "Conversations" do
      
   describe 'No sent conversations' do
     before :each do 
-      visit conversations_path 
+      visit conversations_path(status: 'received')
     end
 
     it 'shows no sent conversations', js: true do
@@ -162,7 +202,7 @@ feature "Conversations" do
       @reply_listing = FactoryGirl.create :listing, seller_id: @sender.id
       @reply_conv= @reply_listing.conversations.create FactoryGirl.attributes_for :conversation, user_id: @user.id, recipient_id: @sender.id
       @reply_post = @reply_conv.posts.create FactoryGirl.attributes_for :post, user_id: @user.id, recipient_id: @sender.id, pixi_id: @listing.pixi_id
-      visit conversations_path 
+      visit conversations_path(status: 'received')
     end
 
     it 'shows sent conversations', js: true do
@@ -177,7 +217,7 @@ feature "Conversations" do
   describe 'Show Page', js: true do
     before :each do
       add_conversation
-      visit conversations_path 
+      visit conversations_path(status: 'received')
       sleep 5
       page.find("#conv-show-btn", :visible => true).click
     end
@@ -199,6 +239,28 @@ feature "Conversations" do
       page.should have_content 'No conversations found' 
     end
 
+    it 'removes last message' do
+      page.should have_selector('.msg-trash-btn') 
+      page.find(".msg-trash-btn", :visible => true).click
+      click_remove_ok
+      sleep 3
+      expect(Post.where(recipient_status: 'removed').count).to eq 1
+      page.should have_content 'No conversations found' 
+    end
+
+    it 'removes a message' do
+      add_post @conversation; sleep 2
+      expect(Post.all.count).to eq 2
+      page.should have_selector('.msg-trash-btn') 
+      page.find(".msg-trash-btn", :visible => true).click
+      click_remove_ok
+      sleep 3
+      page.should_not have_content 'No conversations found' 
+      page.should have_selector('.msg-trash-btn') 
+      expect(Post.where(recipient_status: 'active').count).to eq 1
+      expect(Post.where(recipient_status: 'removed').count).to eq 1
+    end
+
     context 'replying' do 
       it 'replies to a conversation' do 
         send_reply
@@ -215,6 +277,91 @@ feature "Conversations" do
     end
   end
 
+  describe 'Seller Sold or Removed Pixis', js: true do
+    before :each do
+      add_conversation
+      @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
+      visit conversations_path(status: 'received')
+      sleep 5
+    end
+
+    it 'handles removed pixi' do
+      page.should have_selector('#conv-bill-btn') 
+      @listing.status = 'removed'; @listing.save
+      sleep 2;
+      page.find("#conv-bill-btn", :visible => true).click
+      page.should have_content NO_INV_PIXI_MSG
+    end
+
+    it 'handles sold pixi' do
+      page.should have_selector('#conv-bill-btn') 
+      @listing.status = 'sold'; @listing.save
+      sleep 2;
+      page.find("#conv-bill-btn", :visible => true).click
+      sleep 2;
+      page.should have_content NO_INV_PIXI_MSG
+    end
+  end
+
+  describe 'Remove Sent Conversation', js: true do
+    before :each do
+      visit destroy_user_session_path
+      sleep 1;
+      init_setup @sender
+      add_conversation
+      visit conversations_path(status: 'sent')
+      sleep 5
+      page.find("#conv-show-btn", :visible => true).click
+    end
+    
+    it 'shows content' do
+      sleep 2;
+      page.should have_content @conversation.pixi_title
+      page.should have_content @post.content
+    end
+
+    it 'removes conversation' do
+      page.find("#conv-trash-btn", :visible => true).click
+      click_remove_ok
+      sleep 3
+      page.should have_content 'No conversations found' 
+      expect(Conversation.where(status: 'removed').count).to eq 1
+    end
+  end
+
+  describe 'Show System Messages', js: true do
+    before :each do
+      add_system_conversation
+      visit conversations_path(status: 'received')
+    end
+    
+    it 'shows conversation content' do
+      page.should have_selector('#conv-show-btn') 
+      page.should have_selector('#conv-trash-btn') 
+      page.should_not have_selector('#conv-pay-btn') 
+      page.should_not have_selector('#conv-bill-btn') 
+    end
+    
+    it 'shows message content' do
+      sleep 5
+      page.find("#conv-show-btn", :visible => true).click
+      page.should have_selector('#conv-trash-btn') 
+      page.should_not have_selector('#conv-pay-btn') 
+      page.should_not have_selector('#conv-bill-btn') 
+      page.should have_content @conversation.user.name
+      page.should have_content @conversation.listing.title
+      page.should have_content @post.content
+    end
+
+    it 'removes conversation' do
+      page.find("#conv-trash-btn", :visible => true).click
+      click_remove_ok
+      sleep 3
+      page.should have_content 'No conversations found' 
+      expect(Conversation.where(recipient_status: 'removed').count).to eq 1
+    end
+  end
+
   describe 'pagination', js: true do
     before(:each) do 
       5.times { 
@@ -225,7 +372,7 @@ feature "Conversations" do
         @conversation = @listing.conversations.create FactoryGirl.attributes_for :conversation, user_id: @sender.id, recipient_id: @user.id
         @post = @conversation.posts.create FactoryGirl.attributes_for :post, user_id: @sender.id, recipient_id: @user.id, pixi_id: @listing.pixi_id 
       }
-      visit conversations_path
+      visit conversations_path(status: 'received')
     end
 
     let(:first_page)  { Conversation.paginate(page: 1) }

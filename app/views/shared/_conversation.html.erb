@@ -1,5 +1,4 @@
 <% if conv_exists? conversation %>
-<% cache conversation do %>
 <li id="<%= conversation.id %>">
   <div class='row'>
     <div class='span1'>
@@ -10,10 +9,7 @@
       <span class="<%= set_font_weight(conversation) %>"><%= show_msgr_name(conversation) %></span>
     </div>
     <div class='span3 no-left'>
-      <div>
-        <%= image_tag set_msg_icon(conversation.posts.first), class: 'left-form mright5' %>
-        <%= link_to show_msg_title(conversation), conversation.listing, class: 'terms-link' %>
-      </div>
+      <%= link_to show_msg_title(conversation), conversation.listing, class: 'terms-link' %>
     </div>
     <div class='span3'>
       <span class="dblock">
@@ -28,28 +24,13 @@
     <div class='span2'>
       <table class='right-form'>
         <td> 
-          <%= link_to image_tag('show-icon.png'), conversation_path(conversation), class: 'btn btn-small', id: 'conv-show-btn', title: 'Open' %>
+          <%= link_to image_tag('show-icon.png'), conversation_path(conversation, status: @status), class: 'btn btn-small', id: 'conv-show-btn', 
+	    title: 'Open' %>
         </td>
-        <td>
-	  <% if conversation.due_invoice?(@user) %>
-            <%= link_to image_tag('pay-icon.png'), invoice_path(conversation.invoice.id), class: 'btn btn-small', id: 'conv-pay-btn', 
-	      title: 'Pay' %>
-          <% end %>
-        </td>
-        <td>
-          <% if conversation.can_bill? @user %> 
-            <%= link_to image_tag('bill-icon.png'), get_invoice_path(conversation.other_user(@user).id, conversation.pixi_id), 
-	      class: 'btn btn-small', id: 'conv-bill-btn', title: 'Bill' %>
-          <% end %>
-        </td>
-        <td>
-          <%= link_to image_tag('trash-icon.png'), remove_conversation_path(conversation), :method => :put, confirm: 
-	    'Delete this conversation?', class: 'btn btn-small', id: 'conv-trash-btn', title: 'Delete' %>
-        </td>
+	<%= render partial: 'shared/conversation_icons', locals: { conversation: conversation } %>
       </table>
     </div>
   </div>
   <div class='clear-all'></div>
 </li>
-<% end %>
 <% end %>
