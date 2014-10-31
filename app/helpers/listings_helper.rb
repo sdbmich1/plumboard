@@ -8,12 +8,12 @@ module ListingsHelper
 
   # format short date
   def short_date(tm)
-    tm.utc.getlocal.strftime('%m/%d/%Y') rescue nil
+    tm.strftime('%m/%d/%Y') rescue nil
   end
 
   # format short time
   def short_time tm
-    tm.utc.getlocal.strftime('%I:%M%p') rescue nil
+    tm.strftime('%I:%M%p') rescue nil
   end
 
   # build location array for map display
