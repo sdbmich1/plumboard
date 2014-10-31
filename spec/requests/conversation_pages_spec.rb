@@ -126,8 +126,6 @@ feature "Conversations" do
         visit conversations_path(status: 'received')
       end
 
-<<<<<<< HEAD
-=======
       it { should_not have_selector('#conv-pay-btn') }
     end
      
@@ -135,10 +133,9 @@ feature "Conversations" do
       before :each do
         add_invoice
         visit conversations_path(status: 'received')
-	sleep 5;
+        sleep 5;
       end
 
->>>>>>> 8d123b2ca2bcc78b216b48b03feb00212292f272
       it "opens pay invoice page" do
         page.should have_selector('#conv-pay-btn') 
 	@invoice.status = 'paid'; @invoice.save

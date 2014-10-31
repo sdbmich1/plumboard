@@ -125,29 +125,12 @@ function load_slider(cntl) {
 $(document).ready(function(){
 
   // accordion for pixichat
-<<<<<<< HEAD
-  $( "#accordion" ).accordion({
-    heightStyle: "content",
-    header: "table",
-    active: 'none',
-    activate: function(e, ui) {
-      ui.newHeader.find(".hdr-content").hide('fast');
-      ui.oldHeader.find(".hdr-content").show('fast');
-
-      // mark message as read
-      var pid = $('.conv-msg').attr('data-pid');
-      var url = '/posts/' + pid + '/mark_read';
-      processUrl(url, 'PUT');
-    }
-  });
-=======
   open_accordion(false);
 
   // select last accordion panel on window load
   window.onload = function () {
     open_panel();
   }
->>>>>>> 8d123b2ca2bcc78b216b48b03feb00212292f272
 
   // select last accordion panel on window load
   window.onload = function () {
