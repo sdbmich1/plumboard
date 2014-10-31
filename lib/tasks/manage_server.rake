@@ -34,7 +34,7 @@ namespace :manage_server do
   # pick drawing winner
   task :pick_drawing_winner => :environment do
     val = ['abp', 'dr', 'fr', 'bpx', 'spx', 'ppx']
-    entrants = UserPixiPoint.where(code: val).where("created_at >= ?", '2014-09-02'.to_date).order("RAND()")
+    entrants = UserPixiPoint.where(code: val).where("created_at >= ? AND created_at < ?", '2014-09-02'.to_date, '2014-10-15'.to_date).order("RAND()")
     puts "The winner is #{entrants.first.user.name}. Email: #{entrants.first.user.email}"
   end
 

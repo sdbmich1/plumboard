@@ -1,4 +1,5 @@
 class SessionsController < Devise::SessionsController
+  before_filter :set_flg, only: [:new]
   layout :page_layout
   respond_to :html, :js, :json, :mobile
 
@@ -32,6 +33,10 @@ class SessionsController < Devise::SessionsController
 
   def page_layout
     'application'
+  end
+
+  def set_flg
+    @xhr = true if request.xhr?
   end
 
 end

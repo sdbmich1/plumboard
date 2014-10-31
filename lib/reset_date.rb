@@ -31,10 +31,14 @@ module ResetDate
   end
 
   # format display date by location
-  def self.display_date_by_loc tm, ll
+  def self.display_date_by_loc tm, ll, strFlg=true
     timezone = Timezone::Zone.new :latlon => ll rescue nil
     zone = timezone.blank? ? 'America/Los_Angeles' : timezone.zone  
-    tm.utc.in_time_zone(zone).strftime('%m/%d/%Y %l:%M %p') rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
+    if strFlg
+      tm.utc.in_time_zone(zone).strftime('%m/%d/%Y %l:%M %p') rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
+    else
+      tm.utc.in_time_zone(zone) rescue Time.now
+    end
   end
 
   # format display date by zip

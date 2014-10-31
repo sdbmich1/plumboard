@@ -1,5 +1,7 @@
 <ul class="nav pull-right">
     <li id='li_home' class="active"><%= link_to "Received", posts_path, class: 'post-menu submenu', remote: true %></li>
     <li><%= link_to "Sent", sent_posts_path, class: 'post-menu submenu', remote: true %></li>
-    <li><%= link_to "Mark All Read", mark_posts_path, id: 'mark-posts', remote: true if get_unread_count(@user) > 0 %></li>
+    <% if action_name != 'show' %>
+      <li><%= link_to "Mark All Read", mark_posts_path, id: 'mark-posts', remote: true if get_unread_count(@user) > 0 %></li>
+    <% end %>
 </ul>

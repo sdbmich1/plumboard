@@ -55,12 +55,12 @@ class Conversation < ActiveRecord::Base
   
   # checks whether invoice for user is due
   def due_invoice? usr
-    listing.active? && !invoice.blank? && invoice.unpaid? && invoice.buyer == usr
+    listing.active? && !listing.sold? && !invoice.blank? && invoice.unpaid? && invoice.buyer == usr
   end
 
   # checks whether user can bill
   def can_bill? usr
-    if !listing.active? || !invoice.blank? || (!invoice.blank? && !invoice.unpaid?)
+    if !listing.active? || listing.sold? || !invoice.blank? || (!invoice.blank? && !invoice.unpaid?)
       return false
     end
     listing.seller_id == usr.id
@@ -71,6 +71,11 @@ class Conversation < ActiveRecord::Base
     listing.title rescue nil
   end
 
+  # invoice id
+  def invoice_id
+    invoice.id rescue nil
+  end
+
   # check for system message
   def system_msg?
     posts.first.system_msg? rescue nil
@@ -78,13 +83,13 @@ class Conversation < ActiveRecord::Base
 
   # set content display
   def content_msg val=35
-    posts.first.content.length > val ? posts.first.summary_custom(val) + '...' : posts.first.summary_custom(val) rescue nil
+    posts.first.content.length > val ? posts.first.summary(val) + '...' : posts.first.summary(val) rescue nil
   end
 
   # returns whether conversation has any associated unread posts
   def any_unread? usr
     posts.each do |post| 
-      if post.unread? usr
+      if post.unread?(usr) && post.recipient_id == usr.id
         return true
       end
     end
@@ -106,24 +111,26 @@ class Conversation < ActiveRecord::Base
     inc_list.active.where("recipient_id = ? OR user_id = ?", usr, usr.id)
   end
 
+  # check if user has a message in the conversation
+  def self.usr_msg? convo, usr
+    (usr.id == convo.user_id && convo.status == 'active') || (usr.id == convo.recipient_id && convo.recipient_status == 'active')
+  end
+
+  # count number of active posts in a conversation for a specific user
+  def active_post_count usr
+    posts.active_status(usr).size rescue 0
+  end
+
   # get conversations where user has sent/received at least one message in conversation and conversation is active
   # for the user
   def self.get_specific_conversations usr, c_type 
     conv_ids = Array.new
     convos = Conversation.get_conversations(usr)
-    convos.each do |convo|
-      convo.posts.each do |post|
-        if c_type == "received" && post.recipient_id == usr.id && convo.recipient_status == 'active'
-          if (usr.id == convo.user_id && convo.status == 'active') || (usr.id == convo.recipient_id && convo.recipient_status == 'active')
-              conv_ids << convo.id
-              break
-          end
-        end
-        if c_type == "sent" && post.user_id == usr.id 
-          if (usr.id == convo.user_id && convo.status == 'active') || (usr.id == convo.recipient_id && convo.recipient_status == 'active')
-              conv_ids << convo.id
-              break
-          end
+    convos.find_each do |convo|
+      convo.posts.find_each do |post|
+        if (c_type == "received" && post.recipient_id == usr.id && post.recipient_status == 'active') ||
+           (c_type == "sent" && post.user_id == usr.id && post.status == 'active')
+          conv_ids << convo.id if usr_msg?(convo, usr); break
         end
       end
     end
@@ -141,6 +148,7 @@ class Conversation < ActiveRecord::Base
     includes(:posts => {:user => :pictures})
   end
 
+  # sets convo status to 'removed'
   def self.remove_conv conv, user 
     if user.id == conv.user_id
       if conv.update_attributes(status: 'removed')
@@ -173,6 +181,9 @@ class Conversation < ActiveRecord::Base
 
   # return create date
   def create_dt
-    !posts.blank? ? posts.first.created_at : Date.today
+    dt = posts.first.created_at rescue Date.today 
+
+    # get display date/time
+    new_dt = listing.display_date dt, false rescue dt
   end
 end

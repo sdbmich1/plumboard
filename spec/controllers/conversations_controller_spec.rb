@@ -128,7 +128,7 @@ describe ConversationsController do
     end
   end
 
-  describe 'GET sent' do
+  describe 'xhr GET index' do
 
     before :each do
       @conversations = stub_model(Conversation)
@@ -137,7 +137,7 @@ describe ConversationsController do
     end
 
     def do_get
-      xhr :get, :sent
+      xhr :get, :index
     end
 
     it "should load the requested conversations" do
@@ -152,7 +152,7 @@ describe ConversationsController do
     end
 
     it "responds to JSON" do
-      get :sent, format: :json
+      get :index, format: :json
       expect(response).to be_success
     end
   end
@@ -188,15 +188,17 @@ describe ConversationsController do
 
   describe "POST conversation reply" do
     before :each do
+      @posts = mock_model(Post)
       @post = stub_model(Post, :id => 2, :pixi_id => 1)
       @conversation = stub_model(Conversation, :id => 1, :pixi_id => 1)
       Conversation.stub!(:find).and_return(@conversation)
       controller.stub_chain(:mark_post, :mark_as_read).and_return(true)
       @conversation.stub_chain(:posts, :build).and_return(@post)
+      @conversation.stub_chain(:posts, :active_status).and_return(@posts)
     end
     
     def do_reply
-      xhr :post, :reply, id: '1', post: { pixi_id: '1', 'content'=>'test' }
+      xhr :post, :reply, id: '1', status: 'received', post: { pixi_id: '1', 'content'=>'test' }
     end
 
     context 'failure' do
@@ -228,13 +230,17 @@ describe ConversationsController do
 
       before do
         @conversation.stub!(:save).and_return(true)
-        Conversation.stub(:get_specific_conversations).and_return(@conversations)
-        @conversations.stub!(:paginate).and_return( @conversations )
+        @conversation.stub!(:reload).and_return(@conversation)
       end
        
       it "should assign @post" do
         do_reply
         assigns(:post).should_not be_nil 
+      end
+       
+      it "should assign @posts" do
+        do_reply
+        assigns(:posts).should_not be_nil 
       end
 
       it "should assign @conversation" do
@@ -242,10 +248,9 @@ describe ConversationsController do
         assigns(:conversation).should_not be_nil 
       end
 
-      it "should load the requested conversations" do
-        Conversation.stub(:get_specific_conversations).and_return(@conversations)
+      it "should load the requested conversation" do
+        Conversation.stub(:find_by_pixi_id) { @conversation }
         do_reply
-        assigns(:conversations).should == @conversations
       end
 
       it "should change post count" do
@@ -274,7 +279,7 @@ describe ConversationsController do
      before (:each) do
       @posts = mock_model(Post)
       Conversation.stub_chain(:inc_show_list, :find).and_return( @conversation )
-      @conversation.stub!(:posts).and_return(@posts)
+      @conversation.stub_chain(:posts, :active_status).and_return(@posts)
       @user = mock_model(User, :id => 3)
       @post = mock_model(Post, :id => 2, :pixi_id => 1, :user_id => 3)
       @conversation.stub_chain(:posts, :build).and_return(@post)

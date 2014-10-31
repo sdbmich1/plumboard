@@ -5,6 +5,7 @@ class Post < ActiveRecord::Base
   attr_accessible :content, :user_id, :pixi_id, :recipient_id, :msg_type, :conversation_id, :status, :recipient_status
 
   PIXI_POST = PIXI_KEYS['pixi']['pixi_post']
+  MAX_SIZE = 100
 
   before_create :activate
 
@@ -30,12 +31,21 @@ class Post < ActiveRecord::Base
     if self.recipient_status != 'removed'
       self.recipient_status = 'active'
     end
+
+    # check for invalid ascii chars
+    encoding_options = {:invalid => :replace, :undef => :replace, :replace => '', :UNIVERSAL_NEWLINE_DECORATOR => true}
+    self.content.encode!(Encoding.find('ASCII'), encoding_options)
     self
   end
 
   # select active posts
   def self.active
     include_list.where("status = 'active' OR recipient_status = 'active'")
+  end
+
+  # select active posts based on status type
+  def self.active_status usr
+    where("(status = 'active' AND user_id = ?) OR (recipient_id = ? AND recipient_status = 'active')", usr.id, usr.id)
   end
 
   # eager load assns
@@ -49,14 +59,9 @@ class Post < ActiveRecord::Base
   end
 
   # short content
-  def summary
-    descr = content.length < 100 ? content.html_safe : content.html_safe[0..99] rescue nil
-    Rinku.auto_link(descr) if descr
-  end
-
-  def summary_custom num, showTailFlg=false
-    descr = content.length < num ? content.html_safe : content.html_safe[0..num] rescue nil
-    descr = showTailFlg ? descr + '...' : descr
+  def summary num=MAX_SIZE, showTailFlg=false
+    descr = long_content?(num) ? content.html_safe[0..num-1] : content.html_safe rescue nil
+    descr = showTailFlg ? descr + '...' : descr rescue nil
     Rinku.auto_link(descr) if descr
   end
 
@@ -65,9 +70,9 @@ class Post < ActiveRecord::Base
     Rinku.auto_link(content.html_safe) rescue nil
   end
 
-  # check if content length > 100
-  def long_content?
-    content.length > 100
+  # check if content length > MAX_SIZE
+  def long_content? num=MAX_SIZE
+    content.length > num
   end
 
   # check if user is sender
@@ -133,15 +138,17 @@ class Post < ActiveRecord::Base
 
       #find the corresponding conversation
       conv = Conversation.find(:first, :conditions => ["pixi_id = ? AND recipient_id = ? AND user_id = ? AND status = ?",
-                                                       inv.pixi_id, recipient, sender, 'active']) rescue nil
+                                                       inv.pixi_id, recipient.id, sender.id, 'active']) rescue nil
 
       # create new conversation if one doesn't already exist
       if conv.blank?
-        conv = listing.conversations.create pixi_id: listing.pixi_id, user_id: sender, recipient_id: recipient
+        conv = Conversation.find(:first, :conditions => ["pixi_id = ? AND recipient_id = ? AND user_id = ? AND status = ?",
+                                                       inv.pixi_id, sender.id, recipient.id, 'active']) rescue nil
+        conv = listing.conversations.create pixi_id: listing.pixi_id, user_id: sender.id, recipient_id: recipient.id if conv.blank?
       end
 
       # new post
-      post = conv.posts.build recipient_id: recipient, user_id: sender, msg_type: msgType, pixi_id: conv.pixi_id
+      post = conv.posts.build recipient_id: recipient.id, user_id: sender.id, msg_type: msgType, pixi_id: conv.pixi_id
 
       # set amount format
       amt = "%0.2f" % inv.amount
@@ -161,10 +168,10 @@ class Post < ActiveRecord::Base
     if !inv.blank? && !listing.blank?
 
       # set content msg 
-      msg = "You received Invoice ##{inv.id} from #{inv.seller.name} for $"
+      msg = "You received Invoice ##{inv.id} from #{inv.seller_name} for $"
 
       # add post
-      add_post inv, listing, inv.seller_id, inv.buyer_id, msg, 'inv'
+      add_post inv, listing, inv.seller, inv.buyer, msg, 'inv'
     else
       false
     end
@@ -184,7 +191,7 @@ class Post < ActiveRecord::Base
       msg = "You received a payment for Invoice ##{inv.id} from #{inv.buyer_name} for $"
 
       # add post
-      add_post inv, listing, inv.buyer_id, inv.seller_id, msg, 'paidinv'
+      add_post inv, listing, inv.buyer, inv.seller, msg, 'paidinv'
     else
       false
     end
@@ -258,11 +265,11 @@ class Post < ActiveRecord::Base
   end
 
   # removes given posts for a specific user
-  def self.remove_post post, user 
-    if user.id == post.user_id
-      post.update_attributes(status: 'removed')
-    elsif user.id == post.recipient_id 
-      post.update_attributes(recipient_status: 'removed')
+  def remove_post user 
+    if user.id == self.user_id
+      self.update_attributes(status: 'removed')
+    elsif user.id == self.recipient_id 
+      self.update_attributes(recipient_status: 'removed')
     end
   end
 end

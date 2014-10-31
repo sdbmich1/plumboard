@@ -184,6 +184,12 @@ describe Transaction do
       @transaction.add_details('pixi', 1, 10.99).should_not be_nil
     end
 
+    it "checks new item detail" do
+      @transaction.add_details('pixi', 3, 10.99).should_not be_nil
+      @transaction.save
+      expect(TransactionDetail.last.price).to eq 10.99
+    end
+
     it "should not load new item detail" do
       @transaction.add_details(nil, 0, 0).should be_nil
     end

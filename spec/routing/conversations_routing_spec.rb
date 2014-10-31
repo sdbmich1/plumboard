@@ -10,10 +10,6 @@ describe "routes for Conversations" do
       post("/conversations").should route_to("conversations#create")
     end
 
-    it "does route to #sent" do
-      get("/conversations/sent").should route_to("conversations#sent")
-    end
-
     it "does route to #destroy" do
       delete("/conversations/1").should route_to("conversations#destroy", :id => "1")
     end

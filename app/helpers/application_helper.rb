@@ -180,7 +180,7 @@ module ApplicationHelper
 
   # convert to currency
   def ntc val, zeroFlg=false
-    val.blank? ? '$0' : number_to_currency(val, :precision => (val.round == val) && zeroFlg ? 0 : 2) rescue nil
+    val.blank? ? '' : number_to_currency(val, :precision => (val.round == val) && zeroFlg ? 0 : 2) rescue nil
   end
 
   # convert to thousand
@@ -247,5 +247,10 @@ module ApplicationHelper
   # check if invoice exists
   def invoice_exists? invoice
     invoice && invoice.buyer rescue false
+  end
+
+  # check if picture exists
+  def picture_exists? model
+    model && model.pictures[0] rescue false
   end
 end

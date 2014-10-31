@@ -108,7 +108,7 @@ class Transaction < ActiveRecord::Base
       # add transaction details      
       (1..order[:cnt].to_i).each do |i| 
         if order['quantity'+i.to_s].to_i > 0 
-          add_details order['item'+i.to_s], order['quantity'+i.to_s], order['price'+i.to_s].to_f * order['quantity'+i.to_s].to_i
+          add_details order['item'+i.to_s], order['quantity'+i.to_s], order['price'+i.to_s].to_f 
         end 
       end 
 

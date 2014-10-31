@@ -408,11 +408,11 @@ class ListingParent < ActiveRecord::Base
   end
 
   # format date based on location
-  def display_date dt
+  def display_date dt, dFlg=true
     ll = lat && lat > 0 ? [lat, lng] : LocationManager::get_lat_lng_by_loc(site_address)
 
     # get display date/time
-    ResetDate::display_date_by_loc dt, ll rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
+    ResetDate::display_date_by_loc dt, ll, dFlg rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
   end
 
   # get site address

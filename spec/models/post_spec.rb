@@ -65,6 +65,14 @@ describe Post do
       @post.summary.length.should == 100 
     end
 
+    it "should return a summary of 50 chars" do 
+      @post.summary(50).length.should == 50 
+    end
+
+    it "should return a summary of 50 chars w/ ellipses" do 
+      @post.summary(50, true).length.should == 53 
+    end
+
     it "long content should return true" do 
       @post.long_content?.should be_true 
     end
@@ -166,17 +174,22 @@ describe Post do
   describe "add post" do 
     let(:msg) { "Test msg" }
     before do
+      @new_pixi = FactoryGirl.create :listing, seller_id: @user.id, title: 'Big Guitar'
       @person = FactoryGirl.create :pixi_user, first_name: 'Jim', last_name: 'Smith', email: 'jim.smith@pixitest.com'
-      @invoice = @person.invoices.build FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
-      @conversation2 = @listing.conversations.create FactoryGirl.attributes_for :conversation, user_id: @person.id, recipient_id: @recipient.id
+      @conversation2 = @new_pixi.conversations.create FactoryGirl.attributes_for :conversation, user_id: @person.id, recipient_id: @user.id
+      @post2 = @conversation2.posts.create FactoryGirl.attributes_for :post, user_id: @person.id, recipient_id: @user.id, pixi_id: @new_pixi.pixi_id,
+        msg_type: 'want'
+      @invoice = @user.invoices.build FactoryGirl.attributes_for(:invoice, pixi_id: @new_pixi.pixi_id, buyer_id: @person.id)
     end
     
     it "should return true" do
-      Post.add_post(@invoice, @listing, @person.id, @recipient.id, msg, @conversation2).should be_true
+      Post.add_post(@invoice, @new_pixi, @user, @person, msg, 'invmsg').should be_true
+      expect(Conversation.where(pixi_id: @new_pixi.pixi_id).size).to eq 1 
+      expect(@conversation2.posts.size).to eq 2
     end
     
     it "should not return true" do
-      Post.add_post(@invoice, @listing, @person.id, nil, msg, @conversation2).should_not be_true
+      Post.add_post(@invoice, @new_pixi, @person, nil, msg, 'invmsg').should_not be_true
     end
   end
 
@@ -415,28 +428,47 @@ describe Post do
     end
   end
 
+  describe 'active_status' do
+    it 'returns nothing when user status is removed' do
+      @post.status = 'removed'
+      @post.save
+      expect(Post.active_status(@user)).to be_empty
+    end
+
+    it 'returns nothing when recipient status is removed' do
+      @post.recipient_status = 'removed'
+      @post.save
+      expect(Post.active_status(@recipient)).to be_empty
+    end
+
+    it 'returns active posts' do
+      expect(Post.active_status(@user)).not_to be_empty
+      expect(Post.active_status(@recipient)).not_to be_empty
+    end
+  end
+
   describe "removing posts" do
 
     context "removing user's post" do
 
       it "returns true if successful" do
-        @result = Post.remove_post(@post, @user)
+        @result = @post.remove_post(@user)
         expect(@result).to eql(true)
       end
 
       it "returns false if unsuccessful" do
         @post.stub(:update_attributes).and_return(false)
-        @result = Post.remove_post(@post, @user)
+        @result = @post.remove_post(@user)
         expect(@result).to eql(false)
       end
 
       it "sets user's status to removed" do
-        @result = Post.remove_post(@post, @user)
+        @result = @post.remove_post(@user)
         expect(@post.status).to eql('removed')
       end
 
       it "does not set recipient_status to be removed" do
-        @result = Post.remove_post(@post, @user)
+        @result = @post.remove_post(@user)
         expect(@post.recipient_status).to eql("active")
       end
     end
@@ -444,23 +476,23 @@ describe Post do
     context "removing recipient's post" do
 
       it "returns true if successful" do
-        @result = Post.remove_post(@post, @recipient)
+        @result = @post.remove_post(@recipient)
         expect(@result).to eql(true)
       end
 
       it "returns false if unsuccessful" do
         @post.stub(:update_attributes).and_return(false)
-        @result = Post.remove_post(@post, @recipient)
+        @result = @post.remove_post(@recipient)
         expect(@result).to eql(false)
       end
 
       it "sets user's status to removed" do
-        @result = Post.remove_post(@post, @recipient)
+        @result = @post.remove_post(@recipient)
         expect(@post.recipient_status).to eql('removed')
       end
 
       it "does not set recipient_status to be removed" do
-        @result = Post.remove_post(@post, @recipient)
+        @result = @post.remove_post(@recipient)
         expect(@post.status).to eql("active")
       end
     end

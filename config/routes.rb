@@ -28,13 +28,13 @@ Plumboard::Application.routes.draw do
     end
   end
 
-  resources :posts, except: [:new, :edit, :update] do
+  resources :posts, except: [:new, :edit, :update, :show, :index] do
     member do
-      put 'remove', 'mark_read'
+      put 'mark_read'
+      get 'remove'
     end
     collection do
-      get 'unread', 'sent', 'mark'
-      post 'reply'
+      get 'unread', 'mark'
     end
   end
 
@@ -43,7 +43,6 @@ Plumboard::Application.routes.draw do
       put 'remove'
     end
     collection do
-      get 'sent'
       post 'reply'
     end
   end

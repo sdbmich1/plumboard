@@ -40,8 +40,8 @@ function load_image_uploader() {
 	  }
 	  
 	  // check for valid file size
-	  if (uploadFile.size > 5000000) { // 5mb
-	    goUpload = fileErrorHandler($progress, uploadFile.name + ' is too large, max size is 5MB');
+	  if (uploadFile.size > 2000000) { // 2mb
+	    goUpload = fileErrorHandler($progress, uploadFile.name + ' is too large, max size is 2MB');
 	  }
 
 	  // begin processing
