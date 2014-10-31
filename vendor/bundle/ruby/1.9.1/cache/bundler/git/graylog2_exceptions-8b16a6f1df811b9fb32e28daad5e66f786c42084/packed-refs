@@ -1,0 +1,8 @@
+# pack-refs with: peeled fully-peeled 
+61ab1dabfa654295d537a173f5e931339ef3e344 refs/heads/loosen_gelf_dependency
+797924acd1aa89852605230812d8cfd27da90969 refs/heads/master
+3b4eca61472d7e5f0f964c988fef47dffc3950e0 refs/heads/send_rack_env
+df43d2eb1a3fa660b15e2e779f761d1ee06076da refs/tags/v1.1.0
+5f4150c141d063ee30ca353a50a3406cee4f6d3d refs/tags/v1.1.1
+1713e4f167b677260108b0e3b65ef756cffca91e refs/tags/v1.2.0
+0978322c82c03cc3c2d0062370673e3afcc36d0e refs/tags/v1.3.0

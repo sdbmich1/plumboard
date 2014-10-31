@@ -1,14 +1,14 @@
 code,description,status
 perform,"concert, performance, speaker",active
 session,"classes, sessions, workshops",active
-fund,fundraiser,active
-match,team game/match/session/challenge,active
+fund,fundraisers,active
+sport,sporting events,active
 other,other activities,active
 party,party/private social gathering,active
 pubent,"fairs, festivals, public entertainment",active
-resv,reservations,active
 vol,volunteer service,active
-conf,conference,active
-tourn,tournament,active
-festival,festival,active
-seminar,seminar,active
+conf,"conferences, conventions",active
+tourn,tournaments,active
+seminar,seminars,active
+religion,spirituality,active
+art,"gallery, museums, science centers",active

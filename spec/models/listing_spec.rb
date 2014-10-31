@@ -452,12 +452,6 @@ describe Listing do
       @listing.editable?(@support).should be_true 
     end
 
-    it "sold pixi is not editable" do 
-      @sold.editable?(@pixter).should_not be_true 
-      @sold.editable?(@user).should_not be_true 
-      @sold.editable?(@admin).should_not be_true 
-    end
-
     it "is not editable" do 
       @listing.editable?(@user2).should_not be_true 
     end
@@ -996,18 +990,12 @@ describe Listing do
     end
 
     it "show current updated date" do
-      expect(listing.display_date(listing.updated_at)).to eq listing.updated_at.strftime('%m/%d/%Y %l:%M %p')
-    end
-
-    it "shows current updated date w/ pacific time zone" do
-      listing.lat, listing.lng = 37.7749, -122.419
-      listing.save!
-      expect(listing.display_date(listing.updated_at)).to eq listing.updated_at.strftime('%m/%d/%Y %l:%M %p')
+      expect(listing.display_date(listing.updated_at)).not_to eq listing.updated_at.strftime('%m/%d/%Y %l:%M %p')
     end
 
     it "shows local updated date" do
       listing.lat, listing.lng = 35.1498, -90.0492
-      expect(listing.display_date(listing.updated_at)).not_to eq Time.now.strftime('%m/%d/%Y %l:%M %p')
+      expect(listing.display_date(listing.updated_at)).to eq Time.now.strftime('%m/%d/%Y %l:%M %p')
       expect(listing.display_date(listing.updated_at)).not_to eq listing.updated_at.strftime('%m/%d/%Y %l:%M %p')
     end
   end
@@ -1215,22 +1203,31 @@ describe Listing do
 
   describe '.event_type' do
     before do
-        @etype = FactoryGirl.create(:event_type, code: 'party')
-        @listing1 = FactoryGirl.create(:listing)
-        @listing1.category_id = 'event'
-        @listing1.event_type_code = 'party'
+      @etype = FactoryGirl.create(:event_type, code: 'party', description: 'Parties, Galas, and Gatherings')
+      @cat = FactoryGirl.create(:category, name: 'Events', category_type_code: 'event')
+      @listing1 = FactoryGirl.create(:listing, seller_id: @user.id)
+      @listing1.category_id = @cat.id
+      @listing1.event_type_code = 'party'
     end
     
     it "should be an event" do
-        !(@listing1.event?.nil?)
+      expect(@listing1.event?).to be_true
     end
     
     it "should respond to .event_type" do
-        @listing1.event_type == 'party'
+      expect(@listing1.event_type_code).to eq 'party'
     end
     
-    it "etype should respond to listings.first" do
-        !(@etype.listings.first.nil?)
+    it "should respond to .event_type" do
+      expect(@listing.event_type_code).not_to eq 'party'
+    end
+
+    it "shows event_type description" do
+      expect(@listing1.event_type_descr).to eq @etype.description.titleize
+    end
+
+    it "does not show event_type description" do
+      expect(@listing.event_type_descr).to be_nil
     end
   end
   
@@ -1272,6 +1269,7 @@ describe Listing do
       create :admin, email: PIXI_EMAIL
       listing = create(:listing, seller_id: @user.id)
       send_mailer listing, 'send_approval'
+      expect(Conversation.all.count).not_to eq(0)
       expect(Post.all.count).not_to eq(0)
       SystemMessenger.stub!(:send_system_message).with(@user, listing, 'approve').and_return(true)
     end

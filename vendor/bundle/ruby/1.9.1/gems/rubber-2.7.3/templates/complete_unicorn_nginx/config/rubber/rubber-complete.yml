@@ -1,0 +1,3 @@
+role_dependencies:
+  app: [unicorn]
+  web_tools: [nginx]

@@ -162,6 +162,23 @@ describe PostsController do
     end
   end
 
+  describe "PUT /mark_read" do
+    before :each do
+      @post = mock_model Post
+      Post.stub!(:find).and_return( @post )
+      @post.stub_chain(:mark_as_read!, :for, :unread?).with(@user).and_return(true)
+    end
+    
+    def do_mark
+      xhr :put, :mark_read, id: '1'
+    end
+
+    it "should render nothing" do
+      do_mark
+      controller.stub!(:render)
+    end
+  end
+
   describe "GET /show" do
     before :each do
       @posts = mock("posts")

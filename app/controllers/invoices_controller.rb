@@ -11,7 +11,7 @@ class InvoicesController < ApplicationController
   layout :page_layout
 
   def new
-    respond_with(@invoice = Invoice.load_new(@user))
+    respond_with(@invoice = Invoice.load_new(@user, params[:buyer_id], params[:pixi_id]))
   end
    
   def index

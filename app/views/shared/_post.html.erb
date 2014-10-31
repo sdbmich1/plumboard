@@ -1,38 +1,25 @@
-<% if post.content != nil %>
-<li id="<%= post.id %>">
+<% if post && !post.content.blank? %>
+<li id="<%= post.id %>" class='conv-msg' data-pid="<%= post.id %>">
 <table>
-  <tr>
-    <td width="6%"> 
-      <%= render partial: 'shared/show_photo', locals: {model: set_poster(post, sentFlg), file_name: "myimage", psize: '80x80', 
+  <tr class='row'>
+    <td class="span1"> 
+      <%= render partial: 'shared/show_photo', locals: {model: set_poster(post, sentFlg), file_name: "tip-image", psize: '80x80', 
         display_cnt: 0 } %>
     </td>
-    <td width="20%"> 
-      <b>
-        <% if set_poster(post, sentFlg).name == @user.name %>
-          Me
-        <% else %>
-          <%= set_poster(post, sentFlg).name %>
-        <% end %>
-      </b>
+    <td class="span3 no-left"> 
+      <span class="<%= set_user_font(post) %>"><%= get_poster_name(post, sentFlg) %></span>
     </td>
-    <td width="57%">
-      <%= post.summary_custom(60, true) %>
+    <td class="span5 no-left">
+      <span class='pixi-gray-color hdr-content'><%= post.full_content %></span>
     </td>          
-    <td align="right">
-      <div class='pull-right'>
-        <span class="timestamp">
-        <% if post.created_at.to_date == Date.today %>
-	  <%= short_time(post.created_at) %>
-	<% else %>
-	  <%= short_date(post.created_at) %>
-	<% end %>
-	  <%= "(#{time_ago_in_words(post.created_at)} ago)" %>
-        </span>
+    <td class="span4">
+      <div class='right-form'>
+        <span class="timestamp"><%= "#{show_timestamp(post.created_at)} (#{time_ago_in_words(post.created_at)} ago)" %></span>
       </div>
     </td>
   </table>
-  <div> 
-    <span class="content-conv"> <%= post.full_content %></span>
+  <div class='span11'> 
+    <span class="mleft40 content-conv"> <%= post.full_content %></span>
   </div>
   <div class='clear-all'></div>
 </li>

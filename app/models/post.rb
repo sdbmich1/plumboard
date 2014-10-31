@@ -221,6 +221,7 @@ class Post < ActiveRecord::Base
                 user: { only: [:first_name], methods: [:photo] }})
   end
 
+  # map messages to conversations if needed
   def self.map_posts_to_conversations
     Post.order.reverse_order.each do |post|
       post.status = 'active'
@@ -233,14 +234,16 @@ class Post < ActiveRecord::Base
 
         # finds if there is existing conversation with swapped recipient/user
         if conv.blank?
-        conv = Conversation.find(:first, :conditions => ["pixi_id = ? AND recipient_id = ? AND user_id = ?",
+          conv = Conversation.find(:first, :conditions => ["pixi_id = ? AND recipient_id = ? AND user_id = ?",
                                                      post.pixi_id, post.user_id, post.recipient_id]) rescue nil
         end
 
         # create new conversation if one doesn't already exist
         if conv.blank?
-          listing = Listing.find(:first, :conditions => ["pixi_id = ?", post.pixi_id])
-          conv = listing.conversations.create pixi_id: post.pixi_id, user_id: post.user_id, recipient_id: post.recipient_id
+          if listing = Listing.where(:pixi_id => post.pixi_id).first
+            # listing = Listing.find(:first, :conditions => ["pixi_id = ?", post.pixi_id])
+            conv = listing.conversations.create pixi_id: post.pixi_id, user_id: post.user_id, recipient_id: post.recipient_id
+	  end
         elsif conv.status != 'active' || conv.recipient_status != 'active'
           conv.status = 'active'
           conv.recipient_status = 'active'
@@ -248,26 +251,18 @@ class Post < ActiveRecord::Base
         end
 
         # updates post with conversation id
-        post.conversation_id = conv.id
-
+        post.conversation_id = conv.id if conv
       end
       post.save
     end
   end
 
+  # removes given posts for a specific user
   def self.remove_post post, user 
     if user.id == post.user_id
-      if post.update_attributes(status: 'removed')
-        return true
-      else
-        return false
-      end
+      post.update_attributes(status: 'removed')
     elsif user.id == post.recipient_id 
-      if post.update_attributes(recipient_status: 'removed')
-        return true
-      else
-        return false
-      end
+      post.update_attributes(recipient_status: 'removed')
     end
   end
 end

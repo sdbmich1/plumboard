@@ -29,4 +29,13 @@ describe StatusType do
     before { create(:status_type, code: 'active') }
     it { StatusType.unhidden.should_not be_nil } 
   end
+
+  describe 'code_title' do
+    it { @status_type.code_title.should == @status_type.code.titleize }
+
+    it 'does not return titleized code' do
+      @status_type.code = nil
+      @status_type.code_title.should be_nil
+    end
+  end
 end

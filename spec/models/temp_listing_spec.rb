@@ -35,6 +35,7 @@ describe TempListing do
   it { should respond_to(:event_end_time) }
   it { should respond_to(:year_built) }
   it { should respond_to(:pixan_id) }
+  it { should respond_to(:event_type_code) }
   it { should respond_to(:job_type_code) }
 
   it { should respond_to(:user) }
@@ -43,6 +44,7 @@ describe TempListing do
   it { should respond_to(:pictures) }
   it { should respond_to(:category) }
   it { should respond_to(:job_type) }
+  it { should respond_to(:event_type) }
   it { should respond_to(:set_flds) }
   it { should respond_to(:generate_token) }
   it { should respond_to(:site_listings) }
@@ -826,6 +828,7 @@ describe TempListing do
 
   describe 'async_send_notifications' do
     let(:temp_listing) {create :temp_listing_with_transaction, seller_id: @user.id}
+    let(:denied_listing) {create :temp_listing_with_transaction, seller_id: @user.id, status: 'denied'}
 
     def send_mailer model, msg
       @mailer = mock(UserMailer)
@@ -837,6 +840,17 @@ describe TempListing do
       temp_listing.status = 'pending'
       temp_listing.save!
       send_mailer temp_listing, 'send_submit_notice'
+    end
+
+    it 'delivers the submitted pixi message for denied pixi' do
+      denied_listing.status = 'pending'
+      denied_listing.save!
+      send_mailer denied_listing, 'send_submit_notice'
+      denied_listing.status = 'approved'
+      denied_listing.transaction.amt = 0.0
+      expect {
+	denied_listing.save!
+      }.to change {Listing.count}.by(1)
     end
 
     it 'adds listing and transaction' do
@@ -855,7 +869,6 @@ describe TempListing do
       temp_listing.status = 'denied'
       temp_listing.save!
       send_mailer temp_listing, 'send_denial'
-      expect(Post.all.count).to eq(1)
       SystemMessenger.stub!(:send_system_message).with(@user, temp_listing, 'deny').and_return(true)
     end
   end
@@ -1051,6 +1064,36 @@ describe TempListing do
     it 'should return false' do
       @temp_listing.status = 'pending'
       @temp_listing.repost.should be_false
+    end
+  end
+
+  describe '.event_type' do
+    before do
+      @etype = FactoryGirl.create(:event_type, code: 'party', description: 'Parties, Galas, and Gatherings')
+      @cat = FactoryGirl.create(:category, name: 'Events', category_type_code: 'event')
+      @listing1 = FactoryGirl.create(:temp_listing, seller_id: @user.id)
+      @listing1.category_id = @cat.id
+      @listing1.event_type_code = 'party'
+    end
+    
+    it "should be an event" do
+      expect(@listing1.event?).to be_true
+    end
+    
+    it "should respond to .event_type" do
+      expect(@listing1.event_type_code).to eq 'party'
+    end
+    
+    it "should respond to .event_type" do
+      expect(@temp_listing.event_type_code).not_to eq 'party'
+    end
+
+    it "shows event_type description" do
+      expect(@listing1.event_type_descr).to eq @etype.description.titleize
+    end
+
+    it "does not show event_type description" do
+      expect(@temp_listing.event_type_descr).to be_nil
     end
   end
 end

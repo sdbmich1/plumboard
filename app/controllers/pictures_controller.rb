@@ -30,7 +30,7 @@ class PicturesController < ApplicationController
     @listing = TempListing.find_by_pixi_id params[:pixi_id]
     if @listing.delete_photo(params[:id], 0)
       flash.now[:notice] = "Successfully removed image."
-      @listing = @listing.pictures(true)
+      @listing = @listing.reload
     end
   end
 

@@ -8,7 +8,7 @@ class Contact < ActiveRecord::Base
 
   validates :city, :presence => true, :format => { :with => name_regex }
   validates :state, :presence => true
-  validates :zip, allow_blank: true, length: {is: 5}
+  validates :zip, allow_blank: true, length: {in: 5..15}
   validates :home_phone, allow_blank: true, length: {in: 10..15}
   validates :mobile_phone, allow_blank: true, length: {in: 10..15}
   validates :work_phone, allow_blank: true, length: {in: 10..15}
@@ -35,6 +35,6 @@ class Contact < ActiveRecord::Base
   # get proximity
   def self.proximity ip, range=25, pos=nil, geoFlg=false
     val = geoFlg && pos ? pos : ip
-    near(val, range).get_by_type('Site').map(&:contactable_id).uniq
+    near(val, range).get_by_type('Site').map(&:contactable_id).uniq rescue nil
   end
 end

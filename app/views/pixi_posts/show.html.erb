@@ -3,11 +3,9 @@
   <%= render :partial => 'shared/navbar', locals: { menu_name: set_pixi_post_menu } %>
 <% end %>
 <%= content_for :content do %>
-  <% cache @post do %>
-    <div id='inv_form'>
-      <%= render partial: 'shared/show_pixi_post', locals: { post: @post } %>
-    </div>
-  <% end %>
+  <div id='inv_form'>
+    <%= render partial: 'shared/show_pixi_post', locals: { post: @post } %>
+  </div>
 <% end %>
 
 

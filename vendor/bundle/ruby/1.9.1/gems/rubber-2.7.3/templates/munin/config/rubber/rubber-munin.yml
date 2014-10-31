@@ -1,0 +1,12 @@
+# Uses admin_email from base
+
+role_dependencies:
+  common: [munin]
+
+roles:
+  munin:
+    packages: [munin-node, munin-plugins-extra, heirloom-mailx] 
+  web_tools:
+    packages: [munin]
+  mysql:
+    packages: [libdbi-perl, libdbd-mysql, libcache-cache-perl] # for extended mysql munin plugins

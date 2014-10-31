@@ -417,12 +417,30 @@ describe Invoice do
   end
   
   describe "load invoice" do
+    def check_inv
+      inv = Invoice.load_new(@user, @buyer.id, @listing.pixi_id)
+      inv.should_not be_nil
+      expect(inv.pixi_id).to eq @listing.pixi_id
+      expect(inv.buyer_id).to eq @buyer.id
+      expect(inv.price).to eq @listing.price
+    end
+
     it "loads new invoice" do
-      Invoice.load_new(@user).should_not be_nil
+      check_inv
+    end
+
+    it 'sets pixi_id when multiple pixis exist' do
+      listing = FactoryGirl.create(:listing, title: 'Leather Chair', seller_id: @user.id)
+      check_inv
+    end
+
+    it "loads new invoice w/o pixi_id & buyer_id" do
+      inv = Invoice.load_new(@user, nil, nil)
+      expect(inv).not_to be_nil
     end
 
     it "does not load new invoice" do
-      Invoice.load_new(nil).should be_nil
+      Invoice.load_new(nil, nil, nil).should be_nil
     end
   end
 

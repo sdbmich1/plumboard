@@ -301,4 +301,77 @@ describe Conversation do
       @conversation.pixi_title.should be_nil 
     end
   end
+
+  describe "due_invoice" do 
+    
+    it "should_not return true" do
+      @conversation.due_invoice?(@user).should_not be_true
+    end
+    
+    it "should return true" do
+      @invoice = @buyer.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
+      @conversation.due_invoice?(@recipient).should be_true
+    end
+    
+    it "should not return true when paid" do
+      @new_user = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Wilson', email: 'jack.wilson@pixitest.com'
+      @account = @new_user.bank_accounts.create FactoryGirl.attributes_for :bank_account
+      @invoice = @new_user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
+      @invoice.status = 'paid'
+      @invoice.save
+      @conversation.due_invoice?(@recipient).should_not be_true
+    end
+    
+    it "should not return true when removed" do
+      @new_user = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Wilson', email: 'jack.wilson@pixitest.com'
+      @invoice = @new_user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
+      @listing.status = 'removed'
+      @listing.save; sleep 1
+      @conversation.due_invoice?(@recipient).should_not be_true
+    end
+    
+    it "should not return true when sold" do
+      @new_user = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Wilson', email: 'jack.wilson@pixitest.com'
+      @invoice = @new_user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
+      @listing.status = 'sold'
+      @listing.save; sleep 1
+      @conversation.due_invoice?(@recipient).should_not be_true
+    end
+  end
+
+  describe 'can_bill?' do
+    
+    it "should_not return true" do
+      @conversation.can_bill?(@recipient).should_not be_true
+    end
+    
+    it "should return true" do
+      @conversation.can_bill?(@user).should be_true
+    end
+    
+    it "should not return true when paid" do
+      @new_user = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Wilson', email: 'jack.wilson@pixitest.com'
+      @account = @new_user.bank_accounts.create FactoryGirl.attributes_for :bank_account
+      @invoice = @new_user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
+      @invoice.status = 'paid'
+      @invoice.save
+      @conversation.can_bill?(@recipient).should_not be_true
+    end
+    
+    it "should not return true when removed" do
+      @new_user = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Wilson', email: 'jack.wilson@pixitest.com'
+      @invoice = @new_user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
+      @listing.status = 'removed'
+      @listing.save; sleep 1
+      @conversation.can_bill?(@recipient).should_not be_true
+    end
+    
+    it "should not return true when sold" do
+      @new_user = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Wilson', email: 'jack.wilson@pixitest.com'
+      @invoice = @new_user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
+      @listing.status = 'sold'
+      @listing.save; sleep 1
+      @conversation.can_bill?(@recipient).should_not be_true
+    end
+  end
 end

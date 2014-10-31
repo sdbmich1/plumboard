@@ -10,6 +10,7 @@ class PendingListingsController < ApplicationController
   end
 
   def show
+    respond_with(@listing)
   end
 
   def approve

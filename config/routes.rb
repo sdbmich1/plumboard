@@ -12,7 +12,7 @@ Plumboard::Application.routes.draw do
   end
 
   # resource defs
-  resources :listings, except: [:new, :edit, :create] do
+  resources :listings, except: [:new, :edit, :create, :destroy] do
     collection do
       get 'pixi_price', 'seller', 'follower', 'category', 'local', 'wanted', 'purchased', 'invoiced'
     end
@@ -33,7 +33,7 @@ Plumboard::Application.routes.draw do
 
   resources :posts, except: [:new, :edit, :update] do
     member do
-      put 'remove'
+      put 'remove', 'mark_read'
     end
     collection do
       get 'unread', 'sent', 'mark'
@@ -120,10 +120,6 @@ Plumboard::Application.routes.draw do
   end
 
   resources :pending_listings, except: [:new, :edit, :update, :create, :destroy] do
-    collection do
-      get 'invoiced'
-    end
-
     member do
       put 'approve', 'deny'
     end

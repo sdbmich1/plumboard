@@ -1,4 +1,4 @@
-<% unless listing.is_a? TempListing %>
+<% unless temp_listing?(listing) %>
   <div id='comment-entry' class='valign'>
     <div id='comment-hdr' class='sm-top left-form'><%= get_comment_header %></div>
     <% unless signed_in? %>

@@ -18,3 +18,6 @@
   <% end %>
 <% end %>
 
+<% if (listing.sold? || listing.expired?) && (@user.is_admin? || (@user.id == @listing.seller_id)) %>
+  <%= link_to "Repost!", repost_listing_path(listing), method: :put, class: "btn btn-large btn-primary submit-btn", id: 'px-repost-btn' %>
+<% end %>

@@ -1,0 +1,11 @@
+<%
+  @read_cmd = 'crontab -l'
+  @write_cmd = 'crontab -'
+  @additive = ["# rubber-sphinx-start", "# rubber-sphinx-end"]
+%>
+
+# incremental index once every 10 minutes
+*/10 * * * * <%= Rubber.root %>/script/rubber cron --user <%= rubber_env.app_user %> --rake ts:in:delta
+
+# full reindex daily at 4:35
+35 4 * * * <%= Rubber.root %>/script/rubber cron --user <%= rubber_env.app_user %> --rake ts:index

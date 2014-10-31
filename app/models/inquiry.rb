@@ -26,6 +26,9 @@ class Inquiry < ActiveRecord::Base
 
   # set fields upon creation
   def set_flds
+    # parse non-ascii chars
+    encoding_options = {:invalid => :replace, :undef => :replace, :replace => '', :UNIVERSAL_NEWLINE_DECORATOR => true}
+    self.comments.encode!(Encoding.find('ASCII'), encoding_options)
     self.status = 'active' if self.status.blank?
   end
   

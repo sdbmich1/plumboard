@@ -1,7 +1,6 @@
 // hide & reset comp field
 function hideComp(){
-  $('#comp-fld').hide('fast');
-  $('#job-fld').hide('fast');
+  $('#comp-fld, #job-fld').hide('fast');
   $('#price-fld').show('fast');
   $('#cat-fld').removeClass('span2').addClass('span4');
   $('#temp_listing_job_type_code').removeAttr('required'); 
@@ -14,12 +13,12 @@ function hideComp(){
 // toggle field display based on category value
 function toggleFields(ctype) {
   if(ctype.match(/^event/) != null) {
-    $('#event-fields').show('fast');
+    $('#event-fields, #event-type-fld').show('fast');
     $('#yr-fld').hide('fast');
     hideComp();
   }
   else {
-    $('#event-fields').hide('fast');
+    $('#event-fields, #event-type-fld').hide('fast');
 
     // clear event flds
     $('#start-date, #end-date, #start-time, #end-time').val('');
@@ -27,8 +26,7 @@ function toggleFields(ctype) {
     // check for jobs
     if(ctype.match(/^employment/) != null) {
       $('#price-fld, #yr-fld').hide('fast');
-      $('#comp-fld').show('fast');
-      $('#job-fld').show('fast');
+      $('#comp-fld, #job-fld').show('fast');
       $('#cat-fld').removeClass('span4').addClass('span2');
       $('#temp_listing_job_type_code').attr('required', 'required');
 

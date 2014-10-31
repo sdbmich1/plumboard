@@ -1,9 +1,7 @@
 <% cache ['board', listing] do %>
 <div class="item">
   <div class="center-wrapper">
-    <%= link_to listing_path(listing) do %>
-      <%= render partial: 'shared/show_picture', locals: {model: listing, psize: 'medium'} %>
-    <% end %>
+    <%= render partial: 'shared/show_temp_pixi_image', locals: {model: listing, pix_size: 'medium', img_size: 'pixi-image'} %>
     <div class='sm-top bdescr'>
       <%= listing.nice_title false %><br /><%= "(#{listing.site_name})" %>
     </div>

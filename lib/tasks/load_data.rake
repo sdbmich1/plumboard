@@ -34,8 +34,8 @@ namespace :db do
     Role.create!(:name => args.role)
   end
 
-  task :load_lat_lng => :environment do
-    load_contact_lat_lng
+  task :load_lat_lng, [:site] => [:environment] do |t, args|
+    load_contact_lat_lng args.site
   end
 end
 
@@ -118,10 +118,11 @@ def load_pixi_lat_lng
   end
 end
 
-def load_contact_lat_lng
+def load_contact_lat_lng loc
   include LocationManager
+  loc = loc + '%'
 
-  Site.where("name like 'Berkeley%'").each do |p|
+  Site.where("name like ?", loc).each do |p|
     ll = LocationManager::get_lat_lng_by_loc p.name
     p.contacts.each do |c|
       if ll

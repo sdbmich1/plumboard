@@ -374,43 +374,6 @@ describe ListingsController do
     end
   end
 
-  describe "DELETE 'destroy'" do
-
-    before (:each) do
-      Listing.stub!(:find_by_pixi_id).and_return(@listing)
-    end
-
-    def do_delete
-      delete :destroy, :id => "37"
-    end
-
-    context 'success' do
-
-      it "should load the requested listing" do
-        Listing.stub(:find_by_pixi_id).with("37").and_return(@listing)
-      end
-
-      it "destroys the requested listing" do
-        Listing.stub(:find_by_pixi_id).with("37") { mock_listing }
-        mock_listing.should_receive(:destroy)
-        do_delete
-      end
-
-      it "redirects to the listings list" do
-        Listing.stub(:find_by_pixi_id) { mock_listing }
-        do_delete
-        response.should be_redirect
-      end
-
-      it "should decrement the Listing count" do
-        lambda do
-          do_delete
-          should change(Listing, :count).by(-1)
-        end
-      end
-    end
-  end
-
   describe 'xhr GET pixi_price' do
     before :each do
       @listing = mock_listing

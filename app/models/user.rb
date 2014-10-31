@@ -351,6 +351,11 @@ class User < ActiveRecord::Base
   def is_support?
     user_type_code.upcase == 'SP' rescue false
   end
+  
+  # check user is admin
+  def is_admin?
+    user_type_code.upcase == 'AD' rescue false
+  end
 
   # display user type
   def type_descr
@@ -395,6 +400,7 @@ class User < ActiveRecord::Base
     end
   end
 
+  # get user conversations
   def get_conversations
     sent_conversations + received_conversations rescue nil
   end
@@ -402,7 +408,6 @@ class User < ActiveRecord::Base
   def is_admin?
     user_type_code == 'AD' rescue false
   end
-
 
   # set sphinx scopes
    sphinx_scope(:first_name) { 

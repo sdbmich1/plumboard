@@ -1,0 +1,20 @@
+language: ruby
+rvm:
+  - 2.1.0
+gemfile:
+  - Gemfile.rails-4.1
+  - Gemfile.rails-4.0
+  - Gemfile.rails-3.2
+  - Gemfile.rails-3.1
+  - Gemfile.rails-3.0
+  - Gemfile.mongoid-3.1
+  - Gemfile.mongoid-3.0
+  - Gemfile.mongoid-2.8
+  - Gemfile.mongoid-2.7
+  - Gemfile.mongoid-2.6
+  - Gemfile.mongoid-2.5
+  - Gemfile.mongoid-2.4
+env:
+  - DB=sqlite
+services:
+  - mongodb

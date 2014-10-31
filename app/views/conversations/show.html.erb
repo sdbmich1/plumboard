@@ -3,11 +3,9 @@
   <%= render partial: 'shared/navbar', locals: { menu_name: 'Messages' } %>
 <% end %>
 <%= content_for :content do %>
-  <% cache [@conversation, @user] do %>
-    <div id='post-frm'>
-      <%= render partial: 'shared/show_conversation', locals: { conversation: @conversation, sentFlg: false } %>
-    </div>
-  <% end %>
+  <div id='post-frm'>
+    <%= render partial: 'shared/show_conversation', locals: { conversation: @conversation, sentFlg: false } %>
+  </div>
 <% end %>
 
 

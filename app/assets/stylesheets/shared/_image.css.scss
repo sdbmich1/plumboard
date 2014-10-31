@@ -85,6 +85,12 @@
   margin: 0 5px 10px 0;
 }
 
+.pixi-image img {
+  max-height: 150px!important;
+  width: 150px;
+  margin: 0 5px 10px 0;
+}
+
 .inv-pic img {
   @extend .thumb-size, .pic-item;
 }

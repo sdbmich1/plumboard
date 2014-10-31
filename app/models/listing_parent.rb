@@ -142,11 +142,7 @@ class ListingParent < ActiveRecord::Base
 
   # get listings by status and, if provided, category and location
   def self.check_category_and_location status, cid, loc, pg=1
-    if cid.blank? or loc.blank?
-      get_by_status(status)
-    else
-      get_by_status(status).get_by_city(cid, loc, pg, false)
-    end
+    get_by_status(status).get_by_city(cid, loc, pg, false)
   end
 
   # verify if listing has been paid for
@@ -226,7 +222,7 @@ class ListingParent < ActiveRecord::Base
 
   # verify pixi can be edited
   def editable? usr
-    (seller?(usr) || pixter?(usr) || usr.has_role?(:admin)) || usr.has_role?(:support) && !sold?
+    (seller?(usr) || pixter?(usr) || usr.has_role?(:admin)) || usr.has_role?(:support)
   end
 
   # get category name for a listing
@@ -268,7 +264,7 @@ class ListingParent < ActiveRecord::Base
   # titleize title
   def nice_title prcFlg=true
     unless title.blank?
-      str = price.blank? || price == 0 ? '' : ' - $' + price.to_i.to_s
+      str = price.blank? || price == 0 ? '' : ' - '
       tt = prcFlg ? title.split(' ').map(&:capitalize).join(' ').html_safe : title.titleize.html_safe rescue title 
       if prcFlg
         title.index('$') ? tt : tt + str 
@@ -423,18 +419,7 @@ class ListingParent < ActiveRecord::Base
 
   # format date based on location
   def display_date dt
-    if lat && lat > 0
-      ll = [lat, lng]
-    else
-      # get area
-      area = self.site.contacts.first rescue nil
-
-      # set location
-      loc = [area.city, area.state].join(', ') if area
-
-      # get long lat
-      ll = LocationManager::get_lat_lng_by_loc(loc) if loc
-    end
+    ll = lat && lat > 0 ? [lat, lng] : LocationManager::get_lat_lng_by_loc(site_address)
 
     # get display date/time
     ResetDate::display_date_by_loc dt, ll rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
@@ -518,7 +503,7 @@ class ListingParent < ActiveRecord::Base
     end
   end
 
-# get pixis by category & site ids
+  # get pixis by category & site ids
   def self.get_category_by_site cid, sid, pg=1, get_active=true
     unless sid.blank?
       if get_active
@@ -549,5 +534,10 @@ class ListingParent < ActiveRecord::Base
     else
       false
     end
+  end
+
+  # titleize description
+  def event_type_descr
+    event_type.description.titleize rescue nil
   end
 end

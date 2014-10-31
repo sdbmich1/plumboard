@@ -84,7 +84,7 @@ $(document).on("ajax:complete", '#mark-posts, #post-frm, #comment-doc, .pixi-cat
 $(document).ajaxError( function(e, xhr, options){
   if(xhr.status == 401) {
     console.log('in 401 status error handler');
-    window.location.replace('/users/sign_in');
+    window.location.replace('/users/sign_in.html');
   }
   if(xhr.status == 500) {
     console.log('in 500 status error handler');
@@ -128,7 +128,23 @@ $(document).ready(function(){
   $( "#accordion" ).accordion({
     heightStyle: "content",
     header: "table",
+    active: 'none',
+    activate: function(e, ui) {
+      ui.newHeader.find(".hdr-content").hide('fast');
+      ui.oldHeader.find(".hdr-content").show('fast');
+
+      // mark message as read
+      var pid = $('.conv-msg').attr('data-pid');
+      var url = '/posts/' + pid + '/mark_read';
+      processUrl(url, 'PUT');
+    }
   });
+
+  // select last accordion panel on window load
+  window.onload = function () {
+    if($('#accordion').length > 0)
+      $("#accordion").accordion('option', "active", -1 );
+  }
 
   // enable tooltip
   if( $('.ttip').length > 0 ) {
@@ -260,9 +276,25 @@ $(document).on("click", "#approve-btn, #px-done-btn, #px-repost-btn, #fb-btn", f
 
 // show spinner on forms with image uploads
 $(document).on("click", "#build-pixi-btn", function(showElem){
-  var loc = $('#site_id').val(); // grab the selected location 
+  var loc = $('#site_id').val(); 
+
+  // validate fields prior to submitting form
   if(checkLocID(loc))
     toggleLoading();
+  else
+    $(this).attr('disabled', false);
+});
+
+// check for valid price
+$(document).on("change", "#temp_listing_price", function(showElem){
+  var price = $(this).val(); 
+
+  // reset field
+  if(!checkPrice(price))
+    $(this).val('');
+
+  // validate fields prior to submitting form
+  return false;
 });
 
 // reload masonry on ajax calls to swap data
@@ -368,7 +400,6 @@ $(document).on("click", "#cat-link", function(){
 
 // check for category board
 function set_home_location(loc){
-  console.log('loc name = ' + loc);
   var url = '/pages/location_name.js?loc_name=' + loc;
 
   // process ajax call
@@ -382,9 +413,14 @@ $(document).on("click", ".moreBtn, #more-btn", function(){
 });	
 
 // process url calls
-function processUrl(url) {
+function processUrl(url, ptype) {
+  if (typeof ptype === "undefined" || ptype === null) { 
+    ptype = "GET"; 
+  }
+
   $.ajax({
     url: url,
+    type: ptype,
     dataType: 'script',
     'beforeSend': function() {
       toggleLoading();
@@ -801,6 +837,15 @@ function postFlashMsg(id, cls, msg) {
 function checkLocID(loc) {
   if(loc.length == 0 && $('#pixi-form').length > 0) {
     postFlashMsg('#form_errors','error', 'Location is invalid');
+    return false;
+  }
+  return true;
+}
+
+// check if price is valid
+function checkPrice(price) {
+  if(price.length > 0 && parseInt(price) > 15000 && $('#pixi-form').length > 0) {
+    postFlashMsg('#form_errors','error', 'Price must be less than or equal to $15,000');
     return false;
   }
   return true;

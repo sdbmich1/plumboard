@@ -2,13 +2,12 @@ require 'will_paginate/array'
 class PostsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :load_data, only: [:index, :unread, :sent, :reply, :show]
-  before_filter :mark_post, only: [:reply]
+  before_filter :mark_post, only: [:reply, :mark_read]
   respond_to :html, :js, :xml, :json, :mobile
   layout :page_layout
 
   def index
-    @posts = Post.get_posts(@user).paginate(page: @page, per_page: @per_page)
-    respond_with(@posts)
+    respond_with(@posts = Post.get_posts(@user).paginate(page: @page, per_page: @per_page))
   end
 
   def reply
@@ -24,8 +23,7 @@ class PostsController < ApplicationController
   end
 
   def show
-    @posts = Post.get_posts(@user).paginate(page: @page, per_page: @per_page)
-    respond_with(@posts)
+    respond_with(@posts = Post.get_posts(@user).paginate(page: @page, per_page: @per_page))
   end
 
   def mark
@@ -33,8 +31,7 @@ class PostsController < ApplicationController
   end
 
   def sent
-    @posts = Post.get_sent_posts(@user).paginate(page: @page, per_page: @per_page)
-    respond_with(@posts)
+    respond_with(@posts = Post.get_sent_posts(@user).paginate(page: @page, per_page: @per_page))
   end
 
   def create
@@ -74,6 +71,9 @@ class PostsController < ApplicationController
       render :nothing => true
     end
   end
+
+  def mark_read
+  end
    
   private
 
@@ -83,7 +83,7 @@ class PostsController < ApplicationController
 
   def mark_post
     @old_post = Post.find params[:id]
-    @old_post.mark_as_read! for: @user if @old_post
+    @old_post.mark_as_read! for: @user if @old_post && @old_post.unread?(@user)
   end
 
   def load_data

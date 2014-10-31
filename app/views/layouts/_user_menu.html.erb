@@ -5,13 +5,14 @@
   <ul class="dropdown-menu">
     <li><%= link_to "My Pixis", seller_listings_path %></li>
     <li><%= link_to "My PixiPosts", seller_pixi_posts_path(status: 'active') %></li>
-    <li><%= link_to "My Messages", posts_path %></li>
+    <li><%= link_to "My Messages", conversations_path %></li>
     <li class="divider"></li>
     <li><%= link_to "My Invoices", sent_invoices_path %></li>
     <li><%= link_to "My Accounts", get_account_path %></li>
     <li><%= link_to "My Settings", settings_path %></li>
     <li class="divider"></li>
-    <li><%= link_to "About Pixiboard", about_path %></li>
+    <li><%= link_to "About", about_path %></li>
+    <li><%= link_to "Contact", contact_path %></li>
     <li><%= link_to "Privacy", privacy_path %></li>
     <li><%= link_to "Terms", terms_path %></li>
     <li><%= link_to "Help", help_path %></li>

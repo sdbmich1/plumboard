@@ -163,7 +163,7 @@ module ListingsHelper
 
   # set want message
   def want_msg
-    'I want this! Send private message to owner.'
+    PIXI_WANT_MSG rescue 'I want this!'
   end
 
   # set method based on item existance and type 
@@ -223,5 +223,10 @@ module ListingsHelper
   def get_current_region listing
     loc, loc_name = LocationManager::get_region listing.site_name
     link_to loc_name, category_listings_path(cid: listing.category_id, loc: loc)
+  end
+
+  # check model type
+  def temp_listing? model
+    model.is_a? TempListing
   end
 end

@@ -66,4 +66,13 @@ describe EventType do
         it { EventType.active.should be_empty }
     end
 
+  describe 'nice_descr' do
+    it { @event_type.nice_descr.should == @event_type.description.titleize }
+
+    it 'does not return titleized description' do
+      @event_type.description = nil
+      @event_type.nice_descr.should be_nil
+    end
+  end
+
 end
