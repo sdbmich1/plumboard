@@ -141,13 +141,17 @@ end
 def update_txn_detail_price
   Transaction.find_each do |txn|
     # get price
-    price = txn.get_invoice.price
+    if txn.get_invoice
+      price = txn.get_invoice.price
 
-    # load txn details
-    td = txn.transaction_details.first
+      # load txn details
+      td = txn.transaction_details.first
 
-    # set price
-    td.price = price
-    td.save
+      # set price
+      unless price.blank?
+        td.price = price
+        td.save
+      end
+    end
   end
 end
