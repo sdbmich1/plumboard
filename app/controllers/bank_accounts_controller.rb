@@ -1,4 +1,5 @@
 class BankAccountsController < ApplicationController
+  load_and_authorize_resource
   before_filter :authenticate_user!
   before_filter :load_target, only: [:new, :create, :edit, :update]
   respond_to :html, :json, :js, :mobile

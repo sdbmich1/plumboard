@@ -10,11 +10,7 @@
     goToUrl('/conversations', true);
   }
   else {
-    $("#post-frm").html("<%= escape_javascript( raw render(partial: "shared/show_conversation", locals: { conversation: @conversation, sentFlg: false }) ) %>");
-    $("#msg-link").html("<%= escape_javascript( raw render(partial: 'shared/msg_indicator') ) %>");
-
-    // refresh accordion
-    open_accordion(true);
+    <%= render(:partial => 'shared/refresh_messages') %>
   }
 <% end %>
 

@@ -2,6 +2,7 @@ require 'will_paginate/array'
 class SavedListingsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :load_data, only: [:index]
+  after_filter -> { reload_data params[:id] }, only: [:create, :destroy]
   respond_to :html, :js, :mobile, :json
 
   def index
@@ -15,7 +16,6 @@ class SavedListingsController < ApplicationController
     @listing = @user.saved_listings.build pixi_id: params[:id]
     respond_with(@listing) do |format|
       if @listing.save
-        reload_data params[:id]
         format.json { render json: {saved_listing: @listing} }
       else
         format.json { render json: { errors: @listing.errors.full_messages }, status: 422 }
@@ -27,7 +27,6 @@ class SavedListingsController < ApplicationController
     @listing = @user.saved_listings.find_by_pixi_id params[:id]
     respond_with(@listing) do |format|
       if @listing.destroy
-	reload_data params[:id]
         format.json { render json: {head: :ok} }
       else
         format.json { render json: { errors: @listing.errors.full_messages }, status: 422 }
