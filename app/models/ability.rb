@@ -26,30 +26,25 @@ class Ability
       end
 
       can :read, Category
-      can [:create, :show], Transaction, :user_id => user.id
+      can [:create, :read, :update], Transaction, :user_id => user.id
 
-      can [:create, :read, :update], Post do |post|
-        post.try(:user) == user
-      end
+      can [:crud, :remove], Post, :user_id => user.id
+      can [:read, :update, :remove], Post, :recipient_id => user.id
 
-      can :crud, TempListing do |listing|
-        listing.try(:user) == user
+      can [:crud, :remove, :reply], Conversation, :user_id => user.id
+      can [:read, :update, :remove, :reply], Conversation, :recipient_id => user.id
+
+      can :crud, TempListing do |tmp|
+        tmp.try(:user) == user
       end
 
       can [:crud, :sent, :remove], Invoice, :seller_id => user.id
       can [:show, :received], Invoice, :buyer_id => user.id
 
-      can :crud, BankAccount do |acct|
-        acct.try(:user) == user
-      end
+      can [:create, :read, :update], BankAccount, :user_id => user.id
+      can [:create, :read, :update], CardAccount, :user_id => user.id
 
-      can :crud, CardAccount do |acct|
-        acct.try(:user) == user
-      end
-
-      can :update, Listing do |listing|
-        listing.try(:user) == user
-      end
+      can :update, Listing, :user_id => user.id
 
       if user.has_role? :editor
         can [:read, :update], TempListing, status: 'pending'

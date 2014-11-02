@@ -428,4 +428,14 @@ describe Conversation do
       expect(@conversation.active_post_count(@recipient)).to eq 0
     end
   end
+
+  describe 'mark_all_posts' do
+    it 'marks posts' do
+      expect(@conversation.mark_all_posts(@user)).not_to be_false
+    end
+
+    it 'marks no posts' do
+      expect(@conversation.mark_all_posts(nil)).to be_false
+    end
+  end
 end

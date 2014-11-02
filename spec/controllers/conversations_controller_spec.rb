@@ -192,7 +192,8 @@ describe ConversationsController do
       @post = stub_model(Post, :id => 2, :pixi_id => 1)
       @conversation = stub_model(Conversation, :id => 1, :pixi_id => 1)
       Conversation.stub!(:find).and_return(@conversation)
-      controller.stub_chain(:mark_post, :mark_as_read).and_return(true)
+      @conversation.stub!(:mark_all_posts).and_return(true)
+      controller.stub!(:mark_post).and_return(true)
       @conversation.stub_chain(:posts, :build).and_return(@post)
       @conversation.stub_chain(:posts, :active_status).and_return(@posts)
     end

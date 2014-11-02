@@ -497,4 +497,17 @@ describe Post do
       end
     end
   end
+
+  describe 'create_dt' do
+    it "does not show local updated date" do
+      @post.created_at = nil
+      expect(@post.create_dt.to_i).to eq Time.now.to_i
+    end
+
+    it "shows local created date" do
+      @listing.lat, @listing.lng = 35.1498, -90.0492
+      @listing.save
+      expect(@post.create_dt.to_i).to eq @post.created_at.to_i
+    end
+  end
 end

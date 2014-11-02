@@ -43,8 +43,8 @@ class PostsController < ApplicationController
       redirect_to set_redirect_path(params[:status]), notice: 'Message removed successfully' 
     else
       flash[:error] = "Post was not removed. Please try again."
-      render :nothing => true
     end
+    render :nothing => true
   end
 
   def mark_read

@@ -854,9 +854,10 @@ function open_accordion(pFlg) {
       ui.oldHeader.find(".hdr-content").show('fast');
 
       // mark message as read
-      var pid = $('.conv-msg').attr('data-pid');
+      var pid = $('.msg-trash-btn').attr('data-pid');
       var url = '/posts/' + pid + '/mark_read';
-      processUrl(url, 'PUT');
+      if(pid.length > 0)
+        processUrl(url, 'PUT');
     }
   });
 
@@ -873,8 +874,9 @@ function open_panel () {
 
 // remove post message
 $(document).on("click", '.msg-trash-btn', function(){
-  var pid = $('.conv-msg').attr('data-pid');
-  var status = $('.conv-msg').attr('data-status');
+  toggleLoading();
+  var pid = $(this).attr('data-pid');
+  var status = $(this).attr('data-status');
   var url = '/posts/' + pid + '/remove.js?status=' + status;
   processUrl(url);
 });

@@ -1,2 +1,2 @@
-$("#post-frm").html("<%= escape_javascript( raw render(partial: 'shared/show_conversation', locals: {conversation: @conversation, sentFlg: false}) ) %>");
+<%= render(partial: 'shared/refresh_messages') %>
 $('#spinner').hide(300);
