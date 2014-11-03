@@ -20,7 +20,7 @@ feature "TempListings" do
     def add_data
       fill_in 'Title', with: "Guitar for Sale"
       fill_in 'site_name', with: "Stanford University\n"
-      set_site_id @site.id; sleep 0.5
+      set_site_id @site.id; sleep 1.5
       select_category 'Foo Bar'
       fill_in 'Description', with: "Guitar for Sale"
     end

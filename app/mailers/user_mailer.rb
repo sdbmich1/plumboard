@@ -24,7 +24,7 @@ class UserMailer < ActionMailer::Base
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     # set message details
-    mail(:to => "#{post.seller_email}", :subject => "PixiPost Request Submitted") 
+    mail(:to => "#{post.seller_email}", :subject => env_check + ' ' + "PixiPost Request Submitted") 
   end
 
   # send pixi post appt to sellers
@@ -91,7 +91,7 @@ class UserMailer < ActionMailer::Base
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     # set message details
-    mail(:to => "#{@listing.seller_email}", :subject => "Pixiboard Post: Someone Wants Your #{@listing.title} ") 
+    mail(:to => "#{@listing.seller_email}", :subject => env_check + ' ' + "Pixiboard Post: Someone Wants Your #{@listing.title} ") 
   end
 
   # send approval notices to members

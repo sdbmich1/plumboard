@@ -2,7 +2,6 @@ require 'will_paginate/array'
 class SavedListingsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :load_data, only: [:index]
-  after_filter -> { reload_data params[:id] }, only: [:create, :destroy]
   respond_to :html, :js, :mobile, :json
 
   def index
@@ -13,31 +12,33 @@ class SavedListingsController < ApplicationController
   end
 
   def create
-    @listing = @user.saved_listings.build pixi_id: params[:id]
-    respond_with(@listing) do |format|
-      if @listing.save
-        format.json { render json: {saved_listing: @listing} }
+    @saved_listing = @user.saved_listings.build pixi_id: params[:id]
+    respond_with(@saved_listing) do |format|
+      if @saved_listing.save
+        format.json { render json: {saved_listing: @saved_listing} }
       else
-        format.json { render json: { errors: @listing.errors.full_messages }, status: 422 }
+        format.json { render json: { errors: @saved_listing.errors.full_messages }, status: 422 }
       end
+      reload_data
     end
   end
 
   def destroy
-    @listing = @user.saved_listings.find_by_pixi_id params[:id]
-    respond_with(@listing) do |format|
-      if @listing.destroy
+    @saved_listing = @user.saved_listings.find_by_pixi_id params[:id]
+    respond_with(@saved_listing) do |format|
+      if @saved_listing.destroy
         format.json { render json: {head: :ok} }
       else
-        format.json { render json: { errors: @listing.errors.full_messages }, status: 422 }
+        format.json { render json: { errors: @saved_listing.errors.full_messages }, status: 422 }
       end
+      reload_data
     end
   end
 
   private
 
-  def reload_data pid
-    @listing = Listing.find_by_pixi_id pid
+  def reload_data
+    @listing = @saved_listing.listing.reload
   end
 
   def load_data

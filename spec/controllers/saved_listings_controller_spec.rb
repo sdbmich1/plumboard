@@ -53,9 +53,9 @@ describe SavedListingsController do
 
   describe "POST create" do
     before :each do
-      @listing = mock_model SavedListing
+      @saved_listing = mock_model SavedListing
       controller.stub!(:current_user).and_return(@user)
-      @user.stub_chain(:saved_listings, :build).and_return(@listing)
+      @user.stub_chain(:saved_listings, :build).and_return(@saved_listing)
       controller.stub!(:reload_data).and_return(true)
     end
     
@@ -66,12 +66,12 @@ describe SavedListingsController do
     context 'failure' do
       
       before :each do
-        @listing.stub!(:save).and_return(false)
+        @saved_listing.stub!(:save).and_return(false)
       end
 
-      it "should assign @listing" do
+      it "should assign @saved_listing" do
         do_create
-        assigns(:listing).should_not be_nil 
+        assigns(:saved_listing).should_not be_nil 
       end
 
       it "should render nothing" do
@@ -88,7 +88,7 @@ describe SavedListingsController do
     context 'success' do
 
       before :each do
-        @listing.stub!(:save).and_return(true)
+        @saved_listing.stub!(:save).and_return(true)
       end
 
       it "should load the requested listing" do
@@ -96,12 +96,12 @@ describe SavedListingsController do
         do_create
       end
 
-      it "should assign @listing" do
+      it "should assign @saved_listing" do
         do_create
-        assigns(:listing).should_not be_nil 
+        assigns(:saved_listing).should_not be_nil 
       end
 
-      it "should change listing count" do
+      it "should change saved_listing count" do
         lambda do
           do_create
           should change(SavedListing, :count).by(1)
@@ -112,9 +112,9 @@ describe SavedListingsController do
 
   describe "DELETE /:id" do
     before (:each) do
-      @listing = mock_model SavedListing
+      @saved_listing = mock_model SavedListing
       controller.stub!(:current_user).and_return(@user)
-      @user.stub_chain(:saved_listings, :find_by_pixi_id).and_return(@listing)
+      @user.stub_chain(:saved_listings, :find_by_pixi_id).and_return(@saved_listing)
       controller.stub!(:reload_data).and_return(true)
     end
 
@@ -124,11 +124,11 @@ describe SavedListingsController do
 
     context "success" do
       before :each do
-        @listing.stub!(:destroy).and_return(true)
+        @saved_listing.stub!(:destroy).and_return(true)
       end
 
       it "should load the requested listing" do
-        @user.stub_chain(:saved_listings, :find_by_pixi_id) { @listing }
+        @user.stub_chain(:saved_listings, :find_by_pixi_id) { @saved_listing }
         do_delete
       end
 
@@ -138,10 +138,10 @@ describe SavedListingsController do
         do_delete
       end
 
-      it "should assign @listing" do
+      it "should assign @saved_listing" do
         @user.stub_chain(:saved_listings, :find_by_pixi_id) { mock_listing(:destroy => true) }
         do_delete
-        assigns(:listing).should_not be_nil 
+        assigns(:saved_listing).should_not be_nil 
       end
 
       it "should decrement the SavedListing count" do
@@ -159,12 +159,12 @@ describe SavedListingsController do
 
     context 'failure' do
       before :each do
-        @listing.stub!(:destroy).and_return(false) 
+        @saved_listing.stub!(:destroy).and_return(false) 
       end
 
-      it "should assign listing" do
+      it "should assign saved_listing" do
         do_delete
-        assigns(:listing).should_not be_nil 
+        assigns(:saved_listing).should_not be_nil 
       end
 
       it "should render nothing" do
