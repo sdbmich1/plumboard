@@ -283,8 +283,8 @@ describe TempListing do
   end
 
   describe "should return a nice title" do 
-    temp_listing = FactoryGirl.create :temp_listing, title: 'guitar for sale'
-    it { temp_listing.nice_title.should == 'Guitar For Sale' }
+    temp_listing = FactoryGirl.create :temp_listing, title: 'guitar - acoustic (for sale)'
+    it { temp_listing.nice_title.should == 'Guitar - Acoustic (For Sale) - ' }
   end
 
   describe "should not return a nice title" do 
@@ -294,7 +294,7 @@ describe TempListing do
 
   describe "should return a short title" do 
     temp_listing = FactoryGirl.create :temp_listing, title: "a" * 40
-    it { temp_listing.short_title.length.should == 18 }
+    it { temp_listing.short_title.length.should_not == 40 }
   end
 
   describe "should not return a short title" do 
