@@ -10,6 +10,19 @@ GIT
       sass-rails (>= 3.2.5)
 
 GIT
+  remote: git://github.com/pat/thinking-sphinx.git
+  revision: 0c404e756d037daeae579736b4248e963fa3ef01
+  ref: 0c404e756d
+  branch: master
+  specs:
+    thinking-sphinx (3.0.4)
+      activerecord (>= 3.1.0)
+      builder (>= 2.1.2)
+      innertube (>= 1.0.2)
+      middleware (>= 0.1.0)
+      riddle (>= 1.5.7)
+
+GIT
   remote: git://github.com/wr0ngway/graylog2_exceptions.git
   revision: 797924acd1aa89852605230812d8cfd27da90969
   specs:
@@ -373,7 +386,7 @@ GEM
       vegas (~> 0.1.2)
     rest-client (1.6.7)
       mime-types (>= 1.16)
-    riddle (1.5.7)
+    riddle (1.5.11)
     rinku (1.7.2)
     rmagick (2.13.3)
     rolify (3.2.0)
@@ -439,12 +452,6 @@ GEM
       daemons (>= 1.0.9)
       eventmachine (>= 0.12.6)
       rack (>= 1.0.0)
-    thinking-sphinx (3.0.4)
-      activerecord (>= 3.1.0)
-      builder (>= 2.1.2)
-      innertube (>= 1.0.2)
-      middleware (>= 0.1.0)
-      riddle (>= 1.5.7)
     thor (0.19.1)
     thread_safe (0.3.4)
     tilt (1.4.1)
@@ -566,7 +573,7 @@ DEPENDENCIES
   test_after_commit
   therubyracer
   thin
-  thinking-sphinx (~> 3.0.4)
+  thinking-sphinx (~> 3.0.4)!
   timezone (~> 0.3.2)
   turbo-sprockets-rails3
   uglifier (= 1.2.3)

@@ -27,7 +27,10 @@ gem 'delayed_paperclip', '~> 2.7.1'
 gem 'remotipart', '~> 1.0'
 
 # add thinking sphinx
-gem 'thinking-sphinx', '~> 3.0.4'
+gem 'thinking-sphinx', '~> 3.0.4', 
+     :git => 'git://github.com/pat/thinking-sphinx.git', 
+     :branch => 'master', 
+     :ref => '0c404e756d'
 
 # add roles
 gem 'rolify'
