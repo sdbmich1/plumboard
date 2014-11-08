@@ -38,5 +38,27 @@ namespace :manage_server do
     puts "The winner is #{entrants.first.user.name}. Email: #{entrants.first.user.email}"
   end
 
+  # send expiring pixi notices
+  task :send_expiring_pixi_notices, [:arg1] => [:environment] do |t, args|
+    a = args[:arg1].to_i
+    pixis = Listing.soon_expiring_pixis(a)
+    if !pixis.nil?
+      pixis.each do |pixi|
+        UserMailer.send_expiring_pixi_notice(args.arg1, pixi)
+      end
+    end
+  end
+  
+  # send expiring draft pixi notices
+  task :send_expiring_draft_pixi_notices, [:arg1] => [:environment] do|t, args|
+    a = args[:arg1].to_i
+    pixis = TempListing.soon_expiring_pixis(a, ['edit', 'new'])
+    if !pixis.nil?
+      pixis.each do |pixi|
+        UserMailer.send_expiring_pixi_notice(args.arg1, pixi)
+      end
+    end
+  end	
+
 end
 
