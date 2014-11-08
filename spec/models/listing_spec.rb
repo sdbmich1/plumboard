@@ -1327,4 +1327,88 @@ describe Listing do
       @listing.repost.should be_false
     end
   end
+
+  describe 'soon_expiring_pixis' do
+    it "includes active listings" do 
+      @listing.end_date = Date.today + 4.days
+      @listing.save
+      @listing.reload
+      Listing.soon_expiring_pixis(4).should_not be_empty  
+    end
+	
+    it "includes expired listings" do
+      @listing.end_date = Date.today + 4.days
+      @listing.status = 'expired'
+      @listing.save
+      @listing.reload
+      Listing.soon_expiring_pixis(4, 'expired').should_not be_empty  
+    end
+	
+      it "includes expired listings" do
+      @listing.end_date = Date.today + 4.days
+      @listing.status = 'expired'
+      @listing.save
+      @listing.reload
+      Listing.soon_expiring_pixis(4, ['expired', 'active']).should_not be_empty  
+    end
+	
+      it "includes active listings" do
+      @listing.end_date = Date.today + 5.days
+      @listing.status = 'active'
+      @listing.save
+      @listing.reload
+      Listing.soon_expiring_pixis(5, ['expired', 'active']).should_not be_empty  
+    end
+	
+      it "includes default active listings" do
+      @listing.end_date = Date.today + 7.days
+      @listing.status = 'active'
+      @listing.save
+      @listing.reload
+      Listing.soon_expiring_pixis().should_not be_empty  
+    end
+  end
+  
+  
+  describe 'not soon_expiring_pixis' do  
+    it "does not include active listings" do 
+      @listing.end_date = Date.today + 10.days
+      @listing.status = 'active'
+      @listing.save
+      @listing.reload
+      Listing.soon_expiring_pixis(8).should be_empty  
+    end
+	
+    it "does not include expired listings" do 
+      @listing.end_date = Date.today + 4.days
+      @listing.status = 'expired'
+      @listing.save
+      @listing.reload
+      Listing.soon_expiring_pixis(3).should be_empty  
+    end
+	
+    it "does not include expiring early listings" do 
+      @listing.end_date = Date.today + 4.days
+      @listing.status = 'expired'
+      @listing.save
+      @listing.reload
+      Listing.soon_expiring_pixis(5).should be_empty  
+    end
+	
+    it "does not include active listings" do 
+      @listing.end_date = Date.today + 4.days
+      @listing.status = 'active'
+      @listing.save
+      @listing.reload
+      Listing.soon_expiring_pixis(5, nil).should be_empty  
+    end
+	
+    it "does not include active listings" do 
+      @listing.end_date = Date.today + 4.days
+      @listing.status = 'active'
+      @listing.save
+      @listing.reload
+      Listing.soon_expiring_pixis(5, ['expired', 'new']).should be_empty  
+    end
+  end
 end
