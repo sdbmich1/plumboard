@@ -714,7 +714,7 @@ describe Listing do
 
   describe '.event?' do
     before do
-      @cat = FactoryGirl.create(:category, name: 'Event', category_type: 'event', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Event', category_type_code: 'event', pixi_type: 'premium') 
     end
 
     it "is not an event" do
@@ -729,7 +729,7 @@ describe Listing do
 
   describe '.has_year?' do
     before do
-      @cat = FactoryGirl.create(:category, name: 'Automotive', category_type: 'asset', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Automotive', category_type_code: 'asset', pixi_type: 'premium') 
     end
 
     it "does not have a year" do
@@ -744,7 +744,7 @@ describe Listing do
 
   describe '.job?' do
     before do
-      @cat = FactoryGirl.create(:category, name: 'Jobs', category_type: 'employment', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Jobs', category_type_code: 'employment', pixi_type: 'premium') 
     end
 
     it "is not a job" do
@@ -1045,7 +1045,7 @@ describe Listing do
 
   describe 'remove_item_list' do
     it 'is a job' do
-      @cat = FactoryGirl.create(:category, name: 'Job', category_type: 'employment', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Job', category_type_code: 'employment', pixi_type: 'premium') 
       @listing.category_id = @cat.id
       expect(@listing.remove_item_list).not_to include('Event Cancelled') 
       expect(@listing.remove_item_list).to include('Removed Job') 
@@ -1053,7 +1053,7 @@ describe Listing do
     end
 
     it 'is an event' do
-      @cat = FactoryGirl.create(:category, name: 'Event', category_type: 'event', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Event', category_type_code: 'event', pixi_type: 'premium') 
       @listing.category_id = @cat.id
       expect(@listing.remove_item_list).to include('Event Cancelled') 
       expect(@listing.remove_item_list).not_to include('Removed Job') 
@@ -1081,7 +1081,7 @@ describe Listing do
 
   describe "date validations" do
     before do
-      @cat = FactoryGirl.create(:category, name: 'Event', category_type: 'event', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Event', category_type_code: 'event', pixi_type: 'premium') 
       @listing.category_id = @cat.id
       @listing.event_end_date = Date.today+3.days 
       @listing.event_start_time = Time.now+2.hours

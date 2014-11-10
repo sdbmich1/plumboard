@@ -5,7 +5,7 @@ require 'whenever/capistrano'
 require 'rvm/capistrano'
 require 'delayed/recipes'
 # require 'capistrano/ext/multistage'
-require 'capistrano/maintenance'
+# require 'capistrano/maintenance'
 
 # Automatically precompile assets
 set :assets_role, [:app, :worker]
@@ -40,7 +40,9 @@ set :deploy_via, :copy
 set :rvm_type, :system
 
 # Target ruby version
-set :rvm_ruby_string, '1.9.3-p484'
+#set :rvm_ruby_string, '1.9.3-p484'
+set :rvm_ruby_string, :local              # use the same ruby as used locally for deployment
+set :rvm_autolibs_flag, "read-only"       # more info: rvm help autolibs
 
 # Easier to do system level config as root - probably should do it through
 # sudo in the future.  We use ssh keys for access, so no passwd needed
@@ -53,7 +55,7 @@ set :password, nil
 set :use_sudo, false
 
 # How many old releases should be kept around when running "cleanup" task
-set :keep_releases, 5
+set :keep_releases, 8
 
 # Lets us work with staging instances without having to checkin config files
 # (instance*.yml + rubber*.yml) for a deploy.  This gives us the
@@ -70,7 +72,7 @@ set :whenever_command, "bundle exec whenever"
 set :whenever_roles, :app 
 
 # set delayed job role
-set :delayed_job_server_role, :worker
+# set :delayed_job_server_role, :worker
 
 # Allow us to do N hosts at a time for all tasks - useful when trying
 # to figure out which host in a large set is down:
@@ -224,10 +226,12 @@ Dir["#{File.dirname(__FILE__)}/rubber/deploy-*.rb"].each do |deploy_file|
 end
 
 # capistrano's deploy:cleanup doesn't play well with FILTER
+before 'deploy:setup', 'rvm:install_rvm'  # install/update RVM
+before 'deploy:setup', 'rvm:install_ruby' # install Ruby and create gemset
 before 'deploy:setup', 'sphinx:create_sphinx_dir'
-after 'deploy:update_code', 'deploy:enable_rubber'
-after 'bundle:install', 'deploy:enable_rubber'
 before 'rubber:config', 'deploy:enable_rubber', 'deploy:enable_rubber_current'
+after 'bundle:install', 'deploy:enable_rubber'
+after 'deploy:update_code', 'deploy:enable_rubber'
 after 'deploy:update_code', 'deploy:symlink_shared', 'sphinx:stop'
 #after "deploy:migrations", "cleanup"
 after "deploy", "cleanup", "memcached:flush"
@@ -258,4 +262,5 @@ end
 # Delayed Job  
 after "deploy:stop",    "delayed_job:stop"  
 after "deploy:start",   "delayed_job:start"  
-after "deploy:restart", "delayed_job:restart", "sphinx:symlink_indexes", "sphinx:configure", "sphinx:rebuild", "whenever:update_crontab", "deploy:cleanup"
+after "deploy:restart", "sphinx:symlink_indexes", "sphinx:configure", "sphinx:rebuild", "whenever:update_crontab", "deploy:cleanup"
+# after "deploy:restart", "delayed_job:restart", "sphinx:symlink_indexes", "sphinx:configure", "sphinx:rebuild", "whenever:update_crontab", "deploy:cleanup"
