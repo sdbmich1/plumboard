@@ -3,7 +3,5 @@
   <%= render partial: 'shared/navbar', locals: { menu_name: 'Pixi' } %>
 <% end %>
 <%= content_for :content do %>
-  <% cache [@listing, @user] do %>
     <%= render partial: 'shared/show_listing', locals: {listing: @listing, edit_mode: false} %>
-  <% end %>
 <% end %>
