@@ -263,4 +263,4 @@ end
 after "deploy:stop",    "delayed_job:stop"  
 after "deploy:start",   "delayed_job:start"  
 # after "deploy:restart", "sphinx:symlink_indexes", "sphinx:configure", "sphinx:rebuild", "whenever:update_crontab", "deploy:cleanup"
-after "deploy:restart", "delayed_job:restart
+after "deploy:restart", "delayed_job:restart"
