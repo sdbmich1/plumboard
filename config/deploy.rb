@@ -41,8 +41,8 @@ set :rvm_type, :system
 
 # Target ruby version
 #set :rvm_ruby_string, '1.9.3-p484'
-set :rvm_ruby_string, :local              # use the same ruby as used locally for deployment
-set :rvm_autolibs_flag, "read-only"       # more info: rvm help autolibs
+#set :rvm_ruby_string, :local              # use the same ruby as used locally for deployment
+#set :rvm_autolibs_flag, "read-only"       # more info: rvm help autolibs
 
 # Easier to do system level config as root - probably should do it through
 # sudo in the future.  We use ssh keys for access, so no passwd needed
@@ -55,7 +55,7 @@ set :password, nil
 set :use_sudo, false
 
 # How many old releases should be kept around when running "cleanup" task
-set :keep_releases, 8
+set :keep_releases, 5
 
 # Lets us work with staging instances without having to checkin config files
 # (instance*.yml + rubber*.yml) for a deploy.  This gives us the
@@ -226,8 +226,8 @@ Dir["#{File.dirname(__FILE__)}/rubber/deploy-*.rb"].each do |deploy_file|
 end
 
 # capistrano's deploy:cleanup doesn't play well with FILTER
-before 'deploy:setup', 'rvm:install_rvm'  # install/update RVM
-before 'deploy:setup', 'rvm:install_ruby' # install Ruby and create gemset
+#before 'deploy:setup', 'rvm:install_rvm'  # install/update RVM
+#before 'deploy:setup', 'rvm:install_ruby' # install Ruby and create gemset
 before 'deploy:setup', 'sphinx:create_sphinx_dir'
 before 'rubber:config', 'deploy:enable_rubber', 'deploy:enable_rubber_current'
 after 'bundle:install', 'deploy:enable_rubber'
