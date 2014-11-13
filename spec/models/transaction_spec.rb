@@ -402,4 +402,31 @@ describe Transaction do
       expect(@txn.has_amount?).to eq(false) 
     end
   end
+
+  describe 'txn_dt' do
+    before :each do
+      @buyer = FactoryGirl.create(:pixi_user, first_name: 'Lucy', last_name: 'Smith', email: 'lucy.smith@lucy.com')
+      @seller = FactoryGirl.create(:pixi_user, first_name: 'Lucy', last_name: 'Burns', email: 'lucy.burns@lucy.com') 
+      @listing = FactoryGirl.create(:listing, seller_id: @user.id)
+      @invoice = @seller.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id)
+      @txn = @user.transactions.create FactoryGirl.attributes_for(:transaction, transaction_type: 'invoice')
+      @invoice.transaction_id, @invoice.status = @txn.id, 'pending'
+      @invoice.save!
+    end
+
+    it "does not show local created date" do
+      @txn.created_at = nil
+      expect(@txn.txn_dt.to_i).to eq Time.now.to_i
+    end
+
+    it "show current created date" do
+      expect(@txn.txn_dt).to eq @txn.created_at
+    end
+
+    it "shows local created date" do
+      @listing.lat, @listing.lng = 35.1498, -90.0492
+      @listing.save
+      expect(@txn.txn_dt).to eq @txn.created_at
+    end
+  end
 end

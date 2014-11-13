@@ -692,7 +692,7 @@ describe TempListing do
 
   describe '.event?' do
     before do
-      @cat = FactoryGirl.create(:category, name: 'Jobs', category_type: 'event', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Jobs', category_type_code: 'event', pixi_type: 'premium') 
     end
 
     it "is not an event" do
@@ -707,7 +707,7 @@ describe TempListing do
 
   describe '.has_year?' do
     before do
-      @cat = FactoryGirl.create(:category, name: 'Jobs', category_type: 'asset', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Jobs', category_type_code: 'asset', pixi_type: 'premium') 
     end
 
     it "does not have a year" do
@@ -722,7 +722,7 @@ describe TempListing do
 
   describe '.job?' do
     before do
-      @cat = FactoryGirl.create(:category, name: 'Jobs', category_type: 'employment', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Jobs', category_type_code: 'employment', pixi_type: 'premium') 
     end
 
     it "is not a job" do
