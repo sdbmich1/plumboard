@@ -559,7 +559,7 @@ feature "Listings" do
       end
 
       it "has export CSV button" do
-        page.should have_link 'Export as CSV file', href: listings_path(format: 'csv')
+        page.should have_link 'Export as CSV file', href: wanted_listings_path(loc: loc, cid: cid, format: 'csv')
       end
     end
 
@@ -588,6 +588,10 @@ feature "Listings" do
         page.should_not have_content 'Denied Listing'
         page.should_not have_content 'Invoiced Listing'
         page.should_not have_content 'No pixis found.'
+        page.should have_content 'Export as CSV file'
+        visit pending_listings_path(status: 'pending', loc: @site.id, cid: @category.id, format: 'csv')
+        page.should have_content 'Pending Listing'
+        page.should_not have_content 'Active Listing'
       end
 
       it "views active listings", js: true do
@@ -604,6 +608,11 @@ feature "Listings" do
         page.should_not have_content 'Denied Listing'
         page.should_not have_content 'Invoiced Listing'
         page.should_not have_content 'No pixis found.'
+        page.should have_content 'Export as CSV file'
+        page.should have_link href: listings_path(status: 'active', loc: @site.id, cid: @category.id, format: 'csv')
+        visit listings_path(status: 'active', loc: @site.id, cid: @category.id, format: 'csv')
+        page.should have_content 'Active Listing'
+        page.should_not have_content 'Pending Listing'
       end
 
       it "views draft listings", js: true do
@@ -620,6 +629,10 @@ feature "Listings" do
         page.should_not have_content 'Denied Listing'
         page.should_not have_content 'Invoiced Listing'
         page.should_not have_content 'No pixis found.'
+        page.should have_content 'Export as CSV file'
+        visit unposted_temp_listings_path(status: 'new/edit', loc: @site.id, cid: @category.id, format: 'csv')
+        page.should have_content 'Draft Listing'
+        page.should_not have_content 'Pending Listing'        
       end
 
       it "views expired listings", js: true do
@@ -637,6 +650,10 @@ feature "Listings" do
         page.should_not have_content 'Denied Listing'
         page.should_not have_content 'Invoiced Listing'
         page.should_not have_content 'No pixis found.'
+        page.should have_content 'Export as CSV file'
+        visit listings_path(status: 'expired', loc: @site.id, cid: @category.id, format: 'csv')
+        page.should have_content 'Expired Listing'
+        page.should_not have_content 'Active Listing'
       end
 
       it "views sold listings", js: true do
@@ -654,6 +671,10 @@ feature "Listings" do
         page.should_not have_content 'Denied Listing'
         page.should_not have_content 'Invoiced Listing'
         page.should_not have_content 'No pixis found.'
+        page.should have_content 'Export as CSV file'
+        visit listings_path(status: 'sold', loc: @site.id, cid: @category.id, format: 'csv')
+        page.should have_content 'Sold Listing'
+        page.should_not have_content 'Active Listing'
       end
 
       it "views removed listings", js: true do
@@ -671,6 +692,10 @@ feature "Listings" do
         page.should_not have_content 'Denied Listing'
         page.should_not have_content 'Invoiced Listing'
         page.should_not have_content 'No pixis found.'
+        page.should have_content 'Export as CSV file'
+        visit listings_path(status: 'removed', loc: @site.id, cid: @category.id, format: 'csv')
+        page.should have_content 'Removed Listing'
+        page.should_not have_content 'Active Listing'
       end
 
       it "views denied listings", js: true do
@@ -688,13 +713,17 @@ feature "Listings" do
         page.should have_content 'Denied Listing'
         page.should_not have_content 'Invoiced Listing'
         page.should_not have_content 'No pixis found.'
+        page.should have_content 'Export as CSV file'
+        visit listings_path(status: 'denied', loc: @site.id, cid: @category.id, format: 'csv')
+        page.should have_content 'Denied Listing'
+        page.should_not have_content 'Active Listing'
       end
 
       it "views invoiced listings", js: true do
         invoiced_listing = create :listing, seller_id: @user.id, title: 'Invoiced Listing', category_id: @category.id, site_id: @site.id
         buyer = FactoryGirl.create(:pixi_user)
         invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: invoiced_listing.pixi_id, buyer_id: buyer.id, status: 'active')
-        visit invoiced_listings_path(status: 'active', loc: @site.id, cid: @category.id)
+        visit invoiced_listings_path(loc: @site.id, cid: @category.id)
         page.should_not have_content 'Pending Listing'
         page.should_not have_content 'Active Listing'
         page.should_not have_content 'Draft Listing'
@@ -704,6 +733,32 @@ feature "Listings" do
         page.should_not have_content 'Denied Listing'
         page.should have_content 'Invoiced Listing'
         page.should_not have_content 'No pixis found.'
+        page.should have_content 'Export as CSV file'
+        visit invoiced_listings_path(loc: @site.id, cid: @category.id, format: 'csv')
+        page.should have_content 'Invoiced Listing'
+        page.should_not have_content 'Active Listing'
+      end
+
+      it "views wanted listings", js: true do
+        wanted_listing = create :listing, seller_id: @user.id, title: 'Wanted Listing', description: 'Test', category_id: @category.id, site_id: @site.id
+        wanted_listing.status = 'wanted'
+        wanted_listing.save!
+        expect(Listing.where("status = 'wanted'").count).to eq 1
+        visit wanted_listings_path(loc: @site.id, cid: @category.id)
+        page.should_not have_content 'Pending Listing'
+        page.should_not have_content 'Active Listing'
+        page.should_not have_content 'Draft Listing'
+        page.should_not have_content 'Expired Listing'
+        page.should_not have_content 'Sold Listing'
+        page.should_not have_content 'Removed Listing'
+        page.should_not have_content 'Denied Listing'
+        page.should_not have_content 'Invoiced Listing'
+        page.should have_content 'Wanted Listing'
+        page.should_not have_content 'No pixis found.'
+        page.should have_content 'Export as CSV file'
+        visit wanted_listings_path(loc: @site.id, cid: @category.id, format: 'csv')
+        page.should have_content 'Wanted Listing'
+        page.should_not have_content 'Active Listing'
       end
     end
 
@@ -723,7 +778,6 @@ feature "Listings" do
         init_setup px_user
         @listing = create(:listing, seller_id: @user.id) 
         @temp_listing = create(:temp_listing, seller_id: @user.id) 
-        # First couple may not be necessary?
         @pending_listing = create(:temp_listing, seller_id: @user.id, title: 'Snare Drum') 
         @pending_listing.status = 'pending'
         @pending_listing.save!

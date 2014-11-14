@@ -7,7 +7,7 @@ class TempListingsController < ApplicationController
   autocomplete :site, :name, :full => true, :limit => 20
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name, if: :has_pixan?
   include ResetDate
-  respond_to :html, :json, :js, :mobile
+  respond_to :html, :json, :js, :mobile, :csv
   layout :page_layout
 
   def index

@@ -1,1 +1,1 @@
-<%= link_to 'Export as CSV file', listings_path(format: "csv"), class: 'btn btn-small' %>
+<%= link_to 'Export as CSV file', get_csv_path(@status, @cid, @loc), class: 'btn btn-small' %>

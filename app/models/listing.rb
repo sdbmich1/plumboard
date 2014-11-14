@@ -67,8 +67,12 @@ class Listing < ListingParent
   end
 
   # get wanted list by user
-  def self.wanted_list usr, pg=1
-    active.joins(:pixi_wants).where("pixi_wants.user_id = ?", usr.id).paginate page: pg
+  def self.wanted_list usr, pg=1, cid=nil, loc=nil
+    if usr.is_admin?
+      check_category_and_location('wanted', cid, loc)
+    else
+      active.joins(:pixi_wants).where("pixi_wants.user_id = ?", usr.id).paginate page: pg
+    end
   end
 
   # get cool list by user

@@ -36,7 +36,7 @@ describe ListingsController do
   describe 'GET index' do
     before(:each) do
       @listings = stub_model(Listing)
-      Listing.stub_chain(:get_by_status).and_return(@listings)
+      Listing.stub_chain(:check_category_and_location).and_return(@listings)
       @listings.stub!(:paginate).and_return( @listings )
       controller.stub_chain(:load_data, :get_location).and_return(:success)
       do_get
@@ -62,12 +62,17 @@ describe ListingsController do
       get :index, :format => 'json'
       expect(response).to be_success
     end
+
+    it "responds to CSV" do
+      get :index, :format => 'csv'
+      expect(response).to be_success
+    end
   end
 
   describe 'xhr GET index' do
     before(:each) do
       @listings = mock("listings")
-      Listing.stub_chain(:get_by_status).and_return(@listings)
+      Listing.stub_chain(:check_category_and_location).and_return(@listings)
       @listings.stub!(:paginate).and_return( @listings )
       controller.stub_chain(:load_data, :get_location).and_return(:success)
       do_get

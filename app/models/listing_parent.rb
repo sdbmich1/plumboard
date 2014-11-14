@@ -540,4 +540,8 @@ class ListingParent < ActiveRecord::Base
   def event_type_descr
     event_type.description.titleize rescue nil
   end
+
+  def as_csv(options={})
+    { "Title" => title, "Category" => category_name, "Description" => description, "Location" => site_name, "Last Updated" => display_date(updated_at) }
+  end
 end

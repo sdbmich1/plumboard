@@ -2,11 +2,11 @@ require 'will_paginate/array'
 class ListingsController < ApplicationController
   include PointManager, LocationManager, NameParse
   before_filter :authenticate_user!, except: [:local, :category, :show]
-  before_filter :load_data, only: [:index, :seller, :category, :show, :local, :invoiced]
+  before_filter :load_data, only: [:index, :seller, :category, :show, :local, :invoiced, :wanted]
   before_filter :load_pixi, only: [:pixi_price, :repost, :update]
   before_filter :load_city, only: [:local, :category]
   after_filter :add_points, :set_session, only: [:show]
-  respond_to :html, :json, :js, :mobile
+  respond_to :html, :json, :js, :mobile, :csv
   layout :page_layout
 
   def index
@@ -38,7 +38,7 @@ class ListingsController < ApplicationController
   end
 
   def wanted
-    respond_with(@listings = Listing.wanted_list(@user, @page))
+    respond_with(@listings = Listing.wanted_list(@user, @page, @cat, @loc))
   end
 
   def purchased

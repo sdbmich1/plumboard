@@ -3,7 +3,7 @@ class PendingListingsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :load_data, :check_permissions, only: [:index]
   before_filter :load_pixi, only: [:show, :approve, :deny]
-  respond_to :html, :json, :js
+  respond_to :html, :json, :js, :csv
 
   def index
     respond_with(@listings = TempListing.check_category_and_location(@status, @cat, @loc, @page).paginate(page: @page, per_page: 15))

@@ -865,7 +865,6 @@ describe Listing do
     end
   end
 
-
   describe "wanted" do 
     before(:each) do
       @usr = create :pixi_user
@@ -888,6 +887,16 @@ describe Listing do
 
     it { expect(@listing.user_wanted?(@user)).not_to be_nil }
     it { expect(@listing.user_wanted?(@usr)).not_to eq(true) }
+
+    it "shows all wanted pixis for admin" do
+      @admin_user = create :admin
+      @admin_user.user_type_code = 'AD'
+      @admin_user.save!
+      @listing.status = 'wanted'
+      @listing.save!
+      Listing.wanted_list(@admin_user, 1, @listing.category_id, @listing.site_id).should include @listing
+      Listing.wanted_list(@usr, 1, @listing.category_id, @listing.site_id).should_not include @listing
+    end
   end
 
   describe "cool" do 

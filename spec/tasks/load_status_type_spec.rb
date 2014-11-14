@@ -18,6 +18,7 @@ describe 'import_csv namespace rake task' do
       StatusType.exists?(code: 'removed').should be_true
       StatusType.exists?(code: 'denied').should be_true
       StatusType.exists?(code: 'invoiced').should be_true
+      StatusType.exists?(code: 'wanted').should be_true
       StatusType.exists?(hide: 'yes').should be_true
     end
   end
