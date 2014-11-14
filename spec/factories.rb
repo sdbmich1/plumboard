@@ -407,4 +407,10 @@ FactoryGirl.define do
   factory :status_type do
     code "active"
   end
+
+  factory :condition_type do
+    code "N"
+    hide "no"
+    status "active"
+  end
 end

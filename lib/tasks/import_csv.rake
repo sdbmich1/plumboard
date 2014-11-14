@@ -594,6 +594,27 @@ task :load_status_types => :environment do
   end
 end
 
+task :load_condition_types => :environment do
+  ConditionType.delete_all
+  CSV.foreach(Rails.root.join('db', 'condition_type_110214.csv'), :headers => true) do |row|
+
+    attrs = {
+      :code   => row[0],
+      :status   => 'active',
+      :hide   => row[3],
+    }
+
+    #add condition_type
+    new_condition_type = ConditionType.new(attrs)
+
+    #save condition_type
+    if new_condition_type.save
+      puts "Saved condition_type #{attrs.inspect}"
+    else
+      puts new_condition_type.errors
+    end
+  end
+end
 #to run all tasks at once
 task :run_all_tasks => :environment do
 
@@ -616,4 +637,5 @@ task :run_all_tasks => :environment do
   Rake::Task[:load_regions].execute
   Rake::Task[:load_event_types].execute
   Rake::Task[:load_status_types].execute
+  Rake::Task[:load_condition_types].execute
 end
