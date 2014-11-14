@@ -265,7 +265,7 @@ class ListingParent < ActiveRecord::Base
   def nice_title prcFlg=true
     unless title.blank?
       str = price.blank? || price == 0 ? '' : ' - '
-      tt = prcFlg ? title.split(' ').map(&:capitalize).join(' ').html_safe : title.titleize.html_safe rescue title 
+      tt = prcFlg ? title.split('-').map(&:titleize).join('-').html_safe : title.titleize.html_safe rescue title 
       if prcFlg
         title.index('$') ? tt : tt + str 
       else
@@ -543,5 +543,11 @@ class ListingParent < ActiveRecord::Base
 
   def as_csv(options={})
     { "Title" => title, "Category" => category_name, "Description" => description, "Location" => site_name, "Last Updated" => display_date(updated_at) }
+  end
+
+  # get expiring pixis
+  def self.soon_expiring_pixis number_of_days=7, status='active' 
+    date = Date.today + number_of_days.days
+    get_by_status(status).where("cast(end_date As Date) = ?", date)
   end
 end

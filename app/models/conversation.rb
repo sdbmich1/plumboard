@@ -145,7 +145,7 @@ class Conversation < ActiveRecord::Base
 
   # set list of included assns for eager loading
   def self.inc_show_list
-    includes(:posts => {:user => :pictures})
+    includes(:posts => [:listing, {:user => :pictures}])
   end
 
   # sets convo status to 'removed'
@@ -185,5 +185,13 @@ class Conversation < ActiveRecord::Base
 
     # get display date/time
     new_dt = listing.display_date dt, false rescue dt
+  end
+
+  # mark all posts in a conversation
+  def mark_all_posts usr
+    return false if usr.blank?
+    posts.each do |post|
+      post.mark_as_read! for: usr if post
+    end
   end
 end

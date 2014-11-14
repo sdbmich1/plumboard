@@ -272,4 +272,9 @@ class Post < ActiveRecord::Base
       self.update_attributes(recipient_status: 'removed')
     end
   end
+
+  # return create date
+  def create_dt
+    new_dt = listing.display_date created_at, false rescue created_at
+  end
 end

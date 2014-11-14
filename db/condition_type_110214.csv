@@ -1,0 +1,6 @@
+code,description,status,hide
+N,New,active,no
+RF,Refurbished,active,yes
+ULN,Used - Like New,active,no
+UVG,Used - Very Good,active,no
+UG,Used - Good,active,no

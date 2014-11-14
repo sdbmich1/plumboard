@@ -1,7 +1,8 @@
 require 'will_paginate/array' 
 class ConversationsController < ApplicationController
+  load_and_authorize_resource
   before_filter :authenticate_user!
-  before_filter :load_data, only: [:index, :unread, :reply, :show, :remove]
+  before_filter :load_data, only: [:index, :reply, :show, :remove]
   before_filter :mark_post, only: [:show]
   respond_to :html, :js, :xml, :json, :mobile
   layout :page_layout
@@ -76,10 +77,6 @@ class ConversationsController < ApplicationController
 
   def mark_post
     @conversation = Conversation.find params[:id]
-    if @conversation
-      @conversation.posts.each do |post|
-        post.mark_as_read! for: @user if post
-      end
-    end
+    @conversation.mark_all_posts(@user) if @conversation
   end
 end

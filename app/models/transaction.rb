@@ -226,7 +226,7 @@ class Transaction < ActiveRecord::Base
 
   # format txn date
   def txn_dt
-    created_at.utc.getlocal.strftime('%m/%d/%Y') rescue nil
+    new_dt = get_invoice_listing.display_date created_at, false rescue created_at
   end
 
   # get txn fees
