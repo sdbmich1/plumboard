@@ -609,7 +609,6 @@ feature "Listings" do
         page.should_not have_content 'Invoiced Listing'
         page.should_not have_content 'No pixis found.'
         page.should have_content 'Export as CSV file'
-        page.should have_link href: listings_path(status: 'active', loc: @site.id, cid: @category.id, format: 'csv')
         visit listings_path(status: 'active', loc: @site.id, cid: @category.id, format: 'csv')
         page.should have_content 'Active Listing'
         page.should_not have_content 'Pending Listing'
