@@ -540,4 +540,10 @@ class ListingParent < ActiveRecord::Base
   def event_type_descr
     event_type.description.titleize rescue nil
   end
+
+  # get expiring pixis
+  def self.soon_expiring_pixis number_of_days=7, status='active' 
+    date = Date.today + number_of_days.days
+    get_by_status(status).where("cast(end_date As Date) = ?", date)
+  end
 end

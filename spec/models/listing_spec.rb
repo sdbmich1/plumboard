@@ -708,7 +708,7 @@ describe Listing do
 
   describe '.event?' do
     before do
-      @cat = FactoryGirl.create(:category, name: 'Event', category_type: 'event', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Event', category_type_code: 'event', pixi_type: 'premium') 
     end
 
     it "is not an event" do
@@ -723,7 +723,7 @@ describe Listing do
 
   describe '.has_year?' do
     before do
-      @cat = FactoryGirl.create(:category, name: 'Automotive', category_type: 'asset', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Automotive', category_type_code: 'asset', pixi_type: 'premium') 
     end
 
     it "does not have a year" do
@@ -738,7 +738,7 @@ describe Listing do
 
   describe '.job?' do
     before do
-      @cat = FactoryGirl.create(:category, name: 'Jobs', category_type: 'employment', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Jobs', category_type_code: 'employment', pixi_type: 'premium') 
     end
 
     it "is not a job" do
@@ -1039,7 +1039,7 @@ describe Listing do
 
   describe 'remove_item_list' do
     it 'is a job' do
-      @cat = FactoryGirl.create(:category, name: 'Job', category_type: 'employment', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Job', category_type_code: 'employment', pixi_type: 'premium') 
       @listing.category_id = @cat.id
       expect(@listing.remove_item_list).not_to include('Event Cancelled') 
       expect(@listing.remove_item_list).to include('Removed Job') 
@@ -1047,7 +1047,7 @@ describe Listing do
     end
 
     it 'is an event' do
-      @cat = FactoryGirl.create(:category, name: 'Event', category_type: 'event', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Event', category_type_code: 'event', pixi_type: 'premium') 
       @listing.category_id = @cat.id
       expect(@listing.remove_item_list).to include('Event Cancelled') 
       expect(@listing.remove_item_list).not_to include('Removed Job') 
@@ -1075,7 +1075,7 @@ describe Listing do
 
   describe "date validations" do
     before do
-      @cat = FactoryGirl.create(:category, name: 'Event', category_type: 'event', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Event', category_type_code: 'event', pixi_type: 'premium') 
       @listing.category_id = @cat.id
       @listing.event_end_date = Date.today+3.days 
       @listing.event_start_time = Time.now+2.hours
@@ -1325,6 +1325,90 @@ describe Listing do
     it 'returns false if listing is not expired/sold' do
       @listing.status = 'active'
       @listing.repost.should be_false
+    end
+  end
+
+  describe 'soon_expiring_pixis' do
+    it "includes active listings" do 
+      @listing.end_date = Date.today + 4.days
+      @listing.save
+      @listing.reload
+      Listing.soon_expiring_pixis(4).should_not be_empty  
+    end
+	
+    it "includes expired listings" do
+      @listing.end_date = Date.today + 4.days
+      @listing.status = 'expired'
+      @listing.save
+      @listing.reload
+      Listing.soon_expiring_pixis(4, 'expired').should_not be_empty  
+    end
+	
+      it "includes expired listings" do
+      @listing.end_date = Date.today + 4.days
+      @listing.status = 'expired'
+      @listing.save
+      @listing.reload
+      Listing.soon_expiring_pixis(4, ['expired', 'active']).should_not be_empty  
+    end
+	
+      it "includes active listings" do
+      @listing.end_date = Date.today + 5.days
+      @listing.status = 'active'
+      @listing.save
+      @listing.reload
+      Listing.soon_expiring_pixis(5, ['expired', 'active']).should_not be_empty  
+    end
+	
+      it "includes default active listings" do
+      @listing.end_date = Date.today + 7.days
+      @listing.status = 'active'
+      @listing.save
+      @listing.reload
+      Listing.soon_expiring_pixis().should_not be_empty  
+    end
+  end
+  
+  
+  describe 'not soon_expiring_pixis' do  
+    it "does not include active listings" do 
+      @listing.end_date = Date.today + 10.days
+      @listing.status = 'active'
+      @listing.save
+      @listing.reload
+      Listing.soon_expiring_pixis(8).should be_empty  
+    end
+	
+    it "does not include expired listings" do 
+      @listing.end_date = Date.today + 4.days
+      @listing.status = 'expired'
+      @listing.save
+      @listing.reload
+      Listing.soon_expiring_pixis(3).should be_empty  
+    end
+	
+    it "does not include expiring early listings" do 
+      @listing.end_date = Date.today + 4.days
+      @listing.status = 'expired'
+      @listing.save
+      @listing.reload
+      Listing.soon_expiring_pixis(5).should be_empty  
+    end
+	
+    it "does not include active listings" do 
+      @listing.end_date = Date.today + 4.days
+      @listing.status = 'active'
+      @listing.save
+      @listing.reload
+      Listing.soon_expiring_pixis(5, nil).should be_empty  
+    end
+	
+    it "does not include active listings" do 
+      @listing.end_date = Date.today + 4.days
+      @listing.status = 'active'
+      @listing.save
+      @listing.reload
+      Listing.soon_expiring_pixis(5, ['expired', 'new']).should be_empty  
     end
   end
 end

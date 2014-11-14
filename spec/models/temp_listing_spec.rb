@@ -692,7 +692,7 @@ describe TempListing do
 
   describe '.event?' do
     before do
-      @cat = FactoryGirl.create(:category, name: 'Jobs', category_type: 'event', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Jobs', category_type_code: 'event', pixi_type: 'premium') 
     end
 
     it "is not an event" do
@@ -707,7 +707,7 @@ describe TempListing do
 
   describe '.has_year?' do
     before do
-      @cat = FactoryGirl.create(:category, name: 'Jobs', category_type: 'asset', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Jobs', category_type_code: 'asset', pixi_type: 'premium') 
     end
 
     it "does not have a year" do
@@ -722,7 +722,7 @@ describe TempListing do
 
   describe '.job?' do
     before do
-      @cat = FactoryGirl.create(:category, name: 'Jobs', category_type: 'employment', pixi_type: 'premium') 
+      @cat = FactoryGirl.create(:category, name: 'Jobs', category_type_code: 'employment', pixi_type: 'premium') 
     end
 
     it "is not a job" do
@@ -1094,6 +1094,99 @@ describe TempListing do
 
     it "does not show event_type description" do
       expect(@temp_listing.event_type_descr).to be_nil
+    end
+  end
+
+  describe 'soon_expiring_pixis' do
+    it "includes active temp listings" do 
+	  @temp_listing.end_date = Date.today + 4.days
+	  @temp_listing.status = 'edit'
+      @temp_listing.save
+	  @temp_listing.reload
+      TempListing.soon_expiring_pixis(4, 'edit').should_not be_empty  
+    end
+	
+	it "includes expired listings" do
+	  @temp_listing.end_date = Date.today + 4.days
+      @temp_listing.status = 'new'
+      @temp_listing.save
+	  @temp_listing.reload
+      TempListing.soon_expiring_pixis(4, 'new').should_not be_empty  
+    end
+	
+	it "includes expired listings" do
+	  @temp_listing.end_date = Date.today + 4.days
+      @temp_listing.status = 'new'
+      @temp_listing.save
+	  @temp_listing.reload
+      TempListing.soon_expiring_pixis(4, ['edit', 'new']).should_not be_empty  
+    end
+	
+	it "includes active listings" do
+	  @temp_listing.end_date = Date.today + 5.days
+      @temp_listing.status = 'edit'
+      @temp_listing.save
+	  @temp_listing.reload
+      TempListing.soon_expiring_pixis(5, ['edit', 'active']).should_not be_empty  
+    end
+  end
+  
+  
+  describe 'not soon_expiring_pixis' do  
+    it "does not include active listings" do 
+      @temp_listing.end_date = Date.today + 10.days
+      @temp_listing.status = 'new'
+      @temp_listing.save
+      @temp_listing.reload
+      TempListing.soon_expiring_pixis(8).should be_empty  
+    end
+	
+    it "does not include expired listings" do 
+      @temp_listing.end_date = Date.today + 4.days
+      @temp_listing.status = 'edit'
+      @temp_listing.save
+      @temp_listing.reload
+      TempListing.soon_expiring_pixis(3, 'new').should be_empty  
+    end
+	
+    it "does not include expiring early listings" do 
+      @temp_listing.end_date = Date.today + 4.days
+      @temp_listing.status = 'new'
+      @temp_listing.save
+      @temp_listing.reload
+      TempListing.soon_expiring_pixis(5).should be_empty  
+    end
+	
+    it "does not include active listings" do 
+      @temp_listing.end_date = Date.today + 4.days
+      @temp_listing.status = 'edit'
+      @temp_listing.save
+      @temp_listing.reload
+      TempListing.soon_expiring_pixis(5, nil).should be_empty  
+    end
+	
+    it "does not include active listings" do 
+      @temp_listing.end_date = Date.today + 4.days
+      @temp_listing.status = 'new'
+      @temp_listing.save
+      @temp_listing.reload
+      TempListing.soon_expiring_pixis(5, ['edit', 'new']).should be_empty  
+    end
+	
+    it "does not include active listings" do 
+      @temp_listing.end_date = Date.today + 7.days
+      @temp_listing.status = 'new'
+      @temp_listing.save
+      @temp_listing.reload
+      TempListing.soon_expiring_pixis().should be_empty  
+    end
+	
+    it "does not include active listings" do 
+      @temp_listing.end_date = Date.today + 4.days
+      @temp_listing.status = 'active'
+      @temp_listing.save
+      @temp_listing.reload
+      TempListing.soon_expiring_pixis().should be_empty  
     end
   end
 end

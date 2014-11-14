@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head> 
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+</head>
+  <body> 	
+    	<%= render :partial=>'shared/mail_header' %><br /><br />
+	Hi <%= @user.first_name %>,<br />
+
+    	<span style="height:20px;">
+  	  Your Pixi #<pixi_id>,<nice_title> is expiring and will be listed on the site for only <number_of_days>
+      more days. Log into Pixiboard and review this item <%= get_url %> to update
+      or to re-post your listing.  </span><br /><br />
+
+    <span style="margin-top:10px;">Keep on Pixing!</span><br /><br />
+	<span>Pixiboard</span><br /><br /> 	
+    	<%= render :partial=>'shared/mail_footer' %>
+  </body>
+</html>
+

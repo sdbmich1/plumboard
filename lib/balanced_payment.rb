@@ -127,6 +127,8 @@ module BalancedPayment
 
   # get customer 
   def self.get_customer uri, txn, slrFlg=false
+    initialize
+
     # check if uri exists else create token
     if uri
       unless customer = Balanced::Customer.where(uri: uri).first

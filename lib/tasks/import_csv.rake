@@ -48,7 +48,7 @@ task :import_sites => :environment do
       new_site.contacts.build(loc_attrs)
 
       # save site
-      if new_site.save 
+      if !new_site.blank? && new_site.save 
         puts "Saved site #{attrs.inspect}"
       else
         puts "Error: #{new_site.errors.full_messages.first}"
@@ -271,8 +271,8 @@ task :load_categories => :environment do
   CSV.foreach(Rails.root.join('db', 'category_data_020613.csv'), :headers => true) do |row|
 
     attrs = {
-	      	:name              => row[0].titleize,
-      		:category_type_code     => row[1],
+	  :name              => row[0].titleize,
+      	  :category_type_code     => row[1],
           :status		   => 'active'
     }
 
@@ -284,14 +284,13 @@ task :load_categories => :environment do
       new_category.pictures.map { |pic| new_category.pictures.delete(pic) }
     end
 
-    picture = new_category.pictures.build
-    picture.photo = File.new("#{Rails.root}" + row[2]) if picture
+    picture = new_category.pictures.build(:photo => File.new("#{Rails.root}" + row[2]), :dup_flg => true)
 
     # save category
     if new_category.save 
       puts "Saved category #{attrs.inspect}"
     else
-      puts new_category.errors
+      puts "Error: #{new_category.errors.full_messages.first}"
     end
   end
 end
@@ -324,14 +323,13 @@ task :update_categories => :environment do
       updated_category.pictures.map { |pic| updated_category.pictures.delete(pic) }
     end
 
-    picture = updated_category.pictures.build
-    picture.photo = File.new("#{Rails.root}" + row[5]) if picture
+    picture = updated_category.pictures.build(:photo => File.new("#{Rails.root}" + row[5]), :dup_flg => true)
 
     #save category
     if updated_category.save
       puts "Saved category #{attrs.inspect}"
     else
-      puts updated_category.errors
+      puts "Error: #{updated_category.errors.full_messages.first}"
     end
   end
 end
