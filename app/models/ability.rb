@@ -41,8 +41,8 @@ class Ability
       can [:crud, :sent, :remove], Invoice, :seller_id => user.id
       can [:show, :received], Invoice, :buyer_id => user.id
 
-      can [:create, :read, :update], BankAccount, :user_id => user.id
-      can [:create, :read, :update], CardAccount, :user_id => user.id
+      can [:crud], BankAccount, :user_id => user.id
+      can [:crud], CardAccount, :user_id => user.id
 
       can :update, Listing, :user_id => user.id
 

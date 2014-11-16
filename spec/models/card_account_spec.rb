@@ -189,4 +189,22 @@ describe CardAccount do
       @account.delete_card.should_not be_true
     end
   end
+
+  describe 'get_default_acct' do
+    it 'returns acct' do
+      @account.save
+      expect(CardAccount.get_default_acct).not_to be_blank
+    end
+
+    it 'does not return acct' do
+      expect(CardAccount.get_default_acct).to be_blank
+    end
+
+    it 'does not return acct' do
+      @account.save
+      @account2 = @user.card_accounts.create FactoryGirl.attributes_for :card_account, card_no: '5100'
+      expect(CardAccount.get_default_acct.card_no).to eq '9000'
+      expect(CardAccount.get_default_acct.card_no).not_to eq '5100'
+    end
+  end
 end

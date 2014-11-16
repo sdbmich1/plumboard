@@ -190,12 +190,12 @@ class User < ActiveRecord::Base
 
   # return whether user has any bank accounts
   def has_bank_account?
-    bank_accounts.count > 0 rescue nil
+    bank_accounts.size > 0 rescue nil
   end
 
   # return whether user has any card accounts
   def has_card_account?
-    card_accounts.count > 0 rescue nil
+    card_accounts.size > 0 rescue nil
   end
 
   # return any valid card 

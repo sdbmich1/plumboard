@@ -4,11 +4,6 @@ feature "BankAccounts" do
   subject { page }
   let(:user) { FactoryGirl.create(:pixi_user, first_name: 'Jack', last_name: 'Snow', email: 'jack.snow@pixitest.com') }
 
-  def init_setup usr
-    login_as(usr, :scope => :user, :run_callbacks => false)
-    @user = usr
-  end
-
   def add_data
     fill_in 'routing_number', with: '021000021'
     fill_in 'acct_number', with: 9900000002
@@ -92,11 +87,11 @@ feature "BankAccounts" do
     end
 
     it "removes an account" do
+      BankAccount.any_instance.stub(:delete_account).and_return(true)
       expect {
           click_on 'Remove'; sleep 3;
-      }.to change(BankAccount, :count).by(-1)
+      }.to change(BankAccount, :count).by(0)
 
-      page.should have_content 'Home'
       page.should have_content 'Pixis'
       page.should_not have_content 'Account #'
     end

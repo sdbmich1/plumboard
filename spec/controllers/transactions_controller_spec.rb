@@ -68,8 +68,9 @@ describe TransactionsController do
       TempListing.stub!(:find_by_pixi_id).and_return(@listing)
       @invoice = stub_model(Invoice)
       controller.stub(:order) {['order', 'order']}
+      controller.stub(:order) {['transaction_type', 'invoice']}
       controller.stub!(:current_user).and_return(@user)
-      controller.stub_chain(:load_vars, :set_amt).and_return(:success)
+      controller.stub_chain(:load_vars, :load_pixi, :set_amt).and_return(:success)
       Invoice.stub!(:find_invoice).with(@order).and_return(@invoice)
       Transaction.stub!(:load_new).with(@user, @listing, @order).and_return( @transaction )
     end
@@ -101,10 +102,8 @@ describe TransactionsController do
 
   describe 'GET show/:id' do
     before :each do
-      @rating = stub_model(Rating)
       Transaction.stub!(:find).and_return( @transaction )
       controller.stub!(:current_user).and_return(@user)
-      @user.stub_chain(:ratings, :build).and_return(@rating)
     end
 
     def do_get

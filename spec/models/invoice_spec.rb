@@ -180,10 +180,12 @@ describe Invoice do
 
   describe "find_invoice" do 
     before { @invoice.save }
-    let(:order) { {"cnt"=> 1, "quantity1"=> 1, "item1"=> 'Pixi Post', "price1"=> 75.0, "invoice_id"=> @invoice.id} }
+    let(:order) { {"cnt"=> 1, "quantity1"=> 1, "item1"=> 'Pixi Post', "price1"=> 75.0, "invoice_id"=> @invoice.id, "transaction_type"=>'invoice'} }
+    let(:order1) { {"cnt"=> 1, "quantity1"=> 1, "item1"=> 'Pixi Post', "price1"=> 75.0, "invoice_id"=> @invoice.id, "transaction_type"=>'pixi'} }
     let(:order2) { {"cnt"=> 1, "quantity1"=> 1, "item1"=> 'Pixi Post', "price1"=> 75.0, "invoice_id"=> ''} }
 
     it { Invoice.find_invoice(order).should_not be_nil }
+    it { Invoice.find_invoice(order1).should be_nil }
     it { Invoice.find_invoice(order2).should be_nil }
   end
 
@@ -455,13 +457,13 @@ describe Invoice do
 
     it "show current updated date" do
       @invoice.save!
-      expect(@invoice.format_date(@invoice.updated_at)).to eq @invoice.updated_at.strftime('%m/%d/%Y %l:%M %p')
+      expect(@invoice.format_date(@invoice.updated_at)).not_to eq @invoice.updated_at.strftime('%m/%d/%Y %l:%M %p')
     end
 
     it "shows local updated date" do
       @invoice.transaction_id = transaction.id
       @invoice.save!
-      expect(@invoice.format_date(@invoice.updated_at)).not_to eq Time.now.strftime('%m/%d/%Y %l:%M %p')
+      expect(@invoice.format_date(@invoice.updated_at)).to eq Time.now.strftime('%m/%d/%Y %l:%M %p')
     end
   end
 

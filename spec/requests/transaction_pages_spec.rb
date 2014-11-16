@@ -301,11 +301,12 @@ feature "Transactions" do
 
     it "creates a balanced transaction with valid mc card", :js=>true do
       expect { 
-        credit_card_data '5105105105105100'
+        credit_card_data '5105105105105100'; sleep 2
         page.should have_content("Purchase Complete")
         page.should have_content("Please Rate Your Seller")
         page.should have_link('Add Comment', href: '#') 
       }.to change(Transaction, :count).by(1)
+      expect(CardAccount.all.count).to eq 2
     end
   end
 
@@ -358,13 +359,13 @@ feature "Transactions" do
     before(:each) do
       usr = FactoryGirl.create(:contact_user) 
       page_setup usr
-      @acct = @user.card_accounts.create FactoryGirl.attributes_for :card_account, card_no: '1111'
-      visit new_card_account_path
+      visit new_bank_account_path
+      click_link 'Card'
     end
 
     it "submits payment", js: true do
       expect {
-        load_credit_card; sleep 0.5
+        load_credit_card; sleep 2.5
       }.to change(CardAccount, :count).by(1)
       page.should have_content 'Card #'
 
