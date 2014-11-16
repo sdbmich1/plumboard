@@ -29,7 +29,7 @@
     </div> 
 
     <div id='user-list' class="nav pull-right">
-      <%= will_paginate @users, page_links: false if @users.respond_to?(:total_pages) %>
+      <%= will_paginate @users if @users.respond_to?(:total_pages) %>
     </div> 
   </div> 
 
