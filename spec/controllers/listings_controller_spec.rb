@@ -36,7 +36,7 @@ describe ListingsController do
   describe 'GET index' do
     before(:each) do
       @listings = stub_model(Listing)
-      Listing.stub_chain(:get_by_status).and_return(@listings)
+      Listing.stub_chain(:check_category_and_location).and_return(@listings)
       @listings.stub!(:paginate).and_return( @listings )
       controller.stub_chain(:load_data, :get_location).and_return(:success)
       do_get
@@ -67,7 +67,7 @@ describe ListingsController do
   describe 'xhr GET index' do
     before(:each) do
       @listings = mock("listings")
-      Listing.stub_chain(:get_by_status).and_return(@listings)
+      Listing.stub_chain(:check_category_and_location).and_return(@listings)
       @listings.stub!(:paginate).and_return( @listings )
       controller.stub_chain(:load_data, :get_location).and_return(:success)
       do_get
@@ -279,7 +279,7 @@ describe ListingsController do
   describe 'GET show/:id' do
     before :each do
       @comments = mock('comments')
-      Listing.stub_chain(:find_pixi).with('1').and_return( @listing )
+      Listing.stub_chain(:find_by_pixi_id).with('1').and_return( @listing )
       @listing.stub_chain(:comments, :build).and_return( @comments )
       controller.stub!(:load_comments).and_return(@comments)
       controller.stub!(:add_points).and_return(:success)
@@ -295,7 +295,7 @@ describe ListingsController do
     end
 
     it "should load the requested listing" do
-      Listing.stub(:find_pixi).with('1').and_return(@listing)
+      Listing.stub(:find_by_pixi_id).with('1').and_return(@listing)
       do_get
     end
 
@@ -318,7 +318,7 @@ describe ListingsController do
   describe 'xhr GET show/:id' do
     before :each do
       @comments = stub_model(Comment)
-      Listing.stub!(:find_pixi).with('1').and_return( @listing )
+      Listing.stub!(:find_by_pixi_id).with('1').and_return( @listing )
       @listing.stub_chain(:comments, :build).and_return( @comments )
       controller.stub!(:load_comments).and_return(:success)
       controller.stub!(:add_points).and_return(:success)
@@ -334,7 +334,7 @@ describe ListingsController do
     end
 
     it "should load the requested listing" do
-      Listing.stub(:find_pixi).with('1').and_return(@listing)
+      Listing.stub(:find_by_pixi_id).with('1').and_return(@listing)
       do_get
     end
 

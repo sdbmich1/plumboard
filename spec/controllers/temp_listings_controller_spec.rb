@@ -22,7 +22,7 @@ describe TempListingsController do
 
   describe 'GET show/:id' do
     before :each do
-      TempListing.stub!(:find_pixi).and_return( @listing )
+      TempListing.stub!(:find_by_pixi_id).and_return( @listing )
     end
 
     def do_get
@@ -35,7 +35,7 @@ describe TempListingsController do
     end
 
     it "should load the requested listing" do
-      TempListing.stub(:find_pixi).with('1').and_return(@listing)
+      TempListing.stub(:find_by_pixi_id).with('1').and_return(@listing)
       do_get
     end
 
