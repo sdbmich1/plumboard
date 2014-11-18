@@ -65,8 +65,8 @@ feature "BankAccounts" do
           click_on 'Save'; sleep 3;
       }.to change(BankAccount, :count).by(1)
 
-      page.should have_content 'Pixis'
-      page.should_not have_content 'Account #'
+      # page.should_not have_content 'Pixis'
+      page.should have_content 'Account #'
     end
   end
 

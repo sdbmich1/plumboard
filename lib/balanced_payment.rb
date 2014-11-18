@@ -38,6 +38,20 @@ module BalancedPayment
       process_error acct, ex
   end
 
+  # add card account
+  def self.add_card_account customer, model, token
+
+    # add card to Balanced account
+    customer.add_card(token) 
+
+    # add card to db
+    CardAccount.add_card(model, token)
+    Rails.logger.info 'PXB customer add card'
+
+    rescue => ex
+      process_error acct, ex
+  end
+
   # get account
   def self.get_bank_account token, acct
 
@@ -93,17 +107,30 @@ module BalancedPayment
     # get buyer token
     uri = txn.user.acct_token
 
-    # determine buyer
-    buyer = get_customer uri, txn, false, token
-
     # define meta data for tracking
     meta = { 'address'=> txn.address, 'city'=> txn.city, 'state'=> txn.state, 'zip'=> txn.zip, 'pixi_id'=> txn.pixi_id }
 
+    # determine buyer
+    buyer = get_customer uri, txn, false, token
+
     # charge card
-    result = buyer.debit(amount: (amt * 100).to_i.to_s, appears_on_statement_as: 'pixiboard.com', meta: meta)
+    if txn.user.has_bank_account?
+      if txn.user.has_card_account?
+        customer = Balanced::Customer.find uri
+        result = customer.debit(amount: (amt * 100).to_i.to_s, appears_on_statement_as: 'pixiboard.com', meta: meta)
+      else
+        result = buyer.debit(amount: (amt * 100).to_i.to_s, appears_on_statement_as: 'pixiboard.com', meta: meta, source_uri: card_token(txn, token))
+      end
+    else
+      result = buyer.debit(amount: (amt * 100).to_i.to_s, appears_on_statement_as: 'pixiboard.com', meta: meta)
+    end
 
     rescue => ex
       process_error txn, ex
+  end
+
+  def self.card_token txn, token
+    txn.user.card_accounts.get_default_acct.token rescue token
   end
 
   # removes card
@@ -120,7 +147,6 @@ module BalancedPayment
 
   # get customer 
   def self.get_customer uri, txn, slrFlg=false, token=''
-    initialize
 
     # check if uri exists else create token
     unless uri.blank?
@@ -129,6 +155,13 @@ module BalancedPayment
       end
     else
       customer = set_token txn, slrFlg, token
+    end
+
+    # check if buyer has just a seller account
+    unless slrFlg
+      unless txn.user.has_card_account? 
+        add_card_account(customer, txn, token) 
+      end
     end
     customer
   end
@@ -146,11 +179,7 @@ module BalancedPayment
     model.user.save
 
     # add card to Balanced acct & db if not found
-    unless slrFlg
-      customer.add_card(token) 
-      CardAccount.add_card(model, token)
-      # Rails.logger.info 'PXB customer add card'
-    end
+    add_card_account(customer, model, token) unless slrFlg
 
     return customer
 
