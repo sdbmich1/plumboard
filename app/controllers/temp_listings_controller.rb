@@ -21,7 +21,7 @@ class TempListingsController < ApplicationController
   end
 
   def show
-    respond_with(@listing = TempListing.find_pixi(params[:id]))
+    respond_with(@listing = TempListing.find_by_pixi_id(params[:id]))
   end
 
   def edit

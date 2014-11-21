@@ -3,7 +3,7 @@ class ListingsController < ApplicationController
   include PointManager, LocationManager, NameParse
   before_filter :authenticate_user!, except: [:local, :category, :show]
   before_filter :load_data, only: [:index, :seller, :category, :show, :local, :invoiced, :wanted]
-  before_filter :load_pixi, only: [:pixi_price, :repost, :update]
+  before_filter :load_pixi, only: [:show, :pixi_price, :repost, :update]
   before_filter :load_city, only: [:local, :category]
   after_filter :add_points, :set_session, only: [:show]
   respond_to :html, :json, :js, :mobile, :csv
@@ -14,7 +14,6 @@ class ListingsController < ApplicationController
   end
 
   def show
-    @listing = Listing.find_pixi(params[:id])
     load_comments
     respond_with(@listing) do |format|
       format.json { render json: {listing: @listing, comments: @comments} }
