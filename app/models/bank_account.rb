@@ -47,7 +47,7 @@ class BankAccount < ActiveRecord::Base
 
   # set flds
   def set_flds
-    self.status = 'active'
+    self.status, self.default_flg = 'active', 'Y' unless self.user.has_bank_account?
   end
 
   # get account
@@ -116,5 +116,10 @@ class BankAccount < ActiveRecord::Base
   # account owner email
   def email
     user.email rescue nil
+  end
+
+  # returns default account 
+  def self.get_default_acct
+    where(default_flg: 'Y').first
   end
 end

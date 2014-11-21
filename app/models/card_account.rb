@@ -106,4 +106,9 @@ class CardAccount < ActiveRecord::Base
     Rails.logger.info "Card failed: #{e.message}" 
     self
   end
+
+  # returns default account 
+  def self.get_default_acct
+    where(default_flg: 'Y').first
+  end
 end
