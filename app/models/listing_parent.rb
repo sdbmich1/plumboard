@@ -132,7 +132,7 @@ class ListingParent < ActiveRecord::Base
 
   # find listings by status
   def self.get_by_status val
-    include_list.where(:status => val).order('updated_at DESC')
+    include_list_without_job_type.where(:status => val).order('updated_at DESC')
   end
 
   # find all listings where a given user is the seller, or all listings if the user is an admin

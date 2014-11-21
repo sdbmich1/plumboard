@@ -4,6 +4,7 @@ class TempListingsController < ApplicationController
   before_filter :check_permissions, only: [:create, :show, :edit, :update, :delete]
   before_filter :load_data, only: [:index, :unposted]
   before_filter :set_params, only: [:create, :update]
+  before_filter :load_pixi, only: [:edit, :show, :update, :destroy, :submit]
   autocomplete :site, :name, :full => true, :limit => 20
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name, if: :has_pixan?
   include ResetDate
@@ -15,23 +16,18 @@ class TempListingsController < ApplicationController
   end
 
   def new
-    @listing = TempListing.new pixan_id: params[:pixan_id]
-    @photo = @listing.pictures.build
-    respond_with(@listing)
+    respond_with(@listing = TempListing.new(pixan_id: params[:pixan_id]))
   end
 
   def show
-    respond_with(@listing = TempListing.find_by_pixi_id(params[:id]))
-  end
-
-  def edit
-    @listing = TempListing.find_by_pixi_id(params[:id]) || Listing.find_by_pixi_id(params[:id]).dup_pixi(false)
-    @photo = @listing.pictures.build if @listing
     respond_with(@listing)
   end
 
+  def edit
+    respond_with(@listing ||= Listing.find_by_pixi_id(params[:id]).dup_pixi(false))
+  end
+
   def update
-    @listing = TempListing.find_by_pixi_id params[:id]
     respond_with(@listing) do |format|
       if @listing.update_attributes(params[:temp_listing])
         format.json { render json: {listing: @listing} }
@@ -54,7 +50,6 @@ class TempListingsController < ApplicationController
   end
 
   def submit
-    @listing = TempListing.find_by_pixi_id params[:id]
     respond_with(@listing) do |format|
       if @listing.resubmit_order
         format.json { render json: {listing: @listing} }
@@ -66,7 +61,6 @@ class TempListingsController < ApplicationController
   end
 
   def destroy
-    @listing = TempListing.find_by_pixi_id params[:id]
     respond_with(@listing) do |format|
       if @listing.destroy  
         format.html { redirect_to get_root_path }
@@ -122,6 +116,10 @@ class TempListingsController < ApplicationController
   # check if pixipost to enable buyer autocomplete
   def has_pixan?
     !params[:pixan_id].blank?
+  end
+
+  def load_pixi
+    @listing = TempListing.find_by_pixi_id(params[:id])
   end
 
   def check_permissions

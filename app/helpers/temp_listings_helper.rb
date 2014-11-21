@@ -40,4 +40,12 @@ module TempListingsHelper
   def set_pixi_path listing
     listing.pending? && controller_name == 'pending_listings' ? pending_listing_url(listing) : listing
   end
+
+  # add new picture for listing
+  def setup_picture(listing)
+
+    # new post
+    picture = listing.pictures.build 
+    return listing
+  end
 end
