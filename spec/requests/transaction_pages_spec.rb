@@ -389,6 +389,69 @@ feature "Transactions" do
     end
   end
 
+  def add_bank_account_data
+    fill_in 'routing_number', with: '021000021'
+    fill_in 'acct_number', with: 9900000002
+    fill_in 'bank_account_acct_name', with: "SDB Business"
+    fill_in 'bank_account_description', with: "My business"
+    select("checking", :from => "bank_account_acct_type")
+  end
+
+  describe "Valid Invoice Transactions w/ existing bank account" do
+    before(:each) do
+      usr = FactoryGirl.create(:contact_user) 
+      page_setup usr
+      visit new_bank_account_path
+      add_bank_account_data
+    end
+
+    it "creates a balanced transaction with valid amex card", :js=>true do
+      expect {
+          click_on 'Save'; sleep 3;
+      }.to change(BankAccount, :count).by(1)
+
+      visit_inv_txn_path 
+      expect { 
+        credit_card_data '341111111111111', '1234'
+        page.should have_content("Purchase Complete")
+        page.should have_link('Add Comment', href: '#') 
+      }.to change(Transaction, :count).by(1)
+    end
+  end
+
+  describe "Valid Invoice Transactions w/ existing bank & card account" do
+    before(:each) do
+      usr = FactoryGirl.create(:contact_user) 
+      page_setup usr
+      visit new_bank_account_path
+      add_bank_account_data
+    end
+
+    it "creates a balanced transaction with valid amex card", :js=>true do
+      expect {
+          click_on 'Save'; sleep 3;
+      }.to change(BankAccount, :count).by(1)
+      page.should have_content 'Account #'
+
+      # visit new_bank_account_path
+      click_link 'Card'
+
+      expect {
+        load_credit_card; sleep 2.5
+      }.to change(CardAccount, :count).by(1)
+      page.should have_content 'Card #'
+
+      visit_inv_txn_path 
+      expect { 
+        click_valid_ok
+        page.should have_content("Purchase Complete")
+        page.should have_link('Add Comment', href: '#') 
+        page.should have_selector('#rateit5', visible: true) 
+        page.should have_selector('.cmt-descr', visible: false) 
+      }.to change(Transaction, :count).by(1)
+    end
+  end
+
   describe "Invalid Invoice Transactions" do
     before(:each) do
       usr = FactoryGirl.create(:pixi_user) 
