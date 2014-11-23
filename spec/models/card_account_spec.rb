@@ -162,6 +162,7 @@ describe CardAccount do
       acct = @user.card_accounts.create FactoryGirl.attributes_for :card_account
       @txn = @user.transactions.build FactoryGirl.attributes_for(:transaction, card_number: '9000900090009000')
       CardAccount.add_card(@txn, @txn.token).should be_true
+      expect(CardAccount.first.card_no).to eq '9000'
     end
 
     it 'has no card number' do

@@ -42,14 +42,14 @@ module BalancedPayment
   def self.add_card_account customer, model, token
 
     # add card to Balanced account
-    customer.add_card(token) 
+    # customer.add_card(token) 
 
     # add card to db
+    Rails.logger.info "PXB customer add card: #{token}"
     CardAccount.add_card(model, token)
-    Rails.logger.info 'PXB customer add card'
 
     rescue => ex
-      process_error acct, ex
+      process_error model, ex
   end
 
   # get account
@@ -100,7 +100,14 @@ module BalancedPayment
       postal_code: zip).save
   end
 
-  # create card account
+  # assign card account to customer
+  def self.assign_card cust_token, card_token
+    Rails.logger.info "Assign PXB token : #{card_token} to customer #{cust_token}"
+    customer = Balanced::Customer.find cust_token
+    response = customer.add_card card_token
+  end
+
+  # charge card account
   def self.charge_card token, amt, descr, txn 
     initialize
 
@@ -114,23 +121,15 @@ module BalancedPayment
     buyer = get_customer uri, txn, false, token
 
     # charge card
-    if txn.user.has_bank_account?
-      if txn.user.has_card_account?
-        customer = Balanced::Customer.find uri
-        result = customer.debit(amount: (amt * 100).to_i.to_s, appears_on_statement_as: 'pixiboard.com', meta: meta)
-      else
-        result = buyer.debit(amount: (amt * 100).to_i.to_s, appears_on_statement_as: 'pixiboard.com', meta: meta, source_uri: card_token(txn, token))
-      end
-    else
-      result = buyer.debit(amount: (amt * 100).to_i.to_s, appears_on_statement_as: 'pixiboard.com', meta: meta)
-    end
+    result = buyer.debit(amount: (amt * 100).to_i.to_s, appears_on_statement_as: 'pixiboard.com', meta: meta, source_uri: 
+      card_token(txn, token, txn.card_number.blank?))
 
     rescue => ex
       process_error txn, ex
   end
 
-  def self.card_token txn, token
-    txn.user.card_accounts.get_default_acct.token rescue token
+  def self.card_token txn, token, selFlg=true
+    selFlg ? txn.user.card_accounts.get_default_acct.token : token
   end
 
   # removes card
@@ -150,16 +149,17 @@ module BalancedPayment
 
     # check if uri exists else create token
     unless uri.blank?
-      unless customer = Balanced::Customer.where(uri: uri).first
-        customer = set_token txn, slrFlg, token
-      end
+      customer = Balanced::Customer.find uri
+      customer = set_token txn, slrFlg, token unless customer
     else
       customer = set_token txn, slrFlg, token
     end
 
     # check if buyer has just a seller account
     unless slrFlg
-      unless txn.user.has_card_account? 
+      if !txn.card_number.blank?
+        add_card_account(customer, txn, token) 
+      elsif !txn.user.has_card_account?
         add_card_account(customer, txn, token) 
       end
     end
@@ -177,9 +177,6 @@ module BalancedPayment
     # set user token
     model.user.acct_token = customer.uri
     model.user.save
-
-    # add card to Balanced acct & db if not found
-    add_card_account(customer, model, token) unless slrFlg
 
     return customer
 

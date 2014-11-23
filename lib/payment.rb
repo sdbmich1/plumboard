@@ -41,6 +41,14 @@ module Payment
     end
   end
 
+  # assign credit card
+  def self.assign_card cust_token, card_token
+    case CREDIT_CARD_API
+    when 'balanced' 
+      result = BalancedPayment::assign_card cust_token, card_token
+    end
+  end
+
   # charge credit card
   def self.charge_card token, amt, descr, txn
     case CREDIT_CARD_API

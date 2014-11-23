@@ -46,6 +46,8 @@ class CardAccount < ActiveRecord::Base
       # set fields
       self.token, self.card_no, self.expiration_month, self.expiration_year, self.card_type = card.uri, card.last_four, card.expiration_month, 
         card.expiration_year, card.card_type.titleize
+
+      result = Payment::assign_card user.acct_token, self.token
     else
       errors.add :base, "Card info is invalid. Please re-enter."
       return false
@@ -70,11 +72,12 @@ class CardAccount < ActiveRecord::Base
 
     # check if card exists
     unless card = model.user.card_accounts.where(:card_no => card_num).first
-      card = model.user.card_accounts.build card_number: model.card_number, expiration_month: model.exp_month,
+      card = model.user.card_accounts.build card_no: card_num, expiration_month: model.exp_month,
 	         expiration_year: model.exp_year, card_code: model.cvv, zip: model.zip, card_type: model.payment_type 
 
       # check if token was already created
       if token
+        result = Payment::assign_card model.user.acct_token, token
         card.token = token
 	card.save
       else
