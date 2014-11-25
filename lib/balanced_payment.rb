@@ -102,7 +102,6 @@ module BalancedPayment
 
   # assign card account to customer
   def self.assign_card cust_token, card_token
-    Rails.logger.info "Assign PXB token : #{card_token} to customer #{cust_token}"
     customer = Balanced::Customer.find cust_token
     response = customer.add_card card_token
   end
@@ -149,7 +148,7 @@ module BalancedPayment
 
     # check if uri exists else create token
     unless uri.blank?
-      customer = Balanced::Customer.find uri
+      customer = Balanced::Customer.find uri rescue nil
       customer = set_token txn, slrFlg, token unless customer
     else
       customer = set_token txn, slrFlg, token

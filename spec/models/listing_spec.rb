@@ -286,6 +286,8 @@ describe Listing do
     end
 
     it "does not get all listings for non-admin" do
+      @listing.seller_id = 100
+      @listing.save
       Listing.get_by_seller(@user).should_not include @listing
     end
 
@@ -955,6 +957,7 @@ describe Listing do
       expect(new_pixi.status).to eq('edit')
       expect(new_pixi.title).to eq(listing.title)
       expect(new_pixi.id).not_to eq(listing.id)
+      expect(new_pixi.pictures.size).to eq(listing.pictures.size)
     end
   end
 
@@ -1086,6 +1089,7 @@ describe Listing do
     before do
       @cat = FactoryGirl.create(:category, name: 'Event', category_type_code: 'event', pixi_type: 'premium') 
       @listing.category_id = @cat.id
+      @listing.event_type_code = 'party'
       @listing.event_end_date = Date.today+3.days 
       @listing.event_start_time = Time.now+2.hours
       @listing.event_end_time = Time.now+3.hours
@@ -1289,7 +1293,7 @@ describe Listing do
       @buyer = FactoryGirl.create(:pixi_user)
       @buyer2 = FactoryGirl.create(:pixi_user)
       @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id) 
-      @invoice2 = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer2.id) 
+  #    @invoice2 = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer2.id) 
     end
 
     it 'sets invoice status to removed' do
@@ -1297,7 +1301,7 @@ describe Listing do
         create(:saved_listing, user_id: @buyer.id, pixi_id: @listing.pixi_id); sleep 1
         @listing.status = 'removed'
         @listing.save
-      }.to change{ Invoice.where(:status => 'removed').count }.by(2)
+      }.to change{ Invoice.where(:status => 'removed').count }.by(1)
     end
 
     it 'does not set invoice status' do
@@ -1325,10 +1329,15 @@ describe Listing do
       @listing.active?.should be_true
     end
 
-    it 'calls dup_pixi if listing is sold' do
+    it 'calls repost_pixi if listing is sold' do
       @listing.status = 'sold'
-      new_listing = @listing.repost
-      new_listing.active?.should be_true
+      picture = @listing.pictures.build
+      picture.photo = File.new Rails.root.join("spec", "fixtures", "photo0.jpg")
+      @listing.save
+      expect(@listing.repost).to be_true
+      expect(Listing.all.count).to eq 2
+      expect(Listing.first.active?).to be_true
+      expect(Listing.first.pictures.size).to eq @listing.pictures.size
     end
 
     it 'returns false if listing is not expired/sold' do

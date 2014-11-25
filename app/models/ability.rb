@@ -43,6 +43,7 @@ class Ability
 
       can [:crud], BankAccount, :user_id => user.id
       can [:crud], CardAccount, :user_id => user.id
+      can [:create, :read, :show, :refund], Transaction, :user_id => user.id
 
       can :update, Listing, :user_id => user.id
 

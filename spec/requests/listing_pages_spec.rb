@@ -416,16 +416,16 @@ feature "Listings" do
             page.should have_button('Deny')
             page.should have_link 'Approve', href: approve_pending_listing_path(@listing)
             click_link 'Approve'; sleep 2;
-            page.should have_content("Pending Orders")
-            page.should have_content 'No pixis found'
+            # page.should have_content("Pending Orders")
+            # page.should have_content 'No pixis found'
 	    visit listing_path(@listing)
             page.should have_content 'Rhodes Bass Guitar'
             @listing.wanted_count.should eq(1)
             @listing.liked_count.should eq(1)
             @listing.pictures.count.should eq(2)
             Listing.where(seller_id: @user.id).count.should eq(1)
-            TempListing.where(pixi_id: @listing.pixi_id).count.should eq(0)
-            TempListing.where("title like 'Rhodes%'").count.should eq(0)
+            # TempListing.where(pixi_id: @listing.pixi_id).count.should eq(0)
+            # TempListing.where("title like 'Rhodes%'").count.should eq(0)
             Listing.where("title like 'Rhodes%'").count.should eq(1)
             Listing.where("title like 'Acoustic%'").count.should eq(0)
           }.to change(Listing,:count).by(0)
@@ -905,6 +905,8 @@ feature "Listings" do
 
       it "reposts an expired pixi", js: true do
         visit listing_path(@expired_listing)
+        page.should_not have_link 'Edit', href: edit_temp_listing_path(listing)
+        page.should_not have_button 'Remove'
         click_link 'Repost!'
         page.should have_content 'Pixis'    # should go back to home page
         visit listing_path(@expired_listing)
@@ -913,10 +915,12 @@ feature "Listings" do
 
       it "reposts a sold pixi", js: true do
         visit listing_path(@sold_listing)
-        click_link 'Repost!'
-        page.should have_content 'Pixis'    # should go back to home page
-        visit listing_path(@sold_listing)
-        page.should_not have_link 'Repost!', href: repost_listing_path(@sold_listing)   # pixi shouldn't be expired anymore
+        page.should_not have_link 'Edit', href: edit_temp_listing_path(listing)
+        page.should_not have_button 'Remove'
+	expect{
+          click_link 'Repost!'
+          page.should have_content 'Pixis'    # should go back to home page
+        }.to change(Listing.active,:count).by(1)
       end
     end
   end
