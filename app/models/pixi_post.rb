@@ -226,31 +226,12 @@ class PixiPost < ActiveRecord::Base
     pixi_posts = pixter_id.nil? ? PixiPost.includes(:user, :pixan).all : PixiPost.includes(:user, :pixan).where(pixan_id: pixter_id)
     pixi_posts = pixi_posts.keep_if{|elem| ((elem.status == "completed") &&
                   (elem.completed_date >= start_date) && (elem.completed_date <= end_date))}
-    pixi_posts_final = Array.new
-    counter = 0
-    for elem in pixi_posts do
-      pixi_posts_final[counter] = [elem.completed_date, PixiPost.item_title(elem), elem.seller_name,
-                                   elem.pixter_name, !(PixiPost.sale_date(elem).nil?)? PixiPost.sale_date(elem)
-                                    : 'Not sold yet', PixiPost.listing_value(elem), !(PixiPost.sale_value(elem).nil?)?
-                                    PixiPost.sale_value(elem) : 'Not sold yet', !(PixiPost.sale_value(elem).nil?)?
-                                    (PixiPost.sale_value(elem) * PIXTER_PERCENT) / 100 : 'Not sold yet']
-      counter = counter + 1
-    end
-    pixi_posts_final
   end
 
-  def self.to_csv pixi_posts
-    begin
-      CSV.generate do |csv|
-        # header row
-        csv << ["Post Date", "Item Title", "Customer", "Pixter", "Sale Date", "List Value", "Sale Value", "Pixter Revenue"]
-        # data rows
-        for elem in pixi_posts
-          csv << [elem[0].strftime("%F"), elem[1], elem[2], elem[3], elem[4], elem[5], elem[6], elem[7]]
-        end
-      end
-    rescue nil
-    end
+  def as_csv(options={})
+    { "Post Date" => completed_date.strftime("%F"), "Item Title" => PixiPost.item_title(self), "Customer" => seller_name, "Pixter" => pixter_name,
+      "Sale Date" => !(PixiPost.sale_date(self).nil?) ? PixiPost.sale_date(self) : 'Not sold yet', "List Value" => PixiPost.listing_value(self),
+      "Sale Value" => !(PixiPost.sale_value(self).nil?) ? PixiPost.sale_value(self) : 'Not sold yet', 
+      "Pixter Revenue" => !(PixiPost.sale_value(self).nil?) ? (PixiPost.sale_value(self) * PIXTER_PERCENT) / 100 : 'Not sold yet' }
   end
-
 end

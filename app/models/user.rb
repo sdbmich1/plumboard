@@ -380,33 +380,20 @@ class User < ActiveRecord::Base
           include: {active_listings: {}, unpaid_received_invoices: {}, bank_accounts: {}, contacts: {}, card_accounts: {}})
   end
 
-  def self.to_csv
-    begin
-      CSV.generate do |csv|
-        # header row
-        csv << ["Name", "Email", "Home Zip", "Birth Date", "Enrolled", "Last Login", "Gender", "Age"]
-        # data rows
-        all.each do |user|
-          #find user's age
-          now = Time.now.utc.to_date
-          age = now.year - user.birth_date.year - 
-              ((now.month > user.birth_date.month || (now.month == user.birth_date.month && now.day >= user.birth_date.day)) ? 0 : 1)
-
-          csv << [user.name, user.email, user.home_zip, user.birth_dt, user.nice_date(user.created_at), 
-                  user.nice_date(user.last_sign_in_at), user.gender, age]
-        end
-      end
-    rescue nil
-    end
-  end
-
   # get user conversations
   def get_conversations
     sent_conversations + received_conversations rescue nil
   end
 
-  def is_admin?
-    user_type_code == 'AD' rescue false
+  def age
+    now = Time.now.utc.to_date
+    had_birthday_this_year = now.month > birth_date.month || (now.month == birth_date.month && now.day >= birth_date.day)
+    now.year - birth_date.year - (had_birthday_this_year ? 0 : 1)
+  end    
+
+  def as_csv(options={})
+    { "Name" => name, "Email" => email, "Home Zip" => home_zip, "Birth Date" => birth_dt, "Enrolled" => nice_date(created_at),
+      "Last Login" => nice_date(last_sign_in_at), "Gender" => gender, "Age" => age }
   end
 
   # set sphinx scopes

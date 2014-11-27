@@ -9,7 +9,7 @@ class PixiPostsController < ApplicationController
   autocomplete :site, :name, full: true, scopes: [:cities]
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name
   include ResetDate
-  respond_to :html, :js, :json, :mobile
+  respond_to :html, :js, :json, :mobile, :csv
   layout :page_layout
 
   def new
@@ -78,12 +78,7 @@ class PixiPostsController < ApplicationController
   end
 
   def pixter_report
-    @pixi_posts = PixiPost.pixter_report(@start_date, @end_date, @pixter_id).paginate(page: @page, per_page: 15)
-    respond_to do |format|
-      format.html
-      format.js
-      format.csv {send_data PixiPost.to_csv(@pixi_posts), filename: 'pixter_report_' + Date.today.to_s + '.csv'}
-    end
+    respond_with(@pixi_posts = PixiPost.pixter_report(@start_date, @end_date, @pixter_id).paginate(page: @page, per_page: 15))
   end
   
   private

@@ -500,13 +500,9 @@ describe PixiPostsController do
       response.should render_template :pixter_report
     end
 
-    context 'when format is csv' do
-      let(:csv_string) { PixiPost.to_csv(csv_string) }
-
-      it 'should return a csv attachment' do
-        @controller.should_receive(:send_data).with(csv_string).and_return { @controller.render nothing: true }
-        get :pixter_report, format: :csv
-      end
+    it "exports CSV" do
+      get :pixter_report, :format => 'csv'
+      expect(response).to be_success
     end
   end
 end
