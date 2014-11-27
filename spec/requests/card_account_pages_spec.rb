@@ -125,6 +125,7 @@ feature "CardAccounts" do
     end
 
     it "removes an account" do
+      CardAccount.any_instance.stub(:delete_card).and_return(true)
       click_remove_cancel
       page.should have_link('Remove', href: card_account_path(@account)) 
       click_remove_ok

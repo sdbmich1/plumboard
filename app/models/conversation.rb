@@ -46,11 +46,7 @@ class Conversation < ActiveRecord::Base
 
   # returns the other user that is a part of this conversation
   def other_user usr
-    if usr.id == user_id
-      return recipient
-    else
-      return user
-    end
+    usr.id == user_id ? recipient : user
   end
   
   # checks whether invoice for user is due
@@ -98,7 +94,7 @@ class Conversation < ActiveRecord::Base
 
   # select active conversations
   def self.active
-    include_list.where("status = 'active' OR recipient_status = 'active'")
+    where("status = 'active' OR recipient_status = 'active'")
   end
 
   # eager load assns
@@ -140,7 +136,7 @@ class Conversation < ActiveRecord::Base
   # set list of included assns for eager loading
   def self.inc_list
     # includes(:invoice => [:listing, :buyer, :seller], 
-    includes(:listing, :invoice => [:buyer, :seller], :user => [:pictures], :recipient => [:pictures])
+    includes(:listing, :posts, :invoice => [:buyer, :seller], :user => [:pictures], :recipient => [:pictures])
   end
 
   # set list of included assns for eager loading

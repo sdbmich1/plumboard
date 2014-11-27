@@ -3,6 +3,7 @@ require 'spec_helper'
 feature "Transactions" do
   subject { page }
   let(:user) { FactoryGirl.create(:pixi_user) }
+  let(:site) { FactoryGirl.create(:site) }
   let(:contact_user) { FactoryGirl.create(:contact_user) }
   let(:submit) { "Done!" }
   let(:save) { "Save" }
@@ -301,11 +302,12 @@ feature "Transactions" do
 
     it "creates a balanced transaction with valid mc card", :js=>true do
       expect { 
-        credit_card_data '5105105105105100'
+        credit_card_data '5105105105105100'; sleep 2
         page.should have_content("Purchase Complete")
         page.should have_content("Please Rate Your Seller")
         page.should have_link('Add Comment', href: '#') 
       }.to change(Transaction, :count).by(1)
+      expect(CardAccount.all.count).to eq 2
     end
   end
 
@@ -354,17 +356,9 @@ feature "Transactions" do
     end
   end
 
-  describe "Valid Invoice Transactions w/ existing card" do
-    before(:each) do
-      usr = FactoryGirl.create(:contact_user) 
-      page_setup usr
-      @acct = @user.card_accounts.create FactoryGirl.attributes_for :card_account, card_no: '1111'
-      visit new_card_account_path
-    end
-
-    it "submits payment", js: true do
+  def add_card_account
       expect {
-        load_credit_card; sleep 0.5
+        load_credit_card; sleep 2.5
       }.to change(CardAccount, :count).by(1)
       page.should have_content 'Card #'
 
@@ -377,13 +371,108 @@ feature "Transactions" do
       page.should have_content "Payment Information"
       page.should have_selector('#edit-card-btn', visible: true)
       page.should have_link('Prev', href: invoice_path(@invoice))
+  end
 
+  describe "Valid Invoice Transactions w/ existing card" do
+    before(:each) do
+      usr = FactoryGirl.create(:contact_user) 
+      page_setup usr
+      visit new_bank_account_path
+      click_link 'Card'
+      add_card_account
+    end
+
+    it "submits payment", js: true do
       expect { 
         click_valid_ok
         page.should have_content("Purchase Complete")
         page.should have_link('Add Comment', href: '#') 
         page.should have_selector('#rateit5', visible: true) 
         page.should have_selector('.cmt-descr', visible: false) 
+      }.to change(Transaction, :count).by(1)
+    end
+
+    it "creates transaction with new mc card", :js=>true do
+      expect { 
+        page.find('#edit-card-btn').click; sleep 1
+	credit_card_data '5105105105105100'
+        page.should have_content("Purchase Complete")
+      }.to change(Transaction, :count).by(1)
+    end
+  end
+
+  def add_bank_account_data
+    fill_in 'routing_number', with: '021000021'
+    fill_in 'acct_number', with: 9900000002
+    fill_in 'bank_account_acct_name', with: "SDB Business"
+    fill_in 'bank_account_description', with: "My business"
+    select("checking", :from => "bank_account_acct_type")
+  end
+
+  describe "Valid Invoice Transactions w/ existing bank account" do
+    before(:each) do
+      usr = FactoryGirl.create(:contact_user) 
+      page_setup usr
+      visit new_bank_account_path
+      add_bank_account_data
+    end
+
+    it "creates a balanced transaction with valid amex card", :js=>true do
+      expect {
+          click_on 'Save'; sleep 3;
+      }.to change(BankAccount, :count).by(1)
+
+      visit_inv_txn_path 
+      expect { 
+        credit_card_data '341111111111111', '1234'
+        page.should have_content("Purchase Complete")
+        page.should have_link('Add Comment', href: '#') 
+      }.to change(Transaction, :count).by(1)
+    end
+  end
+
+  def setup_accounts
+      expect {
+          click_on 'Save'; sleep 3;
+      }.to change(BankAccount, :count).by(1)
+      page.should have_content 'Account #'
+
+      # visit new_bank_account_path
+      click_link 'Card'
+
+      expect {
+        load_credit_card; sleep 2.5
+      }.to change(CardAccount, :count).by(1)
+      page.should have_content 'Card #'
+
+      visit_inv_txn_path 
+  end
+
+  describe "Valid Invoice Transactions w/ existing bank & card account" do
+    before(:each) do
+      usr = FactoryGirl.create(:contact_user) 
+      page_setup usr
+      visit new_bank_account_path
+      add_bank_account_data
+      setup_accounts
+    end
+
+    it "creates transaction with saved card", :js=>true do
+      expect { 
+        click_valid_ok
+        page.should have_content("Purchase Complete")
+        page.should have_link('Add Comment', href: '#') 
+        page.should have_selector('#rateit5', visible: true) 
+        page.should have_selector('.cmt-descr', visible: false) 
+      }.to change(Transaction, :count).by(1)
+    end
+
+    it "creates transaction with new mc card", :js=>true do
+      expect { 
+        page.find('#edit-card-btn').click; sleep 1
+	credit_card_data '5105105105105100'
+        page.should have_content("Purchase Complete")
+        page.should have_content("mastercard")
       }.to change(Transaction, :count).by(1)
     end
   end

@@ -22,7 +22,7 @@ describe TempListingsController do
 
   describe 'GET show/:id' do
     before :each do
-      TempListing.stub!(:find_pixi).and_return( @listing )
+      TempListing.stub!(:find_by_pixi_id).and_return( @listing )
     end
 
     def do_get
@@ -35,7 +35,7 @@ describe TempListingsController do
     end
 
     it "should load the requested listing" do
-      TempListing.stub(:find_pixi).with('1').and_return(@listing)
+      TempListing.stub(:find_by_pixi_id).with('1').and_return(@listing)
       do_get
     end
 
@@ -60,8 +60,6 @@ describe TempListingsController do
 
     before :each do
       TempListing.stub!(:new).and_return( @listing )
-      @picture = stub_model(Picture)
-      @listing.stub_chain(:pictures, :build).and_return(@picture)
     end
 
     def do_get
@@ -71,11 +69,6 @@ describe TempListingsController do
     it "should assign @listing" do
       do_get
       assigns(:listing).should_not be_nil
-    end
-
-    it "should assign @picture" do
-      do_get
-      assigns(:listing).pictures.should_not be_nil
     end
 
     it "new action should render new template" do
@@ -163,8 +156,6 @@ describe TempListingsController do
       TempListing.stub!(:find_by_pixi_id).and_return( @listing )
       Listing.stub!(:find_by_pixi_id).and_return( @pixi )
       @pixi.stub!(:dup_pixi).and_return( @listing )
-      @photo = stub_model(Picture)
-      @listing.stub_chain(:pictures, :build).and_return(@photo)
     end
 
     def do_get

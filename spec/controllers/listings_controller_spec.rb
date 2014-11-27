@@ -309,7 +309,7 @@ describe ListingsController do
   describe 'GET show/:id' do
     before :each do
       @comments = mock('comments')
-      Listing.stub_chain(:find_pixi).with('1').and_return( @listing )
+      Listing.stub_chain(:find_by_pixi_id).with('1').and_return( @listing )
       @listing.stub_chain(:comments, :build).and_return( @comments )
       controller.stub!(:load_comments).and_return(@comments)
       controller.stub!(:add_points).and_return(:success)
@@ -325,7 +325,7 @@ describe ListingsController do
     end
 
     it "should load the requested listing" do
-      Listing.stub(:find_pixi).with('1').and_return(@listing)
+      Listing.stub(:find_by_pixi_id).with('1').and_return(@listing)
       do_get
     end
 
@@ -348,7 +348,7 @@ describe ListingsController do
   describe 'xhr GET show/:id' do
     before :each do
       @comments = stub_model(Comment)
-      Listing.stub!(:find_pixi).with('1').and_return( @listing )
+      Listing.stub!(:find_by_pixi_id).with('1').and_return( @listing )
       @listing.stub_chain(:comments, :build).and_return( @comments )
       controller.stub!(:load_comments).and_return(:success)
       controller.stub!(:add_points).and_return(:success)
@@ -364,7 +364,7 @@ describe ListingsController do
     end
 
     it "should load the requested listing" do
-      Listing.stub(:find_pixi).with('1').and_return(@listing)
+      Listing.stub(:find_by_pixi_id).with('1').and_return(@listing)
       do_get
     end
 

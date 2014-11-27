@@ -38,6 +38,20 @@ module BalancedPayment
       process_error acct, ex
   end
 
+  # add card account
+  def self.add_card_account customer, model, token
+
+    # add card to Balanced account
+    # customer.add_card(token) 
+
+    # add card to db
+    Rails.logger.info "PXB customer add card: #{token}"
+    CardAccount.add_card(model, token)
+
+    rescue => ex
+      process_error model, ex
+  end
+
   # get account
   def self.get_bank_account token, acct
 
@@ -64,10 +78,11 @@ module BalancedPayment
 
   # delete bank account
   def self.delete_account token, acct
-    initialize
+    initialize false
 
     # find existing account
-    result = get_bank_account(token, acct).unstore
+    ba = get_bank_account(token, acct)
+    ba.unstore if ba
 
     rescue => ex
       process_error acct, ex
@@ -85,32 +100,35 @@ module BalancedPayment
       postal_code: zip).save
   end
 
-  # create card account
+  # assign card account to customer
+  def self.assign_card cust_token, card_token
+    customer = Balanced::Customer.find cust_token
+    response = customer.add_card card_token
+  end
+
+  # charge card account
   def self.charge_card token, amt, descr, txn 
     initialize
 
     # get buyer token
     uri = txn.user.acct_token
 
-    # determine buyer
-    buyer = get_customer uri, txn
-
-    # add card if not found
-    response = buyer.add_card(token) rescue nil
-
-    # check if card exists for buyer
-    if response.nil?
-      response = buyer.find token
-    end
-
     # define meta data for tracking
     meta = { 'address'=> txn.address, 'city'=> txn.city, 'state'=> txn.state, 'zip'=> txn.zip, 'pixi_id'=> txn.pixi_id }
 
+    # determine buyer
+    buyer = get_customer uri, txn, false, token
+
     # charge card
-    result = buyer.debit(amount: (amt * 100).to_i.to_s, appears_on_statement_as: 'pixiboard.com', meta: meta)
+    result = buyer.debit(amount: (amt * 100).to_i.to_s, appears_on_statement_as: 'pixiboard.com', meta: meta, source_uri: 
+      card_token(txn, token, txn.card_number.blank?))
 
     rescue => ex
       process_error txn, ex
+  end
+
+  def self.card_token txn, token, selFlg=true
+    selFlg ? txn.user.card_accounts.get_default_acct.token : token
   end
 
   # removes card
@@ -119,29 +137,36 @@ module BalancedPayment
 
     # unstore card 
     card = Balanced::Card.find token
-    card.unstore
+    card.unstore if card
 
     rescue => ex
       process_error acct, ex
   end
 
   # get customer 
-  def self.get_customer uri, txn, slrFlg=false
-    initialize
+  def self.get_customer uri, txn, slrFlg=false, token=''
 
     # check if uri exists else create token
-    if uri
-      unless customer = Balanced::Customer.where(uri: uri).first
-        customer = set_token txn, slrFlg
-      end
+    unless uri.blank?
+      customer = Balanced::Customer.find uri rescue nil
+      customer = set_token txn, slrFlg, token unless customer
     else
-      customer = set_token txn, slrFlg
+      customer = set_token txn, slrFlg, token
+    end
+
+    # check if buyer has just a seller account
+    unless slrFlg
+      if !txn.card_number.blank?
+        add_card_account(customer, txn, token) 
+      elsif !txn.user.has_card_account?
+        add_card_account(customer, txn, token) 
+      end
     end
     customer
   end
 
   # set buyer uri
-  def self.set_token model, slrFlg=false
+  def self.set_token model, slrFlg=false, token
     # set buyer or seller name 
     name = slrFlg ? model.owner_name : model.buyer_name 
 
@@ -167,7 +192,7 @@ module BalancedPayment
   # process credit card messages
   def self.process_error acct, e
     acct.errors.add :base, "Account declined or invalid. Please re-submit."
-    Rails.logger.info "Card failed: #{e.message}" 
+    Rails.logger.info "Request failed: #{e.message}" 
     acct
   end
 end

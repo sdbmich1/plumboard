@@ -37,7 +37,7 @@ gem 'rolify'
 gem 'cancan'
 
 # add clickable links for comment text
-gem 'rinku'
+gem 'rinku', '~> 1.7.3'
 
 # used to mark messages as read/unread
 gem 'unread'

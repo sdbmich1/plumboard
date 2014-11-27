@@ -97,7 +97,7 @@ class Transaction < ActiveRecord::Base
       if card_number.blank?  
         user.has_card_account? ? true : false
       else
-	CardAccount.add_card(self, self.token)
+        token
       end
     end
   end
@@ -193,8 +193,11 @@ class Transaction < ActiveRecord::Base
   # process transaction
   def process_transaction
     if valid? 
+      # get card token
+      cid = txn.user.card_accounts.get_default_acct.token rescue token
+      
       # charge the credit card
-      result = Payment::charge_card(token, amt, description, self) if amt > 0.0
+      result = Payment::charge_card(cid, amt, description, self) if amt > 0.0
 
       # check for errors
       return false if self.errors.any?
@@ -226,7 +229,7 @@ class Transaction < ActiveRecord::Base
 
   # format txn date
   def txn_dt
-    new_dt = get_invoice_listing.display_date created_at, false rescue created_at
+    new_dt = get_invoice_listing.display_date created_at, true rescue created_at
   end
 
   # get txn fees

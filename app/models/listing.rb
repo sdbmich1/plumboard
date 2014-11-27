@@ -231,6 +231,31 @@ class Listing < ListingParent
     end
   end
 
+  # reposts existing sold or expired pixi as new
+  def repost_pixi
+    listing = Listing.new(get_attr(true))
+
+    # add photos
+    listing = add_photos false, listing
+
+    # add token
+    listing.generate_token
+    listing.status = 'active'
+    listing.save
+  end
+
+  # process pixi repost based on pixi status
+  def repost
+    if expired?
+      self.status = 'active'
+      self.save
+    elsif sold?
+      repost_pixi
+    else
+      false
+    end
+  end
+
   # sphinx scopes
   sphinx_scope(:latest_first) {
     {:order => 'updated_at DESC, created_at DESC'}

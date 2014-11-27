@@ -278,6 +278,7 @@ FactoryGirl.define do
     status  'active'
     acct_type 'checking'
     acct_number '90009000'
+    acct_no '9000'
     token "/v1/marketplaces/TEST-MP2Q4OaIanQuIDJIixHGmhQA/bank_accounts/BA7ehO1oDwPUBAR9cz71sd2g"
   end
 

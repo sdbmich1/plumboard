@@ -172,6 +172,7 @@ feature "Conversations" do
       page.should have_content @post.content
       page.should have_selector('#conv-trash-btn') 
       page.should have_selector('#conv-pay-btn') 
+      page.should_not have_content 'No conversations found' 
     end
 
     it "pays an invoice" do
@@ -208,6 +209,7 @@ feature "Conversations" do
       page.should have_content @reply_conv.recipient.name 
       page.should have_content @reply_conv.listing.title 
       page.should have_content @reply_post.content 
+      page.should_not have_content 'No conversations found' 
     end
   end
 

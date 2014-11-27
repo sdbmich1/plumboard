@@ -17,7 +17,7 @@ module TempListingsHelper
 
   # return # of steps to submit new pixi
   def step_count
-    @listing.free? ? 2 : !@listing.new_status? ? 2 : 3
+    @listing.free? ? 2 : !@listing.new_status? ? 2 : 3 rescue 2
   end
   
   # build array for year selection dropdown
@@ -39,5 +39,13 @@ module TempListingsHelper
   # set different url if pixi is pending
   def set_pixi_path listing
     listing.pending? && controller_name == 'pending_listings' ? pending_listing_url(listing) : listing
+  end
+
+  # add new picture for listing
+  def setup_picture(listing)
+
+    # new post
+    picture = listing.pictures.build 
+    return listing
   end
 end

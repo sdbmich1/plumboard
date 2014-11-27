@@ -153,4 +153,22 @@ describe BankAccount do
       @account.email.should be_nil 
     end
   end
+
+  describe 'get_default_acct' do
+    it 'returns acct' do
+      @account.save
+      expect(BankAccount.get_default_acct).not_to be_blank
+    end
+
+    it 'does not return acct' do
+      expect(BankAccount.get_default_acct).to be_blank
+    end
+
+    it 'does not return acct' do
+      @account.save
+      @account2 = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, acct_no: '9002'
+      expect(BankAccount.get_default_acct.acct_no).to eq '9000'
+      expect(BankAccount.get_default_acct.acct_no).not_to eq '9002'
+    end
+  end
 end

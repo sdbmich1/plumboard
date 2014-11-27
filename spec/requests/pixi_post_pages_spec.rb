@@ -239,9 +239,8 @@ feature "PixiPosts" do
     end
   end
 
-  describe "Seller views PixiPosts" do 
-    before do
-      init_setup user
+  def post_setup usr
+      init_setup usr
       load_zips
       @pixan = create :pixi_user, user_type_code: 'PX'
       @listing = FactoryGirl.create :listing, seller_id: @user.id, pixan_id: @pixan.id
@@ -251,6 +250,22 @@ feature "PixiPosts" do
       @completed = @user.pixi_posts.create FactoryGirl.attributes_for :pixi_post, pixan_id: @pixan.id, appt_date: Time.now+3.days, 
         appt_time: Time.now+3.days, completed_date: Time.now+3.days, pixi_id: @listing.pixi_id, description: 'rocking chair'
       visit seller_pixi_posts_path(status: 'active') 
+  end
+
+  def sched_post flg=true
+      visit pixi_post_path(@scheduled)
+      page.should have_content "PixiPost Request"
+      page.should_not have_link 'Edit', href: edit_pixi_post_path(@scheduled) if flg
+      page.should have_link 'Reschedule', href: reschedule_pixi_post_path(@scheduled) if flg 
+      page.should have_link 'Remove', href: pixi_post_path(@scheduled) 
+      page.should have_link 'Done', href: seller_pixi_posts_path(status: 'active') 
+      page.should have_content @scheduled.description
+      page.should have_content @pixan.name
+  end
+
+  describe "Seller views PixiPosts" do 
+    before do
+      post_setup user
     end
 
     it 'shows active content' do
@@ -305,14 +320,7 @@ feature "PixiPosts" do
     end
 
     it "clicks to open a scheduled pixipost" do
-      visit pixi_post_path(@scheduled)
-      page.should have_content "PixiPost Request"
-      page.should_not have_link 'Edit', href: edit_pixi_post_path(@scheduled) 
-      page.should have_link 'Reschedule', href: reschedule_pixi_post_path(@scheduled) 
-      page.should have_link 'Remove', href: pixi_post_path(@scheduled) 
-      page.should have_link 'Done', href: seller_pixi_posts_path(status: 'active') 
-      page.should have_content @scheduled.description
-      page.should have_content @pixan.name
+      sched_post 
     end
 
     it "reschedules a scheduled pixipost", js: true do
@@ -371,6 +379,16 @@ feature "PixiPosts" do
 
       page.should have_content "My PixiPosts" 
       page.should have_content "No posts found." 
+    end
+  end
+
+  describe "Admin views PixiPosts" do 
+    before do
+      post_setup admin
+    end
+
+    it "clicks to open a scheduled pixipost" do
+      sched_post false
     end
   end
 

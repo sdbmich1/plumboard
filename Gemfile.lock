@@ -387,7 +387,7 @@ GEM
     rest-client (1.6.7)
       mime-types (>= 1.16)
     riddle (1.5.11)
-    rinku (1.7.2)
+    rinku (1.7.3)
     rmagick (2.13.3)
     rolify (3.2.0)
     rspec (2.13.0)
@@ -558,7 +558,7 @@ DEPENDENCIES
   rb-fchange (= 0.0.5)
   rb-notifu (= 0.0.4)
   remotipart (~> 1.0)
-  rinku
+  rinku (~> 1.7.3)
   rmagick (~> 2.13.1)
   rolify
   rspec-rails (= 2.13.0)

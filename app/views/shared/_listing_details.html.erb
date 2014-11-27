@@ -12,7 +12,7 @@
 
   <div class="row">
     <div class="span12 mbot">
-        <%= simple_format(listing.summary) %><br />
+        <%= simple_format(listing.summary, {}, sanitize: false) %><br />
 
         <% if listing.job? %>
           Job Type: <%= listing.job_type_name %><br />

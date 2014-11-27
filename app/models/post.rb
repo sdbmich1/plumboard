@@ -132,18 +132,22 @@ class Post < ActiveRecord::Base
     get_unread(usr).count rescue 0
   end
 
+  # get the conversation
+  def self.get_conv inv, send_model, recv_model
+    Conversation.where("pixi_id = ? AND recipient_id = ? AND user_id = ? AND status = ?",
+                       inv.pixi_id, recv_model.id, send_model.id, 'active').first rescue nil
+  end
+
   # add post for invoice creation or payment
   def self.add_post inv, listing, sender, recipient, msg, msgType=''
     if sender && recipient
 
-      #find the corresponding conversation
-      conv = Conversation.find(:first, :conditions => ["pixi_id = ? AND recipient_id = ? AND user_id = ? AND status = ?",
-                                                       inv.pixi_id, recipient.id, sender.id, 'active']) rescue nil
+      # find the corresponding conversation
+      conv = get_conv inv, recipient, sender
 
       # create new conversation if one doesn't already exist
       if conv.blank?
-        conv = Conversation.find(:first, :conditions => ["pixi_id = ? AND recipient_id = ? AND user_id = ? AND status = ?",
-                                                       inv.pixi_id, sender.id, recipient.id, 'active']) rescue nil
+        conv = get_conv inv, sender, recipient
         conv = listing.conversations.create pixi_id: listing.pixi_id, user_id: sender.id, recipient_id: recipient.id if conv.blank?
       end
 
@@ -157,7 +161,7 @@ class Post < ActiveRecord::Base
       post.content = msg + amt
 
       # add post
-      post.save!
+      post.save
     else
       false
     end
@@ -248,7 +252,6 @@ class Post < ActiveRecord::Base
         # create new conversation if one doesn't already exist
         if conv.blank?
           if listing = Listing.where(:pixi_id => post.pixi_id).first
-            # listing = Listing.find(:first, :conditions => ["pixi_id = ?", post.pixi_id])
             conv = listing.conversations.create pixi_id: post.pixi_id, user_id: post.user_id, recipient_id: post.recipient_id
 	  end
         elsif conv.status != 'active' || conv.recipient_status != 'active'

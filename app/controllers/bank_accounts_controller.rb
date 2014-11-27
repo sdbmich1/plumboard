@@ -71,7 +71,7 @@ class BankAccountsController < ApplicationController
     if !(@target =~ /invoice/i).nil?
       redirect_to new_invoice_path
     else
-      redirect_to get_root_path
+      redirect_to @account
     end
   end
 

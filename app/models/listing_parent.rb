@@ -1,4 +1,4 @@
-require 'rails_rinku'
+require 'rinku'
 require 'digest/md5'
 class ListingParent < ActiveRecord::Base
   resourcify
@@ -132,7 +132,7 @@ class ListingParent < ActiveRecord::Base
 
   # find listings by status
   def self.get_by_status val
-    include_list.where(:status => val).order('updated_at DESC')
+    include_list_without_job_type.where(:status => val).order('updated_at DESC')
   end
 
   # find all listings where a given user is the seller, or all listings if the user is an admin
@@ -142,7 +142,7 @@ class ListingParent < ActiveRecord::Base
 
   # get listings by status and, if provided, category and location
   def self.check_category_and_location status, cid, loc, pg=1
-    get_by_status(status).get_by_city(cid, loc, pg, false)
+    cid || loc ? get_by_status(status).get_by_city(cid, loc, pg, false) : get_by_status(status)
   end
 
   # verify if listing has been paid for
@@ -251,14 +251,19 @@ class ListingParent < ActiveRecord::Base
   end
 
   # short description
-  def brief_descr
-    descr = description.length < 96 ? description.html_safe : description.html_safe[0..96] + '...' rescue nil
-    Rinku.auto_link(descr) if descr
+  def brief_descr val=96
+    descr = description.length < val ? description : description[0..val] + '...' rescue nil
+    set_auto_link descr
   end
 
   # add hyperlinks to description
   def summary
-    Rinku.auto_link(description.html_safe) rescue nil
+    set_auto_link description
+  end
+
+  # calls rinku method to set html_safe & convert certain text to urls/emails
+  def set_auto_link descr
+    Rinku.auto_link(descr, :all, 'target="_blank"') rescue nil
   end
 
   # titleize title
@@ -328,17 +333,13 @@ class ListingParent < ActiveRecord::Base
   def dup_pixi tmpFlg, repost=false
     
     # check for temp or active pixi based on flag
-    listing = tmpFlg ? Listing.find_pixi(self.pixi_id) : TempListing.find_pixi(self.pixi_id)
+    listing = tmpFlg ? Listing.find_by_pixi_id(self.pixi_id) : TempListing.find_by_pixi_id(self.pixi_id)
 
     unless listing
-      attr = self.attributes  # copy attributes
-      # remove protected attributes
-      arr = tmpFlg ? %w(id created_at updated_at parent_pixi_id) : %w(id created_at updated_at delta)
-      arr.map {|x| attr.delete x}
+      attr = get_attr(tmpFlg)  # copy attributes
 
       # load attributes to new record
       listing = tmpFlg ? Listing.where(attr).first_or_initialize : TempListing.where(attr).first_or_initialize
-      # listing = tmpFlg ? Listing.new(attr) : TempListing.new(attr)
       listing.status = 'edit' unless tmpFlg
     end
 
@@ -349,16 +350,7 @@ class ListingParent < ActiveRecord::Base
     end
 
     # add photos
-    self.pictures.each do |pic|
-
-      # check if listing & photo already exists for pixi edit
-      if tmpFlg && !listing.new_record?
-        next if listing.pictures.where(:photo_file_name => pic.photo_file_name).first
-      end
-
-      # add photo
-      listing.pictures.build(:photo => pic.photo, :dup_flg => true)
-    end
+    listing = add_photos tmpFlg, listing
 
     # update fields
     if tmpFlg && listing 
@@ -366,14 +358,10 @@ class ListingParent < ActiveRecord::Base
       listing.description, listing.compensation, listing.status = self.description, self.compensation, 'active'
       listing.event_start_date, listing.event_start_time = self.event_start_date, self.event_start_time
       listing.event_end_date, listing.event_end_time = self.event_end_date, self.event_end_time
-      listing.pixan_id, listing.year_built, listing.buyer_id = self.pixan_id, self.year_built, self.buyer_id
+      listing.pixan_id, listing.year_built = self.pixan_id, self.year_built
       listing.show_phone_flg, listing.start_date, listing.end_date = self.show_phone_flg, self.start_date, self.end_date
       listing.post_ip, listing.lat, listing.lng, listing.edited_by = self.post_ip, self.lat, self.lng, self.edited_by
       listing.pixi_id = self.pixi_id
-    end
-
-    if listing.is_a?(Listing) && repost
-      listing.generate_token
     end
 
     # remove any dup in case of cleanup failures
@@ -525,15 +513,28 @@ class ListingParent < ActiveRecord::Base
     self.pixi_id = token
   end
 
-  def repost
-    if expired?
-      self.status = 'active'
-      self.save!
-    elsif sold?
-      dup_pixi true, true
-    else
-      false
+  # get existing attributes
+  def get_attr tmpFlg
+    attr = self.attributes  # copy attributes
+
+    # remove protected attributes
+    arr = tmpFlg ? %w(id created_at updated_at parent_pixi_id buyer_id delta) : %w(id created_at updated_at delta)
+    arr.map {|x| attr.delete x}
+    attr
+  end
+
+  def add_photos tmpFlg, listing
+    self.pictures.each do |pic|
+
+      # check if listing & photo already exists for pixi edit
+      if tmpFlg && !listing.new_record?
+        next if listing.pictures.where(:photo_file_name => pic.photo_file_name).first
+      end
+
+      # add photo
+      listing.pictures.build(:photo => pic.photo, :dup_flg => true)
     end
+    listing
   end
 
   # titleize description

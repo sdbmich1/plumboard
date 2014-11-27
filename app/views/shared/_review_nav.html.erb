@@ -1,6 +1,4 @@
-<% if !listing.sold? %>
-  <%= link_to 'Edit', edit_temp_listing_path(listing), id: 'pixi-edit-btn', class: 'btn btn-large' %>
-<% end %>
+<%= link_to 'Edit', edit_temp_listing_path(listing), id: 'pixi-edit-btn', class: 'btn btn-large' unless listing.sold? || listing.expired? %>
 <% if listing.edit? %>
   <%= link_to 'Remove', listing, method: :delete, confirm: msg, class: 'btn btn-large' %>
   <%= link_to 'Cancel', get_home_path, confirm: msg, class: 'btn btn-large' %>
@@ -14,9 +12,7 @@
     </ul>
   </div>
 <% else %>
-  <% if !listing.sold? %>
-    <%= link_to 'Remove', listing, method: :delete, confirm: msg, class: 'btn btn-large' %>
-  <% end %>
+   <%= link_to 'Remove', listing, method: :delete, confirm: msg, class: 'btn btn-large' unless listing.sold? || listing.expired? %>
 <% end %>
 
 <% if (listing.sold? || listing.expired?) && (@user.is_admin? || (@user.id == @listing.seller_id)) %>

@@ -49,7 +49,9 @@ class Invoice < ActiveRecord::Base
 
   # get invoice by order id
   def self.find_invoice order
-    find(order['invoice_id']) rescue nil
+    if order['transaction_type'] == 'invoice'
+      find(order['invoice_id']) rescue nil
+    end
   end
 
   # load new invoice with most recent pixi data
@@ -215,8 +217,7 @@ class Invoice < ActiveRecord::Base
 
   # format date
   def format_date dt
-    zip = transaction.zip rescue nil 
-    ResetDate::format_date dt, zip rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
+    listing.display_date dt, true rescue dt
   end
 
   # set json string

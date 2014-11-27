@@ -5,7 +5,7 @@ require 'whenever/capistrano'
 require 'rvm/capistrano'
 require 'delayed/recipes'
 # require 'capistrano/ext/multistage'
-# require 'capistrano/maintenance'
+require 'capistrano/maintenance'
 
 # Automatically precompile assets
 set :assets_role, [:app, :worker]
@@ -188,22 +188,6 @@ namespace :files do
 
 end
 
-namespace :deploy do
-  namespace :web do
-    desc "Enable maintenance mode for apache"
-    task :disable, :roles => :web do
-      on_rollback { run "rm -f #{shared_path}/system/maintenance.html" }
-      page = File.read('public/maintenance.html')
-      put page, "#{shared_path}/system/maintenance.html", :mode => 0644
-    end
-
-    desc "Disable maintenance mode for apache"
-    task :enable, :roles => :web do
-      run "rm -f #{shared_path}/system/maintenance.html"
-    end
-  end
-end
-
 namespace :memcached do
   desc "Flushes memcached local instance"
   task :flush, :roles => [:app] do
@@ -262,5 +246,4 @@ end
 # Delayed Job  
 after "deploy:stop",    "delayed_job:stop"  
 after "deploy:start",   "delayed_job:start"  
-# after "deploy:restart", "sphinx:symlink_indexes", "sphinx:configure", "sphinx:rebuild", "whenever:update_crontab", "deploy:cleanup"
-after "deploy:restart", "delayed_job:restart
+after "deploy:restart", "sphinx:symlink_indexes", "sphinx:configure", "sphinx:rebuild", "whenever:update_crontab"

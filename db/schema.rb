@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141107032025) do
+ActiveRecord::Schema.define(:version => 20141125015257) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -382,6 +382,7 @@ ActiveRecord::Schema.define(:version => 20141107032025) do
     t.boolean  "dup_flg"
   end
 
+  add_index "pictures", ["imageable_id", "imageable_type"], :name => "index_pictures_on_imageable_id_and_imageable_type"
   add_index "pictures", ["processing"], :name => "index_pictures_on_processing"
 
   create_table "pixi_likes", :force => true do |t|

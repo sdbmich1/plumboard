@@ -1,5 +1,5 @@
   <div id="form_errors"><%= render partial: 'shared/error_messages', locals: { :target => @listing } %></div>
-  <%= form_for(@listing, html: { multipart: true, id: 'pixi-form' }, data: {validate: 'parsley'}) do |f| %>
+  <%= form_for(setup_picture(@listing), html: { multipart: true, id: 'pixi-form' }, data: {validate: 'parsley'}) do |f| %>
     <div class="div-border">
       <%= render partial: 'shared/listing_fields', locals: { f: f, listing: @listing, s3Flg: s3Flg } %>
       <%= f.hidden_field :start_date, value: Time.now %>

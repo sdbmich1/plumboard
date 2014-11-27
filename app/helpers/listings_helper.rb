@@ -221,8 +221,10 @@ module ListingsHelper
 
   # get region for show pixi display menu
   def get_current_region listing
-    loc, loc_name = LocationManager::get_region listing.site_name
-    link_to loc_name, category_listings_path(cid: listing.category_id, loc: loc)
+    if listing
+      loc, loc_name = LocationManager::get_region listing.site_name
+      link_to loc_name, category_listings_path(cid: listing.category_id, loc: loc)
+    end
   end
 
   # check model type

@@ -495,10 +495,10 @@ describe TempListing do
       expect(@dup_listing.wanted_count).to eq(1)
       expect(@dup_listing.liked_count).to eq(1)
       # expect(@dup_listing.pictures.count).to eq 1
-      expect(TempListing.where(pixi_id: @listing.pixi_id).count).to eq(0)
-      expect(TempListing.where("title like 'Super%'").count).to eq(0)
       expect(Listing.where(pixi_id: @listing.pixi_id).count).to eq(1)
       expect(Listing.where("title like 'Super%'").count).to eq(1)
+      #expect(TempListing.where(pixi_id: @listing.pixi_id).count).to eq(0)
+      expect(TempListing.where("title like 'Super%'").count).to eq(0)
     end
 
     it "returns edit listing w/ associations - remove only photo" do 
@@ -927,6 +927,7 @@ describe TempListing do
     before do
       @cat = FactoryGirl.create(:category, name: 'Event', pixi_type: 'premium') 
       @temp_listing.category_id = @cat.id
+      @temp_listing.event_type_code = 'party'
       @temp_listing.event_end_date = Date.today+3.days 
       @temp_listing.event_start_time = Time.now+2.hours
       @temp_listing.event_end_time = Time.now+3.hours
