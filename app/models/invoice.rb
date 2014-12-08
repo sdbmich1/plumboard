@@ -133,6 +133,11 @@ class Invoice < ActiveRecord::Base
     end
   end
 
+  # get convenience fee based on user
+  def get_conv_fee usr
+    owner?(usr) ? get_fee(true) : get_fee rescue 0
+  end
+
   # get txn fee
   def get_fee sellerFlg=false
     if amount

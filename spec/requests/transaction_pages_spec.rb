@@ -307,7 +307,7 @@ feature "Transactions" do
         page.should have_content("Please Rate Your Seller")
         page.should have_link('Add Comment', href: '#') 
       }.to change(Transaction, :count).by(1)
-      expect(CardAccount.all.count).to eq 2
+      expect(CardAccount.all.count).to eq 1
     end
   end
 
@@ -398,6 +398,8 @@ feature "Transactions" do
 	credit_card_data '5105105105105100'
         page.should have_content("Purchase Complete")
       }.to change(Transaction, :count).by(1)
+      expect(CardAccount.where(user_id: @user.id).count).to eq 1
+      expect(@user.card_accounts.get_default_acct.card_no).to eq '5100'
     end
   end
 
@@ -474,6 +476,8 @@ feature "Transactions" do
         page.should have_content("Purchase Complete")
         page.should have_content("mastercard")
       }.to change(Transaction, :count).by(1)
+      expect(CardAccount.where(user_id: @user.id).count).to eq 1
+      expect(@user.card_accounts.get_default_acct.card_no).to eq '5100'
     end
   end
 

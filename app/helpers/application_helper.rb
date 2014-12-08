@@ -225,7 +225,7 @@ module ApplicationHelper
 
   # check if using remote pix
   def use_remote_pix?
-    USE_LOCAL_PIX.upcase != 'YES'
+    USE_LOCAL_PIX.upcase != 'YES' rescue true
   end
 
   # check if image exists if not render uploaded image
@@ -251,5 +251,10 @@ module ApplicationHelper
   # check if picture exists
   def picture_exists? model
     model && model.pictures[0] rescue false
+  end
+
+  # set class name if not on the main board
+  def zoom_image
+    %w(category local).detect {|x| action_name == x} ? '' : 'img-zoom'
   end
 end

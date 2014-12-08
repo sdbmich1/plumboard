@@ -5,6 +5,7 @@ class TempListingsController < ApplicationController
   before_filter :load_data, only: [:index, :unposted]
   before_filter :set_params, only: [:create, :update]
   before_filter :load_pixi, only: [:edit, :show, :update, :destroy, :submit]
+  before_filter :load_post_type, only: [:new]
   autocomplete :site, :name, :full => true, :limit => 20
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name, if: :has_pixan?
   include ResetDate
@@ -75,7 +76,7 @@ class TempListingsController < ApplicationController
   end
 
   def unposted
-    respond_with(@listings = TempListing.draft.get_by_seller(@user).paginate(page: @page))
+    respond_with(@listings = TempListing.draft.get_by_seller(@user, @adminFlg).paginate(page: @page))
   end
 
   def pending
@@ -89,7 +90,8 @@ class TempListingsController < ApplicationController
   end
 
   def load_data
-    @page, @cat, @loc, @loc_name = params[:page] || 1, params[:cid], params[:loc], params[:loc_name]
+    @page, @cat, @loc, @loc_name = params[:page] || 1, params[:cid], params[:loc], params[:loc_name] 
+    @adminFlg = params[:adminFlg].to_bool rescue false
     @status = NameParse::transliterate params[:status] if params[:status]
     @loc_name ||= LocationManager::get_loc_name(request.remote_ip, @loc || @region, @user.home_zip)
     @loc ||= LocationManager::get_loc_id(@loc_name, @user.home_zip)
@@ -120,6 +122,10 @@ class TempListingsController < ApplicationController
 
   def load_pixi
     @listing = TempListing.find_by_pixi_id(params[:id])
+  end
+
+  def load_post_type
+    @ptype = params[:ptype]
   end
 
   def check_permissions

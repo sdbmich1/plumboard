@@ -23,6 +23,7 @@ feature "UserSignins" do
     page.should have_link('By Us (PixiPost)', href: check_pixi_post_zips_path)
     if showFlg
       page.should have_link('For Seller', href: new_temp_listing_path(pixan_id: @user))
+      page.should have_link('For Business', href: new_temp_listing_path(pixan_id: @user, ptype: 'bus'))
     end
     page.should have_link('My Pixis', href: seller_listings_path(status: 'active'))
     page.should have_link('My Messages', href: conversations_path(status: 'received'))
@@ -76,7 +77,7 @@ feature "UserSignins" do
     before { visit new_user_session_path }
 
     it 'shows content' do
-      page.should have_selector '#fb-btn', href: user_omniauth_authorize_path(:facebook)
+      page.should have_selector '#fb-btn' #, text: user_omniauth_authorize_path(:facebook)
       page.should have_button('Sign in')
       page.should have_link 'Sign up for free!', href: new_user_registration_path
     end
@@ -127,7 +128,7 @@ feature "UserSignins" do
 
         page.should have_link('Sign out', href: destroy_user_session_path)
         page.should have_content "Home"
-	page.should_not have_content 'About'
+	page.should have_content 'About'
       end
 
       scenario 'signs-in from home page to local pixi page' do
@@ -153,7 +154,7 @@ feature "UserSignins" do
 	expect(User.find_by_email('bob.smith@test.com')).to be_nil
 
         page.should have_link('Sign in', href: new_user_session_path)
-        page.should have_content "Sign Up"
+        #page.should have_content "Sign Up"
       end
     end
 
@@ -217,7 +218,7 @@ feature "UserSignins" do
         page.should have_link('Categories', href: manage_categories_path)
         page.should have_link('Transactions', href: transactions_path)
         page.should have_link('Users', href: users_path)
-        page.should have_link('Pixis', href: listings_path)
+        page.should have_link('Pixis', href: listings_path(status: 'active'))
 	user_menu_items true
       end
 
@@ -242,7 +243,8 @@ feature "UserSignins" do
         page.should_not have_link('Transactions', href: transactions_path)
         page.should_not have_link('Users', href: users_path)
         page.should have_link('For Seller', href: new_temp_listing_path(pixan_id: @user))
-        page.should have_link('Pixis', href: listings_path)
+        page.should have_link('For Business', href: new_temp_listing_path(pixan_id: @user, ptype: 'bus'))
+        page.should have_link('Pixis', href: listings_path(status: 'active'))
 	user_menu_items true
       end
 
@@ -268,6 +270,7 @@ feature "UserSignins" do
         page.should_not have_link('Transactions', href: transactions_path)
         page.should_not have_link('Users', href: users_path)
         page.should have_link('For Seller', href: new_temp_listing_path(pixan_id: @user))
+        page.should have_link('For Business', href: new_temp_listing_path(pixan_id: @user, ptype: 'bus'))
         page.should_not have_link('Pixis', href: listings_path)
 	user_menu_items true
       end
@@ -295,8 +298,8 @@ feature "UserSignins" do
 
     describe 'registered subscriber users' do
       before(:each) do
-        sub = FactoryGirl.create :subscriber, confirmed_at: Time.now 
-        init_setup sub
+        @user = FactoryGirl.create :subscriber, confirmed_at: Time.now 
+        user_login
       end
 
       it 'shows content' do
@@ -307,7 +310,7 @@ feature "UserSignins" do
         page.should_not have_link('Categories', href: manage_categories_path)
         page.should_not have_link('Transactions', href: transactions_path)
         page.should_not have_link('Users', href: users_path)
-        page.should_not have_link('Pixis', href: listings_path)
+        page.should_not have_link('Pixis', href: listings_path(status: 'active'))
 	user_menu_items
       end
 

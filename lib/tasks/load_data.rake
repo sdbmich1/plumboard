@@ -66,9 +66,10 @@ def update_pixis
 end
 
 def updateCategoryType
-  Category.where(name: ['GIGS', 'JOBS', 'EMPLOYMENT']).update_all(category_type: 'employment')
-  Category.where(name: ['EVENT', 'EVENTS', 'HAPPENINGS', 'TICKETS']).update_all(category_type: 'event')
-  Category.where(name: ['ANTIQUES', 'AUTOMOTIVE', 'BOATS', 'COLLECTIBLES', 'MOTORCYCLE', 'REAL ESTATE']).update_all(category_type: 'asset')
+  Category.where(name: ['GIGS', 'JOBS', 'EMPLOYMENT']).update_all(category_type_code: 'employment')
+  Category.where(name: ['EVENT', 'EVENTS', 'HAPPENINGS', 'TICKETS']).update_all(category_type_code: 'event')
+  Category.where(name: ['ANTIQUES', 'COLLECTIBLES', 'REAL ESTATE']).update_all(category_type_code: 'asset')
+  Category.where(name: ['AUTOMOTIVE', 'BOATS', 'MOTORCYCLE']).update_all(category_type_code: 'vehicle')
 end
 
 def update_sites

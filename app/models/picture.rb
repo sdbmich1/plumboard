@@ -21,6 +21,7 @@ class Picture < ActiveRecord::Base
   before_create :set_page_attributes, if: :process_remotely?
   before_post_process :transliterate_file_name
   after_create :queue_processing, if: :process_remotely?
+  after_update :queue_processing, if: :process_remotely?
 
   validates_attachment :photo, 
     :content_type => { :content_type => ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp', 'image/tiff'] },
@@ -93,23 +94,23 @@ class Picture < ActiveRecord::Base
     { :id=>self.id, :imageable_id=>self.imageable_id, :photo_file_name=>self.photo_file_name, :photo_url=>photo_url } 
   end
 
-   # Final upload processing step
-   def self.transfer_and_cleanup(id)
-     pic = Picture.find(id)
-     direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(pic.direct_upload_url)
-     s3 = AWS::S3.new
+  # Final upload processing step
+  def self.transfer_and_cleanup(id)
+    pic = Picture.find(id)
+    direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(pic.direct_upload_url)
+    s3 = AWS::S3.new
 
-     if pic.post_process_required?
-       pic.photo = URI.parse(URI.escape(pic.direct_upload_url))
-     else
-       paperclip_file_path = "photos/#{id}/original/#{direct_upload_url_data[:filename]}"
-       s3.buckets[S3FileField.config.bucket].objects[paperclip_file_path].copy_from(direct_upload_url_data[:path])
-     end
+    if pic.post_process_required?
+      pic.photo = URI.parse(URI.escape(pic.direct_upload_url))
+    else
+      paperclip_file_path = "photos/#{id}/original/#{direct_upload_url_data[:filename]}"
+      s3.buckets[S3FileField.config.bucket].objects[paperclip_file_path].copy_from(direct_upload_url_data[:path])
+    end
 
-     pic.processing = true
-     pic.save
+    pic.processing = true
+    pic.save
 
-     s3.buckets[S3FileField.config.bucket].objects[direct_upload_url_data[:path]].delete
+    s3.buckets[S3FileField.config.bucket].objects[direct_upload_url_data[:path]].delete
   end
 
   # load image from s3 upload folder
@@ -166,7 +167,7 @@ class Picture < ActiveRecord::Base
 
   # remote processing
   def process_remotely?
-    !Rails.env.test? && USE_LOCAL_PIX.upcase == 'NO' && imageable_type != 'User' && !dup_flg
+    !Rails.env.test? && USE_LOCAL_PIX.upcase == 'NO' && !dup_flg
   end
 
 end

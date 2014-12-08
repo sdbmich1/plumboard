@@ -232,6 +232,7 @@ module ListingsHelper
     model.is_a? TempListing
   end
 
+  # toggle csv output based on status type
   def get_csv_path status_type, cid, loc
     case status_type
       when "pending"; pending_listings_path(status: 'pending', loc: loc, cid: cid, format: 'csv')
@@ -244,5 +245,20 @@ module ListingsHelper
       when "invoiced"; invoiced_listings_path(loc: loc, cid: cid, format: 'csv')
       when "wanted"; wanted_listings_path(loc: loc, cid: cid, format: 'csv')
     end
+  end
+
+  # toggle wanted view based on user type
+  def select_wanted_view
+    @user.is_admin? ? 'shared/manage_pixis' : 'shared/mypixis_list'
+  end
+
+  # check repost status
+  def repost? listing
+    (listing.sold? || listing.expired? || listing.removed?) && (@user.is_admin? || (@user.id == listing.seller_id))
+  end
+
+  # check for expired or sold status
+  def expired_or_sold? listing
+    listing.sold? || listing.expired? || listing.removed? 
   end
 end

@@ -1,33 +1,33 @@
   <table class="mtop table table-bordered">
   <%= render 'shared/inv_header' %>
   <tr>
-    <td class="width120"><div class='price'><%= @invoice.quantity %></div></td>
+    <td class="width120"><div class='price'><%= invoice.quantity %></div></td>
     <td class="width360">
-      <%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: @invoice.listing} %>
-      <%= @invoice.pixi_title %></td>
-    <td class="width120"><div class='price'><%= ntc @invoice.price %></div></td>
-    <td class="width120"><div class='price'><%= ntc @invoice.subtotal %></div></td>
+      <%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: invoice.listing} %>
+      <%= invoice.pixi_title %></td>
+    <td class="width120"><div class='price'><%= ntc invoice.price %></div></td>
+    <td class="width120"><div class='price'><%= ntc invoice.subtotal %></div></td>
   </tr>
   <tr>
     <td></td>
     <td><div class='price'>Sales Tax</div></td>
     <td class="width120"><div class='price'><%= get_sales_tax %>%</div></td>
-    <td class="width120"><div class='price'><%= ntc(@invoice.tax_total) %></div></td>
+    <td class="width120"><div class='price'><%= ntc(invoice.tax_total) %></div></td>
   </tr>
   <tr>
     <td></td>
     <td><div class='price'>Shipping</div></td>
     <td></td>
-    <td class="width120"><div class='price'><%= ntc(@invoice.ship_amt) %></div></td>
+    <td class="width120"><div class='price'><%= ntc(invoice.ship_amt) %></div></td>
   </tr>
-  <%= render partial: 'shared/show_conv_fee', locals: {showColFlg: true, invoice: @invoice} unless @invoice.owner?(@user) %>
+  <%= render partial: 'shared/show_conv_fee', locals: {showColFlg: true, invoice: invoice} unless invoice.owner?(@user) %>
   <tr>
     <td></td>
     <td></td>
     <td><div class='order-total price'>Amount Due</div></td>
-    <td class="width120"><div class='order-total price'><%= ntc get_invoice_total(@invoice) %></div></td>
+    <td class="width120"><div class='order-total price'><%= ntc get_invoice_total(invoice) %></div></td>
   </tr>
-  <%= render partial: 'shared/seller_invoice_details' if @invoice.owner?(@user) %>
+  <%= render partial: 'shared/seller_invoice_details', locals: {invoice: invoice} if invoice.owner?(@user) %>
   </table>
 </div>
 

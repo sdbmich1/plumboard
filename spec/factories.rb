@@ -388,7 +388,7 @@ FactoryGirl.define do
   
   factory :event_type do
       code		"perform"
-      description		"concert, performance, speaker"
+      description		"performance"
       status		"active"
       hide      "false"
   end

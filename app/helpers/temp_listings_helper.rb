@@ -43,9 +43,17 @@ module TempListingsHelper
 
   # add new picture for listing
   def setup_picture(listing)
-
-    # new post
     picture = listing.pictures.build 
     return listing
+  end
+
+  # check if post is by seller 
+  def seller_post?
+    !@user.is_support? && action_name != 'edit' && @ptype.blank?
+  end
+
+  # check if new pixi post
+  def new_pixi_post? listing
+    listing.pixi_post? && !listing.edit?
   end
 end

@@ -3,7 +3,9 @@ class ConversationsController < ApplicationController
   load_and_authorize_resource
   before_filter :authenticate_user!
   before_filter :load_data, only: [:index, :reply, :show, :remove]
-  before_filter :mark_post, only: [:show]
+  before_filter :load_convo, only: [:reply, :destroy, :remove] 
+  after_filter :mark_post, only: [:show]
+  after_filter :load_posts, only: [:show]
   respond_to :html, :js, :xml, :json, :mobile
   layout :page_layout
 
@@ -24,13 +26,11 @@ class ConversationsController < ApplicationController
   end
 
   def destroy
-    @conversation = Conversation.find params[:id]
     @conversation.destroy  
     respond_with(@conversation)
   end
 
   def remove 
-    @conversation = Conversation.find params[:id]
     if Conversation.remove_conv(@conversation, @user)
       redirect_to conversations_path(status: @status)
     else
@@ -40,7 +40,6 @@ class ConversationsController < ApplicationController
   end
 
   def reply 
-    @conversation = Conversation.find(params[:id])
     if @conversation
       respond_with(@conversation) do |format|
         @post = @conversation.posts.build(params[:post])
@@ -56,9 +55,7 @@ class ConversationsController < ApplicationController
   end
 
   def show
-    @conversation = Conversation.inc_show_list.find(params[:id])
-    load_posts
-    respond_with(@conversation)
+    respond_with(@conversation = Conversation.inc_show_list.find(params[:id]))
   end
 
   private
@@ -75,8 +72,11 @@ class ConversationsController < ApplicationController
     @posts, @post = @conversation.posts.active_status(@user), @conversation.posts.build if @conversation
   end
 
+  def load_convo
+    @conversation = Conversation.find(params[:id])
+  end
+
   def mark_post
-    @conversation = Conversation.find params[:id]
     @conversation.mark_all_posts(@user) if @conversation
   end
 end

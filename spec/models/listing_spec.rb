@@ -282,20 +282,22 @@ describe Listing do
       @listing.save
       @user.uid = 1
       @user.save
-      Listing.get_by_seller(@user).should_not be_empty  
+      Listing.get_by_seller(@user, false).should_not be_empty  
     end
 
     it "does not get all listings for non-admin" do
       @listing.seller_id = 100
       @listing.save
-      Listing.get_by_seller(@user).should_not include @listing
+      Listing.get_by_seller(@user, false).should_not include @listing
     end
 
     it "gets all listings for admin" do
+      @other = FactoryGirl.create(:pixi_user)
+      listing = FactoryGirl.create(:listing, seller_id: @other.id) 
       @user.user_type_code = "AD"
       @user.uid = 0
       @user.save
-      Listing.get_by_seller(@user).should_not be_empty
+      expect(Listing.get_by_seller(@user).count).to eq 2
     end
   end
 
@@ -894,8 +896,7 @@ describe Listing do
       @admin_user = create :admin
       @admin_user.user_type_code = 'AD'
       @admin_user.save!
-      @listing.status = 'wanted'
-      @listing.save!
+      expect(Listing.wanted_list(@admin_user, 1, @listing.category_id, @listing.site_id).count).not_to eq 0
       Listing.wanted_list(@admin_user, 1, @listing.category_id, @listing.site_id).should include @listing
       Listing.wanted_list(@usr, 1, @listing.category_id, @listing.site_id).should_not include @listing
     end
@@ -1275,6 +1276,7 @@ describe Listing do
       temp_listing = create(:temp_listing, seller_id: @user.id)
       pid = temp_listing.pixi_id
       listing = create(:listing, seller_id: @user.id, pixi_id: temp_listing.pixi_id)
+      sleep 2;
       expect(TempListing.where(pixi_id: pid).count).to eq 0
     end
 
@@ -1427,6 +1429,19 @@ describe Listing do
       @listing.save
       @listing.reload
       Listing.soon_expiring_pixis(5, ['expired', 'new']).should be_empty  
+    end
+  end
+
+  describe "delete temp pixi" do
+    it { @listing.delete_temp_pixi(@listing.pixi_id).should be_blank }
+
+    it "removes temp pixi" do
+      temp_listing = create(:temp_listing, seller_id: @user.id)
+      listing = create(:listing, seller_id: @user.id, pixi_id: temp_listing.pixi_id)
+      expect(listing.pixi_id).to eq temp_listing.pixi_id
+      expect{ 
+         listing.delete_temp_pixi(listing.pixi_id); sleep 2;
+      }.not_to be_blank
     end
   end
 end
