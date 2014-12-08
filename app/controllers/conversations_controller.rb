@@ -77,6 +77,7 @@ class ConversationsController < ApplicationController
   end
 
   def mark_post
+    load_convo
     @conversation.mark_all_posts(@user) if @conversation
   end
 end
