@@ -15,7 +15,7 @@ class SearchesController < ApplicationController
   protected
 
   def page_layout
-    'listings' if mobile_device? 
+    'listings'
   end
 
   # wrap query text for special characters

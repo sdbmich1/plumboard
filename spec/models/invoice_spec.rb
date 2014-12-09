@@ -263,6 +263,21 @@ describe Invoice do
     end
   end
 
+  describe 'get_conv_fee' do
+    it "gets seller fee" do 
+      expect(@invoice.get_conv_fee(@user)).to eq(CalcTotal::get_convenience_fee(@invoice.amount, @invoice.pixan_id).round(2))
+    end
+
+    it "gets buyer fee" do 
+      expect(@invoice.get_conv_fee(@buyer)).to eq((CalcTotal::get_convenience_fee(@invoice.amount) + CalcTotal::get_processing_fee(@invoice.amount)).round(2))
+    end
+
+    it "return zero" do 
+      @invoice.amount = nil
+      expect(@invoice.get_conv_fee(@user)).to eq(0.0)
+    end
+  end
+
   describe 'get_fee' do
     it "gets seller fee" do 
       expect(@invoice.get_fee(true)).to eq(CalcTotal::get_convenience_fee(@invoice.amount, @invoice.pixan_id).round(2))

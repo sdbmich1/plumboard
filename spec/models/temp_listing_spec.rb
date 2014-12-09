@@ -162,16 +162,23 @@ describe TempListing do
     it { TempListing.get_by_site(@temp_listing.site.id).should_not be_empty }
   end
 
-  describe "should include seller listings" do
-    it { TempListing.get_by_seller(1).should_not be_empty }
-  end
+  describe "seller listings" do
+    it { TempListing.get_by_seller(@user, false).should_not be_empty }
 
-  describe "should include all seller listings for admin" do
-    it { TempListing.get_by_seller(0, true).should include @temp_listing }
-  end
+    it "does not get all listings for non-admin" do
+      @temp_listing.seller_id = 100
+      @temp_listing.save
+      TempListing.get_by_seller(@user, false).should_not include @temp_listing
+    end
 
-  describe "should not include incorrect seller listings" do 
-    it { TempListing.get_by_seller(0).should_not include @temp_listing } 
+    it "gets all listings for admin" do
+      @other = FactoryGirl.create(:pixi_user)
+      temp_listing = FactoryGirl.create(:temp_listing, seller_id: @other.id) 
+      @user.user_type_code = "AD"
+      @user.uid = 0
+      @user.save
+      expect(TempListing.get_by_seller(@user).count).to eq 2
+    end
   end
 
   describe "get_by_status should not include inactive listings" do
@@ -497,7 +504,7 @@ describe TempListing do
       # expect(@dup_listing.pictures.count).to eq 1
       expect(Listing.where(pixi_id: @listing.pixi_id).count).to eq(1)
       expect(Listing.where("title like 'Super%'").count).to eq(1)
-      #expect(TempListing.where(pixi_id: @listing.pixi_id).count).to eq(0)
+      # expect(TempListing.where(pixi_id: @listing.pixi_id).count).to eq(0)
       expect(TempListing.where("title like 'Super%'").count).to eq(0)
     end
 

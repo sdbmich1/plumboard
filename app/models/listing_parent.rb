@@ -136,8 +136,8 @@ class ListingParent < ActiveRecord::Base
   end
 
   # find all listings where a given user is the seller, or all listings if the user is an admin
-  def self.get_by_seller user
-    user.is_admin? ? where("seller_id IS NOT NULL") : where(:seller_id => user.id)
+  def self.get_by_seller user, adminFlg=true
+    user.is_admin? && adminFlg ? where("seller_id IS NOT NULL") : where(:seller_id => user.id)
   end
 
   # get listings by status and, if provided, category and location
@@ -366,8 +366,7 @@ class ListingParent < ActiveRecord::Base
 
     # remove any dup in case of cleanup failures
     if listing.is_a?(TempListing) && listing.new_record?
-      templist = TempListing.where(pixi_id: listing.pixi_id)
-      templist.map! {|t| t.destroy} if templist
+      TempListing.destroy_all(pixi_id: listing.pixi_id)
     end
 
     # add dup

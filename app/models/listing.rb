@@ -69,7 +69,7 @@ class Listing < ListingParent
   # get wanted list by user
   def self.wanted_list usr, pg=1, cid=nil, loc=nil
     if usr.is_admin?
-      check_category_and_location('wanted', cid, loc)
+      active.joins(:pixi_wants).where("pixi_wants.user_id is not null").get_by_city(cid, loc, pg, false).paginate(page: pg)
     else
       active.joins(:pixi_wants).where("pixi_wants.user_id = ?", usr.id).paginate page: pg
     end
@@ -92,7 +92,7 @@ class Listing < ListingParent
 
   # get invoiced listings by status and, if provided, category and location
   def self.check_invoiced_category_and_location cid, loc, pg=1
-    if cid.blank? or loc.blank?
+    if cid.blank? && loc.blank?
       active_invoices
     else
       active_invoices.get_by_city(cid, loc, pg, false)
@@ -210,7 +210,7 @@ class Listing < ListingParent
 
   # remove temp pixi
   def delete_temp_pixi pid
-    TempListing.destroy_all(pixi_id: pid) rescue nil
+    TempListing.destroy_all(pixi_id: pid)
   end
 
   # toggle invoice status on removing pixi from board
@@ -246,7 +246,7 @@ class Listing < ListingParent
 
   # process pixi repost based on pixi status
   def repost
-    if expired?
+    if expired? || removed?
       self.status = 'active'
       self.save
     elsif sold?

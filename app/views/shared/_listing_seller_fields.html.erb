@@ -3,8 +3,8 @@
     <%= f.label :seller_id, 'Seller' %>
     <%= autocomplete_field_tag 'slr_name', listing.seller_name, autocomplete_user_first_name_temp_listings_path,
 	        :update_elements => { :id => '#seller_id' }, :placeholder => 'Seller Name', id: 'slr_name', 
-		required: listing.pixi_post? && !listing.edit?  %> 
-    <%= f.hidden_field :seller_id, id: 'seller_id', required: listing.pixi_post? && !listing.edit? %>
+		required: new_pixi_post?(listing) %> 
+    <%= f.hidden_field :seller_id, id: 'seller_id', required: new_pixi_post?(listing) %>
   </div>
 </div>
 
