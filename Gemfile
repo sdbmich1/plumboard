@@ -218,3 +218,4 @@ gem 'graylog2_exceptions', :git => 'git://github.com/wr0ngway/graylog2_exception
 gem 'graylog2-resque'
 gem 'excon', '~> 0.21.0'
 gem 'rubber'
+gem 'recursive-open-struct'
