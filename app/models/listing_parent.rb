@@ -17,7 +17,7 @@ class ListingParent < ActiveRecord::Base
   attr_accessible :buyer_id, :category_id, :description, :title, :seller_id, :status, :price, :show_alias_flg, :show_phone_flg, :alias_name,
   	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id, :year_built, :pixan_id, 
 	:job_type_code, :event_type_code, :edited_by, :edited_dt, :post_ip, :lng, :lat, :event_start_date, :event_end_date, :compensation,
-	:event_start_time, :event_end_time, :explanation, :contacts_attributes
+	:event_start_time, :event_end_time, :explanation, :contacts_attributes, :repost_flg
 
   belongs_to :user, foreign_key: :seller_id
   belongs_to :site
@@ -517,7 +517,7 @@ class ListingParent < ActiveRecord::Base
     attr = self.attributes  # copy attributes
 
     # remove protected attributes
-    arr = tmpFlg ? %w(id created_at updated_at parent_pixi_id buyer_id delta) : %w(id created_at updated_at delta)
+    arr = tmpFlg ? %w(id created_at updated_at explanation parent_pixi_id buyer_id delta) : %w(id created_at updated_at delta)
     arr.map {|x| attr.delete x}
     attr
   end

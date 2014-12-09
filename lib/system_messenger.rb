@@ -7,6 +7,7 @@ module SystemMessenger
     if sender = User.where(:email => PIXI_EMAIL).first
       case msg_type
         when 'approve'; msg = 'Your pixi has been approved.'; convFlg = true
+        when 'repost'; msg = 'Your pixi has been reposted.'; convFlg = true
 	when 'deny'; msg = "Your pixi has been denied due to #{listing.explanation}."
       end
 

@@ -37,6 +37,7 @@ describe TempListing do
   it { should respond_to(:pixan_id) }
   it { should respond_to(:event_type_code) }
   it { should respond_to(:job_type_code) }
+  it { should respond_to(:repost_flg) }
 
   it { should respond_to(:user) }
   it { should respond_to(:site) }

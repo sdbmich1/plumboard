@@ -184,28 +184,34 @@ class Listing < ListingParent
   # sends email to users who saved the listing when listing is removed
   def send_saved_pixi_removed
     closed = ['closed', 'sold', 'removed', 'inactive', 'expired']
-    saved_listings = SavedListing.where(pixi_id: pixi_id) rescue nil
-    saved_listings.each do |saved_listing|
-      if closed.detect {|closed| saved_listing.status == closed }
-        UserMailer.delay.send_saved_pixi_removed(saved_listing) unless self.buyer_id == saved_listing.user_id
+    if closed.detect {|closed| self.status == closed }
+      saved_listings = SavedListing.where(pixi_id: pixi_id) rescue nil
+      saved_listings.each do |saved_listing|
+        if closed.detect {|closed| saved_listing.status == closed }
+          UserMailer.delay.send_saved_pixi_removed(saved_listing) unless self.buyer_id == saved_listing.user_id
+        end
       end
     end
   end
 
   # sends notifications after pixi is posted to board
   def async_send_notification 
-    # update points
-    ptype = self.premium? ? 'app' : 'abp'
-    PointManager::add_points self.user, ptype if self.user
+    if active?
+      ptype = self.premium? ? 'app' : 'abp' 
+      val = self.repost_flg ? 'repost' : 'approve'
 
-    # send system message to user
-    SystemMessenger::send_message self.user, self, 'approve' rescue nil
+      # update points
+      PointManager::add_points self.user, ptype if self.user
 
-    # remove temp pixi
-    delete_temp_pixi self.pixi_id
+      # send system message to user
+      SystemMessenger::send_message self.user, self, val rescue nil
 
-    # send approval message
-    UserMailer.delay.send_approval(self)
+      # remove temp pixi
+      delete_temp_pixi self.pixi_id unless repost_flg
+
+      # send approval message
+      UserMailer.delay.send_approval(self)
+    end
   end
 
   # remove temp pixi
@@ -231,7 +237,7 @@ class Listing < ListingParent
     end
   end
 
-  # reposts existing sold or expired pixi as new
+  # reposts existing sold, removed or expired pixi as new
   def repost_pixi
     listing = Listing.new(get_attr(true))
 
@@ -240,15 +246,16 @@ class Listing < ListingParent
 
     # add token
     listing.generate_token
-    listing.status = 'active'
+    listing.status, listing.repost_flg = 'active', true
     listing.save
   end
 
   # process pixi repost based on pixi status
   def repost
     if expired? || removed?
-      self.status = 'active'
+      self.status, self.repost_flg, self.explanation  = 'active', true, nil
       self.save
+      async_send_notification # send notification
     elsif sold?
       repost_pixi
     else
