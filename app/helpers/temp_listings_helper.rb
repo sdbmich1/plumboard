@@ -56,4 +56,9 @@ module TempListingsHelper
   def new_pixi_post? listing
     listing.pixi_post? && !listing.edit?
   end
+
+  # check if in edit mode
+  def edit_mode? listing
+    !listing.pixi_post? || listing.edit?
+  end
 end

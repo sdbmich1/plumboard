@@ -2,22 +2,9 @@
   <%= render partial: 'shared/show_photo', locals: {model: listing.user, file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
 </div>
 <div id='slr-det' class='no-left span5'>
-  <div class='v-align'>
-    Posted By: <%= listing.seller_name %> 
-    <div class="rateit smpixis" data-rateit-value="<%= get_rating listing.user %>" data-rateit-ispreset="true" data-rateit-readonly="true"></div>
-    <%= "(#{nth(listing.seller_rating_count)})" %>
-  </div>
+  <%= render partial: 'shared/listing_seller_name', locals: {listing: listing} %>
   <div class='clear-all'></div>
-  <% unless !listing.active? || listing.seller?(@user) %>
-    <div class='panel_errors'></div>
-    <div id='px-panel' class='sm-top sm-bot'>
-      <%= render partial: 'shared/listing_panel', locals: {listing: listing} %>
-    </div>
-  <% end %>  
-  <% if show_metric_panel? listing %>
-    <div id='met-panel' class='sm-top sm-bot'>
-      <%= render partial: 'shared/metric_panel', locals: {listing: listing} %>
-    </div>
-  <% end %>  
+  <%= render partial: 'shared/listing_panel', locals: {listing: listing} unless !listing.active? || listing.seller?(@user) %>
+  <%= render partial: 'shared/metric_panel', locals: {listing: listing} if show_metric_panel? listing %>
 </div>
 
