@@ -213,9 +213,15 @@ module ApplicationHelper
   end
 
   # build dynamic cache key for pixi show page
-  def cache_key_for_pixi_item(listing)
+  def cache_key_for_pixi_item(listing, fldName='title')
     path = is_pending?(listing) ? 'pending_listings' : %w(new edit).detect {|x| x == listing.status}.blank? ? 'listings' : 'temp_listings'
-    path + "/#{listing.pixi_id}-#{listing.title}-#{listing.updated_at.to_i}-user-#{@user.id}"
+    path + "/#{listing.pixi_id}-#{listing.title}-#{listing.updated_at.to_i}-user-#{@user.id}-#{fldName}"
+  end
+
+  # build dynamic cache key for pixi show page
+  def cache_key_for_pixi_page(listing, fldName='title')
+    path = is_pending?(listing) ? 'pending_listings' : %w(new edit).detect {|x| x == listing.status}.blank? ? 'listings' : 'temp_listings'
+    path + "/#{listing.pixi_id}-#{listing.title}-#{listing.updated_at.to_i}-#{fldName}"
   end
 
   # check for menu display of footer items

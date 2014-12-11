@@ -1,0 +1,8 @@
+  <% cache cache_key_for_pixi_page(listing, 'seller_name') do %>
+    <div class='v-align'>
+      Posted By: <%= listing.seller_name %> 
+      <div class="rateit smpixis" data-rateit-value="<%= get_rating listing.user %>" data-rateit-ispreset="true" data-rateit-readonly="true"></div>
+      <%= "(#{nth(listing.seller_rating_count)})" %>
+    </div>
+  <% end %>
+

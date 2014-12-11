@@ -1,17 +1,10 @@
 <% if listing %>  
-  <div class='row'>
-    <div class="med-neg-top span12">
-      <h4 class='mbot'><%= listing.nice_title %><%= ntc listing.price %> </h4>
-    </div>
-  </div>
+  <%= render partial: 'shared/show_listing_header', locals: {listing: listing} %>
   <div class='row mbot'>
     <div class='span6 verticalLine'>
       <%= render partial: 'shared/listing_top', locals: {listing: listing} %>
       <div class="clear-all"></div>
-      <div id='item-pix' class="span5 no-left mtop mbot">
-        <%= render partial: 'shared/photos', locals: {model: listing, file_name: "", psize: '120x120'} %>
-      </div>
-      <%= render partial: 'shared/social_links' unless !listing.active? %>
+      <%= render partial: 'shared/show_listing_images', locals: {listing: listing} %>
     </div>
     <div class="span5">
       <div id='comment_form'><%= render partial: 'shared/comments', locals: {listing: listing} %></div>

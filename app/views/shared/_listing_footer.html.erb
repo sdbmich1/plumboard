@@ -1,3 +1,4 @@
+<% cache cache_key_for_pixi_page(listing, 'footer') do %>
   <div class="grey-text mtop row">
     <div class="span4">
       ID: <%= listing.pixi_id %>
@@ -9,3 +10,4 @@
       <span class='pull-right'>Updated: <%= listing.display_date listing.updated_at %></span>
     </div>
   </div>
+<% end %>

@@ -206,10 +206,12 @@ feature "Listings" do
     end
      
     it "views pixi page" do
+      page.should have_content listing.nice_title
+      page.should have_content listing.seller_name
       page.should have_content "Start Date: #{short_date(listing.event_start_date)}"
       page.should have_content "End Date: #{short_date(listing.event_end_date)}"
-      page.should have_content "Start Time: #{short_time(listing.event_start_time)}"
-      page.should have_content "End Time: #{short_time(listing.event_end_time)}"
+      #page.should have_content "Start Time: #{short_time(listing.event_start_time)}"
+      #page.should have_content "End Time: #{short_time(listing.event_end_time)}"
       page.should have_content "Event Type: #{listing.event_type_descr}"
       page.should_not have_content "Compensation: #{(listing.compensation)}"
     end
