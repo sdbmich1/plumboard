@@ -2,7 +2,8 @@
 <div class='offset4'>
   <table>
     <tr><td class='span3'>Name:</td>
-      <td><%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: user} %><%= user.name %></td>
+      <td><%= render partial: 'shared/show_photo', locals: {model: user, file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
+        <span class='mleft10'><%= user.name %></span></td>
     </tr>
     <tr><td class='span3'>Email:</td><td><%= user.email %></td></tr>
     <tr><td class='span3'>Gender:</td><td><%= user.gender %></td></tr>

@@ -34,15 +34,22 @@ function toggleFields(ctype) {
       if($('#input-form').length > 0) 
 	  $('#temp_listing_price, #yr_built').val('');
     }
+    else if(ctype.match(/^vehicle/) != null) {
+      hideComp();
+      toggleYear(ctype);
+    }
     else {
       hideComp();
-
-      // check for year categories
-      if(ctype.match(/^asset/) != null) {
-        $('#yr-fld').show('fast');
-      } else {
-        $('#yr-fld').hide('fast');
-      }
+      toggleYear(ctype);
     }
+  }
+}
+
+// check for year categories
+function toggleYear(ctype) {
+  if(ctype.match(/^asset/) != null || ctype.match(/^vehicle/) != null) {
+    $('#yr-fld').show('fast');
+  } else {
+    $('#yr-fld').hide('fast');
   }
 }

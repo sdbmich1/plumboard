@@ -2,12 +2,12 @@
   <div class="span8">
     <label class='control-label'><span class='no-left span1'>Date: </span><%= get_local_date(invoice.inv_date) %></label>
     <label class='control-label'><span class='no-left span1'>From: </span>
-      <%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: invoice.seller} %>
-      <%= invoice.seller_name %></label>
-    <div class="mtop">
+      <%= render partial: 'shared/show_photo', locals: {model: invoice.seller, file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
+      <span class='mleft10'><%= invoice.seller_name %></span></label>
+    <div class="big-top">
       <label class="control-label"><span class='no-left span1'>Bill To: </span>
-        <%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: invoice.buyer} %>
-        <%= invoice.buyer_name %></label>
+        <%= render partial: 'shared/show_photo', locals: {model: invoice.buyer, file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
+        <span class='mleft10'><%= invoice.buyer_name %></span></label>
     </div>
   </div>
   <div class="span4">
@@ -27,7 +27,7 @@
 <div class="row">
   <div class="sm-top span12">
     <div class="control-group">
-      <%= render partial: 'shared/invoice_details' %>
+      <%= render partial: 'shared/invoice_details', locals: {invoice: invoice} %>
       <label class="sm-top control-label">Comments: <%= invoice.comment %></label>
     </div>
     <div class="pull-right">

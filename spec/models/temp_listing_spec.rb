@@ -37,6 +37,7 @@ describe TempListing do
   it { should respond_to(:pixan_id) }
   it { should respond_to(:event_type_code) }
   it { should respond_to(:job_type_code) }
+  it { should respond_to(:repost_flg) }
 
   it { should respond_to(:user) }
   it { should respond_to(:site) }
@@ -162,16 +163,23 @@ describe TempListing do
     it { TempListing.get_by_site(@temp_listing.site.id).should_not be_empty }
   end
 
-  describe "should include seller listings" do
-    it { TempListing.get_by_seller(1).should_not be_empty }
-  end
+  describe "seller listings" do
+    it { TempListing.get_by_seller(@user, false).should_not be_empty }
 
-  describe "should include all seller listings for admin" do
-    it { TempListing.get_by_seller(0, true).should include @temp_listing }
-  end
+    it "does not get all listings for non-admin" do
+      @temp_listing.seller_id = 100
+      @temp_listing.save
+      TempListing.get_by_seller(@user, false).should_not include @temp_listing
+    end
 
-  describe "should not include incorrect seller listings" do 
-    it { TempListing.get_by_seller(0).should_not include @temp_listing } 
+    it "gets all listings for admin" do
+      @other = FactoryGirl.create(:pixi_user)
+      temp_listing = FactoryGirl.create(:temp_listing, seller_id: @other.id) 
+      @user.user_type_code = "AD"
+      @user.uid = 0
+      @user.save
+      expect(TempListing.get_by_seller(@user).count).to eq 2
+    end
   end
 
   describe "get_by_status should not include inactive listings" do
@@ -238,7 +246,7 @@ describe TempListing do
     it { temp_listing.has_transaction?.should_not be_true }
   end
 
-  describe "should verify if seller name is an alias" do 
+  describe "should verify if seller name is an alias" do  
     temp_listing = FactoryGirl.create :temp_listing, show_alias_flg: 'yes'
     it { temp_listing.alias?.should be_true }
   end
@@ -265,16 +273,12 @@ describe TempListing do
   describe "should return a short description" do 
     temp_listing = FactoryGirl.create :temp_listing, description: "a" * 500
     it { temp_listing.brief_descr.length.should == 100 }
+    it { temp_listing.summary.should be_true }
   end
 
   describe "should not return a short description" do 
     temp_listing = FactoryGirl.create :temp_listing, description: 'qqq'
     it { temp_listing.brief_descr.length.should_not == 100 }
-  end
-
-  describe "should return a summary" do 
-    temp_listing = FactoryGirl.create :temp_listing, description: "a" * 500
-    it { temp_listing.summary.should be_true }
   end
 
   describe "should not return a summary" do 
@@ -497,7 +501,7 @@ describe TempListing do
       # expect(@dup_listing.pictures.count).to eq 1
       expect(Listing.where(pixi_id: @listing.pixi_id).count).to eq(1)
       expect(Listing.where("title like 'Super%'").count).to eq(1)
-      #expect(TempListing.where(pixi_id: @listing.pixi_id).count).to eq(0)
+      # expect(TempListing.where(pixi_id: @listing.pixi_id).count).to eq(0)
       expect(TempListing.where("title like 'Super%'").count).to eq(0)
     end
 
@@ -1098,95 +1102,59 @@ describe TempListing do
     end
   end
 
+  def update_pixi pixi, val, amt
+    pixi.end_date = Date.today + amt.days
+    pixi.status = val
+    pixi.save
+    pixi.reload
+  end
+
   describe 'soon_expiring_pixis' do
     it "includes active temp listings" do 
-	  @temp_listing.end_date = Date.today + 4.days
-	  @temp_listing.status = 'edit'
-      @temp_listing.save
-	  @temp_listing.reload
+      update_pixi @temp_listing, 'edit', 4
       TempListing.soon_expiring_pixis(4, 'edit').should_not be_empty  
     end
 	
-	it "includes expired listings" do
-	  @temp_listing.end_date = Date.today + 4.days
-      @temp_listing.status = 'new'
-      @temp_listing.save
-	  @temp_listing.reload
+    it "includes expired listings" do
+      update_pixi @temp_listing, 'new', 4
       TempListing.soon_expiring_pixis(4, 'new').should_not be_empty  
     end
 	
-	it "includes expired listings" do
-	  @temp_listing.end_date = Date.today + 4.days
-      @temp_listing.status = 'new'
-      @temp_listing.save
-	  @temp_listing.reload
+    it "includes expired listings" do
+      update_pixi @temp_listing, 'new', 4
       TempListing.soon_expiring_pixis(4, ['edit', 'new']).should_not be_empty  
-    end
-	
-	it "includes active listings" do
-	  @temp_listing.end_date = Date.today + 5.days
-      @temp_listing.status = 'edit'
-      @temp_listing.save
-	  @temp_listing.reload
-      TempListing.soon_expiring_pixis(5, ['edit', 'active']).should_not be_empty  
     end
   end
   
   
   describe 'not soon_expiring_pixis' do  
     it "does not include active listings" do 
-      @temp_listing.end_date = Date.today + 10.days
-      @temp_listing.status = 'new'
-      @temp_listing.save
-      @temp_listing.reload
+      update_pixi @temp_listing, 'new', 10
       TempListing.soon_expiring_pixis(8).should be_empty  
     end
 	
     it "does not include expired listings" do 
-      @temp_listing.end_date = Date.today + 4.days
-      @temp_listing.status = 'edit'
-      @temp_listing.save
-      @temp_listing.reload
+      update_pixi @temp_listing, 'edit', 4
       TempListing.soon_expiring_pixis(3, 'new').should be_empty  
     end
 	
     it "does not include expiring early listings" do 
-      @temp_listing.end_date = Date.today + 4.days
-      @temp_listing.status = 'new'
-      @temp_listing.save
-      @temp_listing.reload
+      update_pixi @temp_listing, 'new', 4
       TempListing.soon_expiring_pixis(5).should be_empty  
     end
 	
     it "does not include active listings" do 
-      @temp_listing.end_date = Date.today + 4.days
-      @temp_listing.status = 'edit'
-      @temp_listing.save
-      @temp_listing.reload
+      update_pixi @temp_listing, 'edit', 4
       TempListing.soon_expiring_pixis(5, nil).should be_empty  
     end
 	
     it "does not include active listings" do 
-      @temp_listing.end_date = Date.today + 4.days
-      @temp_listing.status = 'new'
-      @temp_listing.save
-      @temp_listing.reload
+      update_pixi @temp_listing, 'new', 4
       TempListing.soon_expiring_pixis(5, ['edit', 'new']).should be_empty  
     end
 	
     it "does not include active listings" do 
-      @temp_listing.end_date = Date.today + 7.days
-      @temp_listing.status = 'new'
-      @temp_listing.save
-      @temp_listing.reload
-      TempListing.soon_expiring_pixis().should be_empty  
-    end
-	
-    it "does not include active listings" do 
-      @temp_listing.end_date = Date.today + 4.days
-      @temp_listing.status = 'active'
-      @temp_listing.save
-      @temp_listing.reload
+      update_pixi @temp_listing, 'new', 7
       TempListing.soon_expiring_pixis().should be_empty  
     end
   end

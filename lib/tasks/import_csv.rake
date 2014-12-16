@@ -553,7 +553,8 @@ end
 
 #loads the data from the db/event_type_071014.csv file into new event_types table.
 task :load_event_types => :environment do
-    CSV.foreach(Rails.root.join('db', 'event_type_071014.csv'), :headers => true) do |row|
+  EventType.delete_all
+  CSV.foreach(Rails.root.join('db', 'event_type_071014.csv'), :headers => true) do |row|
         attrs = {
             :code       => row[0],
             :description     => row[1],

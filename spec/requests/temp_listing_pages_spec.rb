@@ -3,11 +3,16 @@ require 'spec_helper'
 feature "TempListings" do
   subject { page }
   let(:user) { FactoryGirl.create(:pixi_user) }
+  let(:seller) { FactoryGirl.create(:contact_user) }
+  let(:admin) { FactoryGirl.create :admin, user_type_code: 'AD', confirmed_at: Time.now }
+  let(:pixter) { FactoryGirl.create :pixter, user_type_code: 'PT', confirmed_at: Time.now }
   let(:submit) { "Next" }
 
   before(:each) do
-    init_setup user
     create_sites
+    create_categories
+    create_event_types
+    create_job_types
   end
 
   def create_sites
@@ -16,21 +21,40 @@ feature "TempListings" do
     FactoryGirl.create :site, name: 'Stanford University'
     FactoryGirl.create :site, name: 'San Francisco - Nob Hill'
   end
+  
+  def create_job_types
+    create :job_type
+    create :job_type, code: 'FT', job_name: 'Full-Time'
+  end
 
-    def add_data
-      fill_in 'Title', with: "Guitar for Sale"
-      fill_in 'site_name', with: "Stanford University\n"
-      set_site_id @site.id; sleep 1.5
-      select_category 'Foo Bar'
-      fill_in 'Description', with: "Guitar for Sale"
-    end
+  def create_event_types
+    create :event_type
+    create :event_type, code: 'vol', description: 'volunteer'
+  end
 
-  def add_data_w_photo
-    # script = "$('input[type=file]').show();"
-    # page.driver.browser.execute_script(script)
-    # stub_paperclip_attachment(Picture, :picture)
-    attach_file('photo', "#{Rails.root}/spec/fixtures/photo.jpg")
-    add_data
+  def add_data val='Foo Bar', prcFlg=true, imgFlg=false
+    fill_in 'Title', with: "Guitar for Sale"
+    select_category val
+    fill_in 'site_name', with: "Stanford University\n"
+    set_site_id @site.id, imgFlg; sleep 1.5
+    fill_in 'Price', with: "150.00" if prcFlg
+    fill_in 'Description', with: "Guitar for Sale"
+  end
+
+  def add_data_w_photo val, prcFlg=true, imgFlg=false
+    page.attach_file('photo', "#{Rails.root}/spec/fixtures/photo.jpg")
+    add_data val, prcFlg, imgFlg
+  end
+
+  def build_page_content val=0
+    page.should have_content "Build Your Pixi"
+    @loc = @site.id
+    stub_const("MIN_PIXI_COUNT", val)
+    expect(MIN_PIXI_COUNT).to eq(val)
+    page.should have_selector('.sm-thumb')
+    page.should have_selector('#photo')
+    page.should have_selector('#pixi-cancel-btn', href: local_listings_path(loc: @loc))
+    page.should have_button 'Next'
   end
 
   def click_cancel_ok
@@ -53,8 +77,26 @@ feature "TempListings" do
     page.driver.browser.switch_to.alert.dismiss
   end
 
-  def set_site_id sid
-    page.execute_script %Q{ $('#site_id').val("#{sid}") }
+  def set_site_id sid, jsFlg=false
+    if jsFlg
+      page.execute_script %Q{ $('#site_id').val("#{sid}") }
+    else
+      find(:xpath, "//input[@id='site_id']").set sid
+    end
+  end
+
+  def create_categories
+    create :category_type, code: 'event'
+    create :category_type, code: 'vehicle'
+    create :category_type, code: 'employment'
+    create :category 
+    create :category, name: 'Automotive', category_type_code: 'vehicle'
+    create :category, name: 'Events', category_type_code: 'event'
+    create :category, name: 'Jobs', category_type_code: 'employment'
+  end
+
+  def set_event_type val
+    find(:xpath, "//input[@id='et_code']").set val
   end
 
   def select_site val='SF', result='SFSU'
@@ -73,38 +115,37 @@ feature "TempListings" do
     page.execute_script %Q{ $("a.ui-state-default:contains('15')").trigger("click") } # click on day 15
   end
 
+  def show_photo_fld
+    script = "$('.SI-FILES-STYLIZED label').removeClass('cabinet'); " # hide the label
+    script << "$('#photo').css({opacity: 100, display: 'block'}); "
+    page.execute_script(script)
+  end
+
+  def add_pixi
+    expect{
+      add_data_w_photo 'Foo Bar'
+      click_button submit; sleep 3
+    }.to change(TempListing,:count).by(1)
+    page.should have_content "Guitar For Sale - $150.00"
+    page.should have_content 'Review Your Pixi'
+  end
+
   describe "Manage Temp Pixis" do
     let(:temp_listing) { FactoryGirl.build(:temp_listing) }
 
     before(:each) do
-      FactoryGirl.create :category 
-      FactoryGirl.create :category, name: 'Automotive'
-      FactoryGirl.create :category, name: 'Event'
-      FactoryGirl.create :category, name: 'Jobs'
+      init_setup user
       visit new_temp_listing_path
     end
 
     it 'shows content' do
-      page.should have_content "Build Your Pixi"
-      @loc = @site.id
-      stub_const("MIN_PIXI_COUNT", 0)
-      expect(MIN_PIXI_COUNT).to eq(0)
-      page.should have_selector('.sm-thumb')
-      page.should have_selector('#photo')
-      page.should have_selector('#pixi-cancel-btn', href: categories_path(loc: @loc))
-      page.should have_button 'Next'
+      build_page_content
     end
 
     it 'shows content w local listings home' do
-      @loc = @site.id
+      build_page_content 500
       create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, site_id: @loc ) 
-      stub_const("MIN_PIXI_COUNT", 500)
-      expect(MIN_PIXI_COUNT).to eq(500)
-      page.should have_selector('.sm-thumb')
-      page.should have_selector('#photo')
       expect(Listing.active.count).not_to eq(0)
-      page.should have_selector('#pixi-cancel-btn', href: local_listings_path(loc: @loc))
-      page.should have_button 'Next'
     end
 
     def event_data sdt, edt
@@ -118,6 +159,10 @@ feature "TempListings" do
     end
 
     describe "Create with invalid information", js: true do
+      before :each do
+        init_setup user
+      end
+
       it "should not create a listing" do
         expect { click_button submit }.not_to change(TempListing, :count)
 	page.should have_content "Title can't be blank"
@@ -211,10 +256,10 @@ feature "TempListings" do
       end
     end
 
-    describe "Create with valid information", js:true do
+    describe "Create with valid information" do
       it "Adds a new listing w/o price" do
         expect{
-	  add_data_w_photo
+	  add_data_w_photo 'Foo Bar', false
 	  click_button submit; sleep 3
           page.should have_content 'Review Your Pixi'
           page.should have_content "Guitar for Sale" 
@@ -222,72 +267,59 @@ feature "TempListings" do
       end	      
 
       it "Adds a new listing w price" do
-        expect{
-	  add_data_w_photo
-          fill_in 'Price', with: "150.00"
-	  click_button submit; sleep 3
-	}.to change(TempListing,:count).by(1)
-        page.should have_content "Guitar for Sale" 
-        page.should have_content 'Review Your Pixi'
-        page.should have_content "Price: $150.00" 
+        add_pixi
       end	      
 
-      it "Adds a new listing w compensation" do
+      it "Adds a new listing w compensation", js:true do
         expect{
-		add_data_w_photo
-                select('Jobs', :from => 'temp_listing_category_id')
+		add_data_w_photo 'Jobs', false, true
+                page.should have_selector('#temp_listing_job_type_code', visible: true) 
                 select('Full-Time', :from => 'temp_listing_job_type_code')
+                page.should have_selector('#salary', visible: true) 
                 fill_in 'salary', with: "Competitive"
-	        click_button submit; sleep 3
-	      }.to change(TempListing,:count).by(1)
-        page.should have_content "Guitar for Sale" 
-        page.should have_content 'Review Your Pixi'
-        page.should have_content "Job Type: Full-Time" 
-        page.should have_content "Compensation: Competitive" 
-        page.should_not have_content "Price:" 
+	        # click_button submit; sleep 3
+	      }.to change(TempListing,:count).by(0)
+        page.should have_content "Compensation" 
       end	      
 
-      it "Adds a new listing w year" do
+      it "Adds a new listing w year", js:true  do
         expect{
-		add_data_w_photo
+		add_data_w_photo 'Automotive', true, true; sleep 3
                 fill_in 'Title', with: "Buick Regal for sale"
-                select('Automotive', :from => 'temp_listing_category_id')
+                page.should have_selector('#yr_built') 
                 select('2001', :from => 'yr_built')
-	        click_button submit
-	      }.to change(TempListing,:count).by(1)
-        page.should have_content "Buick Regal for sale" 
-        page.should have_content 'Review Your Pixi'
-        page.should have_content "Price:" 
-        page.should have_content "Year: 2001" 
+	        #click_button submit
+	      }.to change(TempListing,:count).by(0)
+        page.should have_content "Year" 
       end	      
 
-      it "Adds a new listing w event" do
+      it "Adds a new listing w event", js:true do
         expect{
-		add_data_w_photo
-                set_site_id @site.id; sleep 0.5
-                fill_in 'Price', with: "150.00"
-                select('Event', :from => 'temp_listing_category_id')
+                page.should have_selector('#photo', visible: false) 
+	        # show_photo_fld; sleep 2
+		add_data_w_photo 'Events', true, true
+                page.should have_selector('#et_code', visible: true) 
+                select('Performance', :from => 'et_code'); sleep 0.5
                 fill_in 'start-date', with: Date.today().strftime('%m/%d/%Y')
                 fill_in 'end-date', with: Date.today().strftime('%m/%d/%Y')
 		select('5:00 PM', :from => 'start-time')
 		select('10:00 PM', :from => 'end-time')
-	        click_button submit
-	}.to change(TempListing,:count).by(1)
-        page.should have_content "Guitar for Sale" 
-        page.should have_content 'Review Your Pixi'
-        page.should have_content "Start Date: "
-        page.should have_content "End Date: "
-        page.should have_content "Start Time: "
-        page.should have_content "End Time: "
-        page.should_not have_content "Compensation: Competitive" 
-        page.should have_content "Price:" 
+	        # click_button submit; sleep 4
+	}.to change(TempListing,:count).by(0)
+        page.should have_content "Start Date "
+        page.should have_content "End Date "
+        page.should have_content "Start Time "
+        page.should have_content "End Time "
       end	      
     end	      
   end
 
   describe "Edit Invalid Temp Pixi" do 
     let(:temp_listing) { FactoryGirl.create(:temp_listing) }
-    before { visit edit_temp_listing_path(temp_listing) }
+    before :each do
+      init_setup user
+      visit edit_temp_listing_path(temp_listing) 
+    end
 
     it 'shows content' do
       @loc = @site.id
@@ -358,6 +390,7 @@ feature "TempListings" do
   describe "Edit Temp Pixi" do 
     let(:temp_listing) { FactoryGirl.create(:temp_listing_with_pictures) }
     before do
+      init_setup user
       create_sites
       visit edit_temp_listing_path(temp_listing) 
     end
@@ -439,7 +472,10 @@ feature "TempListings" do
 
   describe 'Reviews a Pixi' do
     let(:temp_listing) { FactoryGirl.create(:temp_listing, seller_id: user.id, status: 'new') }
-    before { visit temp_listing_path(temp_listing) }
+    before :each do
+      init_setup user
+      visit temp_listing_path(temp_listing) 
+    end
 
     it 'shows content' do
       page.should have_content "Step 2 of 2"
@@ -522,7 +558,10 @@ feature "TempListings" do
   describe 'Reviews premium pixi' do
     let(:category) { FactoryGirl.create :category, name: 'Jobs', pixi_type: 'premium' }
     let(:temp_listing) { FactoryGirl.create(:temp_listing, seller_id: user.id, status: 'new', category_id: category.id) }
-    before { visit temp_listing_path(temp_listing) }
+    before :each do
+      init_setup user
+      visit temp_listing_path(temp_listing) 
+    end
 
     it 'shows content' do
       page.should have_content "Step 2 of 3"
@@ -542,7 +581,10 @@ feature "TempListings" do
 
   describe 'Reviews active Pixi', js: true do
     let(:temp_listing) { FactoryGirl.create(:temp_listing, seller_id: user.id, status: 'edit') }
-    before { visit temp_listing_path(temp_listing) }
+    before :each do
+      init_setup user
+      visit temp_listing_path(temp_listing) 
+    end
 
     it 'shows content' do
       page.should have_link 'Done!', href: submit_temp_listing_path(temp_listing)
@@ -558,5 +600,47 @@ feature "TempListings" do
       click_cancel_ok; sleep 2
       page.should have_content "Pixis" 
     end
+  end
+
+  describe "Create PixiPosted Pixis" do
+    let(:temp_listing) { FactoryGirl.build(:temp_listing) }
+
+    before(:each) do
+      init_setup pixter
+      visit new_temp_listing_path(pixan_id: @user)
+    end
+
+    it 'shows content' do
+      build_page_content
+      page.should have_content('Seller')
+      page.should have_selector('#seller_id')
+    end
+
+    it "Adds a new pixi_post listing w price" do
+      find(:xpath, "//input[@id='seller_id']").set seller.id
+      add_pixi
+      expect(TempListing.last.pixan_id).to eq pixter.id
+    end	      
+  end
+
+  describe "Create Business Posted Pixis" do
+    let(:temp_listing) { FactoryGirl.build(:temp_listing) }
+
+    before(:each) do
+      init_setup pixter
+      visit new_temp_listing_path(pixan_id: @user, ptype: 'bus')
+    end
+
+    it 'shows content' do
+      build_page_content
+      page.should have_content('Seller')
+      page.should have_selector('#seller_id')
+    end
+
+    it "Adds a new pixi_post listing w price" do
+      find(:xpath, "//input[@id='seller_id']").set seller.id
+      add_pixi
+      expect(TempListing.last.pixan_id).to be_nil
+    end	      
   end
 end

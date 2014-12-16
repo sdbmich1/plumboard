@@ -69,7 +69,7 @@ class Listing < ListingParent
   # get wanted list by user
   def self.wanted_list usr, pg=1, cid=nil, loc=nil
     if usr.is_admin?
-      check_category_and_location('wanted', cid, loc)
+      active.joins(:pixi_wants).where("pixi_wants.user_id is not null").get_by_city(cid, loc, pg, false).paginate(page: pg)
     else
       active.joins(:pixi_wants).where("pixi_wants.user_id = ?", usr.id).paginate page: pg
     end
@@ -92,7 +92,7 @@ class Listing < ListingParent
 
   # get invoiced listings by status and, if provided, category and location
   def self.check_invoiced_category_and_location cid, loc, pg=1
-    if cid.blank? or loc.blank?
+    if cid.blank? && loc.blank?
       active_invoices
     else
       active_invoices.get_by_city(cid, loc, pg, false)
@@ -184,33 +184,39 @@ class Listing < ListingParent
   # sends email to users who saved the listing when listing is removed
   def send_saved_pixi_removed
     closed = ['closed', 'sold', 'removed', 'inactive', 'expired']
-    saved_listings = SavedListing.where(pixi_id: pixi_id) rescue nil
-    saved_listings.each do |saved_listing|
-      if closed.detect {|closed| saved_listing.status == closed }
-        UserMailer.delay.send_saved_pixi_removed(saved_listing) unless self.buyer_id == saved_listing.user_id
+    if closed.detect {|closed| self.status == closed }
+      saved_listings = SavedListing.where(pixi_id: pixi_id) rescue nil
+      saved_listings.each do |saved_listing|
+        if closed.detect {|closed| saved_listing.status == closed }
+          UserMailer.delay.send_saved_pixi_removed(saved_listing) unless self.buyer_id == saved_listing.user_id
+        end
       end
     end
   end
 
   # sends notifications after pixi is posted to board
   def async_send_notification 
-    # update points
-    ptype = self.premium? ? 'app' : 'abp'
-    PointManager::add_points self.user, ptype if self.user
+    if active?
+      ptype = self.premium? ? 'app' : 'abp' 
+      val = self.repost_flg ? 'repost' : 'approve'
 
-    # send system message to user
-    SystemMessenger::send_message self.user, self, 'approve' rescue nil
+      # update points
+      PointManager::add_points self.user, ptype if self.user
 
-    # remove temp pixi
-    delete_temp_pixi self.pixi_id
+      # send system message to user
+      SystemMessenger::send_message self.user, self, val rescue nil
 
-    # send approval message
-    UserMailer.delay.send_approval(self)
+      # remove temp pixi
+      delete_temp_pixi self.pixi_id unless repost_flg
+
+      # send approval message
+      UserMailer.delay.send_approval(self)
+    end
   end
 
   # remove temp pixi
   def delete_temp_pixi pid
-    TempListing.destroy_all(pixi_id: pid) rescue nil
+    TempListing.destroy_all(pixi_id: pid)
   end
 
   # toggle invoice status on removing pixi from board
@@ -231,7 +237,7 @@ class Listing < ListingParent
     end
   end
 
-  # reposts existing sold or expired pixi as new
+  # reposts existing sold, removed or expired pixi as new
   def repost_pixi
     listing = Listing.new(get_attr(true))
 
@@ -240,15 +246,16 @@ class Listing < ListingParent
 
     # add token
     listing.generate_token
-    listing.status = 'active'
+    listing.status, listing.repost_flg = 'active', true
     listing.save
   end
 
   # process pixi repost based on pixi status
   def repost
-    if expired?
-      self.status = 'active'
+    if expired? || removed?
+      self.status, self.repost_flg, self.explanation  = 'active', true, nil
       self.save
+      async_send_notification # send notification
     elsif sold?
       repost_pixi
     else

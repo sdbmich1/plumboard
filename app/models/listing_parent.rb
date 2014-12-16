@@ -17,7 +17,7 @@ class ListingParent < ActiveRecord::Base
   attr_accessible :buyer_id, :category_id, :description, :title, :seller_id, :status, :price, :show_alias_flg, :show_phone_flg, :alias_name,
   	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id, :year_built, :pixan_id, 
 	:job_type_code, :event_type_code, :edited_by, :edited_dt, :post_ip, :lng, :lat, :event_start_date, :event_end_date, :compensation,
-	:event_start_time, :event_end_time, :explanation, :contacts_attributes
+	:event_start_time, :event_end_time, :explanation, :contacts_attributes, :repost_flg
 
   belongs_to :user, foreign_key: :seller_id
   belongs_to :site
@@ -136,8 +136,8 @@ class ListingParent < ActiveRecord::Base
   end
 
   # find all listings where a given user is the seller, or all listings if the user is an admin
-  def self.get_by_seller user
-    user.is_admin? ? where("seller_id IS NOT NULL") : where(:seller_id => user.id)
+  def self.get_by_seller user, adminFlg=true
+    user.is_admin? && adminFlg ? where("seller_id IS NOT NULL") : where(:seller_id => user.id)
   end
 
   # get listings by status and, if provided, category and location
@@ -366,8 +366,7 @@ class ListingParent < ActiveRecord::Base
 
     # remove any dup in case of cleanup failures
     if listing.is_a?(TempListing) && listing.new_record?
-      templist = TempListing.where(pixi_id: listing.pixi_id)
-      templist.map! {|t| t.destroy} if templist
+      TempListing.destroy_all(pixi_id: listing.pixi_id)
     end
 
     # add dup
@@ -518,7 +517,7 @@ class ListingParent < ActiveRecord::Base
     attr = self.attributes  # copy attributes
 
     # remove protected attributes
-    arr = tmpFlg ? %w(id created_at updated_at parent_pixi_id buyer_id delta) : %w(id created_at updated_at delta)
+    arr = tmpFlg ? %w(id created_at updated_at explanation parent_pixi_id buyer_id delta) : %w(id created_at updated_at delta)
     arr.map {|x| attr.delete x}
     attr
   end

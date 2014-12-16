@@ -213,9 +213,15 @@ module ApplicationHelper
   end
 
   # build dynamic cache key for pixi show page
-  def cache_key_for_pixi_item(listing)
+  def cache_key_for_pixi_item(listing, fldName='title')
     path = is_pending?(listing) ? 'pending_listings' : %w(new edit).detect {|x| x == listing.status}.blank? ? 'listings' : 'temp_listings'
-    path + "/#{listing.pixi_id}-#{listing.title}-#{listing.updated_at.to_i}-user-#{@user.id}"
+    path + "/#{listing.pixi_id}-#{listing.title}-#{listing.updated_at.to_i}-user-#{@user.id}-#{fldName}"
+  end
+
+  # build dynamic cache key for pixi show page
+  def cache_key_for_pixi_page(listing, fldName='title')
+    path = is_pending?(listing) ? 'pending_listings' : %w(new edit).detect {|x| x == listing.status}.blank? ? 'listings' : 'temp_listings'
+    path + "/#{listing.pixi_id}-#{listing.title}-#{listing.updated_at.to_i}-#{fldName}"
   end
 
   # check for menu display of footer items
@@ -225,7 +231,7 @@ module ApplicationHelper
 
   # check if using remote pix
   def use_remote_pix?
-    USE_LOCAL_PIX.upcase != 'YES'
+    USE_LOCAL_PIX.upcase != 'YES' rescue true
   end
 
   # check if image exists if not render uploaded image
@@ -251,5 +257,10 @@ module ApplicationHelper
   # check if picture exists
   def picture_exists? model
     model && model.pictures[0] rescue false
+  end
+
+  # set class name if not on the main board
+  def zoom_image
+    %w(category local).detect {|x| action_name == x} ? '' : 'img-zoom'
   end
 end

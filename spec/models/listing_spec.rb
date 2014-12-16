@@ -38,6 +38,7 @@ describe Listing do
   it { should respond_to(:job_type_code) }
   it { should respond_to(:event_type_code) }
   it { should respond_to(:explanation) }
+  it { should respond_to(:repost_flg) }
 
   it { should respond_to(:user) }
   it { should respond_to(:site) }
@@ -282,20 +283,22 @@ describe Listing do
       @listing.save
       @user.uid = 1
       @user.save
-      Listing.get_by_seller(@user).should_not be_empty  
+      Listing.get_by_seller(@user, false).should_not be_empty  
     end
 
     it "does not get all listings for non-admin" do
       @listing.seller_id = 100
       @listing.save
-      Listing.get_by_seller(@user).should_not include @listing
+      Listing.get_by_seller(@user, false).should_not include @listing
     end
 
     it "gets all listings for admin" do
+      @other = FactoryGirl.create(:pixi_user)
+      listing = FactoryGirl.create(:listing, seller_id: @other.id) 
       @user.user_type_code = "AD"
       @user.uid = 0
       @user.save
-      Listing.get_by_seller(@user).should_not be_empty
+      expect(Listing.get_by_seller(@user).count).to eq 2
     end
   end
 
@@ -865,6 +868,13 @@ describe Listing do
         expect(mail.from).to eql(['support@pixiboard.com'])
       end
     end
+
+    it 'does not send message on repost' do
+      @expired = FactoryGirl.create(:listing, seller_id: @user.id, status: 'expired') 
+      @expired.status = 'active'
+      @expired.save
+      expect(ActionMailer::Base.deliveries.last.subject).not_to eql('Saved Pixi is Sold/Removed')
+    end
   end
 
   describe "wanted" do 
@@ -894,8 +904,7 @@ describe Listing do
       @admin_user = create :admin
       @admin_user.user_type_code = 'AD'
       @admin_user.save!
-      @listing.status = 'wanted'
-      @listing.save!
+      expect(Listing.wanted_list(@admin_user, 1, @listing.category_id, @listing.site_id).count).not_to eq 0
       Listing.wanted_list(@admin_user, 1, @listing.category_id, @listing.site_id).should include @listing
       Listing.wanted_list(@usr, 1, @listing.category_id, @listing.site_id).should_not include @listing
     end
@@ -1275,16 +1284,27 @@ describe Listing do
       temp_listing = create(:temp_listing, seller_id: @user.id)
       pid = temp_listing.pixi_id
       listing = create(:listing, seller_id: @user.id, pixi_id: temp_listing.pixi_id)
+      sleep 2;
       expect(TempListing.where(pixi_id: pid).count).to eq 0
     end
 
-    it 'delivers pixi message' do
+    it 'delivers approved pixi message' do
       create :admin, email: PIXI_EMAIL
       listing = create(:listing, seller_id: @user.id)
       send_mailer listing, 'send_approval'
       expect(Conversation.all.count).not_to eq(0)
       expect(Post.all.count).not_to eq(0)
       SystemMessenger.stub!(:send_system_message).with(@user, listing, 'approve').and_return(true)
+    end
+
+    it 'delivers reposted pixi message' do
+      create :admin, email: PIXI_EMAIL
+      listing = create(:listing, seller_id: @user.id, repost_flg: true)
+      expect(Listing.count).to eq 2
+      send_mailer listing, 'send_approval'
+      expect(Conversation.all.count).not_to eq(0)
+      expect(Post.all.count).not_to eq(0)
+      SystemMessenger.stub!(:send_system_message).with(@user, listing, 'repost').and_return(true)
     end
   end
 
@@ -1325,8 +1345,21 @@ describe Listing do
   describe 'repost' do
     it 'sets status to active if listing is expired' do
       @listing.status = 'expired'
+      @listing.repost; sleep 2
+      @listing.active?.should be_true
+      expect(@listing.repost_flg).to be_true
+      expect(ActionMailer::Base.deliveries.last.subject).to eql("Pixi Reposted: #{@listing.title} ") 
+    end
+
+    it 'sets status to active if listing is removed' do
+      @listing.status = 'removed'
+      @listing.explanation = 'Changed Mind'
+      @listing.save
       @listing.repost
       @listing.active?.should be_true
+      expect(@listing.repost_flg).to be_true
+      expect(@listing.explanation).to be_nil
+      expect(ActionMailer::Base.deliveries.last.subject).to eql("Pixi Reposted: #{@listing.title} ") 
     end
 
     it 'calls repost_pixi if listing is sold' do
@@ -1338,6 +1371,7 @@ describe Listing do
       expect(Listing.all.count).to eq 2
       expect(Listing.first.active?).to be_true
       expect(Listing.first.pictures.size).to eq @listing.pictures.size
+      expect(Listing.first.repost_flg).to be_true
     end
 
     it 'returns false if listing is not expired/sold' do
@@ -1427,6 +1461,19 @@ describe Listing do
       @listing.save
       @listing.reload
       Listing.soon_expiring_pixis(5, ['expired', 'new']).should be_empty  
+    end
+  end
+
+  describe "delete temp pixi" do
+    it { @listing.delete_temp_pixi(@listing.pixi_id).should be_blank }
+
+    it "removes temp pixi" do
+      temp_listing = create(:temp_listing, seller_id: @user.id)
+      listing = create(:listing, seller_id: @user.id, pixi_id: temp_listing.pixi_id)
+      expect(listing.pixi_id).to eq temp_listing.pixi_id
+      expect{ 
+         listing.delete_temp_pixi(listing.pixi_id); sleep 2;
+      }.not_to be_blank
     end
   end
 end

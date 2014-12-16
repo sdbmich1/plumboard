@@ -206,10 +206,12 @@ feature "Listings" do
     end
      
     it "views pixi page" do
+      page.should have_content listing.nice_title
+      page.should have_content listing.seller_name
       page.should have_content "Start Date: #{short_date(listing.event_start_date)}"
       page.should have_content "End Date: #{short_date(listing.event_end_date)}"
-      page.should have_content "Start Time: #{short_time(listing.event_start_time)}"
-      page.should have_content "End Time: #{short_time(listing.event_end_time)}"
+      #page.should have_content "Start Time: #{short_time(listing.event_start_time)}"
+      #page.should have_content "End Time: #{short_time(listing.event_end_time)}"
       page.should have_content "Event Type: #{listing.event_type_descr}"
       page.should_not have_content "Compensation: #{(listing.compensation)}"
     end
@@ -800,20 +802,20 @@ feature "Listings" do
       end
       
       it "views my pixis page", js: true do
-        visit seller_listings_path
+        visit seller_listings_path(status: 'active', adminFlg: false)
         page.should have_content('My Pixis')
-        page.should have_link 'Active', href: seller_listings_path(status: 'active')
-        page.should have_link 'Draft', href: unposted_temp_listings_path
+        page.should have_link 'Active', href: seller_listings_path(status: 'active', adminFlg: false)
+        page.should have_link 'Draft', href: unposted_temp_listings_path(adminFlg: false)
         page.should have_link 'Pending', href: pending_temp_listings_path
         page.should have_link 'Purchased', href: purchased_listings_path
-        page.should have_link 'Sold', href: seller_listings_path(status: 'sold')
+        page.should have_link 'Sold', href: seller_listings_path(status: 'sold', adminFlg: false)
         page.should have_link 'Saved', href: saved_listings_path
         page.should have_link 'Wanted', href: wanted_listings_path
-        page.should have_link 'Expired', href: seller_listings_path(status: 'expired')
+        page.should have_link 'Expired', href: seller_listings_path(status: 'expired', adminFlg: false)
       end
 
       it "displays active listings", js: true do
-        visit seller_listings_path(status: 'active')
+        visit seller_listings_path(status: 'active', adminFlg: false)
         page.should have_content @active_listing.title
         page.should_not have_content @sold_listing.title
         page.should_not have_content @purchased_listing.title
@@ -821,7 +823,7 @@ feature "Listings" do
       end
 
       it "displays sold listings", js: true do
-        visit seller_listings_path(status: 'sold')
+        visit seller_listings_path(status: 'sold', adminFlg: false)
         page.should_not have_content listing.title
         page.should have_content @sold_listing.title
         page.should_not have_content @purchased_listing.title
@@ -829,7 +831,7 @@ feature "Listings" do
       end
 
       it "displays draft listings", js: true do
-        visit unposted_temp_listings_path
+        visit unposted_temp_listings_path(adminFlg: false)
         page.should have_content @temp_listing.title
         page.should_not have_content @pending_listing.title
         page.should_not have_content @denied_listing.title
@@ -867,7 +869,7 @@ feature "Listings" do
       end
 
       it "display expired listings", js: true do
-        visit seller_listings_path(status: 'expired')
+        visit seller_listings_path(status: 'expired', adminFlg: false)
         page.should_not have_content listing.title
         page.should_not have_content @sold_listing.title
         page.should have_content @expired_listing.title
@@ -886,6 +888,9 @@ feature "Listings" do
         @expired_listing = create(:listing, seller_id: @user.id, title: 'TV')
         @expired_listing.status = 'expired'
         @expired_listing.save!
+        @removed_listing = create(:listing, seller_id: @user.id, title: 'Suede Jacket') 
+        @removed_listing.status = 'removed'
+        @removed_listing.save!
       end
 
       it "should appear for expired pixi" do
@@ -896,6 +901,15 @@ feature "Listings" do
       it "should appear for sold pixi" do
         visit listing_path(@sold_listing)
         page.should have_link 'Repost!', href: repost_listing_path(@sold_listing)
+        page.should_not have_link 'Edit', href: edit_temp_listing_path(listing)
+        page.should_not have_button 'Remove'
+      end
+
+      it "should appear for removed pixi" do
+        visit listing_path(@removed_listing)
+        page.should_not have_link 'Edit', href: edit_temp_listing_path(listing)
+        page.should have_link 'Repost!', href: repost_listing_path(@removed_listing)
+        page.should_not have_button 'Remove'
       end
 
       it "should not appear for pixi with other status" do
@@ -915,6 +929,16 @@ feature "Listings" do
 
       it "reposts a sold pixi", js: true do
         visit listing_path(@sold_listing)
+        page.should_not have_link 'Edit', href: edit_temp_listing_path(listing)
+        page.should_not have_button 'Remove'
+	expect{
+          click_link 'Repost!'
+          page.should have_content 'Pixis'    # should go back to home page
+        }.to change(Listing.active,:count).by(1)
+      end
+
+      it "reposts a removed pixi", js: true do
+        visit listing_path(@removed_listing)
         page.should_not have_link 'Edit', href: edit_temp_listing_path(listing)
         page.should_not have_button 'Remove'
 	expect{

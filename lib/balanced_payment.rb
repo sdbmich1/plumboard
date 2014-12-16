@@ -41,9 +41,6 @@ module BalancedPayment
   # add card account
   def self.add_card_account customer, model, token
 
-    # add card to Balanced account
-    # customer.add_card(token) 
-
     # add card to db
     Rails.logger.info "PXB customer add card: #{token}"
     CardAccount.add_card(model, token)

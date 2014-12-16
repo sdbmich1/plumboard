@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141125015257) do
+ActiveRecord::Schema.define(:version => 20141208174149) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -309,6 +309,7 @@ ActiveRecord::Schema.define(:version => 20141125015257) do
     t.string   "explanation"
     t.boolean  "delta"
     t.string   "event_type_code"
+    t.boolean  "repost_flg"
   end
 
   add_index "listings", ["category_id"], :name => "index_listings_on_category_id"
@@ -687,6 +688,7 @@ ActiveRecord::Schema.define(:version => 20141125015257) do
     t.string   "explanation"
     t.string   "event_type_code"
     t.boolean  "delta"
+    t.boolean  "repost_flg"
   end
 
   add_index "temp_listings", ["pixi_id"], :name => "index_temp_listings_on_pixi_id", :unique => true

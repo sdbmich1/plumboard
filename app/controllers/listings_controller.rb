@@ -29,11 +29,7 @@ class ListingsController < ApplicationController
   end
 
   def seller
-    respond_with(@listings = Listing.get_by_seller(@user).get_by_status(@status).paginate(page: @page))
-  end
-
-  def sold
-    respond_with(@listings = Listing.get_by_seller(@user).get_by_status('sold').paginate(page: @page))
+    respond_with(@listings = Listing.get_by_seller(@user, @adminFlg).get_by_status(@status).paginate(page: @page))
   end
 
   def wanted
@@ -74,6 +70,7 @@ class ListingsController < ApplicationController
 
   def load_data
     @page, @cat, @loc, @loc_name = params[:page] || 1, params[:cid], params[:loc], params[:loc_name]
+    @adminFlg = params[:adminFlg].to_bool rescue false
     @status = NameParse::transliterate params[:status] if params[:status]
     @loc_name ||= LocationManager::get_loc_name(request.remote_ip, @loc || @region, @user.home_zip)
     @loc ||= LocationManager::get_loc_id(@loc_name, @user.home_zip)

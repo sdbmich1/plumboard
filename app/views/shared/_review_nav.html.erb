@@ -1,4 +1,4 @@
-<%= link_to 'Edit', edit_temp_listing_path(listing), id: 'pixi-edit-btn', class: 'btn btn-large' unless listing.sold? || listing.expired? %>
+<%= link_to 'Edit', edit_temp_listing_path(listing), id: 'pixi-edit-btn', class: 'btn btn-large' unless expired_or_sold? listing %>
 <% if listing.edit? %>
   <%= link_to 'Remove', listing, method: :delete, confirm: msg, class: 'btn btn-large' %>
   <%= link_to 'Cancel', get_home_path, confirm: msg, class: 'btn btn-large' %>
@@ -12,9 +12,7 @@
     </ul>
   </div>
 <% else %>
-   <%= link_to 'Remove', listing, method: :delete, confirm: msg, class: 'btn btn-large' unless listing.sold? || listing.expired? %>
+   <%= link_to 'Remove', listing, method: :delete, confirm: msg, class: 'btn btn-large' unless expired_or_sold?(listing) %>
 <% end %>
 
-<% if (listing.sold? || listing.expired?) && (@user.is_admin? || (@user.id == @listing.seller_id)) %>
-  <%= link_to "Repost!", repost_listing_path(listing), method: :put, class: "btn btn-large btn-primary submit-btn", id: 'px-repost-btn' %>
-<% end %>
+<%= link_to "Repost!", repost_listing_path(listing), method: :put, class: "btn btn-large btn-primary submit-btn", id: 'px-repost-btn' if repost? listing %>
