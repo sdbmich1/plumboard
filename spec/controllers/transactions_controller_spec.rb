@@ -37,11 +37,48 @@ describe TransactionsController do
   describe 'GET index' do
     before(:each) do
       @transactions = stub_model(Transaction)
-      Transaction.stub!(:all).and_return(@transactions)
+      @transactions.updated_at = DateTime.current
+      @invoice = stub_model(Invoice)
+      @invoice.amount = 0
+      @transactions.invoices.push(@invoice)
+      Transaction.stub_chain(:get_by_date).and_return(@transactions)
+      @transactions.stub!(:paginate).and_return(@transactions)
+      controller.stub_chain(:load_date_range, :load_page).and_return(:success)
+      do_get
     end
 
     def do_get
       get :index
+    end
+
+    it "renders the :index view" do
+      response.should render_template :index
+    end
+
+    it "should assign @transactions" do
+      assigns(:transactions).should_not be_nil
+    end
+
+    it "responds to JSON" do
+      get :index, :format => 'json'
+      expect(response).to be_success
+    end 
+
+    it "responds to CSV" do
+      get :index, :format => 'csv'
+      expect(response).to be_success
+    end
+  end
+
+  describe 'xhr GET index' do
+    before(:each) do
+      @transactions = stub_model(Transaction)
+      Transaction.stub!(:get_by_date).and_return(@transactions)
+      @transactions.stub!(:paginate).and_return(@transactions)
+    end
+
+    def do_get
+      xhr :get, :index
     end
 
     it "renders the :index view" do
@@ -50,14 +87,9 @@ describe TransactionsController do
     end
 
     it "should assign @transactions" do
-      Transaction.should_receive(:all).and_return(@transactions)
+      Transaction.should_receive(:get_by_date).and_return(@transactions)
       do_get 
       assigns(:transactions).should_not be_nil
-    end
-
-    it "responds to JSON" do
-      get :index, format: :json
-      expect(response).to be_success
     end
   end
 

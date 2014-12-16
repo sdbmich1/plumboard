@@ -1,0 +1,16 @@
+<% provide(:title, 'Transactions') %>
+<%= content_for :subhead do %>
+  <%= render :partial => 'shared/navbar_transactions', locals: { page_title: 'Transactions', atype: 'local', menu_name: 'Transactions' } %>
+<% end %>
+
+<%= content_for :content do %>
+  <div id="top-header">
+    <%= render :partial => 'shared/date_range_list' %>
+  </div>
+  <div id="txn-list">
+    <%= render :partial => 'shared/transaction_list' %>
+  </div>
+  <div id="entry-top" class="pg-entry">
+    <%= page_entries_info @transactions, :model => 'transactions' unless @transactions.blank? %>
+  </div>
+<% end %>

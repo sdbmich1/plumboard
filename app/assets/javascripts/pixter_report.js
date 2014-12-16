@@ -5,7 +5,12 @@ $(document).on("change", "#date_range_name", function(evt){
     if($('#date_range_name').length > 0) {
         var date_range = $(this).val();
         if (date_range.length > 0) {
-            var url = '/pixi_posts/pixter_report?date_range=' + date_range + '&pixter_id=' + pixter_id;
+            var url;
+            if (pixter_id === undefined) {
+                url = '/transactions?date_range=' + date_range;
+            } else {
+                url = '/pixi_posts/pixter_report?date_range=' + date_range + '&pixter_id=' + pixter_id;
+            }
             // process script
             processUrl(url);
         }

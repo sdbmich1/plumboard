@@ -677,5 +677,72 @@ feature "Transactions" do
       end
     end
   end
+
+  describe "Manage Transactions page without transactions" do
+    before do
+      page_setup user
+      visit transactions_path
+    end
+
+    it "should display 'No transactions found'", js: true do
+      page.should have_content 'No transactions found.'
+    end
+
+    it "should have a selector for date range", js: true do
+      page.should have_selector('#date_range_name', visible: true)
+    end
+
+    it "should have Export Options button", js: true do
+      page.should have_button 'Export Options'
+    end
+  end
+
+  describe "Manage Transactions page with transactions" do
+    before do
+      @user = FactoryGirl.create :pixi_user
+      @buyer = FactoryGirl.create(:pixi_user, first_name: 'Lucy', last_name: 'Smith', email: 'lucy.smith@lucy.com')
+      @seller = FactoryGirl.create(:pixi_user, first_name: 'Lucy', last_name: 'Burns', email: 'lucy.burns@lucy.com') 
+      @listing = FactoryGirl.create(:listing, title: 'Couch', seller_id: @user.id, price: 100)
+      @invoice = @seller.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id)
+      @txn = @user.transactions.create FactoryGirl.attributes_for(:transaction, transaction_type: 'invoice')
+      @invoice.transaction_id, @invoice.status = @txn.id, 'pending'
+      @invoice.save!
+      @txn.invoices.append(@invoice)
+      @txn.save!
+
+      page_setup user
+      visit transactions_path
+    end
+
+    it "should have table", js: true do
+      page.should have_content "Transaction Date"
+      page.should have_content "Item Title"
+      page.should have_content "Buyer"
+      page.should have_content "Seller"
+      page.should have_content "Price"
+      page.should have_content "Quantity"
+      page.should have_content "Buyer Total"
+      page.should have_content "Seller Total"
+    end
+
+    it "should display transaction", js: true do
+      page.should have_content short_date(@txn.updated_at)
+      page.should have_content @txn.pixi_title
+      page.should have_content @txn.buyer_name
+      page.should have_content @txn.seller_name
+      page.should have_content @txn.get_invoice.price
+      page.should have_content @txn.get_invoice.quantity
+      page.should have_content @txn.amt
+      page.should have_content @txn.get_invoice.amount - @txn.get_invoice.get_fee(true)
+    end
+
+    it "should have a selector for date range", js: true do
+      page.should have_selector('#date_range_name', visible: true)
+    end
+
+    it "should have Export Options button", js: true do
+      page.should have_button 'Export Options'
+    end
+  end
 end
 

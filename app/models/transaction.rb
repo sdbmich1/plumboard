@@ -5,7 +5,7 @@ class Transaction < ActiveRecord::Base
   attr_accessor :cvv, :card_number, :exp_month, :exp_year, :mobile_phone
   attr_accessible :address, :address2, :amt, :city, :code, :country, :credit_card_no, :description, :email, :first_name, 
   	:home_phone, :last_name, :payment_type, :promo_code, :state, :work_phone, :zip, :user_id, :confirmation_no, :token, :status,
-	:convenience_fee, :processing_fee, :transaction_type, :debit_token, :cvv, :card_number, :exp_month, :exp_year, :mobile_phone
+	:convenience_fee, :processing_fee, :transaction_type, :debit_token, :cvv, :card_number, :exp_month, :exp_year, :mobile_phone, :updated_at
 
   belongs_to :user
   has_many :invoices
@@ -117,23 +117,22 @@ class Transaction < ActiveRecord::Base
         self.status = 'pending' # set status
         save!  
 
- 	# submit order
+   	    # submit order
         listing.submit_order(self.id) unless self.errors.any?
       else
         # process credit card
-	if has_token? 
+        if has_token? 
           if process_transaction
-	    inv = listing.get_invoice(order["invoice_id"])
-
-	    # submit payment
-	    inv.submit_payment(self.id) if inv
-	  else
+            inv = listing.get_invoice(order["invoice_id"])
+            # submit payment
+            inv.submit_payment(self.id) if inv
+          else
             errors.add :base, "Transaction processing failed. Please re-enter."
-	    false
-	  end
-	else
-	  false
-	end
+            false
+          end
+        else
+          false
+        end
       end
     else
       false
@@ -247,9 +246,18 @@ class Transaction < ActiveRecord::Base
     includes(:transaction_details, :invoices => :listing, :user => [:pictures, :bank_accounts]).where(id: id).first
   end
 
+  def self.get_by_date start_date, end_date
+    where("updated_at >= ? AND updated_at <= ?", start_date, end_date)
+  end
+
   # set json string
   def as_json(options={})
     super(except: [:updated_at], 
       methods: [:pixi_title, :buyer_name, :seller_name, :txn_dt, :get_invoice, :get_invoice_listing]) 
+  end
+
+  def as_csv(options={})
+    { "Transaction Date" => updated_at.strftime("%F"), "Item Title" => pixi_title, "Buyer" => buyer_name, "Seller" => seller_name, "Price" => get_invoice.price,
+      "Quantity" => get_invoice.quantity, "Buyer Total" => amt, "Seller Total" => get_invoice.amount - get_invoice.get_fee(true) }
   end
 end

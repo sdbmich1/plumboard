@@ -27,7 +27,7 @@ $(document).on("change", "select[id*=category_id]", function(evt){
 });
 
 // paginate on click
-var pstr = "#inq-list .pagination a, #pendingOrder .pagination a, #post_form .pagination a, #comment-list .pagination a," +
+var pstr = "#inq-list .pagination a, #pendingOrder .pagination a, #post_form .pagination a, #comment-list .pagination a, #txn-list .pagination a" +
   "#post-list .pagination a, #user-list .pagination a, #inv-list .pagination a, #faq-list .pagination a, #pxp-list .pagination a, #pixi-list .pagination a";
 
 $(document).on("click", pstr, function(){

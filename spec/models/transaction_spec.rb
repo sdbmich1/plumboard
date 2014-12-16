@@ -391,8 +391,8 @@ describe Transaction do
   end
 
   describe 'has_amount?' do
-    before do
-      @txn = FactoryGirl.build :transaction, amt: 50
+    before do 
+     @txn = FactoryGirl.build :transaction, amt: 50
     end
 
     it { expect(@txn.has_amount?).to eq(true) }
@@ -427,6 +427,21 @@ describe Transaction do
       @listing.lat, @listing.lng = 35.1498, -90.0492
       @listing.save
       expect(@txn.txn_dt).to eq @txn.created_at
+    end
+  end
+
+  describe "get_by_date" do
+    before :each do
+      @txn = @user.transactions.create FactoryGirl.attributes_for(:transaction, transaction_type: 'invoice')
+    end
+
+    it "should get transactions in range" do
+      Transaction.get_by_date(DateTime.current - 2.days, DateTime.current).should_not be_empty
+      Transaction.get_by_date(DateTime.current - 2.days, DateTime.current + 1.days).should_not be_empty
+    end
+
+    it "should not get transactions out of range" do
+      Transaction.get_by_date(DateTime.current - 2.days, DateTime.current - 1.days).should be_empty
     end
   end
 end

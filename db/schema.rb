@@ -736,6 +736,7 @@ ActiveRecord::Schema.define(:version => 20141125015257) do
   add_index "transactions", ["code"], :name => "index_transactions_on_code"
   add_index "transactions", ["confirmation_no"], :name => "index_transactions_on_confirmation_no"
   add_index "transactions", ["transaction_type"], :name => "index_transactions_on_transaction_type"
+  add_index "transactions", ["updated_at"], :name => "index_transactions_on_updated_at"
   add_index "transactions", ["user_id"], :name => "index_transactions_on_user_id"
 
   create_table "user_interests", :force => true do |t|
