@@ -15,10 +15,10 @@
     </table>
   </div>
   <div id='accordion'>
-    <%= render partial: 'shared/post', collection: @posts.reorder('created_at ASC'), locals: { sentFlg: sentFlg } if @posts %>
+    <%= render partial: 'shared/post', collection: get_posts(conversation), locals: { sentFlg: sentFlg } %>
   </div>
   <div class='sm-top'>
-    <%= render partial: 'shared/reply', locals: { post: @post, sentFlg: sentFlg, conversation: conversation } unless conversation.system_msg? %>
+    <%= render partial: 'shared/reply', locals: { sentFlg: sentFlg, conversation: conversation } unless conversation.system_msg? %>
   </div>
 <% else %>
   <div class='span12 sm-top'>

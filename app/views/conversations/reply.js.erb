@@ -1,6 +1,6 @@
-<% if @post.errors.any? %>
+<% if @conversation.errors.any? %>
   $("#notice").hide(300);
-  $("#form_errors").html("<%= escape_javascript( render(partial: 'shared/error_messages', locals: {target: @post})) %>"); 
+  $("#form_errors").html("<%= escape_javascript( render(partial: 'shared/error_messages', locals: {target: @conversation})) %>"); 
 <% else %>
   $("#notice").html("<%= escape_javascript(flash[:notice])%>");
   $("#notice").show(300);
@@ -10,7 +10,7 @@
     goToUrl('/conversations', true);
   }
   else {
-    <%= render(:partial => 'shared/refresh_messages') %>
+    <%= render(:partial => 'shared/refresh_messages', locals: {conversation: @conversation}) %>
   }
 <% end %>
 

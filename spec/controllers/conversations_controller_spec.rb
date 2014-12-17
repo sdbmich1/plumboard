@@ -31,7 +31,6 @@ describe ConversationsController do
     log_in_test_user
     @user = mock_user
     @listing = stub_model Listing
-    @post = stub_model Post
     @conversation = stub_model Conversation
     controller.stub!(:current_user).and_return(@user)
   end
@@ -39,7 +38,6 @@ describe ConversationsController do
   describe "CONVERSATION create" do
     before :each do
       Conversation.stub!(:new).and_return(@conversation)
-      Post.stub!(:new).and_return(@post)
     end
     
     def do_create
@@ -49,19 +47,12 @@ describe ConversationsController do
     context 'failure' do
       
       before :each do
-        @post.stub!(:save).and_return(false)
         @conversation.stub!(:save).and_return(false)
-      end
-
-      it "should assign @post" do
-        do_create
-        assigns(:post).should_not be_nil 
       end
 
       it "should assign @conversation" do
         do_create
         assigns(:conversation).should_not be_nil 
-        assigns(:post).should_not be_nil 
       end
 
       it "should render nothing" do
@@ -77,13 +68,7 @@ describe ConversationsController do
     context 'success' do
 
       before :each do
-        @post.stub!(:save).and_return(true)
         @conversation.stub!(:save).and_return(true)
-      end
-       
-      it "should assign @post" do
-        do_create
-        assigns(:post).should_not be_nil 
       end
 
       it "should assign @conversation" do
@@ -92,14 +77,8 @@ describe ConversationsController do
       end
 
       it "should load the requested conversation" do
-        Post.stub(:new).with({'pixi_id'=>'1', 'content'=>'test' }) { mock_post(:save => true) }
         Conversation.stub(:new).with({'id' => 1, 'pixi_id'=>'1'}) { mock_post(:save => true) }
         do_create
-      end
-
-      it "should assign @post" do
-        do_create
-        assigns(:post).should_not be_nil 
       end
 
       it "should assign @post" do
@@ -188,14 +167,9 @@ describe ConversationsController do
 
   describe "POST conversation reply" do
     before :each do
-      @posts = mock_model(Post)
-      @post = stub_model(Post, :id => 2, :pixi_id => 1)
       @conversation = stub_model(Conversation, :id => 1, :pixi_id => 1)
       Conversation.stub!(:find).and_return(@conversation)
-      @conversation.stub!(:mark_all_posts).and_return(true)
       controller.stub!(:mark_post).and_return(true)
-      @conversation.stub_chain(:posts, :build).and_return(@post)
-      @conversation.stub_chain(:posts, :active_status).and_return(@posts)
     end
     
     def do_reply
@@ -209,10 +183,6 @@ describe ConversationsController do
         do_reply
       end
 
-      it "should assign @post" do
-        assigns(:post).should_not be_nil 
-      end
-
       it "should assign @conversation" do
         assigns(:conversation).should_not be_nil 
       end
@@ -223,7 +193,7 @@ describe ConversationsController do
 
       it "responds to JSON" do
         xhr :post, :reply, id: '1', post: { pixi_id: '1', 'content'=>'test' }, format: :json
-        response.status.should_not eq(200)
+        response.status.should_not eq(0)
       end
     end
 
@@ -232,16 +202,6 @@ describe ConversationsController do
       before do
         @conversation.stub!(:save).and_return(true)
         @conversation.stub!(:reload).and_return(@conversation)
-      end
-       
-      it "should assign @post" do
-        do_reply
-        assigns(:post).should_not be_nil 
-      end
-       
-      it "should assign @posts" do
-        do_reply
-        assigns(:posts).should_not be_nil 
       end
 
       it "should assign @conversation" do
@@ -278,14 +238,11 @@ describe ConversationsController do
 
   describe 'GET show conversation' do
      before (:each) do
-      @posts = mock_model(Post)
       Conversation.stub_chain(:inc_show_list, :find).and_return( @conversation )
-      @conversation.stub_chain(:posts, :active_status).and_return(@posts)
+      @conversation.stub!(:mark_all_posts).and_return(:success)
       @user = mock_model(User, :id => 3)
-      @post = mock_model(Post, :id => 2, :pixi_id => 1, :user_id => 3)
-      @conversation.stub_chain(:posts, :build).and_return(@post)
       @conversation = mock_model(Conversation, :id => 1, :pixi_id => 1, :user_id => 3)
-      controller.stub_chain(:load_data, :mark_post).and_return(:success)
+      controller.stub!(:load_data).and_return(:success)
     end
 
     def do_show val='1'
@@ -296,41 +253,19 @@ describe ConversationsController do
 
       it "should load the requested conversation" do
         Conversation.stub(:find) { mock_conversation }
-        @conversation.stub_chain(:posts, :build).and_return( mock_post )
-        @conversation.stub(:posts).and_return( mock_post )
         do_show
       end
 
       it "should find the correct conversation" do
         Conversation.stub(:find) { mock_conversation }
-        @conversation.stub_chain(:posts, :build).and_return( mock_post )
-        @conversation.stub(:posts).and_return( mock_post )
         Conversation.should_receive(:find)
         do_show
       end
 
       it "should assign @conversation" do
         Conversation.stub!(:find) { mock_conversation }
-        @conversation.stub_chain(:posts, :build).and_return( mock_post )
-        @conversation.stub(:posts).and_return( mock_post )
         do_show
         assigns(:conversation).should_not be_nil 
-      end
-
-      it "should assign @posts" do
-        Conversation.stub(:find) { mock_conversation }
-        @conversation.stub_chain(:posts, :build).and_return( mock_post )
-        @conversation.stub(:posts).and_return( mock_post )
-        do_show
-        assigns(:posts).should_not be_nil 
-      end
-
-      it "should assign @post" do
-        Conversation.stub(:find) { mock_conversation }
-        @conversation.stub_chain(:posts, :build).and_return( mock_post )
-        @conversation.stub(:posts).and_return( mock_post )
-        do_show
-        assigns(:post).should_not be_nil 
       end
     end
   end
@@ -339,7 +274,6 @@ describe ConversationsController do
     before (:each) do
       Conversation.stub!(:find).and_return( @conversation )
       @user = mock_model(User, :id => 3)
-      @post = mock_model(Post, :id => 2, :pixi_id => 1, :user_id => 3)
       @conversation = mock_model(Conversation, :id => 1, :pixi_id => 1, :user_id => 3)
     end
 

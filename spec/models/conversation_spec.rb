@@ -438,4 +438,25 @@ describe Conversation do
       expect(@conversation.mark_all_posts(nil)).to be_false
     end
   end
+
+  describe "get_conv" do 
+    let(:msg) { "Test msg" }
+    
+    it "finds recipient as recipient" do
+      expect(Conversation.first.posts.count).to eq 1
+      expect(Conversation.get_conv @listing.pixi_id, @user.id, @recipient.id).not_to be_nil
+    end
+    
+    it "finds user as recipient" do
+      @post2 = @conversation.posts.create FactoryGirl.attributes_for :post, user_id: @recipient.id, recipient_id: @user.id, pixi_id: @listing.pixi_id
+      expect(Conversation.first.posts.where(pixi_id: @listing.pixi_id).count).to eq 2
+      expect(Conversation.first.posts.where('pixi_id = ? AND user_id = ?', @listing.pixi_id, @recipient.id).count).to eq 1
+      expect(Conversation.first.posts.where('pixi_id = ? AND recipient_id = ?', @listing.pixi_id, @user.id).count).to eq 1
+      expect(Conversation.get_conv(@listing.pixi_id, @recipient.id, @user.id)).not_to eq @post
+    end
+    
+    it "should not return true" do
+      expect(Conversation.get_conv nil, nil, nil).to be_nil
+    end
+  end
 end

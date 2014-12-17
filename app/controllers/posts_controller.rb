@@ -11,9 +11,7 @@ class PostsController < ApplicationController
   end
 
   def create
-    @conversation = Conversation.find(:first, :conditions => ["pixi_id = ? AND recipient_id = ? AND user_id = ? AND status = ?",
-                                      params[:post][:pixi_id], params[:post][:recipient_id], params[:post][:user_id], 'active']) rescue nil
-      
+    @conversation = Conversation.get_conv params[:post][:pixi_id], params[:post][:recipient_id], params[:post][:user_id]
     if @conversation
       @post = @conversation.posts.build params[:post]
       respond_with(@post) do |format|
@@ -44,7 +42,6 @@ class PostsController < ApplicationController
     else
       flash[:error] = "Post was not removed. Please try again."
     end
-    render :nothing => true
   end
 
   def mark_read
@@ -75,7 +72,6 @@ class PostsController < ApplicationController
   def set_redirect_path status='received'
     @conversation = @post.conversation.reload
     if @conversation && @conversation.active_post_count(@user) > 0 
-      @posts, @post = @conversation.posts.active_status(@user), @conversation.posts.build
       conversation_path(@conversation)
     else
       conversations_path(status: status)

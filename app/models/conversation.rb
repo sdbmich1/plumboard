@@ -144,6 +144,11 @@ class Conversation < ActiveRecord::Base
     includes(:posts => [:listing, {:user => :pictures}])
   end
 
+  # get the conversation
+  def self.get_conv pid, sendID, recvID
+    where("pixi_id = ? AND recipient_id = ? AND user_id = ? AND status = ?", pid, recvID, sendID, 'active').first rescue nil
+  end
+
   # sets convo status to 'removed'
   def self.remove_conv conv, user 
     if user.id == conv.user_id

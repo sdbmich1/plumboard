@@ -4,8 +4,6 @@ class ConversationsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :load_data, only: [:index, :reply, :show, :remove]
   before_filter :load_convo, only: [:reply, :destroy, :remove] 
-  after_filter :mark_post, only: [:show]
-  after_filter :load_posts, only: [:show]
   respond_to :html, :js, :xml, :json, :mobile
   layout :page_layout
 
@@ -16,7 +14,7 @@ class ConversationsController < ApplicationController
   def create
     @conversation = Conversation.new params[:conversation]
     respond_with(@conversation) do |format|
-      @post = @conversation.posts.build params[:post]
+      @conversation.posts.build params[:post]
       if @conversation.save
         format.json { render json: {conversation: @conversation} }
       else
@@ -40,22 +38,20 @@ class ConversationsController < ApplicationController
   end
 
   def reply 
-    if @conversation
-      respond_with(@conversation) do |format|
-        @post = @conversation.posts.build(params[:post])
-        if @conversation.save
-          @conversation = @conversation.reload
-	  load_posts
-          format.json { render json: {conversation: @conversation} }
-        else
-          format.json { render json: { errors: @conversation.errors.full_messages }, status: 422 }
-        end
+    respond_with(@conversation) do |format|
+      if @conversation.posts.create(params[:post])
+        @conversation = @conversation.reload
+        format.json { render json: {conversation: @conversation} }
+      else
+        format.json { render json: { errors: @conversation.errors.full_messages }, status: 422 }
       end
     end
   end
 
   def show
-    respond_with(@conversation = Conversation.inc_show_list.find(params[:id]))
+    @conversation = Conversation.inc_show_list.find(params[:id])
+    @conversation.mark_all_posts(@user) if @conversation
+    respond_with(@conversation)
   end
 
   private
@@ -68,16 +64,7 @@ class ConversationsController < ApplicationController
     @page, @per_page, @status = params[:page] || 1, params[:per_page] || 10, params[:status]
   end
 
-  def load_posts
-    @posts, @post = @conversation.posts.active_status(@user), @conversation.posts.build if @conversation
-  end
-
   def load_convo
     @conversation = Conversation.find(params[:id])
-  end
-
-  def mark_post
-    load_convo
-    @conversation.mark_all_posts(@user) if @conversation
   end
 end
