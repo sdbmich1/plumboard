@@ -38,7 +38,7 @@ describe PostsController do
   describe "POST create" do
     before :each do
       @conversation = stub_model Conversation
-      Conversation.stub!(:find).and_return(@conversation)
+      Conversation.stub!(:get_conv).and_return(@conversation)
       @conversation.stub_chain(:posts, :build).and_return(@post)
     end
     
