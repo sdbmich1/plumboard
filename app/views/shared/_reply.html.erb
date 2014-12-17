@@ -1,5 +1,6 @@
 <div class='span12 left-form no-left'>  
-  <%= form_for @post, url: reply_conversations_path(id: conversation), id: 'post-frm', method: :post, remote: true do |f| %> 
+  <%= form_for add_post(conversation), url: reply_conversations_path(id: conversation), id: 'post-frm', method: :post, remote: true, 
+    data: {validate: 'parsley'} do |f| %>
     <div id="notice" style="display:none"></div>
     <div id="form_errors">
       <%= render partial: 'shared/error_messages', :locals => { :target => f.object } %>
@@ -12,7 +13,7 @@
         display_cnt: 0 } %>
     </div>
     <div class="reply_form">
-      <%= f.text_area 'content', placeholder: 'Type here to reply...', id: 'reply_content', rows: "5" %>  
+      <%= f.text_area 'content', placeholder: 'Type here to reply...', id: 'reply_content', rows: "5", required: true %>  
       <%= f.submit 'Send', class: "btn btn-medium btn-primary submit-btn", id: 'reply-btn' %>
     </div>
   <% end %>

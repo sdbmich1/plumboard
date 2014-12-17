@@ -132,36 +132,21 @@ class Post < ActiveRecord::Base
     get_unread(usr).count rescue 0
   end
 
-  # get the conversation
-  def self.get_conv inv, send_model, recv_model
-    Conversation.where("pixi_id = ? AND recipient_id = ? AND user_id = ? AND status = ?",
-                       inv.pixi_id, recv_model.id, send_model.id, 'active').first rescue nil
-  end
-
   # add post for invoice creation or payment
   def self.add_post inv, listing, sender, recipient, msg, msgType=''
     if sender && recipient
 
       # find the corresponding conversation
-      conv = get_conv inv, recipient, sender
+      conv = Conversation.get_conv inv.pixi_id, recipient.id, sender.id
 
       # create new conversation if one doesn't already exist
       if conv.blank?
-        conv = get_conv inv, sender, recipient
+        conv = Conversation.get_conv inv.pixi_id, sender.id, recipient.id
         conv = listing.conversations.create pixi_id: listing.pixi_id, user_id: sender.id, recipient_id: recipient.id if conv.blank?
       end
 
       # new post
-      post = conv.posts.build recipient_id: recipient.id, user_id: sender.id, msg_type: msgType, pixi_id: conv.pixi_id
-
-      # set amount format
-      amt = "%0.2f" % inv.amount
-
-      #set content
-      post.content = msg + amt
-
-      # add post
-      post.save
+      conv.posts.create recipient_id: recipient.id, user_id: sender.id, msg_type: msgType, pixi_id: conv.pixi_id, content: msg + ("%0.2f" % inv.amount)
     else
       false
     end
@@ -235,18 +220,15 @@ class Post < ActiveRecord::Base
   # map messages to conversations if needed
   def self.map_posts_to_conversations
     Post.order.reverse_order.each do |post|
-      post.status = 'active'
-      post.recipient_status = 'active'
+      post.status = post.recipient_status = 'active'
       if post.conversation_id.nil?
     
         # finds if there is already an existing conversation for the post
-        conv = Conversation.find(:first, :conditions => ["pixi_id = ? AND recipient_id = ? AND user_id = ?",
-                                                     post.pixi_id, post.recipient_id, post.user_id]) rescue nil
+        conv = Conversation.get_conv post.pixi_id, post.recipient_id, post.user_id
 
         # finds if there is existing conversation with swapped recipient/user
         if conv.blank?
-          conv = Conversation.find(:first, :conditions => ["pixi_id = ? AND recipient_id = ? AND user_id = ?",
-                                                     post.pixi_id, post.user_id, post.recipient_id]) rescue nil
+          conv = Conversation.get_conv post.pixi_id, post.user_id, post.recipient_id
         end
 
         # create new conversation if one doesn't already exist
@@ -255,8 +237,7 @@ class Post < ActiveRecord::Base
             conv = listing.conversations.create pixi_id: post.pixi_id, user_id: post.user_id, recipient_id: post.recipient_id
 	  end
         elsif conv.status != 'active' || conv.recipient_status != 'active'
-          conv.status = 'active'
-          conv.recipient_status = 'active'
+          conv.status = conv.recipient_status = 'active'
           conv.save
         end
 
