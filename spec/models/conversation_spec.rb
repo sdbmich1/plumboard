@@ -444,7 +444,7 @@ describe Conversation do
     
     it "finds recipient as recipient" do
       expect(Conversation.first.posts.count).to eq 1
-      expect(Conversation.get_conv @listing.pixi_id, @user.id, @recipient.id).not_to be_nil
+      expect(Conversation.get_conv @listing.pixi_id, @recipient.id, @user.id).not_to be_nil
     end
     
     it "finds user as recipient" do
@@ -452,7 +452,7 @@ describe Conversation do
       expect(Conversation.first.posts.where(pixi_id: @listing.pixi_id).count).to eq 2
       expect(Conversation.first.posts.where('pixi_id = ? AND user_id = ?', @listing.pixi_id, @recipient.id).count).to eq 1
       expect(Conversation.first.posts.where('pixi_id = ? AND recipient_id = ?', @listing.pixi_id, @user.id).count).to eq 1
-      expect(Conversation.get_conv(@listing.pixi_id, @recipient.id, @user.id)).not_to eq @post
+      expect(Conversation.get_conv(@listing.pixi_id, @user.id, @recipient.id)).not_to eq @post
     end
     
     it "should not return true" do

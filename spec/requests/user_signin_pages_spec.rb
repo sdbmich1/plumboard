@@ -5,12 +5,6 @@ feature "UserSignins" do
   let(:site) { FactoryGirl.create :site }
   subject { page }
 
-  def user_login
-    fill_in "user_email", :with => @user.email
-    fill_in "pwd", :with => @user.password
-    click_button submit
-  end
-
   def invalid_login
     fill_in "user_email", :with => "notarealuser@example.com"
     fill_in "pwd", :with => "fakepassword"
@@ -52,7 +46,7 @@ feature "UserSignins" do
 
     it "signs in a registered user" do
       set_const 0
-      user_login
+      user_login @user
       expect(Listing.get_by_site(@loc, 1).size).to eq(1)
       expect(Listing.get_by_city(nil, @loc, 1).size).to eq(1)
       page.should have_content "Home"
@@ -60,7 +54,7 @@ feature "UserSignins" do
 
     it "signs in a registered user with local pixi home" do
       set_const 500
-      user_login
+      user_login @user
       page.should_not have_content "Home"
       page.should have_content "Pixis"
     end
@@ -164,7 +158,7 @@ feature "UserSignins" do
       end
 
       it "displays confirm message to a registered user" do
-        user_login
+        user_login @user
         page.should have_content("You have to confirm your account before continuing") 
       end
 
@@ -177,7 +171,7 @@ feature "UserSignins" do
     describe 'registered confirmed users' do
       before(:each) do
         @user = FactoryGirl.create :pixi_user, confirmed_at: Time.now 
-        user_login
+        user_login @user
       end
 
       it 'shows content' do
@@ -207,7 +201,7 @@ feature "UserSignins" do
     describe 'registered admin users' do
       before(:each) do
         @user = FactoryGirl.create :admin, confirmed_at: Time.now 
-        user_login
+        user_login @user
       end
 
       it 'shows content' do
@@ -231,7 +225,7 @@ feature "UserSignins" do
     describe 'registered editor users' do
       before(:each) do
         @user = FactoryGirl.create :editor, confirmed_at: Time.now 
-        user_login
+        user_login @user
       end
 
       it 'shows content' do
@@ -257,7 +251,7 @@ feature "UserSignins" do
     describe 'registered pixter users' do
       before(:each) do
         @user = FactoryGirl.create :pixter, confirmed_at: Time.now 
-        user_login
+        user_login @user
       end
 
       it 'shows content' do
@@ -284,7 +278,7 @@ feature "UserSignins" do
     describe "displays my accounts link" do
       before(:each) do
         @user = FactoryGirl.create :subscriber, confirmed_at: Time.now 
-        user_login
+        user_login @user
         FactoryGirl.create(:listing, seller_id: @user.id)
 	@account = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
 	visit root_path
@@ -299,7 +293,7 @@ feature "UserSignins" do
     describe 'registered subscriber users' do
       before(:each) do
         @user = FactoryGirl.create :subscriber, confirmed_at: Time.now 
-        user_login
+        user_login @user
       end
 
       it 'shows content' do

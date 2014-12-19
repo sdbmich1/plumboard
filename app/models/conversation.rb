@@ -1,8 +1,9 @@
 class Conversation < ActiveRecord::Base
-  attr_accessible :pixi_id, :recipient_id, :user_id, :status, :recipient_status
+  attr_accessible :pixi_id, :recipient_id, :user_id, :status, :recipient_status, :posts_attributes
 
   before_create :activate
-  has_many :posts
+  has_many :posts, :inverse_of => :conversation
+  accepts_nested_attributes_for :posts, :allow_destroy => true
 
   belongs_to :user
   belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id"
@@ -145,7 +146,7 @@ class Conversation < ActiveRecord::Base
   end
 
   # get the conversation
-  def self.get_conv pid, sendID, recvID
+  def self.get_conv pid, recvID, sendID
     where("pixi_id = ? AND recipient_id = ? AND user_id = ? AND status = ?", pid, recvID, sendID, 'active').first rescue nil
   end
 

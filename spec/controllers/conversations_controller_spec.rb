@@ -41,7 +41,7 @@ describe ConversationsController do
     end
     
     def do_create
-      post :create
+      xhr :post, :create, :conversation => { pixi_id: '1', user_id: '1', recipient_id: '2', :post => { pixi_id: '1', user_id: '1', 'content'=>'test' } }
     end
 
     context 'failure' do
@@ -69,6 +69,7 @@ describe ConversationsController do
 
       before :each do
         @conversation.stub!(:save).and_return(true)
+        controller.stub!(:reload_data).and_return(true)
       end
 
       it "should assign @conversation" do
@@ -79,11 +80,6 @@ describe ConversationsController do
       it "should load the requested conversation" do
         Conversation.stub(:new).with({'id' => 1, 'pixi_id'=>'1'}) { mock_post(:save => true) }
         do_create
-      end
-
-      it "should assign @post" do
-        do_create
-        assigns(:conversation).should_not be_nil 
       end
 
       it "should change conversation count" do
