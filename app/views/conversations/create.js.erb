@@ -2,10 +2,10 @@
   $("#form_errors").html("<%= escape_javascript( render(partial: 'shared/error_messages', locals: {target: @conversation})) %>");
   $("#flash_notice").hide(300);
 <% else %>
-  var url = '/listings/' + "<%= params[:post][:pixi_id] %>"
 
   // check for mobile
   if($('#seller-post').length > 0) {
+    var url = '/listings/' + "<%= @conversation.listing.pixi_id %>"
     goToUrl(url, true);
     uiLoading(false);
   }

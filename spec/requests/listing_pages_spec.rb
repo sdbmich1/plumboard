@@ -88,6 +88,7 @@ feature "Listings" do
 	  sleep 5
           page.should_not have_button 'Want'
           page.should have_content 'Want'
+          page.should have_content 'Successfully sent message to seller'
       }.to change(Post,:count).by(1)
 
       expect(Conversation.count).to eql(1)
