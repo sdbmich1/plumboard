@@ -4,7 +4,7 @@ module PostsHelper
   def setup_post(listing)
 
     # create new conversation
-    conv = listing.conversations.create pixi_id: listing.pixi_id, user_id: @user.id, recipient_id: listing.seller_id
+    conv = listing.conversations.build user_id: @user.id, recipient_id: listing.seller_id
 
     # new post
     add_post conv

@@ -14,8 +14,8 @@ class ConversationsController < ApplicationController
   def create
     @conversation = Conversation.new params[:conversation]
     respond_with(@conversation) do |format|
-      @conversation.posts.build params[:post]
       if @conversation.save
+        reload_data params[:conversation][:pixi_id]
         format.json { render json: {conversation: @conversation} }
       else
         format.json { render json: { errors: @conversation.errors.full_messages }, status: 422 }
@@ -66,5 +66,11 @@ class ConversationsController < ApplicationController
 
   def load_convo
     @conversation = Conversation.find(params[:id])
+  end
+
+  def reload_data pid
+    @listing = Listing.find_pixi pid
+    @comments = @listing.comments.paginate page: @page, per_page: PIXI_COMMENTS if @listing
+    @user.pixi_wants.create(pixi_id: pid) # add to user's wanted list
   end
 end

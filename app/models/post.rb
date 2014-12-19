@@ -13,15 +13,11 @@ class Post < ActiveRecord::Base
   belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id"
   belongs_to :recipient, class_name: 'User', foreign_key: :recipient_id
   belongs_to :invoice, foreign_key: 'pixi_id', primary_key: 'pixi_id'
-  belongs_to :conversation
+  belongs_to :conversation, :inverse_of => :posts
 
-  validates :conversation_id, :presence => true
-  validates :content, :presence => true 
-  validates :user_id, :presence => true
-  validates :pixi_id, :presence => true
-  validates :recipient_id, :presence => true
+  validates_presence_of :conversation, :content, :user_id, :pixi_id, :recipient_id
 
-  default_scope order: 'posts.created_at DESC'
+  # default_scope order: 'posts.created_at DESC'
 
   # set active status
   def activate

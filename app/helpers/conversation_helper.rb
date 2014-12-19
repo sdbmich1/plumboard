@@ -1,5 +1,12 @@
 module ConversationHelper
 
+  # add new conversation for listing
+  def setup_conversation(listing)
+    conv = Conversation.new
+    conv.posts.build
+    conv
+  end
+
   # set font weight based on message status
   def set_font_weight model
     model.any_unread?(@user) && @status == 'received' ? 'font-bold' : '' rescue ''

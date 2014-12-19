@@ -13,13 +13,7 @@ feature "Listings" do
     site_id: site.id) }
   let(:pixi_post_listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, 
     pixan_id: pixter.id, site_id: site.id) }
-
-  
-  def user_login
-    fill_in "user_email", :with => user.email
-    fill_in "pwd", :with => user.password
-    click_button "Sign in"
-  end
+  let(:submit) { "Want" }
 
   def set_site_id
     page.execute_script %Q{ $('#site_id').val("#{@site.id}") }
@@ -74,7 +68,7 @@ feature "Listings" do
       }.not_to change(Comment,:count).by(1)
       page.should have_content 'Sign in'
       sleep 2;
-      user_login
+      user_login user
       page.should have_content pixi_post_listing.nice_title
     end
   end
@@ -88,19 +82,15 @@ feature "Listings" do
 
     it "Contacts a seller", js: true do
       expect{
-          page.should have_link 'Want'
+          page.should have_button 'Want'
           page.should have_link 'Cool'
-          page.find('#want-btn').click
-	  # page.execute_script("$('#post_form').toggle();")
-          page.should have_selector('#contact_content', visible: true) 
-      	  fill_in 'contact_content', with: "I'm love this pixi. Please contact me.\n"
-	  sleep 3
-          page.should_not have_link 'Want'
+	  click_valid_ok
+	  sleep 5
+          page.should_not have_button 'Want'
           page.should have_content 'Want'
       }.to change(Post,:count).by(1)
 
-      expect(Conversation.count).to eql(2)
-
+      expect(Conversation.count).to eql(1)
       expect{
       	  fill_in 'comment_content', with: "Great pixi. I highly recommend it.\n" 
 	  sleep 3
