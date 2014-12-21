@@ -153,7 +153,7 @@ module ListingsHelper
 
   # set path based on signed in status
   def set_want_path pid
-    signed_in? ? '#' : posts_path(id: pid)
+    signed_in? ? '#' : conversations_path(id: pid)
   end
 
   # set want id based on signed in status
