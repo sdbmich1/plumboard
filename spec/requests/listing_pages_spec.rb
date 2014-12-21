@@ -20,6 +20,7 @@ feature "Listings" do
   end
   
   def pixi_edit_access listing
+    page.should have_content listing.category_name
     page.should have_content "Posted By: #{listing.seller_name}"
     page.should have_link 'Want', href: '#'
     page.should have_link 'Cool'
@@ -105,9 +106,10 @@ feature "Listings" do
      
     it "does not contact a seller", js: true do
       expect{
-          page.find('#want-btn').click
-          page.should have_selector('#contact_content', visible: true) 
-	  fill_in 'contact_content', with: "\n"
+          click_submit_cancel
+          page.should have_button 'Want'
+          page.should_not have_content 'Want'
+          page.should_not have_content 'Successfully sent message to seller'
       }.not_to change(Post,:count).by(1)
     end
 
@@ -130,12 +132,6 @@ feature "Listings" do
           page.should have_link 'Unsave'
       }.to change(SavedListing,:count).by(1)
 
-      page.should have_content listing.nice_title
-    end
-
-    it "clicks on category by site" do
-      click_link listing.category_name
-      page.should have_content 'Pixis'
       page.should have_content listing.nice_title
     end
   end
