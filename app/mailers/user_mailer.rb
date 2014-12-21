@@ -84,8 +84,7 @@ class UserMailer < ActionMailer::Base
 
   # send interest notices to members
   def send_interest want
-    @want = want
-    @listing = @want.listing
+    @want, @listing = want, want.listing
 
     # set logo
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
@@ -102,7 +101,7 @@ class UserMailer < ActionMailer::Base
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     # set message details
-    mail(:to => "#{listing.seller_email}", :subject => "Pixi #{approve_type(listing)}: #{listing.title} ") 
+    mail(:to => "#{listing.seller_email}", :subject => env_check + ' ' + "Pixi #{approve_type(listing)}: #{listing.title} ") 
   end
 
   # send denial notices to members
@@ -113,7 +112,7 @@ class UserMailer < ActionMailer::Base
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     # set message details
-    mail(:to => "#{listing.seller_email}", :subject => "Pixi Denied: #{listing.title} ") 
+    mail(:to => "#{listing.seller_email}", :subject => env_check + ' ' + "Pixi Denied: #{listing.title} ") 
   end
 
   # send confirm message to new members

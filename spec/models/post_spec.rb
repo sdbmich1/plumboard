@@ -306,12 +306,19 @@ describe Post do
     end
   end
 
+  def sys_msg model, val
+    model.msg_type = val
+    expect(model.system_msg?).not_to be_nil
+  end
+
   describe "system_msg?" do 
     it { expect(@post.system_msg?).to be_nil } 
 
     it "returns true" do 
-      @post.msg_type = 'approve' 
-      expect(@post.system_msg?).not_to be_nil
+      sys_msg @post, 'approve'
+      sys_msg @post, 'repost'
+      sys_msg @post, 'deny'
+      sys_msg @post, 'system'
     end
   end
 
