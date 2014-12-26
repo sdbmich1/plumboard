@@ -128,8 +128,8 @@ module ApplicationHelper
   end
   
   # build array for quantity selection dropdown
-  def get_ary
-    (1..99).inject([]){|x,y| x << y}
+  def get_ary val=99
+    (1..val).inject([]){|x,y| x << y}
   end
 
   # set numeric display

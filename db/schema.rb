@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141208174149) do
+ActiveRecord::Schema.define(:version => 20141225001629) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -107,8 +107,9 @@ ActiveRecord::Schema.define(:version => 20141208174149) do
     t.string   "code"
     t.string   "status"
     t.string   "hide"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+    t.string   "description"
   end
 
   create_table "contacts", :force => true do |t|
@@ -285,8 +286,8 @@ ActiveRecord::Schema.define(:version => 20141208174149) do
     t.float    "price"
     t.string   "show_alias_flg"
     t.string   "show_phone_flg"
-    t.datetime "created_at",       :null => false
-    t.datetime "updated_at",       :null => false
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
     t.string   "alias_name"
     t.datetime "start_date"
     t.integer  "site_id"
@@ -310,9 +311,17 @@ ActiveRecord::Schema.define(:version => 20141208174149) do
     t.boolean  "delta"
     t.string   "event_type_code"
     t.boolean  "repost_flg"
+    t.string   "condition_type_code"
+    t.string   "color"
+    t.integer  "quantity"
+    t.integer  "mileage"
+    t.string   "other_id"
+    t.string   "item_type"
+    t.string   "item_size"
   end
 
   add_index "listings", ["category_id"], :name => "index_listings_on_category_id"
+  add_index "listings", ["condition_type_code"], :name => "index_listings_on_condition_type_code"
   add_index "listings", ["end_date", "start_date"], :name => "index_listings_on_end_date_and_start_date"
   add_index "listings", ["event_start_date", "event_end_date"], :name => "index_listings_on_event_start_date_and_event_end_date"
   add_index "listings", ["event_type_code"], :name => "index_listings_on_event_type_code"
@@ -668,8 +677,8 @@ ActiveRecord::Schema.define(:version => 20141208174149) do
     t.float    "price"
     t.string   "show_alias_flg"
     t.string   "show_phone_flg"
-    t.datetime "created_at",       :null => false
-    t.datetime "updated_at",       :null => false
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
     t.string   "pixi_id"
     t.string   "parent_pixi_id"
     t.string   "edited_by"
@@ -689,8 +698,16 @@ ActiveRecord::Schema.define(:version => 20141208174149) do
     t.string   "event_type_code"
     t.boolean  "delta"
     t.boolean  "repost_flg"
+    t.string   "condition_type_code"
+    t.string   "color"
+    t.integer  "quantity"
+    t.integer  "mileage"
+    t.string   "other_id"
+    t.string   "item_type"
+    t.string   "item_size"
   end
 
+  add_index "temp_listings", ["condition_type_code"], :name => "index_temp_listings_on_condition_type_code"
   add_index "temp_listings", ["pixi_id"], :name => "index_temp_listings_on_pixi_id", :unique => true
   add_index "temp_listings", ["status"], :name => "index_temp_listings_on_status"
 

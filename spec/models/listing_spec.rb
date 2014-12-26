@@ -1,4 +1,4 @@
- require 'spec_helper'
+require 'spec_helper'
 
 describe Listing do
   before(:each) do
@@ -8,6 +8,10 @@ describe Listing do
   end
 
   subject { @listing }
+  
+  # describe "testing attributes" do
+  #  it_behaves_like "an Listing class", @listing
+  # end
 
   it { should respond_to(:title) }
   it { should respond_to(:description) }
@@ -39,6 +43,13 @@ describe Listing do
   it { should respond_to(:event_type_code) }
   it { should respond_to(:explanation) }
   it { should respond_to(:repost_flg) }
+  it { should respond_to(:quantity) }
+  it { should respond_to(:condition_type_code) }
+  it { should respond_to(:color) }
+  it { should respond_to(:other_id) }
+  it { should respond_to(:mileage) }
+  it { should respond_to(:item_type) }
+  it { should respond_to(:item_size) }
 
   it { should respond_to(:user) }
   it { should respond_to(:site) }
@@ -53,6 +64,8 @@ describe Listing do
   it { should respond_to(:job_type) }
   it { should respond_to(:event_type) }
   it { should belong_to(:event_type).with_foreign_key('event_type_code') }
+  it { should respond_to(:condition_type) }
+  it { should belong_to(:condition_type).with_foreign_key('condition_type_code') }
   it { should respond_to(:comments) }
   it { should respond_to(:pixi_likes) }
   it { should have_many(:pixi_likes).with_foreign_key('pixi_id') }
@@ -347,16 +360,14 @@ describe Listing do
 
   describe "should find correct category name" do 
     it { @listing.category_name.should == 'Foo Bar' } 
-  end
-
-  describe "should not find correct category name" do 
-    before { @listing.category_id = 100 }
-    it { @listing.category_name.should be_nil } 
+    it "should not find correct category name" do 
+      @listing.category_id = 100 
+      @listing.category_name.should be_nil  
+    end
   end
 
   describe "seller name" do 
     it { expect(@listing.seller_name).to eq(@user.name) } 
-
     it "does not find seller name" do 
       @listing.seller_id = 100 
       expect(@listing.seller_name).not_to eq(@user.name)
@@ -365,7 +376,6 @@ describe Listing do
 
   describe "seller email" do 
     it { expect(@listing.seller_email).to eq(@user.email) } 
-
     it "does not find seller email" do 
       @listing.seller_id = 100 
       expect(@listing.seller_email).not_to eq(@user.email)
@@ -374,7 +384,6 @@ describe Listing do
 
   describe "seller photo" do 
     it { @listing.seller_photo.should_not be_nil } 
-
     it 'does not return seller photo' do 
       @listing.seller_id = 100 
       @listing.seller_photo.should be_nil  
@@ -383,11 +392,19 @@ describe Listing do
 
   describe "seller rating count" do 
     it { @listing.seller_rating_count.should == 0 } 
-
     it 'returns seller rating count' do 
       @buyer = create(:pixi_user)
       @rating = @buyer.ratings.create FactoryGirl.attributes_for :rating, seller_id: @user.id, pixi_id: @listing.id
       expect(@listing.seller_rating_count).to eq(1)
+    end
+  end
+
+  describe "condition" do 
+    before { create :condition_type, code: 'N' }
+    it { expect(@listing.condition).to be_nil } 
+    it "finds condition" do 
+      @listing.condition_type_code = 'N' 
+      expect(@listing.condition).not_to be_nil
     end
   end
 
@@ -711,38 +728,58 @@ describe Listing do
     end
   end
 
+  def check_cat_type model, val, flg=false
+    if flg
+      @cat = FactoryGirl.create(:category, name: 'Test Type', category_type_code: 'event', pixi_type: 'premium') 
+      model.category_id = @cat.id
+    end
+    model.is_category_type?(val)
+  end
+
+  describe '.is_category_type?' do
+    it { check_cat_type(@listing, 'event').should be_false }
+    it "is an category type" do
+      check_cat_type(@listing, 'event', true).should be_true
+      check_cat_type(@listing, ['service', 'sales', 'event'], true).should be_true
+      check_cat_type(@listing, %w(service sales event), true).should be_true
+    end
+  end
+
+  describe '.has_status?' do
+    it { @listing.has_status?('').should be_false }
+    it "return true" do
+      @listing.has_status?('active').should be_true
+      @listing.has_status?(['sold', 'removed','active']).should be_true
+    end
+  end
+
   describe '.event?' do
-    before do
-      @cat = FactoryGirl.create(:category, name: 'Event', category_type_code: 'event', pixi_type: 'premium') 
-    end
-
-    it "is not an event" do
-      @listing.event?.should be_false
-    end
-
+    it { @listing.event?.should be_false }
     it "is an event" do
+      @cat = FactoryGirl.create(:category, name: 'Event', category_type_code: 'event', pixi_type: 'premium') 
       @listing.category_id = @cat.id
       @listing.event?.should be_true
     end
   end
 
   describe '.has_year?' do
-    before do
-      @cat = FactoryGirl.create(:category, name: 'Automotive', category_type_code: 'asset', pixi_type: 'premium') 
+    it { @listing.has_year?.should be_false }
+
+    it "when it's an asset" do
+      @cat = FactoryGirl.create(:category, name: 'Homes', category_type_code: 'asset', pixi_type: 'premium') 
+      @listing.category_id = @cat.id
+      @listing.has_year?.should be_true 
     end
 
-    it "does not have a year" do
-      @listing.has_year?.should be_false 
-    end
-
-    it "has a year" do
+    it "when it's an vehicle" do
+      @cat = FactoryGirl.create(:category, name: 'Homes', category_type_code: 'vehicle', pixi_type: 'premium') 
       @listing.category_id = @cat.id
       @listing.has_year?.should be_true 
     end
   end
 
   describe '.job?' do
-    before do
+    before :each, run: true do
       @cat = FactoryGirl.create(:category, name: 'Jobs', category_type_code: 'employment', pixi_type: 'premium') 
     end
 
@@ -750,17 +787,17 @@ describe Listing do
       @listing.job?.should be_false 
     end
 
-    it "is a job" do
+    it "is a job", run: true do
       @listing.category_id = @cat.id
       @listing.job?.should be_true 
     end
 
-    it "is not valid" do
+    it "is not valid", run: true  do
       @listing.category_id = @cat.id
       @listing.should_not be_valid
     end
 
-    it "is valid" do
+    it "is valid", run: true do
       create :job_type
       @listing.category_id = @cat.id
       @listing.job_type_code = 'CT'

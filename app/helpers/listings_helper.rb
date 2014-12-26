@@ -110,31 +110,31 @@ module ListingsHelper
   end
    
   # set absolute url for current pixi
-  def get_url
-    Rails.application.routes.url_helpers.listing_url(@listing, :host => get_host) 
+  def get_url listing
+    Rails.application.routes.url_helpers.listing_url(listing, :host => get_host) 
   end
 
-  def get_photo
-    @listing.photo_url
+  def get_photo listing
+    listing.photo_url
   end
 
   # set string to share content on pinterest
-  def pin_share
-    "//www.pinterest.com/pin/create/button/?url=" + get_url + "&media=" + get_photo + "&description=Check out this pixi on Pixiboard! " +
-       @listing.nice_title
+  def pin_share listing
+    "//www.pinterest.com/pin/create/button/?url=" + get_url(listing) + "&media=" + get_photo(listing) + 
+    "&description=Check out this pixi on Pixiboard! " + listing.nice_title
   end
 
   # set string to share content on twitter
-  def tweet_share
-    "https://twitter.com/share?url=" + get_url # https%3A%2F%2Fdev.twitter.com%2Fpages%2Ftweet-button
+  def tweet_share listing
+    "https://twitter.com/share?url=" + get_url(listing) # https%3A%2F%2Fdev.twitter.com%2Fpages%2Ftweet-button
   end
 
   # set string to share content on facebook
-  def fb_share
+  def fb_share listing
     'https://www.facebook.com/dialog/feed?app_id=' + API_KEYS['facebook']['api_key'] + 
     '&display=popup&caption=Check out this pixi on Pixiboard!' +
-    '&link=' + get_url + '&redirect_uri=' + get_url + 
-    '&picture=' + get_photo + '&name=' + @listing.nice_title + '&description=' + @listing.description
+    '&link=' + get_url(listing) + '&redirect_uri=' + get_url(listing) + 
+    '&picture=' + get_photo(listing) + '&name=' + listing.nice_title + '&description=' + listing.description
   end
 
   # set path based on like existance and type 
@@ -188,7 +188,7 @@ module ListingsHelper
   # check if panel needs to be displayed
   def show_metric_panel? model
     if controller_name == 'listings'
-      (model.active? || model.sold?) && model.seller?(@user)
+      (model.has_status? %w(active sold)) && model.seller?(@user)
     else
       false
     end
@@ -254,11 +254,16 @@ module ListingsHelper
 
   # check repost status
   def repost? listing
-    (listing.sold? || listing.expired? || listing.removed?) && (@user.is_admin? || (@user.id == listing.seller_id))
+    (expired_or_sold? listing) && (@user.is_admin? || (@user.id == listing.seller_id))
   end
 
   # check for expired or sold status
   def expired_or_sold? listing
-    listing.sold? || listing.expired? || listing.removed? 
+    listing.has_status? %w(sold expired removed)
+  end
+
+  # check for year
+  def has_year? listing
+    listing.has_year? && listing.year_built
   end
 end

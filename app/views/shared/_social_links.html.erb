@@ -1,11 +1,11 @@
 <div id='soc-panel' class='span1 sm-top'>
 <ul id='social-links'>
-  <li><%= link_to image_tag('facebook_icon.png', class: 'social-img'), fb_share, class: 'pixi-link', id: 'fb-link', title: 'Share on Facebook',
+  <li><%= link_to image_tag('facebook_icon.png', class: 'social-img'), fb_share(listing), class: 'pixi-link', id: 'fb-link', title: 'Share on Facebook',
     target: :blank %></li>
-  <li><%= link_to image_tag('twitter_icon.png', class: 'social-img'), tweet_share, class: 'pixi-link', id: 'tw-link', title: 'Share on Twitter',
+  <li><%= link_to image_tag('twitter_icon.png', class: 'social-img'), tweet_share(listing), class: 'pixi-link', id: 'tw-link', title: 'Share on Twitter',
     target: :blank %></li>
-  <li><%= link_to image_tag('pinterest_icon.png', class: 'social-img'), pin_share, class: 'pixi-link', id: 'pin-link', title: 'Share on Pinterest',
-    target: :blank %>
+  <li><%= link_to image_tag('pinterest_icon.png', class: 'social-img'), pin_share(listing), class: 'pixi-link', id: 'pin-link', i
+    title: 'Share on Pinterest', target: :blank %>
   </li>
 </ul>
 </div>

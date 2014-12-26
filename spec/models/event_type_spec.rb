@@ -20,26 +20,12 @@ describe EventType do
     it { should have_many(:listings).with_foreign_key('event_type_code') }
     it { should have_many(:temp_listings).with_foreign_key('event_type_code') }
 
-    
-    describe "load_event_types" do
-        before do
-            load File.expand_path("../../../lib/tasks/import_csv.rake", __FILE__)
-            Rake::Task.define_task(:environment)
-        end
-        
-        it "should call load_event_types" do
-            Rake::Task["load_event_types"].invoke
-            expect !(EventType.first.nil?)
-        end
-     end
-        
      describe '.event_type' do
         before do
             @etype = FactoryGirl.create(:event_type, code: 'party')
             @listing1 = FactoryGirl.create(:listing)
             @listing1.category_id = 'event'
             @listing1.event_type_code = 'party'
-                
         end
         
         it "should be an event" do

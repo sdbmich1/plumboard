@@ -17,7 +17,8 @@ class ListingParent < ActiveRecord::Base
   attr_accessible :buyer_id, :category_id, :description, :title, :seller_id, :status, :price, :show_alias_flg, :show_phone_flg, :alias_name,
   	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id, :year_built, :pixan_id, 
 	:job_type_code, :event_type_code, :edited_by, :edited_dt, :post_ip, :lng, :lat, :event_start_date, :event_end_date, :compensation,
-	:event_start_time, :event_end_time, :explanation, :contacts_attributes, :repost_flg
+	:event_start_time, :event_end_time, :explanation, :contacts_attributes, :repost_flg, :mileage, :other_id, :condition_type_code,
+	:color, :quantity, :item_type, :item_size
 
   belongs_to :user, foreign_key: :seller_id
   belongs_to :site
@@ -25,6 +26,7 @@ class ListingParent < ActiveRecord::Base
   belongs_to :transaction
   belongs_to :job_type, primary_key: 'code', foreign_key: 'job_type_code'
   belongs_to :event_type, primary_key: 'code', foreign_key: 'event_type_code'
+  belongs_to :condition_type, primary_key: 'code', foreign_key: 'condition_type_code'
 
   has_many :pictures, :as => :imageable, :dependent => :destroy
   accepts_nested_attributes_for :pictures, :allow_destroy => true
@@ -33,11 +35,7 @@ class ListingParent < ActiveRecord::Base
   accepts_nested_attributes_for :contacts, :allow_destroy => true
 
   validates :title, :presence => true, :length => { :maximum => 80 }
-  validates :description, :presence => true
-  validates :seller_id, :presence => true
-  validates :site_id, :presence => true
-  validates :start_date, :presence => true
-  validates :category_id, :presence => true
+  validates_presence_of :seller_id, :site_id, :start_date, :category_id, :description
   validates :job_type_code, :presence => true, if: :job?
   validates :event_type_code, :presence => true, if: :event?
   validates :price, allow_blank: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
@@ -59,14 +57,29 @@ class ListingParent < ActiveRecord::Base
     paginate page: pg, per_page: MIN_BOARD_AMT
   end
 
+  # check if pixi is a job
+  def job?
+    is_category_type? 'employment'
+  end
+
   # check if pixi is an event
   def event?
-    category.category_type_code == 'event' rescue nil
+    is_category_type? 'event'
+  end
+
+  # check if pixi is a given category type
+  def is_category_type? val
+    val.include? category.category_type_code rescue false
+  end
+
+  # check if pixi has a given status
+  def has_status? val
+    val.include? status rescue false
   end
 
   # check if pixi can have a year
   def has_year?
-    category.category_type_code == 'asset' rescue nil
+    is_category_type? %w(asset vehicle)
   end
 
   # check if event start date exists
@@ -235,6 +248,11 @@ class ListingParent < ActiveRecord::Base
     site.name rescue nil
   end
 
+  # get condition
+  def condition
+    condition_type.description rescue nil
+  end
+
   # get seller name for a listing
   def seller_name
     alias? ? alias_name : user.name rescue nil
@@ -293,7 +311,7 @@ class ListingParent < ActiveRecord::Base
 
   # set end date to x days after start to denote when listing is no longer displayed on network
   def set_end_date
-    self.end_date = self.start_date + PIXI_DAYS.days
+    self.end_date = self.start_date + PIXI_DAYS.days rescue nil
   end
 
   # get number of sites where pixi is posted
@@ -309,11 +327,6 @@ class ListingParent < ActiveRecord::Base
   # check for premium categories
   def premium?
     category.premium? rescue nil
-  end
-
-  # check if pixi is a job
-  def job?
-    category.category_type_code == 'employment' rescue nil
   end
 
   # delete selected photo

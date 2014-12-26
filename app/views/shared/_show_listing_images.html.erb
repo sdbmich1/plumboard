@@ -1,7 +1,6 @@
-      <% cache cache_key_for_pixi_page(listing, 'photos') do %>
-        <div id='item-pix' class="span5 no-left mtop mbot">
-          <%= render partial: 'shared/photos', locals: {model: listing, file_name: "", psize: '120x120'} %>
-        </div>
-        <%= render partial: 'shared/social_links' unless !listing.active? %>
-      <% end %>
-
+<% cache cache_key_for_pixi_page(listing, 'photos') do %>
+  <div id='item-pix' class="span5 no-left mtop mbot">
+    <%= render partial: 'shared/photos', locals: {model: listing, file_name: "", psize: '120x120'} %>
+  </div>
+  <%= render partial: 'shared/social_links', locals: {model: listing} unless !listing.active? %>
+<% end %>

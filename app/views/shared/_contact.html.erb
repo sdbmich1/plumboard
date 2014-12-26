@@ -18,5 +18,5 @@
          required: true %>  
     </div>
   <% end %>
-  <%= f.submit 'Want', confirm: want_msg, class: 'btn btn-primary signin-btn width100', title: want_msg, data: {disable_with: "Sending..."} %>
+  <%= f.submit 'Want', confirm: want_msg, id: 'send-want-btn', class: 'btn btn-primary signin-btn width100', title: want_msg, data: {disable_with: "Sending..."} %>
 <% end %>

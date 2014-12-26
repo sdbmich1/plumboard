@@ -115,6 +115,10 @@
     page.driver.browser.switch_to.alert.accept
   end
 
+  def click_cancel
+    page.driver.browser.switch_to.alert.dismiss
+  end
+
   def click_cancel_cancel
     click_link 'Cancel'; sleep 1 
     page.driver.browser.switch_to.alert.dismiss
@@ -124,9 +128,39 @@
     click_button submit; sleep 1 
     page.driver.browser.switch_to.alert.dismiss
   end
+
+  def click_remove_ok
+    click_link 'Remove'
+    page.driver.browser.switch_to.alert.accept
+  end
+	                  
+  def click_remove_cancel
+    click_link 'Remove'
+    page.driver.browser.switch_to.alert.dismiss
+  end
   
   def user_login usr
     fill_in "user_email", :with => usr.email
     fill_in "pwd", :with => usr.password
     click_button "Sign in"
+  end
+
+  def check_page_expectations str_arr, txt, notFlg=true
+    str_arr.each do |str|
+      if notFlg
+        page.should_not have_content "#{str} #{txt}"
+      else
+        page.should have_content "#{str} #{txt}"
+      end
+    end
+  end
+
+  def check_page_selectors str_arr, vFlg, notFlg=true
+    str_arr.each do |str|
+      if notFlg
+        page.should_not have_selector("#{str}", visible: vFlg)
+      else
+        page.should have_selector("#{str}", visible: vFlg)
+      end
+    end
   end

@@ -45,16 +45,6 @@ feature "Invoices" do
     click_on 'Edit'
   end
 
-  def click_remove_ok
-    click_link 'Remove'
-    page.driver.browser.switch_to.alert.accept
-  end
-	                  
-  def click_remove_cancel
-    click_link 'Remove'
-    page.driver.browser.switch_to.alert.dismiss
-  end
-
   def add_data
     select_buyer
     select("2", :from => "inv_qty")
@@ -188,7 +178,7 @@ feature "Invoices" do
       page.should have_content "Amount You Receive"
       page.should have_content "#{@invoice.amount - @invoice.get_fee(true)}"
       page.should have_link('Edit', href: edit_invoice_path(@invoice)) 
-      page.should have_link('Remove', href: invoice_path(@invoice)) 
+      page.should have_link('Remove', href: remove_invoice_path(@invoice)) 
     end
   end
 
@@ -357,7 +347,7 @@ feature "Invoices" do
           fill_in 'inv_price', with: "40"
           fill_in 'inv_tax', with: 5000
 	  click_button 'Send'
-          page.should have_content "Sales tax must be less than or equal to 100" 
+          page.should have_content "Sales tax must be less than or equal to 15" 
         end
         
         it 'should not accept bad shipping amt' do
@@ -370,14 +360,17 @@ feature "Invoices" do
           page.should have_content "is not a number" 
         end
         
-        it 'does not accept invalid shipping amt' do
+        it 'does not accept invalid shipping amt', js: true do
+          stub_const("MAX_SHIP_AMT", 500)
+          expect(MAX_SHIP_AMT).to eq(500)
 	  select_buyer
 	  select_pixi
 	  set_buyer_id
-          fill_in 'inv_price', with: "40"
-          fill_in 'ship_amt', with: 5000
+          fill_in 'inv_price', with: 40
+	  page.execute_script("$('#ship_amt').val('5000.00');")
+          # fill_in 'ship_amt', with: 5000
 	  click_button 'Send'
-          page.should have_content " must be less than or equal to" 
+          page.should have_content " must be less than or equal to 500" 
         end
       end
 
@@ -405,19 +398,20 @@ feature "Invoices" do
 	  page.should have_content "Bob Jones" 
         end
         
-        it 'accepts invoice w/ shipping' do
+        it 'accepts invoice w/ shipping', js: true do
 	  select_buyer
 	  select_pixi
 	  set_buyer_id
           fill_in 'inv_price', with: "40"
-          fill_in 'ship_amt', with: "9.99"
+          fill_in 'inv_tax', with: 8.25
+	  page.execute_script("$('#ship_amt').val('9.99');")
 	  expect { 
 	    click_button 'Send'; sleep 3
 	  }.to change(Invoice, :count).by(1)
 
 	  page.should have_content "Status" 
 	  page.should have_content "Shipping" 
-	  page.should have_content "9.99" 
+	  page.should have_content "$9.99" 
 	  page.should have_content "Bob Jones" 
         end
 

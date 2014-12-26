@@ -27,7 +27,7 @@ module Plumboard
     # config.active_record.observers = :cacher, :garbage_collector, :forum_observer
     config.active_record.observers = :transaction_observer, :user_observer, 
       :invoice_observer, :post_observer, :comment_observer, :pixi_post_observer, :inquiry_observer, 
-      :pixi_want_observer  # , :listing_observer, :saved_listing_observer
+      :pixi_want_observer  #, :saved_listing_observer
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
@@ -62,7 +62,7 @@ module Plumboard
     config.assets.enabled = true
 
     # Version of your assets, change this if you want to expire all your assets
-    config.assets.version = '1.11'
+    config.assets.version = '1.5'
 
     # Devise view handler for user/signup
     config.paths['app/views'] << "app/views/devise"

@@ -413,5 +413,6 @@ FactoryGirl.define do
     code "N"
     hide "no"
     status "active"
+    description 'New'
   end
 end

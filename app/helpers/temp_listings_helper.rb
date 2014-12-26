@@ -61,4 +61,9 @@ module TempListingsHelper
   def edit_mode? listing
     !listing.pixi_post? || listing.edit?
   end
+
+  def is_item? listing, flg=true
+    val = flg ? %w(employment service event) : %w(employment service vehicle)
+    !(listing.is_category_type? val)
+  end
 end
