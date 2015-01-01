@@ -46,6 +46,7 @@ class ListingsController < ApplicationController
   end
 
   def local
+    flash.now[:notice] = flash_msg
     respond_with(@listings)
   end
 
@@ -99,5 +100,10 @@ class ListingsController < ApplicationController
 
   def set_session
     session[:back_to] = request.path unless signed_in?
+  end
+
+  def flash_msg 
+    val = ('2015-02-01'.to_date - Date.current).to_i
+    "Pixiboard is donating 10% of our revenues to NorcalMLK for the month of January! Only #{val} days left to Shop Local and Give Back." if val > 0
   end
 end
