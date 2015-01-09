@@ -1,19 +1,7 @@
-<%= render partial: 'shared/pg_header', locals: { linkFlg: false } %>
 <%= content_for :topcontent do %>
-  <div class='container'>
-    <%= hidden_field_tag 'home_site_name' %>
-    <div class='row mtop'>
-      <% cache fragment: 'caption' do %>
-        <div class='mtop span7 home-title-grp'>
-          <span class='home-title-white'><%= PIXI_KEYS['pixi']['caption'] %></span><br />
-          <span class='tag-line'><%= PIXI_KEYS['pixi']['tag_line'] %></span>
-        </div>
-      <% end %>
-      <% cache fragment: 'signin' do %>
-        <div class='mtop span4 pull-right div-clear-border round'>
-          <%= render partial: 'shared/home_signin_form', locals: { rmbrFlg: false } %>
-        </div>
-      <% end %>
-    </div>
-  </div>
+  <% cache fragment: 'home_page_top' do %>
+    <%= render partial: 'home_page_header' %>
+    <%= render partial: 'home_page_subtitle' %>
+  <% end %>
 <% end %>
+<%= render partial: 'home_page_content' %>

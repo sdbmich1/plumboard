@@ -69,4 +69,10 @@ module ResetDate
         [Time.now - 30.days, Time.now]
     end
   end
+
+  # calculate remaining SLGB days
+  def self.days_left
+    val = ('2015-01-31'.to_date - Date.today).to_i
+    val < 10 ? "0#{val}" : val
+  end
 end

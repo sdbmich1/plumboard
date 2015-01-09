@@ -1,8 +1,14 @@
 module PagesHelper
+  include PointManager, ResetDate
 
   # get leader points
   def get_points val
     PointManager::get_points val
+  end
+
+  # get days left
+  def get_days_left
+    ResetDate::days_left
   end
 
   # check if home page
