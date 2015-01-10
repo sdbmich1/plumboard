@@ -1,12 +1,6 @@
 <%= content_for :subhead do %>
+  <%= render partial: 'shared/logo_header', locals: { linkFlg: true } %>
   <div class='row'>
-    <div class='float-left width360 sm-bot'>
-      <% if linkFlg %>
-        <%= link_to image_tag('px_word_logo.png', class: 'px-logo'), get_home_path, class: 'site-logo' %>
-      <% else %>
-        <%= image_tag 'px_word_logo.png', class: 'px-logo' %>
-      <% end %>
-    </div>
     <div id='home-pg-hdr' class='mtop nav pull-right'>
       <%= render 'shared/pg_header_row' %>
     </div>
