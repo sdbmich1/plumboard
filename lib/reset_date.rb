@@ -72,7 +72,7 @@ module ResetDate
 
   # calculate remaining SLGB days
   def self.days_left
-    val = ('2015-01-31'.to_date - Date.today).to_i
+    val = ('2015-02-01'.to_date - Date.today).to_i
     val < 10 ? "0#{val}" : val
   end
 end
