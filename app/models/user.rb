@@ -60,10 +60,8 @@ class User < ActiveRecord::Base
   has_many :bank_accounts, dependent: :destroy
   has_many :card_accounts, dependent: :destroy
   has_many :transactions, dependent: :destroy
-
   has_many :comments, dependent: :destroy
   has_many :inquiries, dependent: :destroy
-
   has_many :ratings, dependent: :destroy
   has_many :seller_ratings, :foreign_key => "seller_id", :class_name => "Rating"
 
@@ -110,17 +108,11 @@ class User < ActiveRecord::Base
   # validate zip exists
   def must_have_zip
     if provider.blank?
-      if home_zip.blank? 
-        errors.add(:base, 'Must have a zip')
-        false
+      if !home_zip.blank? && (home_zip.length == 5 && home_zip.to_region) 
+        true
       else
-        # check for valid zip
-        if home_zip.length == 5 && home_zip.to_region 
-	  true 
-	else
-          errors.add(:base, 'Must have a valid zip')
-	  false
-	end
+        errors.add(:base, 'Must have a valid zip')
+        false
       end
     else
       true

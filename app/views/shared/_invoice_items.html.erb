@@ -1,0 +1,9 @@
+  <tr>
+    <td class="width120"><div class='price'><%= invoice.quantity %></div></td>
+    <td class="width360">
+      <%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: invoice.listing} %>
+      <%= invoice.listing.title %></td>
+    <td class="width120"><div class='price'><%= ntc invoice.price %></div></td>
+    <td class="width120"><div class='price'><%= ntc invoice.subtotal %></div></td>
+  </tr>
+

@@ -28,16 +28,12 @@ feature "Invoices" do
     select(@buyer.name, :from => 'tmp_buyer_id')
   end
    
-  def select_pixi
-    select(@listing.title, :from => 'invoice_pixi_id')
+  def select_pixi item, fld='pixi_id1'
+    select(item.title, :from => fld)
   end
 
   def calc_fee
     (@pxp_listing.price * PXB_TXN_PERCENT).round(2)
-  end
-   
-  def select_pixi_post
-    select(@pxp_listing.title, :from => 'invoice_pixi_id')
   end
 
   def edit_invoice
@@ -45,10 +41,10 @@ feature "Invoices" do
     click_on 'Edit'
   end
 
-  def add_data
+  def add_data fld='inv_qty1'
     select_buyer
-    select("2", :from => "inv_qty")
-    select_pixi
+    select("2", :from => fld)
+    select_pixi @listing
     set_buyer_id
     # fill_in 'inv_price', with: 200.00
     fill_in 'inv_tax', with: 8.25
@@ -56,30 +52,47 @@ feature "Invoices" do
   end
 
   def init_data pxpFlg=true
-    @person = FactoryGirl.create(:pixi_user, first_name: 'Kim', last_name: 'Harris') 
-    @listing = FactoryGirl.create(:listing, seller_id: @user.id)
+    @person = create(:pixi_user, first_name: 'Kim', last_name: 'Harris') 
+    @listing = create(:listing, seller_id: @user.id)
+    @pixi = create(:listing, title: 'Macbook Pro', seller_id: @user.id)
     if pxpFlg
-      @pxp_listing = FactoryGirl.create(:listing, seller_id: @user.id, pixan_id: @person.id)
+      @pxp_listing = create(:listing, seller_id: @user.id, pixan_id: @person.id)
     end
     @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
   end
 
   def add_paid_invoice pxpFlg=true
     init_data pxpFlg
-    @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id, status: 'paid')  
+    @invoice = @user.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: @buyer.id, status: 'paid')
+    @details = @invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+    @invoice.save!
     @listing.status = 'sold'; @listing.save(validate: false)
   end
 
   def add_invoices
     init_data
-    @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id)
-    @listing2 = FactoryGirl.create(:listing, title: 'Leather Bookbag', seller_id: @buyer.id) 
-    @listing3 = FactoryGirl.create(:listing, title: 'Xbox 360', seller_id: @person.id) 
-    @listing4 = FactoryGirl.create(:listing, title: 'Trek Bike', seller_id: @buyer.id) 
-    @invoice2 = @buyer.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing2.pixi_id, buyer_id: @user.id, status: 'paid')  
-    @invoice3 = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing3.pixi_id, buyer_id: @person.id)
+    @invoice = @user.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: @buyer.id)
+    @details = @invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+    @invoice.save!
+    @listing2 = create(:listing, title: 'Leather Bookbag', seller_id: @buyer.id) 
+    @listing3 = create(:listing, title: 'Xbox 360', seller_id: @person.id) 
+    @listing4 = create(:listing, title: 'Trek Bike', seller_id: @buyer.id) 
+    @invoice2 = @buyer.invoices.build attributes_for(:invoice, buyer_id: @user.id, status: 'paid')
+    @details2 = @invoice2.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing2.pixi_id 
+    @invoice2.save!
     sleep 2
-    @invoice4 = @buyer.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing4.pixi_id, buyer_id: @user.id)
+    @invoice3 = @user.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: @person.id, status: 'paid')
+    @details3 = @invoice3.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing3.pixi_id 
+    @invoice3.save!
+    sleep 2
+    @invoice4 = @buyer.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: @user.id)
+    @details4 = @invoice4.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing4.pixi_id 
+    @invoice4.save!
+    sleep 2
+    @invoice5 = @user.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: @person.id, status: 'unpaid')
+    @details5 = @invoice5.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing4.pixi_id 
+    @details6 = @invoice5.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+    @invoice5.save!
   end
 
   def unknown_buyer
@@ -88,12 +101,12 @@ feature "Invoices" do
   end
 
   def zero_price
-    fill_in 'inv_price', with: 0
+    fill_in 'inv_price1', with: 0
     click_button 'Send'
-    page.should have_content "Amount must be greater than 0" 
+    page.should_not have_content "Less Convenience Fee"
   end
 
-  describe "Check menu invoice link" do
+  describe "Check menu invoice link", base: true do
     before do
       px_user = create :pixi_user
       init_setup px_user
@@ -105,7 +118,7 @@ feature "Invoices" do
     end
   end
 
-  describe 'user has pixis w/o bank acct' do
+  describe 'user has pixis w/o bank acct', base: true do
     before do
       px_user = create :pixi_user
       init_setup px_user
@@ -119,7 +132,7 @@ feature "Invoices" do
     end
   end
 
-  describe 'user has pixis w bank acct' do
+  describe 'user has pixis w bank acct', base: true  do
     before do
       px_user = create :pixi_user
       init_setup px_user
@@ -134,7 +147,7 @@ feature "Invoices" do
     end
   end
 
-  describe "Seller checks invoices" do
+  describe "Seller checks invoices", base: true do
     before do
       px_user = create :pixi_user
       init_setup px_user
@@ -151,7 +164,7 @@ feature "Invoices" do
     end
   end
 
-  describe "Sent Invoices" do
+  describe "Sent Invoices", sent: true do
     before do
       px_user = create :pixi_user
       init_setup px_user
@@ -182,7 +195,7 @@ feature "Invoices" do
     end
   end
 
-  describe "View Paid Invoice" do
+  describe "View Paid Invoice", sent: true do
     before do
       px_user = create :pixi_user
       init_setup px_user
@@ -199,7 +212,7 @@ feature "Invoices" do
     end
   end
 
-  describe "Edit Invoice" do
+  describe "Edit Invoice", process: true do
     before do
       px_user = create :pixi_user
       init_setup px_user
@@ -214,7 +227,7 @@ feature "Invoices" do
 
       click_on 'Edit'
       zero_price
-      fill_in 'inv_price', with: 215.00
+      fill_in 'inv_price1', with: 215.00
       expect { 
 	    click_button 'Send'; sleep 3
 	}.to change(Invoice, :count).by(0)
@@ -233,9 +246,22 @@ feature "Invoices" do
       page.should_not have_link("#{@invoice.id}", href: invoice_path(@invoice)) 
       expect(Invoice.find(@invoice.id).status).to eq('removed')
     end
+        
+    it 'removes a pixi', js: true  do
+      visit invoice_path(@invoice5)
+      page.should have_link('Edit', href: edit_invoice_path(@invoice5)) 
+      click_on 'Edit'
+      sleep 2
+      page.should have_content @listing.title
+      page.should have_selector('.add-row-btn')
+      page.should have_selector('.remove-row-btn')
+      page.find('.remove-row-btn').click
+      accept_btn
+      page.should_not have_content @listing4.title
+    end
   end
 
-  describe "Received Invoices w/o Invoices" do
+  describe "Received Invoices w/o Invoices", base: true do
     before do
       px_user = create :pixi_user
       init_setup px_user
@@ -248,7 +274,7 @@ feature "Invoices" do
     end
   end
 
-  describe "Received Invoices w/ Invoices" do
+  describe "Received Invoices w/ Invoices", base: true do
     before do
       px_user = create :pixi_user
       init_setup px_user
@@ -282,14 +308,10 @@ feature "Invoices" do
       visit invoice_path(@invoice4)
       page.should have_content "Trek Bike" 
       page.should have_selector('#pay-btn', visible: true) 
-
-      page.find('#pay-btn').click
-      page.should have_content "Trek Bike" 
-      page.should have_content "Total Due"
     end
   end
 
-  describe "Manage Invoices" do
+  describe "Manage Invoices", process: true do
     before do
       px_user = create :pixi_user
       init_setup px_user
@@ -306,6 +328,12 @@ feature "Invoices" do
     end 
 
     describe "Create Invoices" do
+      before :each, run: true do
+	select_buyer
+	select_pixi @listing
+	set_buyer_id
+        fill_in 'inv_price1', with: "40"
+      end
 
       describe 'invalid invoices', js: true do
         it 'does not submit empty form' do
@@ -325,48 +353,30 @@ feature "Invoices" do
         end
         
         it 'must have a buyer' do
-	  select_pixi
+	  select_pixi @listing
 	  click_button 'Send'
           page.should have_content "Buyer can't be blank" 
         end
         
-        it 'should not accept bad sales tax' do
-	  select_buyer
-	  select_pixi
-	  set_buyer_id
-          fill_in 'inv_price', with: "40"
+        it 'should not accept bad sales tax', run: true do
           fill_in 'inv_tax', with: "R0"
 	  click_button 'Send'
           page.should have_content "is not a number" 
         end
         
-        it 'does not accept invalid sales tax' do
-	  select_buyer
-	  select_pixi
-	  set_buyer_id
-          fill_in 'inv_price', with: "40"
+        it 'does not accept invalid sales tax', run: true  do
           fill_in 'inv_tax', with: 5000
 	  click_button 'Send'
           page.should have_content "Sales tax must be less than or equal to 15" 
-        end
-        
-        it 'should not accept bad shipping amt' do
-	  select_buyer
-	  select_pixi
-	  set_buyer_id
-          fill_in 'inv_price', with: "40"
-          fill_in 'ship_amt', with: "R0"
-	  click_button 'Send'
-          page.should have_content "is not a number" 
         end
         
         it 'does not accept invalid shipping amt', js: true do
           stub_const("MAX_SHIP_AMT", 500)
           expect(MAX_SHIP_AMT).to eq(500)
 	  select_buyer
-	  select_pixi
+	  select_pixi @listing
 	  set_buyer_id
-          fill_in 'inv_price', with: 40
+          fill_in 'inv_price1', with: 40
 	  page.execute_script("$('#ship_amt').val('5000.00');")
           # fill_in 'ship_amt', with: 5000
 	  click_button 'Send'
@@ -385,11 +395,7 @@ feature "Invoices" do
 	  page.should have_content "Bob Jones" 
         end
         
-        it 'accepts invoice w/o sales tax' do
-	  select_buyer
-	  select_pixi
-	  set_buyer_id
-          fill_in 'inv_price', with: "40"
+        it 'accepts invoice w/o sales tax', run: true  do
 	  expect { 
 	    click_button 'Send'; sleep 3
 	  }.to change(Invoice, :count).by(1)
@@ -398,11 +404,7 @@ feature "Invoices" do
 	  page.should have_content "Bob Jones" 
         end
         
-        it 'accepts invoice w/ shipping', js: true do
-	  select_buyer
-	  select_pixi
-	  set_buyer_id
-          fill_in 'inv_price', with: "40"
+        it 'accepts invoice w/ shipping', run: true do
           fill_in 'inv_tax', with: 8.25
 	  page.execute_script("$('#ship_amt').val('9.99');")
 	  expect { 
@@ -416,58 +418,33 @@ feature "Invoices" do
         end
 
         it 'accepts invoice with pixi post' do
-	  select_pixi_post
 	  select_buyer
+	  select_pixi @pxp_listing
 	  set_buyer_id
+          fill_in 'inv_price1', with: "40"
 	  expect { 
-	    click_button 'Send'; sleep 3
+	    click_button 'Send'; sleep 5
 	  }.to change(Invoice, :count).by(1)
 
 	  page.should have_content "Status" 
 	  page.should have_content "Bob Jones" 
-          page.should have_content "#{@pxp_listing.price}"
+          page.should have_content "#{@pxp_listing.seller_name}"
         end
+
+	it 'handles multiple pixis', run: true do
+          page.should have_selector('.add-row-btn')
+          page.should have_selector('.remove-row-btn')
+          page.find('.add-row-btn').click
+          select_pixi @pixi, 'pixi_id2'
+	  set_buyer_id
+          fill_in 'inv_price2', with: "40"
+	  expect { 
+	    click_button 'Send'; sleep 5
+	  }.to change(Invoice, :count).by(1)
+	  page.should have_content "Macbook" 
+	  page.should have_content "Bob Jones" 
+	end
       end
-    end
-  end
-
-  describe "Create More Invoices" do
-    before do
-      init_setup user
-      init_data
-      @buyer.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
-    end
-        
-    it 'invoice w/ wanted buyers', js: true do
-      visit new_invoice_path 
-      select_pixi
-    #  page.should have_selector "#buyer_name"
-    #  page.execute_script("$('#buyer_name').toggle();")
-    #  page.should have_selector "#tmp_buyer_id"
-    #  page.execute_script("$('#tmp_buyer_id').toggle();")
-      sleep 0.5;
-      select_buyer_name
-      fill_in 'inv_price', with: "40"
-      expect { 
-	    click_button 'Send'; sleep 3
-      }.to change(Invoice, :count).by(1)
-
-      page.should have_content "Status" 
-      page.should have_content @buyer.name
-    end
-
-    it 'invoice w/ selected buyer & pixi', js: true do
-      visit new_invoice_path(buyer_id: @buyer.id, pixi_id: @listing.pixi_id)
-      sleep 0.5;
-      page.should have_selector "#buyer_name"
-      # page.should have_selector "#tmp_buyer_id"
-      page.should have_content @listing.title
-      expect { 
-	    click_button 'Send'; sleep 3
-      }.to change(Invoice, :count).by(1)
-
-      page.should have_content "Convenience Fee" 
-      page.should have_content @buyer.name
     end
   end
 

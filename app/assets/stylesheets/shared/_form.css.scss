@@ -297,6 +297,26 @@ tr.spaceUnder > td
   padding-bottom: 1em;
 }
 
+td.borderless {
+  border-top: none; 
+}
+
+td.border-right {
+  border-right: 1px solid #dddddd; 
+}
+
+td.border-bottom {
+  border-bottom: 1px solid #dddddd; 
+}
+
+table.noborder {
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+}
+
+#inv-table.table-bordered th { border-left: none!important; }
+
 .meter { 
   height: 14px; 
   background: blue; 

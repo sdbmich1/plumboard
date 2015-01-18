@@ -1,17 +1,10 @@
   <table class="mtop table table-bordered">
-  <%= render 'shared/inv_header' %>
-  <tr>
-    <td class="width120"><div class='price'><%= invoice.quantity %></div></td>
-    <td class="width360">
-      <%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: invoice.listing} %>
-      <%= invoice.pixi_title %></td>
-    <td class="width120"><div class='price'><%= ntc invoice.price %></div></td>
-    <td class="width120"><div class='price'><%= ntc invoice.subtotal %></div></td>
-  </tr>
+  <%= render partial: 'shared/inv_header', locals: { colFlg: false } %>
+  <%= render partial: 'shared/invoice_items', collection: invoice.invoice_details, as: :invoice %>
   <tr>
     <td></td>
     <td><div class='price'>Sales Tax</div></td>
-    <td class="width120"><div class='price'><%= get_sales_tax %>%</div></td>
+    <td class="width120"><div class='price'><%= get_sales_tax(invoice) %>%</div></td>
     <td class="width120"><div class='price'><%= ntc(invoice.tax_total) %></div></td>
   </tr>
   <tr>

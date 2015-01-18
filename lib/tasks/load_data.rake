@@ -41,6 +41,10 @@ namespace :db do
   task :fix_txn_details_price => :environment do
     update_txn_detail_price
   end
+
+  task :reload_invoices => :environment do
+    load_invoice_details
+  end
 end
 
 def set_keys
@@ -157,4 +161,8 @@ def update_txn_detail_price
       end
     end
   end
+end
+
+def load_invoice_details
+  Invoice.load_details
 end

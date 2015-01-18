@@ -1,5 +1,4 @@
-$("#inv_price").val("<%= @price %>");
-$("#inv_buyer_select").html("<%= escape_javascript( raw render(:partial => 'shared/set_invoice_buyer', locals: {invoice: nil, pid: @listing.pixi_id}) ) %>");
+$("#inv_buyer_select").html("<%= escape_javascript( raw render(partial: 'shared/set_invoice_buyer', locals: {invoice: nil, pid: @listing.pixi_id}) ) %>");
 
 // recalculate totals
 calc_amt();

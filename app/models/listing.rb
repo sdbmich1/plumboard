@@ -11,14 +11,12 @@ class Listing < ListingParent
   belongs_to :buyer, foreign_key: 'buyer_id', class_name: 'User'
   has_many :conversations, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :posts, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
-  has_many :invoices, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :comments, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :pixi_likes, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :pixi_wants, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :saved_listings, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
-
-  has_many :site_listings, :dependent => :destroy
-  #has_many :sites, :through => :site_listings, :dependent => :destroy
+  has_many :invoice_details, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
+  has_many :invoices, through: :invoice_details, :dependent => :destroy
 
   default_scope :order => "updated_at DESC"
 
@@ -105,7 +103,7 @@ class Listing < ListingParent
   end
 
   # mark pixi as sold
-  def mark_as_sold buyer_id=nil
+  def mark_as_sold buyer_id=nil, pid
     unless sold?
       self.status, self.buyer_id = 'sold', buyer_id
       save!
@@ -222,7 +220,12 @@ class Listing < ListingParent
   # toggle invoice status on removing pixi from board
   def set_invoice_status
     if %w(expired removed inactive closed).detect { |x| x == self.status }
-      Invoice.where("pixi_id = ? AND status = ?", self.pixi_id, 'unpaid').update_all(status: 'removed')
+      invoices.find_each do |inv|
+        if inv.invoice_details.size == 1 
+	  inv.update_attribute(:status, 'removed')
+	end
+      end
+      # Invoice.where("pixi_id = ? AND status = ?", self.pixi_id, 'unpaid').update_all(status: 'removed')
     end
   end
 

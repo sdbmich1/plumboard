@@ -2,5 +2,5 @@
   <div id='item-pix' class="span5 no-left mtop mbot">
     <%= render partial: 'shared/photos', locals: {model: listing, file_name: "", psize: '120x120'} %>
   </div>
-  <%= render partial: 'shared/social_links', locals: {model: listing} unless !listing.active? %>
+  <%= render partial: 'shared/social_links', locals: {listing: listing} unless !listing.active? %>
 <% end %>

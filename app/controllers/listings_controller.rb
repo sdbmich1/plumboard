@@ -51,8 +51,7 @@ class ListingsController < ApplicationController
   end
 
   def pixi_price
-    @price = @listing.price rescue nil
-    respond_with(@price)
+    respond_with(@listing)
   end
 
   def invoiced
