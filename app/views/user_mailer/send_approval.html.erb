@@ -7,7 +7,7 @@
     	<%= render :partial=>'shared/mail_header' %><br /><br />
 	Hi <%= @listing.seller_first_name %>,<br /><br />
         Good news!  Your pixi has been <%= approve_type(@listing, false) %> on Pixiboard. Check it out at:<br><br>
-		<%= get_url %> <br><br>
+		<%= get_url(@listing) %> <br><br>
         Now what?  Well, you can wait and see if someone finds your item or
         you can get out and spread the word.  Share your items on Facebook,
         Pinterest, Twitter, or other social media.  It is easy to do.

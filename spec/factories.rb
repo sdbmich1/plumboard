@@ -126,6 +126,7 @@ FactoryGirl.define do
     price 100.00
     category_id 1
     site_id 1
+    quantity 1
     transaction_id  1
     show_alias_flg  "no"
     show_phone_flg  "no"
@@ -222,6 +223,15 @@ FactoryGirl.define do
     subtotal  370.00
     amount  400.52
     status  'unpaid'
+    before(:create) do |inv|
+      inv.invoice_details.build FactoryGirl.attributes_for(:invoice_detail)
+    end
+  end
+
+  factory :invoice_detail do
+    quantity  2
+    price 185.00
+    subtotal  370.00
   end
 
   factory :site_listing do

@@ -263,4 +263,10 @@ module ApplicationHelper
   def zoom_image
     %w(category local).detect {|x| action_name == x} ? '' : 'img-zoom'
   end
+
+  # used to dynamically remove field from a given form
+  def link_to_remove_fields(title, f)
+    f.hidden_field(:_destroy) + 
+      link_to(image_tag('rsz_minus.png', class: 'social-img mbot'), '#', confirm: 'Delete this item?', class: 'remove-row-btn pixi-link', title: title)
+  end 
 end

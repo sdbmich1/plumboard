@@ -1,0 +1,18 @@
+  <div class="row">
+    <div class="sm-top span12">
+      <div id="form_errors"><%= render partial: 'shared/error_messages', locals: { target: f.object } %></div>
+      <div id='inv_select' class='no-left span4'>
+	<div class="control-group">
+	  <label class='control-label'>From: <%= @user.name %></label>
+	  <label class='control-label'>Date: <%= get_local_date(Time.now) %></label>
+	  <label class="sm-top control-label">Bill To:</label>
+	  <div id='inv_buyer_select' class='width360'>
+            <%= render partial: 'shared/set_invoice_buyer', locals: { invoice: invoice, pid: invoice.pixi_id } %>
+          </div>
+        </div>
+      </div>
+      <div class='pull-right'>
+	<%= image_tag('rsz_pixipay.png', class: 'ppay-logo') %>
+      </div>
+    </div>
+  </div>

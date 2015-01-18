@@ -333,6 +333,7 @@ input, select, .uneditable-input {
 
 /* field widths */
 .width30 {width: 30px!important}
+.width45 {width: 45px!important}
 .width60 {width: 60px!important}
 .width80 {width: 80px!important}
 .width100 {width: 100px!important}
@@ -652,7 +653,7 @@ a.btn-mask {
   height: 325px!important;
 }
 
-#contact-btn, #comment-btn {
+#contact-btn, #comment-btn, #add-item-btn, .inv-fld {
   visibility: hidden;
 }
 

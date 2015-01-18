@@ -8,7 +8,6 @@ class TempListing < ListingParent
 
   attr_accessor :slr_name
   attr_accessible :slr_name
-  has_many :site_listings, :foreign_key => :listing_id, :dependent => :destroy
 
   # set fields upon creation
   def set_flds

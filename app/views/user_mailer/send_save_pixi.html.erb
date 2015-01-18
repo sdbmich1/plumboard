@@ -9,7 +9,7 @@
   	We noticed you saved Pixi: <%= @listing.title %>. 
   	Items move fast so don't miss out on this one. 
   	Log into Pixiboard and contact the Seller if you wish to purchase 
-  	this item <%= get_url %>. <br /><br />
+  	this item <%= get_url(@listing) %>. <br /><br />
     <span style="margin-top:10px;">Keep on Pixing!</span><br /><br />
 	<span>The Pixiboard Team</span><br /><br /> 	
     	<center><%= render :partial=>'shared/mail_footer' %></center>

@@ -367,20 +367,12 @@ class ListingParent < ActiveRecord::Base
 
     # update fields
     if tmpFlg && listing 
-      listing.title, listing.price, listing.category_id, listing.site_id = self.title, self.price, self.category_id, self.site_id
-      listing.description, listing.compensation, listing.status = self.description, self.compensation, 'active'
-      listing.event_start_date, listing.event_start_time = self.event_start_date, self.event_start_time
-      listing.event_end_date, listing.event_end_time = self.event_end_date, self.event_end_time
-      listing.pixan_id, listing.year_built = self.pixan_id, self.year_built
-      listing.show_phone_flg, listing.start_date, listing.end_date = self.show_phone_flg, self.start_date, self.end_date
-      listing.post_ip, listing.lat, listing.lng, listing.edited_by = self.post_ip, self.lat, self.lng, self.edited_by
-      listing.pixi_id = self.pixi_id
+      listing.assign_attributes(get_attr(tmpFlg), :without_protection => true) 
+      listing.status = 'active'
     end
 
     # remove any dup in case of cleanup failures
-    if listing.is_a?(TempListing) && listing.new_record?
-      TempListing.destroy_all(pixi_id: listing.pixi_id)
-    end
+    delete_temp_pixi listing.pixi_id if listing.is_a?(TempListing) && listing.new_record?
 
     # add dup
     if listing.save

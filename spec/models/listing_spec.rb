@@ -1513,4 +1513,27 @@ describe Listing do
       }.not_to be_blank
     end
   end
+
+  describe "sold count" do
+    before :each, run: true do
+      @listing.status = 'sold'
+      @listing.save
+    end
+    it { expect(Listing.sold_count(@listing.pixi_id)).to eq 0 }
+    it "has count > 0", run: true do
+      expect(Listing.sold_count(@listing.pixi_id)).to eq 1
+    end
+  end
+
+  describe "amt left" do
+    before :each, run: true do
+      @listing.quantity = 1
+      @listing.status = 'sold'
+      @listing.save
+    end
+    it { expect(Listing.amt_left(@listing.pixi_id)).to eq 1 }
+    it "has count > 0", run: true do
+      expect(Listing.amt_left(@listing.pixi_id)).to eq 0
+    end
+  end
 end
