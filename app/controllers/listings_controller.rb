@@ -1,6 +1,6 @@
 require 'will_paginate/array' 
 class ListingsController < ApplicationController
-  include PointManager, LocationManager, NameParse
+  include PointManager, LocationManager, NameParse, ResetDate
   before_filter :authenticate_user!, except: [:local, :category, :show]
   before_filter :load_data, only: [:index, :seller, :category, :show, :local, :invoiced, :wanted]
   before_filter :load_pixi, only: [:show, :pixi_price, :repost, :update]
@@ -41,6 +41,7 @@ class ListingsController < ApplicationController
   end
 
   def category
+    flash.now[:notice] = flash_msg
     @category = Category.find @cat rescue nil
     respond_with(@listings)
   end
@@ -102,7 +103,7 @@ class ListingsController < ApplicationController
   end
 
   def flash_msg 
-    val = ('2015-02-01'.to_date - Date.current).to_i
+    val = ResetDate::days_left
     "Pixiboard is donating 10% of our revenues to NorcalMLK for the month of January! Only #{val} days left to Shop Local and Give Back." if val > 0
   end
 end

@@ -1,0 +1,20 @@
+<%= content_for :content do %>
+  <div class='row'>
+    <% cache fragment: 'home_page_top' do %>
+      <div class='span2 mtop'>
+        <%= image_tag 'pxb_SLGB_logo_2015.png', class: '' %>
+      </div>
+      <div class='span8 mtop center-wrapper'>
+        <span class='page-str'>For the month of January, Pixiboard is donating 10% of our revenue to 
+        <%= link_to 'NorcalMLK.', 'http://sfmlkday.org/', class: 'browse-link' %>
+        Post that extra holiday sweater. Find that knick-knack you were looking for. Connect and share to help others.<span><br /><br />
+        <h2>Shop local and give back!</h2>
+      </div>
+    <% end %>
+    <div class='span2 px-calendar'>
+      <%= image_tag 'pxb_SLGB_calendar_2015.png', class: '' %>
+      <span class='cal-text'><%= get_days_left %></span>
+    </div>
+  </div>
+<% end %>
+

@@ -1,0 +1,11 @@
+  <header class="navbar transparent navbar-inverse">
+    <div class="navbar-inner">
+      <div class='container'>
+        <%= hidden_field_tag 'home_site_name' %>
+        <%= render partial: 'shared/logo_header', locals: { linkFlg: true } %>
+        <div id='home-pg-hdr' class='mtop nav pull-right'>
+          <%= render 'shared/home_page_header_row' %>
+        </div>
+      </div>
+    </div>
+  </header>  
