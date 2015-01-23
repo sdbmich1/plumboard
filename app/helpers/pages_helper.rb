@@ -11,6 +11,11 @@ module PagesHelper
     ResetDate::days_left
   end
 
+  # check for days left
+  def days_left?
+    get_days_left.to_i > 0 rescue false
+  end
+
   # check if home page
   def home_page?
     controller_name == 'pages' && %w(home location_name).detect {|x| action_name == x} ? true : false

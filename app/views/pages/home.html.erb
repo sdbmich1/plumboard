@@ -4,4 +4,6 @@
     <%= render partial: 'home_page_subtitle' %>
   <% end %>
 <% end %>
-<%= render partial: 'home_page_content' %>
+<% if days_left? %>
+  <%= render partial: 'home_page_content' %>
+<% end %>
