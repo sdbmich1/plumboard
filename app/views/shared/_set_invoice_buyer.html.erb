@@ -1,10 +1,10 @@
 <% if invoice_exists? invoice %>
-  <div class='gen-list'><%= render partial: 'shared/invoice_buyer' %></div>
+  <div class='gen-list'><%= render partial: 'shared/invoice_buyer', locals: {invoice: invoice} %></div>
 <% else %>  
   <div class='want-list' style="<%= !has_wanted_pixi?(pid) ? 'display:none' : '' %>">
     <%= render partial: 'shared/pixi_wanted_list', locals: { invoice: invoice, pid: pid } %>
   </div>
   <div class='gen-list' style="<%= has_wanted_pixi?(pid) ? 'display:none' : '' %>">
-    <%= render partial: 'shared/invoice_buyer' %>
+    <%= render partial: 'shared/invoice_buyer', locals: {invoice: invoice} %>
   </div>
 <% end %>

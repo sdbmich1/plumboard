@@ -151,7 +151,7 @@ p {
 
 /* Wrapper for page content to push down footer */
 #wrap {
-  margin-top: 20px!important;
+  margin-top: 40px!important;
   //min-height: 150%;
   @extend .item-hgt;
 
@@ -333,6 +333,7 @@ input, select, .uneditable-input {
 
 /* field widths */
 .width30 {width: 30px!important}
+.width45 {width: 45px!important}
 .width60 {width: 60px!important}
 .width80 {width: 80px!important}
 .width100 {width: 100px!important}
@@ -652,7 +653,7 @@ a.btn-mask {
   height: 325px!important;
 }
 
-#contact-btn, #comment-btn {
+#contact-btn, #comment-btn, #add-item-btn, .inv-fld {
   visibility: hidden;
 }
 
@@ -755,6 +756,14 @@ a#browse-link {
     text-decoration: underline;
   }
 }
+
+a.white-browse-link {
+  color: white!important;
+  &:hover, &:visited, &:link {
+    background-color: none;
+    text-decoration: none;
+  }
+}
  
 .pad10 {padding: 10px!important;}
 .pad-bot10 {padding-bottom: 10px!important;}
@@ -772,6 +781,7 @@ form .clearfix:before, form .clearfix:after {
   border-spacing: 10px;
 }
 
+.page-str { font-size: 1.075em; color: #000; }
 .title-str { font-size: 1.25em; font-weight: bold; color: #026FB7; }
 .faq-str { font-size: 0.875em; font-weight: bold; color: #000; }
 .contact-str { font-size: 0.675em; color: black; }
@@ -780,14 +790,18 @@ form .clearfix:before, form .clearfix:after {
     color: #000000;
     font-size: 36px;
     font-weight: bold;
-  }
+}
 
 .pxp-title-black {
     color: #000000;
     font-size: 14px;
     font-weight: bold;
-  }
+}
 
 .field_with_errors {
   @extend .control-group.error;
+}
+
+.center-button {
+  left: 50%
 }

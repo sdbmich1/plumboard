@@ -74,6 +74,64 @@ describe UserMailer do
     end
   end
 
+  describe "send_interest" do
+    subject { UserMailer.send_interest(want)}
+    let(:user) { create :pixi_user }
+    let(:buyer) { create :pixi_user }
+    let(:listing) { create :listing, seller_id: user.id }
+    let(:want) { buyer.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: listing.pixi_id }
+
+    it { expect{subject.deliver}.not_to change{ActionMailer::Base.deliveries.length}.by(0) }
+    its(:to) { should == [listing.seller_email] }
+    its(:subject) { should include "Pixiboard Post: Someone Wants Your #{listing.title}" }
+
+    it 'assigns seller_first_name' do
+      expect(subject.body.encoded).to match(listing.seller_first_name)
+    end
+  end
+
+  describe "send_pixipost_request" do
+    subject { UserMailer.send_pixipost_request(post)}
+    let(:user) { create :pixi_user }
+    let(:post) { user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post) }
+
+    it { expect{subject.deliver}.not_to change{ActionMailer::Base.deliveries.length}.by(0) }
+    its(:to) { should == [post.seller_email] }
+    its(:subject) { should include "PixiPost Request Submitted" }
+
+    it 'assigns seller_first_name' do
+      expect(subject.body.encoded).to match(post.seller_first_name)
+    end
+  end
+
+  describe "send_pixipost_appt" do
+    subject { UserMailer.send_pixipost_appt(post)}
+    let(:user) { create :pixi_user }
+    let(:post) { user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post) }
+
+    it { expect{subject.deliver}.not_to change{ActionMailer::Base.deliveries.length}.by(0) }
+    its(:to) { should == [post.seller_email] }
+    its(:subject) { should include "PixiPost Appointment Scheduled" }
+
+    it 'assigns seller_first_name' do
+      expect(subject.body.encoded).to match(post.seller_first_name)
+    end
+  end
+
+  describe "send_pixipost_request_internal" do
+    subject { UserMailer.send_pixipost_request_internal(post)}
+    let(:user) { create :pixi_user }
+    let(:post) { user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post) }
+
+    it { expect{subject.deliver}.not_to change{ActionMailer::Base.deliveries.length}.by(0) }
+    its(:to) { should include "support@pixiboard.com" }
+    its(:subject) { should include "PixiPost Request Submitted" }
+
+    it 'assigns seller_name' do
+      expect(subject.body.encoded).to match(post.seller_name)
+    end
+  end
+
   describe "test_send_inquiry_notice" do
     subject { UserMailer.send_inquiry_notice(inquiry)}
     let (:inquiry) { FactoryGirl.create :inquiry}

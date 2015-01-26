@@ -22,7 +22,7 @@
       </div>
       <div class="span3">
 	<label class="sm-top control-label">Pixi Title</label>
-        <%= render partial: 'shared/active_listings', locals: {model: post.user} if post.user %>
+        <%= render partial: 'shared/active_listings', locals: {model: post.user, pid: post.pixi_id} if post.user %>
       </div>
     </div>
     <div class='row'>

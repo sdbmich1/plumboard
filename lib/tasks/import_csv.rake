@@ -599,7 +599,8 @@ task :load_condition_types => :environment do
 
     attrs = {
       :code   => row[0],
-      :status   => 'active',
+      :description => row[1],
+      :status   => row[2],
       :hide   => row[3],
     }
 

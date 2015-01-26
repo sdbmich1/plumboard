@@ -118,10 +118,11 @@ form#new_post {margin-bottom: -0px!important;}
 .mleft40 {margin-left: 37px!important;}
 .mleft-pct {margin-left: 10%!important;}
   
-/* submit button */
+/* custom buttons */
 .signin-btn { color: white!important; font-weight: bold; background: $pixiOrange!important; border: $pixiOrange!important; 
   height: 29px!important; text-align: center; vertical-align: middle; padding-top: 6px; padding-left: 22px; padding-right: 22px;}
 .submit-btn { color: white!important; font-weight: bold; background: $pixiOrange!important; border: $pixiOrange!important; }
+.pixi-btn { color: white!important; background: $pixiBlue!important; border: $pixiBlue!important; }
   
 .post-btn { color: white!important; font-weight: normal; background: $pixiOrange!important; border: $pixiOrange!important; height: 30px!important;}
 .basic-btn { color: white!important; font-weight: normal;}
@@ -150,6 +151,7 @@ form#new_post {margin-bottom: -0px!important;}
 .med-top {margin-top: 10px!important;}
 .no-mtop {margin-top: 0!important}
 .big-top { margin-top: 50px!important }  
+.huge-top { margin-top: 25%!important }  
 
 .sm-bot { margin-bottom: 5px!important }  
 .med-bot { margin-bottom: 10px!important }  
@@ -296,6 +298,26 @@ tr.spaceUnder > td
 {
   padding-bottom: 1em;
 }
+
+td.borderless {
+  border-top: none; 
+}
+
+td.border-right {
+  border-right: 1px solid #dddddd; 
+}
+
+td.border-bottom {
+  border-bottom: 1px solid #dddddd; 
+}
+
+table.noborder {
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+}
+
+#inv-table.table-bordered th { border-left: none!important; }
 
 .meter { 
   height: 14px; 

@@ -8,7 +8,6 @@ class TempListing < ListingParent
 
   attr_accessor :slr_name
   attr_accessible :slr_name
-  has_many :site_listings, :foreign_key => :listing_id, :dependent => :destroy
 
   # set fields upon creation
   def set_flds
@@ -39,7 +38,7 @@ class TempListing < ListingParent
   end
 
   # deny order
-  def deny_order usr, reason
+  def deny_order usr, reason=''
     edit_flds usr, 'denied', reason if usr
   end
 
@@ -58,7 +57,7 @@ class TempListing < ListingParent
   def submit_order val
 
     # set transaction id
-    if val || free?
+    if !val.blank? || free?
       self.transaction_id = val if val
       self.status = 'pending' 
       save!

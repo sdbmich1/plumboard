@@ -10,26 +10,6 @@ class PostsController < ApplicationController
     Post.mark_as_read! :all, :for => @user
   end
 
-  def create
-    @conversation = Conversation.find(:first, :conditions => ["pixi_id = ? AND recipient_id = ? AND user_id = ? AND status = ?",
-                                      params[:post][:pixi_id], params[:post][:recipient_id], params[:post][:user_id], 'active']) rescue nil
-      
-    if @conversation
-      @post = @conversation.posts.build params[:post]
-      respond_with(@post) do |format|
-        if @post.save
-          reload_data params[:post][:pixi_id]
-          format.json { render json: {post: @post} }
-        else
-          format.json { render json: { errors: @post.errors.full_messages }, status: 422 }
-        end
-      end
-    else 
-      flash[:error] = "Could not create new message, please try again."
-      render :nothing => true
-    end
-  end
-
   def destroy
     @post = Post.find params[:id]
     @post.destroy  
@@ -44,7 +24,6 @@ class PostsController < ApplicationController
     else
       flash[:error] = "Post was not removed. Please try again."
     end
-    render :nothing => true
   end
 
   def mark_read
@@ -62,20 +41,12 @@ class PostsController < ApplicationController
   end
 
   def load_data
-    @page = params[:page] || 1
-    @per_page = params[:per_page] || 5
-  end
-
-  def reload_data pid
-    @listing = Listing.find_pixi pid
-    @comments = @listing.comments.paginate page: @page, per_page: PIXI_COMMENTS if @listing
-    @user.pixi_wants.create(pixi_id: pid) # add to user's wanted list
+    @page, @per_page = params[:page] || 1, params[:per_page] || 5
   end
 
   def set_redirect_path status='received'
     @conversation = @post.conversation.reload
     if @conversation && @conversation.active_post_count(@user) > 0 
-      @posts, @post = @conversation.posts.active_status(@user), @conversation.posts.build
       conversation_path(@conversation)
     else
       conversations_path(status: status)

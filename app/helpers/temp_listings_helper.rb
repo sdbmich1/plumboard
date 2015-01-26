@@ -16,8 +16,8 @@ module TempListingsHelper
   end
 
   # return # of steps to submit new pixi
-  def step_count
-    @listing.free? ? 2 : !@listing.new_status? ? 2 : 3 rescue 2
+  def step_count listing
+    listing.free? ? 2 : !listing.new_status? ? 2 : 3 rescue 2
   end
   
   # build array for year selection dropdown
@@ -60,5 +60,10 @@ module TempListingsHelper
   # check if in edit mode
   def edit_mode? listing
     !listing.pixi_post? || listing.edit?
+  end
+
+  def is_item? listing, flg=true
+    val = flg ? %w(employment service event) : %w(employment service vehicle)
+    !(listing.is_category_type? val)
   end
 end

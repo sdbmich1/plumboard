@@ -1,17 +1,22 @@
-  <%= form_for setup_post(listing), remote: true,  data: {validate: 'parsley'} do |f| %>
-    <div id="notice" style="display:none"></div>
-    <div id="form_errors">
-      <%= render partial: 'shared/error_messages', :locals => { :target => f.object } %>
-    </div>
+<%= form_for setup_conversation(listing), remote: true,  data: {validate: 'parsley'} do |f| %>
+  <div id="notice" style="display:none"></div>
+  <div id="form_errors">
+    <%= render partial: 'shared/error_messages', :locals => { :target => f.object } %>
+  </div>
+  <%= f.hidden_field 'pixi_id', value: listing.pixi_id %>
+  <%= f.hidden_field 'recipient_id', value: listing.seller_id %>
+  <%= f.hidden_field 'user_id', value: @user.id %>
 
-    <%= f.hidden_field 'pixi_id', value: listing.pixi_id %>
-    <%= f.hidden_field 'recipient_id', value: listing.seller_id %>
-    <%= f.hidden_field 'user_id', value: @user.id %>
-    <%= f.hidden_field 'msg_type', value: 'want' %>
+  <%= f.fields_for :posts do |form| %>
+    <%= form.hidden_field 'pixi_id', value: listing.pixi_id %>
+    <%= form.hidden_field 'recipient_id', value: listing.seller_id %>
+    <%= form.hidden_field 'user_id', value: @user.id %>
+    <%= form.hidden_field 'msg_type', value: 'want' %>
 
     <div class="reply_form">
-      <%= f.hidden_field 'content', value: PIXI_POST, placeholder: 'Send message to seller.', autofocus: true, id: 'contact_content', 
+      <%= form.hidden_field 'content', value: PIXI_POST, placeholder: 'Send message to seller.', autofocus: true, id: 'contact_content', 
          required: true %>  
-      <%= f.submit 'Want', confirm: want_msg, class: 'btn btn-primary signin-btn width100', title: want_msg, data: {disable_with: "Sending..."} %>
     </div>
   <% end %>
+  <%= f.submit 'Want', confirm: want_msg, id: 'send-want-btn', class: 'btn btn-primary signin-btn width100', title: want_msg, data: {disable_with: "Sending..."} %>
+<% end %>

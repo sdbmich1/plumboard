@@ -11,6 +11,8 @@ class InvoiceObserver < ActiveRecord::Observer
   end
 
   def after_update model
+    fee = 0.0
+
     # send post
     send_post(model) if model.unpaid?
 
@@ -22,7 +24,9 @@ class InvoiceObserver < ActiveRecord::Observer
       if model.amount > 0
 
         # get txn amount & fee
-        fee = CalcTotal::get_convenience_fee model.amount, model.listing.pixan_id
+	model.invoice_details.find_each do |item|
+          fee += CalcTotal::get_convenience_fee model.subtotal, item.listing.pixan_id
+	end
 
         # process payment
         result = model.bank_account.credit_account(model.amount - fee) rescue nil
@@ -46,12 +50,14 @@ class InvoiceObserver < ActiveRecord::Observer
 
   # notify buyer
   def send_post model
-    Post.send_invoice model, model.listing  
+    Post.send_invoice model, model.listings.first if model.listings 
   end
 
   # mark pixi as sold
   def mark_pixi model
-    model.listing.mark_as_sold model.buyer_id
+    model.listings.find_each do |listing|
+      listing.mark_as_sold(model.buyer_id) if model.listings.size == 1
+    end
   end
 
   # marked as closed any other invoice associated with this pixi

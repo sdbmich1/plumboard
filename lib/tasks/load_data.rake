@@ -41,6 +41,10 @@ namespace :db do
   task :fix_txn_details_price => :environment do
     update_txn_detail_price
   end
+
+  task :reload_invoices => :environment do
+    load_invoice_details
+  end
 end
 
 def set_keys
@@ -67,9 +71,11 @@ end
 
 def updateCategoryType
   Category.where(name: ['GIGS', 'JOBS', 'EMPLOYMENT']).update_all(category_type_code: 'employment')
-  Category.where(name: ['EVENT', 'EVENTS', 'HAPPENINGS', 'TICKETS']).update_all(category_type_code: 'event')
+  Category.where(name: ['EVENT', 'EVENTS', 'HAPPENINGS', 'TICKETS FOR SALE']).update_all(category_type_code: 'event')
   Category.where(name: ['ANTIQUES', 'COLLECTIBLES', 'REAL ESTATE']).update_all(category_type_code: 'asset')
   Category.where(name: ['AUTOMOTIVE', 'BOATS', 'MOTORCYCLE']).update_all(category_type_code: 'vehicle')
+  Category.where(name: ['BEAUTY', 'SERVICES', 'TRAVEL', 'PETS', 'CLASSES & LESSONS', 'LOST & FOUND', 'DEALS']).update_all(category_type_code: 'service')
+  Category.where('category_type_code is null').update_all(category_type_code: 'sales')
 end
 
 def update_sites
@@ -155,4 +161,8 @@ def update_txn_detail_price
       end
     end
   end
+end
+
+def load_invoice_details
+  Invoice.load_details
 end

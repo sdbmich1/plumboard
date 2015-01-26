@@ -87,7 +87,7 @@ feature "Conversations" do
       page.should have_selector('#conv-trash-btn') 
       page.should have_selector('#conv-bill-btn') 
       page.should_not have_selector('#conv-pay-btn') 
-      page.should_not have_selector('#conv-show-btn') 
+      page.should have_selector('#conv-show-btn') 
     end
 
     it "marks all posts read", js: true do
@@ -163,6 +163,7 @@ feature "Conversations" do
       visit conversations_path(status: 'received')
       click_on 'Sent'
       click_on 'Received'
+      sleep 5
     end
     
     it 'shows content' do
@@ -239,10 +240,11 @@ feature "Conversations" do
     end
 
     it 'removes last message' do
+      expect(Post.count).to eq 1
       page.should have_selector('.msg-trash-btn') 
       page.find(".msg-trash-btn", :visible => true).click
       click_remove_ok
-      sleep 3
+      sleep 5
       expect(Post.where(recipient_status: 'removed').count).to eq 1
       page.should have_content 'No conversations found' 
     end
@@ -270,8 +272,7 @@ feature "Conversations" do
             fill_in 'reply_content', with: nil
             click_send
         }.not_to change(Post,:count).by(1)
-
-        page.should have_content "Content can't be blank"
+        page.should have_content @conversation.listing.title
       end
     end
   end
@@ -355,9 +356,9 @@ feature "Conversations" do
     it 'removes conversation' do
       page.find("#conv-trash-btn", :visible => true).click
       click_remove_ok
-      sleep 3
-      page.should have_content 'No conversations found' 
+      sleep 5
       expect(Conversation.where(recipient_status: 'removed').count).to eq 1
+      page.should have_content 'No conversations found' 
     end
   end
 

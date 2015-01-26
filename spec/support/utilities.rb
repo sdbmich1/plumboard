@@ -86,3 +86,81 @@
   def get_invoice_fee inv
     inv.owner?(@user) ? inv.get_fee(true) : inv.get_fee rescue 0
   end
+
+  def accept_btn
+    wait = Selenium::WebDriver::Wait.new ignore: Selenium::WebDriver::Error::NoAlertPresentError
+    alert = wait.until { page.driver.browser.switch_to.alert }
+    alert.accept
+  end
+
+  def click_ok
+    click_button submit; sleep 3 
+    page.driver.browser.switch_to.alert.accept
+  end
+
+  def click_valid_ok
+    click_button submit
+    # page.driver.browser.switch_to.alert.accept
+    accept_btn
+    sleep 2
+  end
+
+  def click_valid_save
+    click_button save 
+    sleep 3
+  end
+
+  def click_cancel_ok
+    click_link 'Cancel'; sleep 1 
+    page.driver.browser.switch_to.alert.accept
+  end
+
+  def click_cancel
+    page.driver.browser.switch_to.alert.dismiss
+  end
+
+  def click_cancel_cancel
+    click_link 'Cancel'; sleep 1 
+    page.driver.browser.switch_to.alert.dismiss
+  end
+
+  def click_submit_cancel
+    click_button submit; sleep 1 
+    page.driver.browser.switch_to.alert.dismiss
+  end
+
+  def click_remove_ok
+    click_link 'Remove'
+    page.driver.browser.switch_to.alert.accept
+  end
+	                  
+  def click_remove_cancel
+    click_link 'Remove'
+    page.driver.browser.switch_to.alert.dismiss
+  end
+  
+  def user_login usr
+    fill_in "user_email", :with => usr.email
+    fill_in "pwd", :with => usr.password
+    click_button "Sign in"
+  end
+
+  def check_page_expectations str_arr, txt, notFlg=true
+    str_arr.each do |str|
+      if notFlg
+        page.should_not have_content "#{str} #{txt}"
+      else
+        page.should have_content "#{str} #{txt}"
+      end
+    end
+  end
+
+  def check_page_selectors str_arr, vFlg, notFlg=true
+    str_arr.each do |str|
+      if notFlg
+        page.should_not have_selector("#{str}", visible: vFlg)
+      else
+        page.should have_selector("#{str}", visible: vFlg)
+      end
+    end
+  end

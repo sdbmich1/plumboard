@@ -54,7 +54,7 @@ module TransactionsHelper
 
   # return page title based on transaction type
   def get_page_title *args
-    @transaction.pixi? ? 'Submit Your Pixi' : 'PixiPay'
+    @transaction && @transaction.pixi? ? 'Submit Your Pixi' : 'PixiPay'
   end
 
   # return page header based on transaction type

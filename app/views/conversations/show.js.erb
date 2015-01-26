@@ -1,2 +1,2 @@
-<%= render(partial: 'shared/refresh_messages') %>
+<%= render(:partial => 'shared/refresh_messages', locals: {conversation: @conversation}) %>
 $('#spinner').hide(300);
