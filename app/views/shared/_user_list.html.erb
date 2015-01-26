@@ -1,7 +1,7 @@
 <% unless @users.blank? %>    
   <div id='usr_list'>
     <div id="top-header" class='sm-top nav pull-right'>
-      <%= link_to 'Export as CSV file', users_path(format: "csv"), class: 'btn btn-small' %>
+      <%= link_to 'Export as CSV file', users_path(utype: @utype, format: "csv"), class: 'btn btn-small' %>
     </div>
     <div class='clear-all'></div>
     <div class='sm-top'>
