@@ -1,0 +1,14 @@
+<div class="sm-top div-border">  
+  <div class='pull-right'>
+    <%= image_tag('rsz_pixipay.png', class: 'ppay-logo') %>
+  </div>
+  <div class="mtop">  
+    <div class="offset3">
+      <h5><%= "Invoice #{invoice.id} from #{invoice.seller_name}" %></h5>
+    </div>
+    <table class="offset3 mtop mbot">
+      <%= render :partial=>'shared/purchase_details', :locals=>{paid: false, invoice: invoice, txn: txn} %>
+      <tr></tr>
+    </table>
+  </div>
+</div>

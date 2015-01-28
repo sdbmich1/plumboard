@@ -17,12 +17,6 @@ describe InvoiceObserver do
     @observer.stub(:mark_pixi).with(@model).and_return(@listing)
   end
 
-  def mark_as_closed
-    @invoice = mock(Invoice)
-    @observer = InvoiceObserver.instance
-    @observer.stub(:mark_as_closed).with(@model).and_return(true)
-  end
-
   def credit_account
     @txn = mock(Transaction)
     @observer = InvoiceObserver.instance
@@ -43,7 +37,6 @@ describe InvoiceObserver do
 
   describe 'after_update' do
     let(:other_user) { create :pixi_user }
-    let(:other_invoice) { user.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: other_user.id) }
 
     before(:each) do
       @transaction = FactoryGirl.create :transaction, convenience_fee: 0.99
@@ -51,7 +44,6 @@ describe InvoiceObserver do
       @model = user.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: buyer.id, 
         bank_account_id: @account.id, transaction_id: @transaction.id ) 
       @details = @model.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: listing.pixi_id, price: 150.00 
-      details = other_invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: listing.pixi_id, price: 150.00 
       @model.save!; sleep 3
       @model.status = 'paid'
     end
@@ -72,13 +64,6 @@ describe InvoiceObserver do
     it 'should deliver the receipt' do
       credit_account
       send_mailer
-    end
-
-    it 'should mark any other invoices as closed' do
-      other_invoice.save!
-      @model.save!
-      mark_as_closed
-      # expect(other_user.unpaid_invoice_count).to eq(0)
     end
   end
 

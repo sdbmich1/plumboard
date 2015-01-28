@@ -2,9 +2,9 @@
    <tr>
     <th>Item</th>
     <th>Quantity</th>
-    <th>Price</th>
+    <th>Total</th>
   </tr>
-  <% items.each do |item| %>
+  <% txn.transaction_details.each do |item| %>
     <% unless item.price.blank? %>
       <tr>
   	<td><%= item.item_name %></td>
@@ -28,5 +28,5 @@
       </tr>
     <% end %>
   <% end %>
-  <%= render partial: 'shared/order_total', :locals=>{paid: paid, invoice: invoice} %>
+  <%= render partial: 'shared/order_total', :locals=>{paid: paid, txn: txn, model: invoice} %>
 </table>

@@ -443,6 +443,7 @@ describe InvoicesController do
 
   describe "PUT /remove/:id" do
     before (:each) do
+      Invoice.stub!(:includes) { Invoice }
       Invoice.stub!(:find).and_return( @invoice )
     end
 

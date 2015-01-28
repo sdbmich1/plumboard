@@ -43,7 +43,7 @@ module TempListingsHelper
 
   # add new picture for listing
   def setup_picture(listing)
-    picture = listing.pictures.build 
+    picture = listing.pictures.build rescue nil
     return listing
   end
 
@@ -62,8 +62,14 @@ module TempListingsHelper
     !listing.pixi_post? || listing.edit?
   end
 
+  # check if pixi is an item
   def is_item? listing, flg=true
     val = flg ? %w(employment service event) : %w(employment service vehicle)
     !(listing.is_category_type? val)
+  end
+
+  # check if pixi is chargeable
+  def chargeable? listing
+    listing.seller?(@user) && listing.new_status? 
   end
 end

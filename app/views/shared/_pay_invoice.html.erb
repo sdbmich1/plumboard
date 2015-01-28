@@ -1,17 +1,19 @@
 <div class='left-form'>
 <%= form_tag new_transaction_path, :method => :get, :id => 'purchase_btn' do %> 
   <%= hidden_field_tag 'invoice_id', invoice.id %>
-  <%= hidden_field_tag 'id', invoice.pixi_id %>
   <%= hidden_field_tag 'user_id', invoice.buyer_id %>
-  <%= hidden_field_tag 'title', "Invoice ##{invoice.id}" %>
+  <%= hidden_field_tag 'title', "Invoice ##{invoice.id} from #{invoice.seller_name}" %>
   <%= hidden_field_tag 'seller', invoice.seller_name %>
-  <%= hidden_field_tag 'item1', invoice.pixi_title %>
-  <%= hidden_field_tag 'promo_code', '' %>
-  <%= hidden_field_tag 'cnt', 1 %>
-  <%= hidden_field_tag 'qtyCnt', invoice.quantity %>
-  <%= hidden_field_tag 'quantity1', invoice.quantity %>
-  <%= hidden_field_tag 'sales_tax', invoice.tax_total %>
-  <%= hidden_field_tag 'price1', invoice.price %>
+  <%= hidden_field_tag 'promo_code', invoice.promo_code %>
+  <%= hidden_field_tag 'cnt', invoice.pixi_count %>
+  <%= hidden_field_tag 'qtyCnt', invoice.pixi_count %>
+  <% invoice.invoice_details.each_with_index do |item, i| %>
+    <%= hidden_field_tag('id'+(i+1).to_s, item.pixi_id) %>
+    <%= hidden_field_tag('quantity'+(i+1).to_s, item.quantity) %>
+    <%= hidden_field_tag('item'+(i+1).to_s, item.pixi_title) %>
+    <%= hidden_field_tag('price'+(i+1).to_s, item.price) %>
+  <% end %>
+  <%= hidden_field_tag 'tax_total', invoice.tax_total %>
   <%= hidden_field_tag 'ship_amt', invoice.ship_amt %>
   <%= hidden_field_tag 'inv_total', invoice.amount %>
   <%= hidden_field_tag 'transaction_type', 'invoice' %>

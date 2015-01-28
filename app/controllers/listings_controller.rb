@@ -41,13 +41,10 @@ class ListingsController < ApplicationController
   end
 
   def category
-    flash.now[:notice] = flash_msg
-    @category = Category.find @cat rescue nil
     respond_with(@listings)
   end
 
   def local
-    flash.now[:notice] = flash_msg
     respond_with(@listings)
   end
 
@@ -95,6 +92,8 @@ class ListingsController < ApplicationController
   end
 
   def load_city
+    flash.now[:notice] = flash_msg
+    @category = Category.find @cat rescue nil if action_name == 'category'
     @listings = Listing.get_by_city @cat, @loc, @page
   end
 

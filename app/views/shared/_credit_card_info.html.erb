@@ -1,44 +1,26 @@
 <div class="div-border">
-  <% if get_card %>
-    <div class='offset3 card-dpl'>
-      <h5 class="grp-hdr">Payment Information</h5>
-      <table>
-      <tr><td class='span3 mbot'><%= get_card_data('card_type') %>
-        <br><%= "************#{get_card_data('card_no')}" %>
-        <br><%= "Exp: #{get_card_data('expiration_month')}/#{get_card_data('expiration_year')}" %></td>
-        <td class='v-align price'>
-	<%= link_to 'Change', '#', id: 'edit-card-btn', class: 'offset2 btn' %></td>
-      </tr>
-      </table>
-    </div>
-  <% end %>
+  <%= render partial: 'shared/credit_card_details' %>
   <div class='sm-top center-wrapper card-tbl' style="<%= get_card ? 'display:none' : '' %>">
-  <table>
-  <th class='tbl-hdr'>Credit Card #* </th>
-  <th></th>
-  <th class='tbl-hdr'>Code (CVV)*</th>
-  <th></th>
-  <th class='tbl-hdr'>Exp Month*</th>
-  <th></th>
-  <th class='tbl-hdr'>Exp Year*</th>
-  <tr>
-    <td class="width240"><%= f.text_field :card_number, id: 'card_number', :size => 16 %></td>
-    <td class="width30"></td>
-    <td class="width120"><%= f.text_field :cvv, id: 'card_code', :maxlength => 4, :size => 4 %></td> 
-    <td class="width30"></td>
-    <td class="width180">
-        <%= select_month Date.today, {add_month_numbers_true: true}, {name: 'card_month', id: "card_month", class: "neg-top pixi-select" } %>
-    </td>
-    <td class="width30"></td>
-    <td class="width120">
-        <%= select_year nil, {start_year: Date.today.year, end_year: Date.today.year+15}, {name: 'card_year', id: "card_year", 
-	  class: "neg-top pixi-select"} %>
-    </td>
-  </tr>
-  <tr>
-    <td><%= image_tag('cc_logos.jpeg', :class=>'cc-logo') %></td>
-    <td></td>
-    <td><%= image_tag('cvv.png', :class=>'cvv-logo') %></td>
-  </tr>
-  </table></div>
+    <table>
+      <th class='tbl-hdr'>Credit Card #* </th><th></th>
+      <th class='tbl-hdr'>Code (CVV)*</th><th></th>
+      <th class='tbl-hdr'>Exp Month*</th><th></th>
+      <th class='tbl-hdr'>Exp Year*</th>
+      <tr>
+        <td class="width240"><%= f.text_field :card_number, id: 'card_number', :size => 16 %></td><td class="width30"></td>
+        <td class="width120"><%= f.text_field :cvv, id: 'card_code', :maxlength => 4, :size => 4 %></td> <td class="width30"></td>
+        <td class="width180">
+          <%= select_month Date.today, {add_month_numbers_true: true}, {name: 'card_month', id: "card_month", class: "neg-top pixi-select" } %>
+        </td><td class="width30"></td>
+        <td class="width120">
+          <%= select_year nil, {start_year: Date.today.year, end_year: Date.today.year+15}, {name: 'card_year', id: "card_year", 
+	    class: "neg-top pixi-select"} %>
+        </td>
+      </tr>
+      <tr>
+        <td><%= image_tag('cc_logos.jpeg', :class=>'cc-logo') %></td><td></td>
+        <td><%= image_tag('cvv.png', :class=>'cvv-logo') %></td>
+      </tr>
+    </table>
+  </div>
 </div>

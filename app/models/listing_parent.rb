@@ -2,7 +2,7 @@ require 'rinku'
 require 'digest/md5'
 class ListingParent < ActiveRecord::Base
   resourcify
-  include Area, ResetDate, LocationManager, PixiPostsHelper, NameParse
+  include Area, ResetDate, LocationManager, NameParse, ProcessMethod
   self.abstract_class = true
   self.per_page = 20
 
@@ -519,12 +519,8 @@ class ListingParent < ActiveRecord::Base
 
   # get existing attributes
   def get_attr tmpFlg
-    attr = self.attributes  # copy attributes
-
-    # remove protected attributes
     arr = tmpFlg ? %w(id created_at updated_at explanation parent_pixi_id buyer_id delta) : %w(id created_at updated_at delta)
-    arr.map {|x| attr.delete x}
-    attr
+    ProcessMethod::get_attr self, arr
   end
 
   def add_photos tmpFlg, listing

@@ -1,12 +1,13 @@
 <%= form_tag new_transaction_path, :method => :get, :id => 'purchase_btn' do %> 
-  <%= hidden_field_tag 'id', listing.pixi_id %>
-  <%= hidden_field_tag 'title', listing.title %>
-  <%= hidden_field_tag 'item1', 'New Pixi Post' %>
+  <%= hidden_field_tag 'id1', listing.pixi_id %>
+  <%= hidden_field_tag 'item1', listing.title %>
+  <%= hidden_field_tag 'title', 'New Pixi Post' %>
+  <%= hidden_field_tag 'seller', listing.seller_name %>
   <%= hidden_field_tag 'promo_code', set_promo_code(listing.site_id) %>
   <%= hidden_field_tag 'cnt', 1 %>
   <%= hidden_field_tag 'qtyCnt', 1 %>
   <%= hidden_field_tag 'quantity1', listing.get_site_count %>
-  <%= hidden_field_tag 'price1', get_price %>
+  <%= hidden_field_tag 'price1', get_price(listing) %>
   <%= hidden_field_tag 'transaction_type', 'pixi' %>
   <%= submit_tag('Next', :class=>'btn btn-large btn-primary submit-btn', id: 'order-btn') %>
 <% end %>  

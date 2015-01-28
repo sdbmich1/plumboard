@@ -154,8 +154,8 @@ gem 'open_uri_redirections'
 
 # development gems
 group :development do
-  # gem 'better_errors'
-  # gem 'binding_of_caller'
+  gem 'better_errors', '~> 1.1.0'
+  gem 'binding_of_caller'
 
   # Deploy with Capistrano
   gem 'capistrano'

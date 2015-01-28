@@ -23,27 +23,43 @@ class Transaction < ActiveRecord::Base
             :format => { :with => name_regex }  
 
   validates :last_name,  :presence => true,
-            :length   => { :maximum => 30 },
+            :length   => { :maximum => 80 },
             :format => { :with => name_regex }
 
   validates :email, :presence => true, :email_format => true
   validates :address,  :presence => true,
                     :length   => { :maximum => 50 }
+  validates :address2, allow_blank: true, length: { :maximum => 50 }
   validates :city,  :presence => true,
                     :length   => { :maximum => 50 },
                     :format => { :with => name_regex }  
 
   validates :state, :presence => true
-  validates :zip, presence: true, length: {is: 5}
+  validates :zip, presence: true, length: {in: 5..10}
   validates :home_phone, presence: true, length: {in: 10..15}
   validates :mobile_phone, allow_blank: true, length: {in: 10..15}
   validates :work_phone, allow_blank: true, length: {in: 10..15}
-  validates :amt, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :amt, presence: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
+  		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_PIXI_AMT.to_f }  
+  validates :convenience_fee, presence: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ },
+   		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: (MAX_PIXI_AMT/10).to_f } 
+  validates :processing_fee, presence: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
+   		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: (MAX_PIXI_AMT/10).to_f } 
+
+  # define eager load assns
+  def self.inc_list
+    includes(:invoices => {:listings => :pictures})
+  end
+
+  # override find method
+  def self.find id
+    inc_list.where(id: id.to_i).first
+  end
 
   # pre-load new transaction for given user
-  def self.load_new usr, listing, order
-    if usr && listing
-      txn = listing.build_transaction
+  def self.load_new usr, order
+    if usr
+      txn = usr.transactions.build
 
       # set transaction amounts
       txn.amt = CalcTotal::process_order order
@@ -54,11 +70,7 @@ class Transaction < ActiveRecord::Base
       # load user info
       txn.user_id = usr.id
       txn.first_name, txn.last_name, txn.email = usr.first_name, usr.last_name, usr.email
-      
-      # load user contact info
-      if usr.has_address?
-        txn = AddressManager::synch_address txn, usr.contacts[0], false
-      end
+      txn = AddressManager::synch_address txn, usr.contacts[0], false if usr.has_address?
     end
     txn
   end
@@ -103,7 +115,7 @@ class Transaction < ActiveRecord::Base
   end
 
   # save transaction
-  def save_transaction order, listing
+  def save_transaction order
     if valid?
       # add transaction details      
       (1..order[:cnt].to_i).each do |i| 
@@ -112,19 +124,23 @@ class Transaction < ActiveRecord::Base
         end 
       end 
 
+      # get listing
+      listing = Listing.where(pixi_id: order['id1']).first
+
       # submit payment or order based on transaction type
       if pixi? 
         self.status = 'pending' # set status
         save!  
 
-   	    # submit order
-        listing.submit_order(self.id) unless self.errors.any?
+   	# submit order
+	unless self.errors.any?
+          listing.submit_order(self.id) if listing
+	end
       else
         # process credit card
         if has_token? 
           if process_transaction
-            inv = listing.get_invoice(order["invoice_id"])
-            # submit payment
+            inv = Invoice.find(order["invoice_id"])
             inv.submit_payment(self.id) if inv
           else
             errors.add :base, "Transaction processing failed. Please re-enter."
@@ -227,8 +243,8 @@ class Transaction < ActiveRecord::Base
   end
 
   # format txn date
-  def txn_dt
-    new_dt = get_invoice_listing.display_date created_at, true rescue created_at
+  def txn_dt flg=true
+    new_dt = get_invoice_listing.display_date created_at, flg rescue created_at
   end
 
   # get txn fees
@@ -239,11 +255,6 @@ class Transaction < ActiveRecord::Base
   # check amount
   def has_amount?
     amt > 0 rescue nil
-  end
-
-  # eager load txn
-  def self.find id
-    includes(:transaction_details, :invoices => :listing, :user => [:pictures, :bank_accounts]).where(id: id).first
   end
 
   def self.get_by_date start_date, end_date
@@ -257,7 +268,9 @@ class Transaction < ActiveRecord::Base
   end
 
   def as_csv(options={})
-    { "Transaction Date" => updated_at.strftime("%F"), "Item Title" => pixi_title, "Buyer" => buyer_name, "Seller" => seller_name, "Price" => get_invoice.price,
-      "Quantity" => get_invoice.quantity, "Buyer Total" => amt, "Seller Total" => get_invoice.amount - get_invoice.get_fee(true) }
+    { "Transaction Date" => updated_at.strftime("%F"), "Item Title" => pixi_title, "Buyer" => buyer_name, "Seller" => seller_name, 
+      "Price" => get_invoice.price, "Quantity" => get_invoice.quantity, "Buyer Total" => amt, 
+      "Seller Total" => get_invoice.amount - get_invoice.get_fee(true) }
+      
   end
 end
