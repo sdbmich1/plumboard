@@ -14,10 +14,10 @@
   <div class="row">
     <div class="span12 mbot">
         <%= simple_format(listing.summary, {}, sanitize: false) %><br />
-
-        <%= "Condition: #{listing.condition}" if is_item?(listing) %>
-        <%= "Quantity: #{listing.quantity}" if is_item?(listing, false) %><br />
+        <%= "Condition: #{listing.condition}" if is_item?(listing) && listing.condition %>
+        <%= "Quantity: #{listing.quantity}" if is_item?(listing, false) && listing.quantity %><br />
         <%= "Year: #{listing.year_built}" if has_year?(listing) %>
+
         <% if listing.job? %>
           Job Type: <%= listing.job_type_name %>
 	  Compensation: <%= listing.compensation %><br />

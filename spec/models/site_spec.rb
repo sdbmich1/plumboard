@@ -16,7 +16,6 @@ describe Site do
   it { should respond_to(:institution_id) }
   it { should respond_to(:users) }
   it { should respond_to(:site_users) }
-  it { should respond_to(:site_listings) }
   it { should respond_to(:listings) }
   it { should respond_to(:contacts) }
   it { should respond_to(:pictures) }
