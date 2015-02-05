@@ -45,6 +45,10 @@ namespace :db do
   task :reload_invoices => :environment do
     load_invoice_details
   end
+
+  task :load_countries => :environment do
+    load_countries
+  end
 end
 
 def set_keys
@@ -165,4 +169,16 @@ end
 
 def load_invoice_details
   Invoice.load_details
+end
+
+# load US as country field for all Contacts that don't have org_type country
+def load_countries
+  Site.find_each do |site|
+    unless site.org_type == 'country'
+      site.contacts.find_each do |contact|
+        contact.country = 'United States of America'
+        contact.save
+      end
+    end
+  end
 end

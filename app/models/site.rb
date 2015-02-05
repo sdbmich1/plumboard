@@ -29,7 +29,7 @@ class Site < ActiveRecord::Base
   
   # select active sites and remove dups
   def self.active regionFlg=true
-    where_stmt = regionFlg ? "status = 'active'" : "status = 'active' AND org_type != 'region'"
+    where_stmt = regionFlg ? "status = 'active'" : "status = 'active' AND org_type NOT IN ('region', 'state', 'country')"
     where(where_stmt).sort_by { |e| e[:name] }.inject([]) { |m,e| m.last.nil? ? [e] : m.last[:name] == e[:name] ? m : m << e }
   end
 

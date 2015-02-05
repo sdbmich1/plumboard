@@ -615,6 +615,41 @@ task :load_condition_types => :environment do
     end
   end
 end
+
+task :import_other_sites, [:file_name, :org_type] => [:environment] do |t, args|
+
+  CSV.foreach(Rails.root.join('db', args[:file_name]), :headers => true) do |row|
+    attrs = {
+      :name => row[0],
+      :status => 'active',
+      :org_type => args[:org_type]
+    }
+
+    # add site
+    unless site = Site.where(:name => row[0]).first
+      new_site = Site.new(attrs)
+
+      # set location/contact attributes
+      loc_attrs = { 
+        :address => row[1],
+        :city => row[2],
+        :state => row[3],
+        :zip => row[4]
+      }
+
+      # add contact info for site
+      new_site.contacts.build(loc_attrs)
+
+      # save site
+      if !new_site.blank? && new_site.save 
+        puts "Saved site #{attrs.inspect}"
+      else
+        puts "Error: #{new_site.errors.full_messages.first}"
+      end
+    end
+  end
+end
+
 #to run all tasks at once
 task :run_all_tasks => :environment do
 
@@ -638,4 +673,6 @@ task :run_all_tasks => :environment do
   Rake::Task[:load_event_types].execute
   Rake::Task[:load_status_types].execute
   Rake::Task[:load_condition_types].execute
+  Rake::Task[:import_other_sites].execute :file_name => "state_site_data_012815.csv", :org_type => "state"
+  Rake::Task[:import_other_sites].execute :file_name => "country_site_data_012815.csv", :org_type => "country"
 end

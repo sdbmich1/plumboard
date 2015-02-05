@@ -203,16 +203,6 @@ describe Listing do
     it { Listing.get_by_category(@listing.category_id, 1).should_not be_empty }
   end
 
-  describe "get_by_city" do
-    it { Listing.get_by_city(0, 1, 1).should_not include @listing } 
-    it "should be able to toggle get_active" do
-      @listing.status = 'expired'
-      @listing.save
-      Listing.get_by_city(@listing.category_id, @listing.site_id, 1, true).should be_empty
-      Listing.get_by_city(@listing.category_id, @listing.site_id, 1, false).should_not be_empty
-    end
-  end
-
   describe "active_invoices" do
     it 'should not get listings if none are invoiced' do
       @listing.status = 'active'
@@ -1534,6 +1524,48 @@ describe Listing do
     it { expect(Listing.amt_left(@listing.pixi_id)).to eq 1 }
     it "has count > 0", run: true do
       expect(Listing.amt_left(@listing.pixi_id)).to eq 0
+    end
+  end
+
+  describe "active_by_state" do
+    it { Listing.active_by_state('MI').should_not include @listing } 
+    it "finds active pixis by state" do
+      @site = create(:site, name: 'Detroit', org_type: 'city')
+      @site.contacts.create(FactoryGirl.attributes_for(:contact, address: 'Metro', city: 'Detroit', state: 'MI'))
+      listing = create(:listing, seller_id: @user.id, site_id: @site.id) 
+      expect(Listing.active_by_state('MI').count).to eq(1)
+    end
+  end
+
+  describe "active_by_country" do
+    it { Listing.active_by_country('United States of America').should_not include @listing } 
+    it "finds active pixis by country" do
+      @site = create(:site, name: 'Detroit', org_type: 'city')
+      @site.contacts.create(FactoryGirl.attributes_for(:contact, address: 'Metro', city: 'Detroit', state: 'MI', country: 'United States of America'))
+      listing = create(:listing, seller_id: @user.id, site_id: @site.id) 
+      expect(Listing.active_by_country('United States of America').count).to eq(1)
+    end
+  end
+
+  describe "get_by_city" do
+    it { Listing.get_by_city(0, 1, 1).should_not include @listing } 
+    it "should be able to toggle get_active" do
+      @listing.status = 'expired'
+      @listing.save!
+      Listing.get_by_city(@listing.category_id, @listing.site_id, 1, true).should be_empty
+      Listing.get_by_city(@listing.category_id, @listing.site_id, 1, false).should_not be_empty
+    end
+
+    it "finds active pixis by org_type" do
+      ['city', 'region', 'state', 'country'].each { |org_type|
+        site = create(:site, name: 'Detroit', org_type: org_type)
+        lat, lng = Geocoder.coordinates('Detroit, MI')
+        site.contacts.create(FactoryGirl.attributes_for(:contact, address: 'Metro', city: 'Detroit', state: 'MI',
+          country: 'United States of America', lat: lat, lng: lng))
+        listing = create(:listing, seller_id: @user.id, site_id: site.id, category_id: @category.id) 
+        expect(Listing.get_by_city(listing.category_id, listing.site_id).first).to eq(listing)
+        listing.destroy
+      }
     end
   end
 end

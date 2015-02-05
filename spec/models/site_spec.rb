@@ -31,6 +31,13 @@ describe Site do
     it { Site.active.should_not include (site) } 
   end
 
+  describe "should not include sites with invalid org_type" do
+    ['region', 'state', 'country'].each { |org_type|
+      site = Site.create(:name=>'Item', :status=>'inactive', org_type: org_type)
+      it { Site.active(false).should_not include (site) }
+    }
+  end
+
   describe "when name is empty" do
     before { @site.name = "" }
     it { should_not be_valid }
@@ -263,18 +270,18 @@ describe Site do
 
         it "renders all pixis in its cities", :run => true do
           site_ids = []
-          Listing.active_by_region(@region_city, @region_state, 1, @range).each do |listing|
+          Listing.active_by_region(@region_city, @region_state, 1, true, @range).each do |listing|
               site_ids.push(listing.site_id)
           end
           expect(site_ids.sort).to eql(@listing_sites)
         end
 
         it "only includes pixis for its cities", :run => true do
-          expect(Listing.active_by_region(@region_city, @region_state, 1, @range).length).to eql(@city_array.length)
+          expect(Listing.active_by_region(@region_city, @region_state, 1, true, @range).length).to eql(@city_array.length)
         end
 
         it "renders no pixis when none in any city" do
-          expect(Listing.active_by_region(@region_city, @region_state, 1, @range)).to be_nil
+          expect(Listing.active_by_region(@region_city, @region_state, 1, true, @range)).to be_nil
         end
       end
     end

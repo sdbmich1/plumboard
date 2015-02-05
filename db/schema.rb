@@ -13,35 +13,6 @@
 
 ActiveRecord::Schema.define(:version => 20150114235711) do
 
-  create_table "admins", :force => true do |t|
-    t.string   "email",                  :default => "", :null => false
-    t.string   "encrypted_password",     :default => "", :null => false
-    t.string   "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          :default => 0
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
-    t.string   "current_sign_in_ip"
-    t.string   "last_sign_in_ip"
-    t.string   "confirmation_token"
-    t.datetime "confirmed_at"
-    t.datetime "confirmation_sent_at"
-    t.string   "unconfirmed_email"
-    t.integer  "failed_attempts",        :default => 0
-    t.string   "unlock_token"
-    t.datetime "locked_at"
-    t.string   "authentication_token"
-    t.datetime "created_at",                             :null => false
-    t.datetime "updated_at",                             :null => false
-  end
-
-  add_index "admins", ["authentication_token"], :name => "index_admins_on_authentication_token", :unique => true
-  add_index "admins", ["confirmation_token"], :name => "index_admins_on_confirmation_token", :unique => true
-  add_index "admins", ["email"], :name => "index_admins_on_email", :unique => true
-  add_index "admins", ["reset_password_token"], :name => "index_admins_on_reset_password_token", :unique => true
-  add_index "admins", ["unlock_token"], :name => "index_admins_on_unlock_token", :unique => true
-
   create_table "bank_accounts", :force => true do |t|
     t.string   "token"
     t.integer  "user_id"
@@ -57,14 +28,6 @@ ActiveRecord::Schema.define(:version => 20150114235711) do
   end
 
   add_index "bank_accounts", ["user_id"], :name => "index_bank_accounts_on_user_id"
-
-  create_table "buyers_listings", :id => false, :force => true do |t|
-    t.integer "listing_id"
-    t.integer "user_id"
-  end
-
-  add_index "buyers_listings", ["listing_id", "user_id"], :name => "index_buyers_listings_on_listing_id_and_user_id"
-  add_index "buyers_listings", ["user_id"], :name => "index_buyers_listings_on_user_id"
 
   create_table "card_accounts", :force => true do |t|
     t.string   "token"
@@ -92,22 +55,6 @@ ActiveRecord::Schema.define(:version => 20150114235711) do
     t.datetime "updated_at",         :null => false
     t.string   "pixi_type"
   end
-
-  create_table "categories_listings", :id => false, :force => true do |t|
-    t.integer "listing_id"
-    t.integer "category_id"
-  end
-
-  add_index "categories_listings", ["category_id"], :name => "index_categories_listings_on_category_id"
-  add_index "categories_listings", ["listing_id", "category_id"], :name => "index_categories_listings_on_listing_id_and_category_id"
-
-  create_table "categories_temp_listings", :id => false, :force => true do |t|
-    t.integer "temp_listing_id"
-    t.integer "category_id"
-  end
-
-  add_index "categories_temp_listings", ["category_id"], :name => "index_categories_temp_listings_on_category_id"
-  add_index "categories_temp_listings", ["temp_listing_id", "category_id"], :name => "cat_tmp_index"
 
   create_table "category_types", :force => true do |t|
     t.string   "code"
@@ -294,14 +241,6 @@ ActiveRecord::Schema.define(:version => 20150114235711) do
   add_index "invoices", ["status"], :name => "index_invoices_on_status"
   add_index "invoices", ["transaction_id"], :name => "index_invoices_on_transaction_id"
 
-  create_table "invoices_listings", :id => false, :force => true do |t|
-    t.integer "listing_id"
-    t.integer "invoice_id"
-  end
-
-  add_index "invoices_listings", ["invoice_id"], :name => "index_invoices_listings_on_invoice_id"
-  add_index "invoices_listings", ["listing_id", "invoice_id"], :name => "index_invoices_listings_on_listing_id_and_invoice_id"
-
   create_table "job_types", :force => true do |t|
     t.string   "code"
     t.string   "job_name"
@@ -311,21 +250,6 @@ ActiveRecord::Schema.define(:version => 20150114235711) do
   end
 
   add_index "job_types", ["code"], :name => "index_job_types_on_code"
-
-  create_table "listing_details", :force => true do |t|
-    t.string   "pixi_id"
-    t.integer  "site_id"
-    t.string   "color"
-    t.string   "item_size"
-    t.integer  "quantity"
-    t.string   "other_id"
-    t.string   "delivery_type"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
-  end
-
-  add_index "listing_details", ["pixi_id"], :name => "index_listing_details_on_pixi_id"
-  add_index "listing_details", ["site_id"], :name => "index_listing_details_on_site_id"
 
   create_table "listings", :force => true do |t|
     t.string   "title"
@@ -383,22 +307,6 @@ ActiveRecord::Schema.define(:version => 20150114235711) do
   add_index "listings", ["site_id", "seller_id", "start_date"], :name => "index_listings_on_org_id_and_seller_id_and_start_date"
   add_index "listings", ["status"], :name => "index_listings_on_status"
   add_index "listings", ["transaction_id"], :name => "index_listings_on_transaction_id"
-
-  create_table "listings_sites", :id => false, :force => true do |t|
-    t.integer "listing_id"
-    t.integer "site_id"
-  end
-
-  add_index "listings_sites", ["listing_id", "site_id"], :name => "index_listings_sites_on_listing_id_and_site_id"
-  add_index "listings_sites", ["site_id"], :name => "index_listings_sites_on_site_id"
-
-  create_table "listings_transactions", :id => false, :force => true do |t|
-    t.integer "listing_id"
-    t.integer "transaction_id"
-  end
-
-  add_index "listings_transactions", ["listing_id", "transaction_id"], :name => "index_listings_transactions_on_listing_id_and_transaction_id"
-  add_index "listings_transactions", ["transaction_id"], :name => "index_listings_transactions_on_transaction_id"
 
   create_table "old_listings", :force => true do |t|
     t.string   "title"
@@ -654,15 +562,6 @@ ActiveRecord::Schema.define(:version => 20150114235711) do
   add_index "saved_listings", ["pixi_id", "user_id"], :name => "index_saved_listings_on_pixi_id_and_user_id"
   add_index "saved_listings", ["status"], :name => "index_saved_listings_on_status"
 
-  create_table "saved_pixis", :force => true do |t|
-    t.string   "pixi_id"
-    t.integer  "user_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
-
-  add_index "saved_pixis", ["pixi_id", "user_id"], :name => "index_saved_pixis_on_pixi_id_and_user_id"
-
   create_table "sessions", :force => true do |t|
     t.string   "session_id", :null => false
     t.text     "data"
@@ -672,6 +571,24 @@ ActiveRecord::Schema.define(:version => 20150114235711) do
 
   add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
   add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
+
+  create_table "site_listings", :force => true do |t|
+    t.integer  "site_id"
+    t.integer  "listing_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "site_listings", ["site_id", "listing_id"], :name => "index_org_listings_on_org_id_and_listing_id", :unique => true
+
+  create_table "site_users", :force => true do |t|
+    t.integer  "site_id"
+    t.integer  "user_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "site_users", ["site_id", "user_id"], :name => "index_org_users_on_org_id_and_user_id", :unique => true
 
   create_table "sites", :force => true do |t|
     t.string   "name"
@@ -684,15 +601,6 @@ ActiveRecord::Schema.define(:version => 20150114235711) do
   end
 
   add_index "sites", ["institution_id"], :name => "index_organizations_on_institution_id"
-
-  create_table "sites_temp_listings", :id => false, :force => true do |t|
-    t.integer "temp_listing_id"
-    t.integer "site_id"
-    t.integer "quantity"
-  end
-
-  add_index "sites_temp_listings", ["site_id"], :name => "index_sites_temp_listings_on_site_id"
-  add_index "sites_temp_listings", ["temp_listing_id", "site_id"], :name => "index_sites_temp_listings_on_temp_listing_id_and_site_id"
 
   create_table "states", :force => true do |t|
     t.string "code"

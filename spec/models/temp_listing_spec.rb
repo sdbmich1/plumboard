@@ -1050,11 +1050,23 @@ describe TempListing do
 
   describe "get_by_city" do
     it "should get listings" do
-      @listings = FactoryGirl.create(:temp_listing)
-      @listings.status = 'pending'
-      @listings.save
-      TempListing.get_by_city(0, 1, 1, false).should_not include @listings
-      TempListing.get_by_city(@listings.category_id, @listings.site_id, 1, false).should_not be_empty
+      temp_listing = FactoryGirl.create :temp_listing
+      temp_listing.status = 'pending'
+      temp_listing.save!
+      TempListing.get_by_city(0, 1, 1, false).should_not include temp_listing
+      TempListing.get_by_city(temp_listing.category_id, temp_listing.site_id, 1, false).should_not be_empty
+    end
+
+    it "finds by org_type" do
+      ['city', 'region', 'state', 'country'].each { |org_type|
+        site = create(:site, name: 'Detroit', org_type: org_type)
+        lat, lng = Geocoder.coordinates('Detroit, MI')
+        site.contacts.create(FactoryGirl.attributes_for(:contact, address: 'Metro', city: 'Detroit', state: 'MI',
+          country: 'United States of America', lat: lat, lng: lng))
+        temp_listing = create(:temp_listing, seller_id: @user.id, site_id: site.id, category_id: @category.id) 
+        expect(TempListing.get_by_city(temp_listing.category_id, temp_listing.site_id, 1, false).first).to eq(temp_listing)
+        temp_listing.destroy
+      }
     end
   end
 

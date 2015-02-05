@@ -462,27 +462,40 @@ class ListingParent < ActiveRecord::Base
     end
   end
 
-  # get pixis by city
-  def self.get_by_city cid, sid, pg=1, get_active=true
-    # check if site is a city
-    unless loc = Site.check_site(sid, 'city')
-      unless loc = Site.check_site(sid, 'region') 
-        cid.blank? ? get_by_site(sid, pg, get_active) : get_category_by_site(cid, sid, pg, get_active)
-      else
-        unless loc.contacts.blank?
-          city, state = loc.contacts[0].city, loc.contacts[0].state
-          cid.blank? ? active_by_region(city, state, pg, get_active) : where('category_id = ?', cid).active_by_region(city, state, pg, get_active) 
-        end
-      end
+  # get active pixis by state
+  def self.active_by_state state, pg=1, get_active=true
+    if get_active
+      active.where(site_id: Contact.where(state: state).map(&:contactable_id).uniq).set_page(pg)
     else
-      # get active pixis by site's city and state
-      unless loc.contacts.blank?
-        city, state = loc.contacts[0].city, loc.contacts[0].state
-        cid.blank? ? active_by_city(city, state, pg, get_active) : where('category_id = ?', cid).active_by_city(city, state, pg, get_active) 
-      else
-        # get pixis by ids
-        cid.blank? ? get_by_site(sid, pg, get_active) : get_category_by_site(cid, sid, pg, get_active)
-      end
+      where(site_id: Contact.where(state: state).map(&:contactable_id).uniq).set_page(pg)
+    end
+  end
+
+  # get active pixis by country
+  def self.active_by_country country, pg=1, get_active=true
+    if get_active
+      active.where(site_id: Contact.where(country: country).map(&:contactable_id).uniq).set_page(pg)
+    else
+      where(site_id: Contact.where(country: country).map(&:contactable_id).uniq).set_page(pg)
+    end
+  end
+
+  # check site's org_type and call the corresponding active_by method, or get pixis by ids if this fails
+  def self.get_by_city cid, sid, pg=1, get_active=true
+    if (loc = Site.check_site(sid, 'city')) && !loc.contacts.blank?
+      city, state = loc.contacts[0].city, loc.contacts[0].state
+      cid.blank? ? active_by_city(city, state, pg, get_active) : where('category_id = ?', cid).active_by_city(city, state, pg, get_active) 
+    elsif (loc = Site.check_site(sid, 'region')) && !loc.contacts.blank?
+      city, state = loc.contacts[0].city, loc.contacts[0].state
+      cid.blank? ? active_by_region(city, state, pg, get_active) : where('category_id = ?', cid).active_by_region(city, state, pg, get_active) 
+    elsif (loc = Site.check_site(sid, 'state')) && !loc.contacts.blank?
+      state = loc.contacts[0].state
+      cid.blank? ? active_by_state(state, pg, get_active) : where('category_id = ?', cid).active_by_state(state, pg, get_active) 
+    elsif (loc = Site.check_site(sid, 'country')) && !loc.contacts.blank?
+      country = loc.contacts[0].country
+      cid.blank? ? active_by_country(country, pg, get_active) : where('category_id = ?', cid).active_by_country(country, pg, get_active) 
+    else
+      cid.blank? ? get_by_site(sid, pg, get_active) : get_category_by_site(cid, sid, pg, get_active)
     end
   end
 
