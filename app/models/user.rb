@@ -144,8 +144,6 @@ class User < ActiveRecord::Base
       :bank_accounts, :card_accounts, :transactions, :ratings, :seller_ratings, :inquiries, :comments,
       :posts, :incoming_posts, :pixi_posts, :active_pixi_posts, :pixan_pixi_posts, :saved_listings, 
       :pictures, :contacts, :preferences, :user_pixi_points, 
-      :paid_invoices => {:listing => :pictures}, :unpaid_invoices => {:listing => :pictures}, :invoices => {:listing => :pictures},  
-      :unpaid_received_invoices => {:listing => :pictures}, :received_invoices => {:listing => :pictures}, 
       :listings => :pictures, :active_listings => :pictures, :sold_pixis => :pictures, :temp_listings => :pictures, 
       :purchased_listings => :pictures, :pending_pixis => :pictures, :new_pixis => :pictures).where(id: uid).first 
   end

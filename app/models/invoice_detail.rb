@@ -9,4 +9,8 @@ class InvoiceDetail < ActiveRecord::Base
     		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_PIXI_AMT.to_f }
   validates :quantity, presence: true, :numericality => { greater_than: 0, less_than_or_equal_to: MAX_INV_QTY.to_i }    
   validates :subtotal, presence: true, :numericality => { greater_than: 0 }
+
+  def pixi_title
+    listing.title rescue nil
+  end
 end

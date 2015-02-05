@@ -382,21 +382,21 @@ describe ListingsController do
   describe 'xhr GET pixi_price' do
     before :each do
       @listing = mock_listing
-      Listing.stub_chain(:find_by_pixi_id, :price).and_return( @listing )
-      @listing.stub(:price) {'500.00'}
+      Listing.stub_chain(:find_by_pixi_id).and_return( @listing )
       do_get
     end
 
     def do_get
-      xhr :get, :pixi_price, pixi_id: '1'
+      xhr :get, :pixi_price, id: '1'
+    end
+
+    it "should assign @listing" do
+      do_get
+      assigns(:listing).should_not be_nil
     end
 
     it "should load nothing" do
       controller.stub!(:render)
-    end
-
-    it "should assign @price" do
-      assigns(:price).should_not be_nil
     end
 
     it "should show the requested listing price" do
@@ -466,7 +466,7 @@ describe ListingsController do
       it "renders the edit form" do 
         Listing.stub(:find_by_pixi_id) { mock_listing(:update_attributes => false) }
         do_update
-	      response.should render_template(:show)
+	response.should render_template(:show)
       end
     end
   end

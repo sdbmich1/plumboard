@@ -1,7 +1,8 @@
-<% provide(:title, "#{get_page_header} Complete") %>
+<% provide(:title, "#{get_page_header(@transaction)} Complete") %>
 <%= content_for :content do %>
   <div id="buyTxtForm">
-    <%= render partial: set_txn_partial, locals: {step_name: "#{get_page_header} Complete", model: @transaction, amtFlg: @transaction.has_amount?} %>
+    <%= render partial: set_txn_partial(@transaction), locals: {step_name: "#{get_page_header(@transaction)} Complete", model: set_model(@transaction), 
+      amtFlg: @transaction.has_amount?} %>
   </div>
 <% end %>
 

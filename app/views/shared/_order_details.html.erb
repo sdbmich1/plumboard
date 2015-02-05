@@ -1,15 +1,17 @@
-   <tr>
-    <th class='width320'>Item</th>
-    <th class="price width120">Quantity</th>
-    <th class="price width140">Price</th>
-  </tr>
-  <% (1..order[:cnt].to_i).each do |i| %>
-  	<% if order['quantity'+i.to_s].to_i > 0 %>
-  	  <tr>
-  		<td class='width320'><%= order['item'+i.to_s] %></td>
-  		<td class="price"><%= order['quantity'+i.to_s] %></td>
-  		<td class="price"><%= ntc(order['price'+i.to_s].to_f * order['quantity'+i.to_s].to_i) %></td>
-  	  </tr>
-  	<% end %>
+<tr>
+  <th class='width320'>Item</th>
+  <th class="price width120">Quantity</th>
+  <th class="price width140">Total</th>
+</tr>
+<% (1..order[:cnt].to_i).each do |i| %>
+  <% if order['quantity'+i.to_s].to_i > 0 %>
+    <tr>
+      <td class='width320'>
+        <%= render partial: 'shared/show_photo', locals: {model: get_item(order['id'+i.to_s]), file_name: "tip-image", psize: '80x80', display_cnt: 0 } %>
+           <span class='sm-top mleft10'><%= order['item'+i.to_s] %></span></td>
+      <td class="price"><%= order['quantity'+i.to_s] %></td>
+      <td class="price"><%= ntc(order['price'+i.to_s].to_f * order['quantity'+i.to_s].to_i) %></td>
+    </tr>
   <% end %>
-  <%= render partial: 'shared/order_total', :locals=>{paid: paid, invoice: invoice} %>
+<% end %>
+<%= render partial: 'shared/order_total', :locals=>{txn: txn, model: RecursiveOpenStruct.new(order), paid: paid} %>

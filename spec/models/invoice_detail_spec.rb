@@ -37,4 +37,15 @@ describe InvoiceDetail do
   it { should_not allow_value('').for(:subtotal) }
   it { should_not allow_value(0).for(:subtotal) }
   it { should_not allow_value(-5000.00).for(:subtotal) }
+
+  describe 'pixi_title' do
+    it "has a title", run: true do
+      @details.pixi_title.should_not be_empty  
+    end
+
+    it "should not find correct pixi_title" do 
+      @details.pixi_id = '100' 
+      @details.pixi_title.should be_nil 
+    end
+  end
 end

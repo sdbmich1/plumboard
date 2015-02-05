@@ -2,58 +2,69 @@ require 'spec_helper'
 
 feature "Transactions" do
   subject { page }
-  let(:user) { FactoryGirl.create(:pixi_user) }
-  let(:site) { FactoryGirl.create(:site) }
-  let(:contact_user) { FactoryGirl.create(:contact_user) }
+  let(:user) { create(:pixi_user) }
+  let(:site) { create(:site) }
+  let(:contact_user) { create(:contact_user) }
   let(:submit) { "Done!" }
   let(:save) { "Save" }
 
-  before(:each) do
-    FactoryGirl.create :state
-    FactoryGirl.create :promo_code
+  before :each do
+    create :state
+    create :promo_code
   end
 
   def page_setup usr
     init_setup usr
-    @listing = FactoryGirl.create :temp_listing, seller_id: @user.id, status: nil
+    @listing = create :temp_listing, seller_id: @user.id
   end
 
-  def add_invoice
-    @seller = FactoryGirl.create(:pixi_user)
-    @listing2 = FactoryGirl.create(:listing, seller_id: @seller.id)
-    @account = @seller.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
-    @invoice = @seller.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing2.pixi_id, buyer_id: @user.id, 
-      bank_account_id: @account.id)
+  def add_invoice mFlg=false
+    @seller = create(:pixi_user)
+    @listing2 = create(:listing, seller_id: @seller.id, title: 'Leather Coat')
+    @account = @seller.bank_accounts.create attributes_for :bank_account, status: 'active'
+    @invoice = @seller.invoices.build attributes_for(:invoice, buyer_id: @user.id, bank_account_id: @account.id)
+    @details = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+    @details2 = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing2.pixi_id if mFlg
+    @invoice.save!
   end
 
   def visit_txn_path
-    visit new_transaction_path id: @listing.pixi_id, promo_code: '', title: @listing.title, 
-        "item1" => 'New Pixi Post', "quantity1" => 1, cnt: 1, qtyCnt: 1, "price1" => 5.00, transaction_type: 'pixi'
+    visit new_transaction_path id1: @listing.pixi_id, promo_code: '', title: 'New Pixi',
+        "item1" => @listing.title, "quantity1" => 1, cnt: 1, qtyCnt: 1, "price1" => 5.00, transaction_type: 'pixi'
   end
 
   def visit_free_txn_path
-    visit new_transaction_path id: @listing.pixi_id, promo_code: '2013LAUNCH', title: @listing.title,
-        "item1" => 'New Pixi Post', "quantity1" => 1, cnt: 1, qtyCnt: 1, "price1" => 5.00, transaction_type: 'pixi'
+    visit new_transaction_path id1: @listing.pixi_id, promo_code: '2013LAUNCH', title: 'New Pixi',
+        "item1" => @listing.title, "quantity1" => 1, cnt: 1, qtyCnt: 1, "price1" => 5.00, transaction_type: 'pixi'
   end
 
   def visit_inv_txn_path ship=nil
-    add_invoice
-    visit new_transaction_path id: @invoice.pixi_id, promo_code: '', title: "Invoice # #{@invoice.id}", seller: @seller.name,
-        "item1" => @invoice.pixi_title, "quantity1" => 1, cnt: 1, qtyCnt: 1, "price1" => 100.00, transaction_type: 'invoice',
-	"sales_tax"=> 8.25, "invoice_id"=> @invoice.id, "ship_amt"=> ship
+    add_invoice 
+    visit new_transaction_path id1: @listing.pixi_id, promo_code: '', title: "Invoice # #{@invoice.id} from #{@invoice.seller_name}", seller: @seller.name,
+        "item1" => @listing.title, "quantity1" => 1, "cnt"=> 1, "qtyCnt"=> 1, "price1" => 100.00, transaction_type: 'invoice',
+	"tax_total"=> 8.25, "invoice_id"=> @invoice.id, "ship_amt"=> ship, "inv_total"=>100.00 
   end
 
-  def user_data
+  def visit_multi_txn_path ship=0.0
+    add_invoice true
+    visit new_transaction_path id1: @listing.pixi_id, promo_code: '', title: "Invoice # #{@invoice.id} from #{@invoice.seller_name}", seller: @seller.name,
+        "item1" => @listing.title, "quantity1" => 1, cnt: 2, "qtyCnt"=> 2, "price1" => 100.00, transaction_type: 'invoice',
+	tax_total: 8.25, "invoice_id"=> @invoice.id, ship_amt: ship,
+        "quantity2"=> 2, "item2"=>@listing2.title, "price2"=> 50.00, "id2"=>@listing2.pixi_id,  
+        "inv_total"=>208.25, "transaction_type"=>'invoice', "promo_code"=>'' 
+  end
+
+  def user_data home_phone
     fill_in 'first_name', with: @user.first_name
     fill_in 'last_name', with: @user.last_name
     fill_in 'transaction_email', with: @user.email
-    fill_in 'transaction_home_phone', with: '4152419755'
+    fill_in 'transaction_home_phone', with: home_phone
     fill_in 'transaction_address', with: '251 Connecticut St'
     fill_in 'transaction_city', with: 'San Francisco'
   end
 
-  def user_data_with_state
-    user_data
+  def user_data_with_state home_phone='4152419755'
+    user_data home_phone
     select("California", :from => "transaction_state")
     fill_in 'postal_code', with: '94103'
   end
@@ -92,7 +103,7 @@ feature "Transactions" do
     click_valid_save
   end
 
-  describe "Manage Free Valid Transactions" do
+  describe "Manage Free Valid Transactions", process: true do
     before(:each) do 
       page_setup user
       visit_free_txn_path 
@@ -124,7 +135,7 @@ feature "Transactions" do
       it "creates a transaction with 100% discount" do
        user_data_with_state
         expect { 
-          click_ok; sleep 2
+          ; sleep 2
 	}.to change(Transaction, :count).by(1)
         page.should have_content "has been submitted"
       end
@@ -132,12 +143,12 @@ feature "Transactions" do
       it "Cancels transaction" do
         click_cancel_ok
         page.should_not have_content "Total Due"
-        page.should have_content "Home" 
+        page.should have_content "Pixis" 
       end
     end
   end
 
-  describe "Manage Valid Invoice Transactions w/ shipping" do
+  describe "Manage Valid Invoice Transactions w/ shipping", process: true do
     before(:each) do
       page_setup user
       visit_inv_txn_path 9.99
@@ -162,7 +173,7 @@ feature "Transactions" do
     end
   end
 
-  describe "Manage Valid Invoice Transactions - new card" do
+  describe "Manage Valid Invoice Transactions - new card", process: true do
     before(:each) do
       page_setup user
       visit_inv_txn_path 
@@ -233,14 +244,14 @@ feature "Transactions" do
         page.find("#rateit5").click
         page.find('#rating-done-btn').click; sleep 3
       }.to change(Transaction, :count).by(1)
-      page.should have_content "Home" 
+      page.should have_content "Pixis" 
     end
   end
 
-  describe "Invoice Transactions" do
+  describe "Invoice Transactions", process: true do
     before(:each) do
       page_setup user
-      @acct = @user.card_accounts.create FactoryGirl.attributes_for(:card_account, status: 'active', expiration_year: Date.today.year-1)
+      @acct = @user.card_accounts.create attributes_for(:card_account, status: 'active', expiration_year: Date.today.year-1)
       visit_inv_txn_path 
       user_data_with_state
     end
@@ -267,11 +278,41 @@ feature "Transactions" do
     end
   end
 
-  describe "Valid Transaction data w/ existing card" do
+  describe "Multi-item Invoice Transactions", process: true do
     before(:each) do
-      usr = FactoryGirl.create(:contact_user) 
+      page_setup user
+      visit_multi_txn_path 
+      user_data_with_state
+    end
+
+    it 'shows content' do
+      page.should have_content "Total Due"
+      page.should have_content @listing.title
+      page.should have_content @listing2.title
+      page.should have_selector('.addr-tbl', visible: false)
+      page.should have_selector('#edit-txn-addr', visible: false)
+      page.should_not have_content "Payment Information"
+      page.should_not have_selector('#edit-card-btn', visible: false)
+      page.should have_link('Prev', href: invoice_path(@invoice))
+      page.should_not have_link('Cancel', href: temp_listing_path(@listing))
+      page.should have_button('Done!')
+    end
+
+    it "creates a balanced transaction with valid mc card", :js=>true do
+      expect { 
+        credit_card_data '5105105105105100'; sleep 2
+        page.should have_content("Purchase Complete")
+        page.should have_content("Please Rate Your Seller")
+        page.should have_link('Add Comment', href: '#') 
+      }.to change(Transaction, :count).by(1)
+    end
+  end
+
+  describe "Valid Transaction data w/ existing card", main: true do
+    before(:each) do
+      usr = create(:contact_user) 
       page_setup usr
-      @acct = @user.card_accounts.create FactoryGirl.attributes_for :card_account, card_no: '1111'
+      @acct = @user.card_accounts.create attributes_for :card_account, card_no: '1111'
       visit_inv_txn_path 
     end
 
@@ -329,9 +370,9 @@ feature "Transactions" do
       page.should have_link('Prev', href: invoice_path(@invoice))
   end
 
-  describe "Valid Invoice Transactions w/ existing card" do
+  describe "Valid Invoice Transactions w/ existing card", main: true do
     before(:each) do
-      usr = FactoryGirl.create(:contact_user) 
+      usr = create(:contact_user) 
       page_setup usr
       visit new_bank_account_path
       click_link 'Card'
@@ -367,9 +408,9 @@ feature "Transactions" do
     select("checking", :from => "bank_account_acct_type")
   end
 
-  describe "Valid Invoice Transactions w/ existing bank account" do
+  describe "Valid Invoice Transactions w/ existing bank account", main: true do
     before(:each) do
-      usr = FactoryGirl.create(:contact_user) 
+      usr = create(:contact_user) 
       page_setup usr
       visit new_bank_account_path
       add_bank_account_data
@@ -406,9 +447,9 @@ feature "Transactions" do
       visit_inv_txn_path 
   end
 
-  describe "Valid Invoice Transactions w/ existing bank & card account" do
+  describe "Valid Invoice Transactions w/ existing bank & card account", main: true do
     before(:each) do
-      usr = FactoryGirl.create(:contact_user) 
+      usr = create(:contact_user) 
       page_setup usr
       visit new_bank_account_path
       add_bank_account_data
@@ -437,9 +478,9 @@ feature "Transactions" do
     end
   end
 
-  describe "Invalid Invoice Transactions" do
+  describe "Invalid Invoice Transactions", invalid: true do
     before(:each) do
-      usr = FactoryGirl.create(:pixi_user) 
+      usr = create(:pixi_user) 
       page_setup usr
       visit_inv_txn_path 
       user_data_with_state
@@ -462,35 +503,35 @@ feature "Transactions" do
     it "should not create a transaction with bad card #", :js=>true do
       expect { 
 	  credit_card_data '6666666666666666', '123', true
-	  click_ok }.not_to change(Transaction, :count)
+	  }.not_to change(Transaction, :count)
       page.should have_content 'invalid'
     end
 
     it "should not create a transaction with bad card token", :js=>true do
       expect { 
 	  credit_card_data '4222222222222220', '123', true
-	  click_ok }.not_to change(Transaction, :count)
+	  }.not_to change(Transaction, :count)
       page.should have_content 'invalid'
     end
 
     it "should not create a transaction with no cvv", :js=>true do
       expect { 
 	  credit_card_data '4242424242424242', '', true
-	  click_ok }.not_to change(Transaction, :count)
+	  }.not_to change(Transaction, :count)
       page.should have_content 'invalid'
     end
 
     it "should not create a transaction with bad_dates card", :js=>true do
       expect { 
 	  credit_card_data '4242424242424242', '123', false
-	  click_ok }.not_to change(Transaction, :count)
+	  }.not_to change(Transaction, :count)
       page.should have_content 'invalid'
     end
 
     it "creates a transaction after bad_dates error", :js=>true do
       expect { 
 	  credit_card_data '4242424242424242', '123', false
-	  click_ok }.not_to change(Transaction, :count)
+	  }.not_to change(Transaction, :count)
       page.should have_content 'invalid'
 
       expect { 
@@ -500,9 +541,9 @@ feature "Transactions" do
     end
   end
 
-  describe "Valid Pixi Transactions" do
+  describe "Valid Pixi Transactions", process: true do
     before(:each) do
-      usr = FactoryGirl.create(:pixi_user) 
+      usr = create(:pixi_user) 
       page_setup usr
       visit_txn_path 
       user_data_with_state
@@ -516,129 +557,116 @@ feature "Transactions" do
     end
   end
 
-  describe "Manage Invalid Transactions", :js=>true do
+  describe "Manage Invalid Transactions", invalid: true do
     before(:each) do
-      usr = FactoryGirl.create(:pixi_user) 
+      usr = create(:pixi_user) 
       page_setup usr
       visit_txn_path 
     end
 
-    describe "Create with invalid address information" do
-      it "should not create a transaction with invalid first name" do
+    context "Create with invalid address information" do
+      it "should not create a transaction with invalid first name", :js=>true do
         expect { 
           user_data_with_state
           fill_in 'first_name', with: ""
           credit_card_data
-	  click_ok }.not_to change(Transaction, :count)
-        page.should have_content "First name can't be blank"
+	  }.not_to change(Transaction, :count)
       end
 
-      it "should not create a transaction with invalid last name" do
+      it "should not create a transaction with invalid last name", :js=>true do
         expect { 
           user_data_with_state
           fill_in 'last_name', with: ""
           credit_card_data
-	  click_ok }.not_to change(Transaction, :count)
-        page.should have_content "Last name can't be blank"
+	  }.not_to change(Transaction, :count)
       end
 
-      it "should not create a transaction with blank home phone" do
+      it "should not create a transaction with blank home phone", :js=>true do
         expect { 
-	  user_data_with_state
-          fill_in 'transaction_home_phone', with: ""
+	  user_data_with_state nil
           credit_card_data
-	  click_ok }.not_to change(Transaction, :count)
-        page.should have_content "Home phone can't be blank"
+	  }.not_to change(Transaction, :count)
       end
     end
 
-    describe "Create with invalid email information" do
-      it "should not create a transaction with blank email" do
+    context "Create with invalid email information" do
+      it "should not create a transaction with blank email", :js=>true do
         expect { 
 	  user_data_with_state
           fill_in 'transaction_email', with: ""
           credit_card_data
-	  click_ok }.not_to change(Transaction, :count)
-        page.should have_content "Email can't be blank"
+	  }.not_to change(Transaction, :count)
       end
 
-      it "should not create a transaction with bad email" do
+      it "should not create a transaction with bad email", :js=>true do
         expect { 
 	  user_data_with_state
           fill_in 'transaction_email', with: "user@x."
           credit_card_data
-	  click_ok }.not_to change(Transaction, :count)
-        page.should have_content 'Email is not formatted properly'
+	  }.not_to change(Transaction, :count)
       end
     end
 
-    describe "Create with invalid address information" do
-      it "should not create a transaction w/o address" do
+    context "Create with invalid address information" do
+      it "should not create a transaction w/o address", :js=>true do
         expect { 
           fill_in 'first_name', with: @user.first_name
           fill_in 'last_name', with: @user.last_name
     	  fill_in 'transaction_email', with: @user.email
           credit_card_data
-	  click_ok }.not_to change(Transaction, :count)
-        page.should have_content "Address can't be blank"
+	  }.not_to change(Transaction, :count)
       end
 
-      it "should not create a transaction with no street address" do
+      it "should not create a transaction with no street address", :js=>true do
         expect { 
 	  user_data_with_state
           fill_in 'transaction_address', with: ""
           credit_card_data
-	  click_ok }.not_to change(Transaction, :count)
-        page.should have_content "Address can't be blank"
+	  }.not_to change(Transaction, :count)
       end
 
-      it "should not create a transaction with no city" do
+      it "should not create a transaction with no city", :js=>true do
         expect { 
 	  user_data_with_state
           fill_in 'transaction_city', with: ""
           credit_card_data
-	  click_ok }.not_to change(Transaction, :count)
-        page.should have_content "City can't be blank"
+	  }.not_to change(Transaction, :count)
       end
 
-      it "should not create a transaction with no state" do
+      it "should not create a transaction with no state", :js=>true do
         expect { 
 	  user_data
           credit_card_data
-	  click_ok }.not_to change(Transaction, :count)
-        page.should have_content "State can't be blank"
+	  }.not_to change(Transaction, :count)
       end
 
-      it "should not create a transaction with no zip" do
+      it "should not create a transaction with no zip", :js=>true do
         expect { 
 	  user_data_with_state
           fill_in 'postal_code', with: ""
           credit_card_data
-	  click_ok }.not_to change(Transaction, :count)
-        page.should have_content "Zip can't be blank"
+	  }.not_to change(Transaction, :count)
       end
     end
 
-    describe "Create with invalid Visa card information" do
+    context "Create with invalid Visa card information" do
       before { user_data_with_state }
 
-      it "should not create a transaction with no card #" do
+      it "should not create a transaction with no card #", :js=>true do
         expect { 
 	  credit_card_data nil
-	  click_ok }.not_to change(Transaction, :count)
-        page.should have_content 'invalid'
+	  }.not_to change(Transaction, :count)
       end
 
-      it "should not create a transaction with no cvv" do
+      it "should not create a transaction with no cvv", :js=>true do
         expect { 
 	  credit_card_data '4242424242424242', nil, true
-	  click_ok }.not_to change(Transaction, :count)
-        page.should have_content 'invalid'
+	  }.not_to change(Transaction, :count)
       end
     end
   end
 
-  describe "Manage Transactions page without transactions" do
+  describe "Manage Transactions page without transactions", admin: true do
     before do
       page_setup user
       visit transactions_path
@@ -657,20 +685,22 @@ feature "Transactions" do
     end
   end
 
-  describe "Manage Transactions page with transactions" do
-    before do
-      @user = FactoryGirl.create :pixi_user
-      @buyer = FactoryGirl.create(:pixi_user, first_name: 'Lucy', last_name: 'Smith', email: 'lucy.smith@lucy.com')
-      @seller = FactoryGirl.create(:pixi_user, first_name: 'Lucy', last_name: 'Burns', email: 'lucy.burns@lucy.com') 
-      @listing = FactoryGirl.create(:listing, title: 'Couch', seller_id: @user.id, price: 100)
-      @invoice = @seller.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id)
-      @txn = @user.transactions.create FactoryGirl.attributes_for(:transaction, transaction_type: 'invoice')
+  describe "Manage Transactions page with transactions", admin: true do
+    let(:admin_user) { create :admin }
+    before :each do
+      @user = create :pixi_user
+      @buyer = create(:pixi_user, first_name: 'Lucy', last_name: 'Smith', email: 'lucy.smith@lucy.com')
+      @seller = create(:pixi_user, first_name: 'Lucy', last_name: 'Burns', email: 'lucy.burns@lucy.com') 
+      @listing = create(:listing, title: 'Couch', seller_id: @user.id, price: 100)
+      @invoice = @seller.invoices.build attributes_for(:invoice, buyer_id: @buyer.id)
+      @details = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+      @txn = @user.transactions.create attributes_for(:transaction, transaction_type: 'invoice')
       @invoice.transaction_id, @invoice.status = @txn.id, 'pending'
       @invoice.save!
       @txn.invoices.append(@invoice)
       @txn.save!
 
-      page_setup user
+      page_setup admin_user
       visit transactions_path
     end
 

@@ -4,7 +4,14 @@ describe Listing do
   before(:each) do
     @user = FactoryGirl.create(:pixi_user) 
     @category = FactoryGirl.create(:category, pixi_type: 'premium') 
-    @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
+    @listing = FactoryGirl.create(:listing, seller_id: @user.id, quantity: 1) 
+  end
+
+  def create_invoice status='active'
+    @buyer = create(:pixi_user)
+    @invoice = @user.invoices.build attributes_for(:invoice, buyer_id: @buyer.id, status: status) 
+    @details = @invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+    @invoice.save!
   end
 
   subject { @listing }
@@ -212,8 +219,7 @@ describe Listing do
     end
 
     it 'should get listings' do
-      @buyer = FactoryGirl.create(:pixi_user)
-      @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id, status: 'active')
+      create_invoice
       Listing.active_invoices.should_not be_empty
     end
   end
@@ -234,8 +240,7 @@ describe Listing do
 
   describe "check_invoiced_category_and_location" do
     before do
-      @buyer = FactoryGirl.create(:pixi_user)
-      @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id, status: 'active')
+      create_invoice
     end      
 
     it "should get all listings of given status if category and location are not specified" do
@@ -602,8 +607,7 @@ describe Listing do
 
   describe 'get invoice' do
     before do 
-      @buyer = FactoryGirl.create(:pixi_user)
-      @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id) 
+      create_invoice
     end
 
     it 'should return true' do
@@ -660,11 +664,21 @@ describe Listing do
   end
 
   describe 'mark_as_sold' do
-    it 'should return true' do
+    before :each, run: true do
+      create_invoice 'paid'
+    end
+
+    it 'returns true', run: true do
       @listing.mark_as_sold.should be_true
     end
 
-    it 'should not return true' do
+    it 'does not mark when amt left > 0' do
+      @listing.update_attribute(:quantity, 5)
+      create_invoice 'paid'
+      @listing.mark_as_sold.should_not be_true
+    end
+
+    it 'does not mark when already sold' do
       @listing.status = 'sold'
       @listing.mark_as_sold.should_not be_true
     end
@@ -1337,10 +1351,7 @@ describe Listing do
 
   describe 'set_invoice_status' do
     before do 
-      @buyer = FactoryGirl.create(:pixi_user)
-      @buyer2 = FactoryGirl.create(:pixi_user)
-      @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id) 
-  #    @invoice2 = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer2.id) 
+      create_invoice
     end
 
     it 'sets invoice status to removed' do
@@ -1506,24 +1517,21 @@ describe Listing do
 
   describe "sold count" do
     before :each, run: true do
-      @listing.status = 'sold'
-      @listing.save
+      create_invoice 'paid'
     end
-    it { expect(Listing.sold_count(@listing.pixi_id)).to eq 0 }
+    it { expect(@listing.sold_count).to eq 0 }
     it "has count > 0", run: true do
-      expect(Listing.sold_count(@listing.pixi_id)).to eq 1
+      expect(@listing.sold_count).to eq 1
     end
   end
 
   describe "amt left" do
     before :each, run: true do
-      @listing.quantity = 1
-      @listing.status = 'sold'
-      @listing.save
+      create_invoice 'paid'
     end
-    it { expect(Listing.amt_left(@listing.pixi_id)).to eq 1 }
+    it { expect(@listing.amt_left).to eq 1 }
     it "has count > 0", run: true do
-      expect(Listing.amt_left(@listing.pixi_id)).to eq 0
+      expect(@listing.amt_left).to eq 0
     end
   end
 

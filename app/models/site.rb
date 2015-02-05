@@ -11,8 +11,6 @@ class Site < ActiveRecord::Base
   scope :with_pixis, :include    => :listings, 
                      :conditions => "listings.id IS NOT NULL"
 
-  has_many :site_listings, :dependent => :destroy
-
   has_many :temp_listings, :dependent => :destroy
   scope :with_new_pixis, :include    => :temp_listings, 
                          :conditions => "temp_listings.id IS NOT NULL"

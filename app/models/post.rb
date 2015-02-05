@@ -12,12 +12,9 @@ class Post < ActiveRecord::Base
   belongs_to :user
   belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id"
   belongs_to :recipient, class_name: 'User', foreign_key: :recipient_id
-  belongs_to :invoice, foreign_key: 'pixi_id', primary_key: 'pixi_id'
   belongs_to :conversation, :inverse_of => :posts
 
   validates_presence_of :conversation, :content, :user_id, :pixi_id, :recipient_id
-
-  # default_scope order: 'posts.created_at DESC'
 
   # set active status
   def activate
@@ -46,7 +43,7 @@ class Post < ActiveRecord::Base
 
   # eager load assns
   def self.include_list
-    includes(:user, :listing, :recipient, :invoice, :conversation)
+    includes(:user, :listing, :recipient, :conversation)
   end
 
   # load default content
@@ -103,18 +100,16 @@ class Post < ActiveRecord::Base
 
   # set list of included assns for eager loading
   def self.inc_list
-    active.includes(:invoice => [:listing, :buyer, :seller], :listing => [:pictures], :user => [:pictures], :recipient => [:pictures])
+    active.includes(:listing => [:pictures], :user => [:pictures], :recipient => [:pictures])
   end
 
   # get sent posts for user
   def self.get_sent_posts usr
-    # inc_list.where(:user_id=>usr)
     inc_list.where("user_id = ? AND status = ?", usr, 'active')
   end
 
   # get posts for recipient
   def self.get_posts usr
-    # inc_list.where(:recipient_id=>usr)
     inc_list.where("recipient_id = ? AND recipient_status = ?", usr, 'active')
   end
 
@@ -133,12 +128,12 @@ class Post < ActiveRecord::Base
     if sender && recipient
 
       # find the corresponding conversation
-      conv = Conversation.get_conv inv.pixi_id, recipient.id, sender.id
+      conv = Conversation.get_conv listing.pixi_id, recipient.id, sender.id
 
       # create new conversation if one doesn't already exist
       if conv.blank?
-        conv = Conversation.get_conv inv.pixi_id, sender.id, recipient.id
-        conv = listing.conversations.create pixi_id: listing.pixi_id, user_id: sender.id, recipient_id: recipient.id if conv.blank?
+        conv = Conversation.get_conv listing.pixi_id, sender.id, recipient.id
+        conv = listing.conversations.create user_id: sender.id, recipient_id: recipient.id if conv.blank?
       end
 
       # new post
@@ -151,11 +146,7 @@ class Post < ActiveRecord::Base
   # send invoice post
   def self.send_invoice inv, listing
     if !inv.blank? && !listing.blank?
-
-      # set content msg 
       msg = "You received Invoice ##{inv.id} from #{inv.seller_name} for $"
-
-      # add post
       add_post inv, listing, inv.seller, inv.buyer, msg, 'inv'
     else
       false
@@ -167,15 +158,11 @@ class Post < ActiveRecord::Base
 
     # get invoice and pixi
     inv = model.invoices[0] rescue nil
-    listing = inv.listing if inv
+    listing = inv.listings.first if inv
 
     # send post
     if inv && listing
-
-      # set content msg 
       msg = "You received a payment for Invoice ##{inv.id} from #{inv.buyer_name} for $"
-
-      # add post
       add_post inv, listing, inv.buyer, inv.seller, msg, 'paidinv'
     else
       false
@@ -184,11 +171,30 @@ class Post < ActiveRecord::Base
 
   # check if invoice is due
   def due_invoice? usr
-    if invoice
-      !invoice.owner?(usr) && invoice.unpaid? && invoice.buyer_name == usr.name ? true : false
-    else
-      false
+    check_invoice usr, false, 'buyer_name' 
+  end
+
+  # checks whether user can bill
+  def can_bill? usr
+    check_invoice(usr, true, 'seller_name')
+  end
+
+  # check invoice status for buyer or seller
+  def check_invoice usr, flg, fld
+    if listing.active?
+      listing.invoices.find_each do |invoice|
+        result = flg ? invoice.owner?(usr) : !invoice.owner?(usr) 
+        if result && invoice.unpaid? && invoice.send(fld) == usr.name
+          invoice.invoice_details.find_each do |item|
+            return true if item.pixi_id == pixi_id 
+          end
+	else
+	  return false
+        end
+      end
+      return listing.seller_id == usr.id if flg 
     end
+    false
   end
 
   # check if invoice msg 

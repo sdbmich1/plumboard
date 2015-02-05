@@ -250,12 +250,14 @@ FactoryGirl.define do
     country "US"
     home_phone  "1234567890"
     amt 100.00
+    convenience_fee 0.99
+    processing_fee 0.99
     status  'pending'
     transaction_type  'pixi'
     token { rand(36**8).to_s(36) }
-    before(:create) do |txn|
-      txn.create_user FactoryGirl.attributes_for(:pixi_user)
-    end
+    #before(:create) do |txn|
+    #  txn.create_user FactoryGirl.attributes_for(:pixi_user)
+    #end
   end
 
   factory :balanced_transaction, :class => "Transaction", :parent => :transaction do

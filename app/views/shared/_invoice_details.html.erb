@@ -1,4 +1,4 @@
-  <table class="mtop table table-bordered">
+<table class="mtop table table-bordered">
   <%= render partial: 'shared/inv_header', locals: { colFlg: false } %>
   <%= render partial: 'shared/invoice_items', collection: invoice.invoice_details, as: :invoice %>
   <tr>
@@ -21,6 +21,4 @@
     <td class="width120"><div class='order-total price'><%= ntc get_invoice_total(invoice) %></div></td>
   </tr>
   <%= render partial: 'shared/seller_invoice_details', locals: {invoice: invoice} if invoice.owner?(@user) %>
-  </table>
-</div>
-
+</table>

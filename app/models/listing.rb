@@ -102,11 +102,21 @@ class Listing < ListingParent
     invoices.where(:id => val).first rescue nil
   end
 
+  # count number of sales
+  def sold_count
+    invoices.inject(0) { |sum, x| sum + 1 if x.status == 'paid' }
+  end
+
+  # determine amount left
+  def amt_left
+    result = quantity - sold_count rescue 0
+    result > 0 ? result : 0
+  end
+
   # mark pixi as sold
-  def mark_as_sold buyer_id=nil, pid
+  def mark_as_sold
     unless sold?
-      self.status, self.buyer_id = 'sold', buyer_id
-      save!
+      self.update_attribute(:status, 'sold') if amt_left == 0
     else
       errors.add(:base, 'Pixi already marked as sold.')
       false
@@ -225,7 +235,6 @@ class Listing < ListingParent
 	  inv.update_attribute(:status, 'removed')
 	end
       end
-      # Invoice.where("pixi_id = ? AND status = ?", self.pixi_id, 'unpaid').update_all(status: 'removed')
     end
   end
 

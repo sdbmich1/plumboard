@@ -21,9 +21,13 @@ describe UserMailer do
     let(:buyer) { create :pixi_user }
     let(:listing) { create :listing, seller_id: seller.id }
     let(:transaction) { create :transaction, status: 'approved' }
-    let(:invoice) { create :invoice, status: 'paid', buyer_id: buyer.id, seller_id: seller.id, pixi_id: listing.pixi_id }
+    let(:invoice) { build :invoice, status: 'paid', buyer_id: buyer.id, seller_id: seller.id }
     let(:acct) {{"bank_account"=>{"account_number"=>"xxxxxx0001", "bank_name"=>"BANK OF AMERICA, N.A."}, "id"=>"BA3EKY6DoRFNhAoOzcb6xL5Y", "amount"=>10000}}
     let(:payment) { RecursiveOpenStruct.new acct }
+    before :each do
+      invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: listing.pixi_id 
+      invoice.save!
+    end
 
     it { expect{subject.deliver}.not_to change{ActionMailer::Base.deliveries.length}.by(0) }
     its(:to) { should == [invoice.seller_email] }

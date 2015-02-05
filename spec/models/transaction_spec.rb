@@ -1,169 +1,62 @@
 require 'spec_helper'
 
 describe Transaction do
+  before :all do
+    @user = FactoryGirl.create :pixi_user
+  end
   before(:each) do
-    @user = FactoryGirl.create :pixi_user, email: 'jblow@pixitest.com'
     @transaction = @user.transactions.build FactoryGirl.attributes_for(:transaction)
   end
 
   subject { @transaction }
 
-  it { should respond_to(:first_name) }
-  it { should respond_to(:last_name) }
-  it { should respond_to(:address) }
-  it { should respond_to(:address2) }
-  it { should respond_to(:email) }
-  it { should respond_to(:home_phone) }
-  it { should respond_to(:work_phone) }
-  it { should respond_to(:mobile_phone) }
-  it { should respond_to(:city) }
-  it { should respond_to(:state) }
-  it { should respond_to(:zip) }
-  it { should respond_to(:payment_type) }
-  it { should respond_to(:country) }
-  it { should respond_to(:credit_card_no) }
-  it { should respond_to(:description) }
-  it { should respond_to(:amt) }
-  it { should respond_to(:transaction_type) }
-  it { should respond_to(:code) }
-  it { should respond_to(:promo_code) }
-  it { should respond_to(:user_id) }
-  it { should respond_to(:cvv) }
-  it { should respond_to(:confirmation_no) }
-  it { should respond_to(:token) }
-  it { should respond_to(:processing_fee) }
-  it { should respond_to(:convenience_fee) }
-  it { should respond_to(:debit_token) }
-  it { should respond_to(:card_number) }
-  it { should respond_to(:exp_month) }
-  it { should respond_to(:exp_year) }
-  it { should validate_numericality_of(:amt).is_greater_than_or_equal_to(0) }
-  it { should ensure_length_of(:zip).is_equal_to(5) }
-  it { should validate_presence_of(:home_phone) }
-  it { should ensure_length_of(:home_phone).is_at_least(10).is_at_most(15) }
-  it { should ensure_length_of(:mobile_phone).is_at_least(10).is_at_most(15) }
-  it { should ensure_length_of(:work_phone).is_at_least(10).is_at_most(15) }
-
-  it { should allow_value(4157251111).for(:home_phone) }
-  it { should allow_value(4157251111).for(:work_phone) }
-  it { should allow_value(4157251111).for(:mobile_phone) }
-  it { should_not allow_value('4157251111abcdefg').for(:mobile_phone) }
-  it { should_not allow_value(7251111).for(:home_phone) }
-  it { should_not allow_value(7251111).for(:work_phone) }
-  it { should_not allow_value(7251111).for(:mobile_phone) }
-  it { should allow_value(41572).for(:zip) }
-  it { should_not allow_value(725).for(:zip) }
-
-  it { should respond_to(:user) }
-  it { should respond_to(:listings) }
-  it { should respond_to(:transaction_details) }
-  it { should respond_to(:invoices) }
-
-  describe "when first_name is too long" do
-    before { @transaction.first_name = "a" * 31 }
-    it { should_not be_valid }
-  end
-
-  describe "when first_name is invalid" do
-    before { @transaction.first_name = "@@@@" }
-    it { should_not be_valid }
-  end
-
-  describe "when address is empty" do
-    before { @transaction.address = "" }
-    it { should_not be_valid }
-  end
-
-  describe "when last_name is too long" do
-    before { @transaction.last_name = "a" * 31 }
-    it { should_not be_valid }
-  end
-
-  describe "when last_name is invalid" do
-    before { @transaction.last_name = "@@@@" }
-    it { should_not be_valid }
-  end
-
-  describe "when email format is invalid" do
-    it "should be invalid" do
-      addresses = %w[user@foo,com user_at_foo.org example.user@foo. foo@bar_baz.com foo@bar+baz.com]
-      addresses.each do |invalid_address|
-        @transaction.email = invalid_address
-        @transaction.should_not be_valid
-      end      
+  describe 'txn attributes', base: true do
+    it_behaves_like "model methods", %w(user listings transaction_details invoices pixi_payments)
+    it_behaves_like 'an user', @transaction, :transaction
+    it_behaves_like 'an address', @transaction, :transaction
+    it { should respond_to(:payment_type) }
+    it { should respond_to(:credit_card_no) }
+    it { should respond_to(:description) }
+    it { should respond_to(:amt) }
+    it { should respond_to(:transaction_type) }
+    it { should respond_to(:code) }
+    it { should respond_to(:promo_code) }
+    it { should respond_to(:user_id) }
+    it { should respond_to(:cvv) }
+    it { should respond_to(:confirmation_no) }
+    it { should respond_to(:token) }
+    it { should respond_to(:processing_fee) }
+    it { should respond_to(:convenience_fee) }
+    it { should respond_to(:debit_token) }
+    it { should respond_to(:card_number) }
+    it { should respond_to(:exp_month) }
+    it { should respond_to(:exp_year) }
+    it { should validate_presence_of(:home_phone) }
+    it { should belong_to(:user) }
+    it { should have_many(:transaction_details) }
+    it { should have_many(:pixi_payments) }
+    it { should have_many(:invoices) }
+    it { should have_many(:listings).through(:invoices) }
+    it { should_not allow_value('').for(:amt) }
+    context 'amounts' do
+      [['processing_fee', 1500], ['convenience_fee', 1500], ['amt', 15000]].each do |item|
+        it { should validate_numericality_of(item[0].to_sym).is_greater_than_or_equal_to(0) }
+        it_behaves_like 'an amount', item[0], item[1]
+      end
     end
-  end
-
-  describe "when email format is valid" do
-    it "should be valid" do
-      addresses = %w[user@foo.COM A_US-ER@f.b.org frst.lst@foo.jp a+b@baz.cn]
-      addresses.each do |valid_address|
-        @transaction.email = valid_address
-        @transaction.should be_valid
-      end      
-    end
-  end
-
-  describe "when address is too long" do
-    before { @transaction.address = "@" * 51 }
-    it { should_not be_valid }
-  end
-
-  describe "when city is invalid" do
-    before { @transaction.city = "@@@@" }
-    it { should_not be_valid }
-  end
-
-  describe "when city is too long" do
-    before { @transaction.city = "@" * 51 }
-    it { should_not be_valid }
-  end
-
-  describe "when city is empty" do
-    before { @transaction.city = "" }
-    it { should_not be_valid }
-  end
-
-  describe "when state is empty" do
-    before { @transaction.state = "" }
-    it { should_not be_valid }
-  end
-
-  describe "when zip is empty" do
-    before { @transaction.zip = "" }
-    it { should_not be_valid }
-  end
-
-  describe "when home_phone is empty" do
-    before { @transaction.home_phone = "" }
-    it { should_not be_valid }
-  end
- 
-  describe "when amt is empty" do
-    before { @transaction.amt = "" }
-    it { should_not be_valid }
-  end
-
-  describe "when amt is not a number" do
-    before { @transaction.amt = "$500" }
-    it { should_not be_valid }
-  end
-  
-  describe "when amt is a number" do
-    before { @transaction.amt = 50.00 }
-    it { should be_valid }
   end
   
   describe "load transaction" do
-    temp_listing = FactoryGirl.create :temp_listing 
-    order = { promo_code: '',  "item1"=> 'New Pixi Post', "quantity1"=> 1, cnt: 1, qtyCnt: 1, "price1"=> 5.00}
+    let(:temp_listing) { create :temp_listing }
+    let(:order) { {"cnt"=> 1, "item1"=> temp_listing.title, "id1"=> temp_listing.pixi_id, "quantity1"=> 1, "title"=> 'New Pixi', "price1"=> 5.0,
+      "promo_code"=>''} }
     it "should load new transaction" do
-      contact_user = FactoryGirl.create :contact_user 
-      Transaction.load_new(contact_user, temp_listing, order).should_not be_nil
+      contact_user = create :contact_user 
+      Transaction.load_new(contact_user, order).should_not be_nil
     end
 
     it "should not load new transaction" do
-      Transaction.load_new(nil, temp_listing, order).should be_nil
+      Transaction.load_new(nil, order).should be_nil
     end
   end
   
@@ -196,16 +89,18 @@ describe Transaction do
   end
 
   describe "save transaction - pixi" do
-    let(:temp_listing) { FactoryGirl.create :temp_listing }
-    let(:order) { {"cnt"=> 1, "quantity1"=> 1, "item1"=> 'Pixi Post', "price1"=> 5.0} }
+    let(:temp_listing) { create :temp_listing }
+    let(:order) { {"cnt"=> 1, "item1"=> temp_listing.title, "id1"=> temp_listing.pixi_id, "quantity1"=> 1, "title"=> 'New Pixi', "price1"=> 5.0,
+      "promo_code"=>''} }
 
     it "should save order" do
-      @transaction.save_transaction(order, temp_listing).should be_true
+      Transaction.any_instance.stub(:save_transaction).and_return(true)
+      @transaction.save_transaction(order).should be_true
     end
 
     it "should not save order" do
       @transaction.first_name = nil
-      @transaction.save_transaction(order, temp_listing).should_not be_true
+      @transaction.save_transaction(order).should_not be_true
     end
   end
 
@@ -227,7 +122,7 @@ describe Transaction do
     end
 
     it 'should not return true' do
-      transaction = FactoryGirl.build :transaction, address: '', city: ''
+      transaction = build :transaction, address: '', city: ''
       transaction.has_address?.should_not be_true
     end
   end
@@ -239,7 +134,7 @@ describe Transaction do
     end
 
     it 'does not return true' do
-      transaction = FactoryGirl.build :transaction, token: ''
+      transaction = build :transaction, token: ''
       transaction.has_token?.should_not be_true
     end
   end
@@ -270,10 +165,11 @@ describe Transaction do
 
   describe 'get invoice' do
     before do
-      @buyer = FactoryGirl.create(:pixi_user, first_name: 'Lucy', last_name: 'Smith', email: 'lucy.smith@lucy.com')
-      @seller = FactoryGirl.create(:pixi_user, first_name: 'Lucy', last_name: 'Burns', email: 'lucy.burns@lucy.com') 
-      @listing = FactoryGirl.create(:listing, seller_id: @user.id)
-      @invoice = @seller.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id)
+      @buyer = create(:pixi_user, first_name: 'Lucy', last_name: 'Smith', email: 'lucy.smith@lucy.com')
+      @seller = create(:pixi_user, first_name: 'Lucy', last_name: 'Burns', email: 'lucy.burns@lucy.com') 
+      @listing = create(:listing, seller_id: @user.id)
+      @invoice = @seller.invoices.build FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id)
+      @details = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
     end
 
     it "does not get invoice pixi" do
@@ -303,12 +199,6 @@ describe Transaction do
   describe "process transaction - Balanced" do
     before do
       set_payment_const('balanced')
-     # @buyer = FactoryGirl.create(:pixi_user, email: 'joedblow@pixitest.com') 
-     # @bal_charge = mock('Balanced::Marketplace', id: 1, card: {card_type: 'visa', last_four: '0000'}) 
-     # @bal_charge.stub!(:create_buyer).with(email_address: @buyer.email, card_uri: @transaction.token).and_return(@bal_charge)
-     # @bal_charge.stub!(:debit).with(amount: 10000).and_return(@bal_charge)
-     # Balanced::Marketplace.stub!(:my_marketplace).and_return(@bal_charge)
-
       @customer = mock('Balanced::Customer')
       Balanced::Customer.stub_chain(:new, :save, :uri).and_return(@customer)
       @customer.stub!(:uri).and_return(true)
@@ -320,48 +210,26 @@ describe Transaction do
       @transaction.process_transaction.should_not be_true
     end
 
-    it "processes with amt = 0" do
-      @transaction.amt = 0.0
-      @transaction.process_transaction.should be_true
-    end
-
     it "processes txn" do
       Transaction.any_instance.stub(:process_transaction).and_return(true)
       @transaction.process_transaction.should be_true
     end
   end
 
-  describe "process transaction - Stripe" do
-    before do
-      set_payment_const('stripe')
-      @stripe_charge = mock('Stripe::Charge', id: 1, card: {type: 'visa', last4: '0000'})
-      @stripe_charge.stub!(:create).with(:amount=>50000, currency: 'usd', card: 'Visa', description: 'test').and_return(@stripe_charge)
-      Stripe::Charge.stub!(:create).and_return(@stripe_charge)
-    end
-
-    it "does not process" do
-      @transaction.first_name = nil
-      @transaction.process_transaction.should_not be_true
-    end
-
-    it "processes with amt = 0" do
-      @transaction.amt = 0.0
-      @transaction.process_transaction.should be_true
-    end
-
-    it "processes Stripe txn" do
-      @transaction.process_transaction.should be_true
-    end
-  end
-
   describe "save transaction - payment" do
     before do
-      @buyer = FactoryGirl.create(:pixi_user, email: 'joedblow@pixitest.com') 
-      @listing = FactoryGirl.create(:listing, seller_id: @user.id)
+      @buyer = create(:pixi_user, email: 'joedblow@pixitest.com') 
+      @listing = create(:listing, seller_id: @user.id)
+      @listing2 = create(:listing, seller_id: @user.id, title: 'Leather coat')
       @account = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account
-      @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id, 
-        bank_account_id: @account.id)
-      @order = {"cnt"=> 1, "quantity1"=> 1, "item1"=> 'Pixi Post', "price1"=> 5.0, "invoice_id"=>@invoice.id, "amount"=>500.00 } 
+      @invoice = @user.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: @buyer.id, bank_account_id: @account.id)
+      @details = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+      @details2 = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing2.pixi_id 
+      @invoice.save!
+      @order = {"title"=> 'Invoice #1', "invoice_id"=>@invoice.id, "cnt"=> 2, "seller"=> @invoice.seller_name, "qtyCnt"=>2,
+        "quantity1"=> 2, "item1"=>@listing.title, "price1"=> 50.00, "id1"=>@listing.pixi_id,  
+        "quantity2"=> 2, "item2"=>@listing2.title, "price2"=> 50.00, "id2"=>@listing2.pixi_id,  
+        "inv_total"=>100.00, "transaction_type"=>'invoice', "promo_code"=>'' }
       @txn = @user.transactions.build FactoryGirl.attributes_for(:balanced_transaction, transaction_type: 'invoice')
     end
 
@@ -369,12 +237,12 @@ describe Transaction do
 
     it "should not save payment" do
       @txn.first_name = nil
-      @txn.save_transaction(@order, @invoice.listing).should_not be_true
+      @txn.save_transaction(@order).should_not be_true
     end
 
     it "should save payment" do
       Transaction.any_instance.stub(:save_transaction).and_return(true)
-      @txn.save_transaction(@order, @listing).should be_true
+      @txn.save_transaction(@order).should be_true
     end
   end
 
@@ -405,28 +273,24 @@ describe Transaction do
 
   describe 'txn_dt' do
     before :each do
-      @buyer = FactoryGirl.create(:pixi_user, first_name: 'Lucy', last_name: 'Smith', email: 'lucy.smith@lucy.com')
-      @seller = FactoryGirl.create(:pixi_user, first_name: 'Lucy', last_name: 'Burns', email: 'lucy.burns@lucy.com') 
-      @listing = FactoryGirl.create(:listing, seller_id: @user.id)
-      @invoice = @seller.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id)
-      @txn = @user.transactions.create FactoryGirl.attributes_for(:transaction, transaction_type: 'invoice')
+      @buyer = create(:pixi_user, first_name: 'Lucy', last_name: 'Smith', email: 'lucy.smith@lucy.com')
+      @seller = create(:pixi_user, first_name: 'Lucy', last_name: 'Burns', email: 'lucy.burns@lucy.com') 
+      @listing = create(:listing, seller_id: @user.id)
+      @invoice = @seller.invoices.build attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id)
+      @details = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+      @txn = @user.transactions.create attributes_for(:transaction, transaction_type: 'invoice')
       @invoice.transaction_id, @invoice.status = @txn.id, 'pending'
       @invoice.save!
     end
 
-    it "does not show local created date" do
-      @txn.created_at = nil
-      expect(@txn.txn_dt.to_i).to eq Time.now.to_i
-    end
-
     it "show current created date" do
-      expect(@txn.txn_dt).to eq @txn.created_at
+      expect(@txn.txn_dt).to eq @listing.display_date(@txn.created_at, true)
     end
 
     it "shows local created date" do
       @listing.lat, @listing.lng = 35.1498, -90.0492
       @listing.save
-      expect(@txn.txn_dt).to eq @txn.created_at
+      expect(@txn.txn_dt).not_to eq @txn.created_at.strftime('%m/%d/%Y %l:%M %p')
     end
   end
 

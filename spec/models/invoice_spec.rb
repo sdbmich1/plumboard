@@ -1,10 +1,11 @@
 require 'spec_helper'
+include ProcessMethod
 
 describe Invoice do
   before :all do
-    @user = FactoryGirl.create(:pixi_user, email: "jblow123@pixitest.com") 
-    @buyer = FactoryGirl.create(:pixi_user, first_name: 'Jaine', last_name: 'Smith', email: 'jaine.smith@pixitest.com') 
-    @listing = FactoryGirl.create(:listing, seller_id: @user.id)
+    @user = create(:pixi_user, email: "jblow123@pixitest.com") 
+    @buyer = create(:pixi_user, first_name: 'Jaine', last_name: 'Smith', email: 'jaine.smith@pixitest.com') 
+    @listing = create(:listing, seller_id: @user.id)
     @account = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account
   end
   before(:each) do
@@ -15,27 +16,9 @@ describe Invoice do
   subject { @invoice }
 
   describe 'attributes', base: true do
-    it { should respond_to(:buyer_id) }
-    it { should respond_to(:seller_id) }
-    it { should respond_to(:transaction_id) }
-    it { should respond_to(:price) }
-    it { should respond_to(:amount) }
-    it { should respond_to(:quantity) }
-    it { should respond_to(:sales_tax) }
-    it { should respond_to(:comment) }
-    it { should respond_to(:tax_total) }
-    it { should respond_to(:inv_date) }
-    it { should respond_to(:buyer_name) }
-    it { should respond_to(:subtotal) }
-    it { should respond_to(:ship_amt) }
-    it { should respond_to(:other_amt) }
-    it { should respond_to(:bank_account_id) }
-    it { should respond_to(:seller) }
-    it { should respond_to(:buyer) }
-    it { should respond_to(:transaction) }
-    it { should respond_to(:posts) }
-    it { should respond_to(:bank_account) }
-    it { should respond_to(:set_flds) }
+    let(:attr) { ProcessMethod::get_attr(@invoice, %w(id created_at updated_at)) }
+    it_behaves_like "model attributes"
+    it_behaves_like "model methods", %w(seller buyer transaction bank_account pixi_payments)
     it { should belong_to(:buyer).with_foreign_key('buyer_id').class_name('User') }
     it { should belong_to(:seller).with_foreign_key('seller_id').class_name('User') }
     it { should have_many(:invoice_details) }
@@ -43,27 +26,16 @@ describe Invoice do
     it { should accept_nested_attributes_for(:invoice_details).allow_destroy(true) }
     it { should belong_to(:transaction) }
     it { should belong_to(:bank_account) }
-    it { should have_many(:posts).with_foreign_key('pixi_id') }
     it { should have_many(:pixi_payments) }
-    it { should allow_value(10.00).for(:sales_tax) }
-    it { should allow_value(7.25).for(:sales_tax) }
-    it { should_not allow_value(50).for(:sales_tax) }
-    it { should_not allow_value(500).for(:sales_tax) }
-    it { should_not allow_value(50.001).for(:sales_tax) }
-    it { should_not allow_value(-5.00).for(:sales_tax) }
-    it { should_not allow_value('50.0%').for(:sales_tax) }
-    it { should allow_value(50.00).for(:ship_amt) }
-    it { should allow_value(400).for(:ship_amt) }
-    it { should_not allow_value(500000).for(:ship_amt) }
-    it { should_not allow_value(5000.001).for(:ship_amt) }
-    it { should_not allow_value(-5000.00).for(:ship_amt) }
-    it { should_not allow_value('$5000.0').for(:ship_amt) }
-    it { should_not allow_value('50.0%').for(:ship_amt) }
     it { should validate_presence_of(:buyer_id) }
     it { should validate_presence_of(:seller_id) }
-    it { should allow_value(50).for(:amount) }
     it { should_not allow_value('').for(:amount) }
     it { should_not allow_value(0).for(:amount) }
+    context 'amounts' do
+      [['sales_tax', 15], ['ship_amt', 500], ['amount', 15000]].each do |item|
+        it_behaves_like 'an amount', item[0], item[1]
+      end
+    end
   end
 
   describe 'must have pixis' do
@@ -434,6 +406,42 @@ describe Invoice do
     it 'loads details', run: true do
       Invoice.load_details
       expect(InvoiceDetail.count).not_to eq 0
+    end
+  end
+
+  describe 'mark_as_closed' do
+    before(:each) do
+      @other_buyer = create :pixi_user
+      @invoice.save!; sleep 2
+      @invoice2 = @user.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: @other_buyer.id, status: 'unpaid')
+      @details2 = @invoice2.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+      @invoice2.save!
+    end
+
+    it 'closes other invoices' do
+      @invoice.status = 'paid'
+      @invoice.save!; sleep 3
+      expect(Invoice.where(status: 'closed').count).to eq 1
+    end
+
+    it 'does not close other invoices' do
+      sleep 3
+      @invoice.amount = 200.00
+      @invoice.save!
+      expect(@invoice2.status).not_to eq 'closed'
+    end
+
+    it 'closes not all other invoices' do
+      listing = create(:listing, seller_id: @user.id, title: 'Sofa')
+      @invoice3 = @user.invoices.build attributes_for(:invoice, buyer_id: @other_buyer.id, status: 'unpaid')
+      @details3 = @invoice3.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+      @details4 = @invoice3.invoice_details.build attributes_for :invoice_detail, pixi_id: listing.pixi_id 
+      @invoice3.save!
+      @invoice.status = 'paid'
+      @invoice.save!; sleep 3
+      expect(@invoice3.status).not_to eq 'closed'
+      expect(Invoice.where(status: 'paid').count).to eq 1
+      expect(Invoice.where(status: 'closed').count).to eq 1
     end
   end
 

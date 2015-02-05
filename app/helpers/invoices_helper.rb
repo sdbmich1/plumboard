@@ -94,4 +94,9 @@ module InvoicesHelper
   def multiple_pixis?
     @user.pixi_count > 1
   end
+
+  # check if user's invoice is unpaid
+  def my_unpaid_invoice? invoice
+    invoice.owner?(@user) && invoice.unpaid? 
+  end
 end

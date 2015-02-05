@@ -1,0 +1,15 @@
+   <tr>
+    <th class='width320'>Item</th>
+    <th class="price width120">Quantity</th>
+    <th class="price width140">Total</th>
+  </tr>
+  <% invoice.invoice_details.each do |item| %>
+    <tr>
+      <td class='width320'>
+        <%= render partial: 'shared/show_photo', locals: {model: item.listing, file_name: "tip-image", psize: '80x80', display_cnt: 0 } %>
+           <span class='sm-top mleft10'><%= item.pixi_title %></span></td>
+      <td class="price"><%= item.quantity %></td>
+      <td class="price"><%= ntc(item.subtotal) %></td>
+    </tr>
+  <% end %>
+  <%= render partial: 'shared/purchase_total', :locals=>{paid: paid, invoice: invoice, txn: txn} %>

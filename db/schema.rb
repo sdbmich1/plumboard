@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150114235711) do
+ActiveRecord::Schema.define(:version => 20150121015955) do
 
   create_table "bank_accounts", :force => true do |t|
     t.string   "token"
@@ -234,6 +234,7 @@ ActiveRecord::Schema.define(:version => 20150114235711) do
     t.boolean  "delta"
     t.float    "ship_amt"
     t.float    "other_amt"
+    t.string   "promo_code"
   end
 
   add_index "invoices", ["bank_account_id"], :name => "index_invoices_on_bank_account_id"

@@ -1,11 +1,13 @@
 require 'spec_helper'
 
 describe Conversation do
-    before(:each) do
+    before :all do
       @user = FactoryGirl.create :pixi_user
       @recipient = FactoryGirl.create :pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tom.davis@pixitest.com'
       @buyer = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Smith', email: 'jack.smith99@pixitest.com'
       @listing = FactoryGirl.create :listing, seller_id: @user.id, title: 'Big Guitar'
+    end
+    before :each do
       @conversation = @listing.conversations.create FactoryGirl.attributes_for :conversation, user_id: @user.id, recipient_id: @recipient.id
       @post = @conversation.posts.create FactoryGirl.attributes_for :post, user_id: @user.id, recipient_id: @recipient.id, pixi_id: @listing.pixi_id
     end
@@ -18,35 +20,10 @@ describe Conversation do
     it { should respond_to(:user) }
     it { should respond_to(:listing) }
     it { should respond_to(:recipient) }
-    it { should respond_to(:invoice) }
     it { should respond_to(:posts) }
-
-    describe "when user_id is empty" do
-      before { @conversation.user_id = "" }
-      it { should_not be_valid }
-    end
-
-    describe "when user_id is not empty" do
-      it { should be_valid }
-    end
-
-    describe "when pixi_id is empty" do
-      before { @conversation.pixi_id = "" }
-      it { should_not be_valid }
-    end
-
-    describe "when pixi_id is not empty" do
-      it { should be_valid }
-    end
-
-    describe "when recipient_id is empty" do
-      before { @conversation.recipient_id = "" }
-      it { should_not be_valid }
-    end
-
-    describe "when recipient_id is not empty" do
-      it { should be_valid}
-    end
+    it { should validate_presence_of(:user_id) }
+    it { should validate_presence_of(:pixi_id) }
+    it { should validate_presence_of(:recipient_id) }
 
     describe "when accessing posts" do
       it "has first post" do
@@ -82,14 +59,12 @@ describe Conversation do
       context "removing user's conversation" do
 
         it "returns true if successful" do
-          @result = Conversation.remove_conv(@conversation, @user)
-          expect(@result).to eql(true)
+          expect(Conversation.remove_conv(@conversation, @user)).to eql(true)
         end
 
         it "returns false if unsuccessful" do
-          @conversation.stub(:update_attributes).and_return(false)
-          @result = Conversation.remove_conv(@conversation, @user)
-          expect(@result).to eql(false)
+	  new_user = create :pixi_user
+          expect(Conversation.remove_conv(@conversation, new_user)).to eql(false)
         end
 
         it "sets user's status to removed" do
@@ -124,14 +99,12 @@ describe Conversation do
       context "removing recipient's conversation" do
 
         it "returns true if successful" do
-          @result = Conversation.remove_conv(@conversation, @recipient)
-          expect(@result).to eql(true)
+          expect(Conversation.remove_conv(@conversation, @recipient)).to eql(true)
         end
 
         it "returns false if unsuccessful" do
-          @conversation.stub(:update_attributes).and_return(false)
-          @result = Conversation.remove_conv(@conversation, @recipient)
-          expect(@result).to eql(false)
+	  new_user = create :pixi_user
+          expect(Conversation.remove_conv(@conversation, new_user)).to eql(false)
         end
 
         it "sets user's status to removed" do
@@ -263,11 +236,12 @@ describe Conversation do
         end
 
         it 'does return true when user has replied' do
-          expect(@conversation.replied_conv?(@recipient)).to be true
+          expect(@conversation.replied_conv?(@user)).to be_true
         end
 
         it 'does not return true when user has not replied' do
-          expect(@conversation.replied_conv?(@user)).to be false
+	  new_user = create :pixi_user
+          expect(@conversation.replied_conv?(new_user)).to be false
         end
       end
     end
@@ -306,87 +280,69 @@ describe Conversation do
     end
   end
 
-  describe "invoice_id" do 
-    it 'returns invoice id' do
-      @invoice = @user.invoices.build FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
-      sleep 2;
-      @invoice.save
-      @conversation.invoice_id.should_not be_nil  
+  describe "due_invoice", invoice: true do 
+    before :each, run: true do
+      @new_user = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Wilson', email: 'jack.wilson@pixitest.com'
+      @account = @new_user.bank_accounts.create FactoryGirl.attributes_for :bank_account
+      @invoice = @new_user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
+      @details = @invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+      @invoice.save!
     end
-
-    it "should not find correct invoice_id" do 
-      @conversation.pixi_id = '100' 
-      @conversation.invoice_id.should be_nil 
-    end
-  end
-
-  describe "due_invoice" do 
     
     it "should_not return true" do
       @conversation.due_invoice?(@user).should_not be_true
     end
     
     it "should return true" do
-      @invoice = @buyer.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
+      @invoice = @buyer.invoices.build attributes_for(:invoice, buyer_id: @recipient.id)
+      @details = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+      @invoice.save!
       @conversation.due_invoice?(@recipient).should be_true
     end
     
-    it "should not return true when paid" do
-      @new_user = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Wilson', email: 'jack.wilson@pixitest.com'
-      @account = @new_user.bank_accounts.create FactoryGirl.attributes_for :bank_account
-      @invoice = @new_user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
+    it "should not return true when paid", run: true do
       @invoice.status = 'paid'
       @invoice.save
       @conversation.due_invoice?(@recipient).should_not be_true
     end
     
-    it "should not return true when removed" do
-      @new_user = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Wilson', email: 'jack.wilson@pixitest.com'
-      @invoice = @new_user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
+    it "should not return true when removed", run: true do
       @listing.status = 'removed'
-      @listing.save; sleep 1
-      @conversation.due_invoice?(@recipient).should_not be_true
-    end
-    
-    it "should not return true when sold" do
-      @new_user = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Wilson', email: 'jack.wilson@pixitest.com'
-      @invoice = @new_user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
-      @listing.status = 'sold'
       @listing.save; sleep 1
       @conversation.due_invoice?(@recipient).should_not be_true
     end
   end
 
-  describe 'can_bill?' do
+  describe 'can_bill?', invoice: true do
+    before :each do
+      @new_user = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Wilson', email: 'jack.wilson@pixitest.com'
+      @account = @new_user.bank_accounts.create FactoryGirl.attributes_for :bank_account
+      @invoice = @new_user.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: @recipient.id)
+      @details = @invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+      @invoice.save!
+    end
     
     it "should_not return true" do
       @conversation.can_bill?(@recipient).should_not be_true
     end
     
-    it "should return true" do
-      @conversation.can_bill?(@user).should be_true
+    it "returns true" do
+      @conversation.can_bill?(@new_user).should be_true
     end
     
     it "should not return true when paid" do
-      @new_user = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Wilson', email: 'jack.wilson@pixitest.com'
-      @account = @new_user.bank_accounts.create FactoryGirl.attributes_for :bank_account
-      @invoice = @new_user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
       @invoice.status = 'paid'
-      @invoice.save
+      @invoice.save!
       @conversation.can_bill?(@recipient).should_not be_true
     end
     
     it "should not return true when removed" do
-      @new_user = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Wilson', email: 'jack.wilson@pixitest.com'
-      @invoice = @new_user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
       @listing.status = 'removed'
       @listing.save; sleep 1
       @conversation.can_bill?(@recipient).should_not be_true
     end
     
     it "should not return true when sold" do
-      @new_user = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Wilson', email: 'jack.wilson@pixitest.com'
-      @invoice = @new_user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
       @listing.status = 'sold'
       @listing.save; sleep 1
       @conversation.can_bill?(@recipient).should_not be_true

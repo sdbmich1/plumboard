@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe TransactionObserver do
-  let(:user) { FactoryGirl.create(:pixi_user) }
+  let(:user) { create(:contact_user) }
 
   def process_post
     @post = mock(Post)
@@ -9,30 +9,30 @@ describe TransactionObserver do
     @observer.stub(:send_post).with(@model).and_return(@post)
   end
 
-  def update_addr
+  def update_addr model
     @user = mock(User)
     @observer = TransactionObserver.instance
-    @observer.stub(:update_contact_info).with(@model).and_return(@user)
+    @observer.stub(:update_contact_info).with(model).and_return(@user)
   end
 
   describe 'after_update' do
-    let(:transaction) { FactoryGirl.create :transaction, address: '1234 Main Street' }
     before(:each) do
-      transaction.address = '3456 Elm'
-      transaction.status = 'approved'
+      @txn = create :transaction, address: '1234 Main Street', user_id: user.id 
+      @txn.address = '3456 Elm'
+      @txn.status = 'approved'
     end
 
     it 'updates contact info' do
-      transaction.save!
-      update_addr
-      transaction.user.contacts[0].address.should == transaction.address 
+      @txn.save!
+      update_addr @txn
+      @txn.user.contacts[0].address.should == @txn.address 
     end
 
     it 'should deliver the receipt' do
       @user_mailer = mock(UserMailer)
       UserMailer.stub(:delay).and_return(UserMailer)
-      UserMailer.should_receive(:send_transaction_receipt).with(transaction)
-      transaction.save!
+      UserMailer.should_receive(:send_transaction_receipt).with(@txn)
+      @txn.save!
     end
   end
 
@@ -47,7 +47,7 @@ describe TransactionObserver do
 
     it 'updates contact info' do
       @model.save!
-      update_addr
+      update_addr @model
       @model.user.contacts[0].address.should == @model.address 
     end
 

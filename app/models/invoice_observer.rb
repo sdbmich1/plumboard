@@ -22,13 +22,7 @@ class InvoiceObserver < ActiveRecord::Observer
 
       # credit seller account
       if model.amount > 0
-
-        # get txn amount & fee
-	model.invoice_details.find_each do |item|
-          fee += CalcTotal::get_convenience_fee model.subtotal, item.listing.pixan_id
-	end
-
-        # process payment
+	fee = model.get_convenience_fee
         result = model.bank_account.credit_account(model.amount - fee) rescue nil
 
         # record payment
@@ -40,9 +34,6 @@ class InvoiceObserver < ActiveRecord::Observer
           UserMailer.send_payment_receipt(model, result).deliver rescue nil
 	end
       end
-
-      # close out any other invoices
-      mark_as_closed model
     end
   end
 
@@ -56,13 +47,7 @@ class InvoiceObserver < ActiveRecord::Observer
   # mark pixi as sold
   def mark_pixi model
     model.listings.find_each do |listing|
-      listing.mark_as_sold(model.buyer_id) if model.listings.size == 1
+      listing.mark_as_sold if model.pixi_count == 1
     end
-  end
-
-  # marked as closed any other invoice associated with this pixi
-  def mark_as_closed model
-    inv_list = Invoice.where("pixi_id = ? AND status != 'paid'", model.pixi_id)
-    inv_list.each { |i| i.status = 'closed'; i.save; }
   end
 end

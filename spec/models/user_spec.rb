@@ -7,10 +7,8 @@ describe User do
 
   subject { @user }
 
-  describe "user methods" do
-    it { should respond_to(:first_name) }
-    it { should respond_to(:last_name) }
-    it { should respond_to(:email) }
+  describe "user methods", base: true do
+    it_behaves_like "an user"
     it { should respond_to(:password) }
     it { should respond_to(:password_confirmation) }
     it { should respond_to(:birth_date) }
@@ -29,8 +27,6 @@ describe User do
     it { should respond_to(:user_interests) }
     it { should respond_to(:transactions) }
     it { should respond_to(:user_pixi_points) }
-    it { should respond_to(:site_users) }
-    it { should respond_to(:sites) } 
     it { should respond_to(:listings) } 
     it { should respond_to(:temp_listings) } 
     it { should respond_to(:active_listings) } 
@@ -85,36 +81,6 @@ describe User do
     it { should validate_presence_of(:birth_date) }
   end
 
-  describe "when first_name is empty" do
-    before { @user.first_name = "" }
-    it { should_not be_valid }
-  end
-
-  describe "when first_name is invalid" do
-    before { @user.first_name = "@@@@" }
-    it { should_not be_valid }
-  end
-
-  describe "when first_name is too long" do
-    before { @user.first_name = "a" * 31 }
-    it { should_not be_valid }
-  end
-
-  describe "when last_name is empty" do
-    before { @user.last_name = "" }
-    it { should_not be_valid }
-  end
-
-  describe "when last_name is invalid" do
-    before { @user.last_name = "@@@" }
-    it { should_not be_valid }
-  end
-
-  describe "when last_name is too long" do
-    before { @user.last_name = "a" * 31 }
-    it { should_not be_valid }
-  end
-
   describe "when gender is empty" do
     before { @user.gender = "" }
     it { should_not be_valid }
@@ -154,26 +120,6 @@ describe User do
     user = FactoryGirl.build(:user, first_name: "John", last_name: "Doe", email: "jdoe@test.com")
     user.abbr_name.should == "John D"
     user.abbr_name.should_not == "John Doe"
-  end
-
-  describe "when email format is invalid" do
-    it "should be invalid" do
-      addresses = %w[user@foo,com user_at_foo.org example.user@foo.]
-      addresses.each do |invalid_address|
-        @user.email = invalid_address
-	@user.should_not be_valid
-      end
-    end
-  end
-
-  describe "when email format is valid" do
-    it "should be valid" do
-      addresses = %w[user@foo.COM A_US-ER@f.b.org frst.lst@foo.jp a+b@baz.cn]
-      addresses.each do |valid_address|
-        @user.email = valid_address
-	@user.should be_valid
-      end
-    end
   end
 
   describe 'contacts' do

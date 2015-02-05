@@ -23,17 +23,19 @@ module TransactionsHelper
     end
   end
   
+  # return fname
   def get_fname txn, fname, flg
     flg ? fname : txn.send(fname)
   end
   
-  def get_promo_code
-    @order ? @order[:promo_code] ? @order[:promo_code] : nil : nil
+  # return promo code if found
+  def get_promo_code order
+    order ? order[:promo_code] ? order[:promo_code] : nil : nil
   end
 
   # get price
-  def get_price
-    CalcTotal::get_price @listing.premium?
+  def get_price listing
+    CalcTotal::get_price listing.premium?
   end
   
   # set display text based on paid status
@@ -53,8 +55,8 @@ module TransactionsHelper
   end
 
   # return page title based on transaction type
-  def get_page_title *args
-    @transaction && @transaction.pixi? ? 'Submit Your Pixi' : 'PixiPay'
+  def get_page_title txn
+    txn && txn.pixi? ? 'Submit Your Pixi' : 'PixiPay'
   end
 
   # return page header based on transaction type
@@ -63,8 +65,8 @@ module TransactionsHelper
   end
 
   # return page header based on transaction type
-  def get_page_header
-    @transaction.pixi? ? 'Pixi' : 'Purchase'
+  def get_page_header txn
+    txn.pixi? ? 'Pixi' : 'Purchase'
   end
 
   # set cancel message
@@ -73,19 +75,14 @@ module TransactionsHelper
   end
 
   # set prev btn based on txn type
-  def set_prev_btn
-    @transaction.pixi? ? @listing : @invoice
-  end
-
-  # set details based on transaction type
-  def txn_details txn
-    txn.pixi? ? txn.description : "#{txn.description} from #{txn.seller_name}" 
+  def set_prev_btn txn, inv
+    txn.pixi? ? inv.listings.first : inv
   end
 
   # set partial based on txn type
-  def set_txn_partial
+  def set_txn_partial txn
     path = mobile_device? ? 'mobile' : 'shared'
-    pname = path + (@transaction.pixi? ? '/order_complete' : '/purchase_complete')
+    pname = path + (txn.pixi? ? '/order_complete' : '/purchase_complete')
   end
 
   # get card element for user if exists
@@ -99,7 +96,27 @@ module TransactionsHelper
   end
 
   # show help
-  def show_help?
-    !@transaction.get_fee.blank? rescue nil
+  def show_help? txn
+    !txn.get_fee.blank? rescue nil
+  end
+
+  # get cancel path
+  def get_cancel_path txn, order
+    txn.pixi? ? temp_listing_path(id: order['id1']) : invoice_path(id: order[:invoice_id])
+  end
+
+  # get related invoice
+  def get_invoice model
+    Invoice.find(model.invoice_id) rescue model
+  end
+
+  # get related item
+  def get_item pid
+    Listing.find_by_pixi_id(pid) rescue nil
+  end
+
+  # set model based on transaction type
+  def set_model txn
+    txn.pixi? ? txn.get_invoice_listing : txn
   end
 end
