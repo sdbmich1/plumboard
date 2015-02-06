@@ -28,6 +28,7 @@ feature "Listings" do
   def pixi_edit_access listing
     page.should have_content "Posted By: #{listing.seller_name}"
     page.should have_link 'Want', href: '#'
+    page.should have_link 'Ask', href: '#'
     page.should have_link 'Cool'
     page.should_not have_link 'Uncool'
     page.should have_link 'Save'
@@ -48,6 +49,13 @@ feature "Listings" do
       expect{
           click_link 'Want'
           # page.find('#want-btn').click
+      }.not_to change(Post,:count).by(1)
+      page.should have_content 'Sign in'
+    end
+    it "does not ask a question", js: true do
+      expect{
+          click_link 'Ask'
+          # page.find('#ask-btn').click
       }.not_to change(Post,:count).by(1)
       page.should have_content 'Sign in'
     end
@@ -89,6 +97,7 @@ feature "Listings" do
     it "Contacts a seller", js: true do
       expect{
           page.should have_link 'Want'
+          page.should have_link 'Ask'
           page.should have_link 'Cool'
           page.find('#want-btn').click
 	  # page.execute_script("$('#post_form').toggle();")
@@ -117,6 +126,14 @@ feature "Listings" do
           page.find('#want-btn').click
           page.should have_selector('#contact_content', visible: true) 
 	  fill_in 'contact_content', with: "\n"
+      }.not_to change(Post,:count).by(1)
+    end
+
+    it "does not ask a seller", js: true do
+      expect{
+          page.find('#ask-btn').click
+          page.should have_selector('#contact_content', visible: true) 
+    fill_in 'contact_content', with: "\n"
       }.not_to change(Post,:count).by(1)
     end
 
@@ -235,6 +252,7 @@ feature "Listings" do
       page.should_not have_selector('#contact_content')
       page.should_not have_selector('#comment_content')
       page.should_not have_selector('#want-btn')
+      page.should_not have_selector('#ask-btn')
       page.should_not have_selector('#cool-btn')
       page.should_not have_selector('#save-btn')
       page.should_not have_selector('#fb-link')
@@ -245,6 +263,7 @@ feature "Listings" do
       page.should have_content "Cool (#{sold_listing.liked_count})"
       page.should have_content "Saved (#{sold_listing.saved_count})"
       page.should have_content "Comments (#{sold_listing.comments.size})"
+      page.should have_content "Ask (#{sold_listing.asked_count})"
       page.should_not have_link 'Cancel', href: root_path
       page.should_not have_button 'Remove'
       page.should_not have_link 'Edit', href: edit_temp_listing_path(sold_listing)
@@ -287,11 +306,13 @@ feature "Listings" do
       page.should_not have_selector('#want-btn')
       page.should_not have_selector('#cool-btn')
       page.should_not have_selector('#save-btn')
+      page.should_not have_selector('#ask-btn')
       page.should have_selector('#fb-link')
       page.should have_selector('#tw-link')
       page.should have_selector('#pin-link')
       page.should_not have_link 'Follow', href: '#'
       page.should have_content "Want (#{listing.wanted_count})"
+      page.should have_content "Ask (#{listing.asked_count})"
       page.should have_content "Cool (#{listing.liked_count})"
       page.should have_content "Saved (#{listing.saved_count})"
       page.should have_content "Comments (#{listing.comments.size})"
@@ -756,6 +777,7 @@ feature "Listings" do
         page.should have_link 'Sold', href: seller_listings_path(status: 'sold')
         page.should have_link 'Saved', href: saved_listings_path
         page.should have_link 'Wanted', href: wanted_listings_path
+        page.should have_link 'Asked', href: asked_listings_path
         page.should have_link 'Expired', href: seller_listings_path(status: 'expired')
       end
 

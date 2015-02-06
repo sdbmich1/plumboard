@@ -18,7 +18,7 @@ class PostsController < ApplicationController
       @post = @conversation.posts.build params[:post]
       respond_with(@post) do |format|
         if @post.save
-          reload_data params[:post][:pixi_id]
+          reload_data params[:post][:pixi_id], params[:msg_type]
           format.json { render json: {post: @post} }
         else
           format.json { render json: { errors: @post.errors.full_messages }, status: 422 }
@@ -44,7 +44,6 @@ class PostsController < ApplicationController
     else
       flash[:error] = "Post was not removed. Please try again."
     end
-    render :nothing => true
   end
 
   def mark_read
@@ -66,10 +65,14 @@ class PostsController < ApplicationController
     @per_page = params[:per_page] || 5
   end
 
-  def reload_data pid
+  def reload_data pid, msg_type
     @listing = Listing.find_pixi pid
     @comments = @listing.comments.paginate page: @page, per_page: PIXI_COMMENTS if @listing
-    @user.pixi_wants.create(pixi_id: pid) # add to user's wanted list
+    if msg_type == 'want'
+      @user.pixi_wants.create(pixi_id: pid) # add to user's wanted list
+    else
+      @user.pixi_asks.create(pixi_id: pid) # add to user's asked list
+    end
   end
 
   def set_redirect_path status='received'

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141107032025) do
+ActiveRecord::Schema.define(:version => 20141121211107) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -383,6 +383,13 @@ ActiveRecord::Schema.define(:version => 20141107032025) do
   end
 
   add_index "pictures", ["processing"], :name => "index_pictures_on_processing"
+
+  create_table "pixi_asks", :force => true do |t|
+    t.integer  "user_id"
+    t.string   "pixi_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
 
   create_table "pixi_likes", :force => true do |t|
     t.integer  "user_id"

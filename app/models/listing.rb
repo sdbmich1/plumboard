@@ -16,6 +16,7 @@ class Listing < ListingParent
   has_many :pixi_likes, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :pixi_wants, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :saved_listings, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
+  has_many :pixi_asks, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
 
   has_many :site_listings, :dependent => :destroy
   #has_many :sites, :through => :site_listings, :dependent => :destroy
@@ -76,6 +77,11 @@ class Listing < ListingParent
     active.joins(:pixi_likes).where("pixi_likes.user_id = ?", usr.id).paginate page: pg
   end
 
+ # get asked list by user
+  def self.asked_list usr, pg=1
+    active.joins(:pixi_asks).where("pixi_asks.user_id = ?", usr.id).paginate page: pg
+  end
+
   # find listings by buyer user id
   def self.get_by_buyer val
     where(:buyer_id => val)
@@ -116,14 +122,29 @@ class Listing < ListingParent
     pixi_wants.size rescue 0
   end
 
+  # return asked count 
+  def asked_count
+    pixi_asks.size rescue 0
+  end
+
   # return whether pixi is wanted
   def is_wanted?
     wanted_count > 0 rescue nil
   end
 
+ # return whether pixi is asked
+  def is_asked?
+    asked_count > 0 rescue nil
+  end
+
   # return whether pixi is wanted by user
   def user_wanted? usr
     pixi_wants.where(user_id: usr.id).first rescue nil
+  end
+
+  # return whether pixi is asked by user
+  def user_asked? usr
+    pixi_asks.where(user_id: usr.id).first rescue nil
   end
 
   # return liked count 
@@ -170,6 +191,12 @@ class Listing < ListingParent
   def self.wanted_users pid
     select("users.id, CONCAT(users.first_name, ' ', users.last_name) AS name, users.updated_at, users.created_at")
       .joins(:pixi_wants => [:user]).where(pixi_id: pid).order("users.first_name")
+  end
+
+  # return asked users 
+  def self.asked_users pid
+    select("users.id, CONCAT(users.first_name, ' ', users.last_name) AS name, users.updated_at, users.created_at")
+      .joins(:pixi_asks => [:user]).where(pixi_id: pid).order("users.first_name")
   end
 
   # mark saved pixis if sold or closed

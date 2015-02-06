@@ -61,6 +61,8 @@ describe Listing do
   it { should have_many(:saved_listings).with_foreign_key('pixi_id') }
   it { should respond_to(:buyer) }
   it { should belong_to(:buyer).with_foreign_key('buyer_id') }
+  it { should respond_to(:pixi_asks) }
+  it { should have_many(:pixi_asks).with_foreign_key('pixi_id') }
 
   describe "when site_id is empty" do
     before { @listing.site_id = "" }
@@ -888,6 +890,30 @@ describe Listing do
 
     it { expect(@listing.user_wanted?(@user)).not_to be_nil }
     it { expect(@listing.user_wanted?(@usr)).not_to eq(true) }
+  end
+
+  describe "asked" do 
+    before(:each) do
+      @usr = create :pixi_user
+      @pixi_ask = @user.pixi_asks.create FactoryGirl.attributes_for :pixi_ask, pixi_id: @listing.pixi_id
+    end
+
+    it { Listing.asked_list(@usr).should_not include @listing } 
+    it { Listing.asked_list(@user).should_not be_empty }
+    it { expect(@listing.asked_count).to eq(1) }
+    it { expect(@listing.is_asked?).to eq(true) }
+
+    it "is not asked" do
+      listing = create(:listing, seller_id: @user.id, title: 'Hair brush') 
+      expect(listing.asked_count).to eq(0)
+      expect(listing.is_asked?).to eq(false)
+    end
+
+    it { expect(Listing.asked_users(@listing.pixi_id).first.name).to eq(@user.name) }
+    it { expect(Listing.asked_users(@listing.pixi_id)).not_to include(@usr) }
+
+    it { expect(@listing.user_asked?(@user)).not_to be_nil }
+    it { expect(@listing.user_asked?(@usr)).not_to eq(true) }
   end
 
   describe "cool" do 

@@ -4,8 +4,8 @@ class PixiWantObserver < ActiveRecord::Observer
 
   def after_create model
     # send notice to recipient
-    UserMailer.delay.send_interest(model)
-    
+      UserMailer.delay.send_interest(model) if model.listing
+
     # reset saved pixi status
     SavedListing.update_status_by_user model.user_id, model.pixi_id, 'wanted'
 

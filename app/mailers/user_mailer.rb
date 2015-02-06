@@ -84,8 +84,7 @@ class UserMailer < ActionMailer::Base
 
   # send interest notices to members
   def send_interest want
-    @want = want
-    @listing = @want.listing
+    @want, @listing = want, want.listing
 
     # set logo
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
@@ -94,6 +93,18 @@ class UserMailer < ActionMailer::Base
     mail(:to => "#{@listing.seller_email}", :subject => env_check + ' ' + "Pixiboard Post: Someone Wants Your #{@listing.title} ") 
   end
 
+  #send ask 
+  def ask_question ask
+    @ask = ask
+    @listing = @ask.listing
+    #set logo
+    attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
+    #set message details
+    mail(:to => "#{@listing.seller_email}", :subject => env_check + ' ' + "Pixiboard Ask: Someone Has a Question About Your #{@listing.title} ") 
+
+    #set message details
+  end
   # send approval notices to members
   def send_approval listing
     @listing = listing

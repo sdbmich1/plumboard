@@ -33,6 +33,7 @@ class User < ActiveRecord::Base
   has_many :saved_listings, dependent: :destroy
   has_many :pixi_likes, dependent: :destroy
   has_many :pixi_wants, dependent: :destroy
+  has_many :pixi_asks, dependent: :destroy
 
   # define site relationships
   has_many :site_users, :dependent => :destroy
@@ -148,7 +149,7 @@ class User < ActiveRecord::Base
 
   # eager load associations
   def self.find_user uid
-    includes(:pixi_posted_listings, :pixi_wants, :pixi_likes,
+    includes(:pixi_posted_listings, :pixi_wants, :pixi_likes, :pixi_asks,
       :bank_accounts, :card_accounts, :transactions, :ratings, :seller_ratings, :inquiries, :comments,
       :posts, :incoming_posts, :pixi_posts, :active_pixi_posts, :pixan_pixi_posts, :saved_listings, 
       :pictures, :contacts, :preferences, :user_pixi_points, 

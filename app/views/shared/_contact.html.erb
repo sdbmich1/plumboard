@@ -1,4 +1,4 @@
-  <%= form_for setup_post(listing), remote: true,  data: {validate: 'parsley'} do |f| %>
+  <%= form_for setup_post(listing), url: posts_path(@post, msg_type: 'want'), remote: true,  data: {validate: 'parsley'} do |f| %>
     <div id="notice" style="display:none"></div>
     <div id="form_errors">
       <%= render partial: 'shared/error_messages', :locals => { :target => f.object } %>

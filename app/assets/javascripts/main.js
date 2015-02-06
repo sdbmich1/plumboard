@@ -496,6 +496,17 @@ $(document).on('click', '#want-btn', function(e) {
   $(this).text(txt);
 });
 
+// toggle contact form for show pixi
+$(document).on('click', '#ask-btn', function(e) {
+  var fld = '#contact_content, #ask_content';
+  var txt;
+  $('#ask_form').toggle();
+
+  // set focus on fld
+  $(fld).focus();
+  $(fld).val($(fld).val());
+});
+
 var keyPress = false; 
 
 // submit contact form on enter key

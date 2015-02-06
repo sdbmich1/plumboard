@@ -156,14 +156,29 @@ module ListingsHelper
     signed_in? ? '#' : posts_path(id: pid)
   end
 
+  # set path based on signed in status
+  def set_ask_path pid
+    signed_in? ? '#' : posts_path(id: pid)
+  end
+
   # set want id based on signed in status
   def set_want_id
     signed_in? ? 'want-btn' : ''
   end
 
+  # set want id based on signed in status
+  def set_ask_id
+    signed_in? ? 'ask-btn' : ''
+  end
+
   # set want message
   def want_msg
     PIXI_WANT_MSG rescue 'I want this!'
+  end
+
+  # set want message
+  def ask_msg
+    PIXI_ASK_MSG rescue 'Ask Question'
   end
 
   # set method based on item existance and type 
