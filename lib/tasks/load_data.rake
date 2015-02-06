@@ -171,12 +171,17 @@ def load_invoice_details
   Invoice.load_details
 end
 
-# load US as country field for all Contacts that don't have org_type country
+# load country field for all Contacts
 def load_countries
   Site.find_each do |site|
-    unless site.org_type == 'country'
+    if site.org_type == 'country'
       site.contacts.find_each do |contact|
-        contact.country = 'United States of America'
+        contact.country = site.name
+        contact.save
+      end
+    else
+      site.contacts.find_each do |contact|
+        contact.country = 'United States'   # assumed to be in US for now
         contact.save
       end
     end
