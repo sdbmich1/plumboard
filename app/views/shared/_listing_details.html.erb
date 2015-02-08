@@ -10,25 +10,23 @@
         <% end %>
       </div>
   </div>
-
   <div class="row">
     <div class="span12 mbot">
         <%= simple_format(listing.summary, {}, sanitize: false) %><br />
-        <%= "Condition: #{listing.condition}" if is_item?(listing) && listing.condition %>
-        <%= "Quantity: #{listing.quantity}" if is_item?(listing, false) && listing.quantity %><br />
+        <%= "Condition: #{listing.condition}" if is_item?(listing) && listing.condition %><br />
+        <%= "Quantity: #{get_item_amt(listing)}" if item_available?(listing, true, 'quantity') %><br />
         <%= "Year: #{listing.year_built}" if has_year?(listing) %>
-
         <% if listing.job? %>
-          Job Type: <%= listing.job_type_name %>
+          Job Type: <%= listing.job_type_name %><br />
 	  Compensation: <%= listing.compensation %><br />
         <% end %>
         <% if listing.is_category_type?('product') %>
-          <%= "Product Code: #{listing.other_id}" if listing.other_id %>
-          <%= "Color: #{listing.color}" if listing.color %>
-          <%= "Size: #{listing.item_size}" if listing.item_size %>
+          <%= "Product Code: #{listing.other_id}" if listing.other_id %><br />
+          <%= "Color: #{listing.color}" if listing.color %><br />
+          <%= "Size: #{listing.item_size}" if listing.item_size %><br />
         <% end %>
         <% if listing.is_category_type?('vehicle') %>
-          <%= "VIN #: #{listing.other_id}" if listing.other_id %>
+          <%= "VIN #: #{listing.other_id}" if listing.other_id %><br />
           <%= "Mileage: #{listing.mileage}" if listing.mileage %><br />
           <%= "Color: #{listing.color}" if listing.color %><br />
         <% end %>

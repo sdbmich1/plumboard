@@ -2,10 +2,10 @@ require 'spec_helper'
 
 feature "TempListings" do
   subject { page }
-  let(:user) { FactoryGirl.create(:pixi_user) }
-  let(:seller) { FactoryGirl.create(:contact_user) }
-  let(:admin) { FactoryGirl.create :admin, user_type_code: 'AD', confirmed_at: Time.now }
-  let(:pixter) { FactoryGirl.create :pixter, user_type_code: 'PT', confirmed_at: Time.now }
+  let(:user) { create(:pixi_user) }
+  let(:seller) { create(:contact_user) }
+  let(:admin) { create :admin, user_type_code: 'AD', confirmed_at: Time.now }
+  let(:pixter) { create :pixter, user_type_code: 'PT', confirmed_at: Time.now }
   let(:submit) { "Next" }
 
   before(:each) do
@@ -17,10 +17,10 @@ feature "TempListings" do
   end
 
   def create_sites
-    @site = FactoryGirl.create :site, name: 'Santa Clara University'
-    @site1 = FactoryGirl.create :site
-    FactoryGirl.create :site, name: 'Stanford University'
-    FactoryGirl.create :site, name: 'San Francisco - Nob Hill'
+    @site = create :site, name: 'Santa Clara University'
+    @site1 = create :site
+    create :site, name: 'Stanford University'
+    create :site, name: 'San Francisco - Nob Hill'
   end
   
   def create_job_types
@@ -123,7 +123,7 @@ feature "TempListings" do
   end
 
   describe "Manage Temp Pixis" do
-    let(:temp_listing) { FactoryGirl.build(:temp_listing) }
+    let(:temp_listing) { build(:temp_listing) }
 
     before(:each) do
       init_setup user
@@ -315,7 +315,7 @@ feature "TempListings" do
   end
 
   describe "Edit Invalid Temp Pixi" do 
-    let(:temp_listing) { FactoryGirl.create(:temp_listing) }
+    let(:temp_listing) { create(:temp_listing) }
     before :each do
       init_setup user
       visit edit_temp_listing_path(temp_listing) 
@@ -385,7 +385,7 @@ feature "TempListings" do
   end
 
   describe "Edit Temp Pixi" do 
-    let(:temp_listing) { FactoryGirl.create(:temp_listing_with_pictures) }
+    let(:temp_listing) { create(:temp_listing_with_pictures) }
     before do
       init_setup user
       create_sites
@@ -467,7 +467,7 @@ feature "TempListings" do
   end
 
   describe 'Reviews a Pixi' do
-    let(:temp_listing) { FactoryGirl.create(:temp_listing, seller_id: user.id, status: 'new', condition_type_code: 'U', quantity: 1) }
+    let(:temp_listing) { create(:temp_listing, seller_id: user.id, status: 'new', condition_type_code: 'U', quantity: 1) }
     before :each do
       init_setup user
       visit temp_listing_path(temp_listing) 
@@ -532,7 +532,7 @@ feature "TempListings" do
         'Product Code:', 'Size:', 'Quantity:'], '', true
       check_page_selectors ['#contact_content', '#comment_content'], false, true
       check_page_expectations ["Step 2 of 2:", "Posted By: #{@temp_listing.seller_name}", "ID: #{@temp_listing.pixi_id}", "Posted:", "Updated:",
-        "Condition:", 'The Vehicle', 'Color:', 'Mileage:', "Year:", 'VIN #:'], '', false
+        "Condition:", 'The Vehicle', 'Color:', 'Blue', 'Mileage:', '50000', "Year:", '2001', 'VIN #:', '123456'], '', false
       check_buttons @temp_listing
     end
 
@@ -611,8 +611,8 @@ feature "TempListings" do
   end
 
   describe 'Reviews premium pixi' do
-    let(:category) { FactoryGirl.create :category, name: 'Jobs', pixi_type: 'premium' }
-    let(:temp_listing) { FactoryGirl.create(:temp_listing, seller_id: user.id, status: 'new', category_id: category.id) }
+    let(:category) { create :category, name: 'Jobs', pixi_type: 'premium' }
+    let(:temp_listing) { create(:temp_listing, seller_id: user.id, status: 'new', category_id: category.id) }
     before :each do
       init_setup user
       visit temp_listing_path(temp_listing) 
@@ -635,7 +635,7 @@ feature "TempListings" do
   end
 
   describe 'Reviews active Pixi', js: true do
-    let(:temp_listing) { FactoryGirl.create(:temp_listing, seller_id: user.id, status: 'edit') }
+    let(:temp_listing) { create(:temp_listing, seller_id: user.id, status: 'edit') }
     before :each do
       init_setup user
       visit temp_listing_path(temp_listing) 
@@ -658,7 +658,7 @@ feature "TempListings" do
   end
 
   describe "Create PixiPosted Pixis" do
-    let(:temp_listing) { FactoryGirl.build(:temp_listing) }
+    let(:temp_listing) { build(:temp_listing) }
 
     before(:each) do
       init_setup pixter
@@ -680,7 +680,7 @@ feature "TempListings" do
   end
 
   describe "Create Business Posted Pixis" do
-    let(:temp_listing) { FactoryGirl.build(:temp_listing) }
+    let(:temp_listing) { build(:temp_listing) }
 
     before(:each) do
       init_setup pixter

@@ -1,8 +1,8 @@
 module CategoriesHelper
 
   # get category path based on record status
-  def get_category_path
-    @category.new_record? ? categories_path : @category
+  def get_category_path category
+    category.new_record? ? categories_path : category
   end
 
   # enable edit link if allowed

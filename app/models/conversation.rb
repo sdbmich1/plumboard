@@ -1,7 +1,9 @@
 class Conversation < ActiveRecord::Base
-  attr_accessible :pixi_id, :recipient_id, :user_id, :status, :recipient_status, :posts_attributes
+  attr_accessible :pixi_id, :recipient_id, :user_id, :status, :recipient_status, :posts_attributes, :quantity
+  attr_accessor :quantity
 
   before_create :activate
+  after_commit :process_pixi_requests, :on => :create
   has_many :posts, :inverse_of => :conversation
   accepts_nested_attributes_for :posts, :allow_destroy => true
 
@@ -164,8 +166,6 @@ class Conversation < ActiveRecord::Base
   # return create date
   def create_dt
     dt = posts.first.created_at rescue Date.today 
-
-    # get display date/time
     new_dt = listing.display_date dt, false rescue dt
   end
 
@@ -175,5 +175,10 @@ class Conversation < ActiveRecord::Base
     posts.each do |post|
       post.mark_as_read! for: usr if post
     end
+  end
+
+  # add pixi requests
+  def process_pixi_requests
+    user.pixi_wants.create(pixi_id: self.pixi_id, quantity: self.quantity) if posts.first.msg_type == 'want'
   end
 end

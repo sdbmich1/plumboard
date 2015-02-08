@@ -385,6 +385,7 @@ FactoryGirl.define do
   factory :pixi_want do
     user_id 1
     pixi_id "xxxx"
+    quantity 1
   end
 
   factory :saved_listing do

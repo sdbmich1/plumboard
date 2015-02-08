@@ -1,3 +1,3 @@
-$("#cat-form").html("<%= escape_javascript( raw render(:partial => "shared/category_form") ) %>");
+$("#cat-form").html("<%= escape_javascript( raw render(:partial => "shared/category_form", locals: {category: @category}) ) %>");
 $("#spinner").hide('fast'); 
 

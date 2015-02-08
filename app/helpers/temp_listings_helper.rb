@@ -41,12 +41,6 @@ module TempListingsHelper
     listing.pending? && controller_name == 'pending_listings' ? pending_listing_url(listing) : listing
   end
 
-  # add new picture for listing
-  def setup_picture(listing)
-    picture = listing.pictures.build rescue nil
-    return listing
-  end
-
   # check if post is by seller 
   def seller_post?
     !@user.is_support? && action_name != 'edit' && @ptype.blank?
@@ -64,8 +58,13 @@ module TempListingsHelper
 
   # check if pixi is an item
   def is_item? listing, flg=true
-    val = flg ? %w(employment service event) : %w(employment service vehicle)
-    !(listing.is_category_type? val)
+    val = %w(employment service vehicle)
+    flg ? !(listing.is_category_type? val) : (listing.is_category_type? val)
+  end
+
+  # check if pixi has quantity
+  def has_qty? listing
+    listing.is_category_type? %w(employment service vehicle)
   end
 
   # check if pixi is chargeable

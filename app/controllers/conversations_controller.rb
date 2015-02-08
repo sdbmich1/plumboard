@@ -71,6 +71,5 @@ class ConversationsController < ApplicationController
   def reload_data pid
     @listing = Listing.find_pixi pid
     @comments = @listing.comments.paginate page: @page, per_page: PIXI_COMMENTS if @listing
-    @user.pixi_wants.create(pixi_id: pid) # add to user's wanted list
   end
 end

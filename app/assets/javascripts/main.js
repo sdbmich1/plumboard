@@ -646,6 +646,13 @@ $(function() {
 });
 
 // toggle menu post menu item
+$(document).on('click', '#send-want-btn, #want-modal-btn', function(e) {
+  var target = $(e.target), action;
+  action = target.is('#want-modal-btn') ? 'hide' : 'show';
+  $('#wantDialog').modal(action);
+});
+
+// toggle menu post menu item
 $(document).on('click', '.post-menu', function(e) {
   $('#mark-posts').toggle();
 });

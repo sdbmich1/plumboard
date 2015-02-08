@@ -102,17 +102,6 @@ class Listing < ListingParent
     invoices.where(:id => val).first rescue nil
   end
 
-  # count number of sales
-  def sold_count
-    invoices.inject(0) { |sum, x| sum + 1 if x.status == 'paid' }
-  end
-
-  # determine amount left
-  def amt_left
-    result = quantity - sold_count rescue 0
-    result > 0 ? result : 0
-  end
-
   # mark pixi as sold
   def mark_as_sold
     unless sold?

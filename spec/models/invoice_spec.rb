@@ -352,11 +352,12 @@ describe Invoice do
   end
   
   describe "load invoice" do
-    def check_inv
+    def check_inv flg=false
       inv = Invoice.load_new(@user, @buyer.id, @listing.pixi_id)
       inv.should_not be_nil
       expect(inv.buyer_id).to eq @buyer.id
       expect(inv.amount).to eq @listing.price
+      expect(inv.invoice_details.first.quantity).to eq @pixi_want.quantity if flg
     end
 
     it "loads new invoice" do
@@ -366,6 +367,12 @@ describe Invoice do
     it 'sets pixi_id when multiple pixis exist' do
       listing = FactoryGirl.create(:listing, title: 'Leather Chair', seller_id: @user.id)
       check_inv
+    end
+
+    it 'sets quantity when same buyer wants pixi' do
+      @listing.update_attribute(:quantity, 4)
+      @pixi_want = @buyer.pixi_wants.create attributes_for :pixi_want, pixi_id: @listing.pixi_id, quantity: 2
+      check_inv true
     end
 
     it "loads new invoice w/o pixi_id & buyer_id" do

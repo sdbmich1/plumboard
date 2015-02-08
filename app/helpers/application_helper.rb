@@ -269,4 +269,10 @@ module ApplicationHelper
     f.hidden_field(:_destroy) + 
       link_to(image_tag('rsz_minus.png', class: 'social-img mbot'), '#', confirm: 'Delete this item?', class: 'remove-row-btn pixi-link', title: title)
   end 
+
+  # add new picture for model
+  def setup_picture(model)
+    picture = model.pictures.build rescue nil
+    return model
+  end
 end
