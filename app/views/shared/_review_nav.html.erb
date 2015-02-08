@@ -3,14 +3,7 @@
   <%= link_to 'Remove', listing, method: :delete, confirm: msg, class: 'btn btn-large' %>
   <%= link_to 'Cancel', get_home_path, confirm: msg, class: 'btn btn-large' %>
 <% elsif listing.active? && controller_name == 'listings' %>
-  <div class="btn-group">
-    <button type="button" class="btn btn-large dropdown-toggle" data-toggle="dropdown">
-      Remove <span class="caret icon-white"></span>
-    </button>
-    <ul class="dropdown-menu" role="menu">
-      <%= remove_menu listing %>
-    </ul>
-  </div>
+  <%= render partial: 'shared/button_menu', locals: {listing: listing, atype: 'Remove'} %>
 <% else %>
    <%= link_to 'Remove', listing, method: :delete, confirm: msg, class: 'btn btn-large' unless expired_or_sold?(listing) %>
 <% end %>

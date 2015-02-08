@@ -1,5 +1,6 @@
 <table id='inv-table' class="table table-bordered noborder">
   <%= render partial: 'shared/inv_header', locals: { colFlg: multiple_pixis? } %>
+  <%= render partial: 'shared/inv_modal' %>
   <%= f.fields_for :invoice_details do |form| %>  
     <%= render partial: 'invoice_detail_fields', locals: {f: form, invoice: invoice} %>
   <% end %>

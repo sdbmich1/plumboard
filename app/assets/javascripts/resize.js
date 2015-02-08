@@ -36,7 +36,7 @@ function resizeFrame() {
         $(".bar-top").addClass('no-mtop');
       }
     } else {
-      if($('.brand').html() > 'Pixis') {
+      if($('.brand').html() > 'Pixis' || $('.brand').html() > 'Categories') {
         $(".bar-top").addClass('mtop');
       }
     }

@@ -28,10 +28,18 @@ feature "ManagePixis" do
 
     if val == 'pending' || val == 'denied'
       visit pending_listings_path(status: val, loc: @site.id, cid: @category.id)
+      visit pending_listing_path(listing)
+      page.should have_button('Deny')
+      ['Improper Content', 'Bad Pictures', 'Insufficient Information'].each do |item|
+        page.should have_link item, href: deny_pending_listing_path(listing, reason: item)
+      end
+      page.should have_link 'Approve', href: approve_pending_listing_path(listing)
     elsif val == 'draft'
       visit unposted_temp_listings_path(status: 'new/edit', loc: @site.id, cid: @category.id)
     elsif val == 'invoiced'
-      @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: listing.pixi_id, buyer_id: buyer.id, status: 'active')
+      @invoice = @user.invoices.build attributes_for(:invoice, buyer_id: buyer.id, status: 'active')
+      @details = @invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: listing.pixi_id 
+      @invoice.save!
       visit invoiced_listings_path(loc: @site.id, cid: @category.id)
     elsif val == 'wanted'
       buyer.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: listing.pixi_id
@@ -39,10 +47,10 @@ feature "ManagePixis" do
     else
       visit listings_path(status: val, loc: @site.id, cid: @category.id)
     end
-    process_element val
+    process_element val, flg if flg
   end
 
-  def process_element val
+  def process_element val, flg
     str_arr = %w(Sold Active Expired Purchased Removed Draft Denied Invoiced)
     str_arr.select! { |x| x != val.titleize }
     page.should have_content "#{val.titleize} Listing" 
@@ -52,16 +60,17 @@ feature "ManagePixis" do
     page.should_not have_content 'No pixis found.'
     page.should have_content 'Export as CSV file'
 
+    ftype = flg ? 'csv' : 'js'
     if val == 'pending'
-      visit pending_listings_path(status: val, loc: @site.id, cid: @category.id, format: 'csv')
+      visit pending_listings_path(status: val, loc: @site.id, cid: @category.id, format: ftype)
     elsif val == 'draft'
-      visit unposted_temp_listings_path(status: 'new/edit', loc: @site.id, cid: @category.id, format: 'csv')
+      visit unposted_temp_listings_path(status: 'new/edit', loc: @site.id, cid: @category.id, format: ftype)
     elsif val == 'invoiced'
-      visit invoiced_listings_path(loc: @site.id, cid: @category.id, format: 'csv')
+      visit invoiced_listings_path(loc: @site.id, cid: @category.id, format: ftype)
     elsif val == 'wanted'
-      visit wanted_listings_path(loc: @site.id, cid: @category.id, format: 'csv')
+      visit wanted_listings_path(loc: @site.id, cid: @category.id, format: ftype)
     else
-      visit listings_path(status: val, loc: @site.id, cid: @category.id, format: 'csv')
+      visit listings_path(status: val, loc: @site.id, cid: @category.id, format: ftype)
     end
   end
 
@@ -132,8 +141,6 @@ feature "ManagePixis" do
 
     it "views invoiced listings", js: true do
       add_listing 'invoiced'
-      # invoiced_listing = create :listing, seller_id: @user.id, title: 'Invoiced Listing', category_id: @category.id, site_id: @site.id
-      # invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: invoiced_listing.pixi_id, buyer_id: buyer.id, status: 'active')
     end
 
     it "views wanted listings", js: true do

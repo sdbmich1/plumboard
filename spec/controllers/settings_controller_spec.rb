@@ -83,9 +83,7 @@ describe SettingsController do
   describe "GET 'contact'" do
 
     before :each do
-      @contacts = stub_model(Contact)
       controller.stub!(:current_user).and_return(@user)
-      @user.stub_chain(:contacts, :build).and_return(@contacts)
       do_get
     end
 
@@ -95,11 +93,6 @@ describe SettingsController do
 
     it "should assign @user" do
       assigns(:user).should_not be_nil 
-    end
-
-    it "should assign @contacts" do
-      do_get
-      assigns(:contacts).should_not be_nil
     end
 
     it "should load nothing" do

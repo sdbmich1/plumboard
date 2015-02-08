@@ -12,6 +12,7 @@ describe PixiWant do
 
   it { should respond_to(:pixi_id) }
   it { should respond_to(:user_id) }
+  it { should respond_to(:quantity) }
   it { should respond_to(:user) }
   it { should respond_to(:listing) }
 

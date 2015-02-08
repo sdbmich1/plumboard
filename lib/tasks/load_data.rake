@@ -45,6 +45,10 @@ namespace :db do
   task :reload_invoices => :environment do
     load_invoice_details
   end
+
+  task :load_quantity => :environment do
+    update_quantity
+  end
 end
 
 def set_keys
@@ -165,4 +169,8 @@ end
 
 def load_invoice_details
   Invoice.load_details
+end
+
+def update_quantity
+  Listing.active.where(quantity: nil).update_all(quantity: 1)
 end

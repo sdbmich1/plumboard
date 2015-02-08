@@ -47,7 +47,7 @@ class InvoiceObserver < ActiveRecord::Observer
   # mark pixi as sold
   def mark_pixi model
     model.listings.find_each do |listing|
-      listing.mark_as_sold if model.pixi_count == 1
+      listing.mark_as_sold 
     end
   end
 end

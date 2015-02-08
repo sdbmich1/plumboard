@@ -1,5 +1,6 @@
 <div class="row">
-  <%= form_for(@user, url: user_path(@user, target: 'shared/user_contact'), html: {method: :put, class: "form-horizontal uform", id: 'contact-form'}, remote: true) do |f| %>
+  <%= form_for(setup_user(@user), url: user_path(@user, target: 'shared/user_contact'), html: {method: :put, class: "form-horizontal uform", 
+    id: 'contact-form'}, remote: true) do |f| %>
       <div id="form_errors"><%= render partial: 'shared/error_messages', :locals => { :target => @user } %></div>
       <div class="sm-top span6 offset3">
         <div id='signup'>
