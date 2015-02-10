@@ -1,6 +1,6 @@
 $("#pxboard").hide("fast");
 $("#cat-form").show('fast');
-$("#cat-form").html("<%= escape_javascript( raw render(:partial => "shared/category_form") ) %>");
+$("#cat-form").html("<%= escape_javascript( raw render(:partial => "shared/category_form", locals: {category: @category}) ) %>");
 
 // reload choose file image
 SI.Files.stylizeById('#user_pic');

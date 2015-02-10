@@ -12,9 +12,7 @@ class SettingsController < ApplicationController
   end
 
   def contact
-    @user = current_user
-    @contacts = @user.contacts.blank? ? @user.contacts.build : @user.contacts
-    respond_with(@contacts)
+    respond_with(@user = current_user)
   end
    
   private

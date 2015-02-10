@@ -49,6 +49,10 @@ namespace :db do
   task :load_countries => :environment do
     load_countries
   end
+
+  task :load_quantity => :environment do
+    update_quantity
+  end
 end
 
 def set_keys
@@ -180,4 +184,8 @@ def load_countries
       contact.save
     end
   end
+end
+
+def update_quantity
+  Listing.active.where(quantity: nil).update_all(quantity: 1)
 end

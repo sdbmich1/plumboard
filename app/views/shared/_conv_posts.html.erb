@@ -1,0 +1,9 @@
+<%= f.fields_for :posts do |form| %>
+  <%= form.hidden_field 'pixi_id', value: listing.pixi_id %>
+  <%= form.hidden_field 'recipient_id', value: listing.seller_id %>
+  <%= form.hidden_field 'user_id', value: @user.id %>
+  <%= form.hidden_field 'msg_type', value: mtype %>
+  <div class="reply_form">
+    <%= form.hidden_field 'content', value: msg, autofocus: true, id: 'contact_content', required: true %>  
+  </div>
+<% end %>

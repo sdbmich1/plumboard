@@ -1,15 +1,15 @@
 <div class='row' id='product-fields' style="<%= !listing.is_category_type?('product') ? 'display:none' : '' %>">
   <div class='span3'>
-    <%= f.label :color, 'Color(s)', class: 'med-top' %>
-    <%= f.text_field :color, value: listing.color, placeholder: 'Enter color(s)' %>
+    <%= f.label :item_color, 'Color(s)', class: 'med-top' %>
+    <%= f.text_field :item_color, value: listing.item_color, placeholder: 'Enter item_color(s)' %>
   </div>
   <div class='span2'>
     <%= f.label :size, 'Size(s)', class: 'med-top' %>
     <%= f.text_field :item_size, value: listing.item_size, placeholder: 'Ex. L or 8 1/2' %>
   </div>
   <div class='span2'>
-    <%= f.label :other_id, 'Product Code', class: 'med-top' %>
-    <%= f.text_field :other_id, value: listing.other_id, size: 25, placeholder: 'Enter Product Code' %>
+    <%= f.label :item_id, 'Product Code', class: 'med-top' %>
+    <%= f.text_field :item_id, value: listing.item_id, size: 25, placeholder: 'Enter Product Code' %>
   </div>
 </div>
 

@@ -1527,11 +1527,12 @@ describe Listing do
 
   describe "amt left" do
     before :each, run: true do
+      @listing.update_attribute(:quantity, 3)
       create_invoice 'paid'
     end
     it { expect(@listing.amt_left).to eq 1 }
-    it "has count > 0", run: true do
-      expect(@listing.amt_left).to eq 0
+    it "has count > 1", run: true do
+      expect(@listing.amt_left).not_to eq 1
     end
   end
 

@@ -15,12 +15,12 @@ feature "Transactions" do
 
   def page_setup usr
     init_setup usr
-    @listing = create :temp_listing, seller_id: @user.id
+    @listing = create :temp_listing, seller_id: @user.id, quantity: 1
   end
 
   def add_invoice mFlg=false
     @seller = create(:pixi_user)
-    @listing2 = create(:listing, seller_id: @seller.id, title: 'Leather Coat')
+    @listing2 = create(:listing, seller_id: @seller.id, title: 'Leather Coat', quantity: 2)
     @account = @seller.bank_accounts.create attributes_for :bank_account, status: 'active'
     @invoice = @seller.invoices.build attributes_for(:invoice, buyer_id: @user.id, bank_account_id: @account.id)
     @details = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
@@ -300,7 +300,9 @@ feature "Transactions" do
 
     it "creates a balanced transaction with valid mc card", :js=>true do
       expect { 
-        credit_card_data '5105105105105100'; sleep 2
+        page.should have_content @listing.title
+        page.should have_content @listing2.title
+        credit_card_data '5105105105105100'; sleep 4
         page.should have_content("Purchase Complete")
         page.should have_content("Please Rate Your Seller")
         page.should have_link('Add Comment', href: '#') 

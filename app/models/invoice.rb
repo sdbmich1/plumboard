@@ -77,7 +77,9 @@ class Invoice < ActiveRecord::Base
       # set pixi id if possible
       det = inv.invoice_details.build
       det.pixi_id = !pixi_id.blank? ? pixi_id : !pixi.blank? ? pixi.id : nil rescue nil
-      det.price, det.subtotal, inv.amount = det.listing.price, det.listing.price, det.listing.price if det.listing
+      det.quantity = det.listing.pixi_wants.where(user_id: buyer_id).first.quantity rescue 1
+      det.price = det.listing.price if det.listing
+      det.subtotal = inv.amount = det.listing.price * det.quantity if det.listing
     end
     inv
   end
