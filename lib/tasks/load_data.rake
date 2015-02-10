@@ -177,17 +177,11 @@ end
 
 # load country field for all Contacts
 def load_countries
-  Site.find_each do |site|
-    if site.org_type == 'country'
-      site.contacts.find_each do |contact|
-        contact.country = site.name
-        contact.save
-      end
-    else
-      site.contacts.find_each do |contact|
-        contact.country = 'United States'   # assumed to be in US for now
-        contact.save
-      end
+  Contact.update_all(:country => 'United States')
+  Site.where(:org_type => 'country').find_each do |site|
+    site.contacts.find_each do |contact|
+      contact.country = site.name
+      contact.save
     end
   end
 end
