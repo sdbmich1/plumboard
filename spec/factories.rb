@@ -126,6 +126,7 @@ FactoryGirl.define do
     price 100.00
     category_id 1
     site_id 1
+    quantity 1
     transaction_id  1
     show_alias_flg  "no"
     show_phone_flg  "no"
@@ -222,6 +223,15 @@ FactoryGirl.define do
     subtotal  370.00
     amount  400.52
     status  'unpaid'
+    before(:create) do |inv|
+      inv.invoice_details.build FactoryGirl.attributes_for(:invoice_detail)
+    end
+  end
+
+  factory :invoice_detail do
+    quantity  2
+    price 185.00
+    subtotal  370.00
   end
 
   factory :site_listing do
@@ -240,12 +250,14 @@ FactoryGirl.define do
     country "US"
     home_phone  "1234567890"
     amt 100.00
+    convenience_fee 0.99
+    processing_fee 0.99
     status  'pending'
     transaction_type  'pixi'
     token { rand(36**8).to_s(36) }
-    before(:create) do |txn|
-      txn.create_user FactoryGirl.attributes_for(:pixi_user)
-    end
+    #before(:create) do |txn|
+    #  txn.create_user FactoryGirl.attributes_for(:pixi_user)
+    #end
   end
 
   factory :balanced_transaction, :class => "Transaction", :parent => :transaction do
@@ -278,6 +290,7 @@ FactoryGirl.define do
     status  'active'
     acct_type 'checking'
     acct_number '90009000'
+    acct_no '9000'
     token "/v1/marketplaces/TEST-MP2Q4OaIanQuIDJIixHGmhQA/bank_accounts/BA7ehO1oDwPUBAR9cz71sd2g"
   end
 
@@ -387,7 +400,7 @@ FactoryGirl.define do
   
   factory :event_type do
       code		"perform"
-      description		"concert, performance, speaker"
+      description		"performance"
       status		"active"
       hide      "false"
   end
@@ -412,6 +425,7 @@ FactoryGirl.define do
     code "N"
     hide "no"
     status "active"
+    description 'New'
   end
 
   factory :pixi_ask do

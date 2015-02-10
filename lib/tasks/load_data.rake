@@ -41,6 +41,14 @@ namespace :db do
   task :fix_txn_details_price => :environment do
     update_txn_detail_price
   end
+
+  task :reload_invoices => :environment do
+    load_invoice_details
+  end
+
+  task :load_countries => :environment do
+    load_countries
+  end
 end
 
 def set_keys
@@ -66,9 +74,12 @@ def update_pixis
 end
 
 def updateCategoryType
-  Category.where(name: ['GIGS', 'JOBS', 'EMPLOYMENT']).update_all(category_type: 'employment')
-  Category.where(name: ['EVENT', 'EVENTS', 'HAPPENINGS', 'TICKETS']).update_all(category_type: 'event')
-  Category.where(name: ['ANTIQUES', 'AUTOMOTIVE', 'BOATS', 'COLLECTIBLES', 'MOTORCYCLE', 'REAL ESTATE']).update_all(category_type: 'asset')
+  Category.where(name: ['GIGS', 'JOBS', 'EMPLOYMENT']).update_all(category_type_code: 'employment')
+  Category.where(name: ['EVENT', 'EVENTS', 'HAPPENINGS', 'TICKETS FOR SALE']).update_all(category_type_code: 'event')
+  Category.where(name: ['ANTIQUES', 'COLLECTIBLES', 'REAL ESTATE']).update_all(category_type_code: 'asset')
+  Category.where(name: ['AUTOMOTIVE', 'BOATS', 'MOTORCYCLE']).update_all(category_type_code: 'vehicle')
+  Category.where(name: ['BEAUTY', 'SERVICES', 'TRAVEL', 'PETS', 'CLASSES & LESSONS', 'LOST & FOUND', 'DEALS']).update_all(category_type_code: 'service')
+  Category.where('category_type_code is null').update_all(category_type_code: 'sales')
 end
 
 def update_sites
@@ -151,6 +162,22 @@ def update_txn_detail_price
       unless price.blank?
         td.price = price
         td.save
+      end
+    end
+  end
+end
+
+def load_invoice_details
+  Invoice.load_details
+end
+
+# load US as country field for all Contacts that don't have org_type country
+def load_countries
+  Site.find_each do |site|
+    unless site.org_type == 'country'
+      site.contacts.find_each do |contact|
+        contact.country = 'United States of America'
+        contact.save
       end
     end
   end

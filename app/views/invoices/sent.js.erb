@@ -1,3 +1,1 @@
-$("#inv_form").html("<%= escape_javascript( raw render(:partial => "shared/invoices") ) %>");
-$("#spinner").hide('fast'); 
-
+<%= render partial: 'refresh_invoice_list', locals: { invoice: @invoices } %>

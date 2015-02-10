@@ -61,10 +61,8 @@ class User < ActiveRecord::Base
   has_many :bank_accounts, dependent: :destroy
   has_many :card_accounts, dependent: :destroy
   has_many :transactions, dependent: :destroy
-
   has_many :comments, dependent: :destroy
   has_many :inquiries, dependent: :destroy
-
   has_many :ratings, dependent: :destroy
   has_many :seller_ratings, :foreign_key => "seller_id", :class_name => "Rating"
 
@@ -111,17 +109,11 @@ class User < ActiveRecord::Base
   # validate zip exists
   def must_have_zip
     if provider.blank?
-      if home_zip.blank? 
-        errors.add(:base, 'Must have a zip')
-        false
+      if !home_zip.blank? && (home_zip.length == 5 && home_zip.to_region) 
+        true
       else
-        # check for valid zip
-        if home_zip.length == 5 && home_zip.to_region 
-	  true 
-	else
-          errors.add(:base, 'Must have a valid zip')
-	  false
-	end
+        errors.add(:base, 'Must have a valid zip')
+        false
       end
     else
       true
@@ -153,8 +145,6 @@ class User < ActiveRecord::Base
       :bank_accounts, :card_accounts, :transactions, :ratings, :seller_ratings, :inquiries, :comments,
       :posts, :incoming_posts, :pixi_posts, :active_pixi_posts, :pixan_pixi_posts, :saved_listings, 
       :pictures, :contacts, :preferences, :user_pixi_points, 
-      :paid_invoices => {:listing => :pictures}, :unpaid_invoices => {:listing => :pictures}, :invoices => {:listing => :pictures},  
-      :unpaid_received_invoices => {:listing => :pictures}, :received_invoices => {:listing => :pictures}, 
       :listings => :pictures, :active_listings => :pictures, :sold_pixis => :pictures, :temp_listings => :pictures, 
       :purchased_listings => :pictures, :pending_pixis => :pictures, :new_pixis => :pictures).where(id: uid).first 
   end
@@ -191,12 +181,12 @@ class User < ActiveRecord::Base
 
   # return whether user has any bank accounts
   def has_bank_account?
-    bank_accounts.count > 0 rescue nil
+    bank_accounts.size > 0 rescue nil
   end
 
   # return whether user has any card accounts
   def has_card_account?
-    card_accounts.count > 0 rescue nil
+    card_accounts.size > 0 rescue nil
   end
 
   # return any valid card 
@@ -381,33 +371,20 @@ class User < ActiveRecord::Base
           include: {active_listings: {}, unpaid_received_invoices: {}, bank_accounts: {}, contacts: {}, card_accounts: {}})
   end
 
-  def self.to_csv
-    begin
-      CSV.generate do |csv|
-        # header row
-        csv << ["Name", "Email", "Home Zip", "Birth Date", "Enrolled", "Last Login", "Gender", "Age"]
-        # data rows
-        all.each do |user|
-          #find user's age
-          now = Time.now.utc.to_date
-          age = now.year - user.birth_date.year - 
-              ((now.month > user.birth_date.month || (now.month == user.birth_date.month && now.day >= user.birth_date.day)) ? 0 : 1)
-
-          csv << [user.name, user.email, user.home_zip, user.birth_dt, user.nice_date(user.created_at), 
-                  user.nice_date(user.last_sign_in_at), user.gender, age]
-        end
-      end
-    rescue nil
-    end
-  end
-
   # get user conversations
   def get_conversations
     sent_conversations + received_conversations rescue nil
   end
 
-  def is_admin?
-    user_type_code == 'AD' rescue false
+  def age
+    now = Time.now.utc.to_date
+    had_birthday_this_year = now.month > birth_date.month || (now.month == birth_date.month && now.day >= birth_date.day)
+    now.year - birth_date.year - (had_birthday_this_year ? 0 : 1)
+  end    
+
+  def as_csv(options={})
+    { "Name" => name, "Email" => email, "Home Zip" => home_zip, "Birth Date" => birth_dt, "Enrolled" => nice_date(created_at),
+      "Last Login" => nice_date(last_sign_in_at), "Gender" => gender, "Age" => age }
   end
 
   # set sphinx scopes

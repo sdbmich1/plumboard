@@ -1,0 +1,9 @@
+  <tr>
+    <td class="width120"><div class='price'><%= invoice.quantity %></div></td>
+    <td class="width360">
+      <%= render partial: 'shared/show_photo', locals: {model: invoice.listing, file_name: "tip-image", psize: '80x80', display_cnt: 0 } %>
+        <span class='mtop mleft10'><%= invoice.pixi_title %></span></td>
+    <td class="width120"><div class='price'><%= ntc invoice.price %></div></td>
+    <td class="width120"><div class='price'><%= ntc invoice.subtotal %></div></td>
+  </tr>
+

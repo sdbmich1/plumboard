@@ -12,16 +12,9 @@ class Post < ActiveRecord::Base
   belongs_to :user
   belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id"
   belongs_to :recipient, class_name: 'User', foreign_key: :recipient_id
-  belongs_to :invoice, foreign_key: 'pixi_id', primary_key: 'pixi_id'
-  belongs_to :conversation
+  belongs_to :conversation, :inverse_of => :posts
 
-  validates :conversation_id, :presence => true
-  validates :content, :presence => true 
-  validates :user_id, :presence => true
-  validates :pixi_id, :presence => true
-  validates :recipient_id, :presence => true
-
-  default_scope order: 'posts.created_at DESC'
+  validates_presence_of :conversation, :content, :user_id, :pixi_id, :recipient_id
 
   # set active status
   def activate
@@ -50,7 +43,7 @@ class Post < ActiveRecord::Base
 
   # eager load assns
   def self.include_list
-    includes(:user, :listing, :recipient, :invoice, :conversation)
+    includes(:user, :listing, :recipient, :conversation)
   end
 
   # load default content
@@ -107,18 +100,16 @@ class Post < ActiveRecord::Base
 
   # set list of included assns for eager loading
   def self.inc_list
-    active.includes(:invoice => [:listing, :buyer, :seller], :listing => [:pictures], :user => [:pictures], :recipient => [:pictures])
+    active.includes(:listing => [:pictures], :user => [:pictures], :recipient => [:pictures])
   end
 
   # get sent posts for user
   def self.get_sent_posts usr
-    # inc_list.where(:user_id=>usr)
     inc_list.where("user_id = ? AND status = ?", usr, 'active')
   end
 
   # get posts for recipient
   def self.get_posts usr
-    # inc_list.where(:recipient_id=>usr)
     inc_list.where("recipient_id = ? AND recipient_status = ?", usr, 'active')
   end
 
@@ -136,28 +127,17 @@ class Post < ActiveRecord::Base
   def self.add_post inv, listing, sender, recipient, msg, msgType=''
     if sender && recipient
 
-      #find the corresponding conversation
-      conv = Conversation.find(:first, :conditions => ["pixi_id = ? AND recipient_id = ? AND user_id = ? AND status = ?",
-                                                       inv.pixi_id, recipient.id, sender.id, 'active']) rescue nil
+      # find the corresponding conversation
+      conv = Conversation.get_conv listing.pixi_id, recipient.id, sender.id
 
       # create new conversation if one doesn't already exist
       if conv.blank?
-        conv = Conversation.find(:first, :conditions => ["pixi_id = ? AND recipient_id = ? AND user_id = ? AND status = ?",
-                                                       inv.pixi_id, sender.id, recipient.id, 'active']) rescue nil
-        conv = listing.conversations.create pixi_id: listing.pixi_id, user_id: sender.id, recipient_id: recipient.id if conv.blank?
+        conv = Conversation.get_conv listing.pixi_id, sender.id, recipient.id
+        conv = listing.conversations.create user_id: sender.id, recipient_id: recipient.id if conv.blank?
       end
 
       # new post
-      post = conv.posts.build recipient_id: recipient.id, user_id: sender.id, msg_type: msgType, pixi_id: conv.pixi_id
-
-      # set amount format
-      amt = "%0.2f" % inv.amount
-
-      #set content
-      post.content = msg + amt
-
-      # add post
-      post.save!
+      conv.posts.create recipient_id: recipient.id, user_id: sender.id, msg_type: msgType, pixi_id: conv.pixi_id, content: msg + ("%0.2f" % inv.amount)
     else
       false
     end
@@ -166,11 +146,7 @@ class Post < ActiveRecord::Base
   # send invoice post
   def self.send_invoice inv, listing
     if !inv.blank? && !listing.blank?
-
-      # set content msg 
       msg = "You received Invoice ##{inv.id} from #{inv.seller_name} for $"
-
-      # add post
       add_post inv, listing, inv.seller, inv.buyer, msg, 'inv'
     else
       false
@@ -182,15 +158,11 @@ class Post < ActiveRecord::Base
 
     # get invoice and pixi
     inv = model.invoices[0] rescue nil
-    listing = inv.listing if inv
+    listing = inv.listings.first if inv
 
     # send post
     if inv && listing
-
-      # set content msg 
       msg = "You received a payment for Invoice ##{inv.id} from #{inv.buyer_name} for $"
-
-      # add post
       add_post inv, listing, inv.buyer, inv.seller, msg, 'paidinv'
     else
       false
@@ -199,11 +171,30 @@ class Post < ActiveRecord::Base
 
   # check if invoice is due
   def due_invoice? usr
-    if invoice
-      !invoice.owner?(usr) && invoice.unpaid? && invoice.buyer_name == usr.name ? true : false
-    else
-      false
+    check_invoice usr, false, 'buyer_name' 
+  end
+
+  # checks whether user can bill
+  def can_bill? usr
+    check_invoice(usr, true, 'seller_name')
+  end
+
+  # check invoice status for buyer or seller
+  def check_invoice usr, flg, fld
+    if listing.active?
+      listing.invoices.find_each do |invoice|
+        result = flg ? invoice.owner?(usr) : !invoice.owner?(usr) 
+        if result && invoice.unpaid? && invoice.send(fld) == usr.name
+          invoice.invoice_details.find_each do |item|
+            return true if item.pixi_id == pixi_id 
+          end
+	else
+	  return false
+        end
+      end
+      return listing.seller_id == usr.id if flg 
     end
+    false
   end
 
   # check if invoice msg 
@@ -218,7 +209,7 @@ class Post < ActiveRecord::Base
 
   # check if system msg 
   def system_msg?
-    %w(approve deny system).detect {|x| msg_type == x}
+    %w(approve deny system repost).detect {|x| msg_type == x}
   end
 
   # set json string
@@ -231,29 +222,24 @@ class Post < ActiveRecord::Base
   # map messages to conversations if needed
   def self.map_posts_to_conversations
     Post.order.reverse_order.each do |post|
-      post.status = 'active'
-      post.recipient_status = 'active'
+      post.status = post.recipient_status = 'active'
       if post.conversation_id.nil?
     
         # finds if there is already an existing conversation for the post
-        conv = Conversation.find(:first, :conditions => ["pixi_id = ? AND recipient_id = ? AND user_id = ?",
-                                                     post.pixi_id, post.recipient_id, post.user_id]) rescue nil
+        conv = Conversation.get_conv post.pixi_id, post.recipient_id, post.user_id
 
         # finds if there is existing conversation with swapped recipient/user
         if conv.blank?
-          conv = Conversation.find(:first, :conditions => ["pixi_id = ? AND recipient_id = ? AND user_id = ?",
-                                                     post.pixi_id, post.user_id, post.recipient_id]) rescue nil
+          conv = Conversation.get_conv post.pixi_id, post.user_id, post.recipient_id
         end
 
         # create new conversation if one doesn't already exist
         if conv.blank?
           if listing = Listing.where(:pixi_id => post.pixi_id).first
-            # listing = Listing.find(:first, :conditions => ["pixi_id = ?", post.pixi_id])
             conv = listing.conversations.create pixi_id: post.pixi_id, user_id: post.user_id, recipient_id: post.recipient_id
 	  end
         elsif conv.status != 'active' || conv.recipient_status != 'active'
-          conv.status = 'active'
-          conv.recipient_status = 'active'
+          conv.status = conv.recipient_status = 'active'
           conv.save
         end
 

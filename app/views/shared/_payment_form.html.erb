@@ -1,29 +1,24 @@
 <div id="pmtForm">
-  <%= form_for @transaction, :url => transactions_url(:id=>@listing, :order=>@order), :html => {id: 'payment_form'} do |f| %>
-    <%= render partial: 'shared/error_messages', locals: { :target => @transaction } %>
+  <%= form_for txn, :url => transactions_url(order: order), :html => {id: 'payment_form'} do |f| %>
     <div id="data_error" style="display:none" class="error"></div>
-    <%= render 'shared/purchase_summary' %>
-    <%= render partial: 'shared/buyer_info', locals: { f: f } %>
-    <% if @transaction.amt > 0.0 %>
-      <%= render partial: 'shared/credit_card_info', locals: { f: f } %>
-    <% end %>
-	
+    <%= render partial: 'shared/error_messages', locals: { :target => txn } %>
+    <%= render partial: 'shared/purchase_summary', locals: { txn: txn, order: order } %>
+    <%= render partial: 'shared/buyer_info', locals: { f: f, txn: txn } %>
+    <%= render partial: 'shared/credit_card_info', locals: { f: f } if txn.amt > 0.0 %>
     <%= f.hidden_field :token, id: 'pay_token', value: get_card_data('token') %>
     <%= f.hidden_field :payment_type, id: 'pay_type' %>
     <%= f.hidden_field :exp_month, id: 'exp_month' %>
     <%= f.hidden_field :exp_year, id: 'exp_year' %>
-    <%= f.hidden_field :promo_code, :value=>get_promo_code %>
-    <%= f.hidden_field :user_id, :value=>@transaction.user_id %>
-    <%= f.hidden_field :transaction_type, :value=>@transaction.transaction_type %>
-    <%= f.hidden_field :amt, :value => @transaction.amt, :id=>'amt' %>
-    <%= f.hidden_field :processing_fee, :value => @transaction.processing_fee, :id=>'processing_fee' %>
-    <%= f.hidden_field :convenience_fee, :value => @transaction.convenience_fee, :id=>'convenience_fee' %>
-    <%= f.hidden_field :description, :value => @order[:title] %>
-
-    <%= link_to 'Prev', set_prev_btn, class: 'btn btn-large back-btn' %>
-
+    <%= f.hidden_field :promo_code, :value=>txn.promo_code %>
+    <%= f.hidden_field :user_id, :value=>txn.user_id %>
+    <%= f.hidden_field :transaction_type, :value=>txn.transaction_type %>
+    <%= f.hidden_field :amt, :value => txn.amt, :id=>'amt' %>
+    <%= f.hidden_field :processing_fee, :value => txn.processing_fee, :id=>'processing_fee' %>
+    <%= f.hidden_field :convenience_fee, :value => txn.convenience_fee, :id=>'convenience_fee' %>
+    <%= f.hidden_field :description, :value => order[:title] %>
+    <%= link_to 'Prev', get_cancel_path(txn, order), class: 'btn btn-large back-btn' %>
     <div class="nav pull-right">
-      <%= link_to 'Cancel', @listing, method: :delete, confirm: cancel_msg, class: 'btn btn-large' if @transaction.pixi? %>
+      <%= link_to 'Cancel', get_cancel_path(txn, order), method: :delete, confirm: cancel_msg, class: 'btn btn-large' %>
       <%= f.submit "Done!", :confirm => confirm_msg, :id => 'payForm', class: "btn btn-large btn-primary submit-btn" %>
     </div>
   <% end %>

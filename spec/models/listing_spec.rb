@@ -1,13 +1,24 @@
- require 'spec_helper'
+require 'spec_helper'
 
 describe Listing do
   before(:each) do
     @user = FactoryGirl.create(:pixi_user) 
     @category = FactoryGirl.create(:category, pixi_type: 'premium') 
-    @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
+    @listing = FactoryGirl.create(:listing, seller_id: @user.id, quantity: 1) 
+  end
+
+  def create_invoice status='active'
+    @buyer = create(:pixi_user)
+    @invoice = @user.invoices.build attributes_for(:invoice, buyer_id: @buyer.id, status: status) 
+    @details = @invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+    @invoice.save!
   end
 
   subject { @listing }
+  
+  # describe "testing attributes" do
+  #  it_behaves_like "an Listing class", @listing
+  # end
 
   it { should respond_to(:title) }
   it { should respond_to(:description) }
@@ -38,6 +49,14 @@ describe Listing do
   it { should respond_to(:job_type_code) }
   it { should respond_to(:event_type_code) }
   it { should respond_to(:explanation) }
+  it { should respond_to(:repost_flg) }
+  it { should respond_to(:quantity) }
+  it { should respond_to(:condition_type_code) }
+  it { should respond_to(:color) }
+  it { should respond_to(:other_id) }
+  it { should respond_to(:mileage) }
+  it { should respond_to(:item_type) }
+  it { should respond_to(:item_size) }
 
   it { should respond_to(:user) }
   it { should respond_to(:site) }
@@ -52,6 +71,8 @@ describe Listing do
   it { should respond_to(:job_type) }
   it { should respond_to(:event_type) }
   it { should belong_to(:event_type).with_foreign_key('event_type_code') }
+  it { should respond_to(:condition_type) }
+  it { should belong_to(:condition_type).with_foreign_key('condition_type_code') }
   it { should respond_to(:comments) }
   it { should respond_to(:pixi_likes) }
   it { should have_many(:pixi_likes).with_foreign_key('pixi_id') }
@@ -191,16 +212,6 @@ describe Listing do
     it { Listing.get_by_category(@listing.category_id, 1).should_not be_empty }
   end
 
-  describe "get_by_city" do
-    it { Listing.get_by_city(0, 1, 1).should_not include @listing } 
-    it "should be able to toggle get_active" do
-      @listing.status = 'expired'
-      @listing.save
-      Listing.get_by_city(@listing.category_id, @listing.site_id, 1, true).should be_empty
-      Listing.get_by_city(@listing.category_id, @listing.site_id, 1, false).should_not be_empty
-    end
-  end
-
   describe "active_invoices" do
     it 'should not get listings if none are invoiced' do
       @listing.status = 'active'
@@ -210,8 +221,7 @@ describe Listing do
     end
 
     it 'should get listings' do
-      @buyer = FactoryGirl.create(:pixi_user)
-      @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id, status: 'active')
+      create_invoice
       Listing.active_invoices.should_not be_empty
     end
   end
@@ -232,8 +242,7 @@ describe Listing do
 
   describe "check_invoiced_category_and_location" do
     before do
-      @buyer = FactoryGirl.create(:pixi_user)
-      @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id, status: 'active')
+      create_invoice
     end      
 
     it "should get all listings of given status if category and location are not specified" do
@@ -284,18 +293,22 @@ describe Listing do
       @listing.save
       @user.uid = 1
       @user.save
-      Listing.get_by_seller(@user).should_not be_empty  
+      Listing.get_by_seller(@user, false).should_not be_empty  
     end
 
     it "does not get all listings for non-admin" do
-      Listing.get_by_seller(@user).should_not include @listing
+      @listing.seller_id = 100
+      @listing.save
+      Listing.get_by_seller(@user, false).should_not include @listing
     end
 
     it "gets all listings for admin" do
+      @other = FactoryGirl.create(:pixi_user)
+      listing = FactoryGirl.create(:listing, seller_id: @other.id) 
       @user.user_type_code = "AD"
       @user.uid = 0
       @user.save
-      Listing.get_by_seller(@user).should_not be_empty
+      expect(Listing.get_by_seller(@user).count).to eq 2
     end
   end
 
@@ -344,16 +357,14 @@ describe Listing do
 
   describe "should find correct category name" do 
     it { @listing.category_name.should == 'Foo Bar' } 
-  end
-
-  describe "should not find correct category name" do 
-    before { @listing.category_id = 100 }
-    it { @listing.category_name.should be_nil } 
+    it "should not find correct category name" do 
+      @listing.category_id = 100 
+      @listing.category_name.should be_nil  
+    end
   end
 
   describe "seller name" do 
     it { expect(@listing.seller_name).to eq(@user.name) } 
-
     it "does not find seller name" do 
       @listing.seller_id = 100 
       expect(@listing.seller_name).not_to eq(@user.name)
@@ -362,7 +373,6 @@ describe Listing do
 
   describe "seller email" do 
     it { expect(@listing.seller_email).to eq(@user.email) } 
-
     it "does not find seller email" do 
       @listing.seller_id = 100 
       expect(@listing.seller_email).not_to eq(@user.email)
@@ -371,7 +381,6 @@ describe Listing do
 
   describe "seller photo" do 
     it { @listing.seller_photo.should_not be_nil } 
-
     it 'does not return seller photo' do 
       @listing.seller_id = 100 
       @listing.seller_photo.should be_nil  
@@ -380,11 +389,19 @@ describe Listing do
 
   describe "seller rating count" do 
     it { @listing.seller_rating_count.should == 0 } 
-
     it 'returns seller rating count' do 
       @buyer = create(:pixi_user)
       @rating = @buyer.ratings.create FactoryGirl.attributes_for :rating, seller_id: @user.id, pixi_id: @listing.id
       expect(@listing.seller_rating_count).to eq(1)
+    end
+  end
+
+  describe "condition" do 
+    before { create :condition_type, code: 'N' }
+    it { expect(@listing.condition).to be_nil } 
+    it "finds condition" do 
+      @listing.condition_type_code = 'N' 
+      expect(@listing.condition).not_to be_nil
     end
   end
 
@@ -592,8 +609,7 @@ describe Listing do
 
   describe 'get invoice' do
     before do 
-      @buyer = FactoryGirl.create(:pixi_user)
-      @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id) 
+      create_invoice
     end
 
     it 'should return true' do
@@ -650,11 +666,21 @@ describe Listing do
   end
 
   describe 'mark_as_sold' do
-    it 'should return true' do
+    before :each, run: true do
+      create_invoice 'paid'
+    end
+
+    it 'returns true', run: true do
       @listing.mark_as_sold.should be_true
     end
 
-    it 'should not return true' do
+    it 'does not mark when amt left > 0' do
+      @listing.update_attribute(:quantity, 5)
+      create_invoice 'paid'
+      @listing.mark_as_sold.should_not be_true
+    end
+
+    it 'does not mark when already sold' do
       @listing.status = 'sold'
       @listing.mark_as_sold.should_not be_true
     end
@@ -708,38 +734,58 @@ describe Listing do
     end
   end
 
+  def check_cat_type model, val, flg=false
+    if flg
+      @cat = FactoryGirl.create(:category, name: 'Test Type', category_type_code: 'event', pixi_type: 'premium') 
+      model.category_id = @cat.id
+    end
+    model.is_category_type?(val)
+  end
+
+  describe '.is_category_type?' do
+    it { check_cat_type(@listing, 'event').should be_false }
+    it "is an category type" do
+      check_cat_type(@listing, 'event', true).should be_true
+      check_cat_type(@listing, ['service', 'sales', 'event'], true).should be_true
+      check_cat_type(@listing, %w(service sales event), true).should be_true
+    end
+  end
+
+  describe '.has_status?' do
+    it { @listing.has_status?('').should be_false }
+    it "return true" do
+      @listing.has_status?('active').should be_true
+      @listing.has_status?(['sold', 'removed','active']).should be_true
+    end
+  end
+
   describe '.event?' do
-    before do
-      @cat = FactoryGirl.create(:category, name: 'Event', category_type_code: 'event', pixi_type: 'premium') 
-    end
-
-    it "is not an event" do
-      @listing.event?.should be_false
-    end
-
+    it { @listing.event?.should be_false }
     it "is an event" do
+      @cat = FactoryGirl.create(:category, name: 'Event', category_type_code: 'event', pixi_type: 'premium') 
       @listing.category_id = @cat.id
       @listing.event?.should be_true
     end
   end
 
   describe '.has_year?' do
-    before do
-      @cat = FactoryGirl.create(:category, name: 'Automotive', category_type_code: 'asset', pixi_type: 'premium') 
+    it { @listing.has_year?.should be_false }
+
+    it "when it's an asset" do
+      @cat = FactoryGirl.create(:category, name: 'Homes', category_type_code: 'asset', pixi_type: 'premium') 
+      @listing.category_id = @cat.id
+      @listing.has_year?.should be_true 
     end
 
-    it "does not have a year" do
-      @listing.has_year?.should be_false 
-    end
-
-    it "has a year" do
+    it "when it's an vehicle" do
+      @cat = FactoryGirl.create(:category, name: 'Homes', category_type_code: 'vehicle', pixi_type: 'premium') 
       @listing.category_id = @cat.id
       @listing.has_year?.should be_true 
     end
   end
 
   describe '.job?' do
-    before do
+    before :each, run: true do
       @cat = FactoryGirl.create(:category, name: 'Jobs', category_type_code: 'employment', pixi_type: 'premium') 
     end
 
@@ -747,17 +793,17 @@ describe Listing do
       @listing.job?.should be_false 
     end
 
-    it "is a job" do
+    it "is a job", run: true do
       @listing.category_id = @cat.id
       @listing.job?.should be_true 
     end
 
-    it "is not valid" do
+    it "is not valid", run: true  do
       @listing.category_id = @cat.id
       @listing.should_not be_valid
     end
 
-    it "is valid" do
+    it "is valid", run: true do
       create :job_type
       @listing.category_id = @cat.id
       @listing.job_type_code = 'CT'
@@ -865,8 +911,14 @@ describe Listing do
         expect(mail.from).to eql(['support@pixiboard.com'])
       end
     end
-  end
 
+    it 'does not send message on repost' do
+      @expired = FactoryGirl.create(:listing, seller_id: @user.id, status: 'expired') 
+      @expired.status = 'active'
+      @expired.save
+      expect(ActionMailer::Base.deliveries.last.subject).not_to eql('Saved Pixi is Sold/Removed')
+    end
+  end
 
   describe "wanted" do 
     before(:each) do
@@ -890,6 +942,15 @@ describe Listing do
 
     it { expect(@listing.user_wanted?(@user)).not_to be_nil }
     it { expect(@listing.user_wanted?(@usr)).not_to eq(true) }
+
+    it "shows all wanted pixis for admin" do
+      @admin_user = create :admin
+      @admin_user.user_type_code = 'AD'
+      @admin_user.save!
+      expect(Listing.wanted_list(@admin_user, 1, @listing.category_id, @listing.site_id).count).not_to eq 0
+      Listing.wanted_list(@admin_user, 1, @listing.category_id, @listing.site_id).should include @listing
+      Listing.wanted_list(@usr, 1, @listing.category_id, @listing.site_id).should_not include @listing
+    end
   end
 
   describe "asked" do 
@@ -972,6 +1033,7 @@ describe Listing do
       expect(new_pixi.status).to eq('edit')
       expect(new_pixi.title).to eq(listing.title)
       expect(new_pixi.id).not_to eq(listing.id)
+      expect(new_pixi.pictures.size).to eq(listing.pictures.size)
     end
   end
 
@@ -1103,6 +1165,7 @@ describe Listing do
     before do
       @cat = FactoryGirl.create(:category, name: 'Event', category_type_code: 'event', pixi_type: 'premium') 
       @listing.category_id = @cat.id
+      @listing.event_type_code = 'party'
       @listing.event_end_date = Date.today+3.days 
       @listing.event_start_time = Time.now+2.hours
       @listing.event_end_time = Time.now+3.hours
@@ -1288,10 +1351,11 @@ describe Listing do
       temp_listing = create(:temp_listing, seller_id: @user.id)
       pid = temp_listing.pixi_id
       listing = create(:listing, seller_id: @user.id, pixi_id: temp_listing.pixi_id)
+      sleep 2;
       expect(TempListing.where(pixi_id: pid).count).to eq 0
     end
 
-    it 'delivers pixi message' do
+    it 'delivers approved pixi message' do
       create :admin, email: PIXI_EMAIL
       listing = create(:listing, seller_id: @user.id)
       send_mailer listing, 'send_approval'
@@ -1299,14 +1363,21 @@ describe Listing do
       expect(Post.all.count).not_to eq(0)
       SystemMessenger.stub!(:send_system_message).with(@user, listing, 'approve').and_return(true)
     end
+
+    it 'delivers reposted pixi message' do
+      create :admin, email: PIXI_EMAIL
+      listing = create(:listing, seller_id: @user.id, repost_flg: true)
+      expect(Listing.count).to eq 2
+      send_mailer listing, 'send_approval'
+      expect(Conversation.all.count).not_to eq(0)
+      expect(Post.all.count).not_to eq(0)
+      SystemMessenger.stub!(:send_system_message).with(@user, listing, 'repost').and_return(true)
+    end
   end
 
   describe 'set_invoice_status' do
     before do 
-      @buyer = FactoryGirl.create(:pixi_user)
-      @buyer2 = FactoryGirl.create(:pixi_user)
-      @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id) 
-      @invoice2 = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer2.id) 
+      create_invoice
     end
 
     it 'sets invoice status to removed' do
@@ -1314,7 +1385,7 @@ describe Listing do
         create(:saved_listing, user_id: @buyer.id, pixi_id: @listing.pixi_id); sleep 1
         @listing.status = 'removed'
         @listing.save
-      }.to change{ Invoice.where(:status => 'removed').count }.by(2)
+      }.to change{ Invoice.where(:status => 'removed').count }.by(1)
     end
 
     it 'does not set invoice status' do
@@ -1338,14 +1409,33 @@ describe Listing do
   describe 'repost' do
     it 'sets status to active if listing is expired' do
       @listing.status = 'expired'
-      @listing.repost
+      @listing.repost; sleep 2
       @listing.active?.should be_true
+      expect(@listing.repost_flg).to be_true
+      expect(ActionMailer::Base.deliveries.last.subject).to eql("Pixi Reposted: #{@listing.title} ") 
     end
 
-    it 'calls dup_pixi if listing is sold' do
+    it 'sets status to active if listing is removed' do
+      @listing.status = 'removed'
+      @listing.explanation = 'Changed Mind'
+      @listing.save
+      @listing.repost
+      @listing.active?.should be_true
+      expect(@listing.repost_flg).to be_true
+      expect(@listing.explanation).to be_nil
+      expect(ActionMailer::Base.deliveries.last.subject).to eql("Pixi Reposted: #{@listing.title} ") 
+    end
+
+    it 'calls repost_pixi if listing is sold' do
       @listing.status = 'sold'
-      new_listing = @listing.repost
-      new_listing.active?.should be_true
+      picture = @listing.pictures.build
+      picture.photo = File.new Rails.root.join("spec", "fixtures", "photo0.jpg")
+      @listing.save
+      expect(@listing.repost).to be_true
+      expect(Listing.all.count).to eq 2
+      expect(Listing.first.active?).to be_true
+      expect(Listing.first.pictures.size).to eq @listing.pictures.size
+      expect(Listing.first.repost_flg).to be_true
     end
 
     it 'returns false if listing is not expired/sold' do
@@ -1435,6 +1525,81 @@ describe Listing do
       @listing.save
       @listing.reload
       Listing.soon_expiring_pixis(5, ['expired', 'new']).should be_empty  
+    end
+  end
+
+  describe "delete temp pixi" do
+    it { @listing.delete_temp_pixi(@listing.pixi_id).should be_blank }
+
+    it "removes temp pixi" do
+      temp_listing = create(:temp_listing, seller_id: @user.id)
+      listing = create(:listing, seller_id: @user.id, pixi_id: temp_listing.pixi_id)
+      expect(listing.pixi_id).to eq temp_listing.pixi_id
+      expect{ 
+         listing.delete_temp_pixi(listing.pixi_id); sleep 2;
+      }.not_to be_blank
+    end
+  end
+
+  describe "sold count" do
+    before :each, run: true do
+      create_invoice 'paid'
+    end
+    it { expect(@listing.sold_count).to eq 0 }
+    it "has count > 0", run: true do
+      expect(@listing.sold_count).to eq 1
+    end
+  end
+
+  describe "amt left" do
+    before :each, run: true do
+      create_invoice 'paid'
+    end
+    it { expect(@listing.amt_left).to eq 1 }
+    it "has count > 0", run: true do
+      expect(@listing.amt_left).to eq 0
+    end
+  end
+
+  describe "active_by_state" do
+    it { Listing.active_by_state('MI').should_not include @listing } 
+    it "finds active pixis by state" do
+      @site = create(:site, name: 'Detroit', org_type: 'city')
+      @site.contacts.create(FactoryGirl.attributes_for(:contact, address: 'Metro', city: 'Detroit', state: 'MI'))
+      listing = create(:listing, seller_id: @user.id, site_id: @site.id) 
+      expect(Listing.active_by_state('MI').count).to eq(1)
+    end
+  end
+
+  describe "active_by_country" do
+    it { Listing.active_by_country('United States of America').should_not include @listing } 
+    it "finds active pixis by country" do
+      @site = create(:site, name: 'Detroit', org_type: 'city')
+      @site.contacts.create(FactoryGirl.attributes_for(:contact, address: 'Metro', city: 'Detroit', state: 'MI', country: 'United States of America'))
+      listing = create(:listing, seller_id: @user.id, site_id: @site.id) 
+      expect(Listing.active_by_country('United States of America').count).to eq(1)
+    end
+  end
+
+  describe "get_by_city" do
+    it { Listing.get_by_city(0, 1, 1).should_not include @listing } 
+    it "should be able to toggle get_active" do
+      @listing.status = 'expired'
+      @listing.save!
+      Listing.get_by_city(@listing.category_id, @listing.site_id, 1, true).should be_empty
+      Listing.get_by_city(@listing.category_id, @listing.site_id, 1, false).should_not be_empty
+    end
+
+    it "finds active pixis by org_type" do
+      ['city', 'region', 'state', 'country'].each { |org_type|
+        site = create(:site, name: 'Detroit', org_type: org_type)
+        lat, lng = Geocoder.coordinates('Detroit, MI')
+        site.contacts.create(FactoryGirl.attributes_for(:contact, address: 'Metro', city: 'Detroit', state: 'MI',
+          country: 'United States of America', lat: lat, lng: lng))
+        listing = create(:listing, seller_id: @user.id, site_id: site.id, category_id: @category.id) 
+        expect(Listing.get_by_city(listing.category_id, listing.site_id).first).to eq(listing)
+        listing.destroy
+      }
     end
   end
 end

@@ -13,22 +13,21 @@ feature "Listings" do
     site_id: site.id) }
   let(:pixi_post_listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, 
     pixan_id: pixter.id, site_id: site.id) }
+  let(:submit) { "Want" }
 
-  
-  def user_login
-    fill_in "user_email", :with => user.email
-    fill_in "pwd", :with => user.password
-    click_button "Sign in"
-  end
-
-  def set_site_id
-    page.execute_script %Q{ $('#site_id').val("#{@site.id}") }
+  def set_site_id val=@site.id
+    page.execute_script %Q{ $('#site_id').val("#{val}") }
   end
   
   def pixi_edit_access listing
+    page.should have_content listing.category_name
     page.should have_content "Posted By: #{listing.seller_name}"
+<<<<<<< HEAD
     page.should have_link 'Want', href: '#'
     page.should have_link 'Ask', href: '#'
+=======
+    page.should have_button 'Want'
+>>>>>>> 894fb2719618ac15a97fc8067b28eeb39c949c98
     page.should have_link 'Cool'
     page.should_not have_link 'Uncool'
     page.should have_link 'Save'
@@ -48,7 +47,6 @@ feature "Listings" do
     it "does not contact a seller", js: true do
       expect{
           click_link 'Want'
-          # page.find('#want-btn').click
       }.not_to change(Post,:count).by(1)
       page.should have_content 'Sign in'
     end
@@ -82,7 +80,7 @@ feature "Listings" do
       }.not_to change(Comment,:count).by(1)
       page.should have_content 'Sign in'
       sleep 2;
-      user_login
+      user_login user
       page.should have_content pixi_post_listing.nice_title
     end
   end
@@ -96,20 +94,21 @@ feature "Listings" do
 
     it "Contacts a seller", js: true do
       expect{
+<<<<<<< HEAD
           page.should have_link 'Want'
           page.should have_link 'Ask'
+=======
+          page.should have_button 'Want'
+>>>>>>> 894fb2719618ac15a97fc8067b28eeb39c949c98
           page.should have_link 'Cool'
-          page.find('#want-btn').click
-	  # page.execute_script("$('#post_form').toggle();")
-          page.should have_selector('#contact_content', visible: true) 
-      	  fill_in 'contact_content', with: "I'm love this pixi. Please contact me.\n"
-	  sleep 3
-          page.should_not have_link 'Want'
+	  click_valid_ok
+	  sleep 5
+          page.should_not have_button 'Want'
           page.should have_content 'Want'
+          page.should have_content 'Successfully sent message to seller'
       }.to change(Post,:count).by(1)
 
-      expect(Conversation.count).to eql(2)
-
+      expect(Conversation.count).to eql(1)
       expect{
       	  fill_in 'comment_content', with: "Great pixi. I highly recommend it.\n" 
 	  sleep 3
@@ -123,9 +122,10 @@ feature "Listings" do
      
     it "does not contact a seller", js: true do
       expect{
-          page.find('#want-btn').click
-          page.should have_selector('#contact_content', visible: true) 
-	  fill_in 'contact_content', with: "\n"
+          click_submit_cancel
+          page.should have_button 'Want'
+          page.should_not have_content 'Want'
+          page.should_not have_content 'Successfully sent message to seller'
       }.not_to change(Post,:count).by(1)
     end
 
@@ -156,12 +156,6 @@ feature "Listings" do
           page.should have_link 'Unsave'
       }.to change(SavedListing,:count).by(1)
 
-      page.should have_content listing.nice_title
-    end
-
-    it "clicks on category by site" do
-      click_link listing.category_name
-      page.should have_content 'Pixis'
       page.should have_content listing.nice_title
     end
   end
@@ -223,19 +217,14 @@ feature "Listings" do
     end
      
     it "views pixi page" do
+      page.should have_content listing.nice_title
+      page.should have_content listing.seller_name
       page.should have_content "Start Date: #{short_date(listing.event_start_date)}"
       page.should have_content "End Date: #{short_date(listing.event_end_date)}"
-      page.should have_content "Start Time: #{short_time(listing.event_start_time)}"
-      page.should have_content "End Time: #{short_time(listing.event_end_time)}"
+      #page.should have_content "Start Time: #{short_time(listing.event_start_time)}"
+      #page.should have_content "End Time: #{short_time(listing.event_end_time)}"
       page.should have_content "Event Type: #{listing.event_type_descr}"
       page.should_not have_content "Compensation: #{(listing.compensation)}"
-    end
-
-    it "clicks on a category" do
-      click_link listing.category_name
-      page.should have_content "Pixis" 
-      page.should have_content listing.nice_title
-      page.should have_content listing.category_name
     end
   end
 
@@ -402,7 +391,6 @@ feature "Listings" do
       @listing = create :listing, seller_id: editor.id
       @pixi_want = editor.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
       @pixi_like = editor.pixi_likes.create FactoryGirl.attributes_for :pixi_like, pixi_id: @listing.pixi_id
-
       init_setup editor
     end
 
@@ -427,26 +415,22 @@ feature "Listings" do
 	    fill_in 'Title', with: 'Rhodes Bass Guitar'
             attach_file('photo', Rails.root.join("spec", "fixtures", "photo0.jpg"))
             page.find('#build-pixi-btn').click
-	    # click_button 'Next'
             page.should have_content 'Review Your Pixi'
             click_link 'Done!'
             page.should have_content 'Rhodes Bass Guitar'
-
             visit pending_listing_path(@listing) 
             page.should have_content 'Rhodes Bass Guitar'
             page.should have_button('Deny')
             page.should have_link 'Approve', href: approve_pending_listing_path(@listing)
             click_link 'Approve'; sleep 2;
-            page.should have_content("Pending Orders")
-            page.should have_content 'No pixis found'
 	    visit listing_path(@listing)
             page.should have_content 'Rhodes Bass Guitar'
             @listing.wanted_count.should eq(1)
             @listing.liked_count.should eq(1)
             @listing.pictures.count.should eq(2)
             Listing.where(seller_id: @user.id).count.should eq(1)
-            TempListing.where(pixi_id: @listing.pixi_id).count.should eq(0)
-            TempListing.where("title like 'Rhodes%'").count.should eq(0)
+            # TempListing.where(pixi_id: @listing.pixi_id).count.should eq(0)
+            # TempListing.where("title like 'Rhodes%'").count.should eq(0)
             Listing.where("title like 'Rhodes%'").count.should eq(1)
             Listing.where("title like 'Acoustic%'").count.should eq(0)
           }.to change(Listing,:count).by(0)
@@ -497,32 +481,36 @@ feature "Listings" do
     end  
 
     describe "GET /listings" do  
-      let(:temp_listing) { FactoryGirl.create(:temp_listing, title: "Guitar", description: "Lessons", seller_id: @user.id ) }
       let(:listings) { 30.times { FactoryGirl.create(:listing, seller_id: @user.id) } }
 
       before(:each) do
-        @site = create :site, name: 'Pixi Tech'
-        create :site, name: 'Cal State'
+        add_region
+        @site = create :site, name: 'Detroit', org_type: 'city'
+	@site.contacts.create FactoryGirl.attributes_for :contact, address: '1611 Tyler', city: 'Detroit', state: 'MI', zip: '48238'
+        @site3 = create :site, name: 'Pixi Tech', org_type: 'school'
+	@site3.contacts.create FactoryGirl.attributes_for :contact, address: '14018 Prevost', city: 'Detroit', state: 'MI', zip: '48227'
 	@category = create :category, name: 'Music'
+	@category5 = create :category, name: 'Electronics'
         create(:listing, title: "HP Printer J4580", description: "printer", seller_id: @user.id, site_id: @site.id, 
-	  category_id: @category.id) 
-        @listing = create(:listing, title: "Guitar", description: "Lessons", seller_id: @user.id, pixi_id: temp_listing.pixi_id,
-	  category_id: @category.id) 
-	@category1 = create :category, name: 'Gigs'
+	  category_id: @category5.id) 
+	@category1 = create :category, name: 'Jobs'
 	@category2 = create :category, name: 'Automotive'
 	@category3 = create :category, name: 'Furniture'
 	@category4 = create :category, name: 'Books'
+        @listing = create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, category_id: @category.id, site_id: @site3.id) 
         @listing1 = create(:listing, title: "Intern", description: "Unpaid job", seller_id: @user.id, category_id: @category1.id, 
-	  site_id: @site.id) 
+	  site_id: @site3.id) 
         @listing2 = create(:listing, title: "Buick Regal", description: "used car", seller_id: @user.id, category_id: @category2.id) 
         @listing3 = create(:listing, title: "Sofa", description: "used couch", seller_id: @user.id, category_id: @category3.id) 
         @listing4 = create(:listing, title: "Calc 201", description: "text book", seller_id: @user.id, category_id: @category4.id) 
-        visit listings_path 
+        visit local_listings_path(loc: @site2.id) 
       end
       
       it "views pixis page" do
+        visit local_listings_path(loc: @site1.id) 
         page.should have_link 'Recent'
         page.should have_content('Pixis')
+        page.should_not have_content 'No pixis found'
       end
       
       it "scrolls listings", js: true do 
@@ -537,20 +525,23 @@ feature "Listings" do
 
       it "selects a site", js: true do
         fill_autocomplete('site_name', with: 'pixi')
-	      set_site_id
+	set_site_id @site3.id; sleep 2
         page.should have_content @listing1.title
-        page.should_not have_content @listing.title
-        page.should have_content @site.name
+        page.should_not have_content @pixi.title
+        page.should have_content @site3.name
       end
 
       it "selects categories", js: true do
-        select('Music', :from => 'category_id')
+        fill_autocomplete('site_name', with: 'pixi')
+	set_site_id @site3.id; sleep 2
+        select('Music', :from => 'category_id'); sleep 2
         page.should have_content @category.name_title
         page.should_not have_content @listing1.title
         page.should have_content 'Guitar'
       end
     end
 
+<<<<<<< HEAD
     describe "Manage Pixis page" do
       before do
         pixi_user = create :pixi_user
@@ -844,6 +835,8 @@ feature "Listings" do
       end
     end
 
+=======
+>>>>>>> 894fb2719618ac15a97fc8067b28eeb39c949c98
     describe "Repost button" do
       before do
         @active_listing = create(:listing, seller_id: @user.id, title: 'Bookshelf')
@@ -855,6 +848,9 @@ feature "Listings" do
         @expired_listing = create(:listing, seller_id: @user.id, title: 'TV')
         @expired_listing.status = 'expired'
         @expired_listing.save!
+        @removed_listing = create(:listing, seller_id: @user.id, title: 'Suede Jacket') 
+        @removed_listing.status = 'removed'
+        @removed_listing.save!
       end
 
       it "should appear for expired pixi" do
@@ -865,6 +861,15 @@ feature "Listings" do
       it "should appear for sold pixi" do
         visit listing_path(@sold_listing)
         page.should have_link 'Repost!', href: repost_listing_path(@sold_listing)
+        page.should_not have_link 'Edit', href: edit_temp_listing_path(listing)
+        page.should_not have_button 'Remove'
+      end
+
+      it "should appear for removed pixi" do
+        visit listing_path(@removed_listing)
+        page.should_not have_link 'Edit', href: edit_temp_listing_path(listing)
+        page.should have_link 'Repost!', href: repost_listing_path(@removed_listing)
+        page.should_not have_button 'Remove'
       end
 
       it "should not appear for pixi with other status" do
@@ -874,6 +879,8 @@ feature "Listings" do
 
       it "reposts an expired pixi", js: true do
         visit listing_path(@expired_listing)
+        page.should_not have_link 'Edit', href: edit_temp_listing_path(listing)
+        page.should_not have_button 'Remove'
         click_link 'Repost!'
         page.should have_content 'Pixis'    # should go back to home page
         visit listing_path(@expired_listing)
@@ -882,10 +889,22 @@ feature "Listings" do
 
       it "reposts a sold pixi", js: true do
         visit listing_path(@sold_listing)
-        click_link 'Repost!'
-        page.should have_content 'Pixis'    # should go back to home page
-        visit listing_path(@sold_listing)
-        page.should_not have_link 'Repost!', href: repost_listing_path(@sold_listing)   # pixi shouldn't be expired anymore
+        page.should_not have_link 'Edit', href: edit_temp_listing_path(listing)
+        page.should_not have_button 'Remove'
+	expect{
+          click_link 'Repost!'
+          page.should have_content 'Pixis'    # should go back to home page
+        }.to change(Listing.active,:count).by(1)
+      end
+
+      it "reposts a removed pixi", js: true do
+        visit listing_path(@removed_listing)
+        page.should_not have_link 'Edit', href: edit_temp_listing_path(listing)
+        page.should_not have_button 'Remove'
+	expect{
+          click_link 'Repost!'
+          page.should have_content 'Pixis'    # should go back to home page
+        }.to change(Listing.active,:count).by(1)
       end
     end
   end

@@ -11,7 +11,6 @@ class Listing < ListingParent
   belongs_to :buyer, foreign_key: 'buyer_id', class_name: 'User'
   has_many :conversations, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :posts, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
-  has_many :invoices, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :comments, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :pixi_likes, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :pixi_wants, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
@@ -20,7 +19,8 @@ class Listing < ListingParent
 
   has_many :site_listings, :dependent => :destroy
   #has_many :sites, :through => :site_listings, :dependent => :destroy
-
+  has_many :invoice_details, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
+  has_many :invoices, through: :invoice_details, :dependent => :destroy
   default_scope :order => "updated_at DESC"
 
   # finds specific pixi
@@ -68,8 +68,12 @@ class Listing < ListingParent
   end
 
   # get wanted list by user
-  def self.wanted_list usr, pg=1
-    active.joins(:pixi_wants).where("pixi_wants.user_id = ?", usr.id).paginate page: pg
+  def self.wanted_list usr, pg=1, cid=nil, loc=nil
+    if usr.is_admin?
+      active.joins(:pixi_wants).where("pixi_wants.user_id is not null").get_by_city(cid, loc, pg, false).paginate(page: pg)
+    else
+      active.joins(:pixi_wants).where("pixi_wants.user_id = ?", usr.id).paginate page: pg
+    end
   end
 
   # get cool list by user
@@ -94,7 +98,7 @@ class Listing < ListingParent
 
   # get invoiced listings by status and, if provided, category and location
   def self.check_invoiced_category_and_location cid, loc, pg=1
-    if cid.blank? or loc.blank?
+    if cid.blank? && loc.blank?
       active_invoices
     else
       active_invoices.get_by_city(cid, loc, pg, false)
@@ -106,11 +110,21 @@ class Listing < ListingParent
     invoices.where(:id => val).first rescue nil
   end
 
+  # count number of sales
+  def sold_count
+    invoices.inject(0) { |sum, x| sum + 1 if x.status == 'paid' }
+  end
+
+  # determine amount left
+  def amt_left
+    result = quantity - sold_count rescue 0
+    result > 0 ? result : 0
+  end
+
   # mark pixi as sold
-  def mark_as_sold buyer_id=nil
+  def mark_as_sold
     unless sold?
-      self.status, self.buyer_id = 'sold', buyer_id
-      save!
+      self.update_attribute(:status, 'sold') if amt_left == 0
     else
       errors.add(:base, 'Pixi already marked as sold.')
       false
@@ -207,39 +221,49 @@ class Listing < ListingParent
   # sends email to users who saved the listing when listing is removed
   def send_saved_pixi_removed
     closed = ['closed', 'sold', 'removed', 'inactive', 'expired']
-    saved_listings = SavedListing.where(pixi_id: pixi_id) rescue nil
-    saved_listings.each do |saved_listing|
-      if closed.detect {|closed| saved_listing.status == closed }
-        UserMailer.delay.send_saved_pixi_removed(saved_listing) unless self.buyer_id == saved_listing.user_id
+    if closed.detect {|closed| self.status == closed }
+      saved_listings = SavedListing.where(pixi_id: pixi_id) rescue nil
+      saved_listings.each do |saved_listing|
+        if closed.detect {|closed| saved_listing.status == closed }
+          UserMailer.delay.send_saved_pixi_removed(saved_listing) unless self.buyer_id == saved_listing.user_id
+        end
       end
     end
   end
 
   # sends notifications after pixi is posted to board
   def async_send_notification 
-    # update points
-    ptype = self.premium? ? 'app' : 'abp'
-    PointManager::add_points self.user, ptype if self.user
+    if active?
+      ptype = self.premium? ? 'app' : 'abp' 
+      val = self.repost_flg ? 'repost' : 'approve'
 
-    # send system message to user
-    SystemMessenger::send_message self.user, self, 'approve' rescue nil
+      # update points
+      PointManager::add_points self.user, ptype if self.user
 
-    # remove temp pixi
-    delete_temp_pixi self.pixi_id
+      # send system message to user
+      SystemMessenger::send_message self.user, self, val rescue nil
 
-    # send approval message
-    UserMailer.delay.send_approval(self)
+      # remove temp pixi
+      delete_temp_pixi self.pixi_id unless repost_flg
+
+      # send approval message
+      UserMailer.delay.send_approval(self)
+    end
   end
 
   # remove temp pixi
   def delete_temp_pixi pid
-    TempListing.destroy_all(pixi_id: pid) rescue nil
+    TempListing.destroy_all(pixi_id: pid)
   end
 
   # toggle invoice status on removing pixi from board
   def set_invoice_status
     if %w(expired removed inactive closed).detect { |x| x == self.status }
-      Invoice.where("pixi_id = ? AND status = ?", self.pixi_id, 'unpaid').update_all(status: 'removed')
+      invoices.find_each do |inv|
+        if inv.invoice_details.size == 1 
+	  inv.update_attribute(:status, 'removed')
+	end
+      end
     end
   end
 
@@ -251,6 +275,32 @@ class Listing < ListingParent
       ['Event Cancelled', 'Event Ended']
     else
       ['Changed Mind', 'Donated Item', 'Gave Away Item', 'Sold Item']
+    end
+  end
+
+  # reposts existing sold, removed or expired pixi as new
+  def repost_pixi
+    listing = Listing.new(get_attr(true))
+
+    # add photos
+    listing = add_photos false, listing
+
+    # add token
+    listing.generate_token
+    listing.status, listing.repost_flg = 'active', true
+    listing.save
+  end
+
+  # process pixi repost based on pixi status
+  def repost
+    if expired? || removed?
+      self.status, self.repost_flg, self.explanation  = 'active', true, nil
+      self.save
+      async_send_notification # send notification
+    elsif sold?
+      repost_pixi
+    else
+      false
     end
   end
 

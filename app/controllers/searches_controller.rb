@@ -8,14 +8,14 @@ class SearchesController < ApplicationController
   respond_to :json, :html, :js, :mobile
 
   def index
-    @listings = Listing.search query, search_options unless query.blank?
+    @listings = Listing.search(query, search_options) rescue nil unless query.blank?
     respond_with(@listings)
   end
 
   protected
 
   def page_layout
-    'listings' if mobile_device? 
+    'listings'
   end
 
   # wrap query text for special characters

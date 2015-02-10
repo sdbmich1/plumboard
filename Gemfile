@@ -37,7 +37,7 @@ gem 'rolify'
 gem 'cancan'
 
 # add clickable links for comment text
-gem 'rinku'
+gem 'rinku', '~> 1.7.3'
 
 # used to mark messages as read/unread
 gem 'unread'
@@ -154,7 +154,7 @@ gem 'open_uri_redirections'
 
 # development gems
 group :development do
-  gem 'better_errors'
+  gem 'better_errors', '~> 1.1.0'
   gem 'binding_of_caller'
 
   # Deploy with Capistrano
@@ -218,3 +218,4 @@ gem 'graylog2_exceptions', :git => 'git://github.com/wr0ngway/graylog2_exception
 gem 'graylog2-resque'
 gem 'excon', '~> 0.21.0'
 gem 'rubber'
+gem 'recursive-open-struct'

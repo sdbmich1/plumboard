@@ -16,7 +16,7 @@ module CalcTotal
     set_discount order[:promo_code]
      
     # check for sales tax
-    @amt += order[:sales_tax].to_f if order[:sales_tax]
+    @amt += order[:tax_total].to_f if order[:tax_total]
      
     # check for shipping
     @amt += order[:ship_amt].to_f if order[:ship_amt]
@@ -24,20 +24,24 @@ module CalcTotal
     # return total order amount
     grand_total
   end
-
-  # calc total from txn details 
-  def self.get_order txn
-    @amt = 0.0
+  
+  # calc total from item details 
+  def self.process_details model, ary
+    @amt, @pfee = 0.0, nil
 
     # process each order item
-    txn.transaction_details.each do |item|
+    ary.each do |item| 
       calc_price item.price, item.quantity
-    end
+    end 
 
     # determine discount if any
-    set_discount txn.promo_code
+    set_discount model.promo_code
+     
+    # check for sales tax & shipping
+    @amt += model.tax_total.to_f if model.sales_tax
+    @amt += model.ship_amt.to_f if model.ship_amt
 
-    # return total order amount
+    # return total amount
     grand_total
   end
 
@@ -106,7 +110,7 @@ module CalcTotal
 
     # check if fee needs to be applied
     if @amt + calc_discount > 0.0 
-      fee > PIXI_FEE.to_f ? fee.to_f : PIXI_FEE.to_f 
+      fee > PIXI_FEE.to_f ? fee.to_f.round(2) : PIXI_FEE.to_f.round(2)
     else
       0.0
     end
@@ -115,6 +119,7 @@ module CalcTotal
   # calculate txn total
   def self.grand_total
     @amt += get_processing_fee + get_convenience_fee + calc_discount
+    @amt.round(2)
   end
   
 end

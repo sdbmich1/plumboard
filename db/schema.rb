@@ -42,6 +42,8 @@ ActiveRecord::Schema.define(:version => 20141121211107) do
   add_index "admins", ["reset_password_token"], :name => "index_admins_on_reset_password_token", :unique => true
   add_index "admins", ["unlock_token"], :name => "index_admins_on_unlock_token", :unique => true
 
+ActiveRecord::Schema.define(:version => 20150121015955) do
+
   create_table "bank_accounts", :force => true do |t|
     t.string   "token"
     t.integer  "user_id"
@@ -107,8 +109,9 @@ ActiveRecord::Schema.define(:version => 20141121211107) do
     t.string   "code"
     t.string   "status"
     t.string   "hide"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+    t.string   "description"
   end
 
   create_table "contacts", :force => true do |t|
@@ -229,6 +232,19 @@ ActiveRecord::Schema.define(:version => 20141121211107) do
 
   add_index "interests", ["name"], :name => "index_interests_on_name"
 
+  create_table "invoice_details", :force => true do |t|
+    t.integer  "invoice_id"
+    t.string   "pixi_id"
+    t.integer  "quantity"
+    t.float    "price"
+    t.float    "subtotal"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "invoice_details", ["invoice_id", "pixi_id"], :name => "index_invoice_details_on_invoice_id_and_pixi_id"
+  add_index "invoice_details", ["pixi_id"], :name => "index_invoice_details_on_pixi_id"
+
   create_table "invoices", :force => true do |t|
     t.string   "pixi_id"
     t.integer  "seller_id"
@@ -249,6 +265,7 @@ ActiveRecord::Schema.define(:version => 20141121211107) do
     t.boolean  "delta"
     t.float    "ship_amt"
     t.float    "other_amt"
+    t.string   "promo_code"
   end
 
   add_index "invoices", ["bank_account_id"], :name => "index_invoices_on_bank_account_id"
@@ -266,15 +283,6 @@ ActiveRecord::Schema.define(:version => 20141121211107) do
 
   add_index "job_types", ["code"], :name => "index_job_types_on_code"
 
-  create_table "listing_categories", :force => true do |t|
-    t.integer  "category_id"
-    t.integer  "listing_id"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
-  end
-
-  add_index "listing_categories", ["category_id", "listing_id"], :name => "index_listing_categories_on_category_id_and_listing_id"
-
   create_table "listings", :force => true do |t|
     t.string   "title"
     t.integer  "category_id"
@@ -285,8 +293,8 @@ ActiveRecord::Schema.define(:version => 20141121211107) do
     t.float    "price"
     t.string   "show_alias_flg"
     t.string   "show_phone_flg"
-    t.datetime "created_at",       :null => false
-    t.datetime "updated_at",       :null => false
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
     t.string   "alias_name"
     t.datetime "start_date"
     t.integer  "site_id"
@@ -309,9 +317,18 @@ ActiveRecord::Schema.define(:version => 20141121211107) do
     t.string   "explanation"
     t.boolean  "delta"
     t.string   "event_type_code"
+    t.boolean  "repost_flg"
+    t.string   "condition_type_code"
+    t.string   "color"
+    t.integer  "quantity"
+    t.integer  "mileage"
+    t.string   "other_id"
+    t.string   "item_type"
+    t.string   "item_size"
   end
 
   add_index "listings", ["category_id"], :name => "index_listings_on_category_id"
+  add_index "listings", ["condition_type_code"], :name => "index_listings_on_condition_type_code"
   add_index "listings", ["end_date", "start_date"], :name => "index_listings_on_end_date_and_start_date"
   add_index "listings", ["event_start_date", "event_end_date"], :name => "index_listings_on_event_start_date_and_event_end_date"
   add_index "listings", ["event_type_code"], :name => "index_listings_on_event_type_code"
@@ -382,6 +399,7 @@ ActiveRecord::Schema.define(:version => 20141121211107) do
     t.boolean  "dup_flg"
   end
 
+  add_index "pictures", ["imageable_id", "imageable_type"], :name => "index_pictures_on_imageable_id_and_imageable_type"
   add_index "pictures", ["processing"], :name => "index_pictures_on_processing"
 
   create_table "pixi_asks", :force => true do |t|
@@ -583,15 +601,6 @@ ActiveRecord::Schema.define(:version => 20141121211107) do
   add_index "saved_listings", ["pixi_id", "user_id"], :name => "index_saved_listings_on_pixi_id_and_user_id"
   add_index "saved_listings", ["status"], :name => "index_saved_listings_on_status"
 
-  create_table "saved_pixis", :force => true do |t|
-    t.string   "pixi_id"
-    t.integer  "user_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
-
-  add_index "saved_pixis", ["pixi_id", "user_id"], :name => "index_saved_pixis_on_pixi_id_and_user_id"
-
   create_table "sessions", :force => true do |t|
     t.string   "session_id", :null => false
     t.text     "data"
@@ -673,8 +682,8 @@ ActiveRecord::Schema.define(:version => 20141121211107) do
     t.float    "price"
     t.string   "show_alias_flg"
     t.string   "show_phone_flg"
-    t.datetime "created_at",       :null => false
-    t.datetime "updated_at",       :null => false
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
     t.string   "pixi_id"
     t.string   "parent_pixi_id"
     t.string   "edited_by"
@@ -693,8 +702,17 @@ ActiveRecord::Schema.define(:version => 20141121211107) do
     t.string   "explanation"
     t.string   "event_type_code"
     t.boolean  "delta"
+    t.boolean  "repost_flg"
+    t.string   "condition_type_code"
+    t.string   "color"
+    t.integer  "quantity"
+    t.integer  "mileage"
+    t.string   "other_id"
+    t.string   "item_type"
+    t.string   "item_size"
   end
 
+  add_index "temp_listings", ["condition_type_code"], :name => "index_temp_listings_on_condition_type_code"
   add_index "temp_listings", ["pixi_id"], :name => "index_temp_listings_on_pixi_id", :unique => true
   add_index "temp_listings", ["status"], :name => "index_temp_listings_on_status"
 
@@ -742,6 +760,7 @@ ActiveRecord::Schema.define(:version => 20141121211107) do
   add_index "transactions", ["code"], :name => "index_transactions_on_code"
   add_index "transactions", ["confirmation_no"], :name => "index_transactions_on_confirmation_no"
   add_index "transactions", ["transaction_type"], :name => "index_transactions_on_transaction_type"
+  add_index "transactions", ["updated_at"], :name => "index_transactions_on_updated_at"
   add_index "transactions", ["user_id"], :name => "index_transactions_on_user_id"
 
   create_table "user_interests", :force => true do |t|

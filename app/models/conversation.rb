@@ -1,20 +1,16 @@
 class Conversation < ActiveRecord::Base
-  attr_accessible :pixi_id, :recipient_id, :user_id, :status, :recipient_status
+  attr_accessible :pixi_id, :recipient_id, :user_id, :status, :recipient_status, :posts_attributes
 
   before_create :activate
-  has_many :posts
+  has_many :posts, :inverse_of => :conversation
+  accepts_nested_attributes_for :posts, :allow_destroy => true
 
   belongs_to :user
   belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id"
   belongs_to :recipient, class_name: 'User', foreign_key: :recipient_id
-  belongs_to :invoice, foreign_key: 'pixi_id', primary_key: 'pixi_id'
 
   # user id is person who starts the conversation and sends first post
-  validates :user_id, :presence => true
-  validates :pixi_id, :presence => true
-  validates :recipient_id, :presence => true
-
-  # default_scope order: 'created_at DESC'
+  validates_presence_of :user_id, :pixi_id, :recipient_id
 
   # set active status
   def activate
@@ -36,44 +32,30 @@ class Conversation < ActiveRecord::Base
   def replied_conv? usr
     if posts.count > 1 && posts.last.user_id != usr.id
       posts.each do |post|
-        if post.user_id == usr.id
-          return true
-        end
+        return true if post.user_id == usr.id
       end
     end
-    return false
+    false
   end
 
   # returns the other user that is a part of this conversation
   def other_user usr
-    if usr.id == user_id
-      return recipient
-    else
-      return user
-    end
+    usr.id == user_id ? recipient : user
   end
   
   # checks whether invoice for user is due
   def due_invoice? usr
-    listing.active? && !listing.sold? && !invoice.blank? && invoice.unpaid? && invoice.buyer == usr
+    posts.detect { |post| post.due_invoice? usr }
   end
 
   # checks whether user can bill
   def can_bill? usr
-    if !listing.active? || listing.sold? || !invoice.blank? || (!invoice.blank? && !invoice.unpaid?)
-      return false
-    end
-    listing.seller_id == usr.id
+    posts.detect { |post| post.can_bill? usr }
   end
 
   # pixi title
   def pixi_title
     listing.title rescue nil
-  end
-
-  # invoice id
-  def invoice_id
-    invoice.id rescue nil
   end
 
   # check for system message
@@ -98,12 +80,7 @@ class Conversation < ActiveRecord::Base
 
   # select active conversations
   def self.active
-    include_list.where("status = 'active' OR recipient_status = 'active'")
-  end
-
-  # eager load assns
-  def self.include_list
-    includes(:posts, :user, :recipient)
+    where("status = 'active' OR recipient_status = 'active'")
   end
 
   # get all conversations for user where status or recipient status is active
@@ -139,8 +116,7 @@ class Conversation < ActiveRecord::Base
 
   # set list of included assns for eager loading
   def self.inc_list
-    # includes(:invoice => [:listing, :buyer, :seller], 
-    includes(:listing, :invoice => [:buyer, :seller], :user => [:pictures], :recipient => [:pictures])
+    includes(:posts, :recipient => :pictures, :user => :pictures, :listing => {:invoices => [:invoice_details, :buyer, :seller]})
   end
 
   # set list of included assns for eager loading
@@ -148,23 +124,29 @@ class Conversation < ActiveRecord::Base
     includes(:posts => [:listing, {:user => :pictures}])
   end
 
+  # get the conversation
+  def self.get_conv pid, recvID, sendID
+    where("pixi_id = ? AND recipient_id = ? AND user_id = ? AND status = ?", pid, recvID, sendID, 'active').first rescue nil
+  end
+
   # sets convo status to 'removed'
   def self.remove_conv conv, user 
     if user.id == conv.user_id
-      if conv.update_attributes(status: 'removed')
+      if conv.update_attribute(:status, 'removed')
         conv.remove_posts(user)
         return true
       else
         return false
       end
     elsif user.id == conv.recipient_id 
-      if conv.update_attributes(recipient_status: 'removed')
+      if conv.update_attribute(:recipient_status, 'removed')
         conv.remove_posts(user)
         return true
       else
         return false
       end
     end
+    false
   end
 
   # sets all posts in a convo to 'removed'

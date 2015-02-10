@@ -1,23 +1,21 @@
-<%= render :partial => 'shared/show_discount' %> 
-
-<% if @order %>
-  <% if @order[:sales_tax].to_f > 0.0 %>
+<%= render :partial => 'shared/show_discount', locals: {txn: txn} %> 
+<% if model %>
+  <% if model.tax_total.to_f > 0.0 %>
     <tr><td>Sales Tax</td><td> </td>
-  	<td class="price"><%= ntc(@order[:sales_tax].to_f) %></td>
+  	<td class="price"><%= ntc(model.tax_total.to_f) %></td>
     </tr>
   <% end %>
-  <% if @order[:ship_amt].to_f > 0.0 %>
+  <% if model.ship_amt.to_f > 0.0 %>
     <tr><td>Shipping</td><td> </td>
-  	<td class="price"><%= ntc(@order[:ship_amt].to_f) %></td>
+  	<td class="price"><%= ntc(model.ship_amt.to_f) %></td>
     </tr>
   <% end %>
 <% end %>
-
-<% if @transaction %>
-  <%= render partial: 'shared/show_conv_fee', locals: {showColFlg: false, invoice: invoice} if show_help? %>
+<% if txn %>
+  <%= render partial: 'shared/show_conv_fee', locals: {showColFlg: false, invoice: get_invoice(model)} if show_help?(txn) %>
   <tr class='title-str'>
   	<td class='order-total'><%= show_title(paid) %></td>
   	<td> </td>
-  	<td class='order-total price'><%= ntc(@transaction.amt) %></td>
+  	<td class='order-total price'><%= ntc(txn.amt) %></td>
   </tr>
 <% end %>

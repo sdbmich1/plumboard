@@ -16,8 +16,8 @@ module TempListingsHelper
   end
 
   # return # of steps to submit new pixi
-  def step_count
-    @listing.free? ? 2 : !@listing.new_status? ? 2 : 3
+  def step_count listing
+    listing.free? ? 2 : !listing.new_status? ? 2 : 3 rescue 2
   end
   
   # build array for year selection dropdown
@@ -39,5 +39,37 @@ module TempListingsHelper
   # set different url if pixi is pending
   def set_pixi_path listing
     listing.pending? && controller_name == 'pending_listings' ? pending_listing_url(listing) : listing
+  end
+
+  # add new picture for listing
+  def setup_picture(listing)
+    picture = listing.pictures.build rescue nil
+    return listing
+  end
+
+  # check if post is by seller 
+  def seller_post?
+    !@user.is_support? && action_name != 'edit' && @ptype.blank?
+  end
+
+  # check if new pixi post
+  def new_pixi_post? listing
+    listing.pixi_post? && !listing.edit?
+  end
+
+  # check if in edit mode
+  def edit_mode? listing
+    !listing.pixi_post? || listing.edit?
+  end
+
+  # check if pixi is an item
+  def is_item? listing, flg=true
+    val = flg ? %w(employment service event) : %w(employment service vehicle)
+    !(listing.is_category_type? val)
+  end
+
+  # check if pixi is chargeable
+  def chargeable? listing
+    listing.seller?(@user) && listing.new_status? 
   end
 end

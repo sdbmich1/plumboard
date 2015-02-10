@@ -151,8 +151,21 @@ describe CardAccount do
     end
   end
 
+  describe "remove cards" do
+    it { CardAccount.remove_cards(@user).should be_false }
+
+    it "removes cards" do
+      @account.save
+      account = @user.card_accounts.create FactoryGirl.attributes_for :card_account, card_no: '5100'
+      expect(CardAccount.remove_cards(@user)).to be_true
+      expect(CardAccount.where(user_id: @user.id).count).to eq 0
+    end
+  end
+
   describe 'add_card' do
     it 'has an existing token' do
+      CardAccount.any_instance.stub(:save_account).and_return({user_id: 1, card_number: '4111111111111111', status: 'active', card_code: '123',
+                  expiration_month: 6, expiration_year: 2019, zip: '94108'})
       @txn = @user.transactions.build FactoryGirl.attributes_for(:transaction, card_number: '9000900090009000', exp_month: Date.today.month+1,
         exp_year: Date.today.year+1, cvv: '123', zip: '11111', payment_type: 'visa')
       CardAccount.add_card(@txn, @txn.token).should be_true
@@ -162,6 +175,7 @@ describe CardAccount do
       acct = @user.card_accounts.create FactoryGirl.attributes_for :card_account
       @txn = @user.transactions.build FactoryGirl.attributes_for(:transaction, card_number: '9000900090009000')
       CardAccount.add_card(@txn, @txn.token).should be_true
+      expect(CardAccount.first.card_no).to eq '9000'
     end
 
     it 'has no card number' do
@@ -187,6 +201,24 @@ describe CardAccount do
     it 'should not delete account' do
       @account.token = nil
       @account.delete_card.should_not be_true
+    end
+  end
+
+  describe 'get_default_acct' do
+    it 'returns acct' do
+      @account.save
+      expect(CardAccount.get_default_acct).not_to be_blank
+    end
+
+    it 'does not return acct' do
+      expect(CardAccount.get_default_acct).to be_blank
+    end
+
+    it 'does not return acct' do
+      @account.save
+      @account2 = @user.card_accounts.create FactoryGirl.attributes_for :card_account, card_no: '5100'
+      expect(CardAccount.get_default_acct.card_no).to eq '9000'
+      expect(CardAccount.get_default_acct.card_no).not_to eq '5100'
     end
   end
 end

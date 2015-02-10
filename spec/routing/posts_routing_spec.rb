@@ -2,8 +2,8 @@ require "spec_helper"
 
 describe "routes for Posts" do
 
-    it "does route to #create" do
-      post("/posts").should route_to("posts#create")
+    it "does not route to #create" do
+      post("/posts").should_not route_to("posts#create")
     end
 
     it "does route to #destroy" do

@@ -17,9 +17,11 @@ describe UsersController do
 
   describe 'GET index' do
     before(:each) do
-      @users = mock("users")
-      User.stub!(:get_by_type).and_return(@users)
-      @users.stub!(:paginate).and_return(@users)
+      @user = stub_model(User)
+      @user.birth_date = DateTime.current
+      User.stub!(:get_by_type).and_return(@user)
+      @user.stub!(:paginate).and_return(@user)
+      controller.stub_chain(:load_data, :check_permissions).and_return(:success)
     end
 
     def do_get
@@ -31,19 +33,15 @@ describe UsersController do
       response.should render_template :index
     end
 
-    it "should assign @users" do
-      User.should_receive(:get_by_type).and_return(@users)
+    it "should assign @user" do
+      User.should_receive(:get_by_type).and_return(@user)
       do_get 
       assigns(:users).should_not be_nil
     end
 
-    context 'when format is csv' do
-      let(:csv_string) { User.to_csv }
-      
-      it 'should return a csv attachment' do
-        @controller.should_receive(:send_data).with(csv_string).and_return { @controller.render nothing: true }
-        get :index, format: :csv
-      end
+    it "responds to CSV" do
+      get :index, :format => 'csv'
+      expect(response).to be_success
     end
   end
 
@@ -233,5 +231,4 @@ describe UsersController do
       expect(response).to be_success
     end
   end
-
 end

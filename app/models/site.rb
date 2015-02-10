@@ -11,8 +11,6 @@ class Site < ActiveRecord::Base
   scope :with_pixis, :include    => :listings, 
                      :conditions => "listings.id IS NOT NULL"
 
-  has_many :site_listings, :dependent => :destroy
-
   has_many :temp_listings, :dependent => :destroy
   scope :with_new_pixis, :include    => :temp_listings, 
                          :conditions => "temp_listings.id IS NOT NULL"
@@ -29,7 +27,7 @@ class Site < ActiveRecord::Base
   
   # select active sites and remove dups
   def self.active regionFlg=true
-    where_stmt = regionFlg ? "status = 'active'" : "status = 'active' AND org_type != 'region'"
+    where_stmt = regionFlg ? "status = 'active'" : "status = 'active' AND org_type NOT IN ('region', 'state', 'country')"
     where(where_stmt).sort_by { |e| e[:name] }.inject([]) { |m,e| m.last.nil? ? [e] : m.last[:name] == e[:name] ? m : m << e }
   end
 

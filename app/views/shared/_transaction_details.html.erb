@@ -7,8 +7,8 @@
     <tr><td class='width240'>Amount:</td><td><%= number_to_currency(transaction.amt) %></td></tr>
   <% end %>
 
-  <tr><td class='width240'>Date: </td><td><%= get_local_date(transaction.created_at) %></td></tr>
+  <tr><td class='width240'>Date: </td><td><%= transaction.txn_dt %></td></tr>
   <tr><td class='width240'>Name: </td><td><%= "#{transaction.first_name} #{transaction.last_name}" %></td></tr>
   <tr><td class='width240'>Email: </td><td><%= transaction.email %><br /></td></tr>
-  <tr><td class='width240'>Description: </td><td><%= txn_details(transaction) %><br /></td></tr>
+  <tr><td class='width240'>Description: </td><td><%= transaction.description %><br /></td></tr>
 </table>

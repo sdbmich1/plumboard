@@ -3,7 +3,7 @@ class ConversationsController < ApplicationController
   load_and_authorize_resource
   before_filter :authenticate_user!
   before_filter :load_data, only: [:index, :reply, :show, :remove]
-  before_filter :mark_post, only: [:show]
+  before_filter :load_convo, only: [:reply, :destroy, :remove] 
   respond_to :html, :js, :xml, :json, :mobile
   layout :page_layout
 
@@ -14,8 +14,8 @@ class ConversationsController < ApplicationController
   def create
     @conversation = Conversation.new params[:conversation]
     respond_with(@conversation) do |format|
-      @post = @conversation.posts.build params[:post]
       if @conversation.save
+        reload_data params[:conversation][:pixi_id]
         format.json { render json: {conversation: @conversation} }
       else
         format.json { render json: { errors: @conversation.errors.full_messages }, status: 422 }
@@ -24,13 +24,11 @@ class ConversationsController < ApplicationController
   end
 
   def destroy
-    @conversation = Conversation.find params[:id]
     @conversation.destroy  
     respond_with(@conversation)
   end
 
   def remove 
-    @conversation = Conversation.find params[:id]
     if Conversation.remove_conv(@conversation, @user)
       redirect_to conversations_path(status: @status)
     else
@@ -40,24 +38,19 @@ class ConversationsController < ApplicationController
   end
 
   def reply 
-    @conversation = Conversation.find(params[:id])
-    if @conversation
-      respond_with(@conversation) do |format|
-        @post = @conversation.posts.build(params[:post])
-        if @conversation.save
-          @conversation = @conversation.reload
-	  load_posts
-          format.json { render json: {conversation: @conversation} }
-        else
-          format.json { render json: { errors: @conversation.errors.full_messages }, status: 422 }
-        end
+    respond_with(@conversation) do |format|
+      if @conversation.posts.create(params[:post])
+        @conversation = @conversation.reload
+        format.json { render json: {conversation: @conversation} }
+      else
+        format.json { render json: { errors: @conversation.errors.full_messages }, status: 422 }
       end
     end
   end
 
   def show
     @conversation = Conversation.inc_show_list.find(params[:id])
-    load_posts
+    @conversation.mark_all_posts(@user) if @conversation
     respond_with(@conversation)
   end
 
@@ -71,12 +64,13 @@ class ConversationsController < ApplicationController
     @page, @per_page, @status = params[:page] || 1, params[:per_page] || 10, params[:status]
   end
 
-  def load_posts
-    @posts, @post = @conversation.posts.active_status(@user), @conversation.posts.build if @conversation
+  def load_convo
+    @conversation = Conversation.find(params[:id])
   end
 
-  def mark_post
-    @conversation = Conversation.find params[:id]
-    @conversation.mark_all_posts(@user) if @conversation
+  def reload_data pid
+    @listing = Listing.find_pixi pid
+    @comments = @listing.comments.paginate page: @page, per_page: PIXI_COMMENTS if @listing
+    @user.pixi_wants.create(pixi_id: pid) # add to user's wanted list
   end
 end

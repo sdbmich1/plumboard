@@ -5,35 +5,39 @@ feature "Conversations" do
   subject { page }
 
   before(:each) do
-    @user = FactoryGirl.create :pixi_user
+    @user = create :pixi_user
     login_as(@user, :scope => :user, :run_callbacks => false)
-    @sender = FactoryGirl.create :pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tdavis@pixitest.com'
-    @listing = FactoryGirl.create :listing, seller_id: @user.id
+    @sender = create :pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tdavis@pixitest.com'
+    @listing = create :listing, seller_id: @user.id
   end
 
   def add_invoice
-    @seller = FactoryGirl.create(:pixi_user, first_name: 'Kim', last_name: 'Harris', email: 'kimmy@pixitest.com')
-    @invoice = @seller.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @user.id)
+    @seller = create(:pixi_user, first_name: 'Kim', last_name: 'Harris', email: 'kimmy@pixitest.com')
+    @invoice = @seller.invoices.build attributes_for(:invoice, buyer_id: @user.id)
+    @details = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+    @invoice.save!
   end
 
   def paid_invoice
-    @seller = FactoryGirl.create(:pixi_user, first_name: 'Kim', last_name: 'Harris', email: 'kimmy@pixitest.com')
-    @invoice = @seller.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @user.id, status: 'paid')
+    @seller = create(:pixi_user, first_name: 'Kim', last_name: 'Harris', email: 'kimmy@pixitest.com')
+    @invoice = @seller.invoices.create attributes_for(:invoice, buyer_id: @user.id, status: 'paid')
+    @details = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+    @invoice.save!
   end
    
   def add_post conv
-    @post_reply = conv.posts.create FactoryGirl.attributes_for :post, user_id: @user.id, recipient_id: @sender.id, pixi_id: @listing.pixi_id
+    @post_reply = conv.posts.create attributes_for :post, user_id: @user.id, recipient_id: @sender.id, pixi_id: @listing.pixi_id
   end
 
   def add_conversation
-    @conversation = @listing.conversations.create FactoryGirl.attributes_for :conversation, user_id: @sender.id, recipient_id: @user.id
-    @post = @conversation.posts.create FactoryGirl.attributes_for :post, user_id: @sender.id, recipient_id: @user.id, pixi_id: @listing.pixi_id
+    @conversation = @listing.conversations.create attributes_for :conversation, user_id: @sender.id, recipient_id: @user.id
+    @post = @conversation.posts.create attributes_for :post, user_id: @sender.id, recipient_id: @user.id, pixi_id: @listing.pixi_id
   end
 
   def add_system_conversation
-    @support = FactoryGirl.create(:pixi_user, first_name: 'Pixiboard', last_name: 'Support', email: 'support@pixiboard.com')
-    @conversation = @listing.conversations.create FactoryGirl.attributes_for :conversation, user_id: @support.id, recipient_id: @user.id
-    @post = @conversation.posts.create FactoryGirl.attributes_for :post, user_id: @support.id, recipient_id: @user.id, pixi_id: @listing.pixi_id, 
+    @support = create(:pixi_user, first_name: 'Pixiboard', last_name: 'Support', email: 'support@pixiboard.com')
+    @conversation = @listing.conversations.create attributes_for :conversation, user_id: @support.id, recipient_id: @user.id
+    @post = @conversation.posts.create attributes_for :post, user_id: @support.id, recipient_id: @user.id, pixi_id: @listing.pixi_id, 
       msg_type: 'system'
   end
 
@@ -60,7 +64,7 @@ feature "Conversations" do
     end
 
     it 'shows content' do
-      @conversation = @listing.conversations.create FactoryGirl.attributes_for :conversation, user_id: @sender.id, recipient_id: @user.id
+      @conversation = @listing.conversations.create attributes_for :conversation, user_id: @sender.id, recipient_id: @user.id
       page.should have_link('Sent', href: conversations_path(status: 'sent'))
       page.should have_link('Received', href: conversations_path(status: 'received'))
       page.should_not have_link('Mark All Read', href: mark_posts_path)
@@ -79,7 +83,7 @@ feature "Conversations" do
     end
 
     it 'shows content' do
-      page.should have_selector('title', :text => full_title('Messages'))
+      #page.should have_selector('title', :text => full_title('Messages'))
       page.should have_content @conversation.user.name
       page.should have_link('Sent', href: conversations_path(status: 'sent'))
       page.should have_link('Received', href: conversations_path(status: 'received'))
@@ -87,7 +91,7 @@ feature "Conversations" do
       page.should have_selector('#conv-trash-btn') 
       page.should have_selector('#conv-bill-btn') 
       page.should_not have_selector('#conv-pay-btn') 
-      page.should_not have_selector('#conv-show-btn') 
+      page.should have_selector('#conv-show-btn') 
     end
 
     it "marks all posts read", js: true do
@@ -163,6 +167,7 @@ feature "Conversations" do
       visit conversations_path(status: 'received')
       click_on 'Sent'
       click_on 'Received'
+      sleep 5
     end
     
     it 'shows content' do
@@ -172,6 +177,7 @@ feature "Conversations" do
       page.should have_content @post.content
       page.should have_selector('#conv-trash-btn') 
       page.should have_selector('#conv-pay-btn') 
+      page.should_not have_content 'No conversations found' 
     end
 
     it "pays an invoice" do
@@ -196,9 +202,9 @@ feature "Conversations" do
      
   describe 'sent conversations' do
     before :each do 
-      @reply_listing = FactoryGirl.create :listing, seller_id: @sender.id
-      @reply_conv= @reply_listing.conversations.create FactoryGirl.attributes_for :conversation, user_id: @user.id, recipient_id: @sender.id
-      @reply_post = @reply_conv.posts.create FactoryGirl.attributes_for :post, user_id: @user.id, recipient_id: @sender.id, pixi_id: @listing.pixi_id
+      @reply_listing = create :listing, seller_id: @sender.id
+      @reply_conv= @reply_listing.conversations.create attributes_for :conversation, user_id: @user.id, recipient_id: @sender.id
+      @reply_post = @reply_conv.posts.create attributes_for :post, user_id: @user.id, recipient_id: @sender.id, pixi_id: @listing.pixi_id
       visit conversations_path(status: 'received')
     end
 
@@ -208,6 +214,7 @@ feature "Conversations" do
       page.should have_content @reply_conv.recipient.name 
       page.should have_content @reply_conv.listing.title 
       page.should have_content @reply_post.content 
+      page.should_not have_content 'No conversations found' 
     end
   end
 
@@ -237,10 +244,11 @@ feature "Conversations" do
     end
 
     it 'removes last message' do
+      expect(Post.count).to eq 1
       page.should have_selector('.msg-trash-btn') 
       page.find(".msg-trash-btn", :visible => true).click
       click_remove_ok
-      sleep 3
+      sleep 5
       expect(Post.where(recipient_status: 'removed').count).to eq 1
       page.should have_content 'No conversations found' 
     end
@@ -268,8 +276,7 @@ feature "Conversations" do
             fill_in 'reply_content', with: nil
             click_send
         }.not_to change(Post,:count).by(1)
-
-        page.should have_content "Content can't be blank"
+        page.should have_content @conversation.listing.title
       end
     end
   end
@@ -277,7 +284,7 @@ feature "Conversations" do
   describe 'Seller Sold or Removed Pixis', js: true do
     before :each do
       add_conversation
-      @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
+      @user.bank_accounts.create attributes_for :bank_account, status: 'active'
       visit conversations_path(status: 'received')
       sleep 5
     end
@@ -353,21 +360,21 @@ feature "Conversations" do
     it 'removes conversation' do
       page.find("#conv-trash-btn", :visible => true).click
       click_remove_ok
-      sleep 3
-      page.should have_content 'No conversations found' 
+      sleep 5
       expect(Conversation.where(recipient_status: 'removed').count).to eq 1
+      page.should have_content 'No conversations found' 
     end
   end
 
   describe 'pagination', js: true do
     before(:each) do 
       5.times { 
-        @user = FactoryGirl.create :pixi_user
-        @sender = FactoryGirl.create :pixi_user
-        @listing = FactoryGirl.create :listing, seller_id: @user.id
-        @listing.conversations.create FactoryGirl.attributes_for :conversation, user_id: @sender.id, recipient_id: @user.id 
-        @conversation = @listing.conversations.create FactoryGirl.attributes_for :conversation, user_id: @sender.id, recipient_id: @user.id
-        @post = @conversation.posts.create FactoryGirl.attributes_for :post, user_id: @sender.id, recipient_id: @user.id, pixi_id: @listing.pixi_id 
+        @user = create :pixi_user
+        @sender = create :pixi_user
+        @listing = create :listing, seller_id: @user.id
+        @listing.conversations.create attributes_for :conversation, user_id: @sender.id, recipient_id: @user.id 
+        @conversation = @listing.conversations.create attributes_for :conversation, user_id: @sender.id, recipient_id: @user.id
+        @post = @conversation.posts.create attributes_for :post, user_id: @sender.id, recipient_id: @user.id, pixi_id: @listing.pixi_id 
       }
       visit conversations_path(status: 'received')
     end

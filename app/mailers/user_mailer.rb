@@ -6,8 +6,8 @@ class UserMailer < ActionMailer::Base
 
   # send receipts to customers
   def send_transaction_receipt transaction
-    @transaction = transaction
     @invoice = transaction.get_invoice
+    @transaction = transaction
 
     # set logo
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
@@ -113,7 +113,7 @@ class UserMailer < ActionMailer::Base
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     # set message details
-    mail(:to => "#{listing.seller_email}", :subject => "Pixi Approved: #{listing.title} ") 
+    mail(:to => "#{listing.seller_email}", :subject => env_check + ' ' + "Pixi #{approve_type(listing)}: #{listing.title} ") 
   end
 
   # send denial notices to members
@@ -124,7 +124,7 @@ class UserMailer < ActionMailer::Base
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     # set message details
-    mail(:to => "#{listing.seller_email}", :subject => "Pixi Denied: #{listing.title} ") 
+    mail(:to => "#{listing.seller_email}", :subject => env_check + ' ' + "Pixi Denied: #{listing.title} ") 
   end
 
   # send confirm message to new members

@@ -1,0 +1,8 @@
+$('#top-header').html();
+$("#txn-list").html("<%= escape_javascript( raw render(:partial => 'shared/transaction_list')) %>");
+<% if @transactions.blank? %>
+  $(".pg-entry").html("");
+<% else %>
+  $(".pg-entry").html("<%= escape_javascript( raw page_entries_info @transactions, :model => 'transactions') %>");
+<% end %>
+$("#spinner").hide('fast');

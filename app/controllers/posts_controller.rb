@@ -73,12 +73,14 @@ class PostsController < ApplicationController
     else
       @user.pixi_asks.create(pixi_id: pid) # add to user's asked list
     end
+
+    @page, @per_page = params[:page] || 1, params[:per_page] || 5
+>>>>>>> 894fb2719618ac15a97fc8067b28eeb39c949c98
   end
 
   def set_redirect_path status='received'
     @conversation = @post.conversation.reload
     if @conversation && @conversation.active_post_count(@user) > 0 
-      @posts, @post = @conversation.posts.active_status(@user), @conversation.posts.build
       conversation_path(@conversation)
     else
       conversations_path(status: status)

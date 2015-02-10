@@ -9,10 +9,6 @@
   <%= render 'layouts/shim' %>
 </head>
 <body>
-  <div class="container">
-    <%= yield :subhead %>
-    <%= render 'layouts/flash_messages', flash: flash %>
-  </div>
   <div id='home-wrap'>
     <div class="home-container">
       <%= yield :topcontent %>

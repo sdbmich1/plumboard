@@ -1,19 +1,22 @@
 class ConditionType < ActiveRecord::Base
-  attr_accessible :code, :hide, :status
+  attr_accessible :code, :hide, :status, :description
 
-  validates :code, :presence => true
-  validates :hide, :presence => true
-  validates :status, :presence => true
+  validates_presence_of :description, :code, :hide, :status
 
-  # default_scope :order => "Condition Type ASC"#what am i doing here?
+  default_scope :order => "description ASC"
 
   # return active types
   def self.active
     where(:status => 'active')
   end
 
-    # return all unhidden types
+  # return all unhidden types
   def self.unhidden
-    where(:hide => 'no')
+    active.where(:hide => 'no')
+  end
+
+  # titleize descr
+  def nice_descr
+    description.titleize rescue nil
   end
 end

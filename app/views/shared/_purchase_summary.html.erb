@@ -3,18 +3,9 @@
     <%= image_tag('rsz_pixipay.png', class: 'ppay-logo') %>
   </div>
   <div class="mtop">  
-    <span class="offset1 span2">
-      <%= render :partial => 'shared/show_photo', :locals => {model: @listing, psize: '100x100', file_name:'pixi-photo', display_cnt: 0} %>
-    </span>
-    <div class="offset3">
-      <% if @order[:transaction_type] == 'invoice' %>
-        <h5><%= @order[:title] %> from <%= @invoice.seller_name %></h5>
-      <% else %>
-        <h5><%= @listing.title %></h5>
-      <% end %>
-    </div>
+    <div class="offset3"><h5><%= order[:title] %></h5></div>
     <table class="offset3 mtop mbot">
-      <%= render :partial=>'shared/order_details', :locals=>{order: @order, paid: false, invoice: @invoice} %>
+      <%= render :partial=>'shared/order_details', :locals=>{txn: txn, order: order, paid: false} %>
       <tr></tr>
     </table>
   </div>

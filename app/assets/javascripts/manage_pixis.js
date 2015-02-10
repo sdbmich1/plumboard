@@ -30,6 +30,9 @@ function get_pixi_url() {
     case "invoiced":
       url = "../listings/invoiced?loc=" + site_id + "&cid=" + category_id;
       break;
+    case "wanted":
+      url = "../listings/wanted?loc=" + site_id + "&cid=" + category_id;
+      break;
   }
   processUrl(url);
 }

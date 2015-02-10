@@ -3,19 +3,19 @@
   <div class='pull-right'>
     <%= image_tag('rsz_pixipay.png', class: 'ppay-logo') %>
   </div>
-  <div class='offset2'>
+  <div class='big-top offset3'>
+    <div class='mleft30'>
     <table>
-    <tr><td class='span2 center-wrapper'>
-      <%= render partial: 'shared/show_photo', locals: {model: model.get_invoice_listing, psize: '180x180', file_name:'pixi-photo', 
-          display_cnt: 0} %>
-    </td><td class='cal-size'>
-      <div class="hdr"><span class='grp-hdr'><%= model.pixi_title %></span></div>
-    </td>
-    </tr>
-    <tr><td></td><td>
-      <%= render partial: 'shared/transaction_details', locals: {transaction: model, showAmt: false} %>
-    </td></tr>
+       <% model.listings.each do |item| %>
+         <tr><td class='cal-size'>
+           <%= render partial: 'shared/show_photo', locals: {model: item, file_name: "tip-image", psize: '80x80', display_cnt: 0 } %>
+             <div class="hdr mbot"><span class='mleft20 grp-hdr'><%= item.title %></span></div>
+           </td>
+        </tr>
+      <% end %>
+      <tr><td><%= render partial: 'shared/transaction_details', locals: {transaction: model, showAmt: false} %></td></tr>
     </table>  
+    </div>
   </div>
   <%= render partial: 'shared/rating_form', locals: { transaction: model } %>
 </div>

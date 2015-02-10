@@ -1,12 +1,12 @@
 require 'will_paginate/array' 
 class ListingsController < ApplicationController
-  include PointManager, LocationManager, NameParse
+  include PointManager, LocationManager, NameParse, ResetDate
   before_filter :authenticate_user!, except: [:local, :category, :show]
-  before_filter :load_data, only: [:index, :seller, :category, :show, :local, :invoiced]
-  before_filter :load_pixi, only: [:pixi_price, :repost, :update]
+  before_filter :load_data, only: [:index, :seller, :category, :show, :local, :invoiced, :wanted]
+  before_filter :load_pixi, only: [:show, :pixi_price, :repost, :update]
   before_filter :load_city, only: [:local, :category]
   after_filter :add_points, :set_session, only: [:show]
-  respond_to :html, :json, :js, :mobile
+  respond_to :html, :json, :js, :mobile, :csv
   layout :page_layout
 
   def index
@@ -14,7 +14,6 @@ class ListingsController < ApplicationController
   end
 
   def show
-    @listing = Listing.find_pixi(params[:id])
     load_comments
     respond_with(@listing) do |format|
       format.json { render json: {listing: @listing, comments: @comments} }
@@ -30,15 +29,11 @@ class ListingsController < ApplicationController
   end
 
   def seller
-    respond_with(@listings = Listing.get_by_seller(@user).get_by_status(@status).paginate(page: @page))
-  end
-
-  def sold
-    respond_with(@listings = Listing.get_by_seller(@user).get_by_status('sold').paginate(page: @page))
+    respond_with(@listings = Listing.get_by_seller(@user, @adminFlg).get_by_status(@status).paginate(page: @page))
   end
 
   def wanted
-    respond_with(@listings = Listing.wanted_list(@user, @page))
+    respond_with(@listings = Listing.wanted_list(@user, @page, @cat, @loc))
   end
 
   def purchased
@@ -46,7 +41,6 @@ class ListingsController < ApplicationController
   end
 
   def category
-    @category = Category.find @cat rescue nil
     respond_with(@listings)
   end
 
@@ -55,8 +49,7 @@ class ListingsController < ApplicationController
   end
 
   def pixi_price
-    @price = @listing.price rescue nil
-    respond_with(@price)
+    respond_with(@listing)
   end
 
   def invoiced
@@ -75,6 +68,7 @@ class ListingsController < ApplicationController
 
   def load_data
     @page, @cat, @loc, @loc_name = params[:page] || 1, params[:cid], params[:loc], params[:loc_name]
+    @adminFlg = params[:adminFlg].to_bool rescue false
     @status = NameParse::transliterate params[:status] if params[:status]
     @loc_name ||= LocationManager::get_loc_name(request.remote_ip, @loc || @region, @user.home_zip)
     @loc ||= LocationManager::get_loc_id(@loc_name, @user.home_zip)
@@ -98,10 +92,17 @@ class ListingsController < ApplicationController
   end
 
   def load_city
+    flash.now[:notice] = flash_msg
+    @category = Category.find @cat rescue nil if action_name == 'category'
     @listings = Listing.get_by_city @cat, @loc, @page
   end
 
   def set_session
     session[:back_to] = request.path unless signed_in?
+  end
+
+  def flash_msg 
+    val = ResetDate::days_left
+    "Pixiboard is donating 10% of our revenues to NorcalMLK for the month of January! Only #{val} days left to Shop Local and Give Back." if val.to_i > 0
   end
 end

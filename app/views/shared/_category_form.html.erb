@@ -4,16 +4,15 @@
 
     <div class="sm-top span5">
       <div id='signup'>
-	  <div class='controls'><%= f.text_field :name, :size => 20, placeholder: 'Category Name' %></div>
-    <span class="control-label">Category Name </span>
-          <div><%= f.collection_select(:category_type_code, CategoryType.active, :code, :code, {:include_blank => 'Select Category Type'}, {}) %></div>
-    <span class="control-label">Pixi Type</span>
-          <div><%= f.select :pixi_type, options_for_select( ['basic', 'premium'], :selected=>@category.pixi_type ) %></div>
-    <span class="control-label">Status</span> 
-          <div><%= f.select :status, options_for_select( ['active', 'inactive'], :selected=>@category.status ), {}, 
+	<div class='controls'><%= f.text_field :name, :size => 20, placeholder: 'Category Name' %></div>
+        <span class="control-label">Category Type </span>
+        <div><%= f.collection_select(:category_type_code, CategoryType.active, :code, :code, {:include_blank => 'Select Category Type'}, {}) %></div>
+        <span class="control-label">Pixi Type</span>
+        <div><%= f.select :pixi_type, options_for_select( ['basic', 'premium'], :selected=>@category.pixi_type ) %></div>
+        <span class="control-label">Status</span> 
+        <div><%= f.select :status, options_for_select( ['active', 'inactive'], :selected=>@category.status ), {}, 
 	    {disabled: @category.has_pixis?} %></div>
       </div>
-
       <%= f.submit "Save Changes", class: "btn btn-large btn-primary submit-btn" %>
     </div>
 <% end %>

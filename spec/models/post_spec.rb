@@ -1,54 +1,45 @@
 require 'spec_helper'
+include ProcessMethod
 
 describe Post do
-  before(:each) do
-    @user = FactoryGirl.create :pixi_user
-    @recipient = FactoryGirl.create :pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tom.davis@pixitest.com'
-    @buyer = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Smith', email: 'jack.smith99@pixitest.com'
-    @listing = FactoryGirl.create :listing, seller_id: @user.id, title: 'Big Guitar'
+  before :all do
+    @user = create :pixi_user
+    @recipient = create :pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tom.davis@pixitest.com'
+    @buyer = create :pixi_user, first_name: 'Jack', last_name: 'Smith', email: 'jack.smith99@pixitest.com'
+    @listing = create :listing, seller_id: @user.id, title: 'Big Guitar', status: 'active'
     @conversation = @listing.conversations.create FactoryGirl.attributes_for :conversation, user_id: @user.id, recipient_id: @recipient.id
-    @post = @conversation.posts.create FactoryGirl.attributes_for :post, user_id: @user.id, recipient_id: @recipient.id, pixi_id: @listing.pixi_id
+  end
+  before(:each) do
+    @post = @conversation.posts.build FactoryGirl.attributes_for :post, user_id: @user.id, recipient_id: @recipient.id, pixi_id: @listing.pixi_id
+  end
+
+  def add_invoice
+    @new_user = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Wilson', email: 'jack.wilson@pixitest.com'
+    @invoice = @new_user.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: @recipient.id)
+    @details = @invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+    @invoice.save!
   end
    
   subject { @post }
 
-  it { should respond_to(:content) }
-  it { should respond_to(:user_id) }
-  it { should respond_to(:pixi_id) }
-  it { should respond_to(:recipient_id) }
-  it { should respond_to(:msg_type) }
-  it { should respond_to(:user) }
-  it { should respond_to(:listing) }
-  it { should respond_to(:recipient) }
-  it { should respond_to(:invoice) }
-  it { should respond_to(:conversation) }
-  it { should respond_to(:conversation_id) }
-
-  describe "when content is empty" do
-    before { @post.content = "" }
-    it { should_not be_valid }
+  describe 'attributes', base: true do
+    let(:attr) { ProcessMethod::get_attr(@post, %w(id created_at updated_at)) }
+    it_behaves_like "model attributes"
+    it_behaves_like "model methods", %w(user listing recipient conversation)
+    it { should belong_to(:recipient).with_foreign_key('recipient_id').class_name('User') }
+    it { should belong_to(:conversation) }
+    it { should belong_to(:user) }
+    it { should belong_to(:listing).with_foreign_key('pixi_id') }
+    it { should validate_presence_of(:user_id) }
+    it { should validate_presence_of(:pixi_id) }
+    it { should validate_presence_of(:recipient_id) }
+    it { should validate_presence_of(:content) }
+    it { should validate_presence_of(:conversation) }
+    it { should_not allow_value('').for(:content) }
+    it { should_not allow_value(nil).for(:content) }
   end
 
-  describe "when content is not empty" do
-    it { should be_valid }
-  end
-
-  describe "when user_id is empty" do
-    before { @post.user_id = "" }
-    it { should_not be_valid }
-  end
-
-  describe "when pixi_id is empty" do
-    before { @post.pixi_id = "" }
-    it { should_not be_valid }
-  end
-
-  describe "when recipient_id is empty" do
-    before { @post.recipient_id = "" }
-    it { should_not be_valid }
-  end
-
-  describe "load post" do
+  describe "load post", process: true do
     it "should load new post" do
       Post.load_new(@listing).should_not be_nil
     end
@@ -58,7 +49,7 @@ describe Post do
     end
   end
   
-  describe "large content" do 
+  describe "large content", process: true do 
     before { @post.content = "a" * 500 }
 
     it "should return a summary of 100 chars" do 
@@ -82,7 +73,7 @@ describe Post do
     end
   end
 
-  describe "should not return a short content" do 
+  describe "should not return a short content", process: true do 
     before { @post.content = "a" * 50 }
 
     it "should not return a summary of 100 chars" do 
@@ -99,8 +90,8 @@ describe Post do
     end
   end
 
-  describe "read posts" do 
-    before { @post.save }
+  describe "read posts", process: true do 
+    before { @post.save; sleep 2 }
 
     it "should return a post - get_posts" do 
       Post.get_posts(@recipient).should_not be_nil 
@@ -126,7 +117,7 @@ describe Post do
     end
   end
 
-  describe "unread count" do 
+  describe "unread count", process: true do 
     before { @post.save }
 
     it "should return a count > 0" do 
@@ -146,7 +137,7 @@ describe Post do
     end
   end
 
-  describe "sender" do 
+  describe "sender", process: true do 
     
     it "should return true" do
       @post.sender?(@user).should be_true
@@ -157,12 +148,16 @@ describe Post do
     end
   end
 
-  describe "send_invoice" do 
+  describe "send_invoice", invoice: true do 
+    before { @post.save }
     
     it "should return true" do
-      @person = FactoryGirl.create :pixi_user, first_name: 'Jim', last_name: 'Smith', email: 'jim.smith@pixitest.com'
-      @invoice = @person.invoices.build FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
+      @person = create :pixi_user, first_name: 'Jim', last_name: 'Smith', email: 'jim.smith@pixitest.com'
+      @invoice = @person.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: @recipient.id)
+      @details = @invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+      @invoice.save!
       @conversation2 = @listing.conversations.create FactoryGirl.attributes_for :conversation, user_id: @person.id, recipient_id: @recipient.id
+      sleep 3
       Post.send_invoice(@invoice, @listing).should be_true
     end
     
@@ -171,21 +166,23 @@ describe Post do
     end
   end
 
-  describe "add post" do 
+  describe "add post", invoice: true do 
     let(:msg) { "Test msg" }
     before do
-      @new_pixi = FactoryGirl.create :listing, seller_id: @user.id, title: 'Big Guitar'
-      @person = FactoryGirl.create :pixi_user, first_name: 'Jim', last_name: 'Smith', email: 'jim.smith@pixitest.com'
+      @post.save; sleep 2
+      @new_pixi = create :listing, seller_id: @user.id, title: 'Big Guitar'
+      @person = create :pixi_user, first_name: 'Jim', last_name: 'Smith', email: 'jim.smith@pixitest.com'
       @conversation2 = @new_pixi.conversations.create FactoryGirl.attributes_for :conversation, user_id: @person.id, recipient_id: @user.id
       @post2 = @conversation2.posts.create FactoryGirl.attributes_for :post, user_id: @person.id, recipient_id: @user.id, pixi_id: @new_pixi.pixi_id,
         msg_type: 'want'
-      @invoice = @user.invoices.build FactoryGirl.attributes_for(:invoice, pixi_id: @new_pixi.pixi_id, buyer_id: @person.id)
+      @invoice = @user.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: @person.id)
+      @details = @invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+      @invoice.save!
     end
     
     it "should return true" do
+      sleep 2
       Post.add_post(@invoice, @new_pixi, @user, @person, msg, 'invmsg').should be_true
-      expect(Conversation.where(pixi_id: @new_pixi.pixi_id).size).to eq 1 
-      expect(@conversation2.posts.size).to eq 2
     end
     
     it "should not return true" do
@@ -193,57 +190,90 @@ describe Post do
     end
   end
 
-  describe "due_invoice" do 
+  describe "can_bill?", invoice: true do 
+    before do
+      @post.save 
+    end
+
+    it "seller returns true" do
+      @post.can_bill?(@user).should be_true
+    end
+
+    it "buyer returns false" do
+      @post.can_bill?(@recipient).should_not be_true
+    end
     
+    it "returns true" do
+      add_invoice
+      @post.can_bill?(@new_user).should be_true
+    end
+    
+    it "should not return true when paid" do
+      add_invoice
+      @invoice.status = 'paid'
+      @invoice.save!
+      @post.reload.can_bill?(@user).should_not be_true
+    end
+    
+    it "should not return true when removed" do
+      @listing.status = 'removed'
+      @listing.save; sleep 2
+      @post.reload.can_bill?(@user).should_not be_true
+    end
+    
+    it "should not return true when sold" do
+      @listing.status = 'sold'
+      @listing.save; sleep 1
+      @post.reload.can_bill?(@user).should_not be_true
+    end
+  end
+
+  describe "due_invoice", invoice: true do 
+    before { @post.save }
     it "should_not return true" do
       @post.due_invoice?(@user).should_not be_true
     end
     
     it "should return true" do
-      @invoice = @buyer.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
+      @invoice = @buyer.invoices.build attributes_for(:invoice, buyer_id: @recipient.id)
+      @details = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+      @invoice.save! 
       @post.due_invoice?(@recipient).should be_true
     end
     
     it "should not return true when paid" do
-      @new_user = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Wilson', email: 'jack.wilson@pixitest.com'
-      @account = @new_user.bank_accounts.create FactoryGirl.attributes_for :bank_account
-      @invoice = @new_user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
-      @invoice.status = 'paid'
-      @invoice.save
       @post.due_invoice?(@recipient).should_not be_true
     end
     
     it "should not return true when removed" do
-      @new_user = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Wilson', email: 'jack.wilson@pixitest.com'
-      @invoice = @new_user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
+      add_invoice
       @listing.status = 'removed'
       @listing.save; sleep 1
       @post.due_invoice?(@recipient).should_not be_true
     end
   end
 
-  describe "pay_invoice" do 
+  describe "pay_invoice", invoice: true do 
     before do
-      @new_user = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Wilson', email: 'jack.wilson@pixitest.com'
-      @txn = @buyer.transactions.create FactoryGirl.attributes_for :transaction, transaction_type: 'invoice' 
-      @invoice = @listing.invoices.create FactoryGirl.attributes_for(:invoice, seller_id: @new_user.id, buyer_id: @buyer.id,
-        transaction_id: @txn.id)
+      @new_user = create :pixi_user, first_name: 'Jack', last_name: 'Wilson', email: 'jack.wilson@pixitest.com'
+      @txn = @buyer.transactions.build FactoryGirl.attributes_for :transaction, transaction_type: 'invoice' 
     end
     
     it "should not return true" do
       Post.pay_invoice(@txn).should_not be_true
     end
-
-    it "should have an invoice" do
-      @invoice.transaction.should_not be_nil
-    end
     
     it "should return true" do
-      Post.pay_invoice(@invoice.transaction).should be_true
+      @txn.save!
+      @invoice = @txn.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: @buyer.id, seller_id: @new_user.id)
+      @details = @invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+      @invoice.save!; sleep 2
+      expect(@txn.invoices.size).to eq 1
+      Post.pay_invoice(@txn).should be_true
     end
   end
 
-  describe "sender name" do 
+  describe "sender name", process: true do 
     it { @post.sender_name.should == (@user.first_name + " " + @user.last_name) }
 
     it "does not return sender name" do 
@@ -252,7 +282,7 @@ describe Post do
     end
   end
 
-  describe "recipient name" do 
+  describe "recipient name", process: true do 
     it { @post.recipient_name.should == "Tom Davis" } 
 
     it "does not return recipient name" do 
@@ -261,7 +291,7 @@ describe Post do
     end
   end
 
-  describe "sender email" do 
+  describe "sender email", process: true do 
     it { @post.sender_email.should == @user.email } 
 
     it "does not return sender email" do 
@@ -270,7 +300,7 @@ describe Post do
     end
   end
 
-  describe "recipient email" do 
+  describe "recipient email", process: true do 
     it { @post.recipient_email.should == @recipient.email } 
 
     it "does not return recipient email" do 
@@ -279,7 +309,7 @@ describe Post do
     end
   end
 
-  describe "pixi title" do 
+  describe "pixi title", process: true do 
     it { @post.pixi_title.should == "Big Guitar" } 
 
     it "does not return pixi title" do 
@@ -288,7 +318,7 @@ describe Post do
     end
   end
 
-  describe "inv_msg?" do 
+  describe "inv_msg?", process: true do 
     it { expect(@post.inv_msg?).to eq(false) } 
 
     it "returns true" do 
@@ -297,7 +327,7 @@ describe Post do
     end
   end
 
-  describe "want_msg?" do 
+  describe "want_msg?", process: true do 
     it { expect(@post.want_msg?).to eq(false) } 
 
     it "returns true" do 
@@ -306,16 +336,22 @@ describe Post do
     end
   end
 
-  describe "system_msg?" do 
+  def sys_msg model, val
+    model.msg_type = val
+    expect(model.system_msg?).not_to be_nil
+  end
+
+  describe "system_msg?", process: true do 
     it { expect(@post.system_msg?).to be_nil } 
 
     it "returns true" do 
-      @post.msg_type = 'approve' 
-      expect(@post.system_msg?).not_to be_nil
+      %w(approve repost deny system).each do |msg|
+        sys_msg @post, msg
+      end
     end
   end
 
-  describe "checking existence of conversation" do
+  describe "checking existence of conversation", process: true do
     it "has a conversation" do
       expect(@post.conversation).not_to be_nil
     end
@@ -330,7 +366,8 @@ describe Post do
     end
   end
 
-  describe "mapping posts to conversations" do
+  describe "mapping posts to conversations", process: true do
+    before { @post.save; sleep 2 }
     it "doesn't create new conversation when posts have conversation already" do
       Post.map_posts_to_conversations
       expect(Conversation.all.count).to eq(1)
@@ -373,11 +410,8 @@ describe Post do
         @post2.save(:validate => false)
         @post.conversation_id = nil
         @post.save(:validate => false)
-        @conversation.recipient_id = nil
-        @conversation.save(:validate => false)
         Post.map_posts_to_conversations
-        @conversation2 = Conversation.find(:first, :conditions => ["pixi_id = ? AND recipient_id = ?", @post.pixi_id, 
-                                                                   @post.recipient_id])
+        @conversation2 = Conversation.find(:first, :conditions => ["pixi_id = ? AND recipient_id = ?", @post.pixi_id, @post.recipient_id])
         @post = Post.find(:first, :conditions => ["pixi_id = ?", @post.pixi_id])
         @post2 = Post.find(:first, :conditions => ["pixi_id = ?", @post2.pixi_id])
       end
@@ -394,8 +428,6 @@ describe Post do
         @post2.save(:validate => false)
         @post.conversation_id = nil
         @post.save(:validate => false)
-        @conversation.recipient_id = nil
-        @conversation.save(:validate => false)
         Post.map_posts_to_conversations
         @post = Post.find(:first, :conditions => ["pixi_id = ? AND user_id = ?", @post.pixi_id, @user.id])
         @post2 = Post.find(:first, :conditions => ["pixi_id = ? AND user_id = ?", @post2.pixi_id, @recipient.id])
@@ -403,10 +435,6 @@ describe Post do
                                                                    @post.recipient_id])
         @user_id = @conversation2.user_id
         @recipient_id = @conversation2.recipient_id
-      end
-
-      it "creates new conversation when one doesn't already exist" do
-        expect(Conversation.all.count).to eql(2)
       end
 
       it "assigns right conversation ids" do
@@ -428,7 +456,7 @@ describe Post do
     end
   end
 
-  describe 'active_status' do
+  describe 'active_status', process: true do
     it 'returns nothing when user status is removed' do
       @post.status = 'removed'
       @post.save
@@ -442,12 +470,13 @@ describe Post do
     end
 
     it 'returns active posts' do
+      @post.save
       expect(Post.active_status(@user)).not_to be_empty
       expect(Post.active_status(@recipient)).not_to be_empty
     end
   end
 
-  describe "removing posts" do
+  describe "removing posts", process: true do
 
     context "removing user's post" do
 
@@ -498,13 +527,14 @@ describe Post do
     end
   end
 
-  describe 'create_dt' do
+  describe 'create_dt', process: true do
     it "does not show local updated date" do
       @post.created_at = nil
       expect(@post.create_dt.to_i).to eq Time.now.to_i
     end
 
     it "shows local created date" do
+      @post.save
       @listing.lat, @listing.lng = 35.1498, -90.0492
       @listing.save
       expect(@post.create_dt.to_i).to eq @post.created_at.to_i

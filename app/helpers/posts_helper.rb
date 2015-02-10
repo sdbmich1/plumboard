@@ -4,11 +4,17 @@ module PostsHelper
   def setup_post(listing)
 
     # create new conversation
-    conv = listing.conversations.create pixi_id: listing.pixi_id, user_id: @user.id, recipient_id: listing.seller_id
+    conv = listing.conversations.build user_id: @user.id, recipient_id: listing.seller_id
 
     # new post
     @post = conv.posts.build 
+    add_post conv
     return @post
+  end
+
+  # add new post for form
+  def add_post conv
+    conv.posts.build 
   end
 
   # toggle msg sender or recipient based on send flg

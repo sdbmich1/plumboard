@@ -1,6 +1,6 @@
   <div class="clear-all"></div>
   <div class='mtop center-wrapper'>
-    <%= form_for @rating, url: ratings_path(id: transaction.id), :method => :post, :id => 'ratings_form' do |f| %> 
+    <%= form_for setup_rating(@user), url: ratings_path(id: transaction.id), :method => :post, :id => 'ratings_form' do |f| %> 
       <%= f.hidden_field 'seller_id', value: transaction.seller_id %>
       <%= f.hidden_field 'pixi_id', value: transaction.pixi_id %>
       <%= f.hidden_field 'user_id', value: @user.id %>

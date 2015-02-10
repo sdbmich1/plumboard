@@ -5,12 +5,6 @@ feature "UserSignins" do
   let(:site) { FactoryGirl.create :site }
   subject { page }
 
-  def user_login
-    fill_in "user_email", :with => @user.email
-    fill_in "pwd", :with => @user.password
-    click_button submit
-  end
-
   def invalid_login
     fill_in "user_email", :with => "notarealuser@example.com"
     fill_in "pwd", :with => "fakepassword"
@@ -23,8 +17,9 @@ feature "UserSignins" do
     page.should have_link('By Us (PixiPost)', href: check_pixi_post_zips_path)
     if showFlg
       page.should have_link('For Seller', href: new_temp_listing_path(pixan_id: @user))
+      page.should have_link('For Business', href: new_temp_listing_path(pixan_id: @user, ptype: 'bus'))
     end
-    page.should have_link('My Pixis', href: seller_listings_path)
+    page.should have_link('My Pixis', href: seller_listings_path(status: 'active'))
     page.should have_link('My Messages', href: conversations_path(status: 'received'))
     page.should have_link('My Invoices', href: sent_invoices_path)
     page.should have_link('My Accounts', href: new_bank_account_path)
@@ -51,7 +46,7 @@ feature "UserSignins" do
 
     it "signs in a registered user" do
       set_const 0
-      user_login
+      user_login @user
       expect(Listing.get_by_site(@loc, 1).size).to eq(1)
       expect(Listing.get_by_city(nil, @loc, 1).size).to eq(1)
       page.should have_content "Home"
@@ -59,7 +54,7 @@ feature "UserSignins" do
 
     it "signs in a registered user with local pixi home" do
       set_const 500
-      user_login
+      user_login @user
       page.should_not have_content "Home"
       page.should have_content "Pixis"
     end
@@ -76,7 +71,7 @@ feature "UserSignins" do
     before { visit new_user_session_path }
 
     it 'shows content' do
-      page.should have_selector '#fb-btn', href: user_omniauth_authorize_path(:facebook)
+      page.should have_selector '#fb-btn' #, text: user_omniauth_authorize_path(:facebook)
       page.should have_button('Sign in')
       page.should have_link 'Sign up for free!', href: new_user_registration_path
     end
@@ -127,7 +122,7 @@ feature "UserSignins" do
 
         page.should have_link('Sign out', href: destroy_user_session_path)
         page.should have_content "Home"
-	page.should_not have_content 'About'
+	page.should have_content 'About'
       end
 
       scenario 'signs-in from home page to local pixi page' do
@@ -153,7 +148,7 @@ feature "UserSignins" do
 	expect(User.find_by_email('bob.smith@test.com')).to be_nil
 
         page.should have_link('Sign in', href: new_user_session_path)
-        page.should have_content "Sign Up"
+        #page.should have_content "Sign Up"
       end
     end
 
@@ -163,7 +158,7 @@ feature "UserSignins" do
       end
 
       it "displays confirm message to a registered user" do
-        user_login
+        user_login @user
         page.should have_content("You have to confirm your account before continuing") 
       end
 
@@ -176,7 +171,7 @@ feature "UserSignins" do
     describe 'registered confirmed users' do
       before(:each) do
         @user = FactoryGirl.create :pixi_user, confirmed_at: Time.now 
-        user_login
+        user_login @user
       end
 
       it 'shows content' do
@@ -206,7 +201,7 @@ feature "UserSignins" do
     describe 'registered admin users' do
       before(:each) do
         @user = FactoryGirl.create :admin, confirmed_at: Time.now 
-        user_login
+        user_login @user
       end
 
       it 'shows content' do
@@ -217,7 +212,7 @@ feature "UserSignins" do
         page.should have_link('Categories', href: manage_categories_path)
         page.should have_link('Transactions', href: transactions_path)
         page.should have_link('Users', href: users_path)
-        page.should have_link('Pixis', href: listings_path)
+        page.should have_link('Pixis', href: listings_path(status: 'active'))
 	user_menu_items true
       end
 
@@ -230,7 +225,7 @@ feature "UserSignins" do
     describe 'registered editor users' do
       before(:each) do
         @user = FactoryGirl.create :editor, confirmed_at: Time.now 
-        user_login
+        user_login @user
       end
 
       it 'shows content' do
@@ -242,7 +237,8 @@ feature "UserSignins" do
         page.should_not have_link('Transactions', href: transactions_path)
         page.should_not have_link('Users', href: users_path)
         page.should have_link('For Seller', href: new_temp_listing_path(pixan_id: @user))
-        page.should have_link('Pixis', href: listings_path)
+        page.should have_link('For Business', href: new_temp_listing_path(pixan_id: @user, ptype: 'bus'))
+        page.should have_link('Pixis', href: listings_path(status: 'active'))
 	user_menu_items true
       end
 
@@ -255,7 +251,7 @@ feature "UserSignins" do
     describe 'registered pixter users' do
       before(:each) do
         @user = FactoryGirl.create :pixter, confirmed_at: Time.now 
-        user_login
+        user_login @user
       end
 
       it 'shows content' do
@@ -268,6 +264,7 @@ feature "UserSignins" do
         page.should_not have_link('Transactions', href: transactions_path)
         page.should_not have_link('Users', href: users_path)
         page.should have_link('For Seller', href: new_temp_listing_path(pixan_id: @user))
+        page.should have_link('For Business', href: new_temp_listing_path(pixan_id: @user, ptype: 'bus'))
         page.should_not have_link('Pixis', href: listings_path)
 	user_menu_items true
       end
@@ -281,7 +278,7 @@ feature "UserSignins" do
     describe "displays my accounts link" do
       before(:each) do
         @user = FactoryGirl.create :subscriber, confirmed_at: Time.now 
-        user_login
+        user_login @user
         FactoryGirl.create(:listing, seller_id: @user.id)
 	@account = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
 	visit root_path
@@ -295,8 +292,8 @@ feature "UserSignins" do
 
     describe 'registered subscriber users' do
       before(:each) do
-        sub = FactoryGirl.create :subscriber, confirmed_at: Time.now 
-        init_setup sub
+        @user = FactoryGirl.create :subscriber, confirmed_at: Time.now 
+        user_login @user
       end
 
       it 'shows content' do
@@ -307,7 +304,7 @@ feature "UserSignins" do
         page.should_not have_link('Categories', href: manage_categories_path)
         page.should_not have_link('Transactions', href: transactions_path)
         page.should_not have_link('Users', href: users_path)
-        page.should_not have_link('Pixis', href: listings_path)
+        page.should_not have_link('Pixis', href: listings_path(status: 'active'))
 	user_menu_items
       end
 

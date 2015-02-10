@@ -1,13 +1,19 @@
 module InvoicesHelper
 
+  # add new details for invoice
+  def setup_inv(invoice)
+    invoice.invoice_details 
+    return invoice
+  end
+
   # set default quantity
   def set_quantity model
     model.quantity || 1
   end
 
   # set default sales tax
-  def get_sales_tax
-    @invoice.sales_tax || 0.0
+  def get_sales_tax invoice
+    invoice.sales_tax || 0.0
   end
 
   # check if user has bank account to determine correct routing
@@ -38,12 +44,12 @@ module InvoicesHelper
 
   # set btn class
   def pay_btn_cls
-    controller_name == 'posts' ? 'btn btn-medium btn-primary' : 'btn btn-large btn-primary'
+    controller_name == 'posts' ? 'btn btn-medium btn-primary' : 'btn btn-large btn-primary submit-btn'
   end
 
   # set buyer name if exists
-  def load_buyer
-    @invoice.buyer_name rescue ''
+  def load_buyer invoice
+    invoice.buyer_name rescue ''
   end
 
   # get invoice fee based on user
@@ -69,7 +75,7 @@ module InvoicesHelper
   # get conv fee message based on user
   def get_conv_fee_msg inv
     if inv
-      inv.owner?(@user) ? inv.listing.pixi_post? ? PXPOST_FEE_MSG : SELLER_FEE_MSG : CONV_FEE_MSG
+      inv.owner?(@user) ? inv.pixi_post? ? PXPOST_FEE_MSG : SELLER_FEE_MSG : CONV_FEE_MSG
     end
   end
 
@@ -82,5 +88,15 @@ module InvoicesHelper
   # build dynamic cache key for invoice page
   def cache_key_for_invoice(invoice)
     "invoice-#{invoice.id}-user-#{@user.id}-time-{Time.now}"
+  end
+
+  # check for multiples
+  def multiple_pixis?
+    @user.pixi_count > 1
+  end
+
+  # check if user's invoice is unpaid
+  def my_unpaid_invoice? invoice
+    invoice.owner?(@user) && invoice.unpaid? 
   end
 end

@@ -37,11 +37,48 @@ describe TransactionsController do
   describe 'GET index' do
     before(:each) do
       @transactions = stub_model(Transaction)
-      Transaction.stub!(:all).and_return(@transactions)
+      @transactions.updated_at = DateTime.current
+      @invoice = stub_model(Invoice)
+      @invoice.amount = 0
+      @transactions.invoices.push(@invoice)
+      Transaction.stub_chain(:get_by_date).and_return(@transactions)
+      @transactions.stub!(:paginate).and_return(@transactions)
+      controller.stub_chain(:load_date_range, :load_page).and_return(:success)
+      do_get
     end
 
     def do_get
       get :index
+    end
+
+    it "renders the :index view" do
+      response.should render_template :index
+    end
+
+    it "should assign @transactions" do
+      assigns(:transactions).should_not be_nil
+    end
+
+    it "responds to JSON" do
+      get :index, :format => 'json'
+      expect(response).to be_success
+    end 
+
+    it "responds to CSV" do
+      get :index, :format => 'csv'
+      expect(response).to be_success
+    end
+  end
+
+  describe 'xhr GET index' do
+    before(:each) do
+      @transactions = stub_model(Transaction)
+      Transaction.stub!(:get_by_date).and_return(@transactions)
+      @transactions.stub!(:paginate).and_return(@transactions)
+    end
+
+    def do_get
+      xhr :get, :index
     end
 
     it "renders the :index view" do
@@ -50,28 +87,20 @@ describe TransactionsController do
     end
 
     it "should assign @transactions" do
-      Transaction.should_receive(:all).and_return(@transactions)
+      Transaction.should_receive(:get_by_date).and_return(@transactions)
       do_get 
       assigns(:transactions).should_not be_nil
-    end
-
-    it "responds to JSON" do
-      get :index, format: :json
-      expect(response).to be_success
     end
   end
 
   describe "GET 'new'" do
 
     before :each do
-      @listing = stub_model(TempListing)
-      TempListing.stub!(:find_by_pixi_id).and_return(@listing)
-      @invoice = stub_model(Invoice)
       controller.stub(:order) {['order', 'order']}
+      controller.stub(:order) {['transaction_type', 'invoice']}
       controller.stub!(:current_user).and_return(@user)
-      controller.stub_chain(:load_vars, :set_amt).and_return(:success)
-      Invoice.stub!(:find_invoice).with(@order).and_return(@invoice)
-      Transaction.stub!(:load_new).with(@user, @listing, @order).and_return( @transaction )
+      controller.stub_chain(:load_vars).and_return(:success)
+      Transaction.stub!(:load_new).with(@user, @order).and_return( @transaction )
     end
 
     def do_get
@@ -83,16 +112,6 @@ describe TransactionsController do
       assigns(:transaction).should_not be_nil
     end
 
-    it "should assign @listing" do
-      do_get
-      assigns(:listing).should_not be_nil
-    end
-
-    it "should assign @invoice" do
-      do_get
-      assigns(:invoice).should eq(@invoice)
-    end
-
     it "new action should render new template" do
       do_get
       response.should render_template(:new)
@@ -101,10 +120,8 @@ describe TransactionsController do
 
   describe 'GET show/:id' do
     before :each do
-      @rating = stub_model(Rating)
       Transaction.stub!(:find).and_return( @transaction )
       controller.stub!(:current_user).and_return(@user)
-      @user.stub_chain(:ratings, :build).and_return(@rating)
     end
 
     def do_get
@@ -118,7 +135,6 @@ describe TransactionsController do
 
     it "should load the requested transaction" do
       Transaction.stub!(:find).with('1').and_return(@transaction)
-      # @user.stub_chain(:transactions, :find).with('1').and_return(@transaction)
       do_get
     end
 
@@ -140,14 +156,12 @@ describe TransactionsController do
 
   describe "POST create" do
     before :each do
-      @listing = stub_model(TempListing)
-      TempListing.stub!(:find_by_pixi_id).and_return(@listing)
       Transaction.stub!(:new).and_return(@transaction)
     end
 
     def do_create
-      post :create, id: '1', transaction: { 'first_name'=>'test', 'description'=>'test' }, order: { "item_name" => 'New Pixi', "quantity" => 1, 
-	   "price" => 5.00 }
+      post :create, id: '1', transaction: { 'first_name'=>'test', 'description'=>'test' }, order: { "title" => 'New Pixi', "quantity1" => 1, 
+	   "price1" => 5.00, 'id1' => '1234', 'item1' => 'bicycle' }
     end
     
     context 'failure' do
@@ -160,19 +174,14 @@ describe TransactionsController do
         assigns(:transaction).should_not be_nil 
       end
 
-      it "should assign @listing" do
-        do_create
-        assigns(:listing).should_not be_nil 
-      end
-
       it "create action should render new action" do
         do_create
         response.should_not be_redirect
       end
 
       it "responds to JSON" do
-        post :create, id: '1', transaction: { 'first_name'=>'test', 'description'=>'test' }, order: { "item_name" => 'New Pixi', "quantity" => 1, 
-	   "price" => 5.00 }, :format=>:json
+        post :create, id: '1', transaction: { 'first_name'=>'test', 'description'=>'test' }, order: { "title" => 'New Pixi', "quantity1" => 1, 
+	   "price1" => 5.00, 'id1' => '1234', 'item1' => 'bicycle' }, :format=>:json
 	response.status.should_not eq(0)
       end
     end
@@ -192,11 +201,6 @@ describe TransactionsController do
       it "should assign @transaction" do
         do_create
         assigns(:transaction).should_not be_nil 
-      end
-
-      it "should assign @listing" do
-        do_create
-        assigns(:listing).should_not be_nil 
       end
 
       it "should redirect to the created transaction" do

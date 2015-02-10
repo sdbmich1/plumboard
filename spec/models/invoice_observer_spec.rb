@@ -17,12 +17,6 @@ describe InvoiceObserver do
     @observer.stub(:mark_pixi).with(@model).and_return(@listing)
   end
 
-  def mark_as_closed
-    @invoice = mock(Invoice)
-    @observer = InvoiceObserver.instance
-    @observer.stub(:mark_as_closed).with(@model).and_return(true)
-  end
-
   def credit_account
     @txn = mock(Transaction)
     @observer = InvoiceObserver.instance
@@ -42,13 +36,16 @@ describe InvoiceObserver do
   end
 
   describe 'after_update' do
+    let(:other_user) { create :pixi_user }
 
     before(:each) do
       @transaction = FactoryGirl.create :transaction, convenience_fee: 0.99
       @account = user.bank_accounts.create FactoryGirl.attributes_for :bank_account
-      @model = user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: listing.pixi_id, buyer_id: buyer.id, 
+      @model = user.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: buyer.id, 
         bank_account_id: @account.id, transaction_id: @transaction.id ) 
-      @model.price, @model.status = 150.00, 'paid'
+      @details = @model.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: listing.pixi_id, price: 150.00 
+      @model.save!; sleep 3
+      @model.status = 'paid'
     end
 
     it 'should send a post' do
@@ -68,20 +65,13 @@ describe InvoiceObserver do
       credit_account
       send_mailer
     end
-
-    it 'should mark any other invoices as closed' do
-      other_user = create :pixi_user
-      other_invoice = user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: listing.pixi_id, buyer_id: other_user.id)
-      @model.save!
-      mark_as_closed
-      expect(other_user.unpaid_invoice_count).to eq(0)
-    end
   end
 
   describe 'after_create' do
 
     before do
-      @model = user.invoices.build FactoryGirl.attributes_for(:invoice, pixi_id: listing.pixi_id, buyer_id: buyer.id) 
+      @model = user.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: buyer.id) 
+      @details = @model.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: listing.pixi_id, price: 150.00 
     end
 
     it 'should send a post' do

@@ -1,0 +1,19 @@
+<div class='fields'>  
+  <tr>
+    <td class='width120'>
+      <%= f.select :quantity, options_for_select(get_ary, f.object.quantity), {}, {id: 'inv_qty1', class: 'pixi-select'} %>
+    </td>
+    <td class="width360"><%= render partial: 'shared/active_listings', locals: {f: f, model: @user, pid: invoice.pixi_id} %></td>
+    <td class="width120"><%= f.text_field :price, in: 0..MAX_PIXI_AMT, step: 0.01, id: 'inv_price1', value: num_display(f.object, "price"), 
+      class: 'price' %></td>
+    <td class="border-right width120">
+      <%= f.text_field :subtotal, id: 'inv_amt1', value: num_display(f.object, "subtotal"), readonly: true, class: 'price' %>
+    </td>
+    <% if multiple_pixis? %>
+      <td class='borderless width60'>
+        <%= link_to image_tag('rsz_plus-blue.png', class: 'social-img mbot'), '#', class: 'add-row-btn pixi-link', title: 'Add Item' %>
+        <%= link_to_remove_fields "Remove Item", f %>
+      </td>
+    <% end %>
+  </tr>
+</div>

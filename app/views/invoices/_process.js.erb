@@ -1,6 +1,6 @@
-<% if @invoice.errors.any? %>
+<% if invoice.errors.any? %>
   $("#notice").hide(300);
-  $("#form_errors").html("<%= escape_javascript( render(partial: 'shared/error_messages', locals: {target: @invoice})) %>");
+  $("#form_errors").html("<%= escape_javascript( render(partial: 'shared/error_messages', locals: {target: invoice})) %>");
 <% else %>
   $("#notice").html("<%= escape_javascript(flash[:notice])%>");
   $("#notice").show(300);
@@ -10,7 +10,7 @@
     goToUrl('/invoices', true);
   }
   else {
-    $("#inv_form").html("<%= escape_javascript( raw render(partial: 'shared/invoices')) %>");
+    <%= render partial: 'refresh_invoice_list', locals: {invoice: @invoices} %>
 
     // toggle menu state
     var $this = $("#li_home");

@@ -1,0 +1,40 @@
+<div class="btn-group pull-right">
+    <button type="button" class="mright btn btn-small dropdown-toggle width120" data-toggle="dropdown">
+    Export Options<span class="caret icon-white"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+        <li><%= link_to 'Export as CSV file', transactions_path(date_range: @date_range, format: "csv"), id: 'csv-exp-btn'  %></li>
+        <li><%= link_to 'Print', "#"  %></li>
+    </ul>
+</div>
+<% unless @transactions.blank? %>
+    <div class = "clear-all"></div>
+    <div class='mtop center-wrapper mbot'>
+        <h2>Transactions</h2>
+        <h2>Period: <%= @start_date.strftime("%m/%d/%Y") %> to <%= @end_date.strftime("%m/%d/%Y") %></h2>
+    </div>
+    <table class="border-collapse: collapse table table-hover table-condensed table-bordered ">
+        <thead>
+            <tr>
+                <th class='center-wrapper'>Transaction Date</th>
+                <th class='center-wrapper'>Item Title</th>
+                <th class='center-wrapper'>Buyer</th>
+                <th class='center-wrapper'>Seller</th>
+                <th class='center-wrapper'>Price</th>
+                <th class='center-wrapper'>Quantity</th>
+                <th class='center-wrapper'>Buyer Total</th>
+                <th class='center-wrapper'>Seller Total</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <%= render partial: 'shared/transaction_row', collection: @transactions, as: :transaction %>
+        </tbody>
+
+    </table>
+    <div id='txn-list' class="nav pull-right">
+        <%= will_paginate @transactions if @transactions.respond_to?(:total_pages) %>
+    </div>
+<% else %>
+    <div class='center-wrapper'>No transactions found.</div>
+<% end %>

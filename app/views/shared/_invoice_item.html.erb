@@ -1,36 +1,30 @@
-  <table class="table table-bordered">
-  <%= render 'shared/inv_header' %>
+<table id='inv-table' class="table table-bordered noborder">
+  <%= render partial: 'shared/inv_header', locals: { colFlg: multiple_pixis? } %>
+  <%= f.fields_for :invoice_details do |form| %>  
+    <%= render partial: 'invoice_detail_fields', locals: {f: form, invoice: invoice} %>
+  <% end %>
   <tr>
-    <td class='width120'>
-      <%= f.select 'quantity', options_for_select(get_ary, :selected => set_quantity(@invoice)), {}, {id: 'inv_qty', class: 'pixi-select'} %>
-    </td>
-    <td class="width360"><%= render partial: 'shared/active_listings', locals: {model: @user} %></td>
-    <td class="width120"><%= f.text_field :price, in: 0..MAX_PIXI_AMT, step: 0.01, id: 'inv_price', value: num_display(f.object, "price"), 
-      class: 'price' %></td>
-    <td class="width120"><%= f.text_field :subtotal, id: 'inv_amt', value: num_display(f.object, "subtotal"), readonly: true, class: 'price' %>
-    </td>
-  </tr>
     <td></td>
     <td><div class='price'><span>Sales Tax (%)</span><%= render partial: 'shared/tooltip', locals: { msg: SALES_TAX_MSG } %></div></td>
     <td class="width120"><%= f.text_field :sales_tax, in: 0..MAX_SALES_TAX, step: 0.01, id: 'inv_tax', class: 'price' %></td>
-    <td class="width120">
+    <td class="border-right width120">
       <%= f.text_field :tax_total, readonly: true, id: 'inv_tax_total', value: num_display(f.object, "tax_total"), class: 'price' %></td>
+    <% if multiple_pixis? %><td class='borderless width60'></td><% end %>
   </tr>
   <tr>
     <td></td>
     <td><div class='price'><span>Shipping</span><%= render partial: 'shared/tooltip', locals: { msg: 'Enter shipping amount' } %></div></td>
     <td></td>
-    <td class="width120"><%= f.text_field :ship_amt, in: 0..MAX_SHIP_AMT, step: 0.01, id: 'ship_amt', value: num_display(f.object, "ship_amt"), 
-      class: 'price' %></td>
+    <td class="border-right width120">
+      <%= f.text_field :ship_amt, in: 0..MAX_SHIP_AMT, step: 0.01, id: 'ship_amt', value: num_display(f.object, "ship_amt"), class: 'price' %></td>
+    <% if multiple_pixis? %><td class='borderless width60'></td><% end %>
   </tr>
   <tr>
-  <tr>
-    <td></td>
-    <td></td>
-    <td><div class='order-total price'>Amount Due</div></td>
-    <td class="width120">
+    <td class='border-bottom'></td>
+    <td class='border-bottom'></td>
+    <td class='border-bottom'><div class='order-total price'>Amount Due</div></td>
+    <td class="border-bottom border-right width120">
       <%= f.text_field :amount, readonly: true, id: 'inv_total', value: num_display(f.object, "amount"), class: 'order-total price' %></td>
+    <% if multiple_pixis? %><td class='borderless width60'></td><% end %>
   </tr>
-  </table>
-</div>
-
+</table>

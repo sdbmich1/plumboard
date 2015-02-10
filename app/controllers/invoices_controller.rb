@@ -82,7 +82,7 @@ class InvoicesController < ApplicationController
   end
 
   def load_invoice
-    @invoice = Invoice.find params[:id]
+    @invoice = Invoice.inc_list.find params[:id]
   end
 
   def set_params

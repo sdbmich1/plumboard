@@ -27,7 +27,7 @@ $(document).on("change", "select[id*=category_id]", function(evt){
 });
 
 // paginate on click
-var pstr = "#inq-list .pagination a, #pendingOrder .pagination a, #post_form .pagination a, #comment-list .pagination a," +
+var pstr = "#inq-list .pagination a, #pendingOrder .pagination a, #post_form .pagination a, #comment-list .pagination a, #txn-list .pagination a" +
   "#post-list .pagination a, #user-list .pagination a, #inv-list .pagination a, #faq-list .pagination a, #pxp-list .pagination a, #pixi-list .pagination a";
 
 $(document).on("click", pstr, function(){
@@ -83,11 +83,9 @@ $(document).on("ajax:complete", '#mark-posts, #post-frm, #comment-doc, .pixi-cat
 // handle 401 ajax error
 $(document).ajaxError( function(e, xhr, options){
   if(xhr.status == 401) {
-    console.log('in 401 status error handler');
     window.location.replace('/users/sign_in.html');
   }
   if(xhr.status == 500) {
-    console.log('in 500 status error handler');
     location.reload();
   }
 });	

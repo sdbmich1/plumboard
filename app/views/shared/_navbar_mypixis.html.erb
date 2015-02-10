@@ -1,12 +1,12 @@
 <ul class="nav">
   <li id='li_home' class="<%= action_name == 'seller' ? 'active' : '' %>">
-    <%= link_to "Active", seller_listings_path, class: 'submenu', id: 'active-pixis', remote: true, status: 'active' %></li>
+    <%= link_to "Active", seller_listings_path(status: 'active', adminFlg: false), class: 'submenu', id: 'active-pixis', remote: true %></li>
   <li class="<%= action_name == 'unposted' ? 'active' : '' %>">
-    <%= link_to "Draft", unposted_temp_listings_path, class: 'submenu', id: 'draft-pixis',remote: true %></li>
+    <%= link_to "Draft", unposted_temp_listings_path(adminFlg: false), class: 'submenu', id: 'draft-pixis',remote: true %></li>
   <li><%= link_to "Pending", pending_temp_listings_path, class: 'submenu', id: 'pending-pixis',remote: true %></li>
   <li><%= link_to "Purchased", purchased_listings_path, class: 'submenu', id: 'purchased-pixis', remote: true %></li>
-  <li><%= link_to "Sold", seller_listings_path, class: 'submenu', id: 'sold-pixis', remote: true, status: 'sold' %></li>
+  <li><%= link_to "Sold", seller_listings_path(status: 'sold', adminFlg: false), class: 'submenu', id: 'sold-pixis', remote: true %></li>
   <li><%= link_to "Saved", saved_listings_path, class: 'submenu', id: 'saved-pixis', remote: true %></li>
   <li><%= link_to "Wanted", wanted_listings_path, class: 'submenu', id: 'wanted-pixis', remote: true %></li>
-  <li><%= link_to "Expired", seller_listings_path, class: 'submenu', id: 'active-pixis', remote: true, status: 'expired' %></li>
+  <li><%= link_to "Expired", seller_listings_path(status: 'expired', adminFlg: false), class: 'submenu', id: 'expired-pixis', remote: true %></li>
 </ul>
