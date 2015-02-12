@@ -8,8 +8,8 @@
         <%= link_to 'Want', set_want_path(listing.pixi_id), method: 'post', class: 'btn btn-primary submit-btn width100', id: set_want_id, 
           remote: !signed_in?, title: want_msg %>
       <% else %>
-        <div id='post_form'><%= render partial: 'shared/contact', locals: { listing: listing } %></div>
-        <%= link_to "Want", "#", id: 'send-want-btn', class: 'btn btn-primary submit-btn width100' %>
+        <div id='post_form'><%= render partial: 'shared/want_modal', locals: { listing: listing, mtype: 'want', msg: PIXI_POST, txt: want_msg } %></div>
+        <%= link_to "Want", "#wantDialog", class: 'btn btn-primary submit-btn width100', 'data-toggle'=>"modal" %>
       <% end %>
     <% end %>
     <%= link_to set_item_name(listing, 'like'), set_like_path(listing, listing.pixi_id), method: set_item_method(listing, 'like'), 

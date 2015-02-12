@@ -278,4 +278,9 @@ module ListingsHelper
   def item_available? listing, flg, method
     is_item?(listing, flg) && listing.send(method) && !listing.sold?
   end
+
+  # check if want msg
+  def is_want? mtype
+    mtype == 'want'
+  end
 end
