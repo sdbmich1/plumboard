@@ -8,7 +8,7 @@ class ConfirmationsController < Devise::ConfirmationsController
       flash[:notice] = t("devise.registrations.signed_up_but_unconfirmed") 
       redirect_to root_url
     else
-      respond_with(resource)
+      super
     end
   end
 end

@@ -4,6 +4,6 @@
 <%= content_for :content do %>
   <div id="buyTxtForm">
     <div id="buyFormError" style="display:none" class="error"></div>
-    <%= render partial: 'shared/listing_form', locals: { step_name: 'Build Your Pixi', action_type: 'Create' } %>
+    <%= render partial: 'shared/listing_form', locals: { listing: @listing, step_name: 'Build Your Pixi', action_type: 'Create' } %>
   </div>
 <% end %>  

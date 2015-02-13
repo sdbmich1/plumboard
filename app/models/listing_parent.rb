@@ -379,7 +379,7 @@ class ListingParent < ActiveRecord::Base
       listing.delete_photo(file_ids, 0) if tmpFlg rescue false
       listing
     else
-      false
+      tmpFlg ? false : listing
     end
   end
 

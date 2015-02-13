@@ -1,4 +1,4 @@
 <% provide(:title, "#{step_name}") %>
 <div id="listing_form">
-  <%= render partial: 'shared/pixi_form', locals: { s3Flg: use_remote_pix? } %>
+  <%= render partial: 'shared/pixi_form', locals: { listing: listing, s3Flg: use_remote_pix? } %>
 </div>
