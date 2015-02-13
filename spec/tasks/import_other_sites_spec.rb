@@ -16,7 +16,7 @@ describe 'import_csv namespace rake task' do
 
     it 'should import country sites' do
       Rake::Task['import_other_sites'].execute :file_name => "country_site_data_012815.csv", :org_type => "country"
-      Site.exists?(name: 'United States of America', status: 'active', org_type: 'country').should be_true
+      Site.exists?(name: 'United States', status: 'active', org_type: 'country').should be_true
       Contact.exists?(address: 'East Capitol Street Northeast and First Street Southeast', city: 'Washington', state: 'D.C.', zip: '20004').should be_true
     end
   end
