@@ -4,13 +4,7 @@
     <h3 class='center-wrapper'>Contact Seller</h3>
   </div>
   <div class="modal-body">
-    <%= form_for setup_conversation(listing), remote: true,  data: {validate: 'parsley'} do |f| %>
-      <%= render partial: 'shared/contact', locals: {f: f, listing: listing, mtype: mtype, msg: msg, txt: txt} %>
-      <div class="modal-footer">
-        <p><%= f.submit "Send", class: 'btn btn-small btn-primary btn-mask' %>
-        <a href="#" class="btn btn-small" data-dismiss="modal">Close</a></p>
-      </div>
-    <% end %>
+    <%= render partial: 'shared/contact', locals: {listing: listing, mtype: mtype, msg: msg, txt: txt} %>
   </div>
 </div>
 

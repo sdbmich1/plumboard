@@ -1,13 +1,23 @@
+    <%= form_for setup_conversation(listing), remote: true,  data: {validate: 'parsley'} do |f| %>
       <div id="notice" style="display:none"></div>
       <div id="form_errors">
         <%= render partial: 'shared/error_messages', :locals => { :target => f.object } %>
       </div>
-      <p class='center-wrapper'><%= "#{txt}" %><br /><br />
-        <% if is_want? mtype  %>
-          Quantity: <%= f.select :quantity, options_for_select(get_ary(listing.amt_left), 1), {}, {id: 'px-qty', class: 'pixi-select width60'} %>
-	<% end %>
-      </p>
       <%= f.hidden_field 'pixi_id', value: listing.pixi_id %>
       <%= f.hidden_field 'recipient_id', value: listing.seller_id %>
       <%= f.hidden_field 'user_id', value: @user.id %>
       <%= render partial: 'shared/conv_posts', locals: {f: f, listing: listing, mtype: mtype, msg: msg} %>
+
+      <% if is_want?(mtype) && multi_qty?(listing) %>
+        <p class='center-wrapper'><%= "#{txt}" %><br /><br />
+          Quantity: <%= f.select :quantity, options_for_select(get_ary(listing.amt_left), 1), {}, {id: 'px-qty', class: 'pixi-select width60'} %>
+        </p>
+        <div class="modal-footer">
+          <p><%= f.submit "Send", class: 'btn btn-small btn-primary btn-mask' %>
+          <a href="#" class="btn btn-small" data-dismiss="modal">Close</a></p>
+        </div>
+      <% else %>
+        <%= f.hidden_field 'quantity', value: 1 %>
+        <%= f.submit 'Want', confirm: msg, class: 'btn btn-primary signin-btn width100', title: txt, data: {disable_with: "Sending..."} %>
+      <% end %>
+    <% end %>
