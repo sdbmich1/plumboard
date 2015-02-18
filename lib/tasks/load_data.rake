@@ -53,6 +53,10 @@ namespace :db do
   task :load_quantity => :environment do
     update_quantity
   end
+
+  task :load_inv_pixi_counter => :environment do
+    set_inv_detail_count
+  end
 end
 
 def set_keys
@@ -187,5 +191,9 @@ def load_countries
 end
 
 def update_quantity
-  Listing.active.where(quantity: nil).update_all(quantity: 1)
+  Listing.where(quantity: nil).update_all(quantity: 1)
+end
+
+def set_inv_detail_count
+  Invoice.find_each { |inv| Invoice.reset_counters(inv.id, :invoice_details) }
 end
