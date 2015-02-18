@@ -7,10 +7,12 @@ describe Listing do
     @listing = FactoryGirl.create(:listing, seller_id: @user.id, quantity: 1) 
   end
 
-  def create_invoice status='active'
+  def create_invoice status='active', qty=1
+    @listing2 = create :listing, seller_id: @user.id, quantity: 2, title: 'Leather Coat'
     @buyer = create(:pixi_user)
     @invoice = @user.invoices.build attributes_for(:invoice, buyer_id: @buyer.id, status: status) 
-    @details = @invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+    @details = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id, quantity: qty 
+    @details2 = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing2.pixi_id, quantity: 3 
     @invoice.save!
   end
 
@@ -1520,8 +1522,12 @@ describe Listing do
       create_invoice 'paid'
     end
     it { expect(@listing.sold_count).to eq 0 }
-    it "has count > 0", run: true do
+    it "has count = 1", run: true do
       expect(@listing.sold_count).to eq 1
+    end
+    it "has count > 1" do
+      create_invoice 'paid', 3
+      expect(@listing.sold_count).to eq 3
     end
   end
 

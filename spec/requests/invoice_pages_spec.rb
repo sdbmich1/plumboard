@@ -21,7 +21,7 @@ feature "Invoices" do
   end
 
   def set_buyer_id
-    page.execute_script %Q{ $('#invoice_buyer_id').val("#{@buyer1.id}") }
+    page.execute_script %Q{ $('#buyer_id').val("#{@buyer1.id}") }
   end
    
   def select_buyer_name

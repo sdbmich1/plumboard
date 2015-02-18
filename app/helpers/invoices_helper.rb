@@ -99,4 +99,10 @@ module InvoicesHelper
   def my_unpaid_invoice? invoice
     invoice.owner?(@user) && invoice.unpaid? 
   end
+ 
+  # set inv title
+  def inv_title inv
+    str = inv.pixi_count > 1 ? ' +' : ''
+    inv.pixi_title + str
+  end
 end
