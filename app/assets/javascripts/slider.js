@@ -15,6 +15,7 @@ function load_slider(cntl) {
       autoControls: false,
       mode: 'fade',
       onSlideAfter: function() {
+        // trigger lazy to load new in-slided images
         setTimeout(function() { $(window).trigger("scroll"); }, 100);
       }
     });
