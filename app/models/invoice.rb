@@ -7,7 +7,7 @@ class Invoice < ActiveRecord::Base
   attr_accessor :buyer_name, :tmp_buyer_id
   attr_accessible :amount, :buyer_id, :comment, :pixi_id, :price, :quantity, :seller_id, :status, :buyer_name,
     :sales_tax, :tax_total, :subtotal, :inv_date, :transaction_id, :bank_account_id, :tmp_buyer_id, :ship_amt, :other_amt,
-    :invoice_details_attributes
+    :invoice_details_attributes, :invoice_details_count
 
   belongs_to :seller, foreign_key: "seller_id", class_name: "User"
   belongs_to :buyer, foreign_key: "buyer_id", class_name: "User"
@@ -121,7 +121,7 @@ class Invoice < ActiveRecord::Base
 
   # count pixis
   def pixi_count
-    invoice_details.size rescue 0
+    invoice_details_count rescue 0
   end
 
   # submit payment request for review
