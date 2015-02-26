@@ -45,9 +45,19 @@ function calc_amt(){
 }
 
 // calc invoice amt
-$(document).on("change", "select[id*=inv_qty], input[id*=inv_price], #inv_tax, #ship_amt", function(){
-  calc_amt();
+$(document).on("change", "select[id*=inv_qty], input[id*=inv_price], #inv_tax, #ship_amt", function(e){
+  var $row = $(this).closest('td').parent(); 
+  var idx = $row[0].sectionRowIndex;
+  var target = $(e.target);
+  target.is('#inv_qty'+idx) ? check_amt(idx) : calc_amt();
 });
+
+function check_amt(idx) {
+  var qty = $('#inv_qty'+idx).val();
+  var amt = $('#amt_left'+idx).val();
+  if(qty.length > 0 && amt.length > 0) 
+    qty > amt ? $('#invDialog').modal('show') : calc_amt();
+}
 
 // get pixi price based selection of pixi ID
 $(document).on("change", "select[id*=pixi_id]", function() {
@@ -62,7 +72,7 @@ $(document).on("change", "select[id*=pixi_id]", function() {
     $('#invoice_buyer_id').val('');
 
     // process script
-    getItemData('#inv_price'+idx, url);
+    getItemData('#inv_price'+idx, '#amt_left'+idx, url);
   }
 });
 
@@ -75,11 +85,9 @@ $(document).on("change", "#tmp_buyer_id", function() {
 // load quantity selectmenu
 function loadQty(fld, val, qty) {
   var qty_str = '<option default value="">' + 'Select' + '</option>';
-
   for (var j = 1; j <= qty; j++) {
     qty_str += '<option value="'+ j + '">' + j + '</option>';
   }
-
   setSelectMenu(fld, qty_str, val); // set option menu
 }
 
@@ -90,6 +98,12 @@ function setSelectMenu(fld, str, val) {
 
   $(fld).trigger("chosen:updated");
 }
+
+// calc new amt if OK
+$(document).on('click', '#inv-ok-btn', function(e){
+  $('#invDialog').modal('hide');
+  calc_amt();
+});
 
 // check for add or remove row 
 $(document).on('click', '.add-row-btn, .remove-row-btn', function(e){
@@ -108,7 +122,8 @@ function add_row($element, row) {
   var pxFld = '#pixi_id' + row;
   var fname = "invoice[invoice_details_attributes][new_invoice_details][";
   var rowCount = $('#inv-table tr').length;
-  var str = "<tr><td class='width120'><select name='" + fname + "quantity]' id='inv_qty" + row + "' class='pixi-select' ></select></td>"; 
+  var str = "<tr><td class='width120'><select name='" + fname + "quantity]' id='inv_qty" + row + "' class='pixi-select' ></select>";
+  str += "<input id='amt_left" + row + "' name='amt_left" + row + "' type='hidden' /></td>"; 
   str += "<td class='width360'><select name='" + fname + "pixi_id]' id='pixi_id" + row + "' class='pixi-select'></select></td>";
   str += "<td class='width120'><input type='text' name='" + fname + "price]' in='0..15000.0' step='0.01' id='inv_price" + row + "' class='price' /></td>";
   str += "<td class='width120'><input type='text' name='" + fname + "subtotal]' id='inv_amt" + row + "' class='price' readonly='true' /></td>";
@@ -139,7 +154,7 @@ function remove_row($element, row) {
 }
 
 // get data from server
-function getItemData(fld, url) {
+function getItemData(fld, fld2, url) {
   $.ajax({
     url: url,
     type: "get",
@@ -148,7 +163,8 @@ function getItemData(fld, url) {
     success: function(data, status, xhr) {
       if (data !== undefined) {
         $(fld).val(data.price); 
-	calc_amt();
+        $(fld2).val(data.amt_left); 
+        calc_amt();
       }
     }
   });

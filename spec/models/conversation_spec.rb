@@ -2,14 +2,14 @@ require 'spec_helper'
 
 describe Conversation do
     before :all do
-      @user = FactoryGirl.create :pixi_user
-      @recipient = FactoryGirl.create :pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tom.davis@pixitest.com'
-      @buyer = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Smith', email: 'jack.smith99@pixitest.com'
-      @listing = FactoryGirl.create :listing, seller_id: @user.id, title: 'Big Guitar'
+      @user = create :pixi_user
+      @recipient = create :pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tom.davis@pixitest.com'
+      @buyer = create :pixi_user, first_name: 'Jack', last_name: 'Smith', email: 'jack.smith99@pixitest.com'
+      @listing = create :listing, seller_id: @user.id, title: 'Big Guitar'
     end
     before :each do
-      @conversation = @listing.conversations.create FactoryGirl.attributes_for :conversation, user_id: @user.id, recipient_id: @recipient.id
-      @post = @conversation.posts.create FactoryGirl.attributes_for :post, user_id: @user.id, recipient_id: @recipient.id, pixi_id: @listing.pixi_id
+      @conversation = @listing.conversations.create attributes_for :conversation, user_id: @user.id, recipient_id: @recipient.id
+      @post = @conversation.posts.create attributes_for :post, user_id: @user.id, recipient_id: @recipient.id, pixi_id: @listing.pixi_id
     end
 
     subject { @conversation }
@@ -33,7 +33,7 @@ describe Conversation do
 
     describe "removing posts" do
       before(:each) do
-        @post = @conversation.posts.create FactoryGirl.attributes_for :post, user_id: @recipient.id, recipient_id: @user.id, pixi_id: @listing.pixi_id
+        @post = @conversation.posts.create attributes_for :post, user_id: @recipient.id, recipient_id: @user.id, pixi_id: @listing.pixi_id
       end
 
       it "removes all associated posts for right user" do
@@ -139,9 +139,9 @@ describe Conversation do
 
     describe "getting conversations" do
       before(:each) do
-          @listing2 = FactoryGirl.create :listing, seller_id: @user.id, title: 'Small Guitar'
-          @conversation2 = @listing2.conversations.create FactoryGirl.attributes_for :conversation, user_id: @recipient.id, recipient_id: @user.id
-          @post2 = @conversation2.posts.create FactoryGirl.attributes_for :post, user_id: @recipient.id, recipient_id: @user.id, pixi_id: @listing2.pixi_id
+          @listing2 = create :listing, seller_id: @user.id, title: 'Small Guitar'
+          @conversation2 = @listing2.conversations.create attributes_for :conversation, user_id: @recipient.id, recipient_id: @user.id
+          @post2 = @conversation2.posts.create attributes_for :post, user_id: @recipient.id, recipient_id: @user.id, pixi_id: @listing2.pixi_id
       end
 
       context 'active' do
@@ -232,7 +232,7 @@ describe Conversation do
 
       context 'with multiple messages' do
         before(:each) do
-          @reply_post = @conversation.posts.create FactoryGirl.attributes_for :post, user_id: @recipient.id, recipient_id: @user.id, pixi_id: @listing.pixi_id, content: 'hello'
+          @reply_post = @conversation.posts.create attributes_for :post, user_id: @recipient.id, recipient_id: @user.id, pixi_id: @listing.pixi_id, content: 'hello'
         end
 
         it 'does return true when user has replied' do
@@ -282,10 +282,10 @@ describe Conversation do
 
   describe "due_invoice", invoice: true do 
     before :each, run: true do
-      @new_user = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Wilson', email: 'jack.wilson@pixitest.com'
-      @account = @new_user.bank_accounts.create FactoryGirl.attributes_for :bank_account
-      @invoice = @new_user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
-      @details = @invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+      @new_user = create :pixi_user, first_name: 'Jack', last_name: 'Wilson', email: 'jack.wilson@pixitest.com'
+      @account = @new_user.bank_accounts.create attributes_for :bank_account
+      @invoice = @new_user.invoices.create attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @recipient.id)
+      @details = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
       @invoice.save!
     end
     
@@ -315,10 +315,10 @@ describe Conversation do
 
   describe 'can_bill?', invoice: true do
     before :each do
-      @new_user = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Wilson', email: 'jack.wilson@pixitest.com'
-      @account = @new_user.bank_accounts.create FactoryGirl.attributes_for :bank_account
-      @invoice = @new_user.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: @recipient.id)
-      @details = @invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+      @new_user = create :pixi_user, first_name: 'Jack', last_name: 'Wilson', email: 'jack.wilson@pixitest.com'
+      @account = @new_user.bank_accounts.create attributes_for :bank_account
+      @invoice = @new_user.invoices.build attributes_for(:invoice, buyer_id: @recipient.id)
+      @details = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
       @invoice.save!
     end
     
@@ -404,7 +404,7 @@ describe Conversation do
     end
     
     it "finds user as recipient" do
-      @post2 = @conversation.posts.create FactoryGirl.attributes_for :post, user_id: @recipient.id, recipient_id: @user.id, pixi_id: @listing.pixi_id
+      @post2 = @conversation.posts.create attributes_for :post, user_id: @recipient.id, recipient_id: @user.id, pixi_id: @listing.pixi_id
       expect(Conversation.first.posts.where(pixi_id: @listing.pixi_id).count).to eq 2
       expect(Conversation.first.posts.where('pixi_id = ? AND user_id = ?', @listing.pixi_id, @recipient.id).count).to eq 1
       expect(Conversation.first.posts.where('pixi_id = ? AND recipient_id = ?', @listing.pixi_id, @user.id).count).to eq 1
@@ -415,4 +415,5 @@ describe Conversation do
       expect(Conversation.get_conv nil, nil, nil).to be_nil
     end
   end
+
 end

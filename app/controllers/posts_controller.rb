@@ -73,9 +73,7 @@ class PostsController < ApplicationController
     else
       @user.pixi_asks.create(pixi_id: pid) # add to user's asked list
     end
-
     @page, @per_page = params[:page] || 1, params[:per_page] || 5
->>>>>>> 894fb2719618ac15a97fc8067b28eeb39c949c98
   end
 
   def set_redirect_path status='received'

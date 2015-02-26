@@ -15,7 +15,6 @@ class CategoriesController < ApplicationController
 
   def new
     @category = Category.new
-    @photo = @category.pictures.build
   end
 
   def create

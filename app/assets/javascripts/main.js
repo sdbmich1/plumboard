@@ -498,7 +498,7 @@ $(document).on('click', '#want-btn', function(e) {
 $(document).on('click', '#ask-btn', function(e) {
   var fld = '#contact_content, #ask_content';
   var txt;
-  $('#ask_form').toggle();
+  // $('#ask_form').toggle();
 
   // set focus on fld
   $(fld).focus();
@@ -654,6 +654,19 @@ $(function() {
   $('.dropdown input, .dropdown label, .dropdown-menu input, .dropdown-menu select').click(function(e) {
     e.stopPropagation();
   });
+});
+
+// toggle menu post menu item
+$(document).on('click', '#send-want-btn, #want-modal-btn', function(e) {
+  var target = $(e.target), action;
+  action = target.is('#want-modal-btn') ? 'hide' : 'show';
+  $('#wantDialog').modal(action);
+});
+
+$(document).on('click', '#ask-btn, #ask-modal-btn', function(e) {
+  var target = $(e.target), action;
+  action = target.is('#ask-modal-btn') ? 'hide' : 'show';
+  $('#askDialog').modal(action);
 });
 
 // toggle menu post menu item

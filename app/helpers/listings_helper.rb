@@ -158,7 +158,7 @@ module ListingsHelper
 
   # set path based on signed in status
   def set_ask_path pid
-    signed_in? ? '#' : posts_path(id: pid)
+    signed_in? ? '#' : conversations_path(id: pid)
   end
 
   # set want id based on signed in status
@@ -216,10 +216,12 @@ module ListingsHelper
   end
 
   # select drop down for remove btn
-  def remove_menu listing
+  def button_menu listing, atype
     # build content tag
     if controller_name == 'listings'
       listing.remove_item_list.collect {|item| concat(content_tag(:li, link_to(item, listing_path(listing, reason: item), method: :put)))}
+    else
+      listing.deny_item_list.collect {|item| concat(content_tag(:li, link_to(item, deny_pending_listing_path(listing, reason: item), method: :put)))}
     end
     return ''
   end
@@ -280,5 +282,20 @@ module ListingsHelper
   # check for year
   def has_year? listing
     listing.has_year? && listing.year_built
+  end
+
+  # get amount based on status
+  def get_item_amt listing
+    listing.active? ? listing.amt_left : listing.quantity
+  end
+
+  # check item status
+  def item_available? listing, flg, method
+    is_item?(listing, flg) && listing.send(method) && !listing.sold?
+  end
+
+  # check if want msg
+  def is_want? mtype
+    mtype == 'want'
   end
 end

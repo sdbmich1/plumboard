@@ -287,7 +287,7 @@ class ListingParent < ActiveRecord::Base
   # titleize title
   def nice_title prcFlg=true
     unless title.blank?
-      str = price.blank? || price == 0 ? '' : ' - '
+      str = (price.blank? || price == 0) && !prcFlg ? '' : ' - '
       tt = prcFlg ? title.split('-').map(&:titleize).join('-').html_safe : title.titleize.html_safe rescue title 
       if prcFlg
         title.index('$') ? tt : tt + str 
@@ -430,7 +430,7 @@ class ListingParent < ActiveRecord::Base
   # set json string
   def as_json(options={})
     super(methods: [:seller_name, :seller_photo, :summary, :short_title, :nice_title,
-        :category_name, :site_name, :start_dt, :seller_first_name, :med_title], 
+        :category_name, :site_name, :start_dt, :seller_first_name, :med_title, :amt_left], 
       include: {pictures: { only: [:photo_file_name], methods: [:photo_url] }})
   end
 
@@ -526,7 +526,6 @@ class ListingParent < ActiveRecord::Base
     begin
       token = SecureRandom.urlsafe_base64
     end while TempListing.where(:pixi_id => token).exists?
-
     self.pixi_id = token
   end
 
@@ -563,5 +562,16 @@ class ListingParent < ActiveRecord::Base
   def self.soon_expiring_pixis number_of_days=7, status='active' 
     date = Date.today + number_of_days.days
     get_by_status(status).where("cast(end_date As Date) = ?", date)
+  end
+
+  # count number of sales
+  def sold_count
+    invoices.inject(0) { |sum, x| sum + 1 if x.status == 'paid' }
+  end
+
+  # determine amount left
+  def amt_left
+    result = quantity - sold_count rescue 1
+    result <= 0 ? 0 : result
   end
 end

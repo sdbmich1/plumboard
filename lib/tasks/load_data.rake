@@ -49,6 +49,10 @@ namespace :db do
   task :load_countries => :environment do
     load_countries
   end
+
+  task :load_quantity => :environment do
+    update_quantity
+  end
 end
 
 def set_keys
@@ -171,14 +175,17 @@ def load_invoice_details
   Invoice.load_details
 end
 
-# load US as country field for all Contacts that don't have org_type country
+# load country field for all Contacts
 def load_countries
-  Site.find_each do |site|
-    unless site.org_type == 'country'
-      site.contacts.find_each do |contact|
-        contact.country = 'United States of America'
-        contact.save
-      end
+  Contact.update_all(:country => 'United States')
+  Site.where(:org_type => 'country').find_each do |site|
+    site.contacts.find_each do |contact|
+      contact.country = site.name
+      contact.save
     end
   end
+end
+
+def update_quantity
+  Listing.active.where(quantity: nil).update_all(quantity: 1)
 end

@@ -1,15 +1,25 @@
-<%= form_for setup_conversation(listing), remote: true,  data: {validate: 'parsley'} do |f| %>
-  <div id="notice" style="display:none"></div>
-  <div id="form_errors">
-    <%= render partial: 'shared/error_messages', :locals => { :target => f.object } %>
+<div class="modal hide" id="wantDialog">
+  <div class="modal-header">
+    <a class="close" data-dismiss="modal">x</a>
+    <h3 class='center-wrapper'>Notify Seller</h3>
   </div>
-  <%= f.hidden_field 'pixi_id', value: listing.pixi_id %>
-  <%= f.hidden_field 'recipient_id', value: listing.seller_id %>
-  <%= f.hidden_field 'user_id', value: @user.id %>
-
-    <div class="reply_form">
-      <%= f.hidden_field 'content', value: PIXI_POST, placeholder: 'Send message to seller.', autofocus: true, id: 'contact_content', 
-         required: true %>  
-    </div>
-  <%= f.submit 'Want', confirm: want_msg, id: 'send-want-btn', class: 'btn btn-primary signin-btn width100', title: want_msg, data: {disable_with: "Sending..."} %>
-<% end %>
+  <div class="modal-body">
+    <%= form_for setup_conversation(listing), url: conversations_path(@post, msg_type:'want'), remote: true,  data: {validate: 'parsley'} do |f| %>
+      <div id="notice" style="display:none"></div>
+      <div id="form_errors">
+        <%= render partial: 'shared/error_messages', :locals => { :target => f.object } %>
+      </div>
+      <p class='center-wrapper'><%= "#{want_msg}" %><br /><br />
+         Quantity: <%= f.select :quantity, options_for_select(get_ary(listing.amt_left), 1), {}, {id: 'px-qty', class: 'pixi-select width60'} %>
+      </p>
+      <%= f.hidden_field 'pixi_id', value: listing.pixi_id %>
+      <%= f.hidden_field 'recipient_id', value: listing.seller_id %>
+      <%= f.hidden_field 'user_id', value: @user.id %>
+      <%= render partial: 'shared/conv_posts', locals: {f: f, listing: listing, mtype: 'want', msg: PIXI_POST} %>
+  </div>
+  <div class="modal-footer">
+    <p><%= f.submit "Send", class: 'btn btn-small btn-primary' %>
+    <a href="#" class="btn btn-small" data-dismiss="modal">Close</a></p>
+  </div>
+  <% end %>
+</div>

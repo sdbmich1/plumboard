@@ -6,8 +6,8 @@ class TempListing < ListingParent
   before_create :set_flds
   after_commit :async_send_notification, :on => :update
 
-  attr_accessor :slr_name
-  attr_accessible :slr_name
+  attr_accessor :slr_name #, :item_color, :item_id, :car_color, :car_id
+  attr_accessible :slr_name, :item_color, :item_id, :car_color, :car_id
 
   # set fields upon creation
   def set_flds
@@ -25,6 +25,44 @@ class TempListing < ListingParent
     self.alias_name = rand(36**ALIAS_LENGTH).to_s(36) if alias?
     set_end_date
     self
+  end
+
+  # getter & setter for shared color & other_id fields
+  def item_color
+    self[:color] unless is_category_type?('vehicle')
+  end
+
+  def item_color=value
+    self[:color] = value unless is_category_type?('vehicle')
+  end
+
+  def item_id
+    self[:other_id] unless is_category_type?('vehicle')
+  end
+
+  def item_id=value
+    self[:other_id] = value unless is_category_type?('vehicle')
+  end
+
+  def car_color
+    self[:color] if is_category_type?('vehicle')
+  end
+
+  def car_color=value
+    self[:color] = value if is_category_type?('vehicle')
+  end
+
+  def car_id
+    self[:other_id] if is_category_type?('vehicle')
+  end
+
+  def car_id=value
+    self[:other_id] = value if is_category_type?('vehicle')
+  end
+
+  # sets values from assessor fields to table fields
+  def set_item_flds
+    self.color, self.other_id = item_color || car_color, item_id || car_id
   end
 
   # finds specific pixi
@@ -105,5 +143,10 @@ class TempListing < ListingParent
         UserMailer.delay.send_denial(self)
         SystemMessenger::send_message user, self, 'deny'
     end
+  end
+
+  # set deny item list based on pixi type
+  def deny_item_list
+    ['Bad Pictures', 'Improper Content', 'Insufficient Information']
   end
 end

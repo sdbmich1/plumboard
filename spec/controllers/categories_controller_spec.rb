@@ -18,7 +18,7 @@ describe CategoriesController do
   before(:each) do
     log_in_test_user
     @user = mock_user
-    @category = stub_model(Category, name: 'Computer', category_type: 'sales', status: 'active')
+    @category = stub_model(Category, name: 'Computer', category_type_code: 'sales', status: 'active')
   end
 
   def set_admin
@@ -188,11 +188,11 @@ describe CategoriesController do
       end
 
       def do_create
-        xhr :post, :create, :category => { 'name'=>'test', 'category_type'=>'test' }
+        xhr :post, :create, :category => { 'name'=>'test', 'category_type_code'=>'test' }
       end
 
       it "loads the requested category" do
-        Category.stub(:new).with({'name'=>'test', 'category_type'=>'test' }) { mock_category(:save => true) }
+        Category.stub(:new).with({'name'=>'test', 'category_type_code'=>'test' }) { mock_category(:save => true) }
         do_create
       end
 
@@ -308,8 +308,8 @@ describe CategoriesController do
   describe 'xhr GET category_type' do
     before :each do
       @category = mock_category
-      Category.stub_chain(:find, :category_type).and_return( @category )
-      @category.stub(:category_type) {'asset'}
+      Category.stub_chain(:find, :category_type_code).and_return( @category )
+      @category.stub(:category_type_code) {'asset'}
       do_get
     end
 

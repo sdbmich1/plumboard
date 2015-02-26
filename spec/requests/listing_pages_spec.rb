@@ -3,15 +3,16 @@ require 'spec_helper'
 feature "Listings" do
   subject { page }
   
-  let(:user) { FactoryGirl.create(:contact_user) }
-  let(:pixter) { FactoryGirl.create :pixter, user_type_code: 'PT', confirmed_at: Time.now }
-  let(:admin) { FactoryGirl.create :admin, confirmed_at: Time.now }
-  let(:site) { FactoryGirl.create :site }
-  let(:site_contact) { site.contacts.create FactoryGirl.attributes_for(:contact) }
-  let(:temp_listing) { FactoryGirl.create(:temp_listing, title: "Guitar", description: "Lessons", seller_id: user.id ) }
-  let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id,
-    site_id: site.id) }
-  let(:pixi_post_listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, 
+  let(:user) { create(:contact_user) }
+  let(:pixter) { create :pixter, user_type_code: 'PT', confirmed_at: Time.now }
+  let(:admin) { create :admin, confirmed_at: Time.now }
+  let(:site) { create :site }
+  let(:site_contact) { site.contacts.create attributes_for(:contact) }
+  let(:condition_type) { create :condition_type, code: 'UG', description: 'Used - Good', hide: 'no', status: 'active' }
+  let(:temp_listing) { create(:temp_listing, title: "Guitar", description: "Lessons", seller_id: user.id ) }
+  let(:listing) { create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id,
+    site_id: site.id, quantity: 1, condition_type_code: condition_type.code) }
+  let(:pixi_post_listing) { create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, 
     pixan_id: pixter.id, site_id: site.id) }
   let(:submit) { "Want" }
 
@@ -21,13 +22,10 @@ feature "Listings" do
   
   def pixi_edit_access listing
     page.should have_content listing.category_name
+    page.should have_content "Quantity: #{(listing.amt_left)}"
     page.should have_content "Posted By: #{listing.seller_name}"
-<<<<<<< HEAD
-    page.should have_link 'Want', href: '#'
-    page.should have_link 'Ask', href: '#'
-=======
-    page.should have_button 'Want'
->>>>>>> 894fb2719618ac15a97fc8067b28eeb39c949c98
+    page.should have_link 'Want'
+    page.should have_link 'Ask'
     page.should have_link 'Cool'
     page.should_not have_link 'Uncool'
     page.should have_link 'Save'
@@ -87,31 +85,29 @@ feature "Listings" do
 
   describe "Contact Owner" do 
     before(:each) do
-      pixi_user = FactoryGirl.create(:pixi_user)
+      pixi_user = create(:pixi_user)
       init_setup pixi_user
       visit listing_path(pixi_post_listing) 
     end
 
     it "Contacts a seller", js: true do
       expect{
-<<<<<<< HEAD
           page.should have_link 'Want'
           page.should have_link 'Ask'
-=======
-          page.should have_button 'Want'
->>>>>>> 894fb2719618ac15a97fc8067b28eeb39c949c98
           page.should have_link 'Cool'
-	  click_valid_ok
-	  sleep 5
-          page.should_not have_button 'Want'
+          click_link 'Want'
+	        click_button 'Send'
+	        sleep 5
+          page.should_not have_link 'Want'
           page.should have_content 'Want'
           page.should have_content 'Successfully sent message to seller'
       }.to change(Post,:count).by(1)
 
       expect(Conversation.count).to eql(1)
+      expect(PixiWant.first.quantity).to eql(1)
       expect{
       	  fill_in 'comment_content', with: "Great pixi. I highly recommend it.\n" 
-	  sleep 3
+	        sleep 3
       }.to change(Comment,:count).by(1)
 
       page.should have_content "Comments (#{pixi_post_listing.comments.size})"
@@ -122,8 +118,9 @@ feature "Listings" do
      
     it "does not contact a seller", js: true do
       expect{
-          click_submit_cancel
-          page.should have_button 'Want'
+          page.should have_link 'Want'
+          click_link 'Want'
+	  click_link 'Cancel'
           page.should_not have_content 'Want'
           page.should_not have_content 'Successfully sent message to seller'
       }.not_to change(Post,:count).by(1)
@@ -144,7 +141,6 @@ feature "Listings" do
           page.should have_link 'Uncool'
           page.should_not have_link 'Cool'
       }.to change(PixiLike,:count).by(1)
-
       page.should have_content listing.nice_title
       page.should have_content "(#{listing.liked_count})"
     end
@@ -162,12 +158,12 @@ feature "Listings" do
 
   describe "View Pixi w/ buyer flags set" do 
     before(:each) do
-      pixi_user = FactoryGirl.create(:pixi_user) 
+      pixi_user = create(:pixi_user) 
       init_setup pixi_user
-      @user.pixi_likes.create FactoryGirl.attributes_for :pixi_like, pixi_id: listing.pixi_id
-      @user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: listing.pixi_id
-      @user.saved_listings.create FactoryGirl.attributes_for :saved_listing, pixi_id: listing.pixi_id
-      @user.posts.create FactoryGirl.attributes_for :post, pixi_id: listing.pixi_id, recipient_id: user.id
+      @user.pixi_likes.create attributes_for :pixi_like, pixi_id: listing.pixi_id
+      @user.pixi_wants.create attributes_for :pixi_want, pixi_id: listing.pixi_id
+      @user.saved_listings.create attributes_for :saved_listing, pixi_id: listing.pixi_id
+      @user.posts.create attributes_for :post, pixi_id: listing.pixi_id, recipient_id: user.id
       visit listing_path(listing) 
     end
 
@@ -187,7 +183,6 @@ feature "Listings" do
           page.should_not have_link 'Uncool'
           page.should have_link 'Cool'
       }.to change(PixiLike,:count).by(-1)
-
       page.should have_content listing.nice_title
       page.should have_content "(#{listing.liked_count})"
     end
@@ -198,39 +193,40 @@ feature "Listings" do
 	  sleep 3
           page.should have_link 'Save'
       }.to change(SavedListing,:count).by(-1)
-
       page.should have_content listing.nice_title
     end
   end
 
-  describe "View Event Pixi" do 
+  describe "View Event Pixi", process: true do 
     let(:event_type) { create :event_type }
-    let(:category) { FactoryGirl.create :category, name: 'Event', category_type_code: 'event' }
-    let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id, 
+    let(:category) { create :category, name: 'Event', category_type_code: 'event' }
+    let(:event_listing) { create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id, 
       category_id: category.id, event_start_date: Date.tomorrow, event_end_date: Date.tomorrow, event_start_time: Time.now+2.hours, 
-      event_end_time: Time.now+3.hours, event_type_code: event_type.code ) }
+      event_end_time: Time.now+3.hours, event_type_code: event_type.code, quantity: 1 ) }
 
     before(:each) do
-      pixi_user = FactoryGirl.create(:pixi_user) 
+      pixi_user = create(:pixi_user) 
       init_setup pixi_user
-      visit listing_path(listing) 
+      visit listing_path(event_listing) 
     end
      
     it "views pixi page" do
-      page.should have_content listing.nice_title
-      page.should have_content listing.seller_name
-      page.should have_content "Start Date: #{short_date(listing.event_start_date)}"
-      page.should have_content "End Date: #{short_date(listing.event_end_date)}"
-      #page.should have_content "Start Time: #{short_time(listing.event_start_time)}"
-      #page.should have_content "End Time: #{short_time(listing.event_end_time)}"
-      page.should have_content "Event Type: #{listing.event_type_descr}"
-      page.should_not have_content "Compensation: #{(listing.compensation)}"
+      page.should have_content event_listing.nice_title
+      page.should have_content event_listing.seller_name
+      page.should have_content "Start Date: #{short_date(event_listing.event_start_date)}"
+      page.should have_content "End Date: #{short_date(event_listing.event_end_date)}"
+      #page.should have_content "Start Time: #{short_time(event_listing.event_start_time)}"
+      #page.should have_content "End Time: #{short_time(event_listing.event_end_time)}"
+      page.should have_content "Event Type: #{event_listing.event_type_descr}"
+      page.should_not have_content "Compensation: #{(event_listing.compensation)}"
+      page.should_not have_content "Condition: #{(event_listing.condition)}"
+      page.should have_content "Quantity: #{(event_listing.amt_left)}"
     end
   end
 
-  describe "View Sold Pixi" do 
-    let(:sold_listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id,
-      site_id: site.id, status: 'sold') }
+  describe "View Sold Pixi", process: true do 
+    let(:sold_listing) { create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, 
+      site_id: site.id, status: 'sold', quantity: 1, condition_type_code: condition_type.code) }
     before(:each) do
       init_setup user
       visit listing_path(sold_listing) 
@@ -242,12 +238,15 @@ feature "Listings" do
       page.should_not have_selector('#comment_content')
       page.should_not have_selector('#want-btn')
       page.should_not have_selector('#ask-btn')
+      page.should_not have_selector('#send-want-btn')
       page.should_not have_selector('#cool-btn')
       page.should_not have_selector('#save-btn')
       page.should_not have_selector('#fb-link')
       page.should_not have_selector('#tw-link')
       page.should_not have_selector('#pin-link')
       page.should_not have_link 'Follow', href: '#'
+      page.should_not have_content "Quantity: #{sold_listing.amt_left}"
+      page.should have_content "Condition: #{sold_listing.condition}"
       page.should have_content "Want (#{sold_listing.wanted_count})"
       page.should have_content "Cool (#{sold_listing.liked_count})"
       page.should have_content "Saved (#{sold_listing.saved_count})"
@@ -259,30 +258,33 @@ feature "Listings" do
     end
   end
 
-  describe "View Compensation Pixi" do 
-    let(:category) { FactoryGirl.create :category, name: 'Gigs', category_type_code: 'employment' }
-    let(:job_type) { FactoryGirl.create :job_type }
-    let(:listing) { FactoryGirl.create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id, 
+  describe "View Compensation Pixi", process: true do 
+    let(:category) { create :category, name: 'Gigs', category_type_code: 'employment' }
+    let(:job_type) { create :job_type }
+    let(:job_listing) { create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, quantity: nil,
       category_id: category.id, job_type_code: job_type.code, compensation: 'Salary + Equity', price: nil) }
 
     before(:each) do
-      pixi_user = FactoryGirl.create(:pixi_user) 
+      pixi_user = create(:pixi_user) 
       init_setup pixi_user
-      visit listing_path(listing) 
+      visit listing_path(job_listing) 
     end
      
     it "views pixi page" do
-      page.should_not have_content "Start Date: #{short_date(listing.event_start_date)}"
-      page.should_not have_content "End Date: #{short_date(listing.event_end_date)}"
-      page.should_not have_content "Start Time: #{short_time(listing.event_start_time)}"
-      page.should_not have_content "End Time: #{short_time(listing.event_end_time)}"
-      page.should_not have_content "Price: #{(listing.price)}"
-      page.should have_content "Job Type: #{(listing.job_type_name)}"
-      page.should have_content "Compensation: #{(listing.compensation)}"
+      page.should_not have_content "Start Date: #{short_date(job_listing.event_start_date)}"
+      page.should_not have_content "End Date: #{short_date(job_listing.event_end_date)}"
+      page.should_not have_content "Start Time: #{short_time(job_listing.event_start_time)}"
+      page.should_not have_content "End Time: #{short_time(job_listing.event_end_time)}"
+      page.should_not have_content "Price: #{(job_listing.price)}"
+      page.should_not have_content "Event Type: #{job_listing.event_type_descr}"
+      page.should_not have_content "Condition: #{(job_listing.condition)}"
+      page.should_not have_content "Quantity: #{(job_listing.amt_left)}"
+      page.should have_content "Job Type: #{(job_listing.job_type_name)}"
+      page.should have_content "Compensation: #{(job_listing.compensation)}"
     end
   end
 
-  describe "Owner-viewed Pixi" do 
+  describe "Owner-viewed Pixi", process: true do 
     before(:each) do
       init_setup user
       visit listing_path(listing) 
@@ -293,6 +295,7 @@ feature "Listings" do
       page.should_not have_selector('#contact_content')
       page.should_not have_selector('#comment_content')
       page.should_not have_selector('#want-btn')
+      page.should_not have_selector('#send-want-btn')
       page.should_not have_selector('#cool-btn')
       page.should_not have_selector('#save-btn')
       page.should_not have_selector('#ask-btn')
@@ -305,6 +308,8 @@ feature "Listings" do
       page.should have_content "Cool (#{listing.liked_count})"
       page.should have_content "Saved (#{listing.saved_count})"
       page.should have_content "Comments (#{listing.comments.size})"
+      page.should have_content "Quantity: #{(listing.amt_left)}"
+      page.should have_content "Condition: #{(listing.condition)}"
       page.should_not have_link 'Cancel', href: root_path
       page.should have_button 'Remove'
       page.should have_link 'Changed Mind', href: listing_path(listing, reason: 'Changed Mind')
@@ -326,7 +331,7 @@ feature "Listings" do
     end
   end
 
-  describe "Admin-viewed Pixi" do 
+  describe "Admin-viewed Pixi", process: true do 
     before(:each) do
       init_setup admin
       visit listing_path(listing) 
@@ -339,7 +344,7 @@ feature "Listings" do
 
   describe "Add Comments" do 
     before(:each) do
-      pixi_user = FactoryGirl.create(:pixi_user) 
+      pixi_user = create(:pixi_user) 
       init_setup pixi_user
       visit listing_path(listing) 
     end
@@ -370,9 +375,9 @@ feature "Listings" do
 
   describe "pagination" do
     before(:each) do
-      pixi_user = FactoryGirl.create(:pixi_user) 
+      pixi_user = create(:pixi_user) 
       init_setup pixi_user
-      10.times { listing.comments.create FactoryGirl.attributes_for(:comment, user_id: pixi_user.id) } 
+      10.times { listing.comments.create attributes_for(:comment, user_id: pixi_user.id) } 
       visit listing_path(listing) 
     end
 
@@ -387,10 +392,10 @@ feature "Listings" do
 
   describe "Check Pixis" do 
     before(:each) do
-      editor = FactoryGirl.create :editor, email: 'jsnow@pixitext.com', confirmed_at: Time.now 
+      editor = create :editor, email: 'jsnow@pixitext.com', confirmed_at: Time.now 
       @listing = create :listing, seller_id: editor.id
-      @pixi_want = editor.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
-      @pixi_like = editor.pixi_likes.create FactoryGirl.attributes_for :pixi_like, pixi_id: @listing.pixi_id
+      @pixi_want = editor.pixi_wants.create attributes_for :pixi_want, pixi_id: @listing.pixi_id
+      @pixi_like = editor.pixi_likes.create attributes_for :pixi_like, pixi_id: @listing.pixi_id
       init_setup editor
     end
 
@@ -439,12 +444,12 @@ feature "Listings" do
     end
 
     describe "GET /category" do  
-      let(:category) { FactoryGirl.create :category }
-      let(:site) { FactoryGirl.create :site }
-      let(:listings) { 10.times { FactoryGirl.create(:listing, seller_id: @user.id, category_id: category.id, site_id: site.id) } }
+      let(:category) { create :category }
+      let(:site) { create :site }
+      let(:listings) { 10.times { create(:listing, seller_id: @user.id, category_id: category.id, site_id: site.id) } }
 
       before(:each) do
-        FactoryGirl.create(:listing, title: "Guitar", seller_id: @user.id, site_id: site.id, category_id: category.id) 
+        create(:listing, title: "Guitar", seller_id: @user.id, site_id: site.id, category_id: category.id) 
         visit category_listings_path(cid: category.id, loc: site.id) 
       end
       
@@ -460,12 +465,12 @@ feature "Listings" do
     end  
 
     describe "GET /local" do  
-      let(:category) { FactoryGirl.create :category }
-      let(:site) { FactoryGirl.create :site }
-      let(:listings) { 10.times { FactoryGirl.create(:listing, seller_id: @user.id, category_id: category.id, site_id: site.id) } }
+      let(:category) { create :category }
+      let(:site) { create :site }
+      let(:listings) { 10.times { create(:listing, seller_id: @user.id, category_id: category.id, site_id: site.id) } }
 
       before(:each) do
-        FactoryGirl.create(:listing, title: "Guitar", seller_id: @user.id, site_id: site.id, category_id: category.id) 
+        create(:listing, title: "Guitar", seller_id: @user.id, site_id: site.id, category_id: category.id) 
         visit local_listings_path(cid: category.id, loc: site.id) 
       end
       
@@ -481,14 +486,14 @@ feature "Listings" do
     end  
 
     describe "GET /listings" do  
-      let(:listings) { 30.times { FactoryGirl.create(:listing, seller_id: @user.id) } }
+      let(:listings) { 30.times { create(:listing, seller_id: @user.id) } }
 
       before(:each) do
         add_region
         @site = create :site, name: 'Detroit', org_type: 'city'
-	@site.contacts.create FactoryGirl.attributes_for :contact, address: '1611 Tyler', city: 'Detroit', state: 'MI', zip: '48238'
+	@site.contacts.create attributes_for :contact, address: '1611 Tyler', city: 'Detroit', state: 'MI', zip: '48238'
         @site3 = create :site, name: 'Pixi Tech', org_type: 'school'
-	@site3.contacts.create FactoryGirl.attributes_for :contact, address: '14018 Prevost', city: 'Detroit', state: 'MI', zip: '48227'
+	@site3.contacts.create attributes_for :contact, address: '14018 Prevost', city: 'Detroit', state: 'MI', zip: '48227'
 	@category = create :category, name: 'Music'
 	@category5 = create :category, name: 'Electronics'
         create(:listing, title: "HP Printer J4580", description: "printer", seller_id: @user.id, site_id: @site.id, 
@@ -541,302 +546,6 @@ feature "Listings" do
       end
     end
 
-<<<<<<< HEAD
-    describe "Manage Pixis page" do
-      before do
-        pixi_user = create :pixi_user
-        @category = create :category, name: 'Music'
-        @site = create :site, name: 'Berkeley'
-        16.times do
-          @listing = create :listing, seller_id: pixi_user.id, status: 'active', title: 'Guitar', description: 'Lessons', category_id: @category.id, site_id: @site.id
-        end
-        # Visit page as admin
-        admin_user = create :admin
-        admin_user.user_type_code = 'AD'
-        admin_user.save
-        init_setup admin_user
-        visit listings_path(status: 'active')
-      end
-
-      it "should display all active listings when category or location are not specified", js: true do
-        page.should have_content 'Manage Pixis'
-        page.should have_content 'Guitar'
-        page.should have_content 'Lessons'
-        page.should have_content 'Berkeley'
-      end
-
-      it "has 'next' and 'previous' page links" do
-        page.should have_link "Next"
-        page.should have_link "Previous"
-      end
-
-      it "has export CSV button" do
-        page.should have_link 'Export as CSV file', href: listings_path(format: 'csv')
-      end
-    end
-
-    describe "Manage Pixis page statuses: " do
-      before do
-        @category = create :category, name: 'Music'
-        @site = create :site, name: 'Berkeley'
-        admin_user = create :admin
-        admin_user.user_type_code = 'AD'
-        admin_user.save
-        init_setup admin_user
-      end
-
-      it "views pending listings", js: true do
-        pending_listing = create :temp_listing, seller_id: @user.id, title: 'Pending Listing', category_id: @category.id, site_id: @site.id
-        pending_listing.status = 'pending'
-        pending_listing.save!
-        expect(TempListing.where("status = 'pending'").count).to eq 1
-        visit pending_listings_path(status: 'pending', loc: @site.id, cid: @category.id)
-        page.should have_content 'Pending Listing'
-        page.should_not have_content 'Active Listing'
-        page.should_not have_content 'Draft Listing'
-        page.should_not have_content 'Expired Listing'
-        page.should_not have_content 'Sold Listing'
-        page.should_not have_content 'Removed Listing'
-        page.should_not have_content 'Denied Listing'
-        page.should_not have_content 'Invoiced Listing'
-        page.should_not have_content 'No pixis found.'
-      end
-
-      it "views active listings", js: true do
-        active_listing = create :listing, seller_id: @user.id, title: 'Active Listing', category_id: @category.id, site_id: @site.id
-        active_listing.status = 'active'
-        active_listing.save!
-        visit listings_path(status: 'active', loc: @site.id, cid: @category.id)
-        page.should_not have_content 'Pending Listing'
-        page.should have_content 'Active Listing'
-        page.should_not have_content 'Draft Listing'
-        page.should_not have_content 'Expired Listing'
-        page.should_not have_content 'Sold Listing'
-        page.should_not have_content 'Removed Listing'
-        page.should_not have_content 'Denied Listing'
-        page.should_not have_content 'Invoiced Listing'
-        page.should_not have_content 'No pixis found.'
-      end
-
-      it "views draft listings", js: true do
-        draft_listing = create :temp_listing, seller_id: @user.id, title: 'Draft Listing', category_id: @category.id, site_id: @site.id
-        draft_listing.status = 'edit'
-        draft_listing.save!
-        visit unposted_temp_listings_path(status: 'new/edit', loc: @site.id, cid: @category.id)
-        page.should_not have_content 'Pending Listing'
-        page.should_not have_content 'Active Listing'
-        page.should have_content 'Draft Listing'
-        page.should_not have_content 'Expired Listing'
-        page.should_not have_content 'Sold Listing'
-        page.should_not have_content 'Removed Listing'
-        page.should_not have_content 'Denied Listing'
-        page.should_not have_content 'Invoiced Listing'
-        page.should_not have_content 'No pixis found.'
-      end
-
-      it "views expired listings", js: true do
-        expired_listing = create :listing, seller_id: @user.id, title: 'Expired Listing', category_id: @category.id, site_id: @site.id
-        expired_listing.status = 'expired'
-        expired_listing.save!
-        expect(Listing.where("status = 'expired'").count).to eq 1
-        visit listings_path(status: 'expired', loc: @site.id, cid: @category.id)
-        page.should_not have_content 'Pending Listing'
-        page.should_not have_content 'Active Listing'
-        page.should_not have_content 'Draft Listing'
-        page.should have_content 'Expired Listing'
-        page.should_not have_content 'Sold Listing'
-        page.should_not have_content 'Removed Listing'
-        page.should_not have_content 'Denied Listing'
-        page.should_not have_content 'Invoiced Listing'
-        page.should_not have_content 'No pixis found.'
-      end
-
-      it "views sold listings", js: true do
-        sold_listing = create :listing, seller_id: @user.id, title: 'Sold Listing', category_id: @category.id, site_id: @site.id
-        sold_listing.status = 'sold'
-        sold_listing.save!
-        expect(Listing.where("status = 'sold'").count).to eq 1
-        visit listings_path(status: 'sold', loc: @site.id, cid: @category.id)
-        page.should_not have_content 'Pending Listing'
-        page.should_not have_content 'Active Listing'
-        page.should_not have_content 'Draft Listing'
-        page.should_not have_content 'Expired Listing'
-        page.should have_content 'Sold Listing'
-        page.should_not have_content 'Removed Listing'
-        page.should_not have_content 'Denied Listing'
-        page.should_not have_content 'Invoiced Listing'
-        page.should_not have_content 'No pixis found.'
-      end
-
-      it "views removed listings", js: true do
-        removed_listing = create :listing, seller_id: @user.id, title: 'Removed Listing', category_id: @category.id, site_id: @site.id
-        removed_listing.status = 'removed'
-        removed_listing.save!
-        expect(Listing.where("status = 'removed'").count).to eq 1
-        visit listings_path(status: 'removed', loc: @site.id, cid: @category.id)
-        page.should_not have_content 'Pending Listing'
-        page.should_not have_content 'Active Listing'
-        page.should_not have_content 'Draft Listing'
-        page.should_not have_content 'Expired Listing'
-        page.should_not have_content 'Sold Listing'
-        page.should have_content 'Removed Listing'
-        page.should_not have_content 'Denied Listing'
-        page.should_not have_content 'Invoiced Listing'
-        page.should_not have_content 'No pixis found.'
-      end
-
-      it "views denied listings", js: true do
-        denied_listing = create :listing, seller_id: @user.id, title: 'Denied Listing', category_id: @category.id, site_id: @site.id
-        denied_listing.status = 'denied'
-        denied_listing.save!
-        expect(Listing.where("status = 'denied'").count).to eq 1
-        visit listings_path(status: 'denied', loc: @site.id, cid: @category.id)
-        page.should_not have_content 'Pending Listing'
-        page.should_not have_content 'Active Listing'
-        page.should_not have_content 'Draft Listing'
-        page.should_not have_content 'Expired Listing'
-        page.should_not have_content 'Sold Listing'
-        page.should_not have_content 'Removed Listing'
-        page.should have_content 'Denied Listing'
-        page.should_not have_content 'Invoiced Listing'
-        page.should_not have_content 'No pixis found.'
-      end
-
-      it "views invoiced listings", js: true do
-        invoiced_listing = create :listing, seller_id: @user.id, title: 'Invoiced Listing', category_id: @category.id, site_id: @site.id
-        buyer = FactoryGirl.create(:pixi_user)
-        invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: invoiced_listing.pixi_id, buyer_id: buyer.id, status: 'active')
-        visit invoiced_listings_path(status: 'active', loc: @site.id, cid: @category.id)
-        page.should_not have_content 'Pending Listing'
-        page.should_not have_content 'Active Listing'
-        page.should_not have_content 'Draft Listing'
-        page.should_not have_content 'Expired Listing'
-        page.should_not have_content 'Sold Listing'
-        page.should_not have_content 'Removed Listing'
-        page.should_not have_content 'Denied Listing'
-        page.should have_content 'Invoiced Listing'
-        page.should_not have_content 'No pixis found.'
-      end
-    end
-
-      describe "My Pixis pagination", js: true do
-        let(:listings) { 30.times { create(:listing, seller_id: user.id) } }
-        it "should list each listing" do
-          @user.pixis.paginate(page: 1).each do |listing|
-            page.should have_selector('td', text: listing.title)
-          end
-        end
-      end
-
-    describe "My pixis page" do
-      before do
-        @other_user = create :pixi_user, email: 'john.doe@pxb.com'
-        px_user = create :pixi_user, email: 'jsnow@pxb.com'
-        init_setup px_user
-        @listing = create(:listing, seller_id: @user.id) 
-        @temp_listing = create(:temp_listing, seller_id: @user.id) 
-        # First couple may not be necessary?
-        @pending_listing = create(:temp_listing, seller_id: @user.id, title: 'Snare Drum') 
-        @pending_listing.status = 'pending'
-        @pending_listing.save!
-        @denied_listing = create(:listing, seller_id: @user.id, title: 'Xbox 360')
-        @denied_listing.status = 'denied'
-        @denied_listing.save!
-        @purchased_listing = create(:listing, seller_id: @other_user.id, buyer_id: @user.id, title: 'Comfy Green Chair') 
-        @purchased_listing.status = 'sold'
-        @purchased_listing.save!
-        @active_listing = create(:listing, seller_id: @user.id, title: 'Bookshelf')
-        @active_listing.status = 'active'
-        @active_listing.save!
-        @sold_listing = create(:listing, seller_id: @user.id, title: 'Leather Briefcase') 
-        @sold_listing.status = 'sold'
-        @sold_listing.save!
-        @expired_listing = create(:listing, seller_id: @user.id, title: 'TV')
-        @expired_listing.status = 'expired'
-        @expired_listing.save!
-        @user.pixi_wants.create FactoryGirl.attributes_for :pixi_like, pixi_id: listing.pixi_id
-        @user.saved_listings.create FactoryGirl.attributes_for :saved_listing, pixi_id: listing.pixi_id
-      end
-      
-      it "views my pixis page", js: true do
-        visit seller_listings_path
-        page.should have_content('My Pixis')
-        page.should have_link 'Active', href: seller_listings_path(status: 'active')
-        page.should have_link 'Draft', href: unposted_temp_listings_path
-        page.should have_link 'Pending', href: pending_temp_listings_path
-        page.should have_link 'Purchased', href: purchased_listings_path
-        page.should have_link 'Sold', href: seller_listings_path(status: 'sold')
-        page.should have_link 'Saved', href: saved_listings_path
-        page.should have_link 'Wanted', href: wanted_listings_path
-        page.should have_link 'Asked', href: asked_listings_path
-        page.should have_link 'Expired', href: seller_listings_path(status: 'expired')
-      end
-
-      it "displays active listings", js: true do
-        visit seller_listings_path(status: 'active')
-        page.should have_content @active_listing.title
-        page.should_not have_content @sold_listing.title
-        page.should_not have_content @purchased_listing.title
-        page.should_not have_content 'No pixis found.'
-      end
-
-      it "displays sold listings", js: true do
-        visit seller_listings_path(status: 'sold')
-        page.should_not have_content listing.title
-        page.should have_content @sold_listing.title
-        page.should_not have_content @purchased_listing.title
-        page.should_not have_content 'No pixis found.'
-      end
-
-      it "displays draft listings", js: true do
-        visit unposted_temp_listings_path
-        page.should have_content @temp_listing.title
-        page.should_not have_content @pending_listing.title
-        page.should_not have_content @denied_listing.title
-        page.should_not have_content 'No pixis found.'
-      end
-
-      it "displays pending listings", js: true do
-        visit pending_temp_listings_path
-        page.should_not have_content @temp_listing.title
-        page.should have_content @pending_listing.title
-        page.should_not have_content @sold_listing.title
-        page.should_not have_content 'No pixis found.'
-      end
-
-      it "displays saved listings", js: true do
-        visit saved_listings_path
-        page.should have_content listing.title
-        page.should_not have_content @sold_listing.title
-        page.should_not have_content 'No pixis found.'
-      end
-
-      it "display wanted listings", js: true do
-        visit wanted_listings_path
-        page.should have_content listing.title
-        page.should_not have_content @sold_listing.title
-        page.should_not have_content 'No pixis found.'
-      end
-
-      it "display purchased listings", js: true do
-        visit purchased_listings_path
-        page.should_not have_content listing.title
-        page.should_not have_content @sold_listing.title
-        page.should have_content @purchased_listing.title
-        page.should_not have_content 'No pixis found.'
-      end
-
-      it "display expired listings", js: true do
-        visit seller_listings_path(status: 'expired')
-        page.should_not have_content listing.title
-        page.should_not have_content @sold_listing.title
-        page.should have_content @expired_listing.title
-        page.should_not have_content 'No pixis found.'
-      end
-    end
-
-=======
->>>>>>> 894fb2719618ac15a97fc8067b28eeb39c949c98
     describe "Repost button" do
       before do
         @active_listing = create(:listing, seller_id: @user.id, title: 'Bookshelf')
