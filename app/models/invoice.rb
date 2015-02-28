@@ -256,7 +256,7 @@ class Invoice < ActiveRecord::Base
   def mark_as_closed 
     if paid?
       listings.find_each do |listing|
-        inv_list = Invoice.joins(:invoice_details).where("`invoice_details`.`pixi_id` = ?", listing.pixi_id).readonly(false)
+        inv_list = Invoice.where(status: 'unpaid').joins(:invoice_details).where("`invoice_details`.`pixi_id` = ?", listing.pixi_id).readonly(false)
         inv_list.find_each do |inv|
           inv.update_attribute(:status, 'closed') if inv.pixi_count == 1 && inv.id != self.id
         end

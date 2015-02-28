@@ -41,6 +41,7 @@ describe InvoiceObserver do
     before(:each) do
       @transaction = FactoryGirl.create :transaction, convenience_fee: 0.99
       @account = user.bank_accounts.create FactoryGirl.attributes_for :bank_account
+      @pixi_want = user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: listing.pixi_id, status: 'active'
       @model = user.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: buyer.id, 
         bank_account_id: @account.id, transaction_id: @transaction.id ) 
       @details = @model.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: listing.pixi_id, price: 150.00 
@@ -54,6 +55,7 @@ describe InvoiceObserver do
 
     it 'should mark as sold' do
       mark_pixi
+      PixiWant.stub(:set_status).with(listing.pixi_id, user.id, 'sold').and_return(true)
     end
 
     it 'should credit account' do

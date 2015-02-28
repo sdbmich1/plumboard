@@ -57,6 +57,10 @@ namespace :db do
   task :load_inv_pixi_counter => :environment do
     set_inv_detail_count
   end
+
+  task :load_want_status => :environment do
+    set_want_status
+  end
 end
 
 def set_keys
@@ -196,4 +200,15 @@ end
 
 def set_inv_detail_count
   Invoice.find_each { |inv| Invoice.reset_counters(inv.id, :invoice_details) }
+end
+
+def set_want_status
+  Invoice.where(status: 'paid').find_each do |inv|
+    inv.listings.find_each do |listing|
+      listing.pixi_wants.where("user_id = ? AND pixi_id = ? AND status = ?", inv.buyer_id, listing.pixi_id, 'active').update_all(status: 'sold')
+    end
+  end
+
+  # update all non-sold wants
+  PixiWant.where(status: nil).update_all(status: 'active')
 end
