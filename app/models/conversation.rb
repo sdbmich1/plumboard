@@ -179,6 +179,6 @@ class Conversation < ActiveRecord::Base
 
   # add pixi requests
   def process_pixi_requests
-    user.pixi_wants.create(pixi_id: self.pixi_id, quantity: self.quantity) if posts.first.msg_type == 'want'
+    user.pixi_wants.create(pixi_id: self.pixi_id, quantity: self.quantity, status: 'active') if posts.first.msg_type == 'want'
   end
 end

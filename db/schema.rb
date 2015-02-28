@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150218061431) do
+ActiveRecord::Schema.define(:version => 20150226054949) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -555,8 +555,10 @@ ActiveRecord::Schema.define(:version => 20150218061431) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
     t.integer  "quantity"
+    t.string   "status"
   end
 
+  add_index "pixi_wants", ["status"], :name => "index_pixi_wants_on_status"
   add_index "pixi_wants", ["user_id", "pixi_id"], :name => "index_pixi_wants_on_user_id_and_pixi_id"
 
   create_table "posts", :force => true do |t|
@@ -843,6 +845,7 @@ ActiveRecord::Schema.define(:version => 20150218061431) do
     t.string   "status"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
+    t.string   "hide"
   end
 
   add_index "user_types", ["code"], :name => "index_user_types_on_code"

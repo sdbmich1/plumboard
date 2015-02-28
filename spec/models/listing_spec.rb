@@ -84,6 +84,7 @@ describe Listing do
   it { should have_many(:saved_listings).with_foreign_key('pixi_id') }
   it { should respond_to(:buyer) }
   it { should belong_to(:buyer).with_foreign_key('buyer_id') }
+  it { should have_many(:active_pixi_wants).class_name('PixiWant').with_foreign_key('pixi_id').conditions(:status=>"active") }
 
   describe "when site_id is empty" do
     before { @listing.site_id = "" }
@@ -924,6 +925,7 @@ describe Listing do
     before(:each) do
       @usr = create :pixi_user
       @pixi_want = @user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
+      @pixi_want = @user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id, status: 'sold'
     end
 
     it { Listing.wanted_list(@usr).should_not include @listing } 

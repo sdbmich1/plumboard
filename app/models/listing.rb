@@ -17,6 +17,7 @@ class Listing < ListingParent
   has_many :saved_listings, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :invoice_details, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :invoices, through: :invoice_details, :dependent => :destroy
+  has_many :active_pixi_wants, primary_key: 'pixi_id', foreign_key: 'pixi_id', class_name: 'PixiWant', conditions: { :status => 'active' }
 
   default_scope :order => "updated_at DESC"
 
@@ -67,9 +68,10 @@ class Listing < ListingParent
   # get wanted list by user
   def self.wanted_list usr, pg=1, cid=nil, loc=nil
     if usr.is_admin?
-      active.joins(:pixi_wants).where("pixi_wants.user_id is not null").get_by_city(cid, loc, pg, false).paginate(page: pg)
+      active.joins(:pixi_wants).where("pixi_wants.user_id is not null AND pixi_wants.status = ?", 'active')
+      .get_by_city(cid, loc, pg, false).paginate(page: pg)
     else
-      active.joins(:pixi_wants).where("pixi_wants.user_id = ?", usr.id).paginate page: pg
+      active.joins(:pixi_wants).where("pixi_wants.user_id = ? AND pixi_wants.status = ?", usr.id, 'active').paginate page: pg
     end
   end
 
@@ -114,7 +116,7 @@ class Listing < ListingParent
 
   # return wanted count 
   def wanted_count
-    pixi_wants.size rescue 0
+    active_pixi_wants.size rescue 0
   end
 
   # return whether pixi is wanted
@@ -124,7 +126,7 @@ class Listing < ListingParent
 
   # return whether pixi is wanted by user
   def user_wanted? usr
-    pixi_wants.where(user_id: usr.id).first rescue nil
+    active_pixi_wants.where(user_id: usr.id).first rescue nil
   end
 
   # return liked count 
