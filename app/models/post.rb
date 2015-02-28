@@ -138,7 +138,7 @@ class Post < ActiveRecord::Base
       end
 
       # new post
-      conv.posts.create recipient_id: recipient.id, user_id: sender.id, msg_type: msgType, pixi_id: conv.pixi_id, content: msg + ("%0.2f" % inv.amount)
+      conv.posts.create recipient_id: recipient.id, user_id: sender.id, msg_type: msgType, pixi_id: conv.pixi_id, content: msg
     else
       false
     end
@@ -147,7 +147,7 @@ class Post < ActiveRecord::Base
   # send invoice post
   def self.send_invoice inv, listing
     if !inv.blank? && !listing.blank?
-      msg = "You received Invoice ##{inv.id} from #{inv.seller_name} for $"
+      msg = "You received Invoice ##{inv.id} from #{inv.seller_name} for $" + ("%0.2f" % inv.amount)
       add_post inv, listing, inv.seller, inv.buyer, msg, 'inv'
     else
       false
@@ -163,7 +163,7 @@ class Post < ActiveRecord::Base
 
     # send post
     if inv && listing
-      msg = "You received a payment for Invoice ##{inv.id} from #{inv.buyer_name} for $"
+      msg = "You received a payment for Invoice ##{inv.id} from #{inv.buyer_name} for $" + ("%0.2f" % inv.amount)
       add_post inv, listing, inv.buyer, inv.seller, msg, 'paidinv'
     else
       false

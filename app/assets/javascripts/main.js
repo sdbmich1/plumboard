@@ -90,36 +90,6 @@ $(document).ajaxError( function(e, xhr, options){
   }
 });	
 
-// process slider
-function load_slider(cntl) {
-
-  // picture slider
-  if( $('.bxslider').length > 0 ) {
-
-    // check slider length to toggle slideshow
-    cntl = ($('.bxslider').children().length > 1) ? true : false;
-
-    $('.bxslider').bxSlider({
-      slideMargin: 10,
-      minSlides: 2,
-      auto: cntl,
-      pager: cntl,
-      autoControls: cntl,
-      mode: 'fade'
-    });
-
-    // vertically center align images in slider
-    $('.bxslider-inner').each(function(){
-      var height_parent = $(this).css('height').replace('px', '') * 1;
-      var height_child = $('div', $(this)).css('height').replace('px', '') * 1;
-      var padding_top_child = $('div', $(this)).css('padding-top').replace('px', '') * 1;
-      var padding_bottom_child = $('div', $(this)).css('padding-bottom').replace('px', '') * 1;
-      var top_margin = (height_parent - (height_child + padding_top_child + padding_bottom_child)) / 2;
-      $(this).html('<div style="height: ' + top_margin + 'px; width: 100%;"></div>' + $(this).html());
-    });
-  }
-}
-
 $(document).ready(function(){
 
   // accordion for pixichat
@@ -498,7 +468,6 @@ $(document).on('click', '#want-btn', function(e) {
 $(document).on('click', '#ask-btn', function(e) {
   var fld = '#contact_content, #ask_content';
   var txt;
-  // $('#ask_form').toggle();
 
   // set focus on fld
   $(fld).focus();

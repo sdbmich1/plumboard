@@ -15,7 +15,6 @@ $('#spinner').show('fast');
     $('#wantDialog').modal('hide');
     postFlashMsg('#flash_notice','success', 'Successfully sent message to seller');
     $("#px-panel").html("<%= escape_javascript( render(partial: 'shared/listing_panel', locals: {listing: @conversation.listing}) ) %>");
-    $("#post_form").html("<%= escape_javascript( raw render(partial: 'shared/contact', locals: {listing: @conversation.listing}) ) %>");
     $("#comment_form").html("<%= escape_javascript( render(partial: 'shared/comments', locals: {listing: @conversation.listing}) ) %>");
   }
 <% end %>

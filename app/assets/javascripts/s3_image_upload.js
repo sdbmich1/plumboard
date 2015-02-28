@@ -1,5 +1,7 @@
 var i=-1, maxFiles=15, j=0;
 var goUpload = true;
+var max_size = $('meta[name="max_pixi_size"]').attr('content');  // get max size
+var px_size = parseInt(max_size) * 1000000;
 
 // direct s3 file field
 function load_image_uploader() {
@@ -40,8 +42,8 @@ function load_image_uploader() {
 	  }
 	  
 	  // check for valid file size
-	  if (uploadFile.size > 2000000) { // 2mb
-	    goUpload = fileErrorHandler($progress, uploadFile.name + ' is too large, max size is 2MB');
+	  if (uploadFile.size > px_size) { 
+	    goUpload = fileErrorHandler($progress, uploadFile.name + ' is too large, max size is ' + max_size + 'MB');
 	  }
 
 	  // begin processing

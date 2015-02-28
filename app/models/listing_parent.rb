@@ -379,7 +379,7 @@ class ListingParent < ActiveRecord::Base
       listing.delete_photo(file_ids, 0) if tmpFlg rescue false
       listing
     else
-      false
+      tmpFlg ? false : listing
     end
   end
 
@@ -566,12 +566,13 @@ class ListingParent < ActiveRecord::Base
 
   # count number of sales
   def sold_count
-    invoices.inject(0) { |sum, x| sum + 1 if x.status == 'paid' }
+    cnt = invoices.where(status: 'paid').map{|inv| inv.invoice_details.where(pixi_id: pixi_id).inject(0){|sum, t| sum += t.quantity}}.first rescue 0
+    cnt || 0
   end
 
   # determine amount left
   def amt_left
-    result = quantity - sold_count rescue 1
+    result = quantity - sold_count rescue 0
     result <= 0 ? 0 : result
   end
 end

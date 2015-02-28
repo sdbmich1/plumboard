@@ -71,4 +71,9 @@ module TempListingsHelper
   def chargeable? listing
     listing.seller?(@user) && listing.new_status? 
   end
+
+  # toggle element on image slider
+  def set_element flg
+    controller_name != 'temp_listings' ? flg ? 'large' : 'Pin it @ Pinterest' : ''
+  end
 end

@@ -298,4 +298,9 @@ module ListingsHelper
   def is_want? mtype
     mtype == 'want'
   end
+  
+  # check if qty > 1 for wanted pixis
+  def multi_qty? listing
+    get_item_amt(listing) > 1
+  end
 end

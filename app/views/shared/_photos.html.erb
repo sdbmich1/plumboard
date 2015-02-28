@@ -1,15 +1,11 @@
-<div class='center-wrapper'>
 <% if model %>
-  <div class="bxslider">
-    <% for pic in model.pictures %>
-      <div>
-        <% if controller_name == 'temp_listings' %>
-          <%= image_tag get_pixi_image(pic), class: 'lrg_pic_frame' if pic.photo? %>
-        <% else %>
-          <%= image_tag get_pixi_image(pic, 'large'), class: 'lrg_pic_frame', title: 'Pin it @ Pinterest' if pic.photo? %>
-        <% end %>
-     </div>
-    <% end %>
+  <div class='center-wrapper'>
+    <div class="bxslider">
+      <% for pic in model.pictures %>
+        <div class='slide'>
+          <%= image_tag get_pixi_image(pic, set_element(true)), class: 'lazy lrg_pic_frame', title: set_element(false), lazy: true if pic.photo? %>
+        </div>
+      <% end %>
+    </div>
   </div>
 <% end %>
-</div>

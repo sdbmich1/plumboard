@@ -69,7 +69,7 @@ $(document).on("change", "select[id*=pixi_id]", function() {
     var url = '/listings/pixi_price?id=' + pid;
 
     // reset buyer id
-    $('#invoice_buyer_id').val('');
+    //$('#invoice_buyer_id').val('');
 
     // process script
     getItemData('#inv_price'+idx, '#amt_left'+idx, url);

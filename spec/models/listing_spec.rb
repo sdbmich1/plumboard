@@ -7,10 +7,12 @@ describe Listing do
     @listing = FactoryGirl.create(:listing, seller_id: @user.id, quantity: 1) 
   end
 
-  def create_invoice status='active'
+  def create_invoice status='active', qty=1
+    @listing2 = create :listing, seller_id: @user.id, quantity: 2, title: 'Leather Coat'
     @buyer = create(:pixi_user)
     @invoice = @user.invoices.build attributes_for(:invoice, buyer_id: @buyer.id, status: status) 
-    @details = @invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+    @details = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id, quantity: qty 
+    @details2 = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing2.pixi_id, quantity: 3 
     @invoice.save!
   end
 
@@ -1025,7 +1027,7 @@ describe Listing do
 
     it "does not return new listing" do 
       listing = FactoryGirl.build :listing, seller_id: user.id 
-      listing.dup_pixi(false).should_not be_true
+      listing.dup_pixi(false).should_not be_nil
     end
 
     it "returns new listing" do 
@@ -1546,8 +1548,12 @@ describe Listing do
       create_invoice 'paid'
     end
     it { expect(@listing.sold_count).to eq 0 }
-    it "has count > 0", run: true do
+    it "has count = 1", run: true do
       expect(@listing.sold_count).to eq 1
+    end
+    it "has count > 1" do
+      create_invoice 'paid', 3
+      expect(@listing.sold_count).to eq 3
     end
   end
 
@@ -1601,6 +1607,44 @@ describe Listing do
         expect(Listing.get_by_city(listing.category_id, listing.site_id).first).to eq(listing)
         listing.destroy
       }
+    end
+  end
+
+  describe "invoiceless pixis" do
+    before do
+      @pixi_want = @user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
+      @pixi_want.created_at = 3.days.ago
+      @pixi_want.save!
+    end
+
+    it "toggles number_of_days" do
+      Listing.invoiceless_pixis.should include @listing
+      Listing.invoiceless_pixis(5).should_not include @listing
+    end
+
+    it "does not return pixis with wants less than two days old" do
+      @pixi_want.created_at = Time.now
+      @pixi_want.save!
+      Listing.invoiceless_pixis.should_not include @listing
+    end
+
+    it "returns invoiced pixis in job category" do
+      @listing.category_id = Category.find_by_name("Jobs").object_id
+      @listing.save!
+      create_invoice
+      Listing.invoiceless_pixis.should include @listing
+    end
+
+    it "returns invoiced pixis with no price" do
+      @listing.price = nil
+      @listing.save!
+      create_invoice
+      Listing.invoiceless_pixis.should include @listing
+    end
+
+    it "does not return other pixis with invoices" do
+      create_invoice
+      Listing.invoiceless_pixis.should_not include @listing
     end
   end
 end

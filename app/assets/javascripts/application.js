@@ -40,4 +40,6 @@
 //= require s3_file_field
 //= require s3_image_upload
 //= require manage_pixis
+//= require slider
+//= require lazyload
 //= require_tree .
