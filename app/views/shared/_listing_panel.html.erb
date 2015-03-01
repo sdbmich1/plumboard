@@ -1,14 +1,13 @@
 <div class='panel_errors'></div>
 <div id='px-panel' class='sm-top sm-bot'>
   <div class='v-align'>
-
+    <%= render partial: 'shared/wanted_listing', locals: {listing: listing} %>
     <% unless signed_in? %>
       <%= link_to 'Ask', set_ask_path(listing.pixi_id), method: 'post', class: 'btn btn-primary btn-mask mleft10', id: set_ask_id, remote: !signed_in?, title: ask_msg %>
     <% else %>
       <div id='post_form'><%= render partial: 'shared/ask_seller', locals: { listing: listing } %></div>
       <%= link_to "Ask", "#", id: 'ask-btn', class: 'btn btn-primary btn-mask mleft10' %>
     <% end %>
-    <%= render partial: 'shared/wanted_listing', locals: {listing: listing} %>
 
     <%= link_to set_item_name(listing, 'like'), set_like_path(listing, listing.pixi_id), method: set_item_method(listing, 'like'), 
       class: 'btn btn-primary btn-mask mleft10', id: 'cool-btn', remote: true, title: 'This is cool!' %>

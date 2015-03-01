@@ -5,7 +5,7 @@
   <%= form.hidden_field 'msg_type', value: mtype %>
   <div class="reply_form" style="<%= is_want?(mtype) ? 'display:none' : '' %>">
   	<center>
-    <%= form.text_area 'content', value: '', autofocus: true, placeholder: 'Send message to seller.', class: 'span4', required: true %>  
+    <%= form.text_area 'content', value: msg, placeholder: 'Send message to seller.', class: 'span4', required: true %>  
     </center>
   </div>
 <% end %>
