@@ -19,10 +19,9 @@
         <% unless pending_listings? %>
           <%= render partial: 'shared/review_nav', locals: { listing: listing } if listing.editable?(@user) %>
           <%= render partial: 'shared/show_temp_listing', locals: {listing: listing} if edit_mode %>
-        <% else %>
-          <%= check_pending_pixi listing if @user.is_admin? %>
         <% end %>
       </div>
+      <%= check_pending_pixi listing %>
     </div>
   <% end %>
 

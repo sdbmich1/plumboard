@@ -162,12 +162,9 @@ describe TempListing do
     end
   end
 
-  describe "should not include invalid site listings" do 
-    it { TempListing.get_by_site(0).should_not include @temp_listing } 
-  end
-
-  describe "should include site listings" do
-    it { TempListing.get_by_site(@temp_listing.site.id).should_not be_empty }
+  describe "get_by_site" do 
+    it { TempListing.get_by_site(0, 1, false).should_not include @temp_listing } 
+    it { TempListing.get_by_site(@temp_listing.site_id, 1, false).should_not be_empty }
   end
 
   describe "seller listings" do
