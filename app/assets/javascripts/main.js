@@ -632,7 +632,7 @@ $(document).on('click', '#send-want-btn, #want-modal-btn', function(e) {
   $('#wantDialog').modal(action);
 });
 
-$(document).on('click', '#ask-btn, #ask-modal-btn', function(e) {
+$(document).on('click', '#send-ask-btn, #ask-modal-btn', function(e) {
   var target = $(e.target), action;
   action = target.is('#ask-modal-btn') ? 'hide' : 'show';
   $('#askDialog').modal(action);

@@ -6,9 +6,9 @@
           remote: !signed_in?, title: want_msg %>
       <% else %>
         <div id='post_form'>
-	  <%= render partial: 'shared/want_modal', locals: { listing: listing, mtype: 'want', msg: PIXI_POST, txt: want_msg } %>
+	        <%= render partial: 'shared/want_modal', locals: { listing: listing, mtype: 'want', msg: PIXI_POST, txt: want_msg } %>
           <%= link_to "Want", "#wantDialog", class: 'btn btn-primary submit-btn width100', 'data-toggle'=>"modal", title: want_msg %>
-	</div>
+	       </div>
       <% end %>
     <% end %>
 

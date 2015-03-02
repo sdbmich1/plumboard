@@ -13,6 +13,7 @@ $('#spinner').show('fast');
   else {
     $('#post_form').toggle();
     $('#wantDialog').modal('hide');
+    $('#askDialog').modal('hide');
     postFlashMsg('#flash_notice','success', 'Successfully sent message to seller');
     $("#px-panel").html("<%= escape_javascript( render(partial: 'shared/listing_panel', locals: {listing: @conversation.listing}) ) %>");
     $("#comment_form").html("<%= escape_javascript( render(partial: 'shared/comments', locals: {listing: @conversation.listing}) ) %>");

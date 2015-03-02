@@ -1,23 +1,12 @@
-<div class="modal hide fade" id="askDialog">
-  <div class="modal-header">
-    <a class="close" data-dismiss="modal">x</a>
-    <h3 class='center-wrapper'>Notify Seller</h3>
-  </div>
-  <div class="modal-body">
-    <p class='center-wrapper'><%= "#{ask_msg}" %><br /><br />
-      </p>
-    <%= form_for setup_conversation(listing), remote: true, data: {validate: 'parsley'} do |f| %>
-      <div id="notice" style="display:none"></div>
-      <div id="form_errors">
-        <%= render partial: 'shared/error_messages', :locals => { :target => f.object } %> </div>
-      <%= f.hidden_field 'pixi_id', value: listing.pixi_id %>
-      <%= f.hidden_field 'recipient_id', value: listing.seller_id %>
-      <%= f.hidden_field 'user_id', value: @user.id %>
-      <%= render partial: 'shared/conv_posts', locals: {f: f, listing: listing, mtype: 'ask', msg: ''} %>
-    <div class="modal-footer">
-    <p><%= f.submit "Send", :class=>'btn btn-small btn-primary', data: {disable_with: "Sending..."} %>
+<%= form_for setup_conversation(listing), remote: true,  data: {validate: 'parsley'} do |f| %>
+  <div id="notice" style="display:none"></div>
+  <div id="form_errors"><%= render partial: 'shared/error_messages', :locals => { :target => f.object } %></div>
+  <%= f.hidden_field 'pixi_id', value: listing.pixi_id %>
+  <%= f.hidden_field 'recipient_id', value: listing.seller_id %>
+  <%= f.hidden_field 'user_id', value: @user.id %>
+  <%= render partial: 'shared/conv_posts', locals: {f: f, listing: listing, mtype: mtype, msg: msg} %>
+  <div class="modal-footer">
+    <p><%= f.submit "Send", class: 'btn btn-primary btn-mask', data: {disable_with: "Sending..."} %>
     <a href="#" class="btn btn-small" data-dismiss="modal">Close</a></p>
-    </div>
-    <% end %>
   </div>
-</div>
+<% end %>
