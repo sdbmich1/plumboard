@@ -447,36 +447,36 @@ class ListingParent < ActiveRecord::Base
   def self.active_by_region city, state, pg=1, get_active=true, range=100
     loc = [city, state].join(', ') if city && state
     if get_active
-      active.where(site_id: Contact.proximity(nil, range, loc, true)).set_page(pg) if loc rescue nil
+      active.where(site_id: Contact.proximity(nil, range, loc, true)) if loc rescue nil
     else
-      where(site_id: Contact.proximity(nil, range, loc, true)).set_page(pg) if loc rescue nil
+      where(site_id: Contact.proximity(nil, range, loc, true)) if loc rescue nil
     end
   end
 
   # get active pixis by city
   def self.active_by_city city, state, pg=1, get_active=true
     if get_active
-      active.where(site_id: Contact.get_sites(city, state)).set_page pg
+      active.where(site_id: Contact.get_sites(city, state))
     else
-      where(site_id: Contact.get_sites(city, state)).set_page pg
+      where(site_id: Contact.get_sites(city, state))
     end
   end
 
   # get active pixis by state
   def self.active_by_state state, pg=1, get_active=true
     if get_active
-      active.where(site_id: Contact.where(state: state).map(&:contactable_id).uniq).set_page(pg)
+      active.where(site_id: Contact.where(state: state).map(&:contactable_id).uniq)
     else
-      where(site_id: Contact.where(state: state).map(&:contactable_id).uniq).set_page(pg)
+      where(site_id: Contact.where(state: state).map(&:contactable_id).uniq)
     end
   end
 
   # get active pixis by country
   def self.active_by_country country, pg=1, get_active=true
     if get_active
-      active.where(site_id: Contact.where(country: country).map(&:contactable_id).uniq).set_page(pg)
+      active.where(site_id: Contact.where(country: country).map(&:contactable_id).uniq)
     else
-      where(site_id: Contact.where(country: country).map(&:contactable_id).uniq).set_page(pg)
+      where(site_id: Contact.where(country: country).map(&:contactable_id).uniq)
     end
   end
 
@@ -573,5 +573,9 @@ class ListingParent < ActiveRecord::Base
   def amt_left
     result = quantity - sold_count rescue 1
     result <= 0 ? 0 : result
+  end
+
+  def self.filename status
+    status.capitalize + '_' + Time.now.year.to_s + '_' + Time.now.month.to_s + '_' + Time.now.day.to_s
   end
 end

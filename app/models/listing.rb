@@ -56,7 +56,7 @@ class Listing < ListingParent
 
   # get all active pixis that have at least one unpaid invoice and no sold invoices
   def self.active_invoices
-    active.joins(:invoices).where("invoices.status = 'active'")
+    active.joins(:invoices).where("invoices.status = 'unpaid'")
   end
 
   # get saved list by user
@@ -67,9 +67,9 @@ class Listing < ListingParent
   # get wanted list by user
   def self.wanted_list usr, pg=1, cid=nil, loc=nil
     if usr.is_admin?
-      active.joins(:pixi_wants).where("pixi_wants.user_id is not null").get_by_city(cid, loc, pg, false).paginate(page: pg)
+      active.joins(:pixi_wants).where("pixi_wants.user_id is not null").get_by_city(cid, loc, pg, false)
     else
-      active.joins(:pixi_wants).where("pixi_wants.user_id = ?", usr.id).paginate page: pg
+      active.joins(:pixi_wants).where("pixi_wants.user_id = ?", usr.id)
     end
   end
 

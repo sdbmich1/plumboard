@@ -386,6 +386,10 @@ class User < ActiveRecord::Base
       "Last Login" => nice_date(last_sign_in_at), "Gender" => gender, "Age" => age }
   end
 
+  def self.filename utype
+    (utype.blank? ? "All" : UserType.where(code: utype).first.description) + '_' + Time.now.year.to_s + '_' + Time.now.month.to_s + '_' + Time.now.day.to_s
+  end
+
   # set sphinx scopes
    sphinx_scope(:first_name) { 
      {:order => 'first_name, last_name ASC'}

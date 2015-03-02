@@ -219,7 +219,7 @@ describe Listing do
     end
 
     it 'should get listings' do
-      create_invoice
+      create_invoice "unpaid"
       Listing.active_invoices.should_not be_empty
     end
   end
@@ -240,7 +240,7 @@ describe Listing do
 
   describe "check_invoiced_category_and_location" do
     before do
-      create_invoice
+      create_invoice "unpaid"
     end      
 
     it "should get all listings of given status if category and location are not specified" do

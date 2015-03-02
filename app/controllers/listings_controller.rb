@@ -10,7 +10,8 @@ class ListingsController < ApplicationController
   layout :page_layout
 
   def index
-    respond_with(@listings = Listing.check_category_and_location(@status, @cat, @loc, @page).paginate(page: @page, per_page: 15))
+    @unpaginated_listings = Listing.check_category_and_location(@status, @cat, @loc, @page)
+    respond_with(@listings = @unpaginated_listings.paginate(page: @page, per_page: 15)) { |format| render_csv format }
   end
 
   def show
@@ -33,7 +34,8 @@ class ListingsController < ApplicationController
   end
 
   def wanted
-    respond_with(@listings = Listing.wanted_list(@user, @page, @cat, @loc))
+    @unpaginated_listings = Listing.wanted_list(@user, @page, @cat, @loc)
+    respond_with(@listings = @unpaginated_listings.paginate(page: @page, per_page: 15)) { |format| render_csv format }
   end
 
   def purchased
@@ -53,7 +55,8 @@ class ListingsController < ApplicationController
   end
 
   def invoiced
-    respond_with(@listings = Listing.check_invoiced_category_and_location(@cat, @loc, @page).paginate(page: @page))
+    @unpaginated_listings = Listing.check_invoiced_category_and_location(@cat, @loc, @page)
+    respond_with(@listings = @unpaginated_listings.paginate(page: @page, per_page: 15)) { |format| render_csv format }
   end
 
   def repost
@@ -104,5 +107,9 @@ class ListingsController < ApplicationController
   def flash_msg 
     val = ResetDate::days_left
     "Pixiboard is donating 10% of our revenues to NorcalMLK for the month of January! Only #{val} days left to Shop Local and Give Back." if val.to_i > 0
+  end
+
+  def render_csv format
+    format.csv { send_data(render_to_string(csv: @unpaginated_listings), disposition: "attachment; filename=#{Listing.filename @status}.csv") }
   end
 end
