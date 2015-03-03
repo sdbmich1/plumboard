@@ -1585,4 +1585,42 @@ describe Listing do
       }
     end
   end
+
+  describe "invoiceless pixis" do
+    before do
+      @pixi_want = @user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
+      @pixi_want.created_at = 3.days.ago
+      @pixi_want.save!
+    end
+
+    it "toggles number_of_days" do
+      Listing.invoiceless_pixis.should include @listing
+      Listing.invoiceless_pixis(5).should_not include @listing
+    end
+
+    it "does not return pixis with wants less than two days old" do
+      @pixi_want.created_at = Time.now
+      @pixi_want.save!
+      Listing.invoiceless_pixis.should_not include @listing
+    end
+
+    it "returns invoiced pixis in job category" do
+      @listing.category_id = Category.find_by_name("Jobs").object_id
+      @listing.save!
+      create_invoice
+      Listing.invoiceless_pixis.should include @listing
+    end
+
+    it "returns invoiced pixis with no price" do
+      @listing.price = nil
+      @listing.save!
+      create_invoice
+      Listing.invoiceless_pixis.should include @listing
+    end
+
+    it "does not return other pixis with invoices" do
+      create_invoice
+      Listing.invoiceless_pixis.should_not include @listing
+    end
+  end
 end

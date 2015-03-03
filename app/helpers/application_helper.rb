@@ -236,7 +236,13 @@ module ApplicationHelper
 
   # check if image exists if not render uploaded image
   def get_pixi_image pic, size='original'
-    pic.photo.exists? ? pic.photo.url(size.to_sym) : use_remote_pix? ? pic.picture_from_url : 'rsz_pixi_top_logo.png'
+    if pic.photo.exists?
+      pic.photo.url(size.to_sym)
+    elsif use_remote_pix?
+      pic.direct_upload_url
+    else
+      'rsz_pixi_top_logo.png'
+    end
   end
 
   # check for model errors
