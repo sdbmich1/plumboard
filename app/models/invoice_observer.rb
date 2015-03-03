@@ -48,6 +48,9 @@ class InvoiceObserver < ActiveRecord::Observer
   def mark_pixi model
     model.listings.find_each do |listing|
       listing.mark_as_sold 
+
+      # mark want as sold
+      PixiWant.set_status(listing.pixi_id, model.buyer_id, 'sold')
     end
   end
 end

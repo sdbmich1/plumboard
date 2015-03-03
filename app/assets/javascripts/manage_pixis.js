@@ -9,9 +9,6 @@ function get_pixi_url() {
     case "pending":
       url = "../pending_listings?status='pending'&loc=" + site_id + "&cid=" + category_id;
       break;
-    case "draft":
-      url = "../temp_listings/unposted?status='new/edit'&loc=" + site_id + "&cid=" + category_id;
-      break;
     case "active":
       url = "../listings?status='active'&loc=" + site_id + "&cid=" + category_id;
       break;
@@ -28,10 +25,10 @@ function get_pixi_url() {
       url = "../pending_listings?status='denied'&loc=" + site_id + "&cid=" + category_id;
       break;
     case "invoiced":
-      url = "../listings/invoiced?loc=" + site_id + "&cid=" + category_id;
+      url = "../listings/invoiced?status='invoiced'&loc=" + site_id + "&cid=" + category_id;    // status needed as parameter in get_csv_path
       break;
     case "wanted":
-      url = "../listings/wanted?loc=" + site_id + "&cid=" + category_id;
+      url = "../listings/wanted?status='wanted'&loc=" + site_id + "&cid=" + category_id;
       break;
   }
   processUrl(url);

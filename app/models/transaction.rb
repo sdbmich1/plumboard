@@ -271,6 +271,9 @@ class Transaction < ActiveRecord::Base
     { "Transaction Date" => updated_at.strftime("%F"), "Item Title" => pixi_title, "Buyer" => buyer_name, "Seller" => seller_name, 
       "Price" => get_invoice.price, "Quantity" => get_invoice.quantity, "Buyer Total" => amt, 
       "Seller Total" => get_invoice.amount - get_invoice.get_fee(true) }
-      
+  end
+
+  def self.filename
+    'Transactions_' + Time.now.year.to_s + '_' + Time.now.month.to_s + '_' + Time.now.day.to_s
   end
 end
