@@ -192,7 +192,7 @@ class Transaction < ActiveRecord::Base
 
   # get invoice pixi id
   def pixi_id
-    get_invoice.pixi_id rescue nil
+    get_invoice_listing.pixi_id rescue nil
   end
 
   # get invoice seller id

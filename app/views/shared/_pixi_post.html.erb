@@ -3,7 +3,7 @@
 <% end %>
 <%= content_for :content do %>
   <div id='inv_form'>
-    <%= form_for @post do |f| %>
+    <%= form_for post do |f| %>
     <div class="div-border">
       <div id="form_errors">
         <%= render partial: 'shared/error_messages', :locals => { :target => post } %>

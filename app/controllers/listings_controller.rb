@@ -10,7 +10,7 @@ class ListingsController < ApplicationController
   layout :page_layout
 
   def index
-    @unpaginated_listings = Listing.check_category_and_location(@status, @cat, @loc, @page)
+    @unpaginated_listings = Listing.check_category_and_location(@status, @cat, @loc)
     respond_with(@listings = @unpaginated_listings.paginate(page: @page, per_page: 15)) { |format| render_csv format }
   end
 
@@ -34,7 +34,7 @@ class ListingsController < ApplicationController
   end
 
   def wanted
-    @unpaginated_listings = Listing.wanted_list(@user, @page, @cat, @loc)
+    @unpaginated_listings = Listing.wanted_list(@user, @cat, @loc)
     respond_with(@listings = @unpaginated_listings.paginate(page: @page, per_page: 15)) { |format| render_csv format }
   end
 
@@ -55,7 +55,7 @@ class ListingsController < ApplicationController
   end
 
   def invoiced
-    @unpaginated_listings = Listing.check_invoiced_category_and_location(@cat, @loc, @page)
+    @unpaginated_listings = Listing.check_invoiced_category_and_location(@cat, @loc)
     respond_with(@listings = @unpaginated_listings.paginate(page: @page, per_page: 15)) { |format| render_csv format }
   end
 
@@ -97,7 +97,7 @@ class ListingsController < ApplicationController
   def load_city
     flash.now[:notice] = flash_msg
     @category = Category.find @cat rescue nil if action_name == 'category'
-    @listings = Listing.get_by_city @cat, @loc, @page
+    @listings = Listing.get_by_city(@cat, @loc).set_page @page
   end
 
   def set_session

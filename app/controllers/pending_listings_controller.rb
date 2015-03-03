@@ -6,7 +6,7 @@ class PendingListingsController < ApplicationController
   respond_to :html, :json, :js, :csv
 
   def index
-    @unpaginated_listings = TempListing.check_category_and_location(@status, @cat, @loc, @page)
+    @unpaginated_listings = TempListing.check_category_and_location(@status, @cat, @loc)
     respond_with(@listings = @unpaginated_listings.paginate(page: @page, per_page: 15)) { |format| render_csv format }
   end
 

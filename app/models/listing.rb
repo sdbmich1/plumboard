@@ -17,6 +17,7 @@ class Listing < ListingParent
   has_many :saved_listings, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :invoice_details, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :invoices, through: :invoice_details, :dependent => :destroy
+  has_many :active_pixi_wants, primary_key: 'pixi_id', foreign_key: 'pixi_id', class_name: 'PixiWant', conditions: { :status => 'active' }
 
   default_scope :order => "updated_at DESC"
 
@@ -50,8 +51,8 @@ class Listing < ListingParent
   end
 
   # get pixis by category id
-  def self.get_by_category cid, pg=1
-    active.where(:category_id => cid).set_page pg
+  def self.get_by_category cid, get_active=true
+    get_active ? active.where(:category_id => cid) : where(:category_id => cid)
   end
 
   # get all active pixis that have at least one unpaid invoice and no sold invoices
@@ -65,11 +66,11 @@ class Listing < ListingParent
   end
 
   # get wanted list by user
-  def self.wanted_list usr, pg=1, cid=nil, loc=nil
+  def self.wanted_list usr, cid=nil, loc=nil
     if usr.is_admin?
-      active.joins(:pixi_wants).where("pixi_wants.user_id is not null").get_by_city(cid, loc, pg, false)
+      active.joins(:pixi_wants).where("pixi_wants.user_id is not null AND pixi_wants.status = ?", 'active').get_by_city(cid, loc, false)
     else
-      active.joins(:pixi_wants).where("pixi_wants.user_id = ?", usr.id)
+      active.joins(:pixi_wants).where("pixi_wants.user_id = ? AND pixi_wants.status = ?", usr.id, 'active')
     end
   end
 
@@ -89,11 +90,11 @@ class Listing < ListingParent
   end
 
   # get invoiced listings by status and, if provided, category and location
-  def self.check_invoiced_category_and_location cid, loc, pg=1
+  def self.check_invoiced_category_and_location cid, loc
     if cid.blank? && loc.blank?
       active_invoices
     else
-      active_invoices.get_by_city(cid, loc, pg, false)
+      active_invoices.get_by_city(cid, loc, false)
     end
   end
 
@@ -114,7 +115,7 @@ class Listing < ListingParent
 
   # return wanted count 
   def wanted_count
-    pixi_wants.size rescue 0
+    active_pixi_wants.size rescue 0
   end
 
   # return whether pixi is wanted
@@ -124,7 +125,7 @@ class Listing < ListingParent
 
   # return whether pixi is wanted by user
   def user_wanted? usr
-    pixi_wants.where(user_id: usr.id).first rescue nil
+    active_pixi_wants.where(user_id: usr.id).first rescue nil
   end
 
   # return liked count 
@@ -163,8 +164,8 @@ class Listing < ListingParent
   end
 
   # return whether region has enough pixis
-  def self.has_enough_pixis? cat, loc, pg=1
-    get_by_city(cat, loc, pg).size >= MIN_PIXI_COUNT rescue false
+  def self.has_enough_pixis? cat, loc
+    get_by_city(cat, loc).size >= MIN_PIXI_COUNT rescue false
   end
 
   # return wanted users 

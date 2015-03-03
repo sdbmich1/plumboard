@@ -7,7 +7,7 @@ class UsersController < ApplicationController
   respond_to :html, :js, :json, :mobile, :csv
 
   def index
-    @unpaginated_users = User.include_list.get_by_type(@utype, @page)
+    @unpaginated_users = User.include_list.get_by_type(@utype)
     respond_with(@users = @unpaginated_users.paginate(page: @page, per_page: 15)) { |format| render_csv format }
   end
 

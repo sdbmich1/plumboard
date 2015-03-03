@@ -1,1 +1,3 @@
-<%= image_tag(get_pixi_image(model.pictures[0], psize), class: zoom_image) if picture_exists? model %>
+<% if picture_exists?(model) %>
+  <%= image_tag(get_pixi_image(model.pictures[0], psize), class: zoom_image) %>
+<% end %>

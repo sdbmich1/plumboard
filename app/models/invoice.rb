@@ -7,7 +7,7 @@ class Invoice < ActiveRecord::Base
   attr_accessor :buyer_name, :tmp_buyer_id
   attr_accessible :amount, :buyer_id, :comment, :pixi_id, :price, :quantity, :seller_id, :status, :buyer_name,
     :sales_tax, :tax_total, :subtotal, :inv_date, :transaction_id, :bank_account_id, :tmp_buyer_id, :ship_amt, :other_amt,
-    :invoice_details_attributes
+    :invoice_details_attributes, :invoice_details_count
 
   belongs_to :seller, foreign_key: "seller_id", class_name: "User"
   belongs_to :buyer, foreign_key: "buyer_id", class_name: "User"
@@ -121,7 +121,7 @@ class Invoice < ActiveRecord::Base
 
   # count pixis
   def pixi_count
-    invoice_details.size rescue 0
+    invoice_details_count rescue 0
   end
 
   # submit payment request for review
@@ -256,7 +256,7 @@ class Invoice < ActiveRecord::Base
   def mark_as_closed 
     if paid?
       listings.find_each do |listing|
-        inv_list = Invoice.joins(:invoice_details).where("`invoice_details`.`pixi_id` = ?", listing.pixi_id).readonly(false)
+        inv_list = Invoice.where(status: 'unpaid').joins(:invoice_details).where("`invoice_details`.`pixi_id` = ?", listing.pixi_id).readonly(false)
         inv_list.find_each do |inv|
           inv.update_attribute(:status, 'closed') if inv.pixi_count == 1 && inv.id != self.id
         end

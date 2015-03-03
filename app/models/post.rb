@@ -137,7 +137,7 @@ class Post < ActiveRecord::Base
       end
 
       # new post
-      conv.posts.create recipient_id: recipient.id, user_id: sender.id, msg_type: msgType, pixi_id: conv.pixi_id, content: msg + ("%0.2f" % inv.amount)
+      conv.posts.create recipient_id: recipient.id, user_id: sender.id, msg_type: msgType, pixi_id: conv.pixi_id, content: msg
     else
       false
     end
@@ -146,7 +146,7 @@ class Post < ActiveRecord::Base
   # send invoice post
   def self.send_invoice inv, listing
     if !inv.blank? && !listing.blank?
-      msg = "You received Invoice ##{inv.id} from #{inv.seller_name} for $"
+      msg = "You received Invoice ##{inv.id} from #{inv.seller_name} for $" + ("%0.2f" % inv.amount)
       add_post inv, listing, inv.seller, inv.buyer, msg, 'inv'
     else
       false
@@ -162,7 +162,7 @@ class Post < ActiveRecord::Base
 
     # send post
     if inv && listing
-      msg = "You received a payment for Invoice ##{inv.id} from #{inv.buyer_name} for $"
+      msg = "You received a payment for Invoice ##{inv.id} from #{inv.buyer_name} for $" + ("%0.2f" % inv.amount)
       add_post inv, listing, inv.buyer, inv.seller, msg, 'paidinv'
     else
       false
@@ -182,7 +182,7 @@ class Post < ActiveRecord::Base
   # check invoice status for buyer or seller
   def check_invoice usr, flg, fld
     if listing.active?
-      listing.invoices.find_each do |invoice|
+      listing.invoices.where(buyer_id: recipient_id).find_each do |invoice|
         result = flg ? invoice.owner?(usr) : !invoice.owner?(usr) 
         if result && invoice.unpaid? && invoice.send(fld) == usr.name
           invoice.invoice_details.find_each do |item|

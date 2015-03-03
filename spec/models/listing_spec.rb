@@ -7,10 +7,12 @@ describe Listing do
     @listing = FactoryGirl.create(:listing, seller_id: @user.id, quantity: 1) 
   end
 
-  def create_invoice status='active'
+  def create_invoice status='active', qty=1
+    @listing2 = create :listing, seller_id: @user.id, quantity: 2, title: 'Leather Coat'
     @buyer = create(:pixi_user)
     @invoice = @user.invoices.build attributes_for(:invoice, buyer_id: @buyer.id, status: status) 
-    @details = @invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+    @details = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id, quantity: qty 
+    @details2 = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing2.pixi_id, quantity: 3 
     @invoice.save!
   end
 
@@ -82,6 +84,7 @@ describe Listing do
   it { should have_many(:saved_listings).with_foreign_key('pixi_id') }
   it { should respond_to(:buyer) }
   it { should belong_to(:buyer).with_foreign_key('buyer_id') }
+  it { should have_many(:active_pixi_wants).class_name('PixiWant').with_foreign_key('pixi_id').conditions(:status=>"active") }
 
   describe "when site_id is empty" do
     before { @listing.site_id = "" }
@@ -203,11 +206,11 @@ describe Listing do
   end
 
   describe "does not include invalid category listings" do 
-    it { Listing.get_by_category(0, 1).should_not include @listing } 
+    it { Listing.get_by_category(0).should_not include @listing } 
   end
 
   describe "includes active category listings" do 
-    it { Listing.get_by_category(@listing.category_id, 1).should_not be_empty }
+    it { Listing.get_by_category(@listing.category_id).should_not be_empty }
   end
 
   describe "active_invoices" do
@@ -260,29 +263,29 @@ describe Listing do
     it "returns true" do
       stub_const("MIN_PIXI_COUNT", 0)
       expect(MIN_PIXI_COUNT).to eq(0)
-      expect(Listing.has_enough_pixis?(@listing.category_id, @listing.site_id, 1)).to be_true
+      expect(Listing.has_enough_pixis?(@listing.category_id, @listing.site_id)).to be_true
     end
 
     it "returns false" do
       stub_const("MIN_PIXI_COUNT", 500)
       expect(MIN_PIXI_COUNT).to eq(500)
-      expect(Listing.has_enough_pixis?(@listing.category_id, 1, 1)).not_to be_true
+      expect(Listing.has_enough_pixis?(@listing.category_id, 1)).not_to be_true
     end
   end
 
   describe "active_by_city" do
-    it { Listing.active_by_city(0, 1, 1).should_not include @listing } 
+    it { Listing.active_by_city(0, 1).should_not include @listing } 
     it "finds active pixis by city" do
       @site = create :site, name: 'Detroit', org_type: 'city'
       @site.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro', city: 'Detroit', state: 'MI'
       listing = create(:listing, seller_id: @user.id, site_id: @site.id) 
-      expect(Listing.active_by_city('Detroit', 'MI', 1).count).to eq(1)
+      expect(Listing.active_by_city('Detroit', 'MI').count).to eq(1)
     end
   end
 
   describe "category_by_site" do
-    it { Listing.get_category_by_site(0, 1, 1).should_not include @listing } 
-    it { Listing.get_category_by_site(@listing.category_id, @listing.site_id, 1).should_not be_empty }
+    it { Listing.get_category_by_site(0, 1).should_not include @listing } 
+    it { Listing.get_category_by_site(@listing.category_id, @listing.site_id).should_not be_empty }
   end
 
   describe "seller listings" do 
@@ -922,6 +925,7 @@ describe Listing do
     before(:each) do
       @usr = create :pixi_user
       @pixi_want = @user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
+      @pixi_want = @user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id, status: 'sold'
     end
 
     it { Listing.wanted_list(@usr).should_not include @listing } 
@@ -945,9 +949,9 @@ describe Listing do
       @admin_user = create :admin
       @admin_user.user_type_code = 'AD'
       @admin_user.save!
-      expect(Listing.wanted_list(@admin_user, 1, @listing.category_id, @listing.site_id).count).not_to eq 0
-      Listing.wanted_list(@admin_user, 1, @listing.category_id, @listing.site_id).should include @listing
-      Listing.wanted_list(@usr, 1, @listing.category_id, @listing.site_id).should_not include @listing
+      expect(Listing.wanted_list(@admin_user, @listing.category_id, @listing.site_id).count).not_to eq 0
+      Listing.wanted_list(@admin_user, @listing.category_id, @listing.site_id).should include @listing
+      Listing.wanted_list(@usr, @listing.category_id, @listing.site_id).should_not include @listing
     end
   end
 
@@ -999,7 +1003,7 @@ describe Listing do
 
     it "does not return new listing" do 
       listing = FactoryGirl.build :listing, seller_id: user.id 
-      listing.dup_pixi(false).should_not be_true
+      listing.dup_pixi(false).should_not be_nil
     end
 
     it "returns new listing" do 
@@ -1520,8 +1524,12 @@ describe Listing do
       create_invoice 'paid'
     end
     it { expect(@listing.sold_count).to eq 0 }
-    it "has count > 0", run: true do
+    it "has count = 1", run: true do
       expect(@listing.sold_count).to eq 1
+    end
+    it "has count > 1" do
+      create_invoice 'paid', 3
+      expect(@listing.sold_count).to eq 3
     end
   end
 
@@ -1557,12 +1565,12 @@ describe Listing do
   end
 
   describe "get_by_city" do
-    it { Listing.get_by_city(0, 1, 1).should_not include @listing } 
+    it { Listing.get_by_city(0, 1).should_not include @listing } 
     it "should be able to toggle get_active" do
       @listing.status = 'expired'
       @listing.save!
-      Listing.get_by_city(@listing.category_id, @listing.site_id, 1, true).should be_empty
-      Listing.get_by_city(@listing.category_id, @listing.site_id, 1, false).should_not be_empty
+      Listing.get_by_city(@listing.category_id, @listing.site_id, true).should be_empty
+      Listing.get_by_city(@listing.category_id, @listing.site_id, false).should_not be_empty
     end
 
     it "finds active pixis by org_type" do

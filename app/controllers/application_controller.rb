@@ -136,6 +136,6 @@ class ApplicationController < ActionController::Base
 
   # set root path based on pixi count
   def get_root_path
-    Listing.has_enough_pixis?(@cat, @region, @page) ? categories_path(loc: @region) : local_listings_path(loc: @region)
+    Listing.has_enough_pixis?(@cat, @region) ? categories_path(loc: @region) : local_listings_path(loc: @region)
   end
 end

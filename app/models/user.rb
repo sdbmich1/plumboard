@@ -314,7 +314,7 @@ class User < ActiveRecord::Base
   end
 
   # return users by type
-  def self.get_by_type val, pg=1
+  def self.get_by_type val
     val.blank? ? all : where(:user_type_code => val)
   end
 

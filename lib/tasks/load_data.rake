@@ -53,6 +53,14 @@ namespace :db do
   task :load_quantity => :environment do
     update_quantity
   end
+
+  task :load_inv_pixi_counter => :environment do
+    set_inv_detail_count
+  end
+
+  task :load_want_status => :environment do
+    set_want_status
+  end
 end
 
 def set_keys
@@ -177,7 +185,7 @@ end
 
 # load country field for all Contacts
 def load_countries
-  Contact.update_all(:country => 'United States')
+  Contact.where(country: nil).update_all(:country => 'United States')
   Site.where(:org_type => 'country').find_each do |site|
     site.contacts.find_each do |contact|
       contact.country = site.name
@@ -187,5 +195,20 @@ def load_countries
 end
 
 def update_quantity
-  Listing.active.where(quantity: nil).update_all(quantity: 1)
+  Listing.where(quantity: nil).update_all(quantity: 1)
+end
+
+def set_inv_detail_count
+  Invoice.find_each { |inv| Invoice.reset_counters(inv.id, :invoice_details) }
+end
+
+def set_want_status
+  Invoice.where(status: 'paid').find_each do |inv|
+    inv.listings.find_each do |listing|
+      listing.pixi_wants.where("user_id = ? AND pixi_id = ? AND status = ?", inv.buyer_id, listing.pixi_id, 'active').update_all(status: 'sold')
+    end
+  end
+
+  # update all non-sold wants
+  PixiWant.where(status: nil).update_all(status: 'active')
 end

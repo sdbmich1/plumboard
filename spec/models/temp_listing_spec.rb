@@ -162,12 +162,9 @@ describe TempListing do
     end
   end
 
-  describe "should not include invalid site listings" do 
-    it { TempListing.get_by_site(0).should_not include @temp_listing } 
-  end
-
-  describe "should include site listings" do
-    it { TempListing.get_by_site(@temp_listing.site.id).should_not be_empty }
+  describe "get_by_site" do 
+    it { TempListing.get_by_site(0, false).should_not include @temp_listing } 
+    it { TempListing.get_by_site(@temp_listing.site_id, false).should_not be_empty }
   end
 
   describe "seller listings" do
@@ -1053,8 +1050,8 @@ describe TempListing do
       temp_listing = FactoryGirl.create :temp_listing
       temp_listing.status = 'pending'
       temp_listing.save!
-      TempListing.get_by_city(0, 1, 1, false).should_not include temp_listing
-      TempListing.get_by_city(temp_listing.category_id, temp_listing.site_id, 1, false).should_not be_empty
+      TempListing.get_by_city(0, 1, false).should_not include temp_listing
+      TempListing.get_by_city(temp_listing.category_id, temp_listing.site_id, false).should_not be_empty
     end
 
     it "finds by org_type" do
@@ -1064,7 +1061,7 @@ describe TempListing do
         site.contacts.create(FactoryGirl.attributes_for(:contact, address: 'Metro', city: 'Detroit', state: 'MI',
           country: 'United States of America', lat: lat, lng: lng))
         temp_listing = create(:temp_listing, seller_id: @user.id, site_id: site.id, category_id: @category.id) 
-        expect(TempListing.get_by_city(temp_listing.category_id, temp_listing.site_id, 1, false).first).to eq(temp_listing)
+        expect(TempListing.get_by_city(temp_listing.category_id, temp_listing.site_id, false).first).to eq(temp_listing)
         temp_listing.destroy
       }
     end
