@@ -28,7 +28,8 @@ class TransactionsController < ApplicationController
   end
 
   def index
-    respond_with(@transactions = Transaction.get_by_date(@start_date, @end_date).paginate(page: @page, per_page: 15))
+    @unpaginated_transactions = Transaction.get_by_date(@start_date, @end_date)
+    respond_with(@transactions = @unpaginated_transactions.paginate(page: @page, per_page: 15)) { |format| render_csv format }
   end
 
   protected
@@ -52,5 +53,9 @@ class TransactionsController < ApplicationController
   def load_date_range
     @date_range = params[:date_range]
     @start_date, @end_date = ResetDate::get_date_range(@date_range)
+  end
+
+  def render_csv format
+    format.csv { send_data(render_to_string(csv: @unpaginated_transactions), disposition: "attachment; filename=#{Transaction.filename}.csv") }
   end
 end

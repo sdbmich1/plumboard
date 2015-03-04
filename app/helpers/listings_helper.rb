@@ -253,14 +253,13 @@ module ListingsHelper
   def get_csv_path status_type, cid, loc
     case status_type
       when "pending"; pending_listings_path(status: 'pending', loc: loc, cid: cid, format: 'csv')
-      when "draft"; unposted_temp_listings_path(status: 'new/edit', loc: loc, cid: cid, format: 'csv')
       when "active"; listings_path(status: 'active', loc: loc, cid: cid, format: 'csv')
       when "expired"; listings_path(status: 'expired', loc: loc, cid: cid, format: 'csv')
       when "sold"; listings_path(status: 'sold', loc: loc, cid: cid, format: 'csv')
       when "removed"; listings_path(status: 'removed', loc: loc, cid: cid, format: 'csv')
-      when "denied"; listings_path(status: 'denied', loc: loc, cid: cid, format: 'csv')
-      when "invoiced"; invoiced_listings_path(loc: loc, cid: cid, format: 'csv')
-      when "wanted"; wanted_listings_path(loc: loc, cid: cid, format: 'csv')
+      when "denied"; pending_listings_path(status: 'denied', loc: loc, cid: cid, format: 'csv')
+      when "invoiced"; invoiced_listings_path(status: 'invoiced', loc: loc, cid: cid, format: 'csv')
+      when "wanted"; wanted_listings_path(status: 'wanted', loc: loc, cid: cid, format: 'csv')
     end
   end
 

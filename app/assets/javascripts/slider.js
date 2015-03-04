@@ -29,9 +29,9 @@ function load_slider(cntl) {
       var top_margin = (height_parent - (height_child + padding_top_child + padding_bottom_child)) / 2;
       $(this).html('<div style="height: ' + top_margin + 'px; width: 100%;"></div>' + $(this).html());
     });
-  }
 
-  $('.lazy').lazyload({
-    effect: 'fadeIn'
-  });
+    $('.lazy').lazyload({
+      effect: 'fadeIn'
+    });
+  }
 }

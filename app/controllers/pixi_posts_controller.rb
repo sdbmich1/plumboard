@@ -78,7 +78,8 @@ class PixiPostsController < ApplicationController
   end
 
   def pixter_report
-    respond_with(@pixi_posts = PixiPost.pixter_report(@start_date, @end_date, @pixter_id).paginate(page: @page, per_page: 15))
+    @unpaginated_pixi_posts = PixiPost.pixter_report(@start_date, @end_date, @pixter_id)
+    respond_with(@pixi_posts = @unpaginated_pixi_posts.paginate(page: @page, per_page: 15)) { |format| render_csv format }
   end
   
   private
@@ -126,4 +127,7 @@ class PixiPostsController < ApplicationController
     @start_date, @end_date = ResetDate::get_date_range(@date_range)
   end
 
+  def render_csv format
+    format.csv { send_data(render_to_string(csv: @unpaginated_pixi_posts), disposition: "attachment; filename=#{PixiPost.filename}.csv") }
+  end
 end

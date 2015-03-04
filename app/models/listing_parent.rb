@@ -155,7 +155,7 @@ class ListingParent < ActiveRecord::Base
 
   # get listings by status and, if provided, category and location
   def self.check_category_and_location status, cid, loc, pg=1
-    cid || loc ? get_by_status(status).get_by_city(cid, loc, pg, false) : get_by_status(status)
+    cid || loc ? get_by_status(status).get_by_city(cid, loc, false) : get_by_status(status)
   end
 
   # verify if listing has been paid for
@@ -444,80 +444,80 @@ class ListingParent < ActiveRecord::Base
   end
 
   # get active pixis by region
-  def self.active_by_region city, state, pg=1, get_active=true, range=100
+  def self.active_by_region city, state, get_active=true, range=100
     loc = [city, state].join(', ') if city && state
     if get_active
-      active.where(site_id: Contact.proximity(nil, range, loc, true)).set_page(pg) if loc rescue nil
+      active.where(site_id: Contact.proximity(nil, range, loc, true)) if loc rescue nil
     else
-      where(site_id: Contact.proximity(nil, range, loc, true)).set_page(pg) if loc rescue nil
+      where(site_id: Contact.proximity(nil, range, loc, true)) if loc rescue nil
     end
   end
 
   # get active pixis by city
-  def self.active_by_city city, state, pg=1, get_active=true
+  def self.active_by_city city, state, get_active=true
     if get_active
-      active.where(site_id: Contact.get_sites(city, state)).set_page pg
+      active.where(site_id: Contact.get_sites(city, state))
     else
-      where(site_id: Contact.get_sites(city, state)).set_page pg
+      where(site_id: Contact.get_sites(city, state))
     end
   end
 
   # get active pixis by state
-  def self.active_by_state state, pg=1, get_active=true
+  def self.active_by_state state, get_active=true
     if get_active
-      active.where(site_id: Contact.where(state: state).map(&:contactable_id).uniq).set_page(pg)
+      active.where(site_id: Contact.where(state: state).map(&:contactable_id).uniq)
     else
-      where(site_id: Contact.where(state: state).map(&:contactable_id).uniq).set_page(pg)
+      where(site_id: Contact.where(state: state).map(&:contactable_id).uniq)
     end
   end
 
   # get active pixis by country
-  def self.active_by_country country, pg=1, get_active=true
+  def self.active_by_country country, get_active=true
     if get_active
-      active.where(site_id: Contact.where(country: country).map(&:contactable_id).uniq).set_page(pg)
+      active.where(site_id: Contact.where(country: country).map(&:contactable_id).uniq)
     else
-      where(site_id: Contact.where(country: country).map(&:contactable_id).uniq).set_page(pg)
+      where(site_id: Contact.where(country: country).map(&:contactable_id).uniq)
     end
   end
 
   # check site's org_type and call the corresponding active_by method, or get pixis by ids if this fails
-  def self.get_by_city cid, sid, pg=1, get_active=true
+  def self.get_by_city cid, sid, get_active=true
     if (loc = Site.check_site(sid, 'city')) && !loc.contacts.blank?
       city, state = loc.contacts[0].city, loc.contacts[0].state
-      cid.blank? ? active_by_city(city, state, pg, get_active) : where('category_id = ?', cid).active_by_city(city, state, pg, get_active) 
+      cid.blank? ? active_by_city(city, state, get_active) : where('category_id = ?', cid).active_by_city(city, state, get_active) 
     elsif (loc = Site.check_site(sid, 'region')) && !loc.contacts.blank?
       city, state = loc.contacts[0].city, loc.contacts[0].state
-      cid.blank? ? active_by_region(city, state, pg, get_active) : where('category_id = ?', cid).active_by_region(city, state, pg, get_active) 
+      cid.blank? ? active_by_region(city, state, get_active) : where('category_id = ?', cid).active_by_region(city, state, get_active) 
     elsif (loc = Site.check_site(sid, 'state')) && !loc.contacts.blank?
       state = loc.contacts[0].state
-      cid.blank? ? active_by_state(state, pg, get_active) : where('category_id = ?', cid).active_by_state(state, pg, get_active) 
+      cid.blank? ? active_by_state(state, get_active) : where('category_id = ?', cid).active_by_state(state, get_active) 
     elsif (loc = Site.check_site(sid, 'country')) && !loc.contacts.blank?
       country = loc.contacts[0].country
-      cid.blank? ? active_by_country(country, pg, get_active) : where('category_id = ?', cid).active_by_country(country, pg, get_active) 
+      cid.blank? ? active_by_country(country, get_active) : where('category_id = ?', cid).active_by_country(country, get_active) 
     else
-      cid.blank? ? get_by_site(sid, pg, get_active) : get_category_by_site(cid, sid, pg, get_active)
+      cid.blank? ? get_by_site(sid, get_active) : get_category_by_site(cid, sid, get_active)
     end
   end
 
   # get active pixis by site id
-  def self.get_by_site sid, pg=1, get_active=true
+  def self.get_by_site sid, get_active=true
     if get_active
-      active.where(:site_id => sid).set_page pg
+      active.where(:site_id => sid)
     else
-      where(:site_id => sid).set_page pg
+      where(:site_id => sid)
     end
   end
 
   # get pixis by category & site ids
-  def self.get_category_by_site cid, sid, pg=1, get_active=true
+  def self.get_category_by_site cid, sid, get_active=true
     unless sid.blank?
       if get_active
-        active.where('category_id = ? and site_id = ?', cid, sid).set_page pg
+        active.where('category_id = ? and site_id = ?', cid, sid)
       else
-        where('category_id = ? and site_id = ?', cid, sid).set_page pg
+        where('category_id = ? and site_id = ?', cid, sid)
       end
     else
-      get_by_category cid, get_active, pg
+      get_by_category cid, get_active
     end
   end
 
@@ -574,5 +574,9 @@ class ListingParent < ActiveRecord::Base
   def amt_left
     result = quantity - sold_count rescue 0
     result <= 0 ? 0 : result
+  end
+
+  def self.filename status
+    status.capitalize + '_' + Time.now.year.to_s + '_' + Time.now.month.to_s + '_' + Time.now.day.to_s
   end
 end

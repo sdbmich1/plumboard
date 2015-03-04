@@ -6,7 +6,7 @@
   <%= f.hidden_field 'user_id', value: @user.id %>
   <%= render partial: 'shared/conv_posts', locals: {f: f, listing: listing, mtype: mtype, msg: msg} %>
   <div class="modal-footer">
-    <p><%= f.submit "Send", class: 'btn btn-primary btn-mask', data: {disable_with: "Sending..."} %>
+    <p><%= f.submit "Send", class: 'btn btn-small btn-primary btn-mask', data: {disable_with: "Sending..."} %>
     <a href="#" class="btn btn-small" data-dismiss="modal">Close</a></p>
   </div>
 <% end %>

@@ -120,11 +120,6 @@ class TempListing < ListingParent
     end
   end
 
-  # find listings by site id
-  def self.get_by_site val
-    where(:site_id => val)
-  end
-
   # find pixis in draft status
   def self.draft
     include_list.where("status NOT IN ('approved', 'pending')").reorder('temp_listings.updated_at DESC')

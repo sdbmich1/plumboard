@@ -8,7 +8,8 @@ class InvoiceDetail < ActiveRecord::Base
   validates :price, presence: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
     		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_PIXI_AMT.to_f }
   validates :quantity, presence: true, :numericality => { greater_than: 0, less_than_or_equal_to: MAX_INV_QTY.to_i }    
-  validates :subtotal, presence: true, :numericality => { greater_than: 0 }
+  validates :subtotal, presence: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
+                numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_PIXI_AMT.to_f } 
 
   def pixi_title
     listing.title rescue nil

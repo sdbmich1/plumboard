@@ -208,11 +208,17 @@ describe Post do
       @post.can_bill?(@new_user).should be_true
     end
     
-    it "should not return true when paid" do
+    it "does not return true when paid" do
+      px_user = create :pixi_user
+      @listing.update_attribute(:quantity, 3)
+      @conversation2 = @listing.conversations.create attributes_for :conversation, user_id: px_user.id, recipient_id: @user.id
+      @post2 = @conversation.posts.build attributes_for :post, user_id: px_user.id, recipient_id: @user.id, pixi_id: @listing.pixi_id
+      @post2.save
       add_invoice
       @invoice.status = 'paid'
       @invoice.save!
       @post.reload.can_bill?(@user).should_not be_true
+      @post2.reload.can_bill?(@user).should be_true
     end
     
     it "should not return true when removed" do

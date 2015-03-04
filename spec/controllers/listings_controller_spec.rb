@@ -38,7 +38,7 @@ describe ListingsController do
       @listings = stub_model(Listing)
       Listing.stub_chain(:check_category_and_location).and_return(@listings)
       @listings.stub!(:paginate).and_return( @listings )
-      controller.stub_chain(:load_data, :get_location).and_return(:success)
+      controller.stub_chain(:get_location).and_return(:success)
       do_get
     end
 
@@ -64,7 +64,7 @@ describe ListingsController do
     end
 
     it "responds to CSV" do
-      get :index, :format => 'csv'
+      get :index, :status => 'active', :format => 'csv'
       expect(response).to be_success
     end
   end
@@ -133,6 +133,7 @@ describe ListingsController do
     before(:each) do
       @listings = stub_model(Listing)
       Listing.stub!(:get_by_city).and_return(@listings)
+      @listings.stub!(:set_page).and_return(@listings)
       controller.stub!(:load_data).and_return(:success)
       do_get
     end
@@ -247,6 +248,7 @@ describe ListingsController do
       @listings = stub_model(Listing)
       controller.stub!(:current_user).and_return(@user)
       Listing.stub!(:wanted_list).and_return( @listings )
+      @listings.stub!(:paginate).and_return( @listings )
       do_get
     end
 

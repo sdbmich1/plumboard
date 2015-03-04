@@ -48,7 +48,7 @@ feature "UserSignins" do
       set_const 0
       user_login @user
       expect(Listing.get_by_site(@loc, 1).size).to eq(1)
-      expect(Listing.get_by_city(nil, @loc, 1).size).to eq(1)
+      expect(Listing.get_by_city(nil, @loc).size).to eq(1)
       page.should have_content "Home"
     end
 

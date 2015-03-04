@@ -420,9 +420,12 @@ describe Invoice do
     before(:each) do
       @other_buyer = create :pixi_user
       @invoice.save!; sleep 2
-      @invoice2 = @user.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: @other_buyer.id, status: 'unpaid')
-      @details2 = @invoice2.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
-      @invoice2.save!
+      @invoice2 = @user.invoices.build attributes_for(:invoice, buyer_id: @other_buyer.id, status: 'unpaid')
+      @details2 = @invoice2.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+      @invoice2.save!; sleep 2
+      @invoice3 = @user.invoices.build attributes_for(:invoice, buyer_id: @other_buyer.id, status: 'paid')
+      @details3 = @invoice3.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+      @invoice3.save!; sleep 2
     end
 
     it 'closes other invoices' do
@@ -447,7 +450,6 @@ describe Invoice do
       @invoice.status = 'paid'
       @invoice.save!; sleep 3
       expect(@invoice3.status).not_to eq 'closed'
-      expect(Invoice.where(status: 'paid').count).to eq 1
       expect(Invoice.where(status: 'closed').count).to eq 1
     end
   end

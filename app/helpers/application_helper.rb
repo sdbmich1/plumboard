@@ -74,7 +74,7 @@ module ApplicationHelper
 
   # set home path based on pixi count
   def set_home_path
-    Listing.has_enough_pixis?(@cat, @region, @page) ? categories_path(loc: @region) : local_listings_path(loc: @region)
+    Listing.has_enough_pixis?(@cat, @region) ? categories_path(loc: @region) : local_listings_path(loc: @region)
   end
 
   # set image

@@ -119,18 +119,8 @@ feature "Listings" do
       expect{
           page.should have_link 'Want'
           click_link 'Want'
-	  click_link 'Cancel'
-          page.should_not have_content 'Want'
-          page.should_not have_content 'Successfully sent message to seller'
-      }.not_to change(Post,:count).by(1)
-    end
-
-    it "does not ask a seller", js: true do
-      expect{
-          page.should have_link 'Ask'
-          click_link 'Ask'
-    click_link 'Cancel'
-          page.should_not have_content 'Ask'
+          sleep 3
+	        click_link 'Close'
           page.should_not have_content 'Successfully sent message to seller'
       }.not_to change(Post,:count).by(1)
     end
@@ -138,7 +128,7 @@ feature "Listings" do
     it "clicks on Cool", js: true do
       expect{
           page.find('#cool-btn').click
-	  sleep 3
+	        sleep 3
           page.should have_link 'Uncool'
           page.should_not have_link 'Cool'
       }.to change(PixiLike,:count).by(1)
@@ -492,17 +482,17 @@ feature "Listings" do
       before(:each) do
         add_region
         @site = create :site, name: 'Detroit', org_type: 'city'
-	@site.contacts.create attributes_for :contact, address: '1611 Tyler', city: 'Detroit', state: 'MI', zip: '48238'
+	      @site.contacts.create attributes_for :contact, address: '1611 Tyler', city: 'Detroit', state: 'MI', zip: '48238'
         @site3 = create :site, name: 'Pixi Tech', org_type: 'school'
-	@site3.contacts.create attributes_for :contact, address: '14018 Prevost', city: 'Detroit', state: 'MI', zip: '48227'
-	@category = create :category, name: 'Music'
-	@category5 = create :category, name: 'Electronics'
+	      @site3.contacts.create attributes_for :contact, address: '14018 Prevost', city: 'Detroit', state: 'MI', zip: '48227'
+	      @category = create :category, name: 'Music'
+	      @category5 = create :category, name: 'Electronics'
         create(:listing, title: "HP Printer J4580", description: "printer", seller_id: @user.id, site_id: @site.id, 
-	  category_id: @category5.id) 
-	@category1 = create :category, name: 'Jobs'
-	@category2 = create :category, name: 'Automotive'
-	@category3 = create :category, name: 'Furniture'
-	@category4 = create :category, name: 'Books'
+	      category_id: @category5.id) 
+	      @category1 = create :category, name: 'Jobs'
+	      @category2 = create :category, name: 'Automotive'
+	      @category3 = create :category, name: 'Furniture'
+	      @category4 = create :category, name: 'Books'
         @listing = create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, category_id: @category.id, site_id: @site3.id) 
         @listing1 = create(:listing, title: "Intern", description: "Unpaid job", seller_id: @user.id, category_id: @category1.id, 
 	  site_id: @site3.id) 
@@ -525,21 +515,21 @@ feature "Listings" do
 
       it "searches for a listing", js: true do
         fill_in 'search', with: 'guitar'
-	click_on 'submit-btn'
+	      click_on 'submit-btn'
         page.should_not have_content 'HP Printer J4580'
       end
 
       it "selects a site", js: true do
         fill_autocomplete('site_name', with: 'pixi')
-	set_site_id @site3.id; sleep 2
+	      set_site_id @site3.id; sleep 2
         page.should have_content @listing1.title
-        page.should_not have_content @pixi.title
+        page.should have_content @pixi.title
         page.should have_content @site3.name
       end
 
       it "selects categories", js: true do
         fill_autocomplete('site_name', with: 'pixi')
-	set_site_id @site3.id; sleep 2
+	      set_site_id @site3.id; sleep 2
         select('Music', :from => 'category_id'); sleep 2
         page.should have_content @category.name_title
         page.should_not have_content @listing1.title
