@@ -314,12 +314,14 @@ describe Listing do
   end
 
   describe "buyer listings" do 
-    it { Listing.get_by_buyer(0).should_not include @listing } 
+    before :each, run: true do
+      create_invoice 
+    end
 
-    it "includes buyer listings" do 
-      @listing.buyer_id = 1
+    it { Listing.get_by_buyer(0).should_not include @listing } 
+    it "includes buyer listings", run: true do 
       @listing.save
-      Listing.get_by_buyer(1).should_not be_empty  
+      Listing.get_by_buyer(@invoice.buyer_id).should_not be_empty  
     end
   end
 
