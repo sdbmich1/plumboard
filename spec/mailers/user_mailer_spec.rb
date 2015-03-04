@@ -154,4 +154,18 @@ describe UserMailer do
     its(:to) { should == ["support@pixiboard.com"] }
     its(:subject) { should_not include "[ TEST ]" }
   end
+
+  describe "send_invoiceless_pixi_notice" do
+    subject { UserMailer.send_invoiceless_pixi_notice(listing)}
+    let(:user) { create :pixi_user }
+    let(:listing) { create :listing, seller_id: user.id }
+
+    it { expect{subject.deliver}.not_to change{ActionMailer::Base.deliveries.length}.by(0) }
+    its(:to) { should == [listing.seller_email] }
+    its(:subject) { should include "Reminder: Someone Wants Your #{listing.title}" }
+
+    it 'assigns seller_first_name' do
+      expect(subject.body.encoded).to match(listing.seller_first_name)
+    end
+  end
 end

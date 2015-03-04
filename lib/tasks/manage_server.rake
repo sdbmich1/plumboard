@@ -88,5 +88,13 @@ namespace :manage_server do
     end
   end	
 
+  task :send_invoiceless_pixi_notices => :environment do
+    listings = Listing.invoiceless_pixis
+    unless listings.blank?
+      listings.each do |listing|
+        UserMailer.delay.send_invoiceless_pixi_notice listing
+      end
+    end
+  end
 end
 
