@@ -711,8 +711,6 @@ feature "Transactions" do
       page.should have_content "Item Title"
       page.should have_content "Buyer"
       page.should have_content "Seller"
-      page.should have_content "Price"
-      page.should have_content "Quantity"
       page.should have_content "Buyer Total"
       page.should have_content "Seller Total"
     end
@@ -722,8 +720,6 @@ feature "Transactions" do
       page.should have_content @txn.pixi_title
       page.should have_content @txn.buyer_name
       page.should have_content @txn.seller_name
-      page.should have_content @txn.get_invoice.price
-      page.should have_content @txn.get_invoice.quantity
       page.should have_content @txn.amt
       page.should have_content @txn.get_invoice.amount - @txn.get_invoice.get_fee(true)
     end
