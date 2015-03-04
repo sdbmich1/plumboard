@@ -1,11 +1,13 @@
 require 'spec_helper'
 
 describe InvoiceDetail do
+  before(:all) do
+    @user = create(:pixi_user, email: "jblow123@pixitest.com") 
+    @buyer = create(:pixi_user, first_name: 'Jaine', last_name: 'Smith', email: 'jaine.smith@pixitest.com') 
+    @listing = create(:listing, seller_id: @user.id)
+  end
   before(:each) do
-    @user = FactoryGirl.create(:pixi_user, email: "jblow123@pixitest.com") 
-    @buyer = FactoryGirl.create(:pixi_user, first_name: 'Jaine', last_name: 'Smith', email: 'jaine.smith@pixitest.com') 
-    @listing = FactoryGirl.create(:listing, seller_id: @user.id)
-    @invoice = @user.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: @buyer.id)
+    @invoice = @user.invoices.build attributes_for(:invoice, buyer_id: @buyer.id)
     @details = @invoice.invoice_details.build pixi_id: @listing.pixi_id 
   end
 
@@ -22,21 +24,11 @@ describe InvoiceDetail do
   it { should validate_presence_of(:price) }
   it { should validate_presence_of(:quantity) }
   it { should validate_presence_of(:subtotal) }
-  it { should allow_value(50.00).for(:price) }
-  it { should allow_value(5000).for(:price) }
-  it { should_not allow_value('').for(:price) }
-  it { should_not allow_value(50000000).for(:price) }
-  it { should_not allow_value(5000.001).for(:price) }
-  it { should_not allow_value(-5000.00).for(:price) }
-  it { should_not allow_value('$5000.0').for(:price) }
-  it { should allow_value(1).for(:quantity) }
-  it { should allow_value(50).for(:quantity) }
-  it { should_not allow_value('').for(:quantity) }
-  it { should_not allow_value(5000).for(:quantity) }
-  it { should allow_value(50).for(:subtotal) }
-  it { should_not allow_value('').for(:subtotal) }
-  it { should_not allow_value(0).for(:subtotal) }
-  it { should_not allow_value(-5000.00).for(:subtotal) }
+  context 'amounts' do
+    [['quantity', 99], ['subtotal', 15000], ['price', 15000]].each do |item|
+      it_behaves_like 'an amount', item[0], item[1]
+    end
+  end
 
   describe 'pixi_title' do
     it "has a title", run: true do

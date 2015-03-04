@@ -21,7 +21,7 @@ feature "Invoices" do
   end
 
   def set_buyer_id
-    page.execute_script %Q{ $('#buyer_id').val("#{@buyer1.id}") }
+    page.execute_script %Q{ $('#invoice_buyer_id').val("#{@buyer1.id}") }
   end
    
   def select_buyer_name
@@ -360,14 +360,16 @@ feature "Invoices" do
         
         it 'should not accept bad sales tax', run: true do
           fill_in 'inv_tax', with: "R0"
-	  click_button 'Send'
-          page.should have_content "is not a number" 
+	  expect { 
+	    click_button 'Send'
+	  }.to change(Invoice, :count).by(0)
         end
         
         it 'does not accept invalid sales tax', run: true  do
           fill_in 'inv_tax', with: 5000
-	  click_button 'Send'
-          page.should have_content "Sales tax must be less than or equal to 15" 
+	  expect { 
+	    click_button 'Send'
+	  }.to change(Invoice, :count).by(0)
         end
         
         it 'does not accept invalid shipping amt', js: true do
@@ -375,12 +377,23 @@ feature "Invoices" do
           expect(MAX_SHIP_AMT).to eq(500)
 	  select_buyer
 	  select_pixi @listing
-	  set_buyer_id
           fill_in 'inv_price1', with: 40
 	  page.execute_script("$('#ship_amt').val('5000.00');")
-          # fill_in 'ship_amt', with: 5000
-	  click_button 'Send'
-          page.should have_content " must be less than or equal to 500" 
+	  expect { 
+	    click_button 'Send'
+	  }.to change(Invoice, :count).by(0)
+        end
+
+        it 'rejects invoice with no price before accepting it' do
+	  add_data
+          fill_in 'inv_price1', with: 0
+	  expect { 
+	    click_button 'Send'; sleep 3
+	  }.to change(Invoice, :count).by(0)
+          fill_in 'inv_price1', with: 100
+	  expect { 
+	    click_button 'Send'; sleep 3
+	  }.to change(Invoice, :count).by(1)
         end
       end
 
@@ -390,7 +403,6 @@ feature "Invoices" do
 	  expect { 
 	    click_button 'Send'; sleep 3
 	  }.to change(Invoice, :count).by(1)
-
 	  page.should have_content "Status" 
 	  page.should have_content "Bob Jones" 
         end
@@ -399,7 +411,6 @@ feature "Invoices" do
 	  expect { 
 	    click_button 'Send'; sleep 3
 	  }.to change(Invoice, :count).by(1)
-
 	  page.should have_content "Status" 
 	  page.should have_content "Bob Jones" 
         end
@@ -410,7 +421,6 @@ feature "Invoices" do
 	  expect { 
 	    click_button 'Send'; sleep 3
 	  }.to change(Invoice, :count).by(1)
-
 	  page.should have_content "Status" 
 	  page.should have_content "Shipping" 
 	  page.should have_content "$9.99" 
@@ -437,7 +447,7 @@ feature "Invoices" do
           page.find('.add-row-btn').click
           select_pixi @pixi, 'pixi_id2'
 	  set_buyer_id
-          fill_in 'inv_price2', with: "40"
+          fill_in 'inv_price2', with: "0"
 	  expect { 
 	    click_button 'Send'; sleep 5
 	  }.to change(Invoice, :count).by(1)

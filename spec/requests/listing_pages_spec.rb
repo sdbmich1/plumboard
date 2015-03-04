@@ -111,8 +111,7 @@ feature "Listings" do
       expect{
           page.should have_link 'Want'
           click_link 'Want'
-	  click_link 'Cancel'
-          page.should_not have_content 'Want'
+	  click_link 'Close'
           page.should_not have_content 'Successfully sent message to seller'
       }.not_to change(Post,:count).by(1)
     end
@@ -511,7 +510,7 @@ feature "Listings" do
         fill_autocomplete('site_name', with: 'pixi')
 	set_site_id @site3.id; sleep 2
         page.should have_content @listing1.title
-        page.should_not have_content @pixi.title
+        page.should have_content @pixi.title
         page.should have_content @site3.name
       end
 
