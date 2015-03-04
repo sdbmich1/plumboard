@@ -51,7 +51,6 @@ feature "Listings" do
     it "does not ask a question", js: true do
       expect{
           click_link 'Ask'
-          # page.find('#ask-btn').click
       }.not_to change(Post,:count).by(1)
       page.should have_content 'Sign in'
     end
@@ -128,9 +127,11 @@ feature "Listings" do
 
     it "does not ask a seller", js: true do
       expect{
-          page.find('#ask-btn').click
-          page.should have_selector('#contact_content', visible: true) 
-    fill_in 'contact_content', with: "\n"
+          page.should have_link 'Ask'
+          click_link 'Ask'
+    click_link 'Cancel'
+          page.should_not have_content 'Ask'
+          page.should_not have_content 'Successfully sent message to seller'
       }.not_to change(Post,:count).by(1)
     end
 
