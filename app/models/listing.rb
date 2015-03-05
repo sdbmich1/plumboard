@@ -19,7 +19,7 @@ class Listing < ListingParent
   has_many :invoices, through: :invoice_details, :dependent => :destroy
   has_many :active_pixi_wants, primary_key: 'pixi_id', foreign_key: 'pixi_id', class_name: 'PixiWant', conditions: { :status => 'active' }
 
-  # default_scope :order => "updated_at DESC"
+  default_scope :order => "listings.updated_at DESC"
 
   # finds specific pixi
   def self.find_pixi pid
