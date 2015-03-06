@@ -119,20 +119,7 @@ feature "Listings" do
       page.should have_content "Comments (#{pixi_post_listing.comments.size})"
       page.should have_content "Great pixi. I highly recommend it." 
       page.should have_content @user.name 
-      expect(page).not_to have_field('#comment_content', with: 'Great pixi')
-
-      visit(current_path) #refreshes page
-
-      expect{
-          page.should have_link 'Ask'
-          page.should have_link 'Cool'
-          click_link 'Ask'
-          sleep 3
-          fill_in 'ask_content', with: "What color is the item?\n" 
-          click_button 'Send'
-          sleep 5
-          page.should have_content 'Successfully sent message to seller'
-      }.to change(Post,:count).by(1)
+      expect(page).not_to have_field('#comment_content', with: 'Great pixi')      
     end
 
 
