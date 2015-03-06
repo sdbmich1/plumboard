@@ -95,6 +95,7 @@ feature "Listings" do
           page.should have_link 'Ask'
           page.should have_link 'Cool'
           click_link 'Want'
+          sleep 3
 	        click_button 'Send'
 	        sleep 5
           page.should_not have_link 'Want'
@@ -113,6 +114,44 @@ feature "Listings" do
       page.should have_content "Great pixi. I highly recommend it." 
       page.should have_content @user.name 
       expect(page).not_to have_field('#comment_content', with: 'Great pixi')
+
+      visit(current_path) #refreshes page
+
+      expect{
+          page.should have_link 'Ask'
+          page.should have_link 'Cool'
+          click_link 'Ask'
+          sleep 3
+          fill_in 'ask_content', with: "What color is the item?\n" 
+          click_button 'Send'
+          sleep 5
+          page.should have_content 'Successfully sent message to seller'
+      }.to change(Post,:count).by(1)
+    end
+
+
+    it "Asks a seller", js: true do
+      expect{
+          page.should have_link 'Ask'
+          page.should have_link 'Cool'
+          click_link 'Ask'
+          sleep 3
+          fill_in 'ask_content', with: "What color is the item?\n" 
+          click_button 'Send'
+          sleep 5
+          page.should have_content 'Successfully sent message to seller'
+      }.to change(Post,:count).by(1)
+
+      expect{
+          page.should have_link 'Ask'
+          page.should have_link 'Cool'
+          click_link 'Ask'
+          sleep 3
+          fill_in 'ask_content', with: "Is this a new item?\n" 
+          click_button 'Send'
+          sleep 5
+          page.should have_content 'Successfully sent message to seller'
+      }.to change(Post,:count).by(1)
     end
      
     it "does not contact a seller", js: true do
@@ -123,6 +162,23 @@ feature "Listings" do
 	        click_link 'Close'
           page.should_not have_content 'Successfully sent message to seller'
       }.not_to change(Post,:count).by(1)
+    end
+
+    it "does not ask a seller", js:true do
+      expect{
+          page.should have_link 'Ask'
+          click_link 'Ask'
+          sleep 3
+          click_link 'Close'
+          page.should_not have_content 'Successfully sent message to seller'
+      }.not_to change(Post,:count).by(1)
+    end
+
+    it "cannot ask seller with empty text box", js:true do
+          page.should have_link 'Ask'
+          click_link 'Ask'
+          sleep 3
+          page.should_not have_link 'Send'
     end
 
     it "clicks on Cool", js: true do
