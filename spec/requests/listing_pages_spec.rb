@@ -12,8 +12,9 @@ feature "Listings" do
   let(:temp_listing) { create(:temp_listing, title: "Guitar", description: "Lessons", seller_id: user.id ) }
   let(:listing) { create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id,
     site_id: site.id, quantity: 1, condition_type_code: condition_type.code) }
-  let(:pixi_post_listing) { create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, 
+  let(:pixi_post_listing) { create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, quantity: 1,
     pixan_id: pixter.id, site_id: site.id) }
+  let(:post_listing) { create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, quantity: 2, site_id: site.id) }
   let(:submit) { "Want" }
 
   def set_site_id val=@site.id
@@ -82,6 +83,26 @@ feature "Listings" do
     end
   end
 
+    def want_request sFlg=true, qty=1
+      expect{
+          page.should have_link 'Want'
+          page.should have_link 'Ask'
+          page.should have_link 'Cool'
+          click_link 'Want'; sleep 2
+          check_page_selectors ['#px-qty'], true, sFlg
+          if qty > 1
+            select("#{qty}", :from => "px-qty")
+          end
+          click_button 'Send'
+          sleep 5
+          page.should_not have_link 'Want'
+          page.should have_content 'Want'
+          page.should have_content 'Successfully sent message to seller'
+      }.to change(Post,:count).by(1)
+      expect(Conversation.count).to eql(1)
+      expect(PixiWant.first.quantity).to eql(qty)
+    end
+
   describe "Contact Owner" do 
     before(:each) do
       pixi_user = create(:pixi_user)
@@ -90,26 +111,11 @@ feature "Listings" do
     end
 
     it "Contacts a seller", js: true do
-      expect{
-          page.should have_link 'Want'
-          page.should have_link 'Ask'
-          page.should have_link 'Cool'
-          click_link 'Want'
-          sleep 3
-	        click_button 'Send'
-	        sleep 5
-          page.should_not have_link 'Want'
-          page.should have_content 'Want'
-          page.should have_content 'Successfully sent message to seller'
-      }.to change(Post,:count).by(1)
-
-      expect(Conversation.count).to eql(1)
-      expect(PixiWant.first.quantity).to eql(1)
+      want_request
       expect{
       	  fill_in 'comment_content', with: "Great pixi. I highly recommend it.\n" 
 	        sleep 3
       }.to change(Comment,:count).by(1)
-
       page.should have_content "Comments (#{pixi_post_listing.comments.size})"
       page.should have_content "Great pixi. I highly recommend it." 
       page.should have_content @user.name 
@@ -200,6 +206,18 @@ feature "Listings" do
       }.to change(SavedListing,:count).by(1)
 
       page.should have_content listing.nice_title
+    end
+  end
+
+  describe "Contact Owner w/ quantity > 1" do 
+    before(:each) do
+      pixi_user = create(:pixi_user)
+      init_setup pixi_user
+      visit listing_path(post_listing) 
+    end
+
+    it "seller want request", js: true do
+      want_request false, 2
     end
   end
 

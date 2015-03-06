@@ -23,7 +23,7 @@ class Listing < ListingParent
   has_many :invoices, through: :invoice_details, :dependent => :destroy
   has_many :active_pixi_wants, primary_key: 'pixi_id', foreign_key: 'pixi_id', class_name: 'PixiWant', conditions: { :status => 'active' }
 
-  default_scope :order => "updated_at DESC"
+  default_scope :order => "listings.updated_at DESC"
 
   # finds specific pixi
   def self.find_pixi pid
@@ -90,7 +90,7 @@ class Listing < ListingParent
 
   # find listings by buyer user id
   def self.get_by_buyer val
-    where(:buyer_id => val)
+    includes(:invoices).where('invoices.buyer_id = ?', val)
   end
 
   # get all active pixis with an end_date less than today and update their statuses to closed
