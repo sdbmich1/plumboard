@@ -7,7 +7,7 @@ class SavedListing < ActiveRecord::Base
   belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id", touch: true
 
   validates :pixi_id, :presence => true
-  validates :user_id, :presence => true, :uniqueness => { :scope => :pixi_id }
+  validates :user_id, :presence => true
 
   #return first_name
   def first_name
@@ -24,9 +24,14 @@ class SavedListing < ActiveRecord::Base
     where(:status => val).order('updated_at DESC')
   end
 
+  # find active by pixi
+  def self.active_by_pixi pid
+    where("pixi_id = ? AND status = 'active'", pid)
+  end
+
   # update status
   def self.update_status pid, val
-    where("pixi_id = ? AND status = 'active'", pid).update_all(status: val) rescue nil
+    active_by_pixi(pid).update_all(status: val) rescue nil
   end
 
   # update status by user

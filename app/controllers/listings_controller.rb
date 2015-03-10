@@ -39,7 +39,7 @@ class ListingsController < ApplicationController
   end
 
   def purchased
-    respond_with(@listings = Listing.get_by_buyer(@user).get_by_status('sold').paginate(page: @page))
+    respond_with(@listings = Listing.purchased(@user).paginate(page: @page))
   end
 
   def category

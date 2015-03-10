@@ -81,7 +81,8 @@ describe Listing do
   it { should respond_to(:pixi_wants) }
   it { should have_many(:pixi_wants).with_foreign_key('pixi_id') }
   it { should respond_to(:saved_listings) }
-  it { should have_many(:saved_listings).with_foreign_key('pixi_id') }
+  it { should have_many(:saved_listings).with_foreign_key('pixi_id')}
+  it { should have_many(:active_saved_listings).with_foreign_key('pixi_id').conditions(:status=>"active") }
   it { should respond_to(:buyer) }
   it { should belong_to(:buyer).with_foreign_key('buyer_id') }
   it { should have_many(:active_pixi_wants).class_name('PixiWant').with_foreign_key('pixi_id').conditions(:status=>"active") }
@@ -315,7 +316,7 @@ describe Listing do
 
   describe "buyer listings" do 
     before :each, run: true do
-      create_invoice 
+      create_invoice 'paid'
     end
 
     it { Listing.get_by_buyer(0).should_not include @listing } 
@@ -859,22 +860,13 @@ describe Listing do
     it 'delivers the email' do
       @listing.status = 'sold'
       @listing.save; sleep 2
-      expect(ActionMailer::Base.deliveries.last.subject).to eql('Saved Pixi is Sold/Removed') 
+      expect(ActionMailer::Base.deliveries.last.subject).to include(@listing.title) 
     end
 
     it 'sends email to right user' do
       @listing.status = 'removed'
       @listing.save; sleep 2
       expect(ActionMailer::Base.deliveries.last.to).to eql([@saved_listing.user.email])
-    end
-
-    it 'delivers email to all saved pixi users' do
-      user2 = FactoryGirl.create :pixi_user
-      saved_listing2 = FactoryGirl.create(:saved_listing, user_id: user2.id, pixi_id: @listing.pixi_id)
-      expect {
-        @listing.status = 'closed'
-        @listing.save; sleep 2
-      }.to change{ActionMailer::Base.deliveries.length}.by(2)
     end
 
     context 'when no saved listings' do
@@ -1586,5 +1578,34 @@ describe Listing do
         listing.destroy
       }
     end
+  end
+
+  describe "purchased" do 
+    before :each, run: true do
+      create_invoice 'paid', 2
+    end
+
+    it { Listing.purchased(0).should_not include @listing } 
+    it "includes buyer listings", run: true do 
+      @listing.save
+      expect(Listing.purchased(@invoice.buyer_id).size).to eq 2
+    end
+  end
+
+  describe "sold_list" do 
+    before :each, run: true do
+      create_invoice 'paid', 2
+    end
+
+    it { Listing.sold_list.should_not include @listing } 
+    it "includes sold listings", run: true do 
+      @listing.save
+      expect(Listing.sold_list.size).to eq 2
+    end
+  end
+
+  describe 'closed_arr' do
+    it { expect(Listing.closed_arr(true).size).to eq 5 }
+    it { expect(Listing.closed_arr(false).size).to eq 4 }
   end
 end
