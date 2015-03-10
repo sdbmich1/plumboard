@@ -1,11 +1,13 @@
 require 'spec_helper'
 
 describe SavedListing do
+  before(:all) do
+    @user = create(:pixi_user) 
+    @category = create(:category, pixi_type: 'premium') 
+    @listing = create(:listing, seller_id: @user.id) 
+  end
   before(:each) do
-    @user = FactoryGirl.create(:pixi_user) 
-    @category = FactoryGirl.create(:category, pixi_type: 'premium') 
-    @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
-    @saved_listing = @user.saved_listings.build FactoryGirl.attributes_for :saved_listing, pixi_id: @listing.pixi_id
+    @saved_listing = @user.saved_listings.build attributes_for :saved_listing, pixi_id: @listing.pixi_id
   end
 
   subject { @saved_listing }
@@ -18,7 +20,7 @@ describe SavedListing do
   it { should respond_to(:set_flds) }
 
   it { should validate_presence_of(:pixi_id) }
-  it { should validate_uniqueness_of(:user_id).scoped_to(:pixi_id) }
+  it { should validate_presence_of(:user_id) }
   it { should belong_to(:listing).with_foreign_key('pixi_id') }
   it { should belong_to(:user) }
 
@@ -40,6 +42,20 @@ describe SavedListing do
     it "includes active listings" do  
       @saved_listing.save
       SavedListing.get_by_status('active').should_not be_empty 
+    end
+  end
+
+  describe 'active_by_pixi' do
+    before :each, run: true do
+      @saved_listing.status = 'wanted'
+    end
+    it 'shows active items' do
+      @saved_listing.save
+      expect(SavedListing.active_by_pixi(@listing.pixi_id).size).to eq 1
+    end
+    it 'does not show active items', run: true do
+      @saved_listing.save
+      expect(SavedListing.active_by_pixi(@listing.pixi_id).size).to eq 0
     end
   end
 
