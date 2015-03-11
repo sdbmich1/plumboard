@@ -95,7 +95,8 @@ describe ListingsController do
     before(:each) do
       @listings = stub_model(Listing)
       @category = stub_model Category
-      Listing.stub!(:get_by_city).and_return(@listings)
+      Listing.stub_chain(:get_by_city).and_return(@listings)
+      @listings.stub!(:set_page).and_return(@listings)
       Category.stub!(:find).and_return(@category)
       controller.stub!(:load_data).and_return(:success)
       do_get
@@ -278,10 +279,45 @@ describe ListingsController do
     end
   end
 
+  describe 'GET seller_wanted' do
+    before :each do
+      @listings = stub_model(Listing)
+      controller.stub!(:current_user).and_return(@user)
+      Listing.stub!(:wanted_list).and_return( @listings )
+      @listings.stub!(:paginate).and_return( @listings )
+      do_get
+    end
+
+    def do_get
+      xhr :get, :seller_wanted
+    end
+
+    it "renders the :wanted view" do
+      response.should render_template :wanted
+    end
+
+    it "should assign @user" do
+      assigns(:user).should_not be_nil
+    end
+
+    it "should assign @listings" do
+      assigns(:listings).should_not be_nil
+    end
+
+    it "should show the requested listings" do
+      response.should be_success
+    end
+
+    it "responds to JSON" do
+      get :wanted, format: :json
+      expect(response).to be_success
+    end
+  end
+
   describe 'GET purchased' do
     before :each do
       @listings = stub_model(Listing)
-      Listing.stub_chain(:get_by_buyer, :get_by_status).and_return( @listings )
+      Listing.stub!(:purchased).and_return( @listings )
       @listings.stub!(:paginate).and_return( @listings )
       do_get
     end

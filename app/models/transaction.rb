@@ -274,6 +274,6 @@ class Transaction < ActiveRecord::Base
   end
 
   def self.filename
-    'Transactions_' + Time.now.year.to_s + '_' + Time.now.month.to_s + '_' + Time.now.day.to_s
+    'Transactions_' + ResetDate::display_date_by_loc(Time.now, Geocoder.coordinates("San Francisco, CA"), false).strftime("%Y_%m_%d")
   end
 end

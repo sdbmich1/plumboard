@@ -15,15 +15,16 @@ class Listing < ListingParent
   has_many :pixi_likes, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :pixi_wants, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :saved_listings, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
+  has_many :active_saved_listings, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy, conditions: { :status => 'active' }
   has_many :invoice_details, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :invoices, through: :invoice_details, :dependent => :destroy
   has_many :active_pixi_wants, primary_key: 'pixi_id', foreign_key: 'pixi_id', class_name: 'PixiWant', conditions: { :status => 'active' }
 
-  default_scope :order => "updated_at DESC"
+  default_scope :order => "listings.updated_at DESC"
 
   # finds specific pixi
   def self.find_pixi pid
-    includes(:pictures, :pixi_likes, :pixi_wants, :saved_listings, :category, :user => [:pictures], 
+    includes(:pictures, :pixi_likes, :active_pixi_wants, :active_saved_listings, :category, :user => [:pictures], 
       :comments=> {:user=>:pictures}).where(pixi_id: pid).first
   end
 
@@ -66,9 +67,15 @@ class Listing < ListingParent
   end
 
   # get wanted list by user
+<<<<<<< HEAD
+  def self.wanted_list usr, cid=nil, loc=nil, adminFlg=true
+    if adminFlg
+      active.joins(:pixi_wants).where("pixi_wants.user_id is not null AND pixi_wants.status = ?", 'active').get_by_city(cid, loc, false)
+=======
   def self.wanted_list usr, cid=nil, loc=nil
     if usr.is_admin?
-      active.joins(:pixi_wants).where("pixi_wants.user_id is not null AND pixi_wants.status = ?", 'active').get_by_city(cid, loc, false)
+      active.joins(:pixi_wants).where("pixi_wants.status = ?", 'active').get_by_city(cid, loc, false)
+>>>>>>> 7b968e1ad04cd6cea04c041cb1e5317ce9d11cf8
     else
       active.joins(:pixi_wants).where("pixi_wants.user_id = ? AND pixi_wants.status = ?", usr.id, 'active')
     end
@@ -81,7 +88,7 @@ class Listing < ListingParent
 
   # find listings by buyer user id
   def self.get_by_buyer val
-    where(:buyer_id => val)
+    includes(:invoices).where('invoices.buyer_id = ?', val)
   end
 
   # get all active pixis with an end_date less than today and update their statuses to closed
@@ -150,7 +157,7 @@ class Listing < ListingParent
 
   # return saved count 
   def saved_count
-    saved_listings.size rescue 0
+    active_saved_listings.size rescue 0
   end
 
   # return whether pixi is saved
@@ -160,7 +167,7 @@ class Listing < ListingParent
 
   # return whether pixi is saved by user
   def user_saved? usr
-    saved_listings.where(user_id: usr.id).first
+    active_saved_listings.where(user_id: usr.id).first
   end
 
   # return whether region has enough pixis
@@ -179,13 +186,18 @@ class Listing < ListingParent
     SavedListing.update_status pixi_id, status unless active?
   end
 
+  # build array of closed statuses
+  def self.closed_arr flg=true
+    result = ['closed', 'removed', 'inactive', 'expired'] 
+    flg ? (result << 'sold') : result
+  end
+
   # sends email to users who saved the listing when listing is removed
   def send_saved_pixi_removed
-    closed = ['closed', 'sold', 'removed', 'inactive', 'expired']
-    if closed.detect {|closed| self.status == closed }
-      saved_listings = SavedListing.where(pixi_id: pixi_id) rescue nil
+    if Listing.closed_arr.detect {|closed| self.status == closed }
+      saved_listings = SavedListing.active_by_pixi(pixi_id) rescue nil
       saved_listings.each do |saved_listing|
-        if closed.detect {|closed| saved_listing.status == closed }
+        if Listing.closed_arr.detect {|closed| saved_listing.status == closed }
           UserMailer.delay.send_saved_pixi_removed(saved_listing) unless self.buyer_id == saved_listing.user_id
         end
       end
@@ -219,7 +231,7 @@ class Listing < ListingParent
 
   # toggle invoice status on removing pixi from board
   def set_invoice_status
-    if %w(expired removed inactive closed).detect { |x| x == self.status }
+    if closed_arr(false).detect { |x| x == self.status }
       invoices.find_each do |inv|
         if inv.invoice_details.size == 1 
 	  inv.update_attribute(:status, 'removed')
@@ -265,12 +277,14 @@ class Listing < ListingParent
     end
   end
 
-  # return all pixis with wants that are more than number_of_days old and either have no invoices, no price, or are jobs
-  def self.invoiceless_pixis number_of_days=2
-    pixi_ids = PixiWant.where("created_at < ?", Time.now - number_of_days.days).pluck(:pixi_id)
-    no_invoice_pixis = active.where(pixi_id: pixi_ids).includes(:invoices).having("count(invoice_details.id) = 0").delete_if { |listing| listing.id.nil? }
-    job_or_no_price_pixis = active.where("pixi_id IN (?) AND (category_id = ? OR price IS NULL)", pixi_ids, Category.find_by_name("Jobs").object_id)
-    (no_invoice_pixis + job_or_no_price_pixis).uniq
+  # returns purchased pixis from buyer
+  def self.purchased usr
+    where("listings.status not in (?)", closed_arr(false)).joins(:invoices).where("invoices.buyer_id = ? AND invoices.status = ?", usr.id, 'paid')
+  end
+
+  # returns sold pixis from seller
+  def self.sold_list 
+    where("listings.status not in (?)", closed_arr(false)).joins(:invoices).where("invoices.status = ?", 'paid').uniq
   end
 
   # sphinx scopes

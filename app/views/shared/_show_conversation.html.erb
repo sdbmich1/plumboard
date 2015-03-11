@@ -3,17 +3,7 @@
 </div>
 <div class='clear-all'></div>
 <% if conv_exists? conversation %>    
-  <div>
-    <table>
-      <tr>
-        <td width="97%">
-            <%= render partial: 'shared/show_photo', locals: {model: conversation.listing, file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
-            <h4>&nbsp;  <%= link_to conversation.pixi_title, conversation.listing, class: 'terms-link' %></h4>
-        </td>
-        <%= render partial: 'shared/conversation_icons', locals: { conversation: conversation } %>
-      </tr>
-    </table>
-  </div>
+  <%= render partial: 'shared/show_conversation_header', locals: { conversation: conversation } %>
   <div id='accordion'>
     <%= render partial: 'shared/post', collection: get_posts(conversation), locals: { sentFlg: sentFlg } %>
   </div>

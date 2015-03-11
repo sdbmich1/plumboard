@@ -248,11 +248,6 @@ module ListingsHelper
     end
   end
 
-  # toggle wanted view based on user type
-  def select_wanted_view
-    @user.is_admin? ? 'shared/manage_pixis' : 'shared/mypixis_list'
-  end
-
   # check repost status
   def repost? listing
     (expired_or_sold? listing) && (@user.is_admin? || (@user.id == listing.seller_id))

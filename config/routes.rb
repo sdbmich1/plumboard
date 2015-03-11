@@ -14,7 +14,7 @@ Plumboard::Application.routes.draw do
   # resource defs
   resources :listings, except: [:new, :edit, :create, :destroy] do
     collection do
-      get 'pixi_price', 'seller', 'follower', 'category', 'local', 'wanted', 'purchased', 'invoiced'
+      get 'pixi_price', 'seller', 'follower', 'category', 'local', 'wanted', 'purchased', 'invoiced', 'seller_wanted'
     end
     member do
       put 'repost'
