@@ -95,7 +95,8 @@ describe ListingsController do
     before(:each) do
       @listings = stub_model(Listing)
       @category = stub_model Category
-      Listing.stub!(:get_by_city).and_return(@listings)
+      Listing.stub_chain(:get_by_city).and_return(@listings)
+      @listings.stub!(:set_page).and_return(@listings)
       Category.stub!(:find).and_return(@category)
       controller.stub!(:load_data).and_return(:success)
       do_get
@@ -316,7 +317,7 @@ describe ListingsController do
   describe 'GET purchased' do
     before :each do
       @listings = stub_model(Listing)
-      Listing.stub_chain(:get_by_buyer, :get_by_status).and_return( @listings )
+      Listing.stub!(:purchased).and_return( @listings )
       @listings.stub!(:paginate).and_return( @listings )
       do_get
     end

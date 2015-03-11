@@ -145,7 +145,11 @@ class ListingParent < ActiveRecord::Base
 
   # find listings by status
   def self.get_by_status val
-    include_list_without_job_type.where(:status => val).order('updated_at DESC')
+    if val == 'sold'
+      include_list_without_job_type.sold_list
+    else
+      include_list_without_job_type.where(:status => val)
+    end
   end
 
   # find all listings where a given user is the seller, or all listings if the user is an admin
@@ -560,14 +564,13 @@ class ListingParent < ActiveRecord::Base
 
   # get expiring pixis
   def self.soon_expiring_pixis number_of_days=7, status='active' 
-    date = Date.today + number_of_days.days
-    get_by_status(status).where("cast(end_date As Date) = ?", date)
+    dt = Date.today + number_of_days.days
+    get_by_status(status).where("cast(end_date As Date) = ?", dt)
   end
 
   # count number of sales
   def sold_count
-    cnt = invoices.where(status: 'paid').map{|inv| inv.invoice_details.where(pixi_id: pixi_id).inject(0){|sum, t| sum += t.quantity}}.first rescue 0
-    cnt || 0
+    invoices.where(status: 'paid').sum("invoice_details.quantity")
   end
 
   # determine amount left
@@ -576,6 +579,7 @@ class ListingParent < ActiveRecord::Base
     result <= 0 ? 0 : result
   end
 
+  # set csv filename
   def self.filename status
     status.capitalize + '_' + ResetDate::display_date_by_loc(Time.now, Geocoder.coordinates("San Francisco, CA"), false).strftime("%Y_%m_%d")
   end

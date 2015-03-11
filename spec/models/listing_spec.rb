@@ -81,7 +81,8 @@ describe Listing do
   it { should respond_to(:pixi_wants) }
   it { should have_many(:pixi_wants).with_foreign_key('pixi_id') }
   it { should respond_to(:saved_listings) }
-  it { should have_many(:saved_listings).with_foreign_key('pixi_id') }
+  it { should have_many(:saved_listings).with_foreign_key('pixi_id')}
+  it { should have_many(:active_saved_listings).with_foreign_key('pixi_id').conditions(:status=>"active") }
   it { should respond_to(:buyer) }
   it { should belong_to(:buyer).with_foreign_key('buyer_id') }
   it { should have_many(:active_pixi_wants).class_name('PixiWant').with_foreign_key('pixi_id').conditions(:status=>"active") }
@@ -314,12 +315,14 @@ describe Listing do
   end
 
   describe "buyer listings" do 
-    it { Listing.get_by_buyer(0).should_not include @listing } 
+    before :each, run: true do
+      create_invoice 'paid'
+    end
 
-    it "includes buyer listings" do 
-      @listing.buyer_id = 1
+    it { Listing.get_by_buyer(0).should_not include @listing } 
+    it "includes buyer listings", run: true do 
       @listing.save
-      Listing.get_by_buyer(1).should_not be_empty  
+      Listing.get_by_buyer(@invoice.buyer_id).should_not be_empty  
     end
   end
 
@@ -857,22 +860,13 @@ describe Listing do
     it 'delivers the email' do
       @listing.status = 'sold'
       @listing.save; sleep 2
-      expect(ActionMailer::Base.deliveries.last.subject).to eql('Saved Pixi is Sold/Removed') 
+      expect(ActionMailer::Base.deliveries.last.subject).to include(@listing.title) 
     end
 
     it 'sends email to right user' do
       @listing.status = 'removed'
       @listing.save; sleep 2
       expect(ActionMailer::Base.deliveries.last.to).to eql([@saved_listing.user.email])
-    end
-
-    it 'delivers email to all saved pixi users' do
-      user2 = FactoryGirl.create :pixi_user
-      saved_listing2 = FactoryGirl.create(:saved_listing, user_id: user2.id, pixi_id: @listing.pixi_id)
-      expect {
-        @listing.status = 'closed'
-        @listing.save; sleep 2
-      }.to change{ActionMailer::Base.deliveries.length}.by(2)
     end
 
     context 'when no saved listings' do
@@ -1582,42 +1576,33 @@ describe Listing do
       }
     end
   end
-
-  describe "invoiceless pixis" do
-    before do
-      @pixi_want = @user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
-      @pixi_want.created_at = 3.days.ago
-      @pixi_want.save!
+  
+  describe "purchased" do 
+    before :each, run: true do
+      create_invoice 'paid', 2
     end
 
-    it "toggles number_of_days" do
-      Listing.invoiceless_pixis.should include @listing
-      Listing.invoiceless_pixis(5).should_not include @listing
+    it { Listing.purchased(0).should_not include @listing } 
+    it "includes buyer listings", run: true do 
+      @listing.save
+      expect(Listing.purchased(@invoice.buyer_id).size).to eq 2
+    end
+  end
+
+  describe "sold_list" do 
+    before :each, run: true do
+      create_invoice 'paid', 2
     end
 
-    it "does not return pixis with wants less than two days old" do
-      @pixi_want.created_at = Time.now
-      @pixi_want.save!
-      Listing.invoiceless_pixis.should_not include @listing
+    it { Listing.sold_list.should_not include @listing } 
+    it "includes sold listings", run: true do 
+      @listing.save
+      expect(Listing.sold_list.size).to eq 2
     end
+  end
 
-    it "returns invoiced pixis in job category" do
-      @listing.category_id = Category.find_by_name("Jobs").object_id
-      @listing.save!
-      create_invoice
-      Listing.invoiceless_pixis.should include @listing
-    end
-
-    it "returns invoiced pixis with no price" do
-      @listing.price = nil
-      @listing.save!
-      create_invoice
-      Listing.invoiceless_pixis.should include @listing
-    end
-
-    it "does not return other pixis with invoices" do
-      create_invoice
-      Listing.invoiceless_pixis.should_not include @listing
-    end
+  describe 'closed_arr' do
+    it { expect(Listing.closed_arr(true).size).to eq 5 }
+    it { expect(Listing.closed_arr(false).size).to eq 4 }
   end
 end

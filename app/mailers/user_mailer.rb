@@ -13,7 +13,7 @@ class UserMailer < ActionMailer::Base
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     # set message details
-    mail(:to => "#{transaction.email}", :subject => "Your Purchase Receipt: #{transaction.confirmation_no} ") 
+    mail(:to => "#{transaction.email}", :subject => env_check + ' ' + "Your Purchase Receipt: #{transaction.confirmation_no} ") 
   end
 
   # send pixi post request to sellers
@@ -35,7 +35,7 @@ class UserMailer < ActionMailer::Base
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     # set message details
-    mail(:to => "#{post.seller_email}", :subject => "PixiPost Appointment Scheduled") 
+    mail(:to => "#{post.seller_email}", :subject => env_check + ' ' + "PixiPost Appointment Scheduled") 
   end
 
   # send inquiry response to user
@@ -46,7 +46,7 @@ class UserMailer < ActionMailer::Base
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     # set message details
-    mail(:to => "#{@inquiry.email}", :subject => "Pixiboard Inquiry Received!")
+    mail(:to => "#{@inquiry.email}", :subject => env_check + ' ' + "Pixiboard Inquiry Received!")
   end
 
   # send inquiry response to pxb
@@ -68,7 +68,7 @@ class UserMailer < ActionMailer::Base
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     # set message details
-    mail(:to => "#{@invoice.seller_email}", :subject => "Your Payment Receipt: #{@payment.id} ") 
+    mail(:to => "#{@invoice.seller_email}", :subject => env_check + ' ' + "Your Payment Receipt: #{@payment.id} ") 
   end
 
   # send post notices to members
@@ -79,7 +79,7 @@ class UserMailer < ActionMailer::Base
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     # set message details
-    mail(:to => "#{post.recipient_email}", :subject => "Pixiboard Post: #{post.pixi_title} ") 
+    mail(:to => "#{post.recipient_email}", :subject => env_check + ' ' + "Pixiboard Post: #{post.pixi_title} ") 
   end
 
   # send interest notices to members
@@ -123,7 +123,7 @@ class UserMailer < ActionMailer::Base
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     # set message details
-    mail(:to => "#{user.email}", :subject => "Welcome to Pixiboard Community!")
+    mail(:to => "#{user.email}", :subject => env_check + ' ' + "Welcome to Pixiboard Community!")
   end
 
   # send welcome message to new members
@@ -134,7 +134,7 @@ class UserMailer < ActionMailer::Base
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     # set message details
-    mail(:to => "#{user.email}", :subject => "Welcome to Pixiboard Community!")
+    mail(:to => "#{user.email}", :subject => env_check + ' ' + "Welcome to Pixiboard Community!")
   end
 
   # send submit response to pxb
