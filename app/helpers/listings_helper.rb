@@ -156,14 +156,29 @@ module ListingsHelper
     signed_in? ? '#' : conversations_path(id: pid)
   end
 
+  # set path based on signed in status
+  def set_ask_path pid
+    signed_in? ? '#' : conversations_path(id: pid)
+  end
+
   # set want id based on signed in status
   def set_want_id
     signed_in? ? 'want-btn' : ''
   end
 
+  # set want id based on signed in status
+  def set_ask_id
+    signed_in? ? 'ask-btn' : ''
+  end
+
   # set want message
   def want_msg
     PIXI_WANT_MSG rescue 'I want this!'
+  end
+
+  # set want message
+  def ask_msg
+    PIXI_ASK_MSG rescue 'Ask Question'
   end
 
   # set method based on item existance and type 
@@ -277,7 +292,7 @@ module ListingsHelper
   def is_want? mtype
     mtype == 'want'
   end
-
+  
   # check if qty > 1 for wanted pixis
   def multi_qty? listing
     get_item_amt(listing) > 1

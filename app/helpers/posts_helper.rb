@@ -7,7 +7,9 @@ module PostsHelper
     conv = listing.conversations.build user_id: @user.id, recipient_id: listing.seller_id
 
     # new post
+    @post = conv.posts.build 
     add_post conv
+    return @post
   end
 
   # add new post for form

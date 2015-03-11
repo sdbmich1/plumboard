@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head> 
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+</head>
+  <body> 	
+    	<%= render :partial=>'shared/mail_header' %><br /><br />
+	Hi <%= @listing.seller_first_name %>,<br /><br />
+
+    	<span style="height:30px;">
+  	Good news! Someone has a question about the pixi you posted.<br /><br />
+    Okay, now what? Well you can 
+	 <%= link_to 'review messages', conversations_url(status: 'received') %> through the PixiChat<sup>TM</sup> message center to answer questions, send invoices and replies, and determine a meet-up spot. <br /> <br />  Either way, there is a deal to be made.</span><br /><br />
+
+	<span style="margin-top:20px;">Keep on Pixing!</span><br /><br />
+	<span>The Pixiboard Team</span><br /><br /> 	
+    	<%= render :partial=>'shared/mail_footer' %>
+  </body>
+</html>
+

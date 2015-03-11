@@ -155,6 +155,19 @@ describe UserMailer do
     its(:subject) { should_not include "[ TEST ]" }
   end
 
+  describe "ask_question" do
+    subject { UserMailer.ask_question(@pixi_ask) }
+    before do
+      @user = FactoryGirl.create(:pixi_user) 
+      @category = FactoryGirl.create(:category, pixi_type: 'premium') 
+      @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
+      @pixi_ask = FactoryGirl.create(:pixi_ask, pixi_id: @listing.pixi_id)
+    end
+    it { expect{subject.deliver}.not_to change{ActionMailer::Base.deliveries.length}.by(0) }
+    its(:to) { should == [@listing.seller_email] }
+    its(:subject) {should include "Pixiboard Ask: Someone Has a Question About Your"}
+  end
+
   describe "send_invoiceless_pixi_notice" do
     subject { UserMailer.send_invoiceless_pixi_notice(listing)}
     let(:user) { create :pixi_user }

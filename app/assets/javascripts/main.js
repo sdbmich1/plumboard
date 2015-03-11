@@ -464,6 +464,16 @@ $(document).on('click', '#want-btn', function(e) {
   $(this).text(txt);
 });
 
+// toggle contact form for show pixi
+$(document).on('click', '#ask-btn', function(e) {
+  var fld = '#contact_content, #ask_content';
+  var txt;
+
+  // set focus on fld
+  $(fld).focus();
+  $(fld).val($(fld).val());
+});
+
 var keyPress = false; 
 
 // submit contact form on enter key
@@ -620,6 +630,12 @@ $(document).on('click', '#send-want-btn, #want-modal-btn', function(e) {
   var target = $(e.target), action;
   action = target.is('#want-modal-btn') ? 'hide' : 'show';
   $('#wantDialog').modal(action);
+});
+
+$(document).on('click', '#send-ask-btn, #ask-modal-btn', function(e) {
+  var target = $(e.target), action;
+  action = target.is('#ask-modal-btn') ? 'hide' : 'show';
+  $('#askDialog').modal(action);
 });
 
 // toggle menu post menu item

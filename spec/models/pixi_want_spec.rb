@@ -16,7 +16,6 @@ describe PixiWant do
   it { should respond_to(:status) }
   it { should respond_to(:user) }
   it { should respond_to(:listing) }
-
   it { should validate_presence_of(:pixi_id) }
   it { should belong_to(:listing).with_foreign_key('pixi_id') }
   it { should belong_to(:user) }
