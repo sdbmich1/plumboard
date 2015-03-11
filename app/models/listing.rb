@@ -66,8 +66,8 @@ class Listing < ListingParent
   end
 
   # get wanted list by user
-  def self.wanted_list usr, cid=nil, loc=nil
-    if usr.is_admin?
+  def self.wanted_list usr, cid=nil, loc=nil, adminFlg=true
+    if adminFlg
       active.joins(:pixi_wants).where("pixi_wants.user_id is not null AND pixi_wants.status = ?", 'active').get_by_city(cid, loc, false)
     else
       active.joins(:pixi_wants).where("pixi_wants.user_id = ? AND pixi_wants.status = ?", usr.id, 'active')

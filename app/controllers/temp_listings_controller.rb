@@ -2,7 +2,7 @@ require 'will_paginate/array'
 class TempListingsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :check_permissions, only: [:create, :show, :edit, :update, :delete]
-  before_filter :load_data, only: [:index, :unposted]
+  before_filter :load_data, only: [:index, :unposted, :pending]
   before_filter :set_params, only: [:create, :update]
   before_filter :load_pixi, only: [:edit, :show, :update, :destroy, :submit]
   before_filter :load_post_type, only: [:new]
@@ -80,7 +80,7 @@ class TempListingsController < ApplicationController
   end
 
   def pending
-    respond_with(@listings = TempListing.get_by_status('pending').get_by_seller(@user).paginate(page: @page))
+    respond_with(@listings = TempListing.get_by_status('pending').get_by_seller(@user, @adminFlg).paginate(page: @page))
   end
   
   protected

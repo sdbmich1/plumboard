@@ -928,8 +928,8 @@ describe Listing do
       @pixi_want = @user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id, status: 'sold'
     end
 
-    it { Listing.wanted_list(@usr).should_not include @listing } 
-    it { Listing.wanted_list(@user).should_not be_empty }
+    it { Listing.wanted_list(@usr, nil, nil, false).should_not include @listing } 
+    it { Listing.wanted_list(@user, nil, nil, false).should_not be_empty }
     it { expect(@listing.wanted_count).to eq(1) }
     it { expect(@listing.is_wanted?).to eq(true) }
 
@@ -946,12 +946,9 @@ describe Listing do
     it { expect(@listing.user_wanted?(@usr)).not_to eq(true) }
 
     it "shows all wanted pixis for admin" do
-      @admin_user = create :admin
-      @admin_user.user_type_code = 'AD'
-      @admin_user.save!
       expect(Listing.wanted_list(@admin_user, @listing.category_id, @listing.site_id).count).not_to eq 0
       Listing.wanted_list(@admin_user, @listing.category_id, @listing.site_id).should include @listing
-      Listing.wanted_list(@usr, @listing.category_id, @listing.site_id).should_not include @listing
+      Listing.wanted_list(@usr, @listing.category_id, @listing.site_id, false).should_not include @listing
     end
   end
 

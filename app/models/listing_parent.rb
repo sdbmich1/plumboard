@@ -154,7 +154,7 @@ class ListingParent < ActiveRecord::Base
   end
 
   # get listings by status and, if provided, category and location
-  def self.check_category_and_location status, cid, loc, pg=1
+  def self.check_category_and_location status, cid, loc
     cid || loc ? get_by_status(status).get_by_city(cid, loc, false) : get_by_status(status)
   end
 
@@ -577,6 +577,6 @@ class ListingParent < ActiveRecord::Base
   end
 
   def self.filename status
-    status.capitalize + '_' + Time.now.year.to_s + '_' + Time.now.month.to_s + '_' + Time.now.day.to_s
+    status.capitalize + '_' + ResetDate::display_date_by_loc(Time.now, Geocoder.coordinates("San Francisco, CA"), false).strftime("%Y_%m_%d")
   end
 end

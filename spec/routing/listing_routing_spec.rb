@@ -31,6 +31,10 @@ describe ListingsController do
       delete("/listings/1").should route_to("listings#destroy", :id => "1")
     end
 
+    it "routes to #seller_wanted" do
+      get("/listings/seller_wanted").should route_to("listings#seller_wanted")
+    end
+
     it "does not expose a new listing route" do
       get("/listings/new").should_not route_to("listings#new")
     end
