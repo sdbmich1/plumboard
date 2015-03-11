@@ -67,15 +67,9 @@ class Listing < ListingParent
   end
 
   # get wanted list by user
-<<<<<<< HEAD
   def self.wanted_list usr, cid=nil, loc=nil, adminFlg=true
     if adminFlg
       active.joins(:pixi_wants).where("pixi_wants.user_id is not null AND pixi_wants.status = ?", 'active').get_by_city(cid, loc, false)
-=======
-  def self.wanted_list usr, cid=nil, loc=nil
-    if usr.is_admin?
-      active.joins(:pixi_wants).where("pixi_wants.status = ?", 'active').get_by_city(cid, loc, false)
->>>>>>> 7b968e1ad04cd6cea04c041cb1e5317ce9d11cf8
     else
       active.joins(:pixi_wants).where("pixi_wants.user_id = ? AND pixi_wants.status = ?", usr.id, 'active')
     end
@@ -283,6 +277,7 @@ class Listing < ListingParent
     no_invoice_pixis = active.where(pixi_id: pixi_ids).includes(:invoices).having("count(invoice_details.id) = 0").delete_if { |listing| listing.id.nil? }
     job_or_no_price_pixis = active.where("pixi_id IN (?) AND (category_id = ? OR price IS NULL)", pixi_ids, Category.find_by_name("Jobs").object_id)
     (no_invoice_pixis + job_or_no_price_pixis).uniq
+  end
 
   # returns purchased pixis from buyer
   def self.purchased usr
