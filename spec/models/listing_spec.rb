@@ -1600,11 +1600,7 @@ describe Listing do
       }
     end
   end
-<<<<<<< HEAD
-  
-=======
 
->>>>>>> de0f6fd4490df6ea541bdf9115da1c46b1a906d5
   describe "invoiceless pixis" do
     before do
       @pixi_want = @user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
@@ -1642,11 +1638,7 @@ describe Listing do
       Listing.invoiceless_pixis.should_not include @listing
     end
   end
-<<<<<<< HEAD
   
-=======
-
->>>>>>> de0f6fd4490df6ea541bdf9115da1c46b1a906d5
   describe "purchased" do 
     before :each, run: true do
       create_invoice 'paid', 2
