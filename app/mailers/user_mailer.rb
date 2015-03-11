@@ -201,4 +201,15 @@ class UserMailer < ActionMailer::Base
     #set message details
     mail(:to => "#{expiring_pixi.user.email}", :subject => "Your Pixi is Expiring Soon!")
   end
+
+  # send notice for each pixi that has a want at least number_of_days old
+  def send_invoiceless_pixi_notice listing
+    @listing = listing
+
+    # set logo
+    attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
+    # set message details
+    mail(:to => "#{@listing.seller_email}", :subject => env_check + ' ' + "Reminder: Someone Wants Your #{@listing.title} ")
+  end
 end
