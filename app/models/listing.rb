@@ -277,6 +277,13 @@ class Listing < ListingParent
     end
   end
 
+  # return all pixis with wants that are more than number_of_days old and either have no invoices, no price, or are jobs
+  def self.invoiceless_pixis number_of_days=2
+    pixi_ids = PixiWant.where("created_at < ?", Time.now - number_of_days.days).pluck(:pixi_id)
+    no_invoice_pixis = active.where(pixi_id: pixi_ids).includes(:invoices).having("count(invoice_details.id) = 0").delete_if { |listing| listing.id.nil? }
+    job_or_no_price_pixis = active.where("pixi_id IN (?) AND (category_id = ? OR price IS NULL)", pixi_ids, Category.find_by_name("Jobs").object_id)
+    (no_invoice_pixis + job_or_no_price_pixis).uniq
+
   # returns purchased pixis from buyer
   def self.purchased usr
     where("listings.status not in (?)", closed_arr(false)).joins(:invoices).where("invoices.buyer_id = ? AND invoices.status = ?", usr.id, 'paid')
