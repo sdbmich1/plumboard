@@ -297,4 +297,9 @@ module ListingsHelper
   def multi_qty? listing
     get_item_amt(listing) > 1
   end
+
+  # set pixi title based on price
+  def set_title listing
+    listing.nice_title !listing.price.blank?
+  end
 end

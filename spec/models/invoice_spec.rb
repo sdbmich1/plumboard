@@ -375,6 +375,11 @@ describe Invoice do
       check_inv true
     end
 
+    it 'loads free pixi' do
+      @listing.update_attribute(:price, nil)
+      check_inv 
+    end
+
     it "loads new invoice w/o pixi_id & buyer_id" do
       inv = Invoice.load_new(@user, nil, nil)
       expect(inv).not_to be_nil
@@ -420,7 +425,7 @@ describe Invoice do
     before(:each) do
       @other_buyer = create :pixi_user
       @invoice.save!; sleep 2
-      @invoice2 = @user.invoices.build attributes_for(:invoice, buyer_id: @other_buyer.id, status: 'unpaid')
+      @invoice2 = @user.invoices.build attributes_for(:invoice, buyer_id: @buyer.id, status: 'unpaid')
       @details2 = @invoice2.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
       @invoice2.save!; sleep 2
       @invoice3 = @user.invoices.build attributes_for(:invoice, buyer_id: @other_buyer.id, status: 'paid')
@@ -438,7 +443,7 @@ describe Invoice do
       sleep 3
       @invoice.amount = 200.00
       @invoice.save!
-      expect(@invoice2.status).not_to eq 'closed'
+      expect(@invoice3.status).not_to eq 'closed'
     end
 
     it 'closes not all other invoices' do

@@ -55,6 +55,7 @@ feature "Invoices" do
     @person = create(:pixi_user, first_name: 'Kim', last_name: 'Harris') 
     @listing = create(:listing, seller_id: @user.id)
     @pixi = create(:listing, title: 'Macbook Pro', seller_id: @user.id)
+    @free = create(:listing, title: 'Free Item', seller_id: @user.id, price: nil)
     if pxpFlg
       @pxp_listing = create(:listing, seller_id: @user.id, pixan_id: @person.id)
     end
@@ -441,6 +442,19 @@ feature "Invoices" do
           page.should have_content "#{@pxp_listing.seller_name}"
         end
 
+        it 'accepts invoice with free pixi' do
+	  select_buyer
+	  select_pixi @free
+	  set_buyer_id
+          fill_in 'inv_price1', with: "40"
+	  expect { 
+	    click_button 'Send'; sleep 5
+	  }.to change(Invoice, :count).by(1)
+	  page.should have_content "Status" 
+	  page.should have_content "Bob Jones" 
+          page.should have_content "#{@free.seller_name}"
+        end
+
 	it 'handles multiple pixis', run: true do
           page.should have_selector('.add-row-btn')
           page.should have_selector('.remove-row-btn')
@@ -453,6 +467,18 @@ feature "Invoices" do
 	  }.to change(Invoice, :count).by(1)
 	  page.should have_content "Macbook" 
 	  page.should have_content "Bob Jones" 
+	end
+
+	it 'handles multiple pixis w/ free item', run: true do
+          page.should have_selector('.add-row-btn')
+          page.should have_selector('.remove-row-btn')
+          page.find('.add-row-btn').click
+          select_pixi @free, 'pixi_id2'
+	  set_buyer_id
+	  expect { 
+	    click_button 'Send'; sleep 5
+	  }.to change(Invoice, :count).by(1)
+	  page.should have_content @free.title
 	end
       end
     end

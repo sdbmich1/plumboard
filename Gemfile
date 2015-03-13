@@ -190,7 +190,7 @@ group :test do
   gem 'launchy'
   gem "database_cleaner"
   gem 'connection_pool'
-  gem 'selenium-webdriver', '~> 2.43.0'
+  gem 'selenium-webdriver', '~> 2.45.0'
   gem 'shoulda-matchers'
   # gem "webmock", "~> 1.11.0"
   gem "fakeweb", "~> 1.3"

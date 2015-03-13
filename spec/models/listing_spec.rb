@@ -1638,7 +1638,7 @@ describe Listing do
       Listing.invoiceless_pixis.should_not include @listing
     end
   end
-  
+
   describe "purchased" do 
     before :each, run: true do
       create_invoice 'paid', 2
