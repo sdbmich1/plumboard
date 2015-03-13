@@ -429,4 +429,9 @@ FactoryGirl.define do
     status "active"
     description 'New'
   end
+
+  factory :pixi_ask do
+    user_id 1
+    pixi_id "xxxx"
+  end
 end

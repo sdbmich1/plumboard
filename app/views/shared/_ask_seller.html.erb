@@ -1,0 +1,12 @@
+<%= form_for setup_conversation(listing), remote: true,  data: {validate: 'parsley'} do |f| %>
+  <div id="notice" style="display:none"></div>
+  <div id="form_errors"><%= render partial: 'shared/error_messages', :locals => { :target => f.object } %></div>
+  <%= f.hidden_field 'pixi_id', value: listing.pixi_id %>
+  <%= f.hidden_field 'recipient_id', value: listing.seller_id %>
+  <%= f.hidden_field 'user_id', value: @user.id %>
+  <%= render partial: 'shared/conv_posts', locals: {f: f, listing: listing, mtype: mtype, msg: msg} %>
+  <div class="modal-footer">
+    <p><%= f.submit "Send", class: 'btn btn-small btn-primary btn-mask', data: {disable_with: "Sending..."} %>
+    <a href="#" class="btn btn-small" data-dismiss="modal">Close</a></p>
+  </div>
+<% end %>

@@ -946,6 +946,30 @@ describe Listing do
     end
   end
 
+  describe "asked" do 
+    before(:each) do
+      @usr = create :pixi_user
+      @pixi_ask = @user.pixi_asks.create FactoryGirl.attributes_for :pixi_ask, pixi_id: @listing.pixi_id
+    end
+
+    it { Listing.asked_list(@usr).should_not include @listing } 
+    it { Listing.asked_list(@user).should_not be_empty }
+    it { expect(@listing.asked_count).to eq(1) }
+    it { expect(@listing.is_asked?).to eq(true) }
+
+    it "is not asked" do
+      listing = create(:listing, seller_id: @user.id, title: 'Hair brush') 
+      expect(listing.asked_count).to eq(0)
+      expect(listing.is_asked?).to eq(false)
+    end
+
+    it { expect(Listing.asked_users(@listing.pixi_id).first.name).to eq(@user.name) }
+    it { expect(Listing.asked_users(@listing.pixi_id)).not_to include(@usr) }
+
+    it { expect(@listing.user_asked?(@user)).not_to be_nil }
+    it { expect(@listing.user_asked?(@usr)).not_to eq(true) }
+  end
+
   describe "cool" do 
     before(:each) do
       @usr = FactoryGirl.create :pixi_user
@@ -1576,7 +1600,45 @@ describe Listing do
       }
     end
   end
-  
+
+  describe "invoiceless pixis" do
+    before do
+      @pixi_want = @user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
+      @pixi_want.created_at = 3.days.ago
+      @pixi_want.save!
+    end
+
+    it "toggles number_of_days" do
+      Listing.invoiceless_pixis.should include @listing
+      Listing.invoiceless_pixis(5).should_not include @listing
+    end
+
+    it "does not return pixis with wants less than two days old" do
+      @pixi_want.created_at = Time.now
+      @pixi_want.save!
+      Listing.invoiceless_pixis.should_not include @listing
+    end
+
+    it "returns invoiced pixis in job category" do
+      @listing.category_id = Category.find_by_name("Jobs").object_id
+      @listing.save!
+      create_invoice
+      Listing.invoiceless_pixis.should include @listing
+    end
+
+    it "returns invoiced pixis with no price" do
+      @listing.price = nil
+      @listing.save!
+      create_invoice
+      Listing.invoiceless_pixis.should include @listing
+    end
+
+    it "does not return other pixis with invoices" do
+      create_invoice
+      Listing.invoiceless_pixis.should_not include @listing
+    end
+  end
+
   describe "purchased" do 
     before :each, run: true do
       create_invoice 'paid', 2

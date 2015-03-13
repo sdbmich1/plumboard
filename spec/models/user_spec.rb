@@ -63,6 +63,8 @@ describe User do
     it { should have_many(:saved_listings) }
     it { should respond_to(:pixi_wants) }
     it { should have_many(:pixi_wants) }
+    it { should respond_to(:pixi_asks) }
+    it { should have_many(:pixi_asks) }
     it { should respond_to(:preferences) }
     it { should have_many(:preferences).dependent(:destroy) }
     it { should accept_nested_attributes_for(:preferences).allow_destroy(true) }

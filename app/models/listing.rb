@@ -16,6 +16,9 @@ class Listing < ListingParent
   has_many :pixi_wants, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :saved_listings, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :active_saved_listings, primary_key: 'pixi_id', foreign_key: 'pixi_id', class_name: 'SavedListing', conditions: { :status => 'active' }
+  has_many :pixi_asks, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
+  has_many :site_listings, :dependent => :destroy
+  #has_many :sites, :through => :site_listings, :dependent => :destroy
   has_many :invoice_details, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :invoices, through: :invoice_details, :dependent => :destroy
   has_many :active_pixi_wants, primary_key: 'pixi_id', foreign_key: 'pixi_id', class_name: 'PixiWant', conditions: { :status => 'active' }
@@ -80,6 +83,11 @@ class Listing < ListingParent
     active.joins(:pixi_likes).where("pixi_likes.user_id = ?", usr.id).paginate page: pg
   end
 
+ # get asked list by user
+  def self.asked_list usr, pg=1
+    active.joins(:pixi_asks).where("pixi_asks.user_id = ?", usr.id).paginate page: pg
+  end
+
   # find listings by buyer user id
   def self.get_by_buyer val
     includes(:invoices).where('invoices.buyer_id = ?', val)
@@ -119,14 +127,29 @@ class Listing < ListingParent
     active_pixi_wants.size rescue 0
   end
 
+  # return asked count 
+  def asked_count
+    pixi_asks.size rescue 0
+  end
+
   # return whether pixi is wanted
   def is_wanted?
     wanted_count > 0 rescue nil
   end
 
+ # return whether pixi is asked
+  def is_asked?
+    asked_count > 0 rescue nil
+  end
+
   # return whether pixi is wanted by user
   def user_wanted? usr
     active_pixi_wants.where(user_id: usr.id).first rescue nil
+  end
+
+  # return whether pixi is asked by user
+  def user_asked? usr
+    pixi_asks.where(user_id: usr.id).first rescue nil
   end
 
   # return liked count 
@@ -173,6 +196,12 @@ class Listing < ListingParent
   def self.wanted_users pid
     select("users.id, CONCAT(users.first_name, ' ', users.last_name) AS name, users.updated_at, users.created_at")
       .joins(:pixi_wants => [:user]).where(pixi_id: pid).order("users.first_name")
+  end
+
+  # return asked users 
+  def self.asked_users pid
+    select("users.id, CONCAT(users.first_name, ' ', users.last_name) AS name, users.updated_at, users.created_at")
+      .joins(:pixi_asks => [:user]).where(pixi_id: pid).order("users.first_name")
   end
 
   # mark saved pixis if sold or closed
@@ -269,6 +298,14 @@ class Listing < ListingParent
     else
       false
     end
+  end
+
+  # return all pixis with wants that are more than number_of_days old and either have no invoices, no price, or are jobs
+  def self.invoiceless_pixis number_of_days=2
+    pixi_ids = PixiWant.where("created_at < ?", Time.now - number_of_days.days).pluck(:pixi_id)
+    no_invoice_pixis = active.where(pixi_id: pixi_ids).includes(:invoices).having("count(invoice_details.id) = 0").delete_if { |listing| listing.id.nil? }
+    job_or_no_price_pixis = active.where("pixi_id IN (?) AND (category_id = ? OR price IS NULL)", pixi_ids, Category.find_by_name("Jobs").object_id)
+    (no_invoice_pixis + job_or_no_price_pixis).uniq
   end
 
   # returns purchased pixis from buyer
