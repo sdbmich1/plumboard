@@ -198,6 +198,18 @@ feature "Listings" do
     end
   end
 
+    def show_content
+      page.should have_content event_listing.seller_name
+      page.should have_content "Start Date: #{short_date(event_listing.event_start_date)}"
+      page.should have_content "End Date: #{short_date(event_listing.event_end_date)}"
+      #page.should have_content "Start Time: #{short_time(event_listing.event_start_time)}"
+      #page.should have_content "End Time: #{short_time(event_listing.event_end_time)}"
+      page.should have_content "Event Type: #{event_listing.event_type_descr}"
+      page.should_not have_content "Compensation: #{(event_listing.compensation)}"
+      page.should_not have_content "Condition: #{(event_listing.condition)}"
+      page.should have_content "Quantity: #{(event_listing.amt_left)}"
+    end
+
   describe "View Event Pixi", process: true do 
     let(:event_type) { create :event_type }
     let(:category) { create :category, name: 'Event', category_type_code: 'event' }
@@ -211,17 +223,28 @@ feature "Listings" do
       visit listing_path(event_listing) 
     end
      
-    it "views pixi page" do
-      page.should have_content event_listing.nice_title
-      page.should have_content event_listing.seller_name
-      page.should have_content "Start Date: #{short_date(event_listing.event_start_date)}"
-      page.should have_content "End Date: #{short_date(event_listing.event_end_date)}"
-      #page.should have_content "Start Time: #{short_time(event_listing.event_start_time)}"
-      #page.should have_content "End Time: #{short_time(event_listing.event_end_time)}"
-      page.should have_content "Event Type: #{event_listing.event_type_descr}"
-      page.should_not have_content "Compensation: #{(event_listing.compensation)}"
-      page.should_not have_content "Condition: #{(event_listing.condition)}"
-      page.should have_content "Quantity: #{(event_listing.amt_left)}"
+    it "views pixi page w/ price", js: true do
+      page.should have_content "#{event_listing.nice_title}$100.00"
+      show_content
+    end
+  end
+
+  describe "View Event Pixi w/o price", process: true do 
+    let(:event_type) { create :event_type }
+    let(:category) { create :category, name: 'Event', category_type_code: 'event' }
+    let(:event_listing) { create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id, 
+      category_id: category.id, event_start_date: Date.tomorrow, event_end_date: Date.tomorrow, event_start_time: Time.now+2.hours, price: nil,
+      event_end_time: Time.now+3.hours, event_type_code: event_type.code, quantity: 1 ) }
+
+    before(:each) do
+      pixi_user = create(:pixi_user) 
+      init_setup pixi_user
+      visit listing_path(event_listing) 
+    end
+     
+    it "views pixi page w/o price", js: true do
+      page.should have_content "#{event_listing.nice_title}FREE"
+      show_content
     end
   end
 

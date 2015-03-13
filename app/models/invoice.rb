@@ -78,8 +78,8 @@ class Invoice < ActiveRecord::Base
       det = inv.invoice_details.build
       det.pixi_id = !pixi_id.blank? ? pixi_id : !pixi.blank? ? pixi.id : nil rescue nil
       det.quantity = det.listing.pixi_wants.where(user_id: buyer_id).first.quantity rescue 1
-      det.price = det.listing.price if det.listing
-      det.subtotal = inv.amount = det.listing.price * det.quantity if det.listing
+      det.price = det.listing.price || 0 if det.listing
+      det.subtotal = inv.amount = det.listing.price * det.quantity if det.listing rescue 0
     end
     inv
   end
@@ -258,7 +258,7 @@ class Invoice < ActiveRecord::Base
       listings.find_each do |listing|
         inv_list = Invoice.where(status: 'unpaid').joins(:invoice_details).where("`invoice_details`.`pixi_id` = ?", listing.pixi_id).readonly(false)
         inv_list.find_each do |inv|
-          inv.update_attribute(:status, 'closed') if inv.pixi_count == 1 && inv.id != self.id
+          inv.update_attribute(:status, 'closed') if inv.pixi_count == 1 && inv.id != self.id && inv.buyer_id == self.buyer_id
         end
       end
     end
