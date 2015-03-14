@@ -1,0 +1,6 @@
+<div class=''>
+  <%- if devise_mapping.recoverable? && controller_name != 'passwords' %>
+    <%= link_to "Forgot password?", new_password_path(resource_name), class: 'terms-link' %><br />
+  <% end -%>
+</div>
+

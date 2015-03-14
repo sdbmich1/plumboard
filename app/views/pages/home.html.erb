@@ -2,8 +2,7 @@
   <% cache fragment: 'home_page_top' do %>
     <%= render partial: 'home_page_header' %>
     <%= render partial: 'home_page_subtitle' %>
+    <%= render partial: 'shared/login_modal' %>
+    <%= render partial: 'shared/signup_modal' %>
   <% end %>
-<% end %>
-<% if days_left? %>
-  <%= render partial: 'home_page_content' %>
 <% end %>
