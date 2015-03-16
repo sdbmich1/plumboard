@@ -1,8 +1,8 @@
-  <% cache cache_key_for_pixi_page(listing, 'header') do %>
+<% cache cache_key_for_pixi_page(listing, 'header') do %>
   <div class='row'>
     <div class="med-neg-top span12">
-      <h4 class='mbot'><%= listing.nice_title %><%= ntc listing.price %> </h4>
+      <h4 class='mbot'><%= set_title listing %></h4>
     </div>
   </div>
-  <% end %>
+<% end %>
 

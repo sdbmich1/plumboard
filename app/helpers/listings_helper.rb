@@ -300,6 +300,7 @@ module ListingsHelper
 
   # set pixi title based on price
   def set_title listing
-    listing.nice_title !listing.price.blank?
+    amt = listing.job? ? listing.compensation : ntc(listing.price)
+    [listing.nice_title, amt].join('')
   end
 end
