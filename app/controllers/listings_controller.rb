@@ -99,18 +99,12 @@ class ListingsController < ApplicationController
   end
 
   def load_city
-    flash.now[:notice] = flash_msg
     @category = Category.find @cat rescue nil if action_name == 'category'
     @listings = Listing.get_by_city(@cat, @loc).set_page @page
   end
 
   def set_session
     session[:back_to] = request.path unless signed_in?
-  end
-
-  def flash_msg 
-    val = ResetDate::days_left
-    "Pixiboard is donating 10% of our revenues to NorcalMLK for the month of January! Only #{val} days left to Shop Local and Give Back." if val.to_i > 0
   end
 
   def render_csv format
