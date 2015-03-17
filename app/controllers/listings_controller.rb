@@ -30,7 +30,7 @@ class ListingsController < ApplicationController
   end
 
   def seller
-    respond_with(@listings = Listing.get_by_status(@status).paginate(page: @page))
+    respond_with(@listings = Listing.get_by_seller(@user, @adminFlg).get_by_status(@status).paginate(page: @page))
   end
 
   def seller_wanted
