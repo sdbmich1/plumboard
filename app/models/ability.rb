@@ -39,7 +39,7 @@ class Ability
       end
 
       can [:crud, :sent, :remove], Invoice, :seller_id => user.id
-      can [:show, :received], Invoice, :buyer_id => user.id
+      can [:show, :received, :decline], Invoice, :buyer_id => user.id
 
       can [:crud], BankAccount, :user_id => user.id
       can [:crud], CardAccount, :user_id => user.id

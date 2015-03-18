@@ -4,7 +4,7 @@ class InvoicesController < ApplicationController
   before_filter :authenticate_user!
   skip_authorize_resource :only => [:autocomplete_user_first_name]
   before_filter :load_data, only: [:index, :sent, :received]
-  before_filter :load_invoice, only: [:show, :edit, :update, :destroy, :remove]
+  before_filter :load_invoice, only: [:show, :edit, :update, :destroy, :remove, :decline]
   before_filter :set_params, only: [:create, :update]
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name
   respond_to :html, :js, :json, :mobile
@@ -68,6 +68,14 @@ class InvoicesController < ApplicationController
       redirect_to sent_invoices_path, notice: 'Invoice was removed successfully.'
     else
       render action: :show, error: "Invoice was not removed. Please try again."
+    end
+  end
+
+  def decline
+    if @invoice.decline params[:reason]
+      redirect_to received_invoices_path, notice: 'Invoice was declined successfully.'
+    else
+      render action: :show, error: "Invoice was not declined. Please try again."
     end
   end
 

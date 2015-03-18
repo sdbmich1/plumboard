@@ -281,4 +281,19 @@ module ApplicationHelper
     picture = model.pictures.build rescue nil
     return model
   end
+
+  # select drop down for remove btn
+  def button_menu model, atype
+    # build content tag
+    if controller_name == 'listings'
+      model.remove_item_list.collect {|item| concat(content_tag(:li, link_to(item, listing_path(model, reason: item), method: :put)))}
+    elsif controller_name == 'invoices'
+      model.decline_item_list.collect { |item|
+        concat(content_tag(:li, link_to(item, decline_invoice_path(model, reason: item), confirm: 'Decline this invoice?', method: :put)))
+      }
+    else
+      model.deny_item_list.collect {|item| concat(content_tag(:li, link_to(item, deny_pending_listing_path(model, reason: item), method: :put)))}
+    end
+    return ''
+  end
 end

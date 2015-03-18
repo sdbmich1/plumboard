@@ -215,17 +215,6 @@ module ListingsHelper
     poster.to_sym
   end
 
-  # select drop down for remove btn
-  def button_menu listing, atype
-    # build content tag
-    if controller_name == 'listings'
-      listing.remove_item_list.collect {|item| concat(content_tag(:li, link_to(item, listing_path(listing, reason: item), method: :put)))}
-    else
-      listing.deny_item_list.collect {|item| concat(content_tag(:li, link_to(item, deny_pending_listing_path(listing, reason: item), method: :put)))}
-    end
-    return ''
-  end
-
   # build dynamic cache key for pixi show page
   def cache_key_for_pixi_panel(listing)
     if listing
