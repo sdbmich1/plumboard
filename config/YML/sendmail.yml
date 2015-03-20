@@ -1,0 +1,33 @@
+# Just like the config/database.yml this file requires an entry for each environment
+defaults: &defaults 
+  user_name: 'sdbmich1@gmail.com'
+  password: 'sdb91mse'
+  domain: 'gmail.com'
+  host: 'localhost:3000'
+  smtp_addr: 'smtp.gmail.com'
+
+smtp_defaults: &smtp_defaults 
+  user_name: 'sdbmich1'
+  password: 'sDb0594BKb'
+  domain: 'pixiboard.com'
+  host: 'test.pixiboard.com'
+  smtp_addr: 'smtp.sendgrid.net'
+
+mail_defaults: &mail_defaults 
+  user_name: 'sbrown@pixiboard.com'
+  password: 'jMUlRyTTdAoogg84cITPpA'
+  domain: 'pixiboard.com'
+  host: 'www.pixiboard.com'
+  smtp_addr: 'smtp.mandrillapp.com'
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+production:
+  <<: *mail_defaults
+
+staging:
+  <<: *smtp_defaults

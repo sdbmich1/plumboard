@@ -616,6 +616,29 @@ task :load_condition_types => :environment do
   end
 end
 
+task :load_fulfillment_types => :environment do
+  FulfillmentType.delete_all
+  CSV.foreach(Rails.root.join('db', 'fulfillment_type_021515.csv'), :headers => true) do |row|
+
+    attrs = {
+      :code   => row[0],
+      :description => row[1],
+      :status   => row[2],
+      :hide   => row[3],
+    }
+
+    #add fulfillment_type
+    new_fulfillment_type = FulfillmentType.new(attrs)
+
+    #save fulfillment_type
+    if new_fulfillment_type.save
+      puts "Saved fulfillment_type #{attrs.inspect}"
+    else
+      puts new_fulfillment_type.errors
+    end
+  end
+end
+
 task :import_other_sites, [:file_name, :org_type] => [:environment] do |t, args|
 
   CSV.foreach(Rails.root.join('db', args[:file_name]), :headers => true) do |row|

@@ -1,0 +1,61 @@
+defaults: &defaults 
+  pixi:
+    alias_length: 12
+    key_length: 16
+    px_comments: 6
+    site_init_free: 100
+    max_pixi_amt: 15000.00
+    base_price: 0.00
+    premium_price: 0.00
+    fee: 0.99
+    percent: 2.9
+    txn_percent: 0.01
+    pxb_txn_percent: 0.2
+    pixter_percent: 0.4
+    min_txn_amt: 250
+    launch_promo_cd: "2013LAUNCH"
+    days: 90
+    max_pixi_pix: 16
+    max_pixi_size: 2
+    max_inv_qty: 100
+    max_sales_tax: 15
+    max_display_days: 60
+    min_ppost_days: 3
+    min_pixi_count: 1500
+    min_board_amt: 25
+    max_ship_amt: 500
+    pixi_locale: 'SF Bay Area'
+    pixi_post: 'Hi, I am interested in the pixi you posted. How do you want to connect to complete the transaction?'
+    payment_api: 'balanced'
+    credit_card_api: 'balanced'
+    company_info: 'Pixiboard, Inc., 3450 Sacramento Street, SF, CA 94118'
+    caption: 'Safe local commerce.'
+    px_post_caption: 'Move Your Stuff.'
+    conv_fee_msg: 'Fee includes card fee (2.9%) and either $0.99 or 0.5% (whichever is higher).'
+    seller_fee_msg: 'Fee is either $0.99 or 0.05% (whichever is higher).'
+    pxpost_fee_msg: 'PixiPost Fee is 20%.'
+    sales_tax_msg: 'For businesses only. If you add sales tax, it is your legal responsibility to file the appropriate paperwork with your local, state, and federal authorities.'
+    zip_error_msg: 'Sorry! The zip code you entered or have on file is outside our current service area. Please resubmit or check back soon.'
+    tag_line: 'The visual marketplace for everything local.'
+    pxpost_tag_line: 'With PixiPost&#0153;, you can have one of our Pixters help get your stuff posted online for free. For a small fee, you can save yourself some time. We only get paid when you do!'
+    fb_welcome_msg: 'To get a better user experience, please go to My Settings and add your zip code. This will enable us to better localize your pixis.'
+    no_pixi_found_msg: 'No pixis found for the specified location and/or category. Be the first to post.'
+    pixi_want_msg: 'I want this! The owner of the pixi will be notified.'
+    no_inv_pixi_msg: 'All your pixis have been sold or removed. Please create a new pixi first.'
+    use_local_pix: 'NO'
+    pixi_contest: 'NO'
+    host_address: 'pixiboard.com'
+    email: 'support@pixiboard.com'
+    version: 1.401
+
+development:    
+  <<: *defaults
+  
+production:    
+  <<: *defaults
+  
+test:    
+  <<: *defaults
+  
+staging:    
+  <<: *defaults

@@ -1,0 +1,31 @@
+defaults: &defaults 
+  paypal:   
+    mode: test     
+    login: sdbmic_1354738494_biz_api1.yahoo.com     
+    password: '1354738514'     
+    signature: A88MTrXoEpssUvMRk3-lzqY2kU6wA6wxHK2i7MCGx0DbDODKzfKBRn6Q     
+  #  application_id: APP-76y884485P519543T  
+  stripe:
+    api_key: "sk_test_87BbvJVr6Gy2KEhNe9N3HlOF"
+    public_key: "pk_test_ND2g6VoRttLN98bVM9rPsiyD"
+  balanced:
+    uri: /v1/marketplaces/TEST-MP2Q4OaIanQuIDJIixHGmhQA
+    api_key: 5d38a206cee611e29cdf026ba7f8ec28
+
+development:    
+  <<: *defaults
+  
+production:    
+  stripe: 
+    api_key: 'sk_live_HzNcL19xXXi3uAhoOj0SsD76'
+    public_key: 'pk_live_pvL5RclUzeg025HFOPPWht52'
+  balanced:
+    uri: /v1/marketplaces/MP4lRyVHhM5eGbRNBtbkYrIK
+    api_key: ak-prod-2HmNYIL3k3c9gM5K4oXOSsbIXaMMazrmI
+    old_key: AK4ludamgjjiZYY6R2X2ZtUf 
+
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults

@@ -162,7 +162,7 @@ group :development do
   gem 'capistrano-maintenance'
 
   # Capistrano RVM integration
-  gem 'rvm-capistrano'
+  gem 'rvm-capistrano', require: false
 
   gem 'quiet_assets'
   gem 'bullet'

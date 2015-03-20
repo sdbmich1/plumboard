@@ -428,4 +428,11 @@ FactoryGirl.define do
     status "active"
     description 'New'
   end
+
+  factory :fulfillment_type do
+    code "SHP"
+    hide "no"
+    status "active"
+    description 'Ship'
+  end
 end
