@@ -1,33 +1,9 @@
 <% provide(:title, 'Sign Up') %>
 <%= content_for :content do %>
   <div class="center">
-    <h2>Create Your Account</h2>
+    <h3>Create Your Account</h3>
   </div>
-  <div class="sm-top row">
-    <%= form_for([resource_name, resource.with_picture], url: registration_path(resource_name), data: {validate: 'parsley'}, 
-      html: { multipart: true, id: 'register-form', class: 'uform'}) do |f| %>
-      <%= render partial: 'shared/error_messages', :locals => { :target => f.object } %>
-      <%= render partial: 'shared/show_user_photo', locals: { f: f, model: resource, file_name: 'person_icon.jpg' } %>
-
-      <div class="span4">
-        <div id='signup'>
-          <%= render partial: 'shared/user_info', locals: { f: f, user: @user } %>
-	  <% if @user.password_required? %>
-    	    <div><%= f.password_field :password, placeholder: 'New password (min. 8 characters)', value: nil, required: true %></div>
-    	    <div><%= f.password_field :password_confirmation, placeholder: 'Re-enter password', required: true %></div>
-	  <% end %>
-        </div>
-
-    	<div class='mtop mbot'>
-	  <div class='left-form mright20'>
-	    <%= f.submit "Register", class: "btn btn-large btn-primary submit-btn", id: 'register-btn', data: {disable_with: "Submitting..."} %>
-	  </div>
-          <div class='pad10 sdescr'>Already have an account? <%= link_to "Sign In", new_user_session_path, class: 'terms-link' %></div>
-	</div>
-	<div class='clear-all'></div>
-        <div class='mtop sdescr'>By registering, I accept <%= link_to "Pixiboard's Terms of Service", terms_path, class: 'terms-link' %> and  
-	   <%= link_to "Privacy Policy", privacy_path, class: 'terms-link' %>. We do not share your personal information.</div>
-      </div>
-    <% end %>
+  <div class='mtop'>
+    <%= render partial: 'shared/signup_form', locals: {src: 'new'} %>
   </div>
 <% end %>

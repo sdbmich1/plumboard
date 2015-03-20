@@ -475,6 +475,13 @@ ActiveRecord::Schema.define(:version => 20150227182420) do
   add_index "pictures", ["imageable_id", "imageable_type"], :name => "index_pictures_on_imageable_id_and_imageable_type"
   add_index "pictures", ["processing"], :name => "index_pictures_on_processing"
 
+  create_table "pixi_asks", :force => true do |t|
+    t.integer  "user_id"
+    t.string   "pixi_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
   create_table "pixi_likes", :force => true do |t|
     t.integer  "user_id"
     t.string   "pixi_id"
@@ -566,8 +573,10 @@ ActiveRecord::Schema.define(:version => 20150227182420) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
     t.integer  "quantity"
+    t.string   "status"
   end
 
+  add_index "pixi_wants", ["status"], :name => "index_pixi_wants_on_status"
   add_index "pixi_wants", ["user_id", "pixi_id"], :name => "index_pixi_wants_on_user_id_and_pixi_id"
 
   create_table "posts", :force => true do |t|
@@ -667,15 +676,6 @@ ActiveRecord::Schema.define(:version => 20150227182420) do
 
   add_index "saved_listings", ["pixi_id", "user_id"], :name => "index_saved_listings_on_pixi_id_and_user_id"
   add_index "saved_listings", ["status"], :name => "index_saved_listings_on_status"
-
-  create_table "saved_pixis", :force => true do |t|
-    t.string   "pixi_id"
-    t.integer  "user_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
-
-  add_index "saved_pixis", ["pixi_id", "user_id"], :name => "index_saved_pixis_on_pixi_id_and_user_id"
 
   create_table "sessions", :force => true do |t|
     t.string   "session_id", :null => false
@@ -854,6 +854,7 @@ ActiveRecord::Schema.define(:version => 20150227182420) do
     t.string   "status"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
+    t.string   "hide"
   end
 
   add_index "user_types", ["code"], :name => "index_user_types_on_code"
@@ -902,7 +903,7 @@ ActiveRecord::Schema.define(:version => 20150227182420) do
   add_index "users", ["ref_id"], :name => "index_users_on_ref_id"
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
   add_index "users", ["unlock_token"], :name => "index_users_on_unlock_token", :unique => true
-  add_index "users", ["url"], :name => "index_users_on_url"
+  add_index "users", ["url"], :name => "index_users_on_url", :unique => true
   add_index "users", ["user_type_code"], :name => "index_users_on_user_type"
 
   create_table "users_roles", :id => false, :force => true do |t|

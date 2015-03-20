@@ -20,4 +20,9 @@ module PagesHelper
   def home_page?
     controller_name == 'pages' && %w(home location_name).detect {|x| action_name == x} ? true : false
   end
+
+  # check for modal source
+  def is_modal? src
+    src == 'modal' ? 'mleft30 span4' : ''
+  end
 end

@@ -6,7 +6,8 @@ class PendingListingsController < ApplicationController
   respond_to :html, :json, :js, :csv
 
   def index
-    respond_with(@listings = TempListing.check_category_and_location(@status, @cat, @loc, @page).paginate(page: @page, per_page: 15))
+    @unpaginated_listings = TempListing.check_category_and_location(@status, @cat, @loc)
+    respond_with(@listings = @unpaginated_listings.paginate(page: @page, per_page: 15)) { |format| render_csv format }
   end
 
   def show
@@ -48,5 +49,9 @@ class PendingListingsController < ApplicationController
 
   def check_access
     authorize! [:read, :update], @listing 
+  end
+
+  def render_csv format
+    format.csv { send_data(render_to_string(csv: @unpaginated_listings), disposition: "attachment; filename=#{TempListing.filename(@status)}.csv") }
   end
 end

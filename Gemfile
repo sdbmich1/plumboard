@@ -162,7 +162,7 @@ group :development do
   gem 'capistrano-maintenance'
 
   # Capistrano RVM integration
-  gem 'rvm-capistrano', require: false
+  gem 'rvm-capistrano'
 
   gem 'quiet_assets'
   gem 'bullet'
@@ -190,7 +190,7 @@ group :test do
   gem 'launchy'
   gem "database_cleaner"
   gem 'connection_pool'
-  gem 'selenium-webdriver', '~> 2.43.0'
+  gem 'selenium-webdriver', '~> 2.45.0'
   gem 'shoulda-matchers'
   # gem "webmock", "~> 1.11.0"
   gem "fakeweb", "~> 1.3"
@@ -219,3 +219,5 @@ gem 'graylog2-resque'
 gem 'excon', '~> 0.21.0'
 gem 'rubber'
 gem 'recursive-open-struct'
+gem 'lazyload-rails'
+>>>>>>> bcaa41e209a74eecede95da295d070f90e40daf0

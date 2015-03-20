@@ -10,7 +10,8 @@ class ListingsController < ApplicationController
   layout :page_layout
 
   def index
-    respond_with(@listings = Listing.check_category_and_location(@status, @cat, @loc, @page).paginate(page: @page, per_page: 15))
+    @unpaginated_listings = Listing.check_category_and_location(@status, @cat, @loc)
+    respond_with(@listings = @unpaginated_listings.paginate(page: @page, per_page: 15)) { |format| render_csv format }
   end
 
   def show
@@ -32,12 +33,17 @@ class ListingsController < ApplicationController
     respond_with(@listings = Listing.get_by_seller(@user, @adminFlg).get_by_status(@status).paginate(page: @page))
   end
 
+  def seller_wanted
+    respond_with(@listings = Listing.wanted_list(@user, nil, nil, false).paginate(page: @page))
+  end
+
   def wanted
-    respond_with(@listings = Listing.wanted_list(@user, @page, @cat, @loc))
+    @unpaginated_listings = Listing.wanted_list(@user, @cat, @loc)
+    respond_with(@listings = @unpaginated_listings.paginate(page: @page, per_page: 15)) { |format| render_csv format }
   end
 
   def purchased
-    respond_with(@listings = Listing.get_by_buyer(@user).get_by_status('sold').paginate(page: @page))
+    respond_with(@listings = Listing.purchased(@user).paginate(page: @page))
   end
 
   def category
@@ -53,7 +59,8 @@ class ListingsController < ApplicationController
   end
 
   def invoiced
-    respond_with(@listings = Listing.check_invoiced_category_and_location(@cat, @loc, @page).paginate(page: @page))
+    @unpaginated_listings = Listing.check_invoiced_category_and_location(@cat, @loc)
+    respond_with(@listings = @unpaginated_listings.paginate(page: @page, per_page: 15)) { |format| render_csv format }
   end
 
   def repost
@@ -92,17 +99,15 @@ class ListingsController < ApplicationController
   end
 
   def load_city
-    flash.now[:notice] = flash_msg
     @category = Category.find @cat rescue nil if action_name == 'category'
-    @listings = Listing.get_by_city @cat, @loc, @page
+    @listings = Listing.get_by_city(@cat, @loc).set_page @page
   end
 
   def set_session
     session[:back_to] = request.path unless signed_in?
   end
 
-  def flash_msg 
-    val = ResetDate::days_left
-    "Pixiboard is donating 10% of our revenues to NorcalMLK for the month of January! Only #{val} days left to Shop Local and Give Back." if val.to_i > 0
+  def render_csv format
+    format.csv { send_data(render_to_string(csv: @unpaginated_listings), disposition: "attachment; filename=#{Listing.filename @status}.csv") }
   end
 end

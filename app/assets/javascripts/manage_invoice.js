@@ -13,10 +13,11 @@ function calc_amt(){
 
     var qty = $('#inv_qty'+j).val();
     var price = $('#inv_price'+j).val();
+    var prc = price != null && price != '' ? price : 0.0;
 
     // calc amounts
-    if (qty.length > 0 && price.length > 0) {
-      var amt = parseInt(qty) * parseFloat(price);
+    if (qty.length > 0) {
+      var amt = parseInt(qty) * parseFloat(prc);
       totAmt += amt;
       $('#inv_amt'+j).val(amt.toFixed(2)); 
     }
@@ -41,7 +42,7 @@ function calc_amt(){
 
   $('#ship_amt').val(parseFloat(ship).toFixed(2)); 
   $('#inv_total').val(inv_total.toFixed(2)); 
-  $('#inv_price').val(parseFloat(price).toFixed(2)); 
+  $('#inv_price').val(parseFloat(prc).toFixed(2)); 
 }
 
 // calc invoice amt
@@ -162,7 +163,8 @@ function getItemData(fld, fld2, url) {
     contentType: "application/json",
     success: function(data, status, xhr) {
       if (data !== undefined) {
-        $(fld).val(data.price); 
+        var prc = data.price != null && data.price != '' ? data.price : 0.0;
+        $(fld).val(prc); 
         $(fld2).val(data.amt_left); 
         calc_amt();
       }

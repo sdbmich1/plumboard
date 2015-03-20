@@ -90,36 +90,6 @@ $(document).ajaxError( function(e, xhr, options){
   }
 });	
 
-// process slider
-function load_slider(cntl) {
-
-  // picture slider
-  if( $('.bxslider').length > 0 ) {
-
-    // check slider length to toggle slideshow
-    cntl = ($('.bxslider').children().length > 1) ? true : false;
-
-    $('.bxslider').bxSlider({
-      slideMargin: 10,
-      minSlides: 2,
-      auto: cntl,
-      pager: cntl,
-      autoControls: cntl,
-      mode: 'fade'
-    });
-
-    // vertically center align images in slider
-    $('.bxslider-inner').each(function(){
-      var height_parent = $(this).css('height').replace('px', '') * 1;
-      var height_child = $('div', $(this)).css('height').replace('px', '') * 1;
-      var padding_top_child = $('div', $(this)).css('padding-top').replace('px', '') * 1;
-      var padding_bottom_child = $('div', $(this)).css('padding-bottom').replace('px', '') * 1;
-      var top_margin = (height_parent - (height_child + padding_top_child + padding_bottom_child)) / 2;
-      $(this).html('<div style="height: ' + top_margin + 'px; width: 100%;"></div>' + $(this).html());
-    });
-  }
-}
-
 $(document).ready(function(){
 
   // accordion for pixichat
@@ -494,6 +464,16 @@ $(document).on('click', '#want-btn', function(e) {
   $(this).text(txt);
 });
 
+// toggle contact form for show pixi
+$(document).on('click', '#ask-btn', function(e) {
+  var fld = '#contact_content, #ask_content';
+  var txt;
+
+  // set focus on fld
+  $(fld).focus();
+  $(fld).val($(fld).val());
+});
+
 var keyPress = false; 
 
 // submit contact form on enter key
@@ -650,6 +630,12 @@ $(document).on('click', '#send-want-btn, #want-modal-btn', function(e) {
   var target = $(e.target), action;
   action = target.is('#want-modal-btn') ? 'hide' : 'show';
   $('#wantDialog').modal(action);
+});
+
+$(document).on('click', '#send-ask-btn, #ask-modal-btn', function(e) {
+  var target = $(e.target), action;
+  action = target.is('#ask-modal-btn') ? 'hide' : 'show';
+  $('#askDialog').modal(action);
 });
 
 // toggle menu post menu item

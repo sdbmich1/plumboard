@@ -1,0 +1,6 @@
+<% unless signed_in? %>
+  <%= link_to 'Ask', set_ask_path(listing.pixi_id), method: 'post', class: 'btn btn-primary btn-mask mleft10', id: set_ask_id, remote: !signed_in?, title: ask_msg %>
+<% else %>
+<%= render partial: 'shared/ask_modal', locals: { listing: listing, mtype: 'ask', msg: '', txt: ask_msg } %>
+  	<%= link_to "Ask", "#askDialog", class: 'btn btn-primary btn-mask mleft10', 'data-toggle'=>"modal", title: ask_msg %>
+<% end %>

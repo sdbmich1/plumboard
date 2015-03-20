@@ -1,4 +1,4 @@
-<div class='left-form'>
+<div class='btn-group right-form'>
 <%= form_tag new_transaction_path, :method => :get, :id => 'purchase_btn' do %> 
   <%= hidden_field_tag 'invoice_id', invoice.id %>
   <%= hidden_field_tag 'user_id', invoice.buyer_id %>

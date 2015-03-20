@@ -375,6 +375,11 @@ describe Invoice do
       check_inv true
     end
 
+    it 'loads free pixi' do
+      @listing.update_attribute(:price, nil)
+      check_inv 
+    end
+
     it "loads new invoice w/o pixi_id & buyer_id" do
       inv = Invoice.load_new(@user, nil, nil)
       expect(inv).not_to be_nil
@@ -420,9 +425,12 @@ describe Invoice do
     before(:each) do
       @other_buyer = create :pixi_user
       @invoice.save!; sleep 2
-      @invoice2 = @user.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: @other_buyer.id, status: 'unpaid')
-      @details2 = @invoice2.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
-      @invoice2.save!
+      @invoice2 = @user.invoices.build attributes_for(:invoice, buyer_id: @buyer.id, status: 'unpaid')
+      @details2 = @invoice2.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+      @invoice2.save!; sleep 2
+      @invoice3 = @user.invoices.build attributes_for(:invoice, buyer_id: @other_buyer.id, status: 'paid')
+      @details3 = @invoice3.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+      @invoice3.save!; sleep 2
     end
 
     it 'closes other invoices' do
@@ -435,7 +443,7 @@ describe Invoice do
       sleep 3
       @invoice.amount = 200.00
       @invoice.save!
-      expect(@invoice2.status).not_to eq 'closed'
+      expect(@invoice3.status).not_to eq 'closed'
     end
 
     it 'closes not all other invoices' do
@@ -447,9 +455,34 @@ describe Invoice do
       @invoice.status = 'paid'
       @invoice.save!; sleep 3
       expect(@invoice3.status).not_to eq 'closed'
-      expect(Invoice.where(status: 'paid').count).to eq 1
       expect(Invoice.where(status: 'closed').count).to eq 1
     end
   end
 
+  describe "unpaid_old_invoices" do
+    it "toggles number_of_days" do
+      @invoice.created_at = 3.days.ago
+      @invoice.save!
+      Invoice.unpaid_old_invoices.should include @invoice
+      Invoice.unpaid_old_invoices(5).should_not include @invoice
+    end
+
+    it "does not return invoices less than two days old" do
+      Invoice.unpaid_old_invoices.should_not include @invoice
+    end
+
+    it "does not return paid invoices" do
+      @invoice.status = "paid"
+      @invoice.save!
+      Invoice.unpaid_old_invoices.should_not include @invoice
+    end
+  end  
+
+  describe "decline" do
+    it "assigns status and decline reason" do
+      @invoice.decline "No Longer Interested"
+      expect(@invoice.status).to eq "declined"
+      expect(@invoice.decline_reason).to eq "No Longer Interested"
+    end
+  end
 end

@@ -642,7 +642,7 @@ a.btn-mask {
 //  width: 860px!important;
 }
 
-#post_form {
+#post_form, #ask_form {
   float: left;
 //  width: 280px!important;
 }
@@ -766,6 +766,8 @@ a.white-browse-link {
 }
  
 .pad10 {padding: 10px!important;}
+.pad5 {padding: 5px!important;}
+.pad-top10 {padding-top: 10px!important;}
 .pad-bot10 {padding-bottom: 10px!important;}
 .pad-bot5 {padding-bottom: 5px!important;}
 
@@ -804,4 +806,8 @@ form .clearfix:before, form .clearfix:after {
 
 .center-button {
   left: 50%
+}
+
+.modal-body {
+  padding: 15px 0 0 0;
 }

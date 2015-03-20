@@ -12,8 +12,9 @@ feature "Listings" do
   let(:temp_listing) { create(:temp_listing, title: "Guitar", description: "Lessons", seller_id: user.id ) }
   let(:listing) { create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id,
     site_id: site.id, quantity: 1, condition_type_code: condition_type.code) }
-  let(:pixi_post_listing) { create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, 
+  let(:pixi_post_listing) { create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, quantity: 1,
     pixan_id: pixter.id, site_id: site.id) }
+  let(:post_listing) { create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, quantity: 2, site_id: site.id) }
   let(:submit) { "Want" }
 
   def set_site_id val=@site.id
@@ -25,6 +26,7 @@ feature "Listings" do
     page.should have_content "Quantity: #{(listing.amt_left)}"
     page.should have_content "Posted By: #{listing.seller_name}"
     page.should have_link 'Want'
+    page.should have_link 'Ask'
     page.should have_link 'Cool'
     page.should_not have_link 'Uncool'
     page.should have_link 'Save'
@@ -44,6 +46,12 @@ feature "Listings" do
     it "does not contact a seller", js: true do
       expect{
           click_link 'Want'
+      }.not_to change(Post,:count).by(1)
+      page.should have_content 'Sign in'
+    end
+    it "does not ask a question", js: true do
+      expect{
+          click_link 'Ask'
       }.not_to change(Post,:count).by(1)
       page.should have_content 'Sign in'
     end
@@ -75,6 +83,26 @@ feature "Listings" do
     end
   end
 
+    def want_request sFlg=true, qty=1
+      expect{
+          page.should have_link 'Want'
+          page.should have_link 'Ask'
+          page.should have_link 'Cool'
+          click_link 'Want'; sleep 2
+          check_page_selectors ['#px-qty'], true, sFlg
+          if qty > 1
+            select("#{qty}", :from => "px-qty")
+          end
+          click_button 'Send'
+          sleep 5
+          page.should_not have_link 'Want'
+          page.should have_content 'Want'
+          page.should have_content 'Successfully sent message to seller'
+      }.to change(Post,:count).by(1)
+      expect(Conversation.count).to eql(1)
+      expect(PixiWant.first.quantity).to eql(qty)
+    end
+
   describe "Contact Owner" do 
     before(:each) do
       pixi_user = create(:pixi_user)
@@ -83,44 +111,73 @@ feature "Listings" do
     end
 
     it "Contacts a seller", js: true do
-      expect{
-          page.should have_link 'Want'
-          page.should have_link 'Cool'
-          click_link 'Want'
-	  click_button 'Send'
-	  sleep 5
-          page.should_not have_link 'Want'
-          page.should have_content 'Want'
-          page.should have_content 'Successfully sent message to seller'
-      }.to change(Post,:count).by(1)
-
-      expect(Conversation.count).to eql(1)
-      expect(PixiWant.first.quantity).to eql(1)
+      want_request
       expect{
       	  fill_in 'comment_content', with: "Great pixi. I highly recommend it.\n" 
-	  sleep 3
+	        sleep 3
       }.to change(Comment,:count).by(1)
-
       page.should have_content "Comments (#{pixi_post_listing.comments.size})"
       page.should have_content "Great pixi. I highly recommend it." 
       page.should have_content @user.name 
-      expect(page).not_to have_field('#comment_content', with: 'Great pixi')
+      expect(page).not_to have_field('#comment_content', with: 'Great pixi')      
+    end
+
+
+    it "Asks a seller", js: true do
+      expect{
+          page.should have_link 'Ask'
+          page.should have_link 'Cool'
+          click_link 'Ask'
+          sleep 3
+          fill_in 'ask_content', with: "What color is the item?\n" 
+          click_button 'Send'
+          sleep 5
+          page.should have_content 'Successfully sent message to seller'
+      }.to change(Post,:count).by(1)
+
+      expect{
+          page.should have_link 'Ask'
+          page.should have_link 'Cool'
+          click_link 'Ask'
+          sleep 3
+          fill_in 'ask_content', with: "Is this a new item?\n" 
+          click_button 'Send'
+          sleep 5
+          page.should have_content 'Successfully sent message to seller'
+      }.to change(Post,:count).by(1)
     end
      
     it "does not contact a seller", js: true do
       expect{
           page.should have_link 'Want'
           click_link 'Want'
-	  click_link 'Cancel'
-          page.should_not have_content 'Want'
+          sleep 3
+	        click_link 'Close'
           page.should_not have_content 'Successfully sent message to seller'
       }.not_to change(Post,:count).by(1)
+    end
+
+    it "does not ask a seller", js:true do
+      expect{
+          page.should have_link 'Ask'
+          click_link 'Ask'
+          sleep 3
+          click_link 'Close'
+          page.should_not have_content 'Successfully sent message to seller'
+      }.not_to change(Post,:count).by(1)
+    end
+
+    it "cannot ask seller with empty text box", js:true do
+          page.should have_link 'Ask'
+          click_link 'Ask'
+          sleep 3
+          page.should_not have_link 'Send'
     end
 
     it "clicks on Cool", js: true do
       expect{
           page.find('#cool-btn').click
-	  sleep 3
+	        sleep 3
           page.should have_link 'Uncool'
           page.should_not have_link 'Cool'
       }.to change(PixiLike,:count).by(1)
@@ -136,6 +193,18 @@ feature "Listings" do
       }.to change(SavedListing,:count).by(1)
 
       page.should have_content listing.nice_title
+    end
+  end
+
+  describe "Contact Owner w/ quantity > 1" do 
+    before(:each) do
+      pixi_user = create(:pixi_user)
+      init_setup pixi_user
+      visit listing_path(post_listing) 
+    end
+
+    it "seller want request", js: true do
+      want_request false, 2
     end
   end
 
@@ -180,6 +249,18 @@ feature "Listings" do
     end
   end
 
+    def show_content
+      page.should have_content event_listing.seller_name
+      page.should have_content "Start Date: #{short_date(event_listing.event_start_date)}"
+      page.should have_content "End Date: #{short_date(event_listing.event_end_date)}"
+      #page.should have_content "Start Time: #{short_time(event_listing.event_start_time)}"
+      #page.should have_content "End Time: #{short_time(event_listing.event_end_time)}"
+      page.should have_content "Event Type: #{event_listing.event_type_descr}"
+      page.should_not have_content "Compensation: #{(event_listing.compensation)}"
+      page.should_not have_content "Condition: #{(event_listing.condition)}"
+      page.should have_content "Quantity: #{(event_listing.amt_left)}"
+    end
+
   describe "View Event Pixi", process: true do 
     let(:event_type) { create :event_type }
     let(:category) { create :category, name: 'Event', category_type_code: 'event' }
@@ -193,17 +274,28 @@ feature "Listings" do
       visit listing_path(event_listing) 
     end
      
-    it "views pixi page" do
-      page.should have_content event_listing.nice_title
-      page.should have_content event_listing.seller_name
-      page.should have_content "Start Date: #{short_date(event_listing.event_start_date)}"
-      page.should have_content "End Date: #{short_date(event_listing.event_end_date)}"
-      #page.should have_content "Start Time: #{short_time(event_listing.event_start_time)}"
-      #page.should have_content "End Time: #{short_time(event_listing.event_end_time)}"
-      page.should have_content "Event Type: #{event_listing.event_type_descr}"
-      page.should_not have_content "Compensation: #{(event_listing.compensation)}"
-      page.should_not have_content "Condition: #{(event_listing.condition)}"
-      page.should have_content "Quantity: #{(event_listing.amt_left)}"
+    it "views pixi page w/ price", js: true do
+      page.should have_content "#{event_listing.nice_title}$100.00"
+      show_content
+    end
+  end
+
+  describe "View Event Pixi w/o price", process: true do 
+    let(:event_type) { create :event_type }
+    let(:category) { create :category, name: 'Event', category_type_code: 'event' }
+    let(:event_listing) { create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id, 
+      category_id: category.id, event_start_date: Date.tomorrow, event_end_date: Date.tomorrow, event_start_time: Time.now+2.hours, price: nil,
+      event_end_time: Time.now+3.hours, event_type_code: event_type.code, quantity: 1 ) }
+
+    before(:each) do
+      pixi_user = create(:pixi_user) 
+      init_setup pixi_user
+      visit listing_path(event_listing) 
+    end
+     
+    it "views pixi page w/o price", js: true do
+      page.should have_content "#{event_listing.nice_title}FREE"
+      show_content
     end
   end
 
@@ -220,6 +312,7 @@ feature "Listings" do
       page.should_not have_selector('#contact_content')
       page.should_not have_selector('#comment_content')
       page.should_not have_selector('#want-btn')
+      page.should_not have_selector('#ask-btn')
       page.should_not have_selector('#send-want-btn')
       page.should_not have_selector('#cool-btn')
       page.should_not have_selector('#save-btn')
@@ -233,6 +326,7 @@ feature "Listings" do
       page.should have_content "Cool (#{sold_listing.liked_count})"
       page.should have_content "Saved (#{sold_listing.saved_count})"
       page.should have_content "Comments (#{sold_listing.comments.size})"
+      page.should have_content "Ask (#{sold_listing.asked_count})"
       page.should_not have_link 'Cancel', href: root_path
       page.should_not have_button 'Remove'
       page.should_not have_link 'Edit', href: edit_temp_listing_path(sold_listing)
@@ -279,11 +373,13 @@ feature "Listings" do
       page.should_not have_selector('#send-want-btn')
       page.should_not have_selector('#cool-btn')
       page.should_not have_selector('#save-btn')
+      page.should_not have_selector('#ask-btn')
       page.should have_selector('#fb-link')
       page.should have_selector('#tw-link')
       page.should have_selector('#pin-link')
       page.should_not have_link 'Follow', href: '#'
       page.should have_content "Want (#{listing.wanted_count})"
+      page.should have_content "Ask (#{listing.asked_count})"
       page.should have_content "Cool (#{listing.liked_count})"
       page.should have_content "Saved (#{listing.saved_count})"
       page.should have_content "Comments (#{listing.comments.size})"
@@ -470,17 +566,17 @@ feature "Listings" do
       before(:each) do
         add_region
         @site = create :site, name: 'Detroit', org_type: 'city'
-	@site.contacts.create attributes_for :contact, address: '1611 Tyler', city: 'Detroit', state: 'MI', zip: '48238'
+	      @site.contacts.create attributes_for :contact, address: '1611 Tyler', city: 'Detroit', state: 'MI', zip: '48238'
         @site3 = create :site, name: 'Pixi Tech', org_type: 'school'
-	@site3.contacts.create attributes_for :contact, address: '14018 Prevost', city: 'Detroit', state: 'MI', zip: '48227'
-	@category = create :category, name: 'Music'
-	@category5 = create :category, name: 'Electronics'
+	      @site3.contacts.create attributes_for :contact, address: '14018 Prevost', city: 'Detroit', state: 'MI', zip: '48227'
+	      @category = create :category, name: 'Music'
+	      @category5 = create :category, name: 'Electronics'
         create(:listing, title: "HP Printer J4580", description: "printer", seller_id: @user.id, site_id: @site.id, 
-	  category_id: @category5.id) 
-	@category1 = create :category, name: 'Jobs'
-	@category2 = create :category, name: 'Automotive'
-	@category3 = create :category, name: 'Furniture'
-	@category4 = create :category, name: 'Books'
+	      category_id: @category5.id) 
+	      @category1 = create :category, name: 'Jobs'
+	      @category2 = create :category, name: 'Automotive'
+	      @category3 = create :category, name: 'Furniture'
+	      @category4 = create :category, name: 'Books'
         @listing = create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, category_id: @category.id, site_id: @site3.id) 
         @listing1 = create(:listing, title: "Intern", description: "Unpaid job", seller_id: @user.id, category_id: @category1.id, 
 	  site_id: @site3.id) 
@@ -503,21 +599,21 @@ feature "Listings" do
 
       it "searches for a listing", js: true do
         fill_in 'search', with: 'guitar'
-	click_on 'submit-btn'
+	      click_on 'submit-btn'
         page.should_not have_content 'HP Printer J4580'
       end
 
       it "selects a site", js: true do
         fill_autocomplete('site_name', with: 'pixi')
-	set_site_id @site3.id; sleep 2
+	      set_site_id @site3.id; sleep 2
         page.should have_content @listing1.title
-        page.should_not have_content @pixi.title
+        page.should have_content @pixi.title
         page.should have_content @site3.name
       end
 
       it "selects categories", js: true do
         fill_autocomplete('site_name', with: 'pixi')
-	set_site_id @site3.id; sleep 2
+	      set_site_id @site3.id; sleep 2
         select('Music', :from => 'category_id'); sleep 2
         page.should have_content @category.name_title
         page.should_not have_content @listing1.title

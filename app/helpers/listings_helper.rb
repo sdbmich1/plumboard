@@ -156,14 +156,29 @@ module ListingsHelper
     signed_in? ? '#' : conversations_path(id: pid)
   end
 
+  # set path based on signed in status
+  def set_ask_path pid
+    signed_in? ? '#' : conversations_path(id: pid)
+  end
+
   # set want id based on signed in status
   def set_want_id
     signed_in? ? 'want-btn' : ''
   end
 
+  # set want id based on signed in status
+  def set_ask_id
+    signed_in? ? 'ask-btn' : ''
+  end
+
   # set want message
   def want_msg
     PIXI_WANT_MSG rescue 'I want this!'
+  end
+
+  # set want message
+  def ask_msg
+    PIXI_ASK_MSG rescue 'Ask Question'
   end
 
   # set method based on item existance and type 
@@ -200,17 +215,6 @@ module ListingsHelper
     poster.to_sym
   end
 
-  # select drop down for remove btn
-  def button_menu listing, atype
-    # build content tag
-    if controller_name == 'listings'
-      listing.remove_item_list.collect {|item| concat(content_tag(:li, link_to(item, listing_path(listing, reason: item), method: :put)))}
-    else
-      listing.deny_item_list.collect {|item| concat(content_tag(:li, link_to(item, deny_pending_listing_path(listing, reason: item), method: :put)))}
-    end
-    return ''
-  end
-
   # build dynamic cache key for pixi show page
   def cache_key_for_pixi_panel(listing)
     if listing
@@ -238,20 +242,14 @@ module ListingsHelper
   def get_csv_path status_type, cid, loc
     case status_type
       when "pending"; pending_listings_path(status: 'pending', loc: loc, cid: cid, format: 'csv')
-      when "draft"; unposted_temp_listings_path(status: 'new/edit', loc: loc, cid: cid, format: 'csv')
       when "active"; listings_path(status: 'active', loc: loc, cid: cid, format: 'csv')
       when "expired"; listings_path(status: 'expired', loc: loc, cid: cid, format: 'csv')
       when "sold"; listings_path(status: 'sold', loc: loc, cid: cid, format: 'csv')
       when "removed"; listings_path(status: 'removed', loc: loc, cid: cid, format: 'csv')
-      when "denied"; listings_path(status: 'denied', loc: loc, cid: cid, format: 'csv')
-      when "invoiced"; invoiced_listings_path(loc: loc, cid: cid, format: 'csv')
-      when "wanted"; wanted_listings_path(loc: loc, cid: cid, format: 'csv')
+      when "denied"; pending_listings_path(status: 'denied', loc: loc, cid: cid, format: 'csv')
+      when "invoiced"; invoiced_listings_path(status: 'invoiced', loc: loc, cid: cid, format: 'csv')
+      when "wanted"; wanted_listings_path(status: 'wanted', loc: loc, cid: cid, format: 'csv')
     end
-  end
-
-  # toggle wanted view based on user type
-  def select_wanted_view
-    @user.is_admin? ? 'shared/manage_pixis' : 'shared/mypixis_list'
   end
 
   # check repost status
@@ -283,9 +281,15 @@ module ListingsHelper
   def is_want? mtype
     mtype == 'want'
   end
-
+  
   # check if qty > 1 for wanted pixis
   def multi_qty? listing
     get_item_amt(listing) > 1
+  end
+
+  # set pixi title based on price
+  def set_title listing
+    amt = listing.job? ? listing.compensation : ntc(listing.price)
+    [listing.nice_title, amt].join('')
   end
 end

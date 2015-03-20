@@ -21,7 +21,7 @@ feature "Invoices" do
   end
 
   def set_buyer_id
-    page.execute_script %Q{ $('#buyer_id').val("#{@buyer1.id}") }
+    page.execute_script %Q{ $('#invoice_buyer_id').val("#{@buyer1.id}") }
   end
    
   def select_buyer_name
@@ -55,6 +55,7 @@ feature "Invoices" do
     @person = create(:pixi_user, first_name: 'Kim', last_name: 'Harris') 
     @listing = create(:listing, seller_id: @user.id)
     @pixi = create(:listing, title: 'Macbook Pro', seller_id: @user.id)
+    @free = create(:listing, title: 'Free Item', seller_id: @user.id, price: nil)
     if pxpFlg
       @pxp_listing = create(:listing, seller_id: @user.id, pixan_id: @person.id)
     end
@@ -93,6 +94,10 @@ feature "Invoices" do
     @details5 = @invoice5.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing4.pixi_id 
     @details6 = @invoice5.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
     @invoice5.save!
+    sleep 2
+    @invoice7 = @buyer.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: @user.id, status: 'declined')
+    @details7 = @invoice7.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing4.pixi_id 
+    @invoice7.save!
   end
 
   def unknown_buyer
@@ -297,6 +302,7 @@ feature "Invoices" do
       page.should_not have_content "#{@invoice.get_fee(true)}"
       page.should_not have_content "Amount You Receive"
       page.should have_content "#{@invoice.amount + @invoice.get_fee}"
+      page.should_not have_button "Decline"
       page.should_not have_selector('#pay-btn') 
     end
 
@@ -307,7 +313,19 @@ feature "Invoices" do
 
       visit invoice_path(@invoice4)
       page.should have_content "Trek Bike" 
+      page.should have_button "Decline"
       page.should have_selector('#pay-btn', visible: true) 
+    end
+
+    it "shows declined received invoices", js: true do
+      page.should have_link('Received', href: received_invoices_path) 
+      click_link 'Received'
+      page.should have_link("#{@invoice7.id}", href: invoice_path(@invoice7)) 
+
+      visit invoice_path(@invoice7)
+      page.should have_content "Trek Bike" 
+      page.should_not have_button "Decline"
+      page.should_not have_selector('#pay-btn', visible: true) 
     end
   end
 
@@ -360,14 +378,16 @@ feature "Invoices" do
         
         it 'should not accept bad sales tax', run: true do
           fill_in 'inv_tax', with: "R0"
-	  click_button 'Send'
-          page.should have_content "is not a number" 
+	  expect { 
+	    click_button 'Send'
+	  }.to change(Invoice, :count).by(0)
         end
         
         it 'does not accept invalid sales tax', run: true  do
           fill_in 'inv_tax', with: 5000
-	  click_button 'Send'
-          page.should have_content "Sales tax must be less than or equal to 15" 
+	  expect { 
+	    click_button 'Send'
+	  }.to change(Invoice, :count).by(0)
         end
         
         it 'does not accept invalid shipping amt', js: true do
@@ -375,12 +395,23 @@ feature "Invoices" do
           expect(MAX_SHIP_AMT).to eq(500)
 	  select_buyer
 	  select_pixi @listing
-	  set_buyer_id
           fill_in 'inv_price1', with: 40
 	  page.execute_script("$('#ship_amt').val('5000.00');")
-          # fill_in 'ship_amt', with: 5000
-	  click_button 'Send'
-          page.should have_content " must be less than or equal to 500" 
+	  expect { 
+	    click_button 'Send'
+	  }.to change(Invoice, :count).by(0)
+        end
+
+        it 'rejects invoice with no price before accepting it' do
+	  add_data
+          fill_in 'inv_price1', with: 0
+	  expect { 
+	    click_button 'Send'; sleep 3
+	  }.to change(Invoice, :count).by(0)
+          fill_in 'inv_price1', with: 100
+	  expect { 
+	    click_button 'Send'; sleep 3
+	  }.to change(Invoice, :count).by(1)
         end
       end
 
@@ -390,7 +421,6 @@ feature "Invoices" do
 	  expect { 
 	    click_button 'Send'; sleep 3
 	  }.to change(Invoice, :count).by(1)
-
 	  page.should have_content "Status" 
 	  page.should have_content "Bob Jones" 
         end
@@ -399,7 +429,6 @@ feature "Invoices" do
 	  expect { 
 	    click_button 'Send'; sleep 3
 	  }.to change(Invoice, :count).by(1)
-
 	  page.should have_content "Status" 
 	  page.should have_content "Bob Jones" 
         end
@@ -410,7 +439,6 @@ feature "Invoices" do
 	  expect { 
 	    click_button 'Send'; sleep 3
 	  }.to change(Invoice, :count).by(1)
-
 	  page.should have_content "Status" 
 	  page.should have_content "Shipping" 
 	  page.should have_content "$9.99" 
@@ -431,18 +459,43 @@ feature "Invoices" do
           page.should have_content "#{@pxp_listing.seller_name}"
         end
 
+        it 'accepts invoice with free pixi' do
+	  select_buyer
+	  select_pixi @free
+	  set_buyer_id
+          fill_in 'inv_price1', with: "40"
+	  expect { 
+	    click_button 'Send'; sleep 5
+	  }.to change(Invoice, :count).by(1)
+	  page.should have_content "Status" 
+	  page.should have_content "Bob Jones" 
+          page.should have_content "#{@free.seller_name}"
+        end
+
 	it 'handles multiple pixis', run: true do
           page.should have_selector('.add-row-btn')
           page.should have_selector('.remove-row-btn')
           page.find('.add-row-btn').click
           select_pixi @pixi, 'pixi_id2'
 	  set_buyer_id
-          fill_in 'inv_price2', with: "40"
+          fill_in 'inv_price2', with: "0"
 	  expect { 
 	    click_button 'Send'; sleep 5
 	  }.to change(Invoice, :count).by(1)
 	  page.should have_content "Macbook" 
 	  page.should have_content "Bob Jones" 
+	end
+
+	it 'handles multiple pixis w/ free item', run: true do
+          page.should have_selector('.add-row-btn')
+          page.should have_selector('.remove-row-btn')
+          page.find('.add-row-btn').click
+          select_pixi @free, 'pixi_id2'
+	  set_buyer_id
+	  expect { 
+	    click_button 'Send'; sleep 5
+	  }.to change(Invoice, :count).by(1)
+	  page.should have_content @free.title
 	end
       end
     end

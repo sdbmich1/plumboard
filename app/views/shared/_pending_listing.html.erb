@@ -1,7 +1,7 @@
 <div class='mtop nav pull-right'>
   <%= link_to 'Edit', edit_temp_listing_path(listing), class: 'btn btn-large' %>
   <%= link_to 'Back', pending_listings_path(status: 'pending'), class: 'btn btn-large' %>
-  <%= render partial: 'shared/button_menu', locals: {listing: listing, atype: 'Deny'} %>
+  <%= render partial: 'shared/button_menu', locals: {model: listing, atype: 'Deny'} %>
   <%= link_to 'Approve', approve_pending_listing_path(listing), method: :put, class: 'btn btn-large btn-primary submit-btn', id: 'approve-btn' %>
 </div>
 

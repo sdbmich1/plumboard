@@ -1,0 +1,7 @@
+<div class='sm-top'>
+  <div class='left-form'>
+    <%= f.submit "Register", class: "btn btn-large btn-primary submit-btn mright20", id: 'register-btn', data: {disable_with: "Submitting..."} %>
+  </div>
+  <div class='pad-top10 sdescr'>Already have an account? <%= link_to "Sign In", new_user_session_path, class: 'terms-link' %></div>
+</div>
+<%= render 'shared/signup_form_terms' %>

@@ -386,6 +386,7 @@ FactoryGirl.define do
     user_id 1
     pixi_id "xxxx"
     quantity 1
+    status 'active'
   end
 
   factory :saved_listing do
@@ -434,5 +435,10 @@ FactoryGirl.define do
     hide "no"
     status "active"
     description 'Ship'
+  end
+
+  factory :pixi_ask do
+    user_id 1
+    pixi_id "xxxx"
   end
 end

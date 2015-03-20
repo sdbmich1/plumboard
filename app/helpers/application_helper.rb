@@ -74,7 +74,7 @@ module ApplicationHelper
 
   # set home path based on pixi count
   def set_home_path
-    Listing.has_enough_pixis?(@cat, @region, @page) ? categories_path(loc: @region) : local_listings_path(loc: @region)
+    Listing.has_enough_pixis?(@cat, @region) ? categories_path(loc: @region) : local_listings_path(loc: @region)
   end
 
   # set image
@@ -179,7 +179,7 @@ module ApplicationHelper
 
   # convert to currency
   def ntc val, zeroFlg=false
-    val.blank? ? '' : number_to_currency(val, :precision => (val.round == val) && zeroFlg ? 0 : 2) rescue nil
+    val.blank? ? 'FREE' : number_to_currency(val, :precision => (val.round == val) && zeroFlg ? 0 : 2) rescue nil
   end
 
   # convert to thousand
@@ -221,7 +221,7 @@ module ApplicationHelper
   # build dynamic cache key for pixi show page
   def cache_key_for_pixi_page(listing, fldName='title')
     path = is_pending?(listing) ? 'pending_listings' : %w(new edit).detect {|x| x == listing.status}.blank? ? 'listings' : 'temp_listings'
-    path + "/#{listing.pixi_id}-#{listing.title}-#{listing.updated_at.to_i}-#{fldName}"
+    path + "/#{listing.pixi_id}-#{listing.title}-#{listing.amt_left}-#{listing.updated_at.to_i}-#{fldName}"
   end
 
   # check for menu display of footer items
@@ -236,7 +236,13 @@ module ApplicationHelper
 
   # check if image exists if not render uploaded image
   def get_pixi_image pic, size='original'
-    pic.photo.exists? ? pic.photo.url(size.to_sym) : use_remote_pix? ? pic.picture_from_url : 'rsz_pixi_top_logo.png'
+    if pic.photo.exists?
+      pic.photo.url(size.to_sym)
+    elsif use_remote_pix?
+      pic.direct_upload_url
+    else
+      'rsz_pixi_top_logo.png'
+    end
   end
 
   # check for model errors
@@ -274,5 +280,20 @@ module ApplicationHelper
   def setup_picture(model)
     picture = model.pictures.build rescue nil
     return model
+  end
+
+  # select drop down for remove btn
+  def button_menu model, atype
+    # build content tag
+    if controller_name == 'listings'
+      model.remove_item_list.collect {|item| concat(content_tag(:li, link_to(item, listing_path(model, reason: item), method: :put)))}
+    elsif controller_name == 'invoices'
+      model.decline_item_list.collect { |item|
+        concat(content_tag(:li, link_to(item, decline_invoice_path(model, reason: item), confirm: 'Decline this invoice?', method: :put)))
+      }
+    else
+      model.deny_item_list.collect {|item| concat(content_tag(:li, link_to(item, deny_pending_listing_path(model, reason: item), method: :put)))}
+    end
+    return ''
   end
 end

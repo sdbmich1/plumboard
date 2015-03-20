@@ -234,4 +234,8 @@ class PixiPost < ActiveRecord::Base
       "Sale Value" => !(PixiPost.sale_value(self).nil?) ? PixiPost.sale_value(self) : 'Not sold yet', 
       "Pixter Revenue" => !(PixiPost.sale_value(self).nil?) ? (PixiPost.sale_value(self) * PIXTER_PERCENT) / 100 : 'Not sold yet' }
   end
+
+  def self.filename
+    'Pixter_Report_' + ResetDate::display_date_by_loc(Time.now, Geocoder.coordinates("San Francisco, CA"), false).strftime("%Y_%m_%d")
+  end
 end

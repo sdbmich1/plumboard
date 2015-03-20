@@ -33,6 +33,7 @@ class User < ActiveRecord::Base
   has_many :saved_listings, dependent: :destroy
   has_many :pixi_likes, dependent: :destroy
   has_many :pixi_wants, dependent: :destroy
+  has_many :pixi_asks, dependent: :destroy
 
   # define site relationships
   has_many :site_users, :dependent => :destroy
@@ -92,6 +93,7 @@ class User < ActiveRecord::Base
 
   validates :birth_date,  :presence => true  
   validates :gender,  :presence => true
+  validates_confirmation_of :password, if: :revalid
   validate :must_have_picture
   validate :must_have_zip
 
@@ -140,7 +142,7 @@ class User < ActiveRecord::Base
 
   # eager load associations
   def self.find_user uid
-    includes(:pixi_posted_listings, :pixi_wants, :pixi_likes,
+    includes(:pixi_posted_listings, :pixi_wants, :pixi_likes, :pixi_asks,
       :bank_accounts, :card_accounts, :transactions, :ratings, :seller_ratings, :inquiries, :comments,
       :posts, :incoming_posts, :pixi_posts, :active_pixi_posts, :pixan_pixi_posts, :saved_listings, 
       :pictures, :contacts, :preferences, :user_pixi_points, 
@@ -251,6 +253,10 @@ class User < ActiveRecord::Base
     super && provider.blank?
   end
 
+  def revalid
+    false
+  end
+
   # set account to inctive status
   def deactivate
     self.status = 'inactive'
@@ -314,7 +320,7 @@ class User < ActiveRecord::Base
   end
 
   # return users by type
-  def self.get_by_type val, pg=1
+  def self.get_by_type val
     val.blank? ? all : where(:user_type_code => val)
   end
 
@@ -384,6 +390,11 @@ class User < ActiveRecord::Base
   def as_csv(options={})
     { "Name" => name, "Email" => email, "Home Zip" => home_zip, "Birth Date" => birth_dt, "Enrolled" => nice_date(created_at),
       "Last Login" => nice_date(last_sign_in_at), "Gender" => gender, "Age" => age }
+  end
+
+  def self.filename utype
+    (utype.blank? ? "All" : UserType.where(code: utype).first.description) + "_" +
+      ResetDate::display_date_by_loc(Time.now, Geocoder.coordinates("San Francisco, CA"), false).strftime("%Y_%m_%d")
   end
 
   # set sphinx scopes

@@ -8,6 +8,7 @@ class Post < ActiveRecord::Base
   MAX_SIZE = 100
 
   before_create :activate
+  after_commit :process_pixi_requests, :on => :create
 
   belongs_to :user
   belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id"
@@ -182,7 +183,7 @@ class Post < ActiveRecord::Base
   # check invoice status for buyer or seller
   def check_invoice usr, flg, fld
     if listing.active?
-      listing.invoices.find_each do |invoice|
+      listing.invoices.where(buyer_id: recipient_id).find_each do |invoice|
         result = flg ? invoice.owner?(usr) : !invoice.owner?(usr) 
         if result && invoice.unpaid? && invoice.send(fld) == usr.name
           invoice.invoice_details.find_each do |item|
@@ -262,5 +263,10 @@ class Post < ActiveRecord::Base
   # return create date
   def create_dt
     new_dt = listing.display_date created_at, false rescue created_at
+  end
+
+    # add pixi requests
+  def process_pixi_requests
+    user.pixi_asks.create(pixi_id: self.pixi_id) if self.msg_type == 'ask'
   end
 end

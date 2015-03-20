@@ -19,7 +19,7 @@ feature "UserRegistrations" do
 
     def user_pwd
       fill_in 'user_password', :with => 'userpassword'
-      fill_in "user_password_confirmation", with: 'userpassword'
+      # fill_in "user_password_confirmation", with: 'userpassword'
     end
 
     describe "with invalid information" do
@@ -146,7 +146,7 @@ feature "UserRegistrations" do
 
     def user_data
       user_info
-      fill_in 'user_email', :with => 'newuser@example.com'
+      fill_in 'user_email', with: 'newuser@example.com'
       select('Male', :from => 'user_gender')
       user_birth_date
       fill_in 'home_zip', :with => '90201'
@@ -162,32 +162,40 @@ feature "UserRegistrations" do
       add_data_w_photo
     end
 
-    describe "create user" do
-      before(:each) do
-        visit root_path
-        click_link 'Connect via email'
-      end
-
+    def register val="YES", cnt=1
+      expect { 
+	stub_const("USE_LOCAL_PIX", val)
+	user_with_photo
+	click_button submit; sleep 2 
+        page.should have_content 'A message with a confirmation link has been sent to your email address' if cnt > 0
+      }.to change(User, :count).by(cnt)
+    end
+    
+    describe 'create user from registration page', process: true do
+      before { visit new_user_registration_path }
       it "should create a user - local pix" do
-        expect { 
-	  stub_const("USE_LOCAL_PIX", "YES")
-	  user_with_photo
-	  click_button submit; sleep 2 
-	 }.to change(User, :count).by(1)
-
-        page.should have_link 'How It Works', href: howitworks_path 
-        page.should have_content 'A message with a confirmation link has been sent to your email address' 
+        register
       end	
 
       it "should create a user" do
-	 expect { 
-	  stub_const("USE_LOCAL_PIX", "NO")
-	  user_with_photo
-	  click_button submit; sleep 2 
-	 }.to change(User, :count).by(1)
+        register "NO"
+      end	
+    end
 
-        page.should have_link 'How It Works', href: howitworks_path 
-        page.should have_content 'A message with a confirmation link has been sent to your email address' 
+    describe "create user from modal", process: true do
+      before(:each) do
+        visit root_path
+        click_link 'Signup'; sleep 2
+      end
+
+      it "should create a user - local pix" do
+        check_page_selectors ['#pwd, #register-btn'], true, false
+        register 'YES', 0
+      end	
+
+      it "should create a user" do
+        check_page_selectors ['#pwd, #register-btn'], true, false
+        register "NO", 0
       end	
     end
   end  

@@ -208,11 +208,17 @@ describe Post do
       @post.can_bill?(@new_user).should be_true
     end
     
-    it "should not return true when paid" do
+    it "does not return true when paid" do
+      px_user = create :pixi_user
+      @listing.update_attribute(:quantity, 3)
+      @conversation2 = @listing.conversations.create attributes_for :conversation, user_id: px_user.id, recipient_id: @user.id
+      @post2 = @conversation.posts.build attributes_for :post, user_id: px_user.id, recipient_id: @user.id, pixi_id: @listing.pixi_id
+      @post2.save
       add_invoice
       @invoice.status = 'paid'
       @invoice.save!
       @post.reload.can_bill?(@user).should_not be_true
+      @post2.reload.can_bill?(@user).should be_true
     end
     
     it "should not return true when removed" do
@@ -538,6 +544,34 @@ describe Post do
       @listing.lat, @listing.lng = 35.1498, -90.0492
       @listing.save
       expect(@post.create_dt.to_i).to eq @post.created_at.to_i
+    end
+  end
+
+  def new_conv mtype
+    @pixi = create :listing, seller_id: @user.id, title: 'Big Guitar'
+    @conv = @pixi.conversations.build attributes_for :conversation, user_id: @user.id, recipient_id: @recipient.id, quantity: 2
+    @new_post = @conv.posts.build attributes_for :post, user_id: @user.id, recipient_id: @recipient.id, pixi_id: @pixi.pixi_id, msg_type: mtype
+    @conv.save!
+  end
+
+  describe 'process_pixi_requests' do
+    it 'processes want request' do
+      new_conv 'want'
+      expect(PixiWant.first.quantity).to eq 2
+    end
+    it 'does not process want request' do
+      new_conv 'inv'
+      expect(PixiWant.count).not_to eq 1
+    end
+
+    it 'processes ask request' do
+      new_conv 'ask'
+      expect(PixiAsk.count).to eq 1
+    end
+
+    it 'does not process ask request' do
+      new_conv 'ask'
+      expect(PixiAsk.count).not_to eq 1
     end
   end
 end

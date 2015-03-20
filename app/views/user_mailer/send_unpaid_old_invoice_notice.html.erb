@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head> 
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+</head>
+<body>  
+  <%= render :partial=>'shared/mail_header' %><br /><br />
+  Hi <%= @invoice.buyer_first_name %>,<br /><br />
+  <span style="height:30px;">
+    You received a message on Pixiboard from <%= @invoice.seller_first_name %>.  
+    Click <%= link_to 'Check My Messages', conversations_url(status: 'received') %> to check it out.<br /><br />
+    If you no longer want this pixi, please go to the invoice and select <%= link_to 'Decline', invoice_url(@invoice.id) %>.
+  </span><br /><br />
+
+  <span style="margin-top:20px;">Happy Pixing!</span><br /><br />
+  <span>The Pixiboard Team</span><br /><br />   
+  <%= render :partial=>'shared/mail_footer' %>
+</body>
+</html>
+

@@ -241,9 +241,11 @@ feature "TempListings" do
 
       it "Adds a new listing w compensation", js:true do
         expect{
-	  add_data_w_photo 'Jobs', false, true
+	  add_data_w_photo 'Jobs', false, true; sleep 2
 	  check_page_selectors ['#temp_listing_job_type_code', '#salary'], true, false
- 	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time', '#pixi_qty', '#et_code', '#cond-type-code', '#yr_built', '#temp_listing_mileage', '#temp_listing_color', '#temp_listing_other_id'], false, false
+ 	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time', '#pixi_qty', '#et_code', '#cond-type-code', '#yr_built', 
+	    '#temp_listing_mileage', '#temp_listing_item_color', '#temp_listing_item_id', '#temp_listing_item_size', '#temp_listing_car_id', 
+	    '#temp_listing_car_color'], false, false
           select('Full-Time', :from => 'temp_listing_job_type_code')
           fill_in 'salary', with: "Competitive"
 	}.to change(TempListing,:count).by(0)
@@ -253,20 +255,23 @@ feature "TempListings" do
         expect{
   	  add_data_w_photo 'Automotive', true, true; sleep 3
           fill_in 'Title', with: "Buick Regal for sale"
-	  check_page_selectors ['#cond-type-code', '#yr_built', '#temp_listing_mileage', '#temp_listing_color', '#temp_listing_other_id'], true, false
- 	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time', '#pixi_qty', '#et_code', '#temp_listing_job_type_code', '#salary', '#temp_listing_item_size'], false, false
+	  check_page_selectors ['#cond-type-code', '#yr_built', '#temp_listing_mileage', '#temp_listing_car_color', '#temp_listing_car_id'], true, false
+ 	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time', '#pixi_qty', '#et_code', '#temp_listing_job_type_code', '#salary',
+	    '#temp_listing_item_size', '#temp_listing_item_color', '#temp_listing_item_id'], false, false
           select('Used', :from => 'cond-type-code')
           select('2001', :from => 'yr_built')
           fill_in 'temp_listing_mileage', with: "100,000"
-          fill_in 'temp_listing_color', with: "Baby Blue"
-          fill_in 'temp_listing_other_id', with: "ABCDEF1234567890"
+          fill_in 'temp_listing_car_color', with: "Baby Blue"
+          fill_in 'temp_listing_car_id', with: "ABCDEF1234567890"
 	}.to change(TempListing,:count).by(0)
       end	      
 
       it "Adds a new event listing", js:true do
         expect{
 	  add_data_w_photo 'Events', true, true
-	  check_page_selectors ['#temp_listing_job_type_code', '#salary', '#cond-type-code', '#yr_built', '#temp_listing_mileage', '#temp_listing_color', '#temp_listing_other_id', '#temp_listing_item_size'], false, false
+	  check_page_selectors ['#temp_listing_job_type_code', '#salary', '#cond-type-code', '#yr_built', '#temp_listing_mileage', 
+	    '#temp_listing_mileage', '#temp_listing_item_color', '#temp_listing_item_id', '#temp_listing_item_size', '#temp_listing_car_id', 
+	    '#temp_listing_car_color'], false, false
  	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time', '#pixi_qty', '#et_code'], true, false
           select('Performance', :from => 'et_code'); sleep 0.5
           select('1', :from => 'pixi_qty'); sleep 0.5
@@ -281,13 +286,15 @@ feature "TempListings" do
         expect{
   	  add_data_w_photo 'Apparel', true, true; sleep 3
           fill_in 'Title', with: "Cosby Sweater"
-	  check_page_selectors ['#cond-type-code','#pixi_qty', '#temp_listing_color', '#temp_listing_other_id', '#temp_listing_item_size'], true, false 
- 	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time', '#et_code', '#temp_listing_job_type_code', '#salary','#yr_built', '#temp_listing_mileage'], false, false
+	  check_page_selectors ['#cond-type-code','#pixi_qty', '#temp_listing_item_color', '#temp_listing_item_id', '#temp_listing_item_size'], true, 
+	  false 
+ 	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time', '#et_code', '#temp_listing_job_type_code', '#salary','#yr_built', 
+	  '#temp_listing_mileage', '#temp_listing_car_id', '#temp_listing_car_color'], false, false
           select('Used', :from => 'cond-type-code')
           select('4', :from => 'pixi_qty'); sleep 0.5
-          fill_in 'temp_listing_color', with: "Baby Blue"
+          fill_in 'temp_listing_item_color', with: "Baby Blue"
           fill_in 'temp_listing_item_size', with: "Large"
-          fill_in 'temp_listing_other_id', with: "ABCDEF1234567890"
+          fill_in 'temp_listing_item_id', with: "ABCDEF1234567890"
 	}.to change(TempListing,:count).by(0)
       end	      
 

@@ -15,14 +15,19 @@ class Listing < ListingParent
   has_many :pixi_likes, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :pixi_wants, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :saved_listings, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
+  has_many :active_saved_listings, primary_key: 'pixi_id', foreign_key: 'pixi_id', class_name: 'SavedListing', conditions: { :status => 'active' }
+  has_many :pixi_asks, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
+  has_many :site_listings, :dependent => :destroy
+  #has_many :sites, :through => :site_listings, :dependent => :destroy
   has_many :invoice_details, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :invoices, through: :invoice_details, :dependent => :destroy
+  has_many :active_pixi_wants, primary_key: 'pixi_id', foreign_key: 'pixi_id', class_name: 'PixiWant', conditions: { :status => 'active' }
 
-  default_scope :order => "updated_at DESC"
+  default_scope :order => "listings.updated_at DESC"
 
   # finds specific pixi
   def self.find_pixi pid
-    includes(:pictures, :pixi_likes, :pixi_wants, :saved_listings, :category, :user => [:pictures], 
+    includes(:pictures, :pixi_likes, :active_pixi_wants, :active_saved_listings, :category, :user => [:pictures], 
       :comments=> {:user=>:pictures}).where(pixi_id: pid).first
   end
 
@@ -50,13 +55,13 @@ class Listing < ListingParent
   end
 
   # get pixis by category id
-  def self.get_by_category cid, pg=1
-    active.where(:category_id => cid).set_page pg
+  def self.get_by_category cid, get_active=true
+    get_active ? active.where(:category_id => cid) : where(:category_id => cid)
   end
 
   # get all active pixis that have at least one unpaid invoice and no sold invoices
   def self.active_invoices
-    active.joins(:invoices).where("invoices.status = 'active'")
+    active.joins(:invoices).where("invoices.status = 'unpaid'")
   end
 
   # get saved list by user
@@ -65,11 +70,11 @@ class Listing < ListingParent
   end
 
   # get wanted list by user
-  def self.wanted_list usr, pg=1, cid=nil, loc=nil
-    if usr.is_admin?
-      active.joins(:pixi_wants).where("pixi_wants.user_id is not null").get_by_city(cid, loc, pg, false).paginate(page: pg)
+  def self.wanted_list usr, cid=nil, loc=nil, adminFlg=true
+    if adminFlg
+      active.joins(:pixi_wants).where("pixi_wants.user_id is not null AND pixi_wants.status = ?", 'active').get_by_city(cid, loc, false)
     else
-      active.joins(:pixi_wants).where("pixi_wants.user_id = ?", usr.id).paginate page: pg
+      active.joins(:pixi_wants).where("pixi_wants.user_id = ? AND pixi_wants.status = ?", usr.id, 'active')
     end
   end
 
@@ -78,9 +83,14 @@ class Listing < ListingParent
     active.joins(:pixi_likes).where("pixi_likes.user_id = ?", usr.id).paginate page: pg
   end
 
+ # get asked list by user
+  def self.asked_list usr, pg=1
+    active.joins(:pixi_asks).where("pixi_asks.user_id = ?", usr.id).paginate page: pg
+  end
+
   # find listings by buyer user id
   def self.get_by_buyer val
-    where(:buyer_id => val)
+    includes(:invoices).where('invoices.buyer_id = ?', val)
   end
 
   # get all active pixis with an end_date less than today and update their statuses to closed
@@ -89,11 +99,11 @@ class Listing < ListingParent
   end
 
   # get invoiced listings by status and, if provided, category and location
-  def self.check_invoiced_category_and_location cid, loc, pg=1
+  def self.check_invoiced_category_and_location cid, loc
     if cid.blank? && loc.blank?
       active_invoices
     else
-      active_invoices.get_by_city(cid, loc, pg, false)
+      active_invoices.get_by_city(cid, loc, false)
     end
   end
 
@@ -114,7 +124,12 @@ class Listing < ListingParent
 
   # return wanted count 
   def wanted_count
-    pixi_wants.size rescue 0
+    active_pixi_wants.size rescue 0
+  end
+
+  # return asked count 
+  def asked_count
+    pixi_asks.size rescue 0
   end
 
   # return whether pixi is wanted
@@ -122,9 +137,19 @@ class Listing < ListingParent
     wanted_count > 0 rescue nil
   end
 
+ # return whether pixi is asked
+  def is_asked?
+    asked_count > 0 rescue nil
+  end
+
   # return whether pixi is wanted by user
   def user_wanted? usr
-    pixi_wants.where(user_id: usr.id).first rescue nil
+    active_pixi_wants.where(user_id: usr.id).first rescue nil
+  end
+
+  # return whether pixi is asked by user
+  def user_asked? usr
+    pixi_asks.where(user_id: usr.id).first rescue nil
   end
 
   # return liked count 
@@ -149,7 +174,7 @@ class Listing < ListingParent
 
   # return saved count 
   def saved_count
-    saved_listings.size rescue 0
+    active_saved_listings.size rescue 0
   end
 
   # return whether pixi is saved
@@ -159,12 +184,12 @@ class Listing < ListingParent
 
   # return whether pixi is saved by user
   def user_saved? usr
-    saved_listings.where(user_id: usr.id).first
+    active_saved_listings.where(user_id: usr.id).first
   end
 
   # return whether region has enough pixis
-  def self.has_enough_pixis? cat, loc, pg=1
-    get_by_city(cat, loc, pg).size >= MIN_PIXI_COUNT rescue false
+  def self.has_enough_pixis? cat, loc
+    get_by_city(cat, loc).size >= MIN_PIXI_COUNT rescue false
   end
 
   # return wanted users 
@@ -173,18 +198,29 @@ class Listing < ListingParent
       .joins(:pixi_wants => [:user]).where(pixi_id: pid).order("users.first_name")
   end
 
+  # return asked users 
+  def self.asked_users pid
+    select("users.id, CONCAT(users.first_name, ' ', users.last_name) AS name, users.updated_at, users.created_at")
+      .joins(:pixi_asks => [:user]).where(pixi_id: pid).order("users.first_name")
+  end
+
   # mark saved pixis if sold or closed
   def sync_saved_pixis
     SavedListing.update_status pixi_id, status unless active?
   end
 
+  # build array of closed statuses
+  def self.closed_arr flg=true
+    result = ['closed', 'removed', 'inactive', 'expired'] 
+    flg ? (result << 'sold') : result
+  end
+
   # sends email to users who saved the listing when listing is removed
   def send_saved_pixi_removed
-    closed = ['closed', 'sold', 'removed', 'inactive', 'expired']
-    if closed.detect {|closed| self.status == closed }
-      saved_listings = SavedListing.where(pixi_id: pixi_id) rescue nil
+    if Listing.closed_arr.detect {|closed| self.status == closed }
+      saved_listings = SavedListing.active_by_pixi(pixi_id) rescue nil
       saved_listings.each do |saved_listing|
-        if closed.detect {|closed| saved_listing.status == closed }
+        if Listing.closed_arr.detect {|closed| saved_listing.status == closed }
           UserMailer.delay.send_saved_pixi_removed(saved_listing) unless self.buyer_id == saved_listing.user_id
         end
       end
@@ -218,7 +254,7 @@ class Listing < ListingParent
 
   # toggle invoice status on removing pixi from board
   def set_invoice_status
-    if %w(expired removed inactive closed).detect { |x| x == self.status }
+    if closed_arr(false).detect { |x| x == self.status }
       invoices.find_each do |inv|
         if inv.invoice_details.size == 1 
 	  inv.update_attribute(:status, 'removed')
@@ -270,6 +306,16 @@ class Listing < ListingParent
     no_invoice_pixis = active.where(pixi_id: pixi_ids).includes(:invoices).having("count(invoice_details.id) = 0").delete_if { |listing| listing.id.nil? }
     job_or_no_price_pixis = active.where("pixi_id IN (?) AND (category_id = ? OR price IS NULL)", pixi_ids, Category.find_by_name("Jobs").object_id)
     (no_invoice_pixis + job_or_no_price_pixis).uniq
+  end
+
+  # returns purchased pixis from buyer
+  def self.purchased usr
+    where("listings.status not in (?)", closed_arr(false)).joins(:invoices).where("invoices.buyer_id = ? AND invoices.status = ?", usr.id, 'paid')
+  end
+
+  # returns sold pixis from seller
+  def self.sold_list 
+    where("listings.status not in (?)", closed_arr(false)).joins(:invoices).where("invoices.status = ?", 'paid').uniq
   end
 
   # sphinx scopes

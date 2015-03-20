@@ -119,7 +119,7 @@ GEM
       rack-test (>= 0.5.4)
       selenium-webdriver (~> 2.0)
       xpath (~> 0.1.4)
-    childprocess (0.5.3)
+    childprocess (0.5.5)
       ffi (~> 1.0, >= 1.0.11)
     chronic (0.9.1)
     clamp (0.6.3)
@@ -187,8 +187,8 @@ GEM
     fb_graph (1.8.6)
       httpclient (>= 2.2.0.2)
       rack-oauth2 (>= 0.8.0)
-    ffi (1.9.3)
-    ffi (1.9.3-x86-mingw32)
+    ffi (1.9.6)
+    ffi (1.9.6-x86-mingw32)
     fog (1.9.0)
       builder
       excon (~> 0.14)
@@ -246,6 +246,8 @@ GEM
       multi_json (>= 1.0)
     launchy (2.1.2)
       addressable (~> 2.3)
+    lazyload-rails (0.3.1)
+      nokogiri (~> 1.5)
     libv8 (3.16.14.3)
     listen (1.3.0)
       rb-fsevent (>= 0.9.3)
@@ -262,7 +264,7 @@ GEM
     money (5.1.0)
       i18n (~> 0.6.0)
     mono_logger (1.1.0)
-    multi_json (1.10.1)
+    multi_json (1.11.0)
     multi_xml (0.5.3)
     multipart-post (1.2.0)
     mysql2 (0.3.12)
@@ -416,7 +418,7 @@ GEM
       thor
     ruby-hmac (0.4.0)
     ruby-openid (2.2.2)
-    rubyzip (1.1.6)
+    rubyzip (1.1.7)
     rvm-capistrano (1.4.1)
       capistrano (>= 2.0.0)
     sass (3.2.5)
@@ -424,7 +426,7 @@ GEM
       railties (~> 3.2.0)
       sass (>= 3.1.10)
       tilt (~> 1.3)
-    selenium-webdriver (2.43.0)
+    selenium-webdriver (2.45.0)
       childprocess (~> 0.5)
       multi_json (~> 1.0)
       rubyzip (~> 1.0)
@@ -541,6 +543,7 @@ DEPENDENCIES
   jquery-ui-rails
   jquery-ui-themes
   launchy
+  lazyload-rails
   mysql2 (~> 0.3.12)
   omniauth
   omniauth-facebook (= 1.4.0)
@@ -568,7 +571,7 @@ DEPENDENCIES
   rvm-capistrano
   s3_file_field!
   sass-rails (= 3.2.5)
-  selenium-webdriver (~> 2.43.0)
+  selenium-webdriver (~> 2.45.0)
   shoulda-matchers
   spork (~> 1.0rc)
   stripe
