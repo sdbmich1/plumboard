@@ -208,6 +208,11 @@ class Post < ActiveRecord::Base
     msg_type == 'want'
   end
 
+  # check if ask msg 
+  def ask_msg?
+    msg_type == 'ask'
+  end
+
   # check if system msg 
   def system_msg?
     %w(approve deny system repost).detect {|x| msg_type == x}
@@ -267,6 +272,6 @@ class Post < ActiveRecord::Base
 
     # add pixi requests
   def process_pixi_requests
-    user.pixi_asks.create(pixi_id: self.pixi_id) if self.msg_type == 'ask'
+    user.pixi_asks.create(pixi_id: self.pixi_id) if msg_type == 'ask'
   end
 end

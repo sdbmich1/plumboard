@@ -324,21 +324,13 @@ describe Post do
     end
   end
 
-  describe "inv_msg?", process: true do 
-    it { expect(@post.inv_msg?).to eq(false) } 
-
-    it "returns true" do 
-      @post.msg_type = 'inv' 
-      expect(@post.inv_msg?).to eq(true) 
-    end
-  end
-
-  describe "want_msg?", process: true do 
-    it { expect(@post.want_msg?).to eq(false) } 
-
-    it "returns true" do 
-      @post.msg_type = 'want' 
-      expect(@post.want_msg?).to eq(true) 
+  describe "msg?", process: true do 
+    %w(ask want inv).each do |val|
+      it { expect(@post.send("#{val}_msg?")).to eq(false) } 
+      it "returns true" do 
+        @post.msg_type = val
+        expect(@post.send("#{val}_msg?")).to eq(true) 
+      end
     end
   end
 
@@ -570,7 +562,7 @@ describe Post do
     end
 
     it 'does not process ask request' do
-      new_conv 'ask'
+      new_conv 'inv'
       expect(PixiAsk.count).not_to eq 1
     end
   end

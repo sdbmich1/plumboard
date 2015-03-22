@@ -38,6 +38,10 @@ describe PostObserver do
       process_msg post, 'want'
     end
 
+    it 'asked msg does not deliver 2nd notice' do
+      process_msg post, 'ask'
+    end
+
     it 'repost msg does not deliver 2nd notice' do
       process_msg post, 'repost'
     end
