@@ -93,6 +93,7 @@ class User < ActiveRecord::Base
 
   validates :birth_date,  :presence => true  
   validates :gender,  :presence => true
+  validates_confirmation_of :password, if: :revalid
   validate :must_have_picture
   validate :must_have_zip
 
@@ -250,6 +251,10 @@ class User < ActiveRecord::Base
 
   def confirmation_required?
     super && provider.blank?
+  end
+
+  def revalid
+    false
   end
 
   # set account to inctive status

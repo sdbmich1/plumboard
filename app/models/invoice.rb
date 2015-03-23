@@ -4,7 +4,7 @@ class Invoice < ActiveRecord::Base
   before_create :set_flds
   after_commit :mark_as_closed, :on => :update
 
-  attr_accessor :buyer_name, :tmp_buyer_id
+  attr_accessor :buyer_name, :tmp_buyer_id, :decline_reason
   attr_accessible :amount, :buyer_id, :comment, :pixi_id, :price, :quantity, :seller_id, :status, :buyer_name,
     :sales_tax, :tax_total, :subtotal, :inv_date, :transaction_id, :bank_account_id, :tmp_buyer_id, :ship_amt, :other_amt,
     :invoice_details_attributes, :invoice_details_count
@@ -112,6 +112,11 @@ class Invoice < ActiveRecord::Base
   # check if invoice is unpaid
   def unpaid?
     status == 'unpaid' rescue false
+  end
+
+  # check if invoice is declined
+  def declined?
+    status == 'declined' rescue false
   end
 
   # check if invoice has shipping
@@ -262,6 +267,30 @@ class Invoice < ActiveRecord::Base
         end
       end
     end
+  end
+
+  # return all unpaid invoices that are more than number_of_days old
+  def self.unpaid_old_invoices number_of_days=2
+    where("status = 'unpaid' AND created_at < ?", Time.now - number_of_days.days)
+  end
+
+  # decline options
+  def decline_item_list
+    ['No Longer Interested', 'Incorrect Pixi', 'Incorrect Price', 'Did Not Want']
+  end
+
+  def decline_msg
+    case self.decline_reason
+      when "No Longer Interested"; "I am no longer interested in this pixi.  Thank you."
+      when "Incorrect Pixi"; "You have invoiced me for the wrong pixi.  Thank you."
+      when "Incorrect Price"; "This was not the price that I was expecting for this pixi. Thank you."
+      when "Did Not Want"; "You have mistakenly invoiced me for this pixi.  Thank you."
+    end
+  end
+
+  def decline reason
+    self.decline_reason = reason
+    update_attribute(:status, 'declined')
   end
 
   # set json string

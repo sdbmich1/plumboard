@@ -94,6 +94,10 @@ feature "Invoices" do
     @details5 = @invoice5.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing4.pixi_id 
     @details6 = @invoice5.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
     @invoice5.save!
+    sleep 2
+    @invoice7 = @buyer.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: @user.id, status: 'declined')
+    @details7 = @invoice7.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing4.pixi_id 
+    @invoice7.save!
   end
 
   def unknown_buyer
@@ -298,6 +302,7 @@ feature "Invoices" do
       page.should_not have_content "#{@invoice.get_fee(true)}"
       page.should_not have_content "Amount You Receive"
       page.should have_content "#{@invoice.amount + @invoice.get_fee}"
+      page.should_not have_button "Decline"
       page.should_not have_selector('#pay-btn') 
     end
 
@@ -308,7 +313,19 @@ feature "Invoices" do
 
       visit invoice_path(@invoice4)
       page.should have_content "Trek Bike" 
+      page.should have_button "Decline"
       page.should have_selector('#pay-btn', visible: true) 
+    end
+
+    it "shows declined received invoices", js: true do
+      page.should have_link('Received', href: received_invoices_path) 
+      click_link 'Received'
+      page.should have_link("#{@invoice7.id}", href: invoice_path(@invoice7)) 
+
+      visit invoice_path(@invoice7)
+      page.should have_content "Trek Bike" 
+      page.should_not have_button "Decline"
+      page.should_not have_selector('#pay-btn', visible: true) 
     end
   end
 

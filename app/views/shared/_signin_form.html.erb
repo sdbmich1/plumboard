@@ -1,18 +1,11 @@
   <%= form_for("user", :url => user_session_path) do |f| %>
     <div id='signup'>
-      <div><%= f.email_field :email, placeholder: 'Email' %></div>
-      <div><%= f.password_field :password, placeholder: 'Password', size: 20, id: 'pwd' %></div>
+      <div><%= f.email_field :email, placeholder: 'Email', class: 'span4', autofocus: true %></div>
+      <div><%= f.password_field :password, placeholder: 'Password', size: 20, id: 'pwd', class: 'span4' %></div>
     </div>
-
-    <% if rmbrFlg && devise_mapping.rememberable? -%>
-      <div>
-	<label class="checkbox">
-	   Remember Me <%= f.check_box :remember_me %>
-	</label>
-      </div><br />
-    <% end -%>
-
-    <div id='login-text' class='center-wrapper'>
+    <%= render partial: 'shared/signin_options', locals: {rmbrFlg: rmbrFlg, f: f} %>
+    <div class='clear-all'></div>
+    <div id='login-text' class='mtop center-wrapper'>
       <%= f.submit "Sign in", class: "btn btn-primary signin-btn sm-top width140", id: 'login-btn', data: {disable_with: "Submitting..."} %>
       <%= link_to "Sign up for free!", new_user_registration_path, class: "btn btn-primary btn-mask sm-top width140" %>
       <h4 class='med-top'>or</h4>

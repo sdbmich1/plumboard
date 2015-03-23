@@ -96,5 +96,14 @@ namespace :manage_server do
       end
     end
   end
+
+  task :send_unpaid_old_invoice_notices => :environment do
+    invoices = Invoice.unpaid_old_invoices
+    unless invoices.blank?
+      invoices.each do |invoice|
+        UserMailer.delay.send_unpaid_old_invoice_notice invoice
+      end
+    end
+  end
 end
 

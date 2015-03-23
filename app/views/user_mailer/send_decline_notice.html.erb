@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head> 
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+</head>
+<body>  
+  <%= render :partial=>'shared/mail_header' %><br /><br />
+  Hi <%= @invoice.seller_first_name %>,<br /><br />
+  <span style="height:30px;">
+    There was an issue with an invoice you submitted: <br /> <br />  
+    <%= @message %> <br /><br />
+    Please log in and go to <%= link_to 'PixiChat', conversations_url(status: 'received') %> to resolve the issue.<br /><br />
+  </span><br /><br />
+
+  <span style="margin-top:20px;">Happy Pixing!</span><br /><br />
+  <span>The Pixiboard Team</span><br /><br />   
+  <%= render :partial=>'shared/mail_footer' %>
+</body>
+</html>
+

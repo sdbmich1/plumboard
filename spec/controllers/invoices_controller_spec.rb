@@ -497,6 +497,62 @@ describe InvoicesController do
     end
   end
 
+  describe "PUT /decline/:id" do
+    before (:each) do
+      Invoice.stub!(:includes) { Invoice }
+      Invoice.stub!(:find).and_return( @invoice )
+    end
+
+    def do_decline
+      put :decline, :id => "1"
+    end
+
+    context "with valid params" do
+      before (:each) do
+        @invoice.stub(:decline).and_return(true)
+      end
+
+      it "should load the requested invoice" do
+        Invoice.stub(:find) { @invoice }
+        do_decline
+      end
+
+      it "should update the requested invoice" do
+        Invoice.stub(:find).with("1") { mock_invoice }
+        mock_invoice.should_receive(:decline)
+        do_decline
+      end
+
+      it "should assign @invoice" do
+        Invoice.stub(:find) { mock_invoice(:decline => true) }
+        do_decline
+        assigns(:invoice).should_not be_nil 
+      end
+
+      it "redirects to the updated invoice" do
+        do_decline
+        response.should be_redirect
+      end
+    end
+
+    context "with invalid params" do
+    
+      before (:each) do
+        @invoice.stub(:decline).and_return(false)
+      end
+
+      it "should load the requested invoice" do
+        Invoice.stub(:find) { @invoice }
+        do_decline
+      end
+
+      it "should assign @invoice" do
+        Invoice.stub(:find) { mock_invoice(:decline => false) }
+        do_decline
+      end
+    end
+  end
+
   describe "DELETE 'destroy'" do
 
     before (:each) do

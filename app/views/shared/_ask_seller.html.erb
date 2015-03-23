@@ -1,4 +1,4 @@
-<%= form_for setup_conversation(listing), remote: true,  data: {validate: 'parsley'}, html: {class: 'no-bot'} do |f| %>
+<%= form_for setup_conversation(listing), remote: true, data: {validate: 'parsley'}, html: {class: 'no-bot'} do |f| %>
   <div id="notice" style="display:none"></div>
   <div id="form_errors"><%= render partial: 'shared/error_messages', :locals => { :target => f.object } %></div>
   <%= f.hidden_field 'pixi_id', value: listing.pixi_id %>

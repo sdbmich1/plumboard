@@ -181,4 +181,39 @@ describe UserMailer do
       expect(subject.body.encoded).to match(listing.seller_first_name)
     end
   end
+
+  describe "send_decline_notice" do
+    subject { UserMailer.send_decline_notice(invoice, message)}
+    let(:message) { "I am no longer interested in this pixi.  Thank you." }
+    let(:seller) { create :pixi_user, email: "test@gmail.com" }
+    let(:buyer) { create :pixi_user }
+    let(:invoice) { build :invoice, status: 'declined', buyer_id: buyer.id, seller_id: seller.id, id: 1 }
+
+    it { expect{subject.deliver}.not_to change{ActionMailer::Base.deliveries.length}.by(0) }
+    its(:to) { should == [invoice.seller_email] }
+    its(:subject) { should include "Invoice Declined" }
+
+    it 'assigns seller_first_name' do
+      expect(subject.body.encoded).to match(invoice.seller_first_name)
+    end
+
+    it 'sends message' do
+      expect(subject.body.encoded).to match(message)
+    end
+  end
+
+  describe "send_unpaid_old_invoice_notice" do
+    subject { UserMailer.send_unpaid_old_invoice_notice(invoice)}
+    let(:seller) { create :pixi_user }
+    let(:buyer) { create :pixi_user }
+    let(:invoice) { build :invoice, status: 'unpaid', buyer_id: buyer.id, seller_id: seller.id, id: 1 }
+
+    it { expect{subject.deliver}.not_to change{ActionMailer::Base.deliveries.length}.by(0) }
+    its(:to) { should == [invoice.buyer_email] }
+    its(:subject) { should include "Reminder: Pixiboard Post: #{invoice.pixi_title}" }
+
+    it 'assigns seller_first_name' do
+      expect(subject.body.encoded).to match(invoice.buyer_first_name)
+    end
+  end
 end

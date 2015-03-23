@@ -3,7 +3,7 @@
   <%= link_to 'Remove', listing, method: :delete, confirm: msg, class: 'btn btn-large' %>
   <%= link_to 'Cancel', get_home_path, confirm: msg, class: 'btn btn-large' %>
 <% elsif listing.active? && controller_name == 'listings' %>
-  <%= render partial: 'shared/button_menu', locals: {listing: listing, atype: 'Remove'} %>
+  <%= render partial: 'shared/button_menu', locals: {model: listing, atype: 'Remove'} %>
 <% else %>
    <%= link_to 'Remove', listing, method: :delete, confirm: msg, class: 'btn btn-large' unless expired_or_sold?(listing) %>
 <% end %>

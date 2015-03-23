@@ -67,6 +67,29 @@ feature "UserSignins" do
     end
   end
 
+  describe 'sign in modal' do
+    before :each do
+      visit root_path 
+      @user = FactoryGirl.create :pixi_user, confirmed_at: Time.now 
+    end
+
+    it 'shows content' do
+      click_link 'Login'; sleep 2
+      check_page_selectors ['#pwd, #login-btn, #fb-btn'], true, false
+      user_login @user
+      page.should have_content(@user.first_name)
+      page.should_not have_content('Manage')
+      page.should have_link('Sign out', href: destroy_user_session_path)
+    end
+
+    it "does not sign in a unregistered user" do
+      invalid_login
+      page.should_not have_content "Home"
+      page.should_not have_content "Pixis"
+      page.should have_content "Sign in"
+    end
+  end
+
   describe 'sign in page' do 
     before { visit new_user_session_path }
 
@@ -178,7 +201,7 @@ feature "UserSignins" do
         page.should have_content(@user.first_name)
         page.should_not have_content('Manage')
         page.should have_link('Sign out', href: destroy_user_session_path)
-        page.should_not have_link('Orders', href: pending_listings_path)
+        page.should_not have_link('Pixis', href: listings_path)
         page.should_not have_link('Transactions', href: transactions_path)
         page.should_not have_link('PixiPosts', href: pixi_posts_path)
         page.should_not have_link('Users', href: users_path)

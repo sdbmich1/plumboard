@@ -459,4 +459,30 @@ describe Invoice do
     end
   end
 
+  describe "unpaid_old_invoices" do
+    it "toggles number_of_days" do
+      @invoice.created_at = 3.days.ago
+      @invoice.save!
+      Invoice.unpaid_old_invoices.should include @invoice
+      Invoice.unpaid_old_invoices(5).should_not include @invoice
+    end
+
+    it "does not return invoices less than two days old" do
+      Invoice.unpaid_old_invoices.should_not include @invoice
+    end
+
+    it "does not return paid invoices" do
+      @invoice.status = "paid"
+      @invoice.save!
+      Invoice.unpaid_old_invoices.should_not include @invoice
+    end
+  end  
+
+  describe "decline" do
+    it "assigns status and decline reason" do
+      @invoice.decline "No Longer Interested"
+      expect(@invoice.status).to eq "declined"
+      expect(@invoice.decline_reason).to eq "No Longer Interested"
+    end
+  end
 end
