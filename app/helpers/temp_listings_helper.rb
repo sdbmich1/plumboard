@@ -73,7 +73,12 @@ module TempListingsHelper
   end
 
   # toggle element on image slider
-  def set_element flg
-    controller_name != 'temp_listings' ? flg ? 'large' : 'Pin it @ Pinterest' : ''
+  def set_element pic
+    controller_name == 'temp_listings' ? get_pixi_image(pic) : get_pixi_image(pic, 'large')
+  end
+
+  # toggle image slider title
+  def set_image_title
+    controller_name == 'temp_listings' ? '' : 'Pin it @ Pinterest'
   end
 end
