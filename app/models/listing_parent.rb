@@ -52,6 +52,8 @@ class ListingParent < ActiveRecord::Base
   geocoded_by :site_address, :latitude => :lat, :longitude => :lng
   after_validation :geocode
 
+  default_scope :order => "updated_at DESC"
+
   # used to handle pagination settings
   def self.set_page pg=1
     paginate page: pg, per_page: MIN_BOARD_AMT
