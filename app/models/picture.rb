@@ -48,7 +48,7 @@ class Picture < ActiveRecord::Base
   def processPhotoJob(picture)
     picture.regenerate_styles!
   end
-  handle_asynchronously :processPhotoJob
+  handle_asynchronously :processPhotoJob, :queue => 'images'
 
   # detect if our photo file has changed
   def photo_changed?
@@ -157,7 +157,7 @@ class Picture < ActiveRecord::Base
 
   # Queue file processing
   def queue_processing
-    Picture.delay.transfer_and_cleanup(id)
+    Picture.delay(:queue => 'images').transfer_and_cleanup(id)
   end
 
   # local processing

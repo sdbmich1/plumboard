@@ -4,6 +4,7 @@ class Conversation < ActiveRecord::Base
 
   before_create :activate
   after_commit :process_pixi_requests, :on => :create
+  after_commit :process_pixi_requests, :on => :update
   has_many :posts, :inverse_of => :conversation
   accepts_nested_attributes_for :posts, :allow_destroy => true
 
@@ -67,7 +68,7 @@ class Conversation < ActiveRecord::Base
 
   # set content display
   def content_msg val=35
-    posts.first.content.length > val ? posts.first.summary(val) + '...' : posts.first.summary(val) rescue nil
+    posts.last.content.length > val ? posts.last.summary(val) + '...' : posts.last.summary(val) rescue nil
   end
 
   # returns whether conversation has any associated unread posts
@@ -134,21 +135,21 @@ class Conversation < ActiveRecord::Base
   # sets convo status to 'removed'
   def self.remove_conv conv, user 
     if user.id == conv.user_id
-      if conv.update_attribute(:status, 'removed')
-        conv.remove_posts(user)
-        return true
-      else
-        return false
-      end
+      update_status(conv, user, 'status')
     elsif user.id == conv.recipient_id 
-      if conv.update_attribute(:recipient_status, 'removed')
-        conv.remove_posts(user)
-        return true
-      else
-        return false
-      end
+      update_status(conv, user, 'recipient_status')
     end
     false
+  end
+
+  # update appropriate status fld
+  def self.update_status conv, user, fld
+    if conv.update_attribute(fld.to_sym, 'removed')
+      conv.remove_posts(user)
+      true
+    else
+      false
+    end
   end
 
   # sets all posts in a convo to 'removed'
@@ -165,7 +166,7 @@ class Conversation < ActiveRecord::Base
 
   # return create date
   def create_dt
-    dt = posts.first.created_at rescue Date.today 
+    dt = posts.last.created_at rescue Date.today 
     new_dt = listing.display_date dt, false rescue dt
   end
 
@@ -179,6 +180,6 @@ class Conversation < ActiveRecord::Base
 
   # add pixi requests
   def process_pixi_requests
-    user.pixi_wants.create(pixi_id: self.pixi_id, quantity: self.quantity, status: 'active') if posts.first.msg_type == 'want'
+    user.pixi_wants.create(pixi_id: self.pixi_id, quantity: self.quantity, status: 'active') if posts.detect{ |x| x.msg_type == 'want' }
   end
 end

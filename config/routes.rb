@@ -41,7 +41,7 @@ Plumboard::Application.routes.draw do
     end
   end
 
-  resources :conversations, except: [:new, :edit, :update] do
+  resources :conversations, except: [:new, :edit] do
     member do
       put 'remove'
     end

@@ -41,7 +41,7 @@ describe ConversationsController do
     end
     
     def do_create
-      xhr :post, :create, :conversation => { pixi_id: '1', user_id: '1', recipient_id: '2', :post => { pixi_id: '1', user_id: '1', 'content'=>'test' } }
+      xhr :post, :create, :conversation => {pixi_id: '1', user_id: '1', recipient_id: '2', :post => {pixi_id: '1', user_id: '1', 'content'=>'test'}}
     end
 
     context 'failure' do
@@ -262,6 +262,51 @@ describe ConversationsController do
         Conversation.stub!(:find) { mock_conversation }
         do_show
         assigns(:conversation).should_not be_nil 
+      end
+    end
+  end
+
+  describe "PUT /:id" do
+    before (:each) do
+      Conversation.stub!(:find).and_return( @conversation )
+      @conv = {'pixi_id'=> '1', 'user_id'=> '1', 'recipient_id'=> '2', 'status' => 'active', 'recipient_status'=>'active'} 
+    end
+
+    def do_update
+      xhr :put, :update, :id => "1", :conversation => {'pixi_id'=> '1', 'user_id'=> '1', 'recipient_id'=> '2', 'status' => 'active', 'recipient_status'=>'active'} 
+    end
+
+    context "with valid params" do
+      before (:each) do
+        @conversation.stub(:update_attributes).and_return(true)
+        controller.stub!(:reload_data).and_return(true)
+      end
+
+      it "should load the requested conversation" do
+        Conversation.stub(:find) { @conversation }
+        do_update
+      end
+
+      it "should update the requested conversation" do
+        Conversation.stub(:find).with("1") { mock_conversation }
+	mock_conversation.should_receive(:update_attributes).with(@conv)
+        do_update
+      end
+
+      it "should assign @conversation" do
+        Conversation.stub(:find) { mock_conversation(:update_attributes => true) }
+        do_update
+        assigns(:conversation).should_not be_nil 
+      end
+
+      it "redirects to the updated conversation" do
+        do_update
+        controller.stub!(:render)
+      end
+
+      it "responds to JSON" do
+        do_update
+        response.status.should_not eq(0)
       end
     end
   end

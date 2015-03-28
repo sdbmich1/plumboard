@@ -34,8 +34,8 @@ describe "routes for Conversations" do
       get("/conversations/1/edit").should_not route_to("conversations#edit", :id => "1")
     end
 
-    it "does not expose an update conversation route" do
-      put("/conversations/1").should_not route_to("conversations#update", :id => "1")
+    it "does expose an update conversation route" do
+      put("/conversations/1").should route_to("conversations#update", :id => "1")
     end
 end
 
