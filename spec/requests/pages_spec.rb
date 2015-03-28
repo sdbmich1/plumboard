@@ -13,43 +13,41 @@ describe "Pages" do
 
     it 'shows content' do
       set_const 0
-      stub_const('PIXI_CONTEST','YES')
       visit root_path 
       page.should have_selector('title', text: full_title(''))
       page.should_not have_selector('title', text: '| Home')
-      page.should_not have_link 'Sign Up', href: new_user_registration_path
-      page.should have_content 'Already have an account?'
-      page.should have_link 'Sign In', href: new_user_session_path
-      page.should have_selector('#browse-home', href: categories_path(loc: @loc))
-      page.should_not have_selector('#home-polaroid', href: categories_path(loc: @loc))
-      page.should_not have_link 'Forgot password?'
+      page.should have_selector('#white-browse-home', href: local_listings_path(loc: @loc))
       page.should have_link 'How It Works', href: howitworks_path
       page.should have_link 'Help', href: help_path
-      page.should_not have_button 'Sign in'
-      page.should_not have_link 'Sign up for free!', href: new_user_registration_path
-      page.should have_link 'Connect via email', href: new_user_registration_path
-      page.should have_link 'Giveaway Rules', href: giveaway_path
-      page.should have_link 'Connect via', href: user_omniauth_authorize_path(:facebook)
+      page.should have_link 'Login', href: '#loginDialog'
+      page.should have_link 'Signup', href: '#signupDialog'
+      page.should have_link 'Forgot password?'
+      page.should have_link 'We Post', href: check_pixi_post_zips_path
+      page.should have_link 'You Post', href: new_temp_listing_path
+      page.should have_link 'View More >', href: local_listings_path(loc: @loc)
+      page.should have_link 'Learn More', href: '/howitworks#pxpay'
       page.should have_link 'About', href: about_path
       page.should have_link 'Privacy', href: privacy_path
       page.should have_link 'Terms', href: terms_path
       page.should have_link 'Contact', href: contact_path
+      page.should have_link 'Careers', href: careers_path
+      page.should have_link 'PixiChat', href: '/howitworks#pxboard'
+      page.should have_link 'PixiPay', href: '/howitworks#pxpay'
+      page.should have_link 'PixiPost', href: '/howitworks#pxpost'
       page.should have_selector('#fb-link', href: 'https://www.facebook.com/pixiboard')
       page.should have_selector('#tw-link', href: 'https://twitter.com/pixiboardmagic')
       page.should have_selector('#pi-link', href: 'http://www.pinterest.com/pixiboardmagic/')
-      page.should have_selector('#ins-link', href: 'http://instagram.com/pixiboard')
+      page.should have_selector('#ins-link', href: 'http://instagram.com/pixiboardmagic')
+      page.should have_selector('#blog-link', href: 'http://www.pixiboardmagic.blogspot.com')
     end
 
     it 'changes Browse path' do
       set_const 500
-      stub_const("PIXI_CONTEST",'NO')
       visit root_path 
       expect(Listing.active.count).to eq(1)
-      expect(PIXI_CONTEST).to eq 'NO'
       sleep 2
       page.should_not have_link 'Giveaway Rules', href: giveaway_path
-      page.should have_selector('#browse-home', href: local_listings_path(loc: @loc))
-      page.should_not have_selector('#home-polaroid', href: local_listings_path(loc: @loc))
+      page.should have_selector('#white-browse-home', href: local_listings_path(loc: @loc))
     end
   end
 
@@ -116,18 +114,6 @@ describe "Pages" do
       page.should_not have_link 'Forgot password?'
       page.should have_selector('.site-logo', href: root_path)
       page.should have_selector('title', text: full_title('Privacy'))
-      page.should_not have_selector('#browse-home', href: categories_path(loc: @loc))
-    end
-  end
-
-  describe "Giveaway page" do
-    before { visit giveaway_path } 
-    it 'shows content' do
-      page.should have_link 'Sign Up', href: new_user_registration_path
-      page.should have_link 'Sign In', href: new_user_session_path
-      page.should_not have_link 'Forgot password?'
-      page.should have_selector('.site-logo', href: root_path)
-      page.should have_selector('title', text: full_title('Giveaway Rules'))
       page.should_not have_selector('#browse-home', href: categories_path(loc: @loc))
     end
   end

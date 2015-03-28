@@ -306,13 +306,13 @@ class ListingParent < ActiveRecord::Base
   end
 
   # short title
-  def short_title val=14
-    nice_title.length < val ? nice_title : nice_title[0..val] + '...' rescue nil
+  def short_title prcFlg=true, val=14
+    nice_title(prcFlg).length < val ? nice_title(prcFlg) : nice_title(prcFlg)[0..val] + '...' rescue nil
   end
 
   # med title
-  def med_title
-    short_title 25
+  def med_title prcFlg=true, val=25
+    short_title prcFlg, val
   end
 
   # set end date to x days after start to denote when listing is no longer displayed on network

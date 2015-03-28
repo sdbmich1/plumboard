@@ -2,8 +2,7 @@
   $("#flash_notice").hide(300);
   $("#form_errors").html("<%= escape_javascript( render(partial: 'shared/error_messages', locals: {target: @listing})) %>");
 <% else %>
-  $("#flash_notice").html("<%= escape_javascript(flash[:notice])%>");
-  $("#flash_notice").show(300);
+  postFlashMsg('#flash_notice','success', 'Successfully removed picture.');
   $("#listing_form").html("<%= escape_javascript( raw render(partial: 'shared/pixi_form', locals: {listing: @listing, s3Flg: false})) %>");
 <% end %>
 

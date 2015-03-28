@@ -13,7 +13,6 @@ class BankAccount < ActiveRecord::Base
   validates :user_id, presence: true
   validates :acct_name, presence: true
   validate :must_have_token
-#  validate :must_be_numeric
 
   # verify token exists before creating record
   def must_have_token
@@ -22,21 +21,6 @@ class BankAccount < ActiveRecord::Base
       false
     else
       true
-    end
-  end
-
-  # check if numeric
-  def must_be_numeric
-    unless acct_number.is_a? Integer
-      errors.add(:base, 'Must be a number')
-      false
-    else
-      if (7..15).include? acct_number.to_s.length 
-        true
-      else
-        errors.add(:base, 'Must be between 7 and 15 digits')
-        false
-      end
     end
   end
 

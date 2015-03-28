@@ -75,7 +75,7 @@ module InvoicesHelper
   # get conv fee message based on user
   def get_conv_fee_msg inv
     if inv
-      inv.owner?(@user) ? inv.pixi_post? ? PXPOST_FEE_MSG : SELLER_FEE_MSG : CONV_FEE_MSG
+      inv.owner?(@user) ? inv.pixi_post? ? PXPOST_FEE_MSG : SELLER_FEE_MSG : CONV_FEE_MSG rescue CONV_FEE_MSG
     end
   end
 

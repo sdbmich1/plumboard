@@ -151,7 +151,7 @@ describe CardAccount do
     end
   end
 
-  describe "remove cards" do
+  describe "remove cards", process: true do
     it { CardAccount.remove_cards(@user).should be_false }
 
     it "removes cards" do
@@ -162,23 +162,25 @@ describe CardAccount do
     end
   end
 
-  describe 'add_card' do
-    it 'has an existing token' do
+  describe 'add_card', process: true do
+    before :each, run: true do
       CardAccount.any_instance.stub(:save_account).and_return({user_id: 1, card_number: '4111111111111111', status: 'active', card_code: '123',
                   expiration_month: 6, expiration_year: 2019, zip: '94108'})
-      @txn = @user.transactions.build FactoryGirl.attributes_for(:transaction, card_number: '9000900090009000', exp_month: Date.today.month+1,
+      @txn = @user.transactions.build FactoryGirl.attributes_for(:transaction, card_number: '4111111111111111', exp_month: Date.today.month+1,
         exp_year: Date.today.year+1, cvv: '123', zip: '11111', payment_type: 'visa')
+    end
+
+    it 'has an existing token', run: true do
       CardAccount.add_card(@txn, @txn.token).should be_true
     end
 
-    it 'has an existing card' do
+    it 'has an existing card', run: true do
       acct = @user.card_accounts.create FactoryGirl.attributes_for :card_account
-      @txn = @user.transactions.build FactoryGirl.attributes_for(:transaction, card_number: '9000900090009000')
       CardAccount.add_card(@txn, @txn.token).should be_true
-      expect(CardAccount.first.card_no).to eq '9000'
     end
 
     it 'has no card number' do
+      CardAccount.any_instance.stub(:save_account).and_return(false)
       @txn = @user.transactions.build FactoryGirl.attributes_for(:transaction, card_number: nil)
       CardAccount.add_card(@txn, @txn.token).should_not be_true
     end

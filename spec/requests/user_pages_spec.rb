@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe "Users", :type => :feature do
   subject { page }
-  let(:admin) { create(:admin, user_type_code: 'PX') }
+  let(:admin) { create(:admin, user_type_code: 'AD') }
+  let(:bus_user) { create(:admin, user_type_code: 'BUS') }
   let(:user) { create(:pixi_user, user_type_code: 'MBR') }
 
   def click_save
@@ -11,12 +12,6 @@ describe "Users", :type => :feature do
 
   def click_submit	
     click_on 'Save Changes'
-  end
-
-  def load_user_types
-    create :user_type
-    create :user_type, code: 'SUB', description: 'Subscriber', status: 'active'
-    create :user_type, code: 'PX', description: 'Pixter', status: 'active'
   end
 
   describe "GET /users" do
@@ -66,7 +61,7 @@ describe "Users", :type => :feature do
     end
 
     it "views user", js: true do
-      load_user_types
+      create_user_types
       expect { 
 	visit user_path(@member)
       }.not_to change(User, :count)
@@ -91,7 +86,7 @@ describe "Users", :type => :feature do
     end
   end
   
-  describe 'Edit profile' do
+  describe 'Edit individual profile' do
     before do
       user = create(:pixi_user) 
       init_setup user
@@ -181,6 +176,26 @@ describe "Users", :type => :feature do
 	      click_save
 	}.not_to change(User, :count)
       @user.reload.unconfirmed_email.should == "tedwhite@test.com"
+    end
+  end
+  
+  describe 'Edit business profile' do
+    before do
+      create_user_types
+      user = create(:pixi_user, business_name: 'PixiBizz', gender: nil, birth_date: nil, user_type_code: 'BUS') 
+      init_setup user
+      visit settings_path 
+    end
+
+    it "changes business name and url", js: true do
+      check_page_selectors ['#user_url, #user_business_name'], true, false
+      # check_page_selectors ['#user_gender'], false
+      expect { 
+        fill_in 'user_business_name', :with => 'Company A'
+	fill_in "user_url", with: "PXB"
+	click_save
+	}.not_to change(User, :count)
+      @user.reload.url.should == "PXB"
     end
   end
 

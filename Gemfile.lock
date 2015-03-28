@@ -1,4 +1,12 @@
 GIT
+  remote: git://github.com/ifad/data-confirm-modal.git
+  revision: 2ad13700540df749af31f7f58bc0d08d98f28433
+  branch: bootstrap2
+  specs:
+    data-confirm-modal (1.0.1)
+      railties (>= 3.0)
+
+GIT
   remote: git://github.com/lastobelus/s3_file_field.git
   revision: b7ebbbbae7c84435020dd509d5dec48d78d90c14
   ref: b7ebbbbae7c84435020dd509d5dec48d78d90c14
@@ -8,19 +16,6 @@ GIT
       jquery-fileupload-rails (~> 0.4.1)
       rails (>= 3.2)
       sass-rails (>= 3.2.5)
-
-GIT
-  remote: git://github.com/pat/thinking-sphinx.git
-  revision: 0c404e756d037daeae579736b4248e963fa3ef01
-  ref: 0c404e756d
-  branch: master
-  specs:
-    thinking-sphinx (3.0.4)
-      activerecord (>= 3.1.0)
-      builder (>= 2.1.2)
-      innertube (>= 1.0.2)
-      middleware (>= 0.1.0)
-      riddle (>= 1.5.7)
 
 GIT
   remote: git://github.com/wr0ngway/graylog2_exceptions.git
@@ -122,6 +117,7 @@ GEM
     childprocess (0.5.5)
       ffi (~> 1.0, >= 1.0.11)
     chronic (0.9.1)
+    chunky_png (1.3.4)
     clamp (0.6.3)
     client_side_validations (3.2.1)
     climate_control (0.0.3)
@@ -137,6 +133,13 @@ GEM
       execjs
     coffee-script-source (1.4.0)
     combined_time_select (1.0.1)
+    compass (0.12.2)
+      chunky_png (~> 1.2)
+      fssm (>= 0.2.7)
+      sass (~> 3.1)
+    compass-rails (1.1.7)
+      compass (>= 0.12.2)
+      sprockets (<= 2.11.0)
     connection_pool (1.0.0)
     country_select (1.1.3)
     daemons (1.1.9)
@@ -200,6 +203,7 @@ GEM
       nokogiri (~> 1.5.0)
       ruby-hmac
     formatador (0.2.4)
+    fssm (0.2.10)
     gelf (1.4.0)
       json
     geocoder (1.1.8)
@@ -455,6 +459,12 @@ GEM
       daemons (>= 1.0.9)
       eventmachine (>= 0.12.6)
       rack (>= 1.0.0)
+    thinking-sphinx (3.0.6)
+      activerecord (>= 3.1.0)
+      builder (>= 2.1.2)
+      innertube (>= 1.0.2)
+      middleware (>= 0.1.0)
+      riddle (>= 1.5.9)
     thor (0.19.1)
     thread_safe (0.3.4)
     tilt (1.4.1)
@@ -515,11 +525,13 @@ DEPENDENCIES
   client_side_validations
   coffee-rails (= 3.2.2)
   combined_time_select (~> 1.0.1)
+  compass-rails (~> 1.1.7)
   connection_pool
   country_select
   daemons
   dalli
   dalli-elasticache
+  data-confirm-modal!
   database_cleaner
   delayed_job_active_record
   delayed_paperclip (~> 2.7.1)
@@ -578,7 +590,7 @@ DEPENDENCIES
   test_after_commit
   therubyracer
   thin
-  thinking-sphinx (~> 3.0.4)!
+  thinking-sphinx (~> 3.0.6)
   timezone (~> 0.3.2)
   turbo-sprockets-rails3
   uglifier (= 1.2.3)

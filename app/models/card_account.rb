@@ -1,5 +1,4 @@
 class CardAccount < ActiveRecord::Base
-  include Payment
   before_create :set_flds, :must_have_token
 
   attr_accessor :card_number, :card_code
@@ -35,39 +34,9 @@ class CardAccount < ActiveRecord::Base
     self.status, self.default_flg = 'active', 'Y' unless self.user.has_card_account?
   end
 
-  # delete saved cards
-  def self.remove_cards uid
-    usr = User.find uid
-    if usr.has_card_account?
-      cnt = usr.card_accounts.delete_all
-    end
-  end
-
   # add new card
   def save_account 
-
-    # create card
-    card = Payment::create_card self.card_number, self.expiration_month, self.expiration_year, self.card_code, self.zip
-
-    # check for errors
-    unless card.blank? 
-      return false if self.errors.any?
-
-      # set fields
-      self.token, self.card_no, self.expiration_month, self.expiration_year, self.card_type = card.uri, card.last_four, card.expiration_month, 
-        card.expiration_year, card.card_type.titleize
-
-      result = Payment::assign_card user.acct_token, self.token
-    else
-      errors.add :base, "Card info is invalid. Please re-enter."
-      return false
-    end
-
-    # save new account
-    save
-
-    rescue => ex
-      process_error ex
+    CardProcessor.new(self).save_card
   end
 
   # check if card has expired
@@ -77,43 +46,17 @@ class CardAccount < ActiveRecord::Base
 
   # add card 
   def self.add_card model, token=nil
-    remove_cards(model.user)  # remove old cards to make this card the default
-
-    # get last 4 of card
-    card_num = model.card_number[model.card_number.length-4..model.card_number.length] rescue nil
-
-    # check if card exists
-    unless card = model.user.card_accounts.where("card_no = ?", card_num).first
-      # build card data
-      card = model.user.card_accounts.build card_no: card_num, expiration_month: model.exp_month,
-	         expiration_year: model.exp_year, card_code: model.cvv, zip: model.zip, card_type: model.payment_type 
-
-      # check if token was already created
-      if token && model.user.acct_token
-        result = Payment::assign_card model.user.acct_token, token
-        card.token = token
-	card.save
-      else
-        card.save_account 
-      end
-    end
-    card.errors.any? ? false : card 
+    CardProcessor.new(self).add_card(model, token)
   end
 
-  # delete card
+  # delete card from API
   def delete_card
-    result = Payment::delete_card token, self if token
+    CardProcessor.new(self).delete_card
+  end
 
-    # remove card
-    if result 
-      self.errors.any? ? false : self.destroy 
-    else
-      errors.add :base, "Error: There was a problem with your account."
-      false
-    end
-
-    rescue => ex
-      process_error ex
+  # remove saved cards
+  def self.remove_cards model
+    CardProcessor.new(self).remove_cards(model.id)
   end
 
   # process messages
@@ -127,4 +70,7 @@ class CardAccount < ActiveRecord::Base
   def self.get_default_acct
     where(default_flg: 'Y').first
   end
+
+  rescue => ex
+    process_error ex
 end

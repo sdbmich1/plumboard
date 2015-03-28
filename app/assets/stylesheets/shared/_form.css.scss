@@ -23,6 +23,10 @@ $pixiBlue: #026FB7;
 .pixi-blue-bkgnd { background-color: $pixiBlue }
 .pixi-blk-bkgnd { background-color: black }
 .pixi-grey-bkgnd { background-color: $grayMediumLight }
+.pixi-pxb-bkgnd { background-color: #fdd835 }
+.pixi-ind-bkgnd { background-color: #fbc02d }
+.pixi-bus-bkgnd { background-color: #ff6d00 }
+.pixi-grp-bkgnd { background-color: #ff5722 }
 
 /* posts */
 
@@ -123,9 +127,11 @@ form#new_post {margin-bottom: -0px!important;}
   height: 29px!important; text-align: center; vertical-align: middle; padding-top: 6px; padding-left: 22px; padding-right: 22px;}
 .submit-btn { color: white!important; font-weight: bold; background: $pixiOrange!important; border: $pixiOrange!important; }
 .pixi-btn { color: white!important; background: $pixiBlue!important; border: $pixiBlue!important; }
-  
+.pxb-btn { color: white!important; font-weight: normal; background: $pixiOrange!important; border: $pixiOrange!important;}
 .post-btn { color: white!important; font-weight: normal; background: $pixiOrange!important; border: $pixiOrange!important; height: 30px!important;}
-.basic-btn { color: white!important; font-weight: normal;}
+.basic-btn { color: white!important; font-weight: normal;
+  &:hover { background: transparent; text-decoration: underline }
+}
 .stnd-btn { color: black!important; background:#CCCCCC!important; border:1px gray!important; font-weight: normal;}
 .fb-btn { 
   background: #2A528E!important; color: white!important; border: #2A528E!important;
@@ -153,6 +159,7 @@ form#new_post {margin-bottom: -0px!important;}
 .big-top { margin-top: 50px!important }  
 .lg-top { margin-top: 30px!important }  
 .huge-top { margin-top: 25%!important }  
+.jumbo-top { margin-top: 20%!important }  
 
 .sm-bot { margin-bottom: 5px!important }  
 .med-bot { margin-bottom: 10px!important }  
@@ -244,6 +251,10 @@ a.pixi-cat-link, a.item-link {
 
 hr {
   border-top: 1px solid $pixiBlue;
+}
+
+.gray hr{
+  border-top: 1px solid $grayMediumLight;
 }
 
 a.clear-link {
@@ -358,9 +369,23 @@ table.noborder {
 .active-msg-text {
   color: white !important;
 }
+
 .ui-accordion-header.ui-state-active { 
   color: black !important; 
   .span5 .no-left .hdr-content {
     color: white;
   }
+}
+
+.clear-btn{
+  background: transparent;
+  color: #FFFFFF;
+
+  /* CSS Transition */
+  -webkit-transition: background .2s ease-in-out, border .2s ease-in-out;
+  -moz-transition: background .2s ease-in-out, border .2s ease-in-out;
+  -ms-transition: background .2s ease-in-out, border .2s ease-in-out;
+  -o-transition: background .2s ease-in-out, border .2s ease-in-out;
+  transition: background .2s ease-in-out, border .2s ease-in-out;
+  text-shadow: none!important;
 }

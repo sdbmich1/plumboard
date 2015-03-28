@@ -25,4 +25,15 @@ module PagesHelper
   def is_modal? src
     src == 'modal' ? 'mleft30 span4' : ''
   end
+
+  # set home page tag groups
+  def get_tags
+    [['pxb', 'PXB'], ['ind', 'Individuals'], ['bus', 'Businesses'], ['grp', 'Peer Groups']]
+  end
+
+  # render footer based on action
+  def toggle_footer
+    item = action_name == 'home' ? 'shared/home_page_footer' : 'shared/main_footer'
+    render item
+  end
 end

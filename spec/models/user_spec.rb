@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe User do
-  before(:each) do
-    @user = FactoryGirl.create(:contact_user, status: 'active')
+  before(:all) do
+    @user = create(:contact_user, status: 'active')
   end
 
   subject { @user }
@@ -21,6 +21,9 @@ describe User do
     it { should respond_to(:status) }
     it { should respond_to(:acct_token) }
     it { should respond_to(:user_type_code) }
+    it { should respond_to(:business_name) }
+    it { should respond_to(:ref_id) }
+    it { should respond_to(:url) }
 
     it { should respond_to(:interests) }
     it { should respond_to(:contacts) }
@@ -77,20 +80,12 @@ describe User do
     it { should respond_to(:has_bank_account?) } 
     it { should respond_to(:has_card_account?) } 
 
-    it { should validate_presence_of(:first_name) }
-    it { should validate_presence_of(:last_name) }
     it { should validate_presence_of(:gender) }
     it { should validate_presence_of(:birth_date) }
-  end
-
-  describe "when gender is empty" do
-    before { @user.gender = "" }
-    it { should_not be_valid }
-  end
-
-  describe "when birth_date is empty" do
-    before { @user.birth_date = "" }
-    it { should_not be_valid }
+    # it { should validate_presence_of(:url) }
+    it { should validate_uniqueness_of(:url) }
+    it { should allow_value('Tom').for(:url) }
+    it { should_not allow_value("a").for(:url) }
   end
 
   describe "with a password that's too short" do
@@ -108,25 +103,38 @@ describe User do
     it { should_not be_valid }
   end
 
-  it "returns a user's full name as a string" do
-    user = FactoryGirl.build(:user, first_name: "John", last_name: "Doe", email: "jdoe@test.com")
-    user.name.should == "John Doe"
-  end
+  describe 'name' do
+    before :each, run: true do
+      @usr = build(:user, first_name: "John", last_name: "Doe", email: "jdoe@test.com")
+    end
 
-  it "does not return a user's invalid full name as a string" do
-    user = FactoryGirl.build(:user, first_name: "John", last_name: "Wilson", email: "jwilson@test.com")
-    user.name.should_not == "John Smith"
-  end
+    it "returns a user's full name as a string", run: true do
+      @usr.name.should == "John Doe"
+    end
 
-  it "returns a user's abbr name as a string" do
-    user = FactoryGirl.build(:user, first_name: "John", last_name: "Doe", email: "jdoe@test.com")
-    user.abbr_name.should == "John D"
-    user.abbr_name.should_not == "John Doe"
+    it "does not return a user's invalid full name as a string", run: true do
+      @usr.name.should_not == "John Smith"
+    end
+
+    it "does not return a user's invalid full name when a business" do
+      @usr = build :pixi_user, first_name: 'John', last_name: 'Smith', birth_date: nil, gender: nil, user_type_code: 'BUS', business_name: 'Company A'
+      @usr.name.should_not == "John Smith"
+    end
+
+    it "returns a business name when a business" do
+      @usr = build :pixi_user, first_name: 'John', last_name: 'Smith', birth_date: nil, gender: nil, user_type_code: 'BUS', business_name: 'Company A'
+      @usr.name.should == "Company A"
+    end
+
+    it "returns a user's abbr name as a string", run: true do
+      @usr.abbr_name.should == "John D"
+      @usr.abbr_name.should_not == "John Doe"
+    end
   end
 
   describe 'contacts' do
     before(:each) do
-      @sr = @user.contacts.build FactoryGirl.attributes_for(:contact)
+      @sr = @user.contacts.build attributes_for(:contact)
     end
 
     it "has many contacts" do 
@@ -143,7 +151,7 @@ describe User do
 
   describe 'temp_listings' do
     before(:each) do
-      @sr = @user.temp_listings.create FactoryGirl.attributes_for(:temp_listing)
+      @sr = @user.temp_listings.create attributes_for(:temp_listing)
     end
 
     it "has many temp_listings" do 
@@ -159,8 +167,8 @@ describe User do
   end  
 
   describe 'with_picture' do
-    let(:user) { FactoryGirl.build :user }
-    let(:pixi_user) { FactoryGirl.build :pixi_user }
+    let(:user) { build :user }
+    let(:pixi_user) { build :pixi_user }
 
     it "adds a picture" do
       user.with_picture.pictures.size.should == 1
@@ -173,7 +181,7 @@ describe User do
 
   describe 'pictures' do
     before(:each) do
-      @sr = @user.pictures.create FactoryGirl.attributes_for(:picture)
+      @sr = @user.pictures.create attributes_for(:picture)
     end
 
     it "has many pictures" do 
@@ -189,7 +197,7 @@ describe User do
   end  
 
   describe 'home_zip' do
-    let(:user) { FactoryGirl.build :user }
+    let(:user) { build :user }
     it { expect(@user.home_zip).not_to be_nil }
     it { expect(user.home_zip).to be_nil }
     it { expect(@user.home_zip=('94108')).to eq('94108') }
@@ -197,7 +205,7 @@ describe User do
   end
 
   describe "must have pictures" do
-    let(:user) { FactoryGirl.build :user }
+    let(:user) { build :user }
 
     it "does not save w/o at least one picture" do
       picture = user.pictures.build
@@ -215,7 +223,7 @@ describe User do
   end
 
   describe "must have zip" do
-    let(:user) { FactoryGirl.build :user }
+    let(:user) { build :user }
     before :each do
       picture = user.pictures.build
       picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
@@ -247,14 +255,14 @@ describe User do
 
   describe 'pixis' do
     it "returns pixis" do
-      @listing = FactoryGirl.create(:listing, seller_id: @user.id)
-      @user.listings.create FactoryGirl.attributes_for(:listing, status: 'active')
+      @listing = create(:listing, seller_id: @user.id)
+      @user.listings.create attributes_for(:listing, status: 'active')
       @user.pixis.should_not be_empty
       @user.has_pixis?.should be_true
     end
 
     it "does not return pixis" do
-      usr = FactoryGirl.create :contact_user
+      usr = create :contact_user
       usr.pixis.should be_empty
       @user.has_pixis?.should_not be_true
     end
@@ -262,53 +270,53 @@ describe User do
 
   describe 'sold pixis' do
     it "returns pixis" do
-      @listing = FactoryGirl.create(:listing, seller_id: @user.id, status: 'sold')
+      @listing = create(:listing, seller_id: @user.id, status: 'sold')
       @user.sold_pixis.should_not be_empty
     end
 
     it "does not return pixis" do
-      usr = FactoryGirl.create :contact_user
+      usr = create :contact_user
       usr.sold_pixis.should be_empty
     end
   end
 
   describe 'new pixis' do
     it "returns new pixis" do
-      @temp_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id)
+      @temp_listing = create(:temp_listing, seller_id: @user.id)
       @user.new_pixis.should_not be_empty
     end
 
     it "returns denied pixis" do
-      @temp_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id, status: 'denied')
+      @temp_listing = create(:temp_listing, seller_id: @user.id, status: 'denied')
       @user.new_pixis.should_not be_empty
     end
 
     it "does not return new pixis" do
-      @temp_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id, status: 'pending')
+      @temp_listing = create(:temp_listing, seller_id: @user.id, status: 'pending')
       @user.new_pixis.should be_empty
     end
   end
 
   describe 'pending pixis' do
     it "returns pending pixis" do
-      @temp_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id, status: 'pending')
+      @temp_listing = create(:temp_listing, seller_id: @user.id, status: 'pending')
       @user.pending_pixis.should_not be_empty
     end
 
     it "does not return denied pixis" do
-      @temp_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id, status: 'denied')
+      @temp_listing = create(:temp_listing, seller_id: @user.id, status: 'denied')
       @user.pending_pixis.should be_empty
     end
 
     it "does not return pending pixis" do
-      @temp_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id)
+      @temp_listing = create(:temp_listing, seller_id: @user.id)
       @user.pending_pixis.should be_empty
     end
   end
 
   describe 'bank_account' do
     it "has account" do
-      @user.bank_accounts.create FactoryGirl.attributes_for(:bank_account, status: 'active')
+      @user.bank_accounts.create attributes_for(:bank_account, status: 'active')
       @user.has_bank_account?.should be_true
     end
 
@@ -319,7 +327,7 @@ describe User do
 
   describe 'card_account' do
     it "has account" do
-      @user.card_accounts.create FactoryGirl.attributes_for(:card_account, status: 'active')
+      @user.card_accounts.create attributes_for(:card_account, status: 'active')
       @user.has_card_account?.should be_true
     end
 
@@ -328,24 +336,24 @@ describe User do
     end
 
     it "has valid card" do
-      @user.card_accounts.create FactoryGirl.attributes_for(:card_account, status: 'active')
+      @user.card_accounts.create attributes_for(:card_account, status: 'active')
       @user.get_valid_card.should be_true
     end
 
     it "has valid card & expired card" do
-      @user.card_accounts.create FactoryGirl.attributes_for(:card_account, status: 'active')
-      @user.card_accounts.create FactoryGirl.attributes_for(:card_account, status: 'active', expiration_year: Date.today.year, 
+      @user.card_accounts.create attributes_for(:card_account, status: 'active')
+      @user.card_accounts.create attributes_for(:card_account, status: 'active', expiration_year: Date.today.year, 
         expiration_month: Date.today.month-1)
       @user.get_valid_card.should be_true
     end
 
     it "has invalid card - old year" do
-      @user.card_accounts.create FactoryGirl.attributes_for(:card_account, status: 'active', expiration_year: Date.today.year-1)
+      @user.card_accounts.create attributes_for(:card_account, status: 'active', expiration_year: Date.today.year-1)
       @user.get_valid_card.should_not be_true
     end
 
     it "has invalid card - same year, old month" do
-      @user.card_accounts.create FactoryGirl.attributes_for(:card_account, status: 'active', expiration_year: Date.today.year, 
+      @user.card_accounts.create attributes_for(:card_account, status: 'active', expiration_year: Date.today.year, 
         expiration_month: Date.today.month-1)
       @user.get_valid_card.should_not be_true
     end
@@ -356,7 +364,7 @@ describe User do
   end
 
   describe 'facebook' do
-    let(:user) { FactoryGirl.build :user }
+    let(:user) { build :user }
     let(:auth) { OmniAuth.config.mock_auth[:facebook] = OmniAuth::AuthHash.new({
                provider: 'facebook', uid: "fb-12345", 
 	       info: { name: "Bob Smith", image: "http://graph.facebook.com/708798320/picture?type=square" }, 
@@ -373,7 +381,7 @@ describe User do
   end
 
   describe 'password' do
-    let(:user) { FactoryGirl.build :user }
+    let(:user) { build :user }
 
     it 'should valid password' do
       user.password_required?.should be_true  
@@ -395,7 +403,7 @@ describe User do
   end
 
   describe "pic_with_name" do 
-    let(:user) { FactoryGirl.build :user }
+    let(:user) { build :user }
 
     it "should not be true" do
       user.pic_with_name.should_not be_true
@@ -410,7 +418,7 @@ describe User do
     it { @user.active?.should be_true }
 
     it 'should not be active' do
-      user = FactoryGirl.build :user, status: 'inactive'
+      user = build :user, status: 'inactive'
       user.active?.should_not be_true
     end
 
@@ -429,7 +437,7 @@ describe User do
     end
 
     it 'should not return true' do
-      user = FactoryGirl.build :user
+      user = build :user
       user.has_address?.should_not be_true
     end
   end
@@ -441,7 +449,7 @@ describe User do
     end
 
     it 'should not return true' do
-      user = FactoryGirl.build :user
+      user = build :user
       user.new_user?.should_not be_true
     end
   end
@@ -482,7 +490,7 @@ describe User do
     it { @user.is_pixter?.should be_false }
 
     it 'is true' do
-      @pixter = FactoryGirl.create(:pixi_user, user_type_code: 'PT') 
+      @pixter = create(:pixi_user, user_type_code: 'PT') 
       expect(@pixter.is_pixter?).to be_true
     end
   end
@@ -491,7 +499,7 @@ describe User do
     it { @user.is_member?.should be_true }
 
     it 'is false' do
-      @pixter = FactoryGirl.create(:pixi_user, user_type_code: 'PT') 
+      @pixter = create(:pixi_user, user_type_code: 'PT') 
       expect(@pixter.is_member?).to be_false
     end
   end
@@ -500,7 +508,7 @@ describe User do
     it { @user.is_support?.should be_false }
 
     it 'is true' do
-      @support = FactoryGirl.create(:pixi_user, user_type_code: 'SP') 
+      @support = create(:pixi_user, user_type_code: 'SP') 
       expect(@support.is_support?).to be_true
     end
   end
@@ -509,18 +517,18 @@ describe User do
     it { @user.is_admin?.should be_false }
 
     it 'is true' do
-      @admin = FactoryGirl.create(:pixi_user, user_type_code: 'AD') 
+      @admin = create(:pixi_user, user_type_code: 'AD') 
       expect(@admin.is_admin?).to be_true
     end
   end
 
   describe "listing associations" do
     before do
-      @buyer = FactoryGirl.create(:pixi_user) 
-      @pixter = FactoryGirl.create(:pixi_user, user_type_code: 'PT') 
-      @listing = FactoryGirl.create(:listing, seller_id: @user.id)
-      @pp_listing = FactoryGirl.create(:listing, seller_id: @user.id, pixan_id: @pixter.id)
-      @sold_listing = FactoryGirl.create(:listing, seller_id: @buyer.id, status: 'sold')
+      @buyer = create(:pixi_user) 
+      @pixter = create(:pixi_user, user_type_code: 'PT') 
+      @listing = create(:listing, seller_id: @user.id)
+      @pp_listing = create(:listing, seller_id: @user.id, pixan_id: @pixter.id)
+      @sold_listing = create(:listing, seller_id: @buyer.id, status: 'sold')
     end
 
     it 'accesses listings' do 
@@ -533,8 +541,8 @@ describe User do
 
   describe "invoice associations" do
     before do
-      @buyer = FactoryGirl.create(:pixi_user) 
-      @listing = FactoryGirl.create(:listing, seller_id: @user.id)
+      @buyer = create(:pixi_user) 
+      @listing = create(:listing, seller_id: @user.id)
     end
 
     it 'should not have unpaid invoices' do
@@ -542,15 +550,15 @@ describe User do
     end
 
     it 'should have only unpaid invoices' do
-      @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id, status: 'unpaid')
+      @invoice = @user.invoices.create attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id, status: 'unpaid')
       @user.unpaid_invoices.should_not be_empty
       @buyer.paid_invoices.should be_empty
       @buyer.has_unpaid_invoices?.should be_true 
     end
 
     it 'should have paid invoices' do
-      @account = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account
-      @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id, 
+      @account = @user.bank_accounts.create attributes_for :bank_account
+      @invoice = @user.invoices.create attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id, 
         bank_account_id: @account.id, status: 'paid')
       @user.paid_invoices.should_not be_empty
       @user.unpaid_invoices.should be_empty
@@ -583,16 +591,6 @@ describe User do
 
     it "does not show description" do
       expect(@user.type_descr).to be_nil
-    end
-  end
-
-  describe 'process_uri' do
-    it "processes uri" do
-      expect(User.process_uri("https://graph.facebook.com/708798320/picture?type=square")).not_to be_nil
-    end
-
-    it "does not process uri" do
-      expect(User.process_uri(nil)).to be_false
     end
   end
 
@@ -634,16 +632,16 @@ describe User do
   end
 
   describe "post associations" do
-    let(:listing) { FactoryGirl.create :listing, seller_id: @user.id }
-    let(:newer_listing) { FactoryGirl.create :listing, seller_id: @user.id }
-    let(:recipient) { FactoryGirl.create :pixi_user, first_name: 'Wilson' }
-    let(:conversation) { FactoryGirl.create :conversation, user: @user, recipient: recipient, listing: listing, pixi_id: listing.pixi_id }
+    let(:listing) { create :listing, seller_id: @user.id }
+    let(:newer_listing) { create :listing, seller_id: @user.id }
+    let(:recipient) { create :pixi_user, first_name: 'Wilson' }
+    let(:conversation) { create :conversation, user: @user, recipient: recipient, listing: listing, pixi_id: listing.pixi_id }
     let!(:older_post) do 
-      FactoryGirl.create(:post, user: @user, recipient: recipient, listing: listing, pixi_id: listing.pixi_id, created_at: 1.day.ago, conversation_id: conversation.id, conversation: conversation)
+      create(:post, user: @user, recipient: recipient, listing: listing, pixi_id: listing.pixi_id, created_at: 1.day.ago, conversation_id: conversation.id, conversation: conversation)
     end
 
     let!(:newer_post) do
-      FactoryGirl.create(:post, user: @user, recipient: recipient, listing: newer_listing, pixi_id: newer_listing.pixi_id, created_at: 1.hour.ago, conversation_id: conversation.id, conversation: conversation)
+      create(:post, user: @user, recipient: recipient, listing: newer_listing, pixi_id: newer_listing.pixi_id, created_at: 1.hour.ago, conversation_id: conversation.id, conversation: conversation)
     end
 
     it "should have the right posts in the right order" do
@@ -662,35 +660,32 @@ describe User do
   end
 
   describe "exporting as CSV" do
-    let(:headers) { ["Name", "Email", "Home Zip", "Birth Date", "Enrolled", "Last Login", "Gender", "Age"] }
-    let(:now) { Time.now.utc.to_date }
-    let(:age) { now.year - @user.birth_date.year - ((now.month > @user.birth_date.month || (now.month == @user.birth_date.month && now.day >= @user.birth_date.day)) ? 0 : 1) }
-    let(:csv_line) { [@user.name, @user.email, @user.home_zip, @user.birth_dt, @user.nice_date(@user.created_at), @user.nice_date(@user.last_sign_in_at), @user.gender, age] }
 
     it "exports data as CSV file" do
-      csv_string = User.to_csv
-      csv_string.should include headers.join(',')
-      csv_string.should include csv_line.join(',')
+      csv_string = @user.as_csv
+      csv_string.keys.should =~ ["Name", "Email", "Home Zip", "Birth Date", "Enrolled", "Last Login", "Gender", "Age"] 
+      csv_string.values.should =~ [@user.name, @user.email, @user.home_zip, @user.birth_dt, @user.nice_date(@user.created_at), 
+        @user.nice_date(@user.last_sign_in_at), @user.gender, @user.age] 
     end
 
     it "does not export any user data" do
-      User.destroy_all
-      csv = User.to_csv
-      csv.should include headers.join(',')
+      usr = build :user
+      csv = usr.as_csv
+      csv.values.should include(nil)
     end
   end
 
   describe "get conversations" do
     before(:each) do
-      @user = FactoryGirl.create :pixi_user
-      @recipient = FactoryGirl.create :pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tom.davis@pixitest.com'
-      @buyer = FactoryGirl.create :pixi_user, first_name: 'Jack', last_name: 'Smith', email: 'jack.smith99@pixitest.com'
-      @listing = FactoryGirl.create :listing, seller_id: @user.id, title: 'Big Guitar'
-      @listing2 = FactoryGirl.create :listing, seller_id: @recipient.id, title: 'Small Guitar'
-      @conversation = @listing.conversations.create FactoryGirl.attributes_for :conversation, user_id: @recipient.id, recipient_id: @user.id
-      @conversation2 = @listing2.conversations.create FactoryGirl.attributes_for :conversation, user_id: @user.id, recipient_id: @recipient.id 
-      @post = @conversation.posts.create FactoryGirl.attributes_for :post, user_id: @recipient.id, recipient_id: @user.id, pixi_id: @listing.pixi_id
-      @post2 = @conversation2.posts.create FactoryGirl.attributes_for :post, user_id: @user.id, recipient_id: @recipient.id, pixi_id: @listing2.pixi_id
+      @user = create :pixi_user
+      @recipient = create :pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tom.davis@pixitest.com'
+      @buyer = create :pixi_user, first_name: 'Jack', last_name: 'Smith', email: 'jack.smith99@pixitest.com'
+      @listing = create :listing, seller_id: @user.id, title: 'Big Guitar'
+      @listing2 = create :listing, seller_id: @recipient.id, title: 'Small Guitar'
+      @conversation = @listing.conversations.create attributes_for :conversation, user_id: @recipient.id, recipient_id: @user.id
+      @conversation2 = @listing2.conversations.create attributes_for :conversation, user_id: @user.id, recipient_id: @recipient.id 
+      @post = @conversation.posts.create attributes_for :post, user_id: @recipient.id, recipient_id: @user.id, pixi_id: @listing.pixi_id
+      @post2 = @conversation2.posts.create attributes_for :post, user_id: @user.id, recipient_id: @recipient.id, pixi_id: @listing2.pixi_id
 
     end
 
@@ -714,15 +709,53 @@ describe User do
 
   describe "is_admin?" do
     it "returns true for admin" do
-      @user = FactoryGirl.create :admin
+      @user = create :admin
       @user.user_type_code = 'AD'
       @user.save!
       expect(@user.is_admin?).to be_true
     end
 
     it "returns false for non-admin" do
-      @user = FactoryGirl.create :pixi_user
+      @user = create :pixi_user
       expect(@user.is_admin?).to be_false
+    end
+  end
+
+  describe "is_business?" do
+    it "returns true for business" do
+      @user = create :pixi_user, birth_date: nil, gender: nil, user_type_code: 'BUS', business_name: 'Company A'
+      expect(@user.is_business?).to be_true
+    end
+
+    it "returns false for non-business" do
+      @user = create :pixi_user
+      expect(@user.is_business?).to be_false
+    end
+  end
+
+  describe "url" do
+    it 'generates url' do
+      @user.user_url = @user.name
+      expect(@user.url).to eq @user.name.gsub!(/\s+/, "") + '1'
+    end
+
+    it 'generates unique url' do
+      @user.user_url = @user.name
+      @user.save!
+      user2 = create :pixi_user, first_name: @user.first_name, last_name: @user.last_name
+      expect(user2.url).not_to eq @user.url
+    end
+  end
+
+  describe 'code_type' do
+    it "shows code" do
+      @user.user_type_code = 'px'
+      expect(@user.code_type).to eq 'PX'
+    end
+
+    it "shows default code" do
+      usr = build :user
+      expect(usr.code_type).not_to be_nil
     end
   end
 end

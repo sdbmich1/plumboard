@@ -27,10 +27,7 @@ gem 'delayed_paperclip', '~> 2.7.1'
 gem 'remotipart', '~> 1.0'
 
 # add thinking sphinx
-gem 'thinking-sphinx', '~> 3.0.4', 
-     :git => 'git://github.com/pat/thinking-sphinx.git', 
-     :branch => 'master', 
-     :ref => '0c404e756d'
+gem 'thinking-sphinx', '~> 3.0.6' 
 
 # add roles
 gem 'rolify'
@@ -50,6 +47,7 @@ gem 'jquery-rails', '~> 3.1.0'
 group :assets do
   gem 'sass-rails',   '3.2.5'
   gem 'coffee-rails', '3.2.2'
+  gem 'compass-rails', '~> 1.1.7'
 
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
   gem 'therubyracer', :platforms => :ruby
@@ -162,7 +160,7 @@ group :development do
   gem 'capistrano-maintenance'
 
   # Capistrano RVM integration
-  gem 'rvm-capistrano'
+  gem 'rvm-capistrano', :require => false
 
   gem 'quiet_assets'
   gem 'bullet'
@@ -220,3 +218,6 @@ gem 'excon', '~> 0.21.0'
 gem 'rubber'
 gem 'recursive-open-struct'
 gem 'lazyload-rails'
+
+# standardize all modals
+gem 'data-confirm-modal', github: 'ifad/data-confirm-modal', branch: 'bootstrap2'

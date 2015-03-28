@@ -39,8 +39,7 @@ class CategoriesController < ApplicationController
   end
 
   def category_type
-    @cat_type = @category.category_type_code rescue nil
-    respond_with(@cat_type)
+    respond_with(@category)
   end
 
   protected
@@ -55,9 +54,8 @@ class CategoriesController < ApplicationController
 
   # set location var
   def load_data
-    @page, @loc, @loc_name = params[:page] || 1, params[:loc], params[:loc_name]
-    @loc_name ||= LocationManager::get_loc_name request.remote_ip, @loc, @user.home_zip
-    @loc ||= LocationManager::get_loc_id(@loc_name, @user.home_zip)
+    @page = params[:page] || 1
+    @loc, @loc_name = LocationManager::setup request.remote_ip, params[:loc], params[:loc_name], @user.home_zip
   end
 
   # check user signin status

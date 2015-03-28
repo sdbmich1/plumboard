@@ -23,7 +23,10 @@ feature "UserRegistrations" do
     end
 
     describe "with invalid information" do
-      before { visit new_user_registration_path }
+      before :each do  
+        create_user_types
+        visit new_user_registration_path 
+      end
 
       it 'shows content' do
         page.should have_content 'Already have an account?'
@@ -142,13 +145,28 @@ feature "UserRegistrations" do
 	}.not_to change(User, :count)
         page.should have_content "Create Your Account"
       end
+
+      it "should not create a business user with name" do
+        expect{ 
+      		user_data false
+      		add_data_w_photo
+        	fill_in "user_business_name", with: ''
+		click_button submit 
+	}.not_to change(User, :count)
+        page.should have_content "Create Your Account"
+      end
     end
 
-    def user_data
+    def user_data flg=true
       user_info
-      fill_in 'user_email', with: 'newuser@example.com'
-      select('Male', :from => 'user_gender')
-      user_birth_date
+      fill_in 'user_email', :with => 'newuser@example.com'
+      if flg
+        select('Male', :from => 'user_gender')
+        user_birth_date
+      else
+        select('Business', :from => 'ucode')
+        fill_in 'user_business_name', :with => 'Company A'
+      end
       fill_in 'home_zip', :with => '90201'
       user_pwd
     end
@@ -157,8 +175,8 @@ feature "UserRegistrations" do
       attach_file('user_pic', Rails.root.join("spec", "fixtures", "photo.jpg"))
     end
 
-    def user_with_photo
-      user_data
+    def user_with_photo flg=true
+      user_data flg
       add_data_w_photo
     end
 
@@ -184,6 +202,7 @@ feature "UserRegistrations" do
 
     describe "create user from modal", process: true do
       before(:each) do
+        create_user_types
         visit root_path
         click_link 'Signup'; sleep 2
       end
@@ -196,6 +215,29 @@ feature "UserRegistrations" do
       it "should create a user" do
         check_page_selectors ['#pwd, #register-btn'], true, false
         register "NO", 0
+      end
+
+      def create_user val='NO', flg=true
+        expect { 
+	  stub_const("USE_LOCAL_PIX", val)
+	  user_with_photo flg
+	  click_button submit; sleep 2 
+	 }.to change(User, :count).by(1)
+      end
+
+      it "should create a user - local pix" do
+        create_user 'YES'
+        page.should have_link 'How It Works', href: howitworks_path 
+        page.should have_content 'A message with a confirmation link has been sent to your email address' 
+      end	
+
+      it "should create a user" do
+        create_user
+      end	
+
+      it "should create a business user" do
+        create_user 'NO', false
+	expect(User.first.url).not_to be_nil
       end	
     end
   end  

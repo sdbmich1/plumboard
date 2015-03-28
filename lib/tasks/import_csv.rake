@@ -438,9 +438,10 @@ task :import_user_type => :environment do
   CSV.foreach(Rails.root.join('db', 'user_type_040114.csv'), :headers => true) do |row|
 
     attrs = {
-          :code	       => row[0],
-      		:description   => row[1],
-          :status	       => 'active'
+      :code	       => row[0],
+      :description   => row[1],
+      :hide   => row[2],
+      :status	       => 'active'
     }
 
     # add user_type

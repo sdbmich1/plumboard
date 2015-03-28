@@ -308,8 +308,7 @@ describe CategoriesController do
   describe 'xhr GET category_type' do
     before :each do
       @category = mock_category
-      Category.stub_chain(:find, :category_type_code).and_return( @category )
-      @category.stub(:category_type_code) {'asset'}
+      Category.stub_chain(:find).and_return( @category )
       do_get
     end
 
@@ -321,8 +320,8 @@ describe CategoriesController do
       controller.stub!(:render)
     end
 
-    it "should assign @category_type" do
-      assigns(:cat_type).should_not be_nil
+    it "should assign @category" do
+      assigns(:category).should_not be_nil
     end
 
     it "should show the requested category category_type" do

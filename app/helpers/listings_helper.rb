@@ -21,11 +21,7 @@ module ListingsHelper
     ary = []
 
     # build array
-    pixis.map do |x| 
-      if x.site
-        ary << x.site.contacts[0].full_address if x.site.contacts[0] 
-      end
-    end
+    pixis.map { |x| ary << x.site.contacts[0].full_address if x.site && x.site.contacts[0] }
 
     # flatten and return as json
     ary.flatten(1).to_json       
@@ -287,9 +283,33 @@ module ListingsHelper
     get_item_amt(listing) > 1
   end
 
-  # set pixi title based on price
+  # set title based on price
   def set_title listing
     amt = listing.job? ? listing.compensation : ntc(listing.price)
     [listing.nice_title, amt].join('')
+  end
+
+  # set pixi title based on job
+  def set_pixi_details listing
+    listing.job? ? listing.job_type_name : ntc(listing.price, true)
+  end
+
+  # set item title based on controller
+  def item_title listing
+    controller_name == 'pages' ? listing.short_title(false, 16) : listing.nice_title(false)
+  end
+
+  # toggle category title based on controller
+  def item_category listing
+    if controller_name == 'pages'
+      listing.category_name
+    else
+      link_to listing.category_name, '#', class: 'pixi-cat', 'data-cat-id'=> listing.category_id
+    end
+  end
+
+  # render footer if needed
+  def pixi_footer listing
+    render partial: 'shared/pixi_footer', locals: {listing: listing} # unless controller_name == 'pages'
   end
 end

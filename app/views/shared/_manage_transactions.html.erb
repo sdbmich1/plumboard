@@ -8,9 +8,9 @@
     <%= render :partial => 'shared/date_range_list' %>
   </div>
   <div id="txn-list">
-    <%= render :partial => 'shared/transaction_list' %>
+    <%= render :partial => 'shared/transaction_list', locals: { txn: txn } %>
   </div>
   <div id="entry-top" class="pg-entry">
-    <%= page_entries_info @transactions, :model => 'transactions' unless @transactions.blank? %>
+    <%= page_entries_info txn, :model => 'transactions' unless txn.blank? %>
   </div>
 <% end %>

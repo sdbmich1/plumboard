@@ -6,9 +6,11 @@ body {
 }
 
 .home-container {
-  height: 540px;
-  background: url("pxb_homepage_header_2015_01_08.jpg");
-  background-size: 100% 100%;
+  height: 550px;
+}
+
+.footer-container {
+  height: 200px
 }
 
 .home-title-grp {
@@ -17,28 +19,97 @@ body {
   font-weight: bold;
   .home-title {
     color: #000000;
-    font-size: 44px;
+    font-size: 36px;
   }
   .home-title-white {
-    font-family: "Bauhaus 93";
-    font-size: 65px;
+    font-family: "Helvetica";
+    font-size: 36px;
   }
+}
+
+.helv-white {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #ffffff;
 }
 
 .home-page-title {
   text-shadow: 2px 2px #000;
-    font-family: "Bauhaus 93";
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: #fff;
-    font-size: 65px;
+    font-size: 50px;
     font-weight: bold;
 }
 
+.mobile-tag {
+  @extend .helv-white;
+  font-size: 36px;
+  line-height: 36px;
+}
+
+.mobile-tag-line {
+  @extend .helv-white;
+  font-size: 20px;
+  line-height: 24px;
+}
+
+.pxp-tag {
+  @extend .mobile-tag;
+  font-size: 36px;
+  line-height: 36px;
+}
+
+.pxp-items {
+  top: 25%;
+  @extend .overlay;
+}
+
+.pxp-tag-line {
+  @extend .helv-white;
+  font-size: 18px;
+}
+
+.comm-tag-small {
+  @extend .helv-white;
+  font-size: 16px;
+}
+
 .tag-line {
-  text-shadow: 3px 3px #000;
-    color: #fff;
+  text-shadow: 2px 2px #000;
+  @extend .helv-white;
+  font-weight: normal;
+  font-size: 28px;
+}
+
+.trend-tag {
+    @extend .trend-tag-norm;
     font-weight: bold;
-    font-family: "Trebuchet MS";
-    font-size: 24px;
+}
+
+.trend-tag-norm {
+    color: #505050;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 42px;
+}
+
+.community-title {
+  @extend .trend-tag;
+  font-size: 50px;
+  font-weight: bold;
+}
+
+.why-tag {
+  @extend .trend-tag;
+  font-size: 18px;
+}
+
+.why-tag-line {
+    @extend .trend-tag-norm;
+    font-size: 14px;
+}
+
+.trend-tag-line {
+    @extend .trend-tag-norm;
+    font-size: 20px;
 }
 
 .px-calendar {
@@ -75,6 +146,10 @@ body {
   border-width: 0px;
   -webkit-box-shadow: 0px 0px;
   box-shadow: 0px 0px;
+  @extend .bg-transparent;
+}
+
+.bg-transparent {
   background-color: rgba(0,0,0,0.30);
   background-image: -webkit-gradient(linear, 50.00% 0.00%, 50.00% 100.00%, color-stop( 0% , rgba(0,0,0,0.300)),color-stop( 100% , rgba(0,0,0,0.300)));
   background-image: -webkit-linear-gradient(270deg,rgba(0,0,0,0.300) 0%,rgba(0,0,0,0.300) 100%);
@@ -96,3 +171,138 @@ body #signupDialog.modal {
 #signupDialog.modal .modal-footer {
   border-radius: 6px 6px 6px 6px;
 }
+
+.slider-size {
+  height: 480px; /* This is your slider height */
+}
+
+.carousel { 
+  position: absolute;
+  z-index: -99; 
+  width:100%; 
+  margin-bottom: 60px;
+} 
+
+.carousel-inner > .item > img, .carousel-inner > .item > a > img {
+    margin:auto;
+}
+
+.carousel-inner > .item {
+  left:0;
+  margin-left: 0!important;
+  width: 100%; 
+  -webkit-transition: opacity 1s;
+  -moz-transition: opacity 1s;
+  -ms-transition: opacity 1s;
+  -o-transition: opacity 1s;
+  transition: opacity 1s;
+}
+  
+.bkgnd-elem {
+  height: 550px;
+  width:100%!important; 
+  background-size: cover!important;
+  -moz-background-size: cover!important;
+}
+  
+.pxp-bkgnd {
+  background: url("pxb_pixipost_2015_03_23.jpg") no-repeat; 
+  @extend .bkgnd-elem;
+  position: relative;
+  height: 200px;
+}
+
+.carousel .one {
+  background: url("pxb_header_one_2015_02_26.jpg") no-repeat; 
+  @extend .bkgnd-elem;
+}
+  
+.carousel .two {
+  background: url("pxb_header_two_2015_02_26.jpg") no-repeat;
+  @extend .bkgnd-elem;
+}
+
+.carousel .three {
+  background: url("pxb_header_three_2015_02_26.jpg") no-repeat;
+  @extend .bkgnd-elem;
+}
+
+.carousel .active.left {
+  left:0;
+  opacity:0;
+  z-index:2;
+}
+
+.carousel-indicators {
+  position: absolute;
+  top: 85%;
+  right: 5px;
+  width: 80px;
+}
+
+.carousel-inner {
+  margin-bottom:30px;
+}
+
+.overlay { 
+  color:#fff;
+  position:absolute;
+  z-index:12;
+  left:0;
+  width:100%;
+  text-align:center;
+}
+
+.carousel-overlay {
+  top: 35%;
+  @extend .overlay;
+}
+
+header#home-navbar.navbar {
+  margin-bottom: -90px!important; /* Negative margin to pull up carousel. 90px is roughly margins and height of navbar. */
+}
+
+/* The navbar becomes detached from the top, so we round the corners */
+.navbar-wrapper .navbar {
+  border-radius: 4px;
+}
+
+.base-container {
+  position: relative;
+  height: 500px;
+  background-size: 100% 100%;
+  border-radius: 3px;
+}
+
+.pxb-container {
+  background: url("rsz_local_shop_bag.jpg") no-repeat;
+  @extend .base-container
+}
+
+.ind-container {
+  background: url("pxb_card_individuals_2015_02_26.png") no-repeat;
+  @extend .base-container
+}
+
+.bus-container {
+  background: url("pxb_card_business_2015_02_26.png") no-repeat;
+  @extend .base-container
+}
+
+.grp-container {
+  background: url("pxb_card_group_2015_02_26.png") no-repeat;
+  @extend .base-container
+}
+
+.comm-tag-line {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.comm-section {
+  position: absolute;
+  bottom: 0;
+}
+

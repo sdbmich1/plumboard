@@ -308,7 +308,7 @@ class Listing < ListingParent
 
   # returns purchased pixis from buyer
   def self.purchased usr
-    where("listings.status not in (?)", closed_arr(false)).joins(:invoices).where("invoices.buyer_id = ? AND invoices.status = ?", usr.id, 'paid')
+    where("listings.status not in (?)", closed_arr(false)).joins(:invoices).where("invoices.buyer_id = ? AND invoices.status = ?", usr.id, 'paid').uniq
   end
 
   # returns sold pixis from seller

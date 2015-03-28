@@ -449,19 +449,19 @@ feature "TempListings" do
 
     it "cancels delete picture from listing", js: true do
       click_remove_cancel
-      page.should have_content 'Build Pixi'
+      page.should have_content 'Build Your Pixi'
     end
 
     it "deletes picture from listing", js: true do
       expect{
         click_remove_ok; sleep 2
       }.to change(Picture,:count).by(-1)
-      page.should have_content 'Build Pixi'
+      page.should have_content 'Build Your Pixi'
     end
 
     it "cancels build cancel", js: true do
       click_remove_cancel
-      page.should have_content "Build Pixi" 
+      page.should have_content "Build Your Pixi" 
     end
 
     it "changes a pixi price" do
@@ -613,7 +613,7 @@ feature "TempListings" do
       expect { 
 	      click_link 'Edit'
 	}.not_to change(TempListing, :count)
-      page.should have_content "Build Pixi" 
+      page.should have_content "Build Your Pixi" 
     end
   end
 

@@ -61,6 +61,10 @@ namespace :db do
   task :load_want_status => :environment do
     set_want_status
   end
+
+  task :load_user_urls => :environment do
+    set_user_url
+  end
 end
 
 def set_keys
@@ -205,10 +209,14 @@ end
 def set_want_status
   Invoice.where(status: 'paid').find_each do |inv|
     inv.listings.find_each do |listing|
-      listing.pixi_wants.where("user_id = ? AND pixi_id = ? AND status = ?", inv.buyer_id, listing.pixi_id, 'active').update_all(status: 'sold')
+      PixiWant.set_status(listing.pixi_id, inv.buyer_id, 'sold')
     end
   end
 
   # update all non-sold wants
   PixiWant.where(status: nil).update_all(status: 'active')
+end
+
+def set_user_url
+  User.where(first_name: 'Sean').find_each {|u| u.update_attribute(:user_url, u.name)}
 end

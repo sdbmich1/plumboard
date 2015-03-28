@@ -162,7 +162,6 @@ Plumboard::Application.routes.draw do
   get '/buyer_name', to: "users#buyer_name"
   get '/states', to: "users#states"
   # get '/photos/:attachment/:id/:style/:filename', :to => 'pictures#display'
-  # post "/temp_listings/manage", to: "temp_listings#manage", :via => :post, :as => :manage 
   put '/submit', to: "temp_listings#submit"
   put '/resubmit', to: "temp_listings#resubmit"
 
@@ -170,15 +169,15 @@ Plumboard::Application.routes.draw do
   get "/settings/contact", to: "settings#contact" 
   get "/settings/password", to: "settings#password" 
 
-  # specify routes for devise user after sign-in
-  # namespace :user do
-  #  root :to => "users#show", :as => :user_root
-  # end
-
   # specify root route based on user sign in status
   root to: 'listings#local', :constraints => lambda {|r| r.env["warden"].authenticate? }
   root to: 'pages#home'
 
   # exception handling
   # match '/*path', :to => 'application#rescue_with_handler'
+
+  # personalized paths
+  get '/biz/:search', to: "searches#biz"
+  get '/mbr/:search', to: "searches#biz"
+  get '/careers', to: "searches#jobs"
 end

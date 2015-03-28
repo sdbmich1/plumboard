@@ -74,11 +74,10 @@ class ListingsController < ApplicationController
   protected
 
   def load_data
-    @page, @cat, @loc, @loc_name = params[:page] || 1, params[:cid], params[:loc], params[:loc_name]
+    @page, @cat = params[:page] || 1, params[:cid]
     @adminFlg = params[:adminFlg].to_bool rescue false
     @status = NameParse::transliterate params[:status] if params[:status]
-    @loc_name ||= LocationManager::get_loc_name(request.remote_ip, @loc || @region, @user.home_zip)
-    @loc ||= LocationManager::get_loc_id(@loc_name, @user.home_zip)
+    @loc, @loc_name = LocationManager::setup request.remote_ip, @loc || @region, @loc_name, @user.home_zip
   end
 
   def page_layout

@@ -1,0 +1,11 @@
+  <div class='row big-top'>
+    <div class='center-wrapper'>
+      <span class='trend-tag'>Our Community</span>
+    </div>
+    <div class='lg-top'>
+      <% get_tags().each do |ctype, ctag| %>
+        <%= render partial: 'home_page_community_item', locals: {ctype: ctype, ctag: ctag} %>
+      <% end %>
+    </div>
+  </div>
+

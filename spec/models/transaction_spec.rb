@@ -52,11 +52,11 @@ describe Transaction do
       "promo_code"=>''} }
     it "should load new transaction" do
       contact_user = create :contact_user 
-      Transaction.load_new(contact_user, order).should_not be_nil
+      Transaction.load_new(contact_user, order).first_name.should_not be_nil
     end
 
     it "should not load new transaction" do
-      Transaction.load_new(nil, order).should be_nil
+      Transaction.load_new(nil, order).first_name.should be_nil
     end
   end
   

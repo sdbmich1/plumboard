@@ -41,8 +41,10 @@ module ApplicationHelper
   def display_search
     case controller_name
       when 'categories'; render 'shared/search' if action_name != 'show'
+      when 'searches'; render 'shared/search' if action_name != 'show'
       when 'listings'; render 'shared/search' if action_name != 'show'
       when 'posts'; render 'shared/search_posts'
+      when 'conversations'; render 'shared/search_posts'
       when 'users'; render 'shared/search_users'
       when 'pending_listings'; render 'shared/search' if action_name != 'show'
     end
@@ -267,7 +269,7 @@ module ApplicationHelper
 
   # set class name if not on the main board
   def zoom_image
-    %w(category local).detect {|x| action_name == x} ? '' : 'img-zoom'
+    %w(category local).detect {|x| action_name == x} ? '' : action_name == 'home' ? 'img-board' : ''
   end
 
   # used to dynamically remove field from a given form

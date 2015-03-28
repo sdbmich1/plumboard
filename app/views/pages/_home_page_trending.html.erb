@@ -1,0 +1,18 @@
+  <div class='row lg-top'>
+    <% cache fragment: 'home_page_trending' do %>
+      <div class='med-top center-wrapper'>
+        <span class='trend-tag-norm'><%= PXB_HOME_PAGE_KEYS['pixi']['trend_line'] %></span><br />
+        <div class='sm-top'><span class='trend-tag-line'><%= PXB_HOME_PAGE_KEYS['pixi']['trend_tag_line'] %></span></div>
+      </div>
+    <% end %>
+  </div>
+  <div class='mtop row'>
+    <%= render partial: 'shared/home_page_trending_pixis', collection: @listings, as: :listing %>
+  </div>
+  <div class='mtop row'>
+    <div class='center-wrapper'>
+      <div class="col-sm-offset-5 col-sm-2 text-center">
+	<%= link_to 'View More >', set_home_path, class: "btn btn-large btn-primary pxb-btn width180" %>
+      </div>
+    </div>
+  </div>

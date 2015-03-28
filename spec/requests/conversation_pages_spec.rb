@@ -11,16 +11,17 @@ feature "Conversations" do
     @listing = create :listing, seller_id: @user.id
   end
 
-  def add_invoice
+  def add_invoice status='unpaid'
     @seller = create(:pixi_user, first_name: 'Kim', last_name: 'Harris', email: 'kimmy@pixitest.com')
-    @invoice = @seller.invoices.build attributes_for(:invoice, buyer_id: @user.id)
-    @details = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+    @listing1 = create :listing, seller_id: @seller.id
+    @invoice = @seller.invoices.build attributes_for(:invoice, buyer_id: @user.id, status: status)
+    @details = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing1.pixi_id 
     @invoice.save!
   end
 
-  def paid_invoice
-    @seller = create(:pixi_user, first_name: 'Kim', last_name: 'Harris', email: 'kimmy@pixitest.com')
-    @invoice = @seller.invoices.create attributes_for(:invoice, buyer_id: @user.id, status: 'paid')
+  def sent_invoice status='unpaid'
+    @buyer = create(:pixi_user, first_name: 'Kim', last_name: 'Harris', email: 'kimmy@pixitest.com')
+    @invoice = @user.invoices.create attributes_for(:invoice, buyer_id: @buyer.id, status: status)
     @details = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
     @invoice.save!
   end
@@ -126,7 +127,7 @@ feature "Conversations" do
      
     describe 'paid invoice' do
       before :each do
-        paid_invoice
+        add_invoice 'paid'
         visit conversations_path(status: 'received')
       end
 
@@ -152,7 +153,7 @@ feature "Conversations" do
      
     describe 'paid invoice' do
       before :each do
-        paid_invoice
+        add_invoice 'paid'
         visit conversations_path
       end
 
@@ -281,12 +282,33 @@ feature "Conversations" do
     end
   end
 
-  describe 'Seller Sold or Removed Pixis', js: true do
+  describe 'Seller Invoiced Pixis', js: true do
+    before :each do
+      add_conversation
+      @user.bank_accounts.create attributes_for :bank_account, status: 'active'
+      sent_invoice; sleep 2;
+      visit conversations_path(status: 'received')
+      sleep 5
+    end
+
+    it 'hides bill button' do
+      page.find("#conv-bill-btn", :visible => false)
+    end
+  end
+
+  describe 'Seller Pixis', js: true do
     before :each do
       add_conversation
       @user.bank_accounts.create attributes_for :bank_account, status: 'active'
       visit conversations_path(status: 'received')
       sleep 5
+    end
+
+    it 'opens new invoice' do
+      page.should have_selector('#conv-bill-btn') 
+      sleep 2;
+      page.find("#conv-bill-btn", :visible => true).click
+      page.should have_content 'Sales Tax'
     end
 
     it 'handles removed pixi' do

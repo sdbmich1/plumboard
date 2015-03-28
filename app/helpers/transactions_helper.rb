@@ -117,6 +117,11 @@ module TransactionsHelper
 
   # set model based on transaction type
   def set_model txn
-    txn.pixi? ? txn.get_invoice_listing : txn
+    txn.pixi? ? txn.temp_listings.first : txn
+  end
+
+  # calc amt
+  def txn_amt txn
+    txn.get_invoice.amount - txn.get_invoice.get_fee(true) rescue 0
   end
 end

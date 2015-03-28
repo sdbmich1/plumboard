@@ -12,6 +12,7 @@ FactoryGirl.define do
 
   factory :pixi_user, :class => "User", :parent => :user do
     after(:build) do |usr|
+      usr.user_url = usr.name
       usr.pictures.build FactoryGirl.attributes_for(:picture)
       usr.preferences.build FactoryGirl.attributes_for(:preference)
     end
@@ -23,6 +24,7 @@ FactoryGirl.define do
 
   factory :unconfirmed_user, :class => "User", :parent => :user do
     after(:build) do |usr|
+      usr.user_url = usr.name
       usr.pictures.build FactoryGirl.attributes_for(:picture)
       usr.preferences.build FactoryGirl.attributes_for(:preference)
     end

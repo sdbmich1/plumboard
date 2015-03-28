@@ -1,3 +1,32 @@
+// when the user type field changes
+$(document).on("change", "#ucode", function(e){
+  var utype = $(this).val().toLowerCase();
+  var fldList = '#user_gender, #user_birth_date_1i, #user_birth_date_2i, #user_birth_date_3i';
+  if(utype.match(/^bus/) != null) {
+    var showList = '#bus_code, #user_business_name';
+    var hideList = '#mbr_code, #gender_code';
+    $(showList).attr('required', 'required');
+    $(fldList).removeAttr('required'); 
+  }  
+  else {
+    var hideList = '#bus_code, #user_business_name'; 
+    var showList = '#mbr_code, #gender_code';
+    $(fldList).attr('required', 'required');
+    $(showList).removeAttr('required'); 
+  }
+  $(showList).show('fast');
+  $(hideList).hide('fast');
+});
+
+// business name field changes
+$(document).on("change", "#user_business_name", function(e){
+  var bname = $(this).val().replace(/ /g,'');
+
+  // set field
+  if(bname.length > 0) 
+    $('#user_url').val(bname);
+});
+
 // hide & reset comp field
 function hideComp(eFlg){
   refreshPage('#comp-fld, #job-fld', '#price-fld, #qty-fld', eFlg);

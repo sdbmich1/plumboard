@@ -1,6 +1,5 @@
 class Transaction < ActiveRecord::Base
   resourcify
-  include CalcTotal, Payment, AddressManager
 
   attr_accessor :cvv, :card_number, :exp_month, :exp_year, :mobile_phone
   attr_accessible :address, :address2, :amt, :city, :code, :country, :credit_card_no, :description, :email, :first_name, 
@@ -58,30 +57,7 @@ class Transaction < ActiveRecord::Base
 
   # pre-load new transaction for given user
   def self.load_new usr, order
-    if usr
-      txn = usr.transactions.build
-
-      # set transaction amounts
-      txn.amt = CalcTotal::process_order order
-      txn.processing_fee = CalcTotal::get_processing_fee order[:inv_total]
-      txn.convenience_fee = CalcTotal::get_convenience_fee order[:inv_total]
-      txn.transaction_type = order[:transaction_type]
-
-      # load user info
-      txn.user_id = usr.id
-      txn.first_name, txn.last_name, txn.email = usr.first_name, usr.last_name, usr.email
-      txn = AddressManager::synch_address txn, usr.contacts[0], false if usr.has_address?
-    end
-    txn
-  end
-
-  # add each transaction item
-  def add_details item, qty, val
-    if item && val
-      item_detail = self.transaction_details.build rescue nil
-      item_detail.item_name, item_detail.quantity, item_detail.price = item, qty, val if item_detail
-    end
-    item_detail
+    txn = usr ? TransactionProcessor.new(usr.transactions.build).load_data(usr, order) : Transaction.new
   end
   
   # check if transaction is refundable
@@ -99,60 +75,15 @@ class Transaction < ActiveRecord::Base
   def valid_card?
     card_number.blank? || cvv.blank? || (exp_month < Date.today.month && exp_year <= Date.today.year) ? false : true
   end
-
-  # check for token
-  def has_token?
-    if token.blank?
-      errors.add :base, "Card info is missing or invalid. Please re-enter."
-      false
-    else
-      if card_number.blank?  
-        user.has_card_account? ? true : false
-      else
-        token
-      end
-    end
+  
+  # process transaction
+  def process_transaction
+    valid? ? TransactionProcessor.new(self).process_data : false
   end
 
   # save transaction
   def save_transaction order
-    if valid?
-      # add transaction details      
-      (1..order[:cnt].to_i).each do |i| 
-        if order['quantity'+i.to_s].to_i > 0 
-          add_details order['item'+i.to_s], order['quantity'+i.to_s], order['price'+i.to_s].to_f 
-        end 
-      end 
-
-      # get listing
-      listing = Listing.where(pixi_id: order['id1']).first
-
-      # submit payment or order based on transaction type
-      if pixi? 
-        self.status = 'pending' # set status
-        save!  
-
-   	# submit order
-	unless self.errors.any?
-          listing.submit_order(self.id) if listing
-	end
-      else
-        # process credit card
-        if has_token? 
-          if process_transaction
-            inv = Invoice.find(order["invoice_id"])
-            inv.submit_payment(self.id) if inv
-          else
-            errors.add :base, "Transaction processing failed. Please re-enter."
-            false
-          end
-        else
-          false
-        end
-      end
-    else
-      false
-    end
+    valid? ? TransactionProcessor.new(self).save_data(order) : false
   end
 
   # set approval status
@@ -204,43 +135,6 @@ class Transaction < ActiveRecord::Base
   def has_address?
     !address.blank? && !city.blank? && !state.blank? && !zip.blank? && !home_phone.blank?
   end
-  
-  # process transaction
-  def process_transaction
-    if valid? 
-      # get card token
-      cid = txn.user.card_accounts.get_default_acct.token rescue token
-      
-      # charge the credit card
-      result = Payment::charge_card(cid, amt, description, self) if amt > 0.0
-
-      # check for errors
-      return false if self.errors.any?
-
-      # check result - update confirmation # if nil (free transactions) use timestamp instead
-      if result
-        self.confirmation_no = result.id 
-
-        if CREDIT_CARD_API == 'balanced'
-	  self.payment_type, self.credit_card_no, self.debit_token = result.source.card_type, result.source.last_four, result.uri
-	else
-	  self.payment_type, self.credit_card_no = result.card[:type], result.card[:last4]
-	end
-      else
-        if amt > 0.0
-	  return false
-	else
-          self.confirmation_no = Time.now.to_i.to_s   
-	end
-      end  
-
-      # set status
-      self.status = 'approved'
-      save!  
-    else
-      false
-    end
-  end
 
   # format txn date
   def txn_dt flg=true
@@ -258,7 +152,7 @@ class Transaction < ActiveRecord::Base
   end
 
   def self.get_by_date start_date, end_date
-    where("updated_at >= ? AND updated_at <= ?", start_date, end_date)
+    includes(:invoices => [{:invoice_details => :listing}, :seller]).where("updated_at >= ? AND updated_at <= ?", start_date, end_date)
   end
 
   # set json string

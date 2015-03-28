@@ -1,22 +1,11 @@
 <% cache ['board', listing] do %>
 <div class="item">
   <div class="center-wrapper">
-    <%= render partial: 'shared/show_temp_pixi_image', locals: {model: listing, pix_size: 'medium', img_size: 'pixi-image'} %>
-    <div class='sm-top bdescr'>
-      <%= listing.nice_title false %><br /><%= "(#{listing.site_name})" %>
+    <%= render partial: 'shared/show_temp_pixi_image', locals: {model: listing, pix_size: 'large', img_size: 'pixi-image'} %>
+    <div class='sm-top'>
+      <span class=' bdescr'><%= item_title listing %></span><br /><span class='loc-descr'><%= "(#{listing.site_name})" %></span>
     </div>
-    <div class='sm-top gdescr'>
-      <div class='item-cat pixi-grey-bkgnd'>
-        <% unless listing.job? %>
-	  <%= ntc listing.price, true %>
-	<% else %>
-	  <%= listing.job_type_name %>
-	<% end %>
-      </div>
-      <div class='item-dt pixi-grey-bkgnd' data-cat-id="<%= listing.category_id %>">
-        <%= link_to listing.category_name, '#', class: 'pixi-cat', 'data-cat-id'=> listing.category_id %>
-      </div>
-    </div>
+    <%= pixi_footer listing %>
   </div>
 </div>
 <% end %>

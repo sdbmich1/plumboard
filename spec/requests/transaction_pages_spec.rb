@@ -69,40 +69,6 @@ feature "Transactions" do
     fill_in 'postal_code', with: '94103'
   end
 
-  def invalid_card_dates
-    select "January", from: "card_month"
-    select (Date.today.year).to_s, from: "card_year"
-  end
-
-  def valid_card_dates
-    select "January", from: "card_month"
-    select (Date.today.year+2).to_s, from: "card_year"
-  end
-
-  def credit_card val="4111111111111111"
-    fill_in "card_number", with: val
-  end
-
-  def credit_card_data cid="4111111111111111", cvv="123", valid=true
-    credit_card cid
-    fill_in "card_code",  with: cvv
-    valid ? valid_card_dates : invalid_card_dates
-    click_valid_ok
-  end
-
-  def valid_dates
-    select "January", from: "cc_card_month"
-    select (Date.today.year+2).to_s, from: "cc_card_year"
-  end
-
-  def load_credit_card cid="4111111111111111", cvv="123", valid=true
-    credit_card cid
-    fill_in "card_code",  with: cvv
-    valid ? valid_dates : invalid_card_dates
-    fill_in "card_zip",  with: '94103'
-    click_valid_save
-  end
-
   describe "Manage Free Valid Transactions", process: true do
     before(:each) do 
       page_setup user

@@ -6,7 +6,7 @@ class TempListing < ListingParent
   before_create :set_flds
   after_commit :async_send_notification, :on => :update
 
-  attr_accessor :slr_name #, :item_color, :item_id, :car_color, :car_id
+  attr_accessor :slr_name
   attr_accessible :slr_name, :item_color, :item_id, :car_color, :car_id
 
   # set fields upon creation
@@ -85,6 +85,7 @@ class TempListing < ListingParent
     self.status, self.edited_by, self.edited_dt, self.explanation = val, usr.name, Time.now, reason
     save!
   end
+  # handle_asynchronously :edit_flds, :queue => 'pixi_processing'
 
   # check if pixi is free
   def free?

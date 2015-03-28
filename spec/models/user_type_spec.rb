@@ -10,6 +10,7 @@ describe UserType do
   it { should respond_to(:description) }
   it { should respond_to(:status) }
   it { should respond_to(:code) }
+  it { should respond_to(:hide) }
   it { should validate_presence_of(:description) }
   it { should validate_presence_of(:status) }
   it { should validate_presence_of(:code) }
@@ -23,5 +24,15 @@ describe UserType do
   describe "inactive user_types" do
     before { create(:user_type, status: 'inactive') }
     it { UserType.active.should be_empty } 
+  end
+
+  describe "hidden user_types" do
+    before { create(:user_type, code: 'active', hide: 'yes') }
+    it { UserType.unhidden.should be_empty } 
+  end
+
+  describe "unhidden user_types" do
+    before { create(:user_type, code: 'active', hide: 'no') }
+    it { UserType.unhidden.should_not be_nil } 
   end
 end

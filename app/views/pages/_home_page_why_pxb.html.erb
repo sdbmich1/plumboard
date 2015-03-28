@@ -1,0 +1,10 @@
+  <div class='row big-top'>
+    <div class='gray'><hr></div>
+    <div class='clear-all'></div>
+    <div class='center-wrapper big-top'>
+      <span class='trend-tag-norm'>Why use</span><span class='trend-tag'> Pixiboard?<span><br />
+    </div>
+  </div>
+  <% [0, 3].each do |idx| %>
+    <%= render partial: 'home_page_pxboard', locals: {val: idx} %>
+  <% end %>

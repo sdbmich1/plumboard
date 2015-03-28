@@ -90,7 +90,7 @@ feature "UserSignins" do
     end
   end
 
-  describe 'sign in page' do 
+  describe 'sign in page - other signins' do 
     before { visit new_user_session_path }
 
     it 'shows content' do
@@ -126,52 +126,12 @@ feature "UserSignins" do
 
       scenario 'signs-in from sign-in page' do
         omniauth
-        set_const 0
+        set_const 500
         click_on "fb-btn"
         page.should have_link('Sign out', href: destroy_user_session_path)
-        page.should have_content "Home"
+        page.should have_content "Pixis"
         # page.should have_content "Welcome to Pixiboard, Bob!"
         # page.should have_content "To get a better user experience"
-      end
-
-      scenario 'signs-in from home page' do
-        omniauth
-        set_const 0
-        expect {
-          visit root_path
-          click_on "fb-btn"
-        }.to change(User, :count).by(1)
-	expect(User.find_by_email('bob.smith@test.com').home_zip).not_to be_nil
-
-        page.should have_link('Sign out', href: destroy_user_session_path)
-        page.should have_content "Home"
-	page.should have_content 'About'
-      end
-
-      scenario 'signs-in from home page to local pixi page' do
-        omniauth
-        set_const 500
-        expect {
-          visit root_path
-          click_on "fb-btn"
-        }.to change(User, :count).by(1)
-	expect(User.find_by_email('bob.smith@test.com').home_zip).not_to be_nil
-
-	user_menu_items
-        page.should have_content "Pixis"
-	about_menu
-      end
-
-      scenario 'does not sign-in from home page' do
-        omniauth false
-        expect {
-          visit root_path
-          click_on "fb-btn"
-        }.to change(User, :count).by(0)
-	expect(User.find_by_email('bob.smith@test.com')).to be_nil
-
-        page.should have_link('Sign in', href: new_user_session_path)
-        #page.should have_content "Sign Up"
       end
     end
 

@@ -1,9 +1,12 @@
-  <div class='container'>
-    <div class='huge-top center-wrapper'>
-      <span class='home-page-title'><%= PIXI_KEYS['pixi']['caption'] %></span><br /><br />
-      <span class='tag-line'><%= PIXI_KEYS['pixi']['tag_line'] %></span>
-    </div>
-    <div class='mtop offset4 span5'>
-      <%= link_to 'Join for Free!', new_user_registration_path, class: 'btn btn-large btn-primary submit-btn span2' %>
+<div class='carousel-overlay center-wrapper'>
+  <span class='home-page-title'><%= PXB_HOME_PAGE_KEYS['pixi']['caption'] %></span><br />
+  <div class='med-top'><span class='tag-line'><%= PXB_HOME_PAGE_KEYS['pixi']['tag_line'] %></span></div>
+  <div class='clear-all'></div>
+  <div class='mtop row'>
+    <div class="col-sm-offset-5 col-sm-2 text-center">
+	<%= link_to 'We Post', check_pixi_post_zips_path, class: "btn btn-large btn-primary pixi-btn" %>
+	<%= link_to 'You Post', new_temp_listing_path, class: "btn btn-large btn-primary pxb-btn mleft20" %>
     </div>
   </div>
+</div>
+<%= render 'home_page_carousel' %>

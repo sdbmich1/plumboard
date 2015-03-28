@@ -1,9 +1,6 @@
-require "open-uri"
-require 'open_uri_redirections'
 class User < ActiveRecord::Base
-  include ThinkingSphinx::Scopes, Area, LocationManager, PointManager
+  include ThinkingSphinx::Scopes, Area
   extend Rolify
-
   rolify
   acts_as_reader
 
@@ -15,7 +12,9 @@ class User < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :first_name, :last_name, :email, :password, :password_confirmation, :remember_me, :birth_date, :gender, :pictures_attributes,
-    :fb_user, :provider, :uid, :contacts_attributes, :status, :acct_token, :preferences_attributes, :user_type_code
+    :fb_user, :provider, :uid, :contacts_attributes, :status, :acct_token, :preferences_attributes, :user_type_code, :business_name, :ref_id, :url,
+    :user_url
+  attr_accessor :user_url
 
   before_save :ensure_authentication_token unless Rails.env.test?
   after_commit :async_send_notification, :on => :create
@@ -36,8 +35,8 @@ class User < ActiveRecord::Base
   has_many :pixi_asks, dependent: :destroy
 
   # define site relationships
-  has_many :site_users, :dependent => :destroy
-  has_many :sites, :through => :site_users
+  # has_many :site_users, :dependent => :destroy
+  # has_many :sites, :through => :site_users
 
   # define user relationships
   belongs_to :user_type, primary_key: 'code', foreign_key: 'user_type_code'
@@ -91,9 +90,14 @@ class User < ActiveRecord::Base
             :length   => { :maximum => 30 },
  	    :format => { :with => name_regex }  
 
-  validates :birth_date,  :presence => true  
-  validates :gender,  :presence => true
   validates_confirmation_of :password, if: :revalid
+  validates :business_name,  :presence => true,
+            :length   => { :maximum => 60 },
+ 	    :format => { :with => name_regex }, if: :is_business? 
+
+  validates :birth_date,  :presence => true, unless: :is_business? 
+  validates :gender,  :presence => true, unless: :is_business? 
+  validates :url, uniqueness: true, length: { :minimum => 2 }
   validate :must_have_picture
   validate :must_have_zip
 
@@ -133,6 +137,15 @@ class User < ActiveRecord::Base
     preferences[0].zip = val
   end
 
+  # getter & setter for url
+  def user_url
+    self[:url] 
+  end
+
+  def user_url=value
+    self[:url] = UserProcessor.new(self).generate_url value 
+  end
+
   # used to add pictures for new user
   def with_picture
     self.pictures.build if self.pictures.blank?
@@ -157,7 +170,7 @@ class User < ActiveRecord::Base
 
   # combine name
   def name
-    [first_name, last_name].join " "
+    is_business? ? business_name : [first_name, last_name].join(" ")
   end
 
   # abbreviated name
@@ -196,38 +209,14 @@ class User < ActiveRecord::Base
     card_accounts.detect { |x| x.expiration_year > yr || (x.expiration_year == yr && x.expiration_month >= mo) }
   end
 
-  # converts date format
-  def self.convert_date(old_dt)
-    Date.strptime(old_dt, '%m/%d/%Y') if old_dt    
-  end  
-
   # process facebook user
   def self.find_for_facebook_oauth(access_token, signed_in_resource=nil)
-    # load token
-    data = access_token.extra.raw_info
-
-    # find or create user
-    unless user = User.where(:email => data.email).first
-      user = User.new(:first_name => data.first_name, :last_name => data.last_name, 
-	      :birth_date => convert_date(data.birthday), :provider => access_token.provider, :uid => access_token.uid, :email => data.email) 
-      user.password = user.password_confirmation = Devise.friendly_token[0,20]
-      user.fb_user = true
-      user.gender = data.gender.capitalize rescue nil
-      user.home_zip = LocationManager::get_home_zip(access_token.info.location) rescue nil
-
-      #add photo 
-      picture_from_url user, access_token
-      user.email.blank? ? false : user.save(:validate => false)
-    end
-    user
+    UserProcessor.new(self).load_facebook_user access_token, signed_in_resource
   end
 
   # add photo from url
   def self.picture_from_url usr, access_token
-    pic = usr.pictures.build
-    avatar_url = process_uri(access_token.info.image.sub("square","large"))
-    pic.photo = URI.parse(avatar_url) 
-    pic
+    UserProcessor.new(self).add_url_image(usr, access_token)
   end
 
   # devise user handler
@@ -270,12 +259,7 @@ class User < ActiveRecord::Base
 
   # check if address is populated
   def has_address?
-    self.contacts.build if self.contacts.blank?
-    if contacts[0]
-      !contacts[0].address.blank? && !contacts[0].city.blank? && !contacts[0].state.blank? && !contacts[0].zip.blank?
-    else
-      false
-    end
+    UserProcessor.new(self).has_address?
   end
 
   # display image with name for autocomplete
@@ -296,7 +280,7 @@ class User < ActiveRecord::Base
 
   # get number of unread messages for user
   def unread_count
-    Post.unread_count self rescue 0
+    UserProcessor.new(self).unread_count
   end
 
   # new user?
@@ -323,34 +307,25 @@ class User < ActiveRecord::Base
   def self.get_by_type val
     val.blank? ? all : where(:user_type_code => val)
   end
-
-  # handle https uri requests
-  def self.process_uri uri
-    unless uri.blank?
-      open(uri, :allow_redirections => :safe) do |r|
-        r.base_uri.to_s
-      end
-    end
-  end
   
   # check user is pixter
   def is_pixter?
-    user_type_code.upcase == 'PT' rescue false
+    code_type == 'PT' rescue false
   end
   
   # check user is member
   def is_member?
-    user_type_code.upcase == 'MBR' rescue false
+    code_type == 'MBR' rescue false
   end
   
   # check user is support
   def is_support?
-    user_type_code.upcase == 'SP' rescue false
+    code_type == 'SP' rescue false
   end
   
   # check user is admin
   def is_admin?
-    user_type_code.upcase == 'AD' rescue false
+    code_type == 'AD' rescue false
   end
 
   # display user type
@@ -358,20 +333,19 @@ class User < ActiveRecord::Base
     user_type.description rescue nil
   end
 
+  # display user type code
+  def code_type
+    user_type_code.upcase rescue 'MBR'
+  end
+
   # send notice & add points
   def async_send_notification
-
-    # update points
-    ptype = uid.blank? ? 'dr' : 'fr'
-    PointManager::add_points self, ptype
-
-    # send welcome message to facebook users
-    UserMailer.delay.welcome_email(self) if fb_user?
+    UserProcessor.new(self).process_data
   end
 
   # set json string
   def as_json(options={})
-    super(only: [:id, :first_name, :last_name, :email, :birth_date, :gender, :current_sign_in_ip, :fb_user], 
+    super(only: [:id, :first_name, :last_name, :email, :birth_date, :gender, :current_sign_in_ip, :fb_user, :business_name], 
           methods: [:name, :photo, :unpaid_invoice_count, :pixi_count, :unread_count, :birth_dt, :home_zip], 
           include: {active_listings: {}, unpaid_received_invoices: {}, bank_accounts: {}, contacts: {}, card_accounts: {}})
   end
@@ -381,11 +355,15 @@ class User < ActiveRecord::Base
     sent_conversations + received_conversations rescue nil
   end
 
+  # determine age
   def age
-    now = Time.now.utc.to_date
-    had_birthday_this_year = now.month > birth_date.month || (now.month == birth_date.month && now.day >= birth_date.day)
-    now.year - birth_date.year - (had_birthday_this_year ? 0 : 1)
+    UserProcessor.new(self).calc_age
   end    
+
+  # check user type is business
+  def is_business?
+    user_type_code == 'BUS' rescue false
+  end
 
   def as_csv(options={})
     { "Name" => name, "Email" => email, "Home Zip" => home_zip, "Birth Date" => birth_dt, "Enrolled" => nice_date(created_at),

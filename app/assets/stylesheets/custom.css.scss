@@ -15,6 +15,7 @@ body {
 }
 
 @import "bootstrap-responsive";
+@import "compass";
 @import "shared/form";
 @import "shared/image";
 
@@ -151,7 +152,7 @@ p {
 
 /* Wrapper for page content to push down footer */
 #wrap {
-  margin-top: 40px!important;
+  //margin-top: 40px!important;
   //min-height: 150%;
   @extend .item-hgt;
 
@@ -183,6 +184,16 @@ p {
   height: 100%;
 }
 
+.no-list {
+      list-style: none;
+      li {
+        float: left;
+        margin-left: 10px;
+      }
+}
+
+.margin-auto { margin: 0 auto }
+
 /* footer */
 
 #push,
@@ -208,16 +219,11 @@ footer {
       }
     }  
     small { 
-    
       float: left; 
     }
     ul {
       float: right;
-      list-style: none;
-      li {
-        float: left;
-        margin-left: 10px;
-      }
+      @extend .no-list;
    }
 }
 
@@ -766,6 +772,8 @@ a.white-browse-link {
 }
  
 .pad10 {padding: 10px!important;}
+.pad15 {padding: 15px!important;}
+.pad20 {padding: 20px!important;}
 .pad5 {padding: 5px!important;}
 .pad-top10 {padding-top: 10px!important;}
 .pad-bot10 {padding-bottom: 10px!important;}
@@ -810,4 +818,12 @@ form .clearfix:before, form .clearfix:after {
 
 .modal-body {
   padding: 15px 0 0 0;
+}
+
+.modal-body > p {
+  text-align: center; 
+}
+
+.modal-header h3 {
+  text-align: center; 
 }

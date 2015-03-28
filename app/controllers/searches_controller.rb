@@ -1,14 +1,24 @@
 require 'will_paginate/array' 
 class SearchesController < ApplicationController
-  before_filter :load_data, :get_location
-  after_filter :add_points, only: [:index]
+  before_filter :load_data
+  before_filter :load_job, only: [:jobs]
+  before_filter :pxb_url, only: [:biz] 
+  before_filter :load_url_data, only: [:biz, :jobs]
+  after_filter :add_points, only: [:index, :biz]
   autocomplete :listing, :title, :full => true
   include PointManager, LocationManager
   layout :page_layout
   respond_to :json, :html, :js, :mobile
 
   def index
-    @listings = Listing.search(query, search_options) rescue nil unless query.blank?
+    respond_with(@listings = Listing.search(query, search_options) rescue nil) 
+  end
+
+  def jobs
+    respond_with(@listings)
+  end
+
+  def biz
     respond_with(@listings)
   end
 
@@ -24,11 +34,20 @@ class SearchesController < ApplicationController
   end  
 
   def add_points
-    PointManager::add_points @user, 'fpx' if signed_in?
+    PointManager::add_points @user, 'fpx' if signed_in? && @listings
   end
 
   def site
     @site = LocationManager::get_site_list(@loc)
+  end
+
+  def load_job
+    params[:search] = 'Pixiboard'
+    @cat = Category.find_by_name('Jobs').id rescue nil
+  end
+
+  def pxb_url
+    @url = request.original_url.to_s.split('/')[4]
   end
 
   def get_autocomplete_items(parameters)
@@ -37,28 +56,15 @@ class SearchesController < ApplicationController
   end
  
   def load_data
-    @cat, @loc, @page = params[:cid], params[:loc], params[:page] || 1
-  end
-
-  # specify default search location based on user location
-  def get_location
-    @lat, @lng = LocationManager::get_lat_lng request.remote_ip rescue nil
-    @loc_name = LocationManager::get_loc_name request.remote_ip, @loc
+    @cat, @loc, @url, @page = params[:cid], params[:loc], params[:url], params[:page] || 1
   end
 
   # dynamically define search options based on selections
   def search_options
-    unless @loc.blank?
-      @cat.blank? ? {:include => [:pictures, :site, :category], with: {site_id: site}, star: true, page: @page} : 
-        {:include => [:pictures, :site, :category], with: {category_id: @cat, site_id: site}, star: true, page: @page}
-    else
-      unless @cat.blank?
-        {:include => [:pictures, :site, :category], with: {category_id: @cat}, geo: [@lat, @lng], order: "geodist ASC, @weight DESC", 
-	  star: true, page: @page}
-      else
-        @lat.blank? ? {:include => [:pictures, :site, :category], star: true, page: @page} : 
-	  {:include => [:pictures, :site, :category], geo: [@lat, @lng], order: "geodist ASC, @weight DESC", star: true, page: @page}
-      end
-    end
+    SearchBuilder.new(@cat, @loc, @page, request.remote_ip).search_options(@url, site)
+  end
+
+  def load_url_data
+    @listings = Listing.search(query, {:sql=>{:include=>[:pictures, :site, :category]}} ) rescue nil 
   end
 end

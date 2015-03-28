@@ -1,5 +1,5 @@
 <% if @usr.errors.any? %>
-  $("#flash_notice").hide(300);
+  $("#notice").hide(300);
   $("#form_errors").html("<%= escape_javascript( render(partial: 'shared/error_messages', locals: {target: @usr})) %>");
 <% else %>
   var url = '/settings'
@@ -10,8 +10,8 @@
     uiLoading(false);
   }
   else {
-    $("#flash_notice").html("<%= escape_javascript( raw render('layouts/flash_messages', flash: flash)) %>");
-    $("#flash_notice").show(300);
+    $("#notice").html("<%= escape_javascript( raw render('layouts/messages', flash: flash)) %>");
+    $("#notice").show(300);
     $("#user_form").html("<%= escape_javascript( raw render(partial: @target)) %>");
 
     <% if @user == @usr %>

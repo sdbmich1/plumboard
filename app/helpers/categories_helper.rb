@@ -18,4 +18,9 @@ module CategoriesHelper
   def set_cat_link_class
     @loc.blank? ? 'pixi-cat-link' : 'img-link'
   end
+
+  # get cat type
+  def get_cat_type cat
+    cat.category_type_code rescue nil
+  end
 end

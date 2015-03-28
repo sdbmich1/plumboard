@@ -1,8 +1,0 @@
-  <div>
-    <%= f.fields_for :sites do |form| %>
-      <%= form.label :site_id, 'Site' %>
-      <%= form.collection_select :site_id, Site.active, :id, :name, {:prompt => 'Select'}, {class: 'pixi-select'} %>
-    <% end %>
-  </div>
-
-

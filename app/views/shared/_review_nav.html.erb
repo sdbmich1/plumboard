@@ -5,7 +5,7 @@
 <% elsif listing.active? && controller_name == 'listings' %>
   <%= render partial: 'shared/button_menu', locals: {model: listing, atype: 'Remove'} %>
 <% else %>
-   <%= link_to 'Remove', listing, method: :delete, confirm: msg, class: 'btn btn-large' unless expired_or_sold?(listing) %>
+   <%= link_to 'Remove', listing, method: :delete, confirm: msg, class: 'btn btn-large', title: 'Remove Pixi' unless expired_or_sold?(listing) %>
 <% end %>
 
 <%= link_to "Repost!", repost_listing_path(listing), method: :put, class: "btn btn-large btn-primary submit-btn", id: 'px-repost-btn' if repost? listing %>

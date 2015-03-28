@@ -40,10 +40,14 @@ describe UserObserver do
   end
 
   describe 'after_create' do
-    let(:user) { FactoryGirl.create :pixi_user }
+    let(:user) { FactoryGirl.create :contact_user }
 
     it 'set default user_type' do
       user.user_type_code.should == 'mbr'
+    end
+
+    it 'set url' do
+      expect(user.url).not_to be_nil
     end
   end
 end

@@ -15,7 +15,10 @@
     </div>
     <div class="container">
       <div id="spinner" class="round" style="display:none"></div>
+      <%= render 'layouts/flash_messages', flash: flash %>
       <%= yield :content %>
+    </div>
+    <div class="footer-container">
       <%= render 'layouts/footer' %>
     </div>
   </div>

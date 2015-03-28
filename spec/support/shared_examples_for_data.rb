@@ -65,6 +65,8 @@ shared_examples "an user" do
   describe 'attributes', base: true do
     it { should respond_to(:first_name) }
     it { should respond_to(:last_name) }
+    it { should validate_presence_of(:first_name) }
+    it { should validate_presence_of(:last_name) }
     it { should respond_to(:email) }
     it { should allow_value('Tom').for(:first_name) }
     it { should_not allow_value("a" * 31).for(:first_name) }

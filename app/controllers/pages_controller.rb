@@ -1,5 +1,6 @@
 class PagesController < ApplicationController
   respond_to :html, :json, :js, :mobile
+  before_filter :load_data, only: [:home]
   layout :page_layout
   include LocationManager
   
@@ -8,6 +9,7 @@ class PagesController < ApplicationController
   end
 
   def home
+    @listings = Listing.active.paginate(page: @page, per_page: @per_page) unless mobile_device?
   end
 
   def about
@@ -34,5 +36,9 @@ class PagesController < ApplicationController
 
   def page_layout
     action_name == 'home' ? 'pages' : 'about'
+  end
+
+  def load_data
+    @page, @per_page = params[:page] || 1, params[:per_page] || 8
   end
 end

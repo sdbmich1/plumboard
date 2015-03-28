@@ -95,13 +95,19 @@ $(document).ready(function(){
   // accordion for pixichat
   open_accordion(false);
 
-  // select last accordion panel on window load
-  window.onload = function () {
-    open_panel();
-  }
+  // set modal defaults
+  dataConfirmModal.setDefaults({
+    title: 'Confirm your action',
+    commit: 'OK',
+    cancel: 'Cancel'
+  });
+
+  // enable carousel
+  $('.carousel').carousel({interval: 7000});
 
   // select last accordion panel on window load
   window.onload = function () {
+    open_panel();
     if($('#accordion').length > 0)
       $("#accordion").accordion('option', "active", -1 );
   }
@@ -132,7 +138,7 @@ $(document).ready(function(){
   else {
     // load board on doc ready
     if( $('.pixiPg').length == 0) {
-      load_masonry('#px-nav', '#px-nav a', '#pxboard .item', 180); 
+      load_masonry('#px-nav', '#px-nav a', '#pxboard .item', 220); 
     }
   }
 

@@ -1,18 +1,25 @@
 <div><%= f.text_field :first_name, :placeholder=>'First Name', required: true  %></div>
 <div><%= f.text_field :last_name, :placeholder=> 'Last Name', required: true  %></div>
 <div><%= f.email_field :email, :placeholder=>'Email Address', required: true  %></div>
-<div><%= f.label :birth_date, 'Birth Date' %>
-     <%= f.date_select :birth_date, {:as => :date, :start_year => Date.today.year - 13,
-	               :end_year => Date.today.year - 100, :use_short_month => true,
-		       :order => [:month, :day, :year], :prompt => true}, {class: 'width120', required: true } %></div>
-<div><%= f.select :gender, options_for_select( ['Male', 'Female'], :selected=>user.gender), {prompt: 'Gender'}, {class: 'width240', required: true} %>
-  <%= f.fields_for :preferences do |form| %>
-       <%= form.text_field :zip, placeholder: 'Home Zip', size: 5, id: 'home_zip', class: 'mleft5 width120', required: true %>
-     <% end %>
-</div>
-<% if can? :manage_users, user %>
-  <div>
-    <%= f.collection_select :user_type_code, UserType.active, :code, :description, {selected: user.user_type_code, prompt: 'Select User Type'}, 
+<div>
+  <%= f.collection_select :user_type_code, check_access(user), :code, :description, {selected: user.code_type}, 
       {class: 'mbot', id: 'ucode'} %>
+</div>
+<div id='mbr_code' style="<%= user.is_business? ? 'display:none' : '' %>">
+  <div><%= f.label :birth_date, 'Birth Date' %>
+       <%= f.date_select :birth_date, {:as => :date, :start_year => Date.today.year - 13,
+	               :end_year => Date.today.year - 100, :use_short_month => true,
+		       :order => [:month, :day, :year], :prompt => true}, {class: 'width120', required: !user.is_business? } %></div>
+</div>
+<div id='bus_code' style="<%= !user.is_business? ? 'display:none' : '' %>">
+  <%= f.text_field :business_name, :placeholder=>'Business Name', required: user.is_business? %>
+  <div style="<%= access?(@user) || user.is_business? ? '' : 'display:none' %>">
+    <%= f.text_field :url, value: user.url %>
   </div>
-<% end %>
+</div>
+<div id='gender_code' style="<%= user.is_business? ? 'display:none' : '' %>" class='left-form'>
+  <%= f.select :gender, options_for_select(['Male', 'Female'], selected: user.gender), {prompt: 'Gender'}, {class: 'width240 mright', 
+    required: !user.is_business?} %></div>
+  <%= f.fields_for :preferences do |form| %>
+       <%= form.text_field :zip, placeholder: 'Home Zip', size: 5, id: 'home_zip', class: 'width120', required: true %>
+     <% end %>

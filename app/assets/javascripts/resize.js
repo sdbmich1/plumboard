@@ -1,11 +1,19 @@
 jQuery.event.add(window, "load", adjustWindow);
 jQuery.event.add(window, "resize", adjustWindow);
+var orig_hgt = 0;
+var orig_width = 0;
+var orig_win_width = 0;
 
 // used to resize window top menu
 function resizeFrame() {
+  resizePixi();
+
   // check window width to see if resize is needed
   if($(window).width() < 1024) {
     $('#fb-btn').removeClass('span3').addClass('width240');
+    $('#wrap').css({'margin-top': 0 });
+    $(".navbar-fixed-top").css({'margin-bottom': 0 });
+    $("#submenu").removeClass('.bar-top').removeClass('.mtop');
 
     // check if small window
     if($(window).width() < 768) {
@@ -37,6 +45,7 @@ function resizeFrame() {
       }
     } else {
       if($('.brand').html() > 'Pixis' || $('.brand').html() > 'Categories') {
+        console.log('in pixis');
         $(".bar-top").addClass('mtop');
       }
     }
@@ -57,6 +66,9 @@ function resizeFrame() {
     $(".pixi-logo").removeClass('mleft30');
     $('#fb-btn').addClass('span3').removeClass('width240');
 
+    $('#wrap').css({'margin-top': '40px' });
+    $(".navbar-fixed-top").css({'margin-bottom': '20px' });
+
     if($('#slr-pic').length > 0) {
       $("#slr-pic").removeClass('width60');
       $("#slr-det").removeClass('width320');
@@ -68,8 +80,11 @@ function resizeFrame() {
 function adjustWindow() {
   var docHeight = $(document).height();
   var winHeight = $(window).height();
+  var winWidth = $(window).width();
   var footerHeight = $('#footer').height();
   var mtop;
+
+  orig_win_width = orig_win_width == 0 ? winWidth : orig_win_width;
 
   if($('#cat-wrap').length > 0 || $('#wrap').length > 0) {
     var footerTop = $('#footer').position().top + footerHeight;
@@ -115,3 +130,60 @@ function checkMenuHgt(str) {
   }
 }
 
+function resizePixi () {
+  $('img.img-board').each(function(i, item) {
+    var img_width = $(item).width();
+    var img_height = $(item).height();
+    var factor = $(window).width() / orig_win_width;
+
+    //INCREASE WIDTH OF IMAGE TO MATCH CONTAINER
+    if(i==0) {
+      orig_width = orig_width == 0 ? set_item_size() : orig_width;
+      $('.item').css({'width': parseInt(orig_width*factor)});
+    }
+    $(item).css({'width': '100%' });
+
+    //GET THE NEW WIDTH AFTER RESIZE
+    var new_width = $(item).width();
+
+    // set new height
+    var result = orig_hgt == 0 ? img_height : orig_hgt;
+    var sz = orig_hgt == 0 ? set_item_size() : result*factor;
+    orig_hgt = orig_hgt == 0 ? sz : orig_hgt;
+
+    /*
+    //var factor = orig_width > new_width ? img_width / orig_width : new_width / img_width;
+    //var sz = new_width > 190 ? 200 : result*factor;
+    console.log('img_width = ' + img_width);
+    console.log('new_width = ' + new_width);
+    console.log('orig_width = ' + orig_width);
+    console.log('result = ' + result);
+    console.log('factor = ' + factor);
+    console.log('orig_hgt = ' + orig_hgt);
+    console.log('sz = ' + sz);
+    */
+
+    //INCREASE HEIGHT OF IMAGE TO MATCH CONTAINER
+    $(item).css({'height': sz });
+  }); 
+}
+
+// set default item size based on window size
+function set_item_size () {
+  var width = $(window).width();
+  var col = 200;
+
+  if(width < 1200 && width >= 980) {
+    col = 160;
+  }
+  else if(width < 980 && width >= 768) {
+    col = 140;
+  }
+  else if(width < 768 && width >= 480) {
+    col = 120;
+  }
+  else if(width < 480) {
+    col = 100;
+  }
+  return col;
+}

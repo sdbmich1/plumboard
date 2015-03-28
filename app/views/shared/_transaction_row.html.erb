@@ -1,10 +1,10 @@
 <div class='clear-all'></div>
 <tr>
-	<td class='center-wrapper'><%= short_date(transaction.updated_at) %></td>
-	<td class='center-wrapper'><%= transaction.pixi_title %></td>
-	<td class='center-wrapper'><%= transaction.buyer_name %></td>
-	<td class='center-wrapper'><%= transaction.seller_name %></td>
-    <td class='center-wrapper'><div class='price'><%= ntc(transaction.amt) %></td>
-    <td class='center-wrapper'><div class='price'><%= ntc(transaction.get_invoice.amount - transaction.get_invoice.get_fee(true)) %></td>
-    <td class='center-wrapper'><%= link_to 'Details', transaction, class: 'btn btn-small' %></td>
+  <td class='center-wrapper'><%= short_date(transaction.updated_at) %></td>
+  <td class='center-wrapper'><%= transaction.pixi_title %></td>
+  <td class='center-wrapper'><%= transaction.buyer_name %></td>
+  <td class='center-wrapper'><%= transaction.seller_name %></td>
+  <td class='center-wrapper'><div class='price'><%= ntc(transaction.amt) %></td>
+  <td class='center-wrapper'><div class='price'><%= ntc(txn_amt(transaction)) %></td>
+  <td class='center-wrapper'><%= link_to 'Details', transaction, class: 'btn btn-small' %></td>
 </tr>

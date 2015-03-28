@@ -1,5 +1,5 @@
 class UserType < ActiveRecord::Base
-  attr_accessible :code, :description, :status
+  attr_accessible :code, :description, :status, :hide
 
   validates :description, :presence => true
   validates :status, :presence => true
@@ -11,6 +11,11 @@ class UserType < ActiveRecord::Base
 
   # return active types
   def self.active
-    where(:status => 'active')
+    where(status: 'active')
+  end
+
+  # return all unhidden types
+  def self.unhidden
+    where(hide: 'no')
   end
 end
