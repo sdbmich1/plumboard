@@ -3,7 +3,7 @@
     <div class="bxslider">
       <% for pic in model.pictures %>
         <div class='slide'>
-          <%= image_tag get_pixi_image(pic, set_element(true)), class: 'lazy lrg_pic_frame', title: set_element(false), lazy: true if pic.photo? %>
+          <%= image_tag set_element(pic), class: 'lazy lrg_pic_frame', title: set_image_title, lazy: true if pic.photo? %>
         </div>
       <% end %>
     </div>

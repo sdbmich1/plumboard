@@ -430,6 +430,13 @@ FactoryGirl.define do
     description 'New'
   end
 
+  factory :fulfillment_type do
+    code "SHP"
+    hide "no"
+    status "active"
+    description 'Ship'
+  end
+
   factory :pixi_ask do
     user_id 1
     pixi_id "xxxx"

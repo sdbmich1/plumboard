@@ -69,6 +69,36 @@ describe InvoiceObserver do
     end
   end
 
+  describe 'after_update decline' do
+    before do
+      @invoice = user.invoices.build attributes_for(:invoice, buyer_id: buyer.id, seller_id: user.id, status: 'unpaid')
+      @details = @invoice.invoice_details.build attributes_for(:invoice_detail, pixi_id: listing.pixi_id)
+      buyer.pixi_wants.create attributes_for(:pixi_want, pixi_id: listing.pixi_id)
+      listing.pictures.create attributes_for(:picture)
+      listing.conversations.create attributes_for :conversation, user_id: user.id, recipient_id: buyer.id
+      listing.conversations.first.posts.create attributes_for :post, user_id: user.id, recipient_id: buyer.id, pixi_id: listing.pixi_id
+      @invoice.save
+    end
+
+    it 'should send a post' do
+      Post.should_receive(:add_post).and_return(double("Post"))
+      @invoice.decline("No Longer Interested")
+    end
+
+    it 'should send decline email' do
+      UserMailer.stub(:delay).and_return(UserMailer)
+      UserMailer.should_receive(:send_decline_notice).and_return(double("UserMailer", :deliver => true))
+      @invoice.decline("Incorrect Price")
+    end
+
+    it "removes wants" do
+      pixi_want = double("PixiWant")
+      @invoice.buyer.pixi_wants.stub(:find_by_pixi_id).with(listing.pixi_id).and_return(pixi_want)
+      pixi_want.should_receive(:destroy)
+      @invoice.decline("Did Not Want")
+    end
+  end
+
   describe 'after_create' do
 
     before do

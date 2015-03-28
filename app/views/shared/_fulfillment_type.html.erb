@@ -1,0 +1,2 @@
+<%= collection_select :fulfillment_type, :code, FulfillmentType.unhidden, :code, :nice_descr, {include_blank: 'Choose Fulfillment'}, 
+  {id: 'fulfillment_type', class: 'span2 cat-select'} %>

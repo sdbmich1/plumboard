@@ -224,4 +224,27 @@ class UserMailer < ActionMailer::Base
     # set message details
     mail(:to => "#{@listing.seller_email}", :subject => env_check + ' ' + "Reminder: Someone Wants Your #{@listing.title} ")
   end
+
+  # send notice for an unpaid invoice at least number_of_days old
+  def send_unpaid_old_invoice_notice invoice
+    @invoice = invoice
+
+    # set logo
+    attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
+    # set message details
+    mail(:to => "#{@invoice.buyer_email}", :subject => env_check + ' ' + "Reminder: Pixiboard Post: #{@invoice.pixi_title}")
+  end
+
+  # send notice for declined invoice
+  def send_decline_notice invoice, message
+    @invoice = invoice
+    @message = message
+
+    # set logo
+    attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
+    # set message details
+    mail(:to => "#{@invoice.seller_email}", :subject => env_check + ' ' + "Invoice Declined")
+  end
 end

@@ -27,7 +27,7 @@ Plumboard::Application.routes.draw do
     end
     member do
       get 'pay'
-      put 'remove'
+      put 'remove', 'decline'
     end
   end
 
