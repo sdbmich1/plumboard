@@ -433,6 +433,18 @@ feature "Invoices" do
 	  page.should have_content "Bob Jones" 
         end
         
+        it 'accepts invoice changes quantity', run: true  do
+	  expect { 
+            fill_in 'inv_price1', with: "100"
+            select("4", :from => 'inv_qty1')
+	    click_link 'OK'
+	    click_button 'Send'; sleep 3
+	  }.to change(Invoice, :count).by(1)
+	  page.should have_content "$400.00" 
+	  page.should have_content "Status" 
+	  page.should have_content "Bob Jones" 
+        end
+        
         it 'accepts invoice w/ shipping', run: true do
           fill_in 'inv_tax', with: 8.25
 	  page.execute_script("$('#ship_amt').val('9.99');")

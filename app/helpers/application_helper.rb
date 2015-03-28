@@ -179,7 +179,7 @@ module ApplicationHelper
 
   # convert to currency
   def ntc val, zeroFlg=false
-    val.blank? ? 'FREE' : number_to_currency(val, :precision => (val.round == val) && zeroFlg ? 0 : 2) rescue nil
+    val.blank? ? '$0' : number_to_currency(val, :precision => (val.round == val) && zeroFlg ? 0 : 2) rescue nil
   end
 
   # convert to thousand

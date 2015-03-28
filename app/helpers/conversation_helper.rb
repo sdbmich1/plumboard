@@ -2,7 +2,7 @@ module ConversationHelper
 
   # add new conversation for listing
   def setup_conversation(listing)
-    conv = Conversation.new
+    conv = Conversation.get_conv(listing.pixi_id, listing.seller_id, @user.id) || Conversation.new
     conv.posts.build
     conv
   end
@@ -39,7 +39,7 @@ module ConversationHelper
 
   # get posts
   def get_posts conv
-    conv.posts.active_status(@user).reorder('created_at ASC') rescue nil if conv
+    conv.posts.active_status(@user).reorder('created_at DESC') rescue nil if conv
   end
 
 end

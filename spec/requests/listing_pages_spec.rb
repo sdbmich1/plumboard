@@ -49,6 +49,7 @@ feature "Listings" do
       }.not_to change(Post,:count).by(1)
       page.should have_content 'Sign in'
     end
+
     it "does not ask a question", js: true do
       expect{
           click_link 'Ask'
@@ -111,7 +112,19 @@ feature "Listings" do
     end
 
     it "Contacts a seller", js: true do
+      expect{
+          page.should have_link 'Ask'
+          page.should have_link 'Cool'
+          click_link 'Ask'
+          sleep 3
+          fill_in 'ask_content', with: "Is this a new item?\n" 
+          click_button 'Send'
+          sleep 5
+          page.should have_content 'Successfully sent message to seller'
+      }.to change(Post,:count).by(1)
       want_request
+      expect(Conversation.count).to eq 1
+
       expect{
       	  fill_in 'comment_content', with: "Great pixi. I highly recommend it.\n" 
 	        sleep 3
@@ -121,7 +134,6 @@ feature "Listings" do
       page.should have_content @user.name 
       expect(page).not_to have_field('#comment_content', with: 'Great pixi')      
     end
-
 
     it "Asks a seller", js: true do
       expect{
@@ -145,6 +157,7 @@ feature "Listings" do
           sleep 5
           page.should have_content 'Successfully sent message to seller'
       }.to change(Post,:count).by(1)
+      expect(Conversation.count).to eq 1
     end
      
     it "does not contact a seller", js: true do
@@ -294,7 +307,7 @@ feature "Listings" do
     end
      
     it "views pixi page w/o price", js: true do
-      page.should have_content "#{event_listing.nice_title}FREE"
+      page.should have_content "#{event_listing.nice_title}$0"
       show_content
     end
   end

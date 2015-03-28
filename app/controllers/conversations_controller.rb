@@ -4,6 +4,7 @@ class ConversationsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :load_data, only: [:index, :reply, :show, :remove]
   before_filter :load_convo, only: [:reply, :destroy, :remove] 
+  before_filter :ajax?, only: [:create, :update]
   respond_to :html, :js, :xml, :json, :mobile
   layout :page_layout
 
@@ -15,6 +16,18 @@ class ConversationsController < ApplicationController
     @conversation = Conversation.new params[:conversation]
     respond_with(@conversation) do |format|
       if @conversation.save
+        reload_data params[:conversation][:pixi_id]
+        format.json { render json: {conversation: @conversation} }
+      else
+        format.json { render json: { errors: @conversation.errors.full_messages }, status: 422 }
+      end
+    end
+  end
+
+  def update
+    @conversation = Conversation.find(params[:id])
+    respond_with(@conversation) do |format|
+      if @conversation.update_attributes(params[:conversation])
         reload_data params[:conversation][:pixi_id]
         format.json { render json: {conversation: @conversation} }
       else
@@ -71,5 +84,9 @@ class ConversationsController < ApplicationController
   def reload_data pid
     @listing = Listing.find_pixi pid
     @comments = @listing.comments.paginate page: @page, per_page: PIXI_COMMENTS if @listing
+  end
+
+  def ajax?
+    @xhr_flag = request.xhr?
   end
 end
