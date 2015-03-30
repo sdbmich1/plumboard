@@ -254,7 +254,8 @@ describe Post do
     it "should not return true when removed" do
       add_invoice
       @listing.status = 'removed'
-      @listing.save; sleep 1
+      @listing.save; sleep 3
+      expect(@invoice.reload.status).not_to eq 'unpaid'
       @post.due_invoice?(@recipient).should_not be_true
     end
   end

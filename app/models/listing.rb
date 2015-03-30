@@ -252,7 +252,7 @@ class Listing < ListingParent
 
   # toggle invoice status on removing pixi from board
   def set_invoice_status
-    if closed_arr(false).detect { |x| x == self.status }
+    if Listing.closed_arr(false).detect { |x| x == self.status }
       invoices.find_each do |inv|
         if inv.invoice_details.size == 1 
 	  inv.update_attribute(:status, 'removed')

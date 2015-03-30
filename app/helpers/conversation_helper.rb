@@ -39,7 +39,7 @@ module ConversationHelper
 
   # get posts
   def get_posts conv
-    conv.posts.active_status(@user).reorder('created_at DESC') rescue nil if conv
+    conv.posts.active_status(@user).reorder('created_at ASC') rescue nil if conv
   end
 
 end

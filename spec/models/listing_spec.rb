@@ -7,12 +7,12 @@ describe Listing do
     @listing = FactoryGirl.create(:listing, seller_id: @user.id, quantity: 1) 
   end
 
-  def create_invoice status='active', qty=1
+  def create_invoice status='active', qty=1, flg=true
     @listing2 = create :listing, seller_id: @user.id, quantity: 2, title: 'Leather Coat'
     @buyer = create(:pixi_user)
     @invoice = @user.invoices.build attributes_for(:invoice, buyer_id: @buyer.id, status: status) 
     @details = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id, quantity: qty 
-    @details2 = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing2.pixi_id, quantity: 3 
+    @details2 = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing2.pixi_id, quantity: 3 if flg
     @invoice.save!
   end
 
@@ -1370,7 +1370,7 @@ describe Listing do
 
   describe 'set_invoice_status' do
     before do 
-      create_invoice
+      create_invoice 'active', 1, false
     end
 
     it 'sets invoice status to removed' do
