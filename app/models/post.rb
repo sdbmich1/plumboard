@@ -13,7 +13,7 @@ class Post < ActiveRecord::Base
   belongs_to :user
   belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id"
   belongs_to :recipient, class_name: 'User', foreign_key: :recipient_id
-  belongs_to :conversation, :inverse_of => :posts
+  belongs_to :conversation, :inverse_of => :posts, touch: true
 
   validates_presence_of :conversation, :content, :user_id, :pixi_id, :recipient_id
 
@@ -189,11 +189,9 @@ class Post < ActiveRecord::Base
           invoice.invoice_details.find_each do |item|
             return true if item.pixi_id == pixi_id 
           end
-	else
-	  return false
         end
       end
-      return listing.seller_id == usr.id if flg 
+      return flg ? listing.seller_id == usr.id : false
     end
     false
   end

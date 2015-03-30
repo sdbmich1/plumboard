@@ -111,6 +111,11 @@ feature "Listings" do
       visit listing_path(pixi_post_listing) 
     end
 
+    it "Wants a pixi", js: true do
+      want_request
+      expect(Conversation.count).to eq 1
+    end
+
     it "Contacts a seller", js: true do
       expect{
           page.should have_link 'Ask'

@@ -3,7 +3,7 @@ class Conversation < ActiveRecord::Base
   attr_accessor :quantity
 
   before_create :activate
-  after_commit :process_pixi_requests, :on => :create
+  after_commit :process_want_requests, :on => :create
   after_commit :process_pixi_requests, :on => :update
   has_many :posts, :inverse_of => :conversation
   accepts_nested_attributes_for :posts, :allow_destroy => true
@@ -114,7 +114,8 @@ class Conversation < ActiveRecord::Base
         end
       end
     end
-    return convos.where(["id in (?)", conv_ids]).sort_by {|x| x.posts.first.created_at }.reverse 
+    # return convos.where(["id in (?)", conv_ids]).sort_by {|x| x.posts.first.created_at }.reverse 
+    return convos.where(["id in (?)", conv_ids]).sort_by {|x| x.updated_at }.reverse 
   end
 
   # set list of included assns for eager loading
@@ -167,7 +168,7 @@ class Conversation < ActiveRecord::Base
   # return create date
   def create_dt
     dt = posts.last.created_at rescue Date.today 
-    new_dt = listing.display_date dt, false rescue dt
+    new_dt = listing.display_date updated_at, false rescue dt
   end
 
   # mark all posts in a conversation
@@ -180,6 +181,18 @@ class Conversation < ActiveRecord::Base
 
   # add pixi requests
   def process_pixi_requests
-    user.pixi_wants.create(pixi_id: self.pixi_id, quantity: self.quantity, status: 'active') if posts.detect{ |x| x.msg_type == 'want' }
+    add_want_request
+  end
+
+  # add pixi requests
+  def process_want_requests
+    add_want_request
+  end
+
+  # process request
+  def add_want_request
+    if posts.where('msg_type= ? AND status= ?', 'want', 'active').first
+      user.pixi_wants.create(pixi_id: self.pixi_id, quantity: self.quantity, status: 'active')
+    end
   end
 end
