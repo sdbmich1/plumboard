@@ -110,6 +110,26 @@ feature "Conversations" do
         page.should have_content @conversation.pixi_title
       end
     end
+
+    describe 'open billable invoice' do
+      before :each do
+        @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
+        visit conversations_path(status: 'received')
+      end
+
+      it "opens create invoice page", js: true do
+        page.should have_selector('#conv-bill-btn') 
+        page.find('#conv-bill-btn').click
+	sleep 3
+	  expect { 
+            fill_in 'inv_price1', with: "100"
+            select("4", :from => 'inv_qty1')
+	    click_link 'OK'
+	    click_button 'Send'; sleep 3
+	  }.to change(Invoice, :count).by(1)
+	  page.should have_content "$400.00" 
+      end
+    end
      
     describe 'pay invoice' do
       before :each do
