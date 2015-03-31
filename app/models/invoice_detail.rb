@@ -1,5 +1,6 @@
 class InvoiceDetail < ActiveRecord::Base
-  attr_accessible :invoice_id, :pixi_id, :price, :quantity, :subtotal
+  attr_accessor :amt_left
+  attr_accessible :invoice_id, :pixi_id, :price, :quantity, :subtotal, :amt_left
 
   belongs_to :invoice, counter_cache: true
   belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id"
