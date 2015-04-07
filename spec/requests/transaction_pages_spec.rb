@@ -103,6 +103,23 @@ feature "Transactions" do
     click_valid_save
   end
 
+  def display_inv_content
+      page.should have_selector('title', text: 'PixiPay')
+      page.should have_content "Invoice # #{@invoice.id} from #{@seller.name}"
+      page.should have_content @invoice.pixi_title
+      page.should have_content "Total Due"
+      page.should have_content "Buyer Information"
+      page.should have_content @user.contacts[0].address
+      page.should have_content @user.contacts[0].city
+      page.should have_content @user.contacts[0].state
+      page.should have_content @user.contacts[0].zip
+      page.should have_selector('#edit-txn-addr', visible: false)
+      page.should have_content "Payment Information"
+      page.should have_selector('#edit-card-btn', visible: true)
+      page.should have_link('Cancel', href: invoice_path(@invoice))
+      page.should have_button('Done!')
+  end
+
   describe "Manage Free Valid Transactions", process: true do
     before(:each) do 
       page_setup user
@@ -110,14 +127,13 @@ feature "Transactions" do
     end
 
     it 'shows content' do
-      page.should have_link('Prev', href: temp_listing_path(@listing))
       page.should have_link('Cancel', href: temp_listing_path(@listing))
       page.should have_button('Done!')
     end
 
     it "Reviews a pixi" do
       expect { 
-	      click_link 'Prev'
+	      click_link 'Cancel'
 	}.not_to change(Transaction, :count)
       page.should have_content "Review Your Pixi" 
     end
@@ -143,7 +159,7 @@ feature "Transactions" do
       it "Cancels transaction" do
         click_cancel_ok
         page.should_not have_content "Total Due"
-        page.should have_content "Pixis" 
+        page.should have_content "Pixi" 
       end
     end
   end
@@ -191,14 +207,13 @@ feature "Transactions" do
       page.should have_selector('#edit-txn-addr', visible: false)
       page.should_not have_content "Payment Information"
       page.should_not have_selector('#edit-card-btn', visible: false)
-      page.should have_link('Prev', href: invoice_path(@invoice))
-      page.should_not have_link('Cancel', href: temp_listing_path(@listing))
+      page.should have_link('Cancel', href: invoice_path(@invoice))
       page.should have_button('Done!')
     end
 
     it "Reviews an invoice" do
       expect { 
-	click_link 'Prev'
+	click_link 'Cancel'
       }.not_to change(Transaction, :count)
       page.should have_selector('title', text: 'Invoices')
       page.should have_content "INVOICE" 
@@ -262,8 +277,7 @@ feature "Transactions" do
       page.should have_selector('#edit-txn-addr', visible: false)
       page.should_not have_content "Payment Information"
       page.should_not have_selector('#edit-card-btn', visible: false)
-      page.should have_link('Prev', href: invoice_path(@invoice))
-      page.should_not have_link('Cancel', href: temp_listing_path(@listing))
+      page.should have_link('Cancel', href: invoice_path(@invoice))
       page.should have_button('Done!')
     end
 
@@ -293,8 +307,7 @@ feature "Transactions" do
       page.should have_selector('#edit-txn-addr', visible: false)
       page.should_not have_content "Payment Information"
       page.should_not have_selector('#edit-card-btn', visible: false)
-      page.should have_link('Prev', href: invoice_path(@invoice))
-      page.should_not have_link('Cancel', href: temp_listing_path(@listing))
+      page.should have_link('Cancel', href: invoice_path(@invoice))
       page.should have_button('Done!')
     end
 
@@ -319,20 +332,7 @@ feature "Transactions" do
     end
 
     it 'shows content' do
-      page.should have_selector('title', text: 'PixiPay')
-      page.should have_content "Invoice # #{@invoice.id} from #{@seller.name}"
-      page.should have_content @invoice.pixi_title
-      page.should have_content "Total Due"
-      page.should have_content "Buyer Information"
-      page.should have_content @user.contacts[0].address
-      page.should have_content @user.contacts[0].city
-      page.should have_content @user.contacts[0].state
-      page.should have_content @user.contacts[0].zip
-      page.should have_selector('#edit-txn-addr', visible: false)
-      page.should have_content "Payment Information"
-      page.should have_selector('#edit-card-btn', visible: true)
-      page.should have_link('Prev', href: invoice_path(@invoice))
-      page.should have_button('Done!')
+      display_inv_content
     end
 
     it "edits the buyer info" do
@@ -369,7 +369,7 @@ feature "Transactions" do
       page.should have_selector('#edit-txn-addr', visible: false)
       page.should have_content "Payment Information"
       page.should have_selector('#edit-card-btn', visible: true)
-      page.should have_link('Prev', href: invoice_path(@invoice))
+      page.should have_link('Cancel', href: invoice_path(@invoice))
   end
 
   describe "Valid Invoice Transactions w/ existing card", main: true do
