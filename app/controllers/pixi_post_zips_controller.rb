@@ -1,5 +1,5 @@
 class PixiPostZipsController < ApplicationController
-  before_filter :authenticate_user!
+  #before_filter :authenticate_user!
   autocomplete :pixi_post_zip, :zip, :full => true
   respond_to :html, :js, :json, :mobile
 

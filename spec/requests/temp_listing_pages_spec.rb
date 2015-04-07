@@ -47,7 +47,7 @@ feature "TempListings" do
     fill_in 'Description', with: descr
   end
 
-  def add_data_w_photo val, prcFlg=true, imgFlg=false, descr="Guitar for Sale"
+  def add_photo val, prcFlg=true, imgFlg=false, descr="Guitar for Sale"
     page.attach_file('photo', "#{Rails.root}/spec/fixtures/photo.jpg")
     add_data val, prcFlg, imgFlg, descr
   end
@@ -115,7 +115,7 @@ feature "TempListings" do
 
   def add_pixi
     expect{
-      add_data_w_photo 'Foo Bar'
+      add_photo 'Foo Bar'
       click_button submit; sleep 3
     }.to change(TempListing,:count).by(1)
     page.should have_content "Guitar For Sale - $150.00"
@@ -141,7 +141,7 @@ feature "TempListings" do
     end
 
     def event_data sdt, edt
-      add_data_w_photo 'Events', true, true
+      add_photo 'Events', true, true
       fill_in 'start-date', with: sdt
       fill_in 'end-date', with: edt
     end
@@ -167,19 +167,19 @@ feature "TempListings" do
 
       it "does not create a listing w/o category" do
         expect { 
-	  add_data_w_photo nil, true, true
+	  add_photo nil, true, true
 	  click_button submit }.not_to change(TempListing, :count)
       end
 
       it "does not create a listing w/o description" do
         expect { 
-	  add_data_w_photo 'Foo Bar', true, true, nil
+	  add_photo 'Foo Bar', true, true, nil
 	  click_button submit }.not_to change(TempListing, :count)
       end
 
       it "does not create a listing w/o start date" do
         expect { 
-	  add_data_w_photo 'Events', true, true
+	  add_photo 'Events', true, true
           page.should have_selector('#et_code', visible: true) 
           select('Performance', :from => 'et_code'); sleep 0.5
 	  click_button submit }.not_to change(TempListing, :count)
@@ -217,7 +217,7 @@ feature "TempListings" do
 
       it "should not create a listing w/o photo" do
         expect { 
-	  add_data_w_photo 'Foo Bar', true, true
+	  add_photo 'Foo Bar', true, true
 	  click_button submit }.not_to change(TempListing, :count)
 	  page.should have_content "Must have at least one picture"
       end
@@ -226,7 +226,7 @@ feature "TempListings" do
     describe "Create with valid information" do
       it "Adds a new listing w/o price" do
         expect{
-	  add_data_w_photo 'Foo Bar', false
+	  add_photo 'Foo Bar', false
           select('Used', :from => 'cond-type-code')
 	  click_button submit; sleep 3
           page.should have_content 'Review Your Pixi'
@@ -241,7 +241,7 @@ feature "TempListings" do
 
       it "Adds a new listing w compensation", js:true do
         expect{
-	  add_data_w_photo 'Jobs', false, true; sleep 2
+	  add_photo 'Jobs', false, true; sleep 2
 	  check_page_selectors ['#temp_listing_job_type_code', '#salary'], true, false
  	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time', '#pixi_qty', '#et_code', '#cond-type-code', '#yr_built', 
 	    '#temp_listing_mileage', '#temp_listing_item_color', '#temp_listing_item_id', '#temp_listing_item_size', '#temp_listing_car_id', 
@@ -253,7 +253,7 @@ feature "TempListings" do
 
       it "Adds a new vehicle listing", js:true  do
         expect{
-  	  add_data_w_photo 'Automotive', true, true; sleep 3
+  	  add_photo 'Automotive', true, true; sleep 3
           fill_in 'Title', with: "Buick Regal for sale"
 	  check_page_selectors ['#cond-type-code', '#yr_built', '#temp_listing_mileage', '#temp_listing_car_color', '#temp_listing_car_id'], true, false
  	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time', '#pixi_qty', '#et_code', '#temp_listing_job_type_code', '#salary',
@@ -268,7 +268,7 @@ feature "TempListings" do
 
       it "Adds a new event listing", js:true do
         expect{
-	  add_data_w_photo 'Events', true, true
+	  add_photo 'Events', true, true
 	  check_page_selectors ['#temp_listing_job_type_code', '#salary', '#cond-type-code', '#yr_built', '#temp_listing_mileage', 
 	    '#temp_listing_mileage', '#temp_listing_item_color', '#temp_listing_item_id', '#temp_listing_item_size', '#temp_listing_car_id', 
 	    '#temp_listing_car_color'], false, false
@@ -284,7 +284,7 @@ feature "TempListings" do
 
       it "Adds a new product listing", js:true  do
         expect{
-  	  add_data_w_photo 'Apparel', true, true; sleep 3
+  	  add_photo 'Apparel', true, true; sleep 3
           fill_in 'Title', with: "Cosby Sweater"
 	  check_page_selectors ['#cond-type-code','#pixi_qty', '#temp_listing_item_color', '#temp_listing_item_id', '#temp_listing_item_size'], true, 
 	  false 
@@ -300,7 +300,7 @@ feature "TempListings" do
 
       it "Adds a new sales listing", js:true  do
         expect{
-  	  add_data_w_photo 'Books', true, true; sleep 3
+  	  add_photo 'Books', true, true; sleep 3
           fill_in 'Title', with: "Harry Potter"
 	  check_page_selectors ['#cond-type-code','#pixi_qty'], true, false
  	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time', '#et_code', '#temp_listing_job_type_code', '#salary','#yr_built', '#temp_listing_mileage', '#temp_listing_color', '#temp_listing_other_id', '#temp_listing_item_size'], false, false
@@ -311,7 +311,7 @@ feature "TempListings" do
 
       it "Adds a new service listing", js:true  do
         expect{
-  	  add_data_w_photo 'Deals', true, true; sleep 3
+  	  add_photo 'Deals', true, true; sleep 3
           fill_in 'Title', with: "Harry Potter"
 	  check_page_selectors ['#pixi_qty'], true, false
  	  check_page_selectors ['#cond-type-code', '#start-date', '#end-date', '#start-time', '#end-time', '#et_code', '#temp_listing_job_type_code', '#salary','#yr_built', '#temp_listing_mileage', '#temp_listing_color', '#temp_listing_other_id', '#temp_listing_item_size'], false, false

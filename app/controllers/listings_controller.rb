@@ -102,10 +102,6 @@ class ListingsController < ApplicationController
     @listings = Listing.get_by_city(@cat, @loc).set_page @page
   end
 
-  def set_session
-    session[:back_to] = request.path unless signed_in?
-  end
-
   def render_csv format
     format.csv { send_data(render_to_string(csv: @unpaginated_listings), disposition: "attachment; filename=#{Listing.filename @status}.csv") }
   end

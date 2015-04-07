@@ -1315,12 +1315,6 @@ describe Listing do
   
   describe 'async_send_notifications' do
 
-    def send_mailer model, msg
-      @mailer = mock(UserMailer)
-      UserMailer.stub!(:delay).and_return(@mailer)
-      @mailer.stub(msg.to_sym).with(model).and_return(@mailer)
-    end
-
     it 'adds abp pixi points' do
       create(:listing, seller_id: @user.id)
       expect(@user.user_pixi_points.count).not_to eq(0)

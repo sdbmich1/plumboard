@@ -24,4 +24,9 @@ module UsersHelper
   def access? usr
     can?(:manage_users, usr)
   end
+
+  # show url
+  def show_url? usr
+    signed_in? && (access?(@user) || usr.is_business?)
+  end
 end

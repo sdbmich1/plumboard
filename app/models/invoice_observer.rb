@@ -12,7 +12,6 @@ class InvoiceObserver < ActiveRecord::Observer
 
   def after_update model
     fee = 0.0
-    # send post
     send_post(model) if model.unpaid?
     
     # toggle status
@@ -38,8 +37,10 @@ class InvoiceObserver < ActiveRecord::Observer
     if model.declined?
       # send message in PixiChat (disable observer to avoid sending email notification that message was received)
       Post.observers.disable(:all) { Post.add_post(model, model.listings.first, model.buyer, model.seller, model.decline_msg, 'inv') }
+
       # send email
       UserMailer.delay.send_decline_notice(model, model.decline_msg)
+
       # delete wants if buyer selected "Did Not Want"
       model.listings.each { |listing| model.buyer.pixi_wants.find_by_pixi_id(listing.pixi_id).destroy } if model.decline_reason == "Did Not Want"
     end

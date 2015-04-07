@@ -82,8 +82,9 @@ describe User do
 
     it { should validate_presence_of(:gender) }
     it { should validate_presence_of(:birth_date) }
-    # it { should validate_presence_of(:url) }
+    it { should validate_presence_of(:url).on(:create) }
     it { should validate_uniqueness_of(:url) }
+    it { should validate_length_of(:url).is_at_least(2) }
     it { should allow_value('Tom').for(:url) }
     it { should_not allow_value("a").for(:url) }
   end
@@ -756,6 +757,47 @@ describe User do
     it "shows default code" do
       usr = build :user
       expect(usr.code_type).not_to be_nil
+    end
+  end
+
+  describe 'guest' do
+    before :each, run: true do
+      @test_user = build :pixi_user, guest: true
+    end
+
+    it { expect(@user.guest?).not_to be_true }
+    it 'returns true', run: true do
+      expect(@test_user.guest?).to be_true
+    end
+  end
+
+  describe 'new_guest' do
+    it { expect(User.new_guest.status).to eq 'inactive' }
+    it { expect(User.new_guest.guest?).to be_true }
+    it 'saves guest user' do
+      user = User.new_guest
+      expect(User.where(status: 'inactive').count).to eq 1
+    end
+  end
+
+  describe 'move_to' do
+    it 'moves user content' do
+      @usr = create :pixi_user
+      @pixi_post_zip = create(:pixi_post_zip)
+      attr = {"preferred_date"=>"04/05/2015", "preferred_time"=>"13:00:00", "alt_date"=>"", "alt_time"=>"12:00:00", 
+      "quantity"=>"2", "value"=>"200.0", "description"=>"xbox 360 box.", "address"=>"123 Elm", "address2"=>"", "city"=>"LA", "state"=>"CA", 
+      "zip"=>"90201", "home_phone"=>"4155551212", "mobile_phone"=>"", "user_id"=>""}
+      @post = PixiPost.add_post(attr, User.new)
+      @post.save!
+      @post.user.move_to(@usr)
+      expect(@usr.pixi_posts.size).to eq 1
+      expect(@usr.contacts.size).to eq 1
+      expect(@post.user.pixi_posts.size).to eq 0
+    end
+    it 'does not move user content' do
+      usr = create :contact_user
+      usr.move_to(nil)
+      expect(usr.contacts.size).to eq 1
     end
   end
 end

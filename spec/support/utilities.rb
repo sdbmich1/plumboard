@@ -88,14 +88,17 @@
   end
 
   def accept_btn
-    wait = Selenium::WebDriver::Wait.new ignore: Selenium::WebDriver::Error::NoAlertPresentError
-    alert = wait.until { page.driver.browser.switch_to.alert }
-    alert.accept
+    click_button 'OK'
+    # page.driver.browser.switch_to.alert.accept
+    # wait = Selenium::WebDriver::Wait.new ignore: Selenium::WebDriver::Error::NoAlertPresentError
+    # alert = wait.until { page.driver.browser.switch_to.alert }
+    # alert.accept
   end
 
   def click_ok
     click_button submit; sleep 3 
-    page.driver.browser.switch_to.alert.accept
+    click_button 'OK'
+    # page.driver.browser.switch_to.alert.accept
   end
 
   def click_submit
@@ -116,31 +119,37 @@
 
   def click_cancel_ok
     click_link 'Cancel'; sleep 1 
-    page.driver.browser.switch_to.alert.accept
+    click_button 'OK'
+    # page.driver.browser.switch_to.alert.accept
   end
 
   def click_cancel
-    page.driver.browser.switch_to.alert.dismiss
+    click_button 'Cancel'
+    # page.driver.browser.switch_to.alert.dismiss
   end
 
   def click_cancel_cancel
     click_link 'Cancel'; sleep 1 
-    page.driver.browser.switch_to.alert.dismiss
+    click_button 'Cancel'
+    # page.driver.browser.switch_to.alert.dismiss
   end
 
   def click_submit_cancel
     click_button submit; sleep 1 
-    page.driver.browser.switch_to.alert.dismiss
+    click_button 'Cancel'
+    # page.driver.browser.switch_to.alert.dismiss
   end
 
   def click_remove_ok
     click_link 'Remove'
-    page.driver.browser.switch_to.alert.accept
+    click_button 'OK'
+    # page.driver.browser.switch_to.alert.accept
   end
 	                  
   def click_remove_cancel
     click_link 'Remove'
-    page.driver.browser.switch_to.alert.dismiss
+    click_button 'Cancel'
+    # page.driver.browser.switch_to.alert.dismiss
   end
   
   def user_login usr
@@ -209,3 +218,69 @@
     create :user_type, code: 'SUB', description: 'Subscriber', status: 'active'
     create :user_type, code: 'PX', description: 'Pixter', status: 'active'
   end
+
+  def send_mailer model, msg
+    @mailer = mock(UserMailer)
+    UserMailer.stub!(:delay).and_return(@mailer)
+    @mailer.stub(msg.to_sym).with(model).and_return(@mailer)
+  end
+
+    def reg_user_info
+      fill_in "user_first_name", with: 'Jill'
+      fill_in "user_last_name", with: 'Jones'
+    end
+
+    def reg_user_birth_date
+      select('Jan', :from => "user_birth_date_2i")
+      select('10', :from => 'user_birth_date_3i')
+      select('1983', :from => 'user_birth_date_1i')
+    end
+
+    def reg_user_pwd
+      fill_in 'user_password', :with => 'userpassword'
+      # fill_in "user_password_confirmation", with: 'userpassword'
+    end
+
+    def reg_user_data flg=true
+      reg_user_info
+      fill_in 'email', :with => 'newuser@example.com'
+      if flg
+        select('Male', :from => 'user_gender')
+        select('Individual', :from => 'ucode')
+        reg_user_birth_date
+      else
+        select('Business', :from => 'ucode')
+        fill_in 'user_business_name', :with => 'Company A'
+      end
+      fill_in 'home_zip', :with => '90201'
+      reg_user_pwd
+    end
+
+    def add_data_w_photo
+      # attach_file('user[pictures_attributes][0][photo]', Rails.root.join("spec", "fixtures", "photo.jpg"))
+      # attach_file('user_pictures_attributes_0_photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
+      attach_file('user_pic', Rails.root.join("spec", "fixtures", "photo.jpg"))
+    end
+
+    def reg_user_with_photo flg=true
+      reg_user_data flg
+      add_data_w_photo
+    end
+
+    def register val="YES", cnt=1, flg=true
+      expect { 
+        stub_const("USE_LOCAL_PIX", val)
+        reg_user_with_photo
+        click_button submit; sleep 2 
+        page.should have_content 'A message with a confirmation link has been sent to your email address' if cnt > 0
+      }.to change(User, :count).by(cnt)
+    end
+
+    def omniauth eFlg=true
+      email = eFlg ? 'bob.smith@test.com' : ''
+      OmniAuth.config.add_mock :facebook,
+        uid: "fb-12345", info: { name: "Bob Smith", image: "https://graph.facebook.com/708798320/picture?type=square", 
+	location: 'San Francisco, California' },
+        extra: { raw_info: { first_name: 'Bob', last_name: 'Smith',
+        email: email, birthday: "01/03/1989", gender: 'male' } }
+    end

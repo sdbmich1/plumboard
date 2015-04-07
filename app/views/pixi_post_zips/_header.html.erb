@@ -1,0 +1,15 @@
+<%= content_for :topcontent do %>
+  <% cache fragment: 'post_caption' do %>
+  <div class='container'>
+    <div class='row'>
+      <div class='med-top mbot span6'>
+        <span class='sm-top pg-title-black'><%= PIXI_POST_CAPTION %></span><br />
+      </div>
+      <div class='neg-top pull-right sm-bot'>
+          <%= image_tag 'rsz_ppost_words_20140314.png', class: 'pixi-logo' %>
+      </div>
+    </div>
+  </div>
+  <% end %>
+<% end %>
+

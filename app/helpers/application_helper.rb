@@ -1,4 +1,5 @@
 module ApplicationHelper
+  include ControllerManager
 
   # Returns the full title on a per-page basis.
   def full_title page_title
@@ -76,7 +77,7 @@ module ApplicationHelper
 
   # set home path based on pixi count
   def set_home_path
-    Listing.has_enough_pixis?(@cat, @region) ? categories_path(loc: @region) : local_listings_path(loc: @region)
+    ControllerManager::set_root_path @cat, @region
   end
 
   # set image

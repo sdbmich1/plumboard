@@ -322,7 +322,7 @@ class ListingParent < ActiveRecord::Base
 
   # get number of sites where pixi is posted
   def get_site_count
-    site_name ? 1 : site_listings.size
+    site_name ? 1 : 0
   end
 
   # set nice time
@@ -442,11 +442,7 @@ class ListingParent < ActiveRecord::Base
 
   # get pixter name
   def pixter_name
-    if self.pixi_post?
-      User.find_by_id(self.pixan_id).first_name
-    else
-      nil
-    end
+    User.find_by_id(self.pixan_id).first_name rescue nil if self.pixi_post?
   end
 
   # get active pixis by region

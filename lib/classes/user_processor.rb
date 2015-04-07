@@ -62,8 +62,6 @@ class UserProcessor
   # load facebook data
   def load_facebook_user access_token, signed_in_resource
     data = access_token.extra.raw_info
-
-    # find or create user
     unless user = User.where(:email => data.email).first
       user = User.new(:first_name => data.first_name, :last_name => data.last_name, 
 	      :birth_date => convert_date(data.birthday), :provider => access_token.provider, :uid => access_token.uid, :email => data.email) 
@@ -71,11 +69,16 @@ class UserProcessor
       user.fb_user = true
       user.gender = data.gender.capitalize rescue nil
       user.home_zip = LocationManager::get_home_zip(access_token.info.location) rescue nil
-
-      #add photo 
       add_url_image user, access_token
       user.email.blank? ? false : user.save(:validate => false)
     end
     user
+  end
+
+  # transfer data between user accounts
+  def move_to usr
+    @user.pixi_posts.update_all({user_id: usr.id, status: 'active'}, {})
+    @user.contacts.update_all(contactable_id: usr.id) unless usr.has_address? 
+    @user.temp_listings.update_all({seller_id: usr.id, status: 'active'}, {})
   end
 end

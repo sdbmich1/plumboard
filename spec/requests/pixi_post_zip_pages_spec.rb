@@ -3,7 +3,7 @@ require 'spec_helper'
 feature "PixiPostZips" do
   subject { page }
   let(:user) { FactoryGirl.create(:pixi_user) }
-  let(:submit) { "Submit" }
+  let(:submit) { "Next" }
 
   before(:each) do
     create :state

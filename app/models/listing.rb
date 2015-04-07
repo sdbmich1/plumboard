@@ -17,11 +17,11 @@ class Listing < ListingParent
   has_many :saved_listings, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :active_saved_listings, primary_key: 'pixi_id', foreign_key: 'pixi_id', class_name: 'SavedListing', conditions: { :status => 'active' }
   has_many :pixi_asks, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
-  has_many :site_listings, :dependent => :destroy
-  #has_many :sites, :through => :site_listings, :dependent => :destroy
   has_many :invoice_details, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :invoices, through: :invoice_details, :dependent => :destroy
   has_many :active_pixi_wants, primary_key: 'pixi_id', foreign_key: 'pixi_id', class_name: 'PixiWant', conditions: { :status => 'active' }
+  has_many :pixi_post_details, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
+  has_many :pixi_posts, through: :pixi_post_details, :dependent => :destroy
 
   # finds specific pixi
   def self.find_pixi pid

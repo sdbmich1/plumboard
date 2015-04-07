@@ -1,0 +1,21 @@
+      <div class='span2'> 
+        <%= f.label :appt_date, 'Appointment Date', class: 'sm-top' %>
+        <%= f.text_field :appt_date, value: get_local_date(post.appt_date), class: 'px-date width120', size: 10, id: 'appt-dt' %>
+      </div>
+      <div class='span2'>
+        <%= f.label :appt_time, 'Appointment Time', class: 'sm-top' %>
+        <%= f.time_select :appt_time, { :combined => true, :default => Time.now.change(:hour => 12), ampm: true, 
+    	  :minute_interval => 30, :time_separator => "", :start_hour => 9, :end_hour => 18 }, value: post.appt_time, 
+	  :class=>'pixi-select width120', id: 'appt-tm' %>
+      </div>
+      <div class='span2'>
+        <%= f.label :completed_date, 'Completed Date', class: 'sm-top' %>
+        <%= f.text_field :completed_date, value: get_local_date(post.completed_date), class: 'px-date width120', size: 10, id: 'cmp-dt' %>
+      </div>
+      <div class='span2'>
+        <%= f.label :completed_time, 'Completed Time', class: 'sm-top' %>
+        <%= f.time_select :completed_time, { :combined => true, :default => Time.now.change(:hour => 12), ampm: true, 
+	  :minute_interval => 30, :time_separator => "", :start_hour => 9, :end_hour => 18 }, 
+	  value: post.completed_time, :class=>'pixi-select width120', id: 'cmp-tm' %>
+      </div>
+

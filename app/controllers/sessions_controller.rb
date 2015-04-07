@@ -1,5 +1,7 @@
 class SessionsController < Devise::SessionsController
+  include ControllerManager
   before_filter :set_flg, only: [:new]
+  after_filter :transfer_guest_acct, only: [:create]
   layout :page_layout
   respond_to :html, :js, :json, :mobile
 
@@ -8,12 +10,8 @@ class SessionsController < Devise::SessionsController
     sign_in(resource_name, resource)
 
     respond_to do |format|
-      format.html do
-        super
-      end
-      format.mobile do
-        super
-      end
+      format.html { super }
+      format.mobile { super }
       format.json do
 	render json: { response: 'ok', auth_token: current_user.authentication_token }.to_json, status: :ok
       end
@@ -39,4 +37,9 @@ class SessionsController < Devise::SessionsController
     @xhr = true if request.xhr?
   end
 
+  private
+
+  def transfer_guest_acct
+    ControllerManager::transfer_guest_acct session, resource
+  end
 end

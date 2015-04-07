@@ -4,7 +4,7 @@ class UserObserver < ActiveRecord::Observer
   # set default user type
   def before_create usr
     usr.user_type_code = 'mbr' if usr.user_type_code.blank?
-    usr.user_url = usr.name
+    usr.user_url = usr.name unless usr.guest?
   end
 
   # update points

@@ -236,11 +236,6 @@ FactoryGirl.define do
     subtotal  370.00
   end
 
-  factory :site_listing do
-    site
-    listing
-  end
-
   factory :transaction do
     first_name "Joe"
     last_name "Blow"
@@ -441,6 +436,11 @@ FactoryGirl.define do
 
   factory :pixi_ask do
     user_id 1
+    pixi_id "xxxx"
+  end
+
+  factory :pixi_post_detail do
+    pixi_post_id 1
     pixi_id "xxxx"
   end
 end

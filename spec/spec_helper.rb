@@ -54,6 +54,7 @@ Spork.prefork do
     config.include(MailerMacros)  
     config.include IntegrationSpecHelper, :type => :request
     config.include PaperclipStub
+    # config.include TokenInputHelper, :type => :feature
 
     config.before(:suite) do
       DatabaseCleaner.clean_with :truncation

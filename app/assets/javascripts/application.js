@@ -43,4 +43,5 @@
 //= require slider
 //= require lazyload
 //= require data-confirm-modal
+//= require jquery.tokenize
 //= require_tree .
