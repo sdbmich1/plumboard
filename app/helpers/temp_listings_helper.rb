@@ -64,7 +64,7 @@ module TempListingsHelper
 
   # check if pixi has quantity
   def has_qty? listing
-    listing.is_category_type? %w(employment service vehicle)
+    !listing.is_category_type? %w(employment service vehicle)
   end
 
   # check if pixi is chargeable

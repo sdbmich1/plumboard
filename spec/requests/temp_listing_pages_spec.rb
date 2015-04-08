@@ -245,7 +245,7 @@ feature "TempListings" do
 	  check_page_selectors ['#temp_listing_job_type_code', '#salary'], true, false
  	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time', '#pixi_qty', '#et_code', '#cond-type-code', '#yr_built', 
 	    '#temp_listing_mileage', '#temp_listing_item_color', '#temp_listing_item_id', '#temp_listing_item_size', '#temp_listing_car_id', 
-	    '#temp_listing_car_color'], false, false
+	    '#temp_listing_car_color', '#temp_listing_price'], false, false
           select('Full-Time', :from => 'temp_listing_job_type_code')
           fill_in 'salary', with: "Competitive"
 	}.to change(TempListing,:count).by(0)
@@ -288,7 +288,7 @@ feature "TempListings" do
           fill_in 'Title', with: "Cosby Sweater"
 	  check_page_selectors ['#cond-type-code','#pixi_qty', '#temp_listing_item_color', '#temp_listing_item_id', '#temp_listing_item_size'], true, 
 	  false 
- 	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time', '#et_code', '#temp_listing_job_type_code', '#salary','#yr_built', 
+ 	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time','#et_code','#temp_listing_job_type_code', '#salary','#yr_built', 
 	  '#temp_listing_mileage', '#temp_listing_car_id', '#temp_listing_car_color'], false, false
           select('Used', :from => 'cond-type-code')
           select('4', :from => 'pixi_qty'); sleep 0.5
@@ -303,7 +303,7 @@ feature "TempListings" do
   	  add_data_w_photo 'Books', true, true; sleep 3
           fill_in 'Title', with: "Harry Potter"
 	  check_page_selectors ['#cond-type-code','#pixi_qty'], true, false
- 	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time', '#et_code', '#temp_listing_job_type_code', '#salary','#yr_built', '#temp_listing_mileage', '#temp_listing_color', '#temp_listing_other_id', '#temp_listing_item_size'], false, false
+ 	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time', '#et_code', '#temp_listing_job_type_code', '#salary','#yr_built', '#temp_listing_mileage', '#temp_listing_car_color', '#temp_listing_car_id', '#temp_listing_item_size', '#temp_listing_item_color'], false, false
           select('Used', :from => 'cond-type-code')
           select('4', :from => 'pixi_qty'); sleep 0.5
 	}.to change(TempListing,:count).by(0)
@@ -313,9 +313,10 @@ feature "TempListings" do
         expect{
   	  add_data_w_photo 'Deals', true, true; sleep 3
           fill_in 'Title', with: "Harry Potter"
-	  check_page_selectors ['#pixi_qty'], true, false
- 	  check_page_selectors ['#cond-type-code', '#start-date', '#end-date', '#start-time', '#end-time', '#et_code', '#temp_listing_job_type_code', '#salary','#yr_built', '#temp_listing_mileage', '#temp_listing_color', '#temp_listing_other_id', '#temp_listing_item_size'], false, false
-          select('4', :from => 'pixi_qty'); sleep 0.5
+	  check_page_selectors ['#temp_listing_price'], true, false
+ 	  check_page_selectors ['#cond-type-code', '#start-date', '#end-date', '#start-time', '#end-time', '#et_code', '#temp_listing_job_type_code',
+	  '#salary','#yr_built', '#temp_listing_mileage', '#temp_listing_item_color','#temp_listing_car_color', '#temp_listing_car_id', 
+	  '#temp_listing_item_size', '#pixi_qty'], false, false
 	}.to change(TempListing,:count).by(0)
       end	      
     end	      
