@@ -17,6 +17,10 @@ class CategoriesController < ApplicationController
     @category = Category.new
   end
 
+  def edit
+    respond_with(@category)
+  end
+
   def create
     @category = Category.new params[:category]
     if @category.save 

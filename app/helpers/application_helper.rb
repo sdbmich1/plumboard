@@ -281,7 +281,7 @@ module ApplicationHelper
 
   # add new picture for model
   def setup_picture(model)
-    picture = model.pictures.build rescue nil
+    model.pictures.build if model.pictures.empty? rescue nil
     return model
   end
 
