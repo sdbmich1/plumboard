@@ -678,6 +678,15 @@ describe Listing do
       @listing.mark_as_sold.should be_true
     end
 
+    it 'closes other invoices', run: true do
+      @buyer2 = create :pixi_user
+      @invoice2 = @user.invoices.build attributes_for(:invoice, buyer_id: @buyer2.id) 
+      @details = @invoice2.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id, quantity: 1 
+      @invoice2.save!
+      @listing.mark_as_sold
+      expect(@invoice2.reload.status).to eq 'closed'
+    end
+
     it 'does not mark when amt left > 0' do
       @listing.update_attribute(:quantity, 5)
       create_invoice 'paid'
