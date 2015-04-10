@@ -75,6 +75,11 @@ module ApplicationHelper
     signed_in? ? set_home_path : root_path
   end
 
+  # route to my pixis page if possible
+  def get_return_path
+    @user.is_admin? ? listings_path(status: 'active') : @user.has_pixis? ? seller_listings_path(status: 'active') : get_home_path
+  end
+
   # set home path based on pixi count
   def set_home_path
     ControllerManager::set_root_path @cat, @region

@@ -13,7 +13,7 @@ function calc_amt(){
 
     var qty = $('#inv_qty'+j).val();
     var price = $('#inv_price'+j).val();
-    var prc = price != null && price != '' ? price : 0.0;
+    var prc = price.length > 0 ? price : 0.0;
 
     // calc amounts
     if (qty.length > 0) {
@@ -121,13 +121,15 @@ $(document).on('click', '.add-row-btn, .remove-row-btn', function(e){
 function add_row($element, row) {
   var fld = '#inv_qty' + row;
   var pxFld = '#pixi_id' + row;
-  var fname = "invoice[invoice_details_attributes][new_invoice_details][";
+  var prcFld = '#inv_price' + row;
+  var fname = "invoice[invoice_details_attributes][";
   var rowCount = $('#inv-table tr').length;
-  var str = "<tr><td class='width120'><select name='" + fname + "quantity]' id='inv_qty" + row + "' class='pixi-select' ></select>";
+  var cnt = row-1;
+  var str = "<tr><td class='width120'><select name='" + fname + cnt + "][quantity]' id='inv_qty" + row + "' class='pixi-select' ></select>";
   str += "<input id='amt_left" + row + "' name='amt_left" + row + "' type='hidden' /></td>"; 
-  str += "<td class='width360'><select name='" + fname + "pixi_id]' id='pixi_id" + row + "' class='pixi-select'></select></td>";
-  str += "<td class='width120'><input type='text' name='" + fname + "price]' in='0..15000.0' step='0.01' id='inv_price" + row + "' class='price' /></td>";
-  str += "<td class='width120'><input type='text' name='" + fname + "subtotal]' id='inv_amt" + row + "' class='price' readonly='true' /></td>";
+  str += "<td class='width360'><select name='" + fname + cnt + "][pixi_id]' id='pixi_id" + row + "' class='pixi-select'></select></td>";
+  str += "<td class='width120'><input type='text' name='" + fname + cnt + "][price]' in='0..15000.0' step='0.01' id='inv_price" + row + "' class='price' /></td>";
+  str += "<td class='width120'><input type='text' name='" + fname + cnt + "][subtotal]' id='inv_amt" + row + "' class='price' readonly='true' /></td>";
   str += "<td class='borderless width60'><a href='#' class='pixi-link add-row-btn' title='Add Item'>";
   str += "<img class='social-img mbot' src='/assets/rsz_plus-blue.png'></a>";
   str += "<a href='#' class='pixi-link remove-row-btn' title='Remove Item'><img class='social-img mleft5 mbot' src='/assets/rsz_minus.png'></a></td></tr>";
@@ -137,7 +139,9 @@ function add_row($element, row) {
 
   // load items
   $(pxFld).html( $('#pixi_id1').html() );
+  $(pxFld).val("");
   $(fld).html( $('#inv_qty1').html() );
+  $(fld).val(1);
 }
 
 // remove row from html table
@@ -151,7 +155,7 @@ function remove_row($element, row) {
     calc_amt();
   }
   else
-    alert('There must be at least one item on an invoice.');
+    alert('There must be at least one pixi on an invoice.');
 }
 
 // get data from server

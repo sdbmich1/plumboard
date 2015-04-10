@@ -58,13 +58,18 @@ module TempListingsHelper
 
   # check if pixi is an item
   def is_item? listing, flg=true
-    val = %w(employment service vehicle)
+    val = %w(event employment service vehicle)
     flg ? !(listing.is_category_type? val) : (listing.is_category_type? val)
   end
 
   # check if pixi has quantity
   def has_qty? listing
     !listing.is_category_type? %w(employment service vehicle)
+  end
+
+  # check if pixi has condition
+  def has_condition? listing
+    !listing.is_category_type? %w(employment service event)
   end
 
   # check if pixi is chargeable
