@@ -7,7 +7,7 @@ describe Listing do
     @listing = FactoryGirl.create(:listing, seller_id: @user.id, quantity: 1) 
   end
 
-  def create_invoice status='active', qty=1, flg=true
+  def create_invoice status='unpaid', qty=1, flg=true
     @listing2 = create :listing, seller_id: @user.id, quantity: 2, title: 'Leather Coat'
     @buyer = create(:pixi_user)
     @invoice = @user.invoices.build attributes_for(:invoice, buyer_id: @buyer.id, status: status) 
@@ -1385,9 +1385,10 @@ describe Listing do
     end
 
     it 'does not set invoice status' do
+      @invoice.update_attribute :status, 'paid'
       @listing.status = 'sold'
       @listing.save
-      expect(@invoice.status).not_to eq 'removed'
+      expect(@invoice.status).not_to eq 'closed'
     end
   end
 

@@ -33,7 +33,8 @@
     <%= f.text_field :price, step: 0.01, size: 10, value: num_display(f.object, "price"), class: 'width120', placeholder: 'Ex. 50.00', max: '15000' %>
   </div>
   <div class='span2' id='qty-fld' style="<%= !has_qty?(listing) ? 'display:none' : '' %>"><%= f.label :quantity, 'Qty' %>
-    <%= f.select 'quantity', options_for_select(get_ary, :selected => set_quantity(listing)), {}, {id: 'pixi_qty', class: 'pixi-select'} %>
+    <%= f.select 'quantity', options_for_select(get_ary, :selected => set_quantity(listing)), {}, {id: 'pixi_qty', class: 'pixi-select', 
+      required: is_item?(listing)} %>
   </div>
   <div class='span2' id='yr-fld' style="<%= !listing.has_year? ? 'display:none' : '' %>"><%= f.label 'Year' %>
     <%= f.select 'year_built', options_for_select(get_year_ary, :selected => listing.year_built), {:prompt => 'Select'}, 
