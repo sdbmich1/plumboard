@@ -74,7 +74,7 @@ module ApplicationHelper
 
   # route to my pixis page if possible
   def get_return_path
-    @user.has_pixis? ? seller_listings_path(status: 'active') : get_home_path
+    @user.is_admin? ? listings_path(status: 'active') : @user.has_pixis? ? seller_listings_path(status: 'active') : get_home_path
   end
 
   # set home path based on pixi count
