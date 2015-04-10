@@ -72,6 +72,11 @@ module ApplicationHelper
     signed_in? ? set_home_path : root_path
   end
 
+  # route to my pixis page if possible
+  def get_return_path
+    @user.has_pixis? ? seller_listings_path(status: 'active') : get_home_path
+  end
+
   # set home path based on pixi count
   def set_home_path
     Listing.has_enough_pixis?(@cat, @region) ? categories_path(loc: @region) : local_listings_path(loc: @region)

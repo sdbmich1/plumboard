@@ -393,7 +393,7 @@ feature "TempListings" do
   end
 
   describe "Edit Temp Pixi" do 
-    let(:temp_listing) { create(:temp_listing_with_pictures) }
+    let(:temp_listing) { create(:temp_listing_with_pictures, condition_type_code: 'U', quantity: 3) }
     before do
       init_setup user
       create_sites
@@ -471,6 +471,15 @@ feature "TempListings" do
               click_button submit
       }.to change(TempListing,:count).by(0)
       page.should have_content 'Review Your Pixi'
+    end
+
+    it "changes a pixi quantity" do
+      expect{
+          select('4', :from => 'pixi_qty'); sleep 0.5
+          click_button submit
+      }.to change(TempListing,:count).by(0)
+      page.should have_content 'Review Your Pixi'
+      page.should have_content 'Quantity: 4'
     end
   end
 
