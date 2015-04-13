@@ -232,6 +232,11 @@ class PixiPost < ActiveRecord::Base
     PixiPostProcessor.new(self).send_appt_notice
   end
 
+  # migrate pixi id to details`
+  def self.load_details
+    PixiPostProcessor.new(self).load_details
+  end
+
   def as_csv(options={})
     PixiPostProcessor.new(self).csv_data
   end
@@ -242,6 +247,6 @@ class PixiPost < ActiveRecord::Base
   end
 
   def self.filename
-    'Pixter_Report_' + ResetDate::display_date_by_loc(Time.now, Geocoder.coordinates("San Francisco, CA"), false).strftime("%Y_%m_%d")
+    PixiPostProcessor.new(self).filename
   end
 end

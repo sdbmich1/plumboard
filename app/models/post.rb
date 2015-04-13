@@ -13,7 +13,7 @@ class Post < ActiveRecord::Base
   belongs_to :user
   belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id"
   belongs_to :recipient, class_name: 'User', foreign_key: :recipient_id
-  belongs_to :conversation, :inverse_of => :posts, touch: true
+  belongs_to :conversation, :inverse_of => :posts, touch: true, counter_cache: true
 
   validates_presence_of :conversation, :content, :user_id, :pixi_id, :recipient_id
 

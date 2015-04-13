@@ -137,6 +137,6 @@ class PixiPostsController < ApplicationController
   end
 
   def set_uid
-    session[:guest_user_id] = @post.user_id if @post.user.guest?
+    ControllerManager::set_uid session, @post
   end
 end

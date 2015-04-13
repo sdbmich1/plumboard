@@ -89,21 +89,6 @@ describe User do
     it { should_not allow_value("a").for(:url) }
   end
 
-  describe "with a password that's too short" do
-    before { @user.password = @user.password_confirmation = "a" * 5 }
-    it { should be_invalid }
-  end
-
-  describe "when password is not present" do
-    before { @user.password = @user.password_confirmation = " " }
-    it { should_not be_valid }
-  end
-
-  describe "when password doesn't match confirmation" do
-    before { @user.password_confirmation = "mismatch" }
-    it { should_not be_valid }
-  end
-
   describe 'name' do
     before :each, run: true do
       @usr = build(:user, first_name: "John", last_name: "Doe", email: "jdoe@test.com")
@@ -781,8 +766,10 @@ describe User do
   end
 
   describe 'move_to' do
-    it 'moves user content' do
+    before :each, run: true do
       @usr = create :pixi_user
+    end
+    it 'moves user pixipost content', run: true do
       @pixi_post_zip = create(:pixi_post_zip)
       attr = {"preferred_date"=>"04/05/2015", "preferred_time"=>"13:00:00", "alt_date"=>"", "alt_time"=>"12:00:00", 
       "quantity"=>"2", "value"=>"200.0", "description"=>"xbox 360 box.", "address"=>"123 Elm", "address2"=>"", "city"=>"LA", "state"=>"CA", 
@@ -794,8 +781,15 @@ describe User do
       expect(@usr.contacts.size).to eq 1
       expect(@post.user.pixi_posts.size).to eq 0
     end
+    it 'moves user temp listings', run: true do
+      @listing = TempListing.add_listing(set_temp_attr(''), TempListing.new)
+      @listing.save!
+      @listing.user.move_to(@usr)
+      expect(@usr.temp_listings.size).to eq 1
+      expect(@listing.user.temp_listings.size).to eq 0
+    end
     it 'does not move user content' do
-      usr = create :contact_user
+      usr = create :pixi_user
       usr.move_to(nil)
       expect(usr.contacts.size).to eq 1
     end

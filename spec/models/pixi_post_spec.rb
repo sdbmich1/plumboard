@@ -661,19 +661,21 @@ describe PixiPost do
     end
   end
 
+  def set_attr uid
+    attr = {"preferred_date"=>"04/05/2015", "preferred_time"=>"13:00:00", "alt_date"=>"", "alt_time"=>"12:00:00", 
+      "quantity"=>"2", "value"=>"200.0", "description"=>"xbox 360 box.", "address"=>"123 Elm", "address2"=>"", "city"=>"LA", "state"=>"CA", 
+      "zip"=>"90201", "home_phone"=>"4155551212", "mobile_phone"=>"", "user_id"=>"#{uid}"}
+  end
+
   describe 'add_post' do
     it 'has user id' do
-      attr = {"preferred_date"=>"04/05/2015", "preferred_time"=>"13:00:00", "alt_date"=>"", "alt_time"=>"12:00:00", 
-      "quantity"=>"2", "value"=>"200.0", "description"=>"xbox 360 box.", "address"=>"123 Elm", "address2"=>"", "city"=>"LA", "state"=>"CA", 
-      "zip"=>"90201", "home_phone"=>"4155551212", "mobile_phone"=>"", "user_id"=>"#{@user.id}"}
+      set_attr @user.id
       @post = PixiPost.add_post(attr, @user)
       @post.save!
       expect(@post.user_id).to eq @user.id
     end
     it 'has no user id' do
-      attr = {"preferred_date"=>"04/05/2015", "preferred_time"=>"13:00:00", "alt_date"=>"", "alt_time"=>"12:00:00", 
-      "quantity"=>"2", "value"=>"200.0", "description"=>"xbox 360 box.", "address"=>"123 Elm", "address2"=>"", "city"=>"LA", "state"=>"CA", 
-      "zip"=>"90201", "home_phone"=>"4155551212", "mobile_phone"=>"", "user_id"=>""}
+      set_attr ''
       expect(PixiPost.add_post(attr, User.new).user_id).not_to eq @user.id
     end
   end

@@ -23,6 +23,8 @@ class Listing < ListingParent
   has_many :pixi_post_details, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :pixi_posts, through: :pixi_post_details, :dependent => :destroy
 
+  default_scope :order => "listings.updated_at DESC"
+
   # finds specific pixi
   def self.find_pixi pid
     includes(:pictures, :pixi_likes, :active_pixi_wants, :active_saved_listings, :category, :user => [:pictures], 
@@ -31,30 +33,17 @@ class Listing < ListingParent
 
   # set active status
   def activate
-    if self.status != 'sold'
-      self.id, self.status, self.start_date = nil, 'active', Time.now 
-      set_end_date
-    end
-    self
+    ListingProcessor.new(self).activate
   end
 
   # check for free pixi posting
   def self.free_order? val
-    active.get_by_site(val).count < SITE_FREE_AMT ? true : false rescue nil
+    active.get_by_site(val).size < SITE_FREE_AMT ? true : false rescue nil
   end
 
   # paginate
   def self.active_page ip="127.0.0.1", pg=1, range=25
-    if Rails.env.development?
-      active.set_page pg
-    else
-      active.where(site_id: Contact.proximity(ip, range)).set_page pg
-    end
-  end
-
-  # get pixis by category id
-  def self.get_by_category cid, get_active=true
-    get_active ? active.where(:category_id => cid) : where(:category_id => cid)
+    ListingProcessor.new(self).active_page ip, pg, range
   end
 
   # get all active pixis that have at least one unpaid invoice and no sold invoices
@@ -69,11 +58,7 @@ class Listing < ListingParent
 
   # get wanted list by user
   def self.wanted_list usr, cid=nil, loc=nil, adminFlg=true
-    if adminFlg
-      active.joins(:pixi_wants).where("pixi_wants.user_id is not null AND pixi_wants.status = ?", 'active').get_by_city(cid, loc, false)
-    else
-      active.joins(:pixi_wants).where("pixi_wants.user_id = ? AND pixi_wants.status = ?", usr.id, 'active')
-    end
+    ListingProcessor.new(self).wanted_list usr, cid, loc, adminFlg
   end
 
   # get cool list by user
@@ -98,11 +83,7 @@ class Listing < ListingParent
 
   # get invoiced listings by status and, if provided, category and location
   def self.check_invoiced_category_and_location cid, loc
-    if cid.blank? && loc.blank?
-      active_invoices
-    else
-      active_invoices.get_by_city(cid, loc, false)
-    end
+    cid.blank? && loc.blank? ? active_invoices : active_invoices.get_by_city(cid, loc, true)
   end
 
   # get invoice
@@ -112,12 +93,7 @@ class Listing < ListingParent
 
   # mark pixi as sold
   def mark_as_sold
-    unless sold?
-      self.update_attribute(:status, 'sold') if amt_left == 0
-    else
-      errors.add(:base, 'Pixi already marked as sold.')
-      false
-    end
+    ListingProcessor.new(self).mark_as_sold
   end
 
   # return wanted count 
@@ -157,7 +133,7 @@ class Listing < ListingParent
 
   # return msg count 
   def msg_count
-    conversations.first.posts.size rescue 0
+    posts.size rescue 0
   end
 
   # return whether pixi is liked
@@ -192,127 +168,57 @@ class Listing < ListingParent
 
   # return wanted users 
   def self.wanted_users pid
-    select("users.id, CONCAT(users.first_name, ' ', users.last_name) AS name, users.updated_at, users.created_at")
-      .joins(:pixi_wants => [:user]).where(pixi_id: pid).order("users.first_name")
+    ListingProcessor.new(self).wanted_users pid
   end
 
   # return asked users 
   def self.asked_users pid
-    select("users.id, CONCAT(users.first_name, ' ', users.last_name) AS name, users.updated_at, users.created_at")
-      .joins(:pixi_asks => [:user]).where(pixi_id: pid).order("users.first_name")
+    ListingProcessor.new(self).asked_users pid
   end
 
   # mark saved pixis if sold or closed
   def sync_saved_pixis
-    SavedListing.update_status pixi_id, status unless active?
-  end
-
-  # build array of closed statuses
-  def self.closed_arr flg=true
-    result = ['closed', 'removed', 'inactive', 'expired'] 
-    flg ? (result << 'sold') : result
+    ListingProcessor.new(self).sync_saved_pixis
   end
 
   # sends email to users who saved the listing when listing is removed
   def send_saved_pixi_removed
-    if Listing.closed_arr.detect {|closed| self.status == closed }
-      saved_listings = SavedListing.active_by_pixi(pixi_id) rescue nil
-      saved_listings.each do |saved_listing|
-        if Listing.closed_arr.detect {|closed| saved_listing.status == closed }
-          UserMailer.delay.send_saved_pixi_removed(saved_listing) unless self.buyer_id == saved_listing.user_id
-        end
-      end
-    end
+    ListingProcessor.new(self).send_saved_pixi_removed
   end
 
   # sends notifications after pixi is posted to board
   def async_send_notification 
-    if active?
-      ptype = self.premium? ? 'app' : 'abp' 
-      val = self.repost_flg ? 'repost' : 'approve'
-
-      # update points
-      PointManager::add_points self.user, ptype if self.user
-
-      # send system message to user
-      SystemMessenger::send_message self.user, self, val rescue nil
-
-      # remove temp pixi
-      delete_temp_pixi self.pixi_id unless repost_flg
-
-      # send approval message
-      UserMailer.delay.send_approval(self)
-    end
-  end
-
-  # remove temp pixi
-  def delete_temp_pixi pid
-    TempListing.destroy_all(pixi_id: pid)
+    ListingProcessor.new(self).async_send_notification 
   end
 
   # toggle invoice status on removing pixi from board
   def set_invoice_status
-    if Listing.closed_arr(true).detect { |x| x == self.status }
-      val = self.status == 'sold' ? 'closed' : self.status
-      invoices.find_each do |inv|
-	inv.update_attribute(:status, val) unless inv.paid? #  inv.invoice_details.size == 1 
-      end
-    end
+    ListingProcessor.new(self).set_invoice_status
   end
 
   # set remove item list based on pixi type
   def remove_item_list
-    if job? 
-      ['Filled Position', 'Removed Job']
-    elsif event?  
-      ['Event Cancelled', 'Event Ended']
-    else
-      ['Changed Mind', 'Donated Item', 'Gave Away Item', 'Sold Item']
-    end
-  end
-
-  # reposts existing sold, removed or expired pixi as new
-  def repost_pixi
-    listing = Listing.new(get_attr(true))
-
-    # add photos
-    listing = add_photos false, listing
-
-    # add token
-    listing.generate_token
-    listing.status, listing.repost_flg = 'active', true
-    listing.save
+    ListingProcessor.new(self).remove_item_list
   end
 
   # process pixi repost based on pixi status
   def repost
-    if expired? || removed?
-      self.status, self.repost_flg, self.explanation  = 'active', true, nil
-      self.save
-      async_send_notification # send notification
-    elsif sold?
-      repost_pixi
-    else
-      false
-    end
+    ListingProcessor.new(self).repost
   end
 
   # return all pixis with wants that are more than number_of_days old and either have no invoices, no price, or are jobs
   def self.invoiceless_pixis number_of_days=2
-    pixi_ids = PixiWant.where("created_at < ?", Time.now - number_of_days.days).pluck(:pixi_id)
-    no_invoice_pixis = active.where(pixi_id: pixi_ids).includes(:invoices).having("count(invoice_details.id) = 0").delete_if { |listing| listing.id.nil? }
-    job_or_no_price_pixis = active.where("pixi_id IN (?) AND (category_id = ? OR price IS NULL)", pixi_ids, Category.find_by_name("Jobs").object_id)
-    (no_invoice_pixis + job_or_no_price_pixis).uniq
+    ListingProcessor.new(self).invoiceless_pixis number_of_days
   end
 
   # returns purchased pixis from buyer
   def self.purchased usr
-    where("listings.status not in (?)", closed_arr(false)).joins(:invoices).where("invoices.buyer_id = ? AND invoices.status = ?", usr.id, 'paid').uniq
+    ListingProcessor.new(self).purchased usr
   end
 
   # returns sold pixis from seller
   def self.sold_list 
-    where("listings.status not in (?)", closed_arr(false)).joins(:invoices).where("invoices.status = ?", 'paid').uniq
+    ListingProcessor.new(self).sold_list
   end
 
   # sphinx scopes

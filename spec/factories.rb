@@ -139,19 +139,12 @@ FactoryGirl.define do
   end
 
   factory :listing, :class => "Listing", :parent => :listing_parent do
-    before(:create) do |listing|
+    after(:build) do |listing|
       listing.pictures.build FactoryGirl.attributes_for(:picture)
     end
 
     ignore do
       sites_count 3
-    end
-
-    factory :listing_with_sites do
-      after(:create) do |listing, x|
-        FactoryGirl.create_list(:site_listing, x.sites_count, :listing => listing)
-        x.reload
-      end
     end
 
     factory :listing_with_post do
@@ -171,7 +164,7 @@ FactoryGirl.define do
   end
 
   factory :temp_listing, :class => "TempListing", :parent => :listing_parent do
-    before(:create) do |listing|
+    after(:build) do |listing|
       listing.pictures.build FactoryGirl.attributes_for(:picture)
     end
   end

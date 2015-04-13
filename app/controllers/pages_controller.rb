@@ -39,6 +39,6 @@ class PagesController < ApplicationController
   end
 
   def load_data
-    @page, @per_page = params[:page] || 1, params[:per_page] || 8
+    @page, @per_page = params[:page] || 1, params[:per_page] || PIXI_DISPLAY_AMT
   end
 end

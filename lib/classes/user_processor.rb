@@ -77,8 +77,10 @@ class UserProcessor
 
   # transfer data between user accounts
   def move_to usr
-    @user.pixi_posts.update_all({user_id: usr.id, status: 'active'}, {})
-    @user.contacts.update_all(contactable_id: usr.id) unless usr.has_address? 
-    @user.temp_listings.update_all({seller_id: usr.id, status: 'active'}, {})
+    if usr
+      @user.pixi_posts.update_all({user_id: usr.id, status: 'active'}, {})
+      @user.contacts.update_all(contactable_id: usr.id) unless usr.has_address? 
+      @user.temp_listings.update_all({seller_id: usr.id, status: 'new'}, {})
+    end
   end
 end

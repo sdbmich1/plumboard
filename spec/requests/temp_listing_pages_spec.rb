@@ -1,4 +1,5 @@
 require 'spec_helper'
+require "rack_session_access/capybara"
 
 feature "TempListings" do
   subject { page }
@@ -122,9 +123,33 @@ feature "TempListings" do
     page.should have_content 'Review Your Pixi'
   end
 
+  describe "login sets session" do
+    before :each do
+      set_temp_attr ''
+      @temp = TempListing.add_listing(@attr, User.new)
+      @temp.save!
+      page.set_rack_session(back_to: "/temp_listings/#{@temp.pixi_id}")
+      page.set_rack_session(guest_user_id: @temp.user.id)
+      visit new_user_session_path
+    end
+    it 'assigns temp_listing to signed in user' do
+      user_login user
+      page.should have_content 'Review Your Pixi'
+      page.should have_content @temp.pixi_id
+      page.should have_content user.first_name
+      expect(@temp.reload.seller_id).to eq user.id
+    end
+
+    it "creates a listing and signs in w/ FB", js: true do
+      omniauth
+      click_on "fb-btn"
+      page.should have_content 'Review Your Pixi'
+      page.should have_content 'Bob'
+    end
+  end
+
   describe "Manage Temp Pixis" do
     let(:temp_listing) { build(:temp_listing) }
-
     before(:each) do
       init_setup user
       visit new_temp_listing_path

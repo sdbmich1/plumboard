@@ -97,11 +97,7 @@ class PixiPostProcessor
 
   # add new post
   def add_post usr
-    if usr.id.blank?
-      usr = User.new_guest
-      @post.user_id, @post.status = usr.id, 'inactive'
-    end
-    @post
+    ProcessMethod::set_guest_user @post, usr, 'inactive'
   end
 
   # format date based on location
@@ -115,6 +111,17 @@ class PixiPostProcessor
       pid = Listing.find_by_pixi_id(pixi) rescue nil
       @post.pixi_post_details.build.pixi_id = pid unless pid.blank?
     end
+  end
+
+  # load assn details
+  def load_details
+    PixiPost.find_each do |post|
+      post.pixi_post_details.create pixi_id: post.pixi_id
+    end
+  end
+
+  def filename
+    'Pixter_Report_' + ResetDate::display_date_by_loc(Time.now, Geocoder.coordinates("San Francisco, CA"), false).strftime("%Y_%m_%d")
   end
 end
 

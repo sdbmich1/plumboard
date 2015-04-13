@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150401223108) do
+ActiveRecord::Schema.define(:version => 20150411214153) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -169,6 +169,7 @@ ActiveRecord::Schema.define(:version => 20150401223108) do
     t.datetime "updated_at",       :null => false
     t.string   "status"
     t.string   "recipient_status"
+    t.integer  "posts_count"
   end
 
   add_index "conversations", ["pixi_id"], :name => "index_conversations_on_pixi_id"

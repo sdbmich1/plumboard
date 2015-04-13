@@ -284,3 +284,22 @@
         extra: { raw_info: { first_name: 'Bob', last_name: 'Smith',
         email: email, birthday: "01/03/1989", gender: 'male' } }
     end
+
+  def set_temp_attr uid
+    @attr = {"title"=>"Tribe Designer Table Lamp", "category_id"=>"31", "condition_type_code"=>"N", "job_type_code"=>"", 
+      "event_type_code"=>"", "site_id"=>"9973", "price"=>"250", "quantity"=>"1", "year_built"=>"", "compensation"=>"", "event_start_date"=>"", 
+      "event_end_date"=>"", "car_id"=>"", "car_color"=>"", "mileage"=>"", "item_color"=>"", "item_size"=>"", "item_id"=>"", 
+      "description"=>"great for your new home.", "start_date"=>"2015-04-09 19:50:49 -0700", "status"=>"new", "seller_id"=>"#{uid}", 
+      "post_ip"=>"127.0.0.1", "pictures_attributes"=>{"0"=>{"direct_upload_url"=>
+      "https://pixibucket02.s3-us-west-1.amazonaws.com/uploads/1428634318430-866cf4fkl3-6c0edffe786507255b8e72f246d301ad/1ktribe-t1-table-lamp.jpg", 
+      "photo_file_name"=>"1ktribe-t1-table-lamp.jpg", 
+      "photo_file_path"=>"/uploads/1428634318430-866cf4fkl3-6c0edffe786507255b8e72f246d301ad/1ktribe-t1-table-lamp.jpg", "photo_file_size"=>"42817", 
+      "photo_content_type"=>"image/jpeg"}}}
+  end
+
+  def update_pixi pixi, val, amt
+    pixi.end_date = Date.today + amt.days
+    pixi.status = val
+    pixi.save
+    pixi.reload
+  end

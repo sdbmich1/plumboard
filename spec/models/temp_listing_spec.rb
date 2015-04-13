@@ -1,70 +1,71 @@
 require 'spec_helper'
 
 describe TempListing do
-  before(:each) do
+  before(:all) do
     @user = create :pixi_user
     @category = FactoryGirl.create(:category, pixi_type: 'basic') 
-    @temp_listing = FactoryGirl.create(:temp_listing, seller_id: @user.id)
+  end
+  before(:each) do
+    @temp_listing = FactoryGirl.build(:temp_listing, seller_id: @user.id)
   end
 
   subject { @temp_listing }
 
-  it { should respond_to(:title) }
-  it { should respond_to(:description) }
-  it { should respond_to(:site_id) }
-  it { should respond_to(:seller_id) }
-  it { should respond_to(:alias_name) }
-  it { should respond_to(:transaction_id) }
-  it { should respond_to(:show_alias_flg) }
-  it { should respond_to(:status) }
-  it { should respond_to(:price) }
-  it { should respond_to(:start_date) }
-  it { should respond_to(:end_date) }
-  it { should respond_to(:buyer_id) }
-  it { should respond_to(:show_phone_flg) }
-  it { should respond_to(:category_id) }
-  it { should respond_to(:pixi_id) }
-  it { should respond_to(:parent_pixi_id) }
-  it { should respond_to(:post_ip) }
-  it { should respond_to(:event_start_date) }
-  it { should respond_to(:event_end_date) }
-  it { should respond_to(:compensation) }
-  it { should respond_to(:lng) }
-  it { should respond_to(:lat) }
-  it { should respond_to(:event_start_time) }
-  it { should respond_to(:event_end_time) }
-  it { should respond_to(:year_built) }
-  it { should respond_to(:pixan_id) }
-  it { should respond_to(:event_type_code) }
-  it { should respond_to(:job_type_code) }
-  it { should respond_to(:repost_flg) }
-  it { should respond_to(:quantity) }
-  it { should respond_to(:condition_type_code) }
-  it { should respond_to(:color) }
-  it { should respond_to(:other_id) }
-  it { should respond_to(:mileage) }
-  it { should respond_to(:item_type) }
-  it { should respond_to(:size) }
+  describe 'attributes', base: true do
+    it { should respond_to(:title) }
+    it { should respond_to(:description) }
+    it { should respond_to(:site_id) }
+    it { should respond_to(:seller_id) }
+    it { should respond_to(:alias_name) }
+    it { should respond_to(:transaction_id) }
+    it { should respond_to(:show_alias_flg) }
+    it { should respond_to(:status) }
+    it { should respond_to(:price) }
+    it { should respond_to(:start_date) }
+    it { should respond_to(:end_date) }
+    it { should respond_to(:buyer_id) }
+    it { should respond_to(:show_phone_flg) }
+    it { should respond_to(:category_id) }
+    it { should respond_to(:pixi_id) }
+    it { should respond_to(:parent_pixi_id) }
+    it { should respond_to(:post_ip) }
+    it { should respond_to(:event_start_date) }
+    it { should respond_to(:event_end_date) }
+    it { should respond_to(:compensation) }
+    it { should respond_to(:lng) }
+    it { should respond_to(:lat) }
+    it { should respond_to(:event_start_time) }
+    it { should respond_to(:event_end_time) }
+    it { should respond_to(:year_built) }
+    it { should respond_to(:pixan_id) }
+    it { should respond_to(:event_type_code) }
+    it { should respond_to(:job_type_code) }
+    it { should respond_to(:repost_flg) }
+    it { should respond_to(:quantity) }
+    it { should respond_to(:condition_type_code) }
+    it { should respond_to(:color) }
+    it { should respond_to(:other_id) }
+    it { should respond_to(:mileage) }
+    it { should respond_to(:item_type) }
+    it { should respond_to(:item_size) }
+    it { should respond_to(:user) }
+    it { should respond_to(:site) }
+    it { should respond_to(:transaction) }
+    it { should respond_to(:pictures) }
+    it { should respond_to(:category) }
+    it { should respond_to(:job_type) }
+    it { should respond_to(:event_type) }
+    it { should respond_to(:set_flds) }
+    it { should respond_to(:generate_token) }
+    it { should allow_value(50.00).for(:price) }
+    it { should allow_value(5000).for(:price) }
+    it { should allow_value('').for(:price) }
+    it { should_not allow_value(500000).for(:price) }
+    it { should_not allow_value(5000.001).for(:price) }
+    it { should_not allow_value(-5000.00).for(:price) }
+    it { should_not allow_value('$5000.0').for(:price) }
+  end
 
-  it { should respond_to(:user) }
-  it { should respond_to(:site) }
-  it { should respond_to(:transaction) }
-  it { should respond_to(:pictures) }
-  it { should respond_to(:category) }
-  it { should respond_to(:job_type) }
-  it { should respond_to(:event_type) }
-  it { should respond_to(:set_flds) }
-  it { should respond_to(:generate_token) }
-  it { should respond_to(:site_listings) }
-
-  it { should allow_value(50.00).for(:price) }
-  it { should allow_value(5000).for(:price) }
-  it { should allow_value('').for(:price) }
-  it { should_not allow_value(500000).for(:price) }
-  it { should_not allow_value(5000.001).for(:price) }
-  it { should_not allow_value(-5000.00).for(:price) }
-  it { should_not allow_value('$5000.0').for(:price) }
-  
   describe "when site_id is empty" do
     before { @temp_listing.site_id = "" }
     it { should_not be_valid }
@@ -135,7 +136,7 @@ describe TempListing do
     it { should_not be_valid }
   end
 
-  describe 'set_end_date' do
+  describe 'set_end_date', date: true do
     it "sets correct end date" do
       temp_listing = FactoryGirl.build(:temp_listing, seller_id: @user.id)
       expect(temp_listing.set_end_date).to be > Date.today + 1.day
@@ -162,12 +163,8 @@ describe TempListing do
     end
   end
 
-  describe "get_by_site" do 
-    it { TempListing.get_by_site(0, false).should_not include @temp_listing } 
-    it { TempListing.get_by_site(@temp_listing.site_id, false).should_not be_empty }
-  end
-
-  describe "seller listings" do
+  describe "seller listings", base: true do
+    before { @temp_listing.save! }
     it { TempListing.get_by_seller(@user, false).should_not be_empty }
 
     it "does not get all listings for non-admin" do
@@ -336,11 +333,12 @@ describe TempListing do
     it { @temp_listing.get_site_count.should_not == 0 } 
   end
 
-  describe "transactions" do
+  describe "transactions", base: true  do
     let(:transaction) { FactoryGirl.create :transaction }
     before do
       @cat = FactoryGirl.create(:category, name: 'Jobs', pixi_type: 'premium') 
       stub_const("PIXI_PREMIUM_PRICE", 10.00)
+      @temp_listing.save!
     end
 
     context "get_by_status should include new listings" do
@@ -368,7 +366,7 @@ describe TempListing do
     end
   end
 
-  describe "approved order" do
+  describe "approved order", base: true  do
     let(:user) { FactoryGirl.create :pixi_user }
     let(:temp_listing) { FactoryGirl.create :temp_listing_with_transaction, seller_id: user.id }
 
@@ -383,7 +381,7 @@ describe TempListing do
     end
   end
 
-  describe "deny order" do
+  describe "deny order", base: true  do
     let(:user) { FactoryGirl.create :pixi_user }
     let(:temp_listing) { FactoryGirl.create :temp_listing_with_transaction, seller_id: user.id }
 
@@ -399,7 +397,8 @@ describe TempListing do
     end
   end
 
-  describe "draft listings" do
+  describe "draft listings", base: true  do
+    before { @temp_listing.save! }
     it { expect(TempListing.draft.count).to eq(1) }
 
     it "should not include pending temp_listings" do
@@ -409,7 +408,7 @@ describe TempListing do
     end
   end
 
-  describe "pixter" do 
+  describe "pixter", base: true  do 
     before do
       @pixter = create :pixi_user, user_type_code: 'PT'
       @user2 = FactoryGirl.create(:pixi_user, first_name: 'Lisa', last_name: 'Harden', email: 'lisaharden@pixitest.com') 
@@ -425,7 +424,7 @@ describe TempListing do
     end
   end
 
-  describe "editable" do 
+  describe "editable", base: true do 
     before do
       @pixter = create :pixi_user, user_type_code: 'PT'
       @admin = create :admin, confirmed_at: Time.now
@@ -446,14 +445,9 @@ describe TempListing do
     end
   end
 
-  describe "dup pixi" do
+  describe "dup pixi", process: true  do
     let(:user) { FactoryGirl.create :pixi_user }
     let(:temp_listing) { FactoryGirl.create :temp_listing_with_transaction, seller_id: user.id }
-
-    it "does not return new listing" do 
-      listing = FactoryGirl.build :temp_listing, seller_id: user.id 
-      listing.dup_pixi(true).should_not be_true
-    end
 
     it 'returns new listing' do
       @new_listing = @temp_listing.dup_pixi(true)
@@ -533,20 +527,6 @@ describe TempListing do
     end
   end
 
-  describe "post to board" do
-    let(:user) { FactoryGirl.create :pixi_user }
-    let(:temp_listing) { FactoryGirl.create :temp_listing_with_transaction, seller_id: user.id }
-
-    it "post to board should not return new listing" do 
-      temp_listing.post_to_board.should_not be_true
-    end
-
-    it "post to board should return new listing" do 
-      temp_listing.status = 'approved'
-      temp_listing.post_to_board.should be_true
-    end
-  end
-
   describe "should verify new status" do 
     temp_listing = FactoryGirl.build :temp_listing, status: 'new'
     it { temp_listing.new_status?.should be_true }
@@ -557,7 +537,7 @@ describe TempListing do
     it { temp_listing.new_status?.should_not be_true }
   end
 
-  describe "must have pictures" do
+  describe "must have pictures", base: true  do
     let(:temp_listing) { FactoryGirl.build :invalid_temp_listing }
 
     it "should not save w/o at least one picture" do
@@ -573,7 +553,7 @@ describe TempListing do
     end
   end
 
-  describe "delete photo" do
+  describe "delete photo", base: true  do
     let(:temp_listing) { FactoryGirl.create :temp_listing }
 
     it "should not delete photo" do 
@@ -610,8 +590,9 @@ describe TempListing do
     end
   end
 
-  describe 'pictures' do
+  describe 'pictures', base: true  do
     before(:each) do
+      @temp_listing.save!
       @sr = @temp_listing.pictures.create FactoryGirl.attributes_for(:picture)
     end
 				            
@@ -819,6 +800,7 @@ describe TempListing do
   end
 
   describe "find_pixi" do
+    before { @temp_listing.save! }
     it 'finds a pixi' do
       expect(TempListing.find_pixi(@temp_listing.pixi_id)).not_to be_nil
     end
@@ -840,7 +822,7 @@ describe TempListing do
     end
   end
 
-  describe 'async_send_notifications' do
+  describe 'async_send_notifications', process: true  do
     let(:temp_listing) {create :temp_listing_with_transaction, seller_id: @user.id}
     let(:denied_listing) {create :temp_listing_with_transaction, seller_id: @user.id, status: 'denied'}
 
@@ -864,7 +846,7 @@ describe TempListing do
       denied_listing.transaction.amt = 0.0
       expect {
 	denied_listing.save!
-      }.to change {Listing.count}.by(1)
+      }.not_to change {Listing.count}.by(1)
     end
 
     it 'adds listing and transaction' do
@@ -898,7 +880,7 @@ describe TempListing do
     end
   end
 
-  describe 'format_date' do
+  describe 'format_date', date: true  do
     let(:user) { FactoryGirl.create :pixi_user }
     let(:listing) { FactoryGirl.create :temp_listing, seller_id: user.id }
 
@@ -917,7 +899,7 @@ describe TempListing do
     end
   end
 
-  describe 'display_date' do
+  describe 'display_date', date: true  do
     let(:user) { FactoryGirl.create :pixi_user }
     let(:listing) { FactoryGirl.create :temp_listing, seller_id: user.id }
 
@@ -937,7 +919,7 @@ describe TempListing do
     end
   end
 
-  describe "date validations" do
+  describe "date validations", date: true  do
     before do
       @cat = FactoryGirl.create(:category, category_type_code: 'event', name: 'Event', pixi_type: 'premium') 
       @temp_listing.category_id = @cat.id
@@ -1045,7 +1027,7 @@ describe TempListing do
     end
   end
 
-  describe "get_by_city" do
+  describe "get_by_city", process: true do
     it "should get listings" do
       temp_listing = FactoryGirl.create :temp_listing
       temp_listing.status = 'pending'
@@ -1067,7 +1049,7 @@ describe TempListing do
     end
   end
 
-  describe "check_category_and_location" do
+  describe "check_category_and_location", process: true do
     before do
       @listings = FactoryGirl.create(:temp_listing)
       @listings.status = 'pending'
@@ -1087,14 +1069,7 @@ describe TempListing do
     end
   end
 
-  describe 'repost' do
-    it 'should return false' do
-      @temp_listing.status = 'pending'
-      @temp_listing.repost.should be_false
-    end
-  end
-
-  describe '.event_type' do
+  describe '.event_type', base: true do
     before do
       @etype = FactoryGirl.create(:event_type, code: 'party', description: 'Parties, Galas, and Gatherings')
       @cat = FactoryGirl.create(:category, name: 'Events', category_type_code: 'event')
@@ -1124,14 +1099,7 @@ describe TempListing do
     end
   end
 
-  def update_pixi pixi, val, amt
-    pixi.end_date = Date.today + amt.days
-    pixi.status = val
-    pixi.save
-    pixi.reload
-  end
-
-  describe 'soon_expiring_pixis' do
+  describe 'soon_expiring_pixis', process: true do
     it "includes active temp listings" do 
       update_pixi @temp_listing, 'edit', 4
       TempListing.soon_expiring_pixis(4, 'edit').should_not be_empty  
@@ -1148,8 +1116,7 @@ describe TempListing do
     end
   end
   
-  
-  describe 'not soon_expiring_pixis' do  
+  describe 'not soon_expiring_pixis', process: true do  
     it "does not include active listings" do 
       update_pixi @temp_listing, 'new', 10
       TempListing.soon_expiring_pixis(8).should be_empty  
@@ -1178,6 +1145,19 @@ describe TempListing do
     it "does not include active listings" do 
       update_pixi @temp_listing, 'new', 7
       TempListing.soon_expiring_pixis().should be_empty  
+    end
+  end
+
+  describe 'add_listing' do
+    it 'has seller id' do
+      set_temp_attr @user.id
+      @listing = TempListing.add_listing(@attr, @user)
+      @listing.save!
+      expect(@listing.seller_id).to eq @user.id
+    end
+    it 'has no user id' do
+      set_temp_attr ''
+      expect(TempListing.add_listing(@attr, User.new).seller_id).not_to eq @user.id
     end
   end
 end

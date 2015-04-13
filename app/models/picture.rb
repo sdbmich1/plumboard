@@ -71,8 +71,7 @@ class Picture < ActiveRecord::Base
       extension = File.extname(photo_file_name).gsub(/^\.+/, '') rescue nil
       if extension
         filename = photo_file_name.gsub(/\.#{extension}$/, '')
-        self.photo.instance_write(:photo_file_name, "#{NameParse::transliterate(filename)}.#{NameParse::transliterate(extension)}"
-          .gsub('//', '/'))
+        self.photo.instance_write(:photo_file_name, "#{NameParse::transliterate(filename)}.#{NameParse::transliterate(extension)}".gsub('//', '/'))
       end
     end
   end

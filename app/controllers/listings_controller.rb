@@ -10,7 +10,7 @@ class ListingsController < ApplicationController
   layout :page_layout
 
   def index
-    @unpaginated_listings = Listing.check_category_and_location(@status, @cat, @loc)
+    @unpaginated_listings = Listing.check_category_and_location(@status, @cat, @loc, true)
     respond_with(@listings = @unpaginated_listings.paginate(page: @page, per_page: 15)) { |format| render_csv format }
   end
 
