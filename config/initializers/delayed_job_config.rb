@@ -8,8 +8,10 @@ Delayed::Worker.delay_jobs = !Rails.env.test?
 Delayed::Worker.default_queue_name = 'default'
 
 # Fail at startup if method does not exist instead of later in a background job 
-[[ExceptionNotifier::Notifier, :background_exception_notification]].each do |object, method_name|
-  raise NoMethodError, "undefined method `#{method_name}' for #{object.inspect}" unless object.respond_to?(method_name, true)
+if Rails.env.production? || Rails.env.staging?
+  [[ExceptionNotifier::Notifier, :background_exception_notification]].each do |object, method_name|
+    raise NoMethodError, "undefined method '#{method_name}' for #{object.inspect}" unless object.respond_to?(method_name, true)
+  end
 end
 
 # Chain delayed job's handle_failed_job method to do exception notification
