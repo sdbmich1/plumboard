@@ -12,7 +12,7 @@
   </div>
   <div class="row">
     <div class="span12 mbot">
-        <%= simple_format(listing.summary, {}, sanitize: false) %><br />
+        <%= sanitize(listing.summary) %><br />
         <%= "Condition: #{listing.condition}" if is_item?(listing) && listing.condition %><br />
         <%= "Quantity: #{get_item_amt(listing)}" if item_available?(listing, true, 'quantity') %><br />
         <%= "Year: #{listing.year_built}" if has_year?(listing) %>

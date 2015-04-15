@@ -301,4 +301,9 @@ module ApplicationHelper
     end
     return ''
   end
+
+  # removes html tags
+  def sanitize txt
+    simple_format(txt, {}, sanitize: false) 
+  end
 end

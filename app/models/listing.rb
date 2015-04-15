@@ -255,7 +255,7 @@ class Listing < ListingParent
     if Listing.closed_arr(true).detect { |x| x == self.status }
       val = self.status == 'sold' ? 'closed' : self.status
       invoices.find_each do |inv|
-	inv.update_attribute(:status, val) unless inv.paid? #  inv.invoice_details.size == 1 
+	inv.update_attribute(:status, val) if inv.unpaid? #  inv.invoice_details.size == 1 
       end
     end
   end

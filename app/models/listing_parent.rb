@@ -572,7 +572,7 @@ class ListingParent < ActiveRecord::Base
 
   # count number of sales
   def sold_count
-    invoices.where(status: 'paid').sum("invoice_details.quantity")
+    invoices.where(status: 'paid').sum("invoice_details.quantity") rescue 0
   end
 
   # determine amount left

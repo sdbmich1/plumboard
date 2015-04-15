@@ -1379,14 +1379,13 @@ describe Listing do
 
   describe 'set_invoice_status' do
     before do 
-      create_invoice 'active', 1, false
+      create_invoice 'unpaid', 1, false
     end
 
     it 'sets invoice status to removed' do
       expect {
         create(:saved_listing, user_id: @buyer.id, pixi_id: @listing.pixi_id); sleep 1
-        @listing.status = 'removed'
-        @listing.save
+        @listing.update_attribute(:status, 'removed')
       }.to change{ Invoice.where(:status => 'removed').count }.by(1)
     end
 
