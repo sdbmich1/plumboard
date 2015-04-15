@@ -1257,14 +1257,14 @@ describe Listing do
 
   describe 'set_invoice_status', process: true  do
     before do 
-      create_invoice 'active', 1, false
+      create_invoice 'unpaid', 1, false
     end
 
     it 'sets invoice status to removed' do
-      create(:saved_listing, user_id: @buyer.id, pixi_id: @listing.pixi_id); sleep 1
-      @listing.status = 'removed'
-      @listing.save
-      expect(Invoice.where(status: 'unpaid').size).not_to eq 1
+      expect {
+        create(:saved_listing, user_id: @buyer.id, pixi_id: @listing.pixi_id); sleep 1
+        @listing.update_attribute(:status, 'removed')
+      }.to change{ Invoice.where(:status => 'removed').count }.by(1)
     end
 
     it 'does not set invoice status' do

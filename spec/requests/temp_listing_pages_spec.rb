@@ -742,4 +742,30 @@ feature "TempListings" do
       expect(TempListing.last.pixan_id).to be_nil
     end	      
   end
+
+  describe "Edit Business Posted Pixis" do
+    before :each do
+      attr = {"seller_id"=>"#{user.id}", "title"=>"Dilworth Leather Loveseat", "category_id"=>"31", "condition_type_code"=>"ULN", 
+      "job_type_code"=>"", "event_type_code"=>"", "site_id"=>"9904", "price"=>"300", "quantity"=>"1", "year_built"=>"", "compensation"=>"", 
+      "event_start_date"=>"", "event_end_date"=>"", "car_id"=>"", "car_color"=>"","mileage"=>"", "item_color"=>"", "item_size"=>"", "item_id"=>"", 
+      "description"=>"great condition", "start_date"=>"2015-04-13 19:58:11 -0700", "status"=>"new", "post_ip"=>"127.0.0.1", 
+      "pictures_attributes"=>{"0"=>{"direct_upload_url"=>"Dilworth-loveseat-Leather-22.jpg","photo_file_name"=>"Dilworth-loveseat-Leather-22.jpg", 
+      "photo_file_path"=>"/uploads/1428981009986-dla2y3o9mjejnhfr-3c45659dc6c50163f3b8048e5b81e979/Dilworth-loveseat-Leather-22.jpg", 
+      "photo_file_size"=>"1061500", "photo_content_type"=>"image/jpeg"}} }
+      @temp = TempListing.new attr
+      @temp.save
+      init_setup admin
+      visit edit_temp_listing_path(@temp)
+    end
+
+    it "Changes a pixi title" do
+      expect{
+	      fill_in 'Title', with: "Leather Loveseat for Sale"
+              click_button submit
+      }.to change(TempListing,:count).by(0)
+      page.should have_content 'Leather Loveseat For Sale'
+      page.should have_content 'Review Your Pixi'
+      expect(@temp.reload.seller_id).to eq user.id
+    end
+  end
 end

@@ -896,3 +896,10 @@ function updateUrl(url, destUrl, pType, method) {
     }
   });
 }
+
+// prevent page change on backspace for forms
+$(document).on("keydown", function (e) {
+  if (e.which === 8 && !$(e.target).is("input, textarea")) {
+    e.preventDefault();
+  }
+});

@@ -52,7 +52,7 @@ function toggleFields(ctype) {
     }
     else {
       hideComp(false);
-      var str = "#pixi_qty, #yr_built, #temp_listing_item_id, #temp_listing_mileage, #temp_listing_item_size, ";
+      var str = "#yr_built, #temp_listing_item_id, #temp_listing_mileage, #temp_listing_item_size, ";
       str += "#temp_listing_item_color, #temp_listing_car_color, #temp_listing_car_id";
 
       if(ctype.match(/^service/) != null) {
@@ -65,9 +65,14 @@ function toggleFields(ctype) {
         toggleReqFlds('#cond-type-code, #pixi_qty', '#yr_built', str);
       }
 
+      if(ctype.match(/^item/) != null) {
+        refreshPage('#cond-type-fld, #vehicle-fields, #product-fields', '#qty-fld', false);
+        toggleReqFlds('#pixi_qty', '#cond-type-code, #yr_built', str+', #cond-type-code');
+      }
+
       if(ctype.match(/^vehicle/) != null) {
         refreshPage('#qty-fld, #product-fields', '#vehicle-fields, #cond-type-fld', true);
-        toggleReqFlds('#cond-type-code, #yr_built', '#pixi_qty', '#pixi_qty, #temp_listing_item_id, #temp_listing_item_size, #temp_listing_item_color');
+        toggleReqFlds('#cond-type-code, #yr_built', '#pixi_qty', '#temp_listing_item_id, #temp_listing_item_size, #temp_listing_item_color');
       }
 
       if(ctype.match(/^product/) != null) {
