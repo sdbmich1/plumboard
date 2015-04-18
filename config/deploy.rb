@@ -186,7 +186,6 @@ namespace :files do
     upload("#{rails_root}/config/certs/gd_bundle.crt", "#{release_path}/config/gd_bundle.crt")
     run "touch #{current_path}/public/httpchk.txt"
   end
-
 end
 
 namespace :memcached do
