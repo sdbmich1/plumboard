@@ -13,6 +13,35 @@
 
 ActiveRecord::Schema.define(:version => 20150423072945) do
 
+  create_table "admins", :force => true do |t|
+    t.string   "email",                  :default => "", :null => false
+    t.string   "encrypted_password",     :default => "", :null => false
+    t.string   "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer  "sign_in_count",          :default => 0
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string   "current_sign_in_ip"
+    t.string   "last_sign_in_ip"
+    t.string   "confirmation_token"
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.string   "unconfirmed_email"
+    t.integer  "failed_attempts",        :default => 0
+    t.string   "unlock_token"
+    t.datetime "locked_at"
+    t.string   "authentication_token"
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
+  end
+
+  add_index "admins", ["authentication_token"], :name => "index_admins_on_authentication_token", :unique => true
+  add_index "admins", ["confirmation_token"], :name => "index_admins_on_confirmation_token", :unique => true
+  add_index "admins", ["email"], :name => "index_admins_on_email", :unique => true
+  add_index "admins", ["reset_password_token"], :name => "index_admins_on_reset_password_token", :unique => true
+  add_index "admins", ["unlock_token"], :name => "index_admins_on_unlock_token", :unique => true
+
   create_table "bank_accounts", :force => true do |t|
     t.string   "token"
     t.integer  "user_id"
@@ -117,6 +146,7 @@ ActiveRecord::Schema.define(:version => 20150423072945) do
     t.datetime "updated_at",       :null => false
     t.string   "status"
     t.string   "recipient_status"
+    t.integer  "posts_count"
   end
 
   add_index "conversations", ["pixi_id"], :name => "index_conversations_on_pixi_id"
@@ -440,6 +470,16 @@ ActiveRecord::Schema.define(:version => 20150423072945) do
   end
 
   add_index "pixi_points", ["code"], :name => "index_pixi_points_on_code"
+
+  create_table "pixi_post_details", :force => true do |t|
+    t.integer  "pixi_post_id"
+    t.string   "pixi_id"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
+  add_index "pixi_post_details", ["pixi_id"], :name => "index_pixi_post_details_on_pixi_id"
+  add_index "pixi_post_details", ["pixi_post_id", "pixi_id"], :name => "index_pixi_post_details_on_pixi_post_id_and_pixi_id"
 
   create_table "pixi_post_zips", :force => true do |t|
     t.integer  "zip"
@@ -823,6 +863,7 @@ ActiveRecord::Schema.define(:version => 20150423072945) do
     t.string   "business_name"
     t.integer  "ref_id"
     t.string   "url"
+    t.boolean  "guest"
   end
 
   add_index "users", ["acct_token"], :name => "index_users_on_acct_token"

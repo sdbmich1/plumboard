@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 shared_examples "model attributes" do
-
   describe 'assessible', base: true do
     unless attr.blank?
       attr.each do |fld, val| 
@@ -12,7 +11,6 @@ shared_examples "model attributes" do
 end
 
 shared_examples "model methods" do |arr|
-
   describe 'defined methods', base: true do
     arr.each do |fld| 
       it { should respond_to(fld.to_sym) }
@@ -21,7 +19,6 @@ shared_examples "model methods" do |arr|
 end
 
 shared_examples "an amount" do |fld, max_amt|
-
   describe 'attributes', amt: true do
     it { should allow_value(5.00).for(fld.to_sym) }
     it { should allow_value(max_amt).for(fld.to_sym) }
@@ -34,7 +31,6 @@ shared_examples "an amount" do |fld, max_amt|
 end
 
 shared_examples "an address" do
-
   describe 'attributes', base: true do
     it { should respond_to(:address) }
     it { should respond_to(:address2) }
@@ -60,8 +56,30 @@ shared_examples "an address" do
   end
 end
 
-shared_examples "an user" do
+shared_examples "an ID" do |fld|
+  describe 'attributes', base: true do
+    it { should allow_value(1).for(fld.to_sym) }
+    # it { should_not allow_value("a").for(fld.to_sym) }
+    it { should_not allow_value("").for(fld.to_sym) }
+  end
+end
 
+shared_examples "a date" do |fld|
+  describe 'attributes', base: true do
+    it { should allow_value(Time.now).for(fld.to_sym) }
+    # it { should_not allow_value("").for(fld.to_sym) }
+  end
+end
+
+shared_examples "a status field" do |factory, fld|
+  describe 'attributes', base: true do
+    let(:model) { FactoryGirl.build factory, status: fld }
+    it { expect(model.send([fld, '?'].join(''))).to be_true }
+    it { expect(model.status).to eq fld }
+  end
+end
+
+shared_examples "an user" do
   describe 'attributes', base: true do
     it { should respond_to(:first_name) }
     it { should respond_to(:last_name) }

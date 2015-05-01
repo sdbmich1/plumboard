@@ -1,6 +1,6 @@
 <div><%= f.text_field :first_name, :placeholder=>'First Name', required: true  %></div>
 <div><%= f.text_field :last_name, :placeholder=> 'Last Name', required: true  %></div>
-<div><%= f.email_field :email, :placeholder=>'Email Address', required: true  %></div>
+<div><%= f.email_field :email, :placeholder=>'Email Address', id: 'email', required: true  %></div>
 <div>
   <%= f.collection_select :user_type_code, check_access(user), :code, :description, {selected: user.code_type}, 
       {class: 'mbot', id: 'ucode'} %>
@@ -13,9 +13,7 @@
 </div>
 <div id='bus_code' style="<%= !user.is_business? ? 'display:none' : '' %>">
   <%= f.text_field :business_name, :placeholder=>'Business Name', required: user.is_business? %>
-  <div style="<%= access?(@user) || user.is_business? ? '' : 'display:none' %>">
-    <%= f.text_field :url, value: user.url %>
-  </div>
+  <% render partial: 'shared/user_url', locals:{f: f, user: user} if show_url?(user) %>
 </div>
 <div id='gender_code' style="<%= user.is_business? ? 'display:none' : '' %>" class='left-form'>
   <%= f.select :gender, options_for_select(['Male', 'Female'], selected: user.gender), {prompt: 'Gender'}, {class: 'width240 mright', 

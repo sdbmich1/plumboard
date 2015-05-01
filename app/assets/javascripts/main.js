@@ -103,7 +103,12 @@ $(document).ready(function(){
   });
 
   // enable carousel
-  $('.carousel').carousel({interval: 7000});
+  if( $('.carousel').length > 0 ) 
+    $('.carousel').carousel({interval: 7000});
+
+  // enable tokenize
+  if( $('#listing_tokens').length > 0 ) 
+    $('#listing_tokens').tokenize();
 
   // select last accordion panel on window load
   window.onload = function () {
@@ -891,3 +896,10 @@ function updateUrl(url, destUrl, pType, method) {
     }
   });
 }
+
+// prevent page change on backspace for forms
+$(document).on("keydown", function (e) {
+  if (e.which === 8 && !$(e.target).is("input, textarea")) {
+    e.preventDefault();
+  }
+});

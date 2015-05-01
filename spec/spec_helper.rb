@@ -17,6 +17,7 @@ Spork.prefork do
   require "cancan/matchers"
   require "thinking_sphinx/test"
   require 'balanced'
+  require "rack_session_access/capybara"
 
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
@@ -54,6 +55,7 @@ Spork.prefork do
     config.include(MailerMacros)  
     config.include IntegrationSpecHelper, :type => :request
     config.include PaperclipStub
+    # config.include TokenInputHelper, :type => :feature
 
     config.before(:suite) do
       DatabaseCleaner.clean_with :truncation

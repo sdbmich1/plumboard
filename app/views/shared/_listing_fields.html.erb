@@ -9,7 +9,7 @@
     <%= f.label :category_id, 'Category' %>
     <%= f.collection_select :category_id, Category.active, :id, :name_title, {:prompt => 'Select'}, {class: 'pixi-select', required: true} %>
   </div>
-  <div id='cond-type-fld' class='span2'> 
+  <div class='span2' id='cond-type-fld' style="<%= !has_condition?(listing) ? 'display:none' : '' %>">
     <%= f.label :condition_type_code, 'Condition' %>
     <%= f.collection_select :condition_type_code, ConditionType.unhidden, :code, :nice_descr, {:prompt => 'Select'}, {class: 'pixi-select', 
       id: 'cond-type-code', required: is_item?(listing)} %>
@@ -32,8 +32,9 @@
   <div class='span2' id='price-fld' style="<%= listing.job? ? 'display:none' : '' %>"><%= f.label :price, 'Price $' %>
     <%= f.text_field :price, step: 0.01, size: 10, value: num_display(f.object, "price"), class: 'width120', placeholder: 'Ex. 50.00', max: '15000' %>
   </div>
-  <div class='span2' id='qty-fld' style="<%= has_qty?(listing) ? 'display:none' : '' %>"><%= f.label :quantity, 'Qty' %>
-    <%= f.select 'quantity', options_for_select(get_ary, :selected => set_quantity(listing)), {}, {id: 'pixi_qty', class: 'pixi-select'} %>
+  <div class='span2' id='qty-fld' style="<%= !has_qty?(listing) ? 'display:none' : '' %>"><%= f.label :quantity, 'Qty' %>
+    <%= f.select 'quantity', options_for_select(get_ary, :selected => set_quantity(listing)), {}, {id: 'pixi_qty', class: 'pixi-select', 
+      required: is_item?(listing)} %>
   </div>
   <div class='span2' id='yr-fld' style="<%= !listing.has_year? ? 'display:none' : '' %>"><%= f.label 'Year' %>
     <%= f.select 'year_built', options_for_select(get_year_ary, :selected => listing.year_built), {:prompt => 'Select'}, 

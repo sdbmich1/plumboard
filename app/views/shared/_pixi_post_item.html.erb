@@ -1,42 +1,11 @@
-    <div>Requested By: <%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: @user} %>
-      <%= @user.name %>
-    </div>      
-    <div class='row'>
-      <div class='span2'> 
-        <%= f.label :preferred_date, 'Preferred Date*', class: 'sm-top' %>
-        <%= f.text_field :preferred_date, value: get_local_date(post.preferred_date), class: 'dt-pckr width120', size: 10, id: 'pref-dt' %>
-      </div>
-      <div class='span2'>
-        <%= f.label :preferred_time, 'Preferred Time', class: 'sm-top' %>
-        <%= f.time_select :preferred_time, { :combined => true, :default => Time.now.change(:hour => 12), ampm: true, 
-    	  :minute_interval => 30, :time_separator => "", :start_hour => 9, :end_hour => 18 }, :class=>'pixi-select width120', 
-	  value: post.preferred_time, id: 'pref-time' %>
-      </div>
-      <div class='span2'>
-        <%= f.label :alt_date, 'Alternate Date', class: 'sm-top' %>
-        <%= f.text_field :alt_date, value: get_local_date(post.alt_date), class: 'dt-pckr width120', size: 10, id: 'alt-dt' %>
-      </div>
-      <div class='span2'>
-        <%= f.label :alt_time, 'Alternate Time', class: 'sm-top' %>
-        <%= f.time_select :alt_time, { :combined => true, :default => Time.now.change(:hour => 12), ampm: true, 
-    	  :minute_interval => 30, :time_separator => "", :start_hour => 9, :end_hour => 18 }, value: post.alt_time, 
-	  :class=>'pixi-select width120', id: 'alt-time' %>
-      </div>
-    </div>
-    <div class='row'>
-      <div class='span2'>
-        <%= f.label :quantity, '# of Items' %>
-        <%= f.select 'quantity', options_for_select(get_ary, :selected => set_quantity(post)), {}, {id: 'post_qty', 
-	  class: 'width120 pixi-select'} %></td>
-      </div>
-      <div class='span2'>
-        <%= f.label :value, 'Value*' %>
-	<%= f.text_field :value, in: 0..MAX_PIXI_AMT, step: 0.01, size: 10, value: num_display(f.object, "value"), class: 'width120',
-	  placeholder: 'Ex. 50.00' %>
-      </div>
-      <div class='span7'>
-        <%= f.label :description %><%= f.text_area :description, id: 'description', :placeholder => 'Describe Your Item' %>
-      </div>
+<% if signed_in? %>
+  <div class='row'>
+    <div class='span4'> 
+      <label class='control-label'><span class='no-left span2'>Requested By: </span>
+        <%= render partial: 'shared/show_photo', locals: {model: @user, file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
+            <span class='mleft10'><%= @user.name %></span></label>
     </div>
   </div>
-
+<% end %>
+<%= render partial: 'shared/pixi_post_form_dates', locals: { f: f, post: post } %>
+<%= render partial: 'shared/pixi_post_form_data', locals: { f: f, post: post } %>

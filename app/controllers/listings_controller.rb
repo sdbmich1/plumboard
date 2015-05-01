@@ -10,7 +10,7 @@ class ListingsController < ApplicationController
   layout :page_layout
 
   def index
-    @unpaginated_listings = Listing.check_category_and_location(@status, @cat, @loc)
+    @unpaginated_listings = Listing.check_category_and_location(@status, @cat, @loc, true)
     respond_with(@listings = @unpaginated_listings.paginate(page: @page, per_page: 15)) { |format| render_csv format }
   end
 
@@ -100,10 +100,6 @@ class ListingsController < ApplicationController
   def load_city
     @category = Category.find @cat rescue nil if action_name == 'category'
     @listings = Listing.get_by_city(@cat, @loc).set_page @page
-  end
-
-  def set_session
-    session[:back_to] = request.path unless signed_in?
   end
 
   def render_csv format

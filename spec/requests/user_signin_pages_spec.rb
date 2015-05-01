@@ -100,15 +100,6 @@ feature "UserSignins" do
     end
 
     describe 'facebook' do 
-      def omniauth eFlg=true
-        email = eFlg ? 'bob.smith@test.com' : ''
-        OmniAuth.config.add_mock :facebook,
-          uid: "fb-12345", info: { name: "Bob Smith", image: "https://graph.facebook.com/708798320/picture?type=square", 
-	    location: 'San Francisco, California' },
-          extra: { raw_info: { first_name: 'Bob', last_name: 'Smith',
-          email: email, birthday: "01/03/1989", gender: 'male' } }
-      end
-
       before :each do
         create :state
         add_region

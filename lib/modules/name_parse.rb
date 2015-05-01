@@ -24,14 +24,17 @@ module NameParse
     return s
   end
 
-  # parse url string for correctness
+  # use array to substitute invalid url characters
   def self.parse_url str
-
-    # use array to substitute invalid url characters
     r = [[' ','_'], ['.','_']]
     r.each {|rep| str.gsub!(rep[0], rep[1])}
+    str
+  end
 
-    # return parsed url
+  # parse non-ascii chars
+  def self.encode_string str
+    encoding_options = {:invalid => :replace, :undef => :replace, :replace => '', :UNIVERSAL_NEWLINE_DECORATOR => true}
+    str.encode!(Encoding.find('ASCII'), encoding_options)
     str
   end
 end

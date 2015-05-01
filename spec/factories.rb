@@ -139,19 +139,12 @@ FactoryGirl.define do
   end
 
   factory :listing, :class => "Listing", :parent => :listing_parent do
-    before(:create) do |listing|
+    after(:build) do |listing|
       listing.pictures.build FactoryGirl.attributes_for(:picture)
     end
 
     ignore do
       sites_count 3
-    end
-
-    factory :listing_with_sites do
-      after(:create) do |listing, x|
-        FactoryGirl.create_list(:site_listing, x.sites_count, :listing => listing)
-        x.reload
-      end
     end
 
     factory :listing_with_post do
@@ -171,7 +164,7 @@ FactoryGirl.define do
   end
 
   factory :temp_listing, :class => "TempListing", :parent => :listing_parent do
-    before(:create) do |listing|
+    after(:build) do |listing|
       listing.pictures.build FactoryGirl.attributes_for(:picture)
     end
   end
@@ -234,11 +227,6 @@ FactoryGirl.define do
     quantity  2
     price 185.00
     subtotal  370.00
-  end
-
-  factory :site_listing do
-    site
-    listing
   end
 
   factory :transaction do
@@ -448,5 +436,10 @@ FactoryGirl.define do
     site_name "SF Bay Area"
     description "SF Examiner"
     url "http://www.sfexaminer.com/sanfrancisco/Rss.xml?section=2124643"
+  end
+
+  factory :pixi_post_detail do
+    pixi_post_id 1
+    pixi_id "xxxx"
   end
 end

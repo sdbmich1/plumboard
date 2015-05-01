@@ -1,13 +1,13 @@
 <% cache post do %>
 <tr>
   <td><div class='price'><%= link_to post.id, post %></div></td>
-  <td class='center-wrapper'>
+  <td>
     <% if action_name == 'seller' && @status != 'active' %>
-      <%= render partial: 'shared/show_picture', locals: {model: post.pixan, psize: 'tiny'} %>
-      <%= post.pixter_name %>
+      <%= render partial: 'shared/show_photo', locals: {model: post.pixan, file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
+      <span class='mleft10'><%= post.pixter_name %></span>
     <% else %>
-      <%= render partial: 'shared/show_picture', locals: {model: post.user, psize: 'tiny'} if can? :manage_items, @user %>
-      <%= post.seller_name %>
+      <%= render partial: 'shared/show_photo', locals: {model: post.user, file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
+      <span class='mleft10'><%= post.seller_name %></span>
     <% end %>
   </td>
   <td class='center-wrapper'><%= get_col_date(@status, post) %></td>

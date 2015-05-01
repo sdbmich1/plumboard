@@ -1,4 +1,5 @@
-<ul class="nav">
+<% if signed_in? %>
+  <ul class="nav">
   <% if access_pxp_admin_menu? %>
     <li id='li_home' class="<%= @status == 'active' ? 'active' : '' %>">
       <%= link_to "Submitted", pixi_posts_path(status: 'active'), class: 'submenu', id: 'active-posts', remote: remote? %></li>
@@ -9,10 +10,7 @@
     <li class="<%= action_name == 'pixter_report' ? 'active' : '' %>">
       <%= link_to "Pixter Report", pixter_report_pixi_posts_path, class: 'submenu', id: 'pixter-report' %>
     </li>
-
-
-
-<% elsif @user.is_pixter? && can?(:manage_pixi_posts, @user) %>
+  <% elsif @user.is_pixter? && can?(:manage_pixi_posts, @user) %>
     <li class="<%= @status == 'scheduled' ? 'active' : '' %>">
       <%= link_to "Scheduled", pixter_pixi_posts_path(status: 'scheduled'), class: 'submenu', id: 'schd-posts', remote: remote? %></li>
     <li class="<%= @status == 'completed' ? 'active' : '' %>">
@@ -20,8 +18,7 @@
     <li class="<%= action_name == 'pixter_report' ? 'active' : '' %>">
       <%= link_to "Pixter Report", pixter_report_pixi_posts_path, class: 'submenu', id: 'pixter-report' %>
     </li>
-
-<% else %>
+  <% else %>
     <li id='li_home' class="<%= @status == 'active' ? 'active' : '' %>">
       <%= link_to "Submitted", seller_pixi_posts_path(status: 'active'), class: 'submenu', id: 'active-posts',  remote: remote? %></li>
     <li class="<%= @status == 'scheduled' ? 'active' : '' %>">
@@ -29,5 +26,5 @@
     <li class="<%= @status == 'completed' ? 'active' : '' %>">
       <%= link_to "Completed", seller_pixi_posts_path(status: 'completed'), class: 'submenu', id: 'comp-posts', remote: remote? %></li>
   <% end %>
-
-</ul>
+  </ul>
+<% end %>

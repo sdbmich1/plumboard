@@ -12,3 +12,7 @@ def set_updated_date
     c.update_attribute(:updated_at, post.created_at) if post
   end
 end
+
+def set_post_count
+  Conversation.find_each { |post| Conversation.reset_counters(post.id, :posts) }
+end

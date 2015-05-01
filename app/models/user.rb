@@ -16,8 +16,8 @@ class User < ActiveRecord::Base
     :user_url
   attr_accessor :user_url
 
-  before_save :ensure_authentication_token unless Rails.env.test?
-  after_commit :async_send_notification, :on => :create
+  before_save :ensure_authentication_token, unless: :guest_or_test?
+  after_commit :async_send_notification, :on => :create, unless: :guest?
 
   # define pixi relationships
   has_many :listings, foreign_key: :seller_id, dependent: :destroy
@@ -82,24 +82,15 @@ class User < ActiveRecord::Base
   name_regex = 	/^[A-Z]'?['-., a-zA-Z]+$/i
 
   # validate added fields  				  
-  validates :first_name,  :presence => true,
-            :length   => { :maximum => 30 },
- 	    :format => { :with => name_regex }  
-
-  validates :last_name,  :presence => true,
-            :length   => { :maximum => 30 },
- 	    :format => { :with => name_regex }  
-
+  validates :first_name,  :presence => true, :length => { :maximum => 30 }, :format => { :with => name_regex }, unless: :guest?  
+  validates :last_name,  :presence => true, :length => { :maximum => 30 }, :format => { :with => name_regex }, unless: :guest?    
   validates_confirmation_of :password, if: :revalid
-  validates :business_name,  :presence => true,
-            :length   => { :maximum => 60 },
- 	    :format => { :with => name_regex }, if: :is_business? 
-
-  validates :birth_date,  :presence => true, unless: :is_business? 
-  validates :gender,  :presence => true, unless: :is_business? 
-  validates :url, uniqueness: true, length: { :minimum => 2 }
-  validate :must_have_picture
-  validate :must_have_zip
+  validates :business_name,  :presence => true, :length => { :maximum => 60 }, :format => { :with => name_regex }, if: :is_business? 
+  validates :birth_date,  :presence => true, unless: :guest_or_other?
+  validates :gender,  :presence => true, unless: :guest_or_other?
+  # validates :url, :presence => {:on => :create}, uniqueness: true, length: { :minimum => 2 }, unless: :guest?
+  validate :must_have_picture, unless: :guest?
+  validate :must_have_zip, unless: :guest?
 
   # validate picture exists
   def must_have_picture
@@ -217,6 +208,11 @@ class User < ActiveRecord::Base
   # add photo from url
   def self.picture_from_url usr, access_token
     UserProcessor.new(self).add_url_image(usr, access_token)
+  end
+
+  # add guest account
+  def self.new_guest
+    create { |u| u.guest = true; u.provider = 'pxb'; u.status = 'inactive'; u.email = "guest#{DateTime.now.to_i}@pxbguest.com" }
   end
 
   # devise user handler
@@ -363,6 +359,25 @@ class User < ActiveRecord::Base
   # check user type is business
   def is_business?
     user_type_code == 'BUS' rescue false
+  end
+
+  # check if guest or non-person
+  def guest_or_other?
+    is_business? || guest?
+  end
+
+  # check if guest or test
+  def guest_or_test?
+    Rails.env.test? || guest?
+  end
+
+  # moves data from guest to actute user
+  def move_to usr
+    UserProcessor.new(self).move_to usr
+  end
+
+  def set_flds
+    user_url = name unless guest?
   end
 
   def as_csv(options={})

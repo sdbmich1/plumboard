@@ -1,11 +1,14 @@
 require 'will_paginate/array' 
 class PixiPostsController < ApplicationController
-  before_filter :authenticate_user!
+  before_filter :authenticate_user!, except: [:new, :create]
   before_filter :check_permissions, only: [:index]
   before_filter :set_params, only: [:create, :update]
   before_filter :set_zip, only: [:new]
   before_filter :load_data, only: [:index, :seller, :pixter, :pixter_report]
+  before_filter :load_post, only: [:show, :edit, :update, :destroy]
   before_filter :init_vars, :ajax?, only: [:pixter_report]
+  after_filter :set_session, only: [:show]
+  after_filter :set_uid, only: [:create]
   autocomplete :site, :name, full: true, scopes: [:cities]
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name
   include ResetDate
@@ -17,7 +20,7 @@ class PixiPostsController < ApplicationController
   end
 
   def create
-    @post = PixiPost.new params[:pixi_post]
+    @post = PixiPost.add_post params[:pixi_post], @user
     respond_with(@post) do |format|
       if @post.save
         format.json { render json: {post: @post} }
@@ -28,11 +31,10 @@ class PixiPostsController < ApplicationController
   end
 
   def edit
-    respond_with(@post = PixiPost.find(params[:id]))
+    respond_with(@post)
   end
 
   def update
-    @post = PixiPost.find params[:id]
     respond_with(@post) do |format|
       if @post.update_attributes(params[:pixi_post])
         format.json { render json: {post: @post} }
@@ -43,7 +45,7 @@ class PixiPostsController < ApplicationController
   end
 
   def show
-    respond_with(@post = PixiPost.find(params[:id]))
+    respond_with(@post)
   end
 
   def index
@@ -51,7 +53,6 @@ class PixiPostsController < ApplicationController
   end
 
   def destroy
-    @post = PixiPost.find params[:id]
     respond_with(@post) do |format|
       if @post.destroy  
         format.html { redirect_to seller_pixi_posts_path(status: 'active') }
@@ -127,7 +128,15 @@ class PixiPostsController < ApplicationController
     @start_date, @end_date = ResetDate::get_date_range(@date_range)
   end
 
+  def load_post
+    @post = PixiPost.find params[:id]
+  end
+
   def render_csv format
     format.csv { send_data(render_to_string(csv: @unpaginated_pixi_posts), disposition: "attachment; filename=#{PixiPost.filename}.csv") }
+  end
+
+  def set_uid
+    ControllerManager::set_uid session, @post
   end
 end

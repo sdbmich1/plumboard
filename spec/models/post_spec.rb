@@ -552,6 +552,7 @@ describe Post do
       new_conv 'want'
       expect(PixiWant.first.quantity).to eq 2
     end
+    
     it 'does not process want request' do
       new_conv 'inv'
       expect(PixiWant.count).not_to eq 1

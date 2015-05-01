@@ -65,6 +65,10 @@ namespace :db do
   task :load_user_urls => :environment do
     set_user_url
   end
+
+  task :reload_pixi_posts => :environment do
+    load_pixi_post_details
+  end
 end
 
 def set_keys
@@ -94,7 +98,8 @@ def updateCategoryType
   Category.where(name: ['EVENT', 'EVENTS', 'HAPPENINGS', 'TICKETS FOR SALE']).update_all(category_type_code: 'event')
   Category.where(name: ['ANTIQUES', 'COLLECTIBLES', 'REAL ESTATE']).update_all(category_type_code: 'asset')
   Category.where(name: ['AUTOMOTIVE', 'BOATS', 'MOTORCYCLE']).update_all(category_type_code: 'vehicle')
-  Category.where(name: ['BEAUTY', 'SERVICES', 'TRAVEL', 'PETS', 'CLASSES & LESSONS', 'LOST & FOUND', 'DEALS']).update_all(category_type_code: 'service')
+  Category.where(name: ['BEAUTY', 'SERVICES', 'TRAVEL', 'CLASSES & LESSONS', 'LOST & FOUND' ]).update_all(category_type_code: 'service')
+  Category.where(name: ['PETS']).update_all(category_type_code: 'item')
   Category.where('category_type_code is null').update_all(category_type_code: 'sales')
 end
 
@@ -183,8 +188,14 @@ def update_txn_detail_price
   end
 end
 
+# migrate pixi_id to new child table
 def load_invoice_details
   Invoice.load_details
+end
+
+# migrate pixi_id to new child table
+def load_pixi_post_details
+  PixiPost.load_details
 end
 
 # load country field for all Contacts

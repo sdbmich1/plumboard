@@ -136,6 +136,7 @@ end
 
 # load zip codes for pixi post service areas
 task :load_zip_codes => :environment do
+  PixiPostZip.delete_all
   CSV.foreach(Rails.root.join('db', 'ZipCodes_2014_03_11.csv'), :headers => true) do |row|
     attrs = {
 	      	:zip               => row[0],

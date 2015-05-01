@@ -2,7 +2,7 @@
   <tr>
     <td class='width120'>
       <%= f.select :quantity, options_for_select(get_ary, f.object.quantity), {}, {id: 'inv_qty1', class: 'pixi-select'} %>
-      <%= hidden_field_tag 'amt_left1' %>
+      <%= f.hidden_field :amt_left, id: 'amt_left1', value: f.object.amt_left %>
     </td>
     <td class="width360"><%= render partial: 'shared/active_listings', locals: {f: f, model: @user, pid: invoice.pixi_id} %></td>
     <td class="width120"><%= f.text_field :price, in: 0..MAX_PIXI_AMT, step: 0.01, id: 'inv_price1', value: num_display(f.object, "price"), 

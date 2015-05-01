@@ -1,0 +1,5 @@
+<div class='fields'>  
+  <label class="sm-top control-label">Pixi(s)</label>
+  <%= f.collection_select(:listing_tokens, post.user.pixi_posted_listings.reorder('title ASC'), :pixi_id, :title, 
+    {selected: f.object.listing_tokens, include_blank: 'Select'}, { id: 'listing_tokens', class: 'pixi-select token-width', multiple: true }) %>
+</div>

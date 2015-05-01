@@ -1,39 +1,19 @@
-  <div class="div-border">
-    <div class='row'>
-      <div class='span2'> 
-        <%= f.label :appt_date, 'Appointment Date', class: 'sm-top' %>
-        <%= f.text_field :appt_date, value: get_local_date(post.appt_date), class: 'px-date width120', size: 10, id: 'appt-dt' %>
-      </div>
-      <div class='span2'>
-        <%= f.label :appt_time, 'Appointment Time', class: 'sm-top' %>
-        <%= f.time_select :appt_time, { :combined => true, :default => Time.now.change(:hour => 12), ampm: true, 
-    	  :minute_interval => 30, :time_separator => "", :start_hour => 9, :end_hour => 18 }, value: post.appt_time, 
-	  :class=>'pixi-select width120', id: 'appt-tm' %>
-      </div>
-      <div class='span2'>
-        <%= f.label :completed_date, 'Completed Date', class: 'sm-top' %>
-        <%= f.text_field :completed_date, value: get_local_date(post.completed_date), class: 'px-date width120', size: 10, id: 'cmp-dt' %>
-      </div>
-      <div class='span2'>
-        <%= f.label :completed_time, 'Completed Time', class: 'sm-top' %>
-        <%= f.time_select :completed_time, { :combined => true, :default => Time.now.change(:hour => 12), ampm: true, 
-	  :minute_interval => 30, :time_separator => "", :start_hour => 9, :end_hour => 18 }, 
-	  value: post.completed_time, :class=>'pixi-select width120', id: 'cmp-tm' %>
-      </div>
-      <div class="span3">
-	<label class="sm-top control-label">Pixi Title</label>
-        <%= render partial: 'shared/active_listings', locals: {model: post.user, pid: post.pixi_id} if post.user %>
-      </div>
-    </div>
-    <div class='row'>
-      <div class='span4'>
-	<label class="control-label">Pixter Name</label>
-        <%= render partial: 'shared/pixter_list', locals: { post: post } %>
-      </div>
-      <div class='span7'>
-	<label class="sm-top control-label">Comments</label>
-	<%= f.text_area :comments, id: 'comments', :placeholder => 'Enter Comments or Notes' %>
-      </div>
+<div class="div-border">
+  <div class='row'>
+    <%= render partial: 'shared/manage_pixi_post_dates', locals: {f: f, post: post} %>
+    <div class="span3">
+      <%= f.hidden_field :editor_id, value: @user.id %>
+      <label class="control-label sm-top">Pixter Name</label>
+      <%= render partial: 'shared/pixter_list', locals: { post: post } %>
     </div>
   </div>
-  <%= f.hidden_field :editor_id, value: @user.id %>
+  <div class='row'>
+    <div class='span4'>
+      <%= render partial: 'pixi_post_detail_fields', locals: {f: f, post: post} %>
+    </div>
+    <div class='span7'>
+      <label class="sm-top control-label">Comments</label>
+      <%= f.text_area :comments, id: 'comments', :placeholder => 'Enter Comments or Notes' %>
+    </div>
+  </div>
+</div>

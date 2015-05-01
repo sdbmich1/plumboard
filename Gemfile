@@ -175,6 +175,7 @@ group :development, :test do
   gem 'spork', '~> 1.0rc'
   gem 'faker'
   gem "vcr", "~> 2.5.0"
+  gem 'rack_session_access'
 end
 
 # test gems

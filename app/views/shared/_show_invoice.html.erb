@@ -3,7 +3,7 @@
   <div class="sm-top span12">
     <div class="control-group">
       <%= render partial: 'shared/invoice_details', locals: {invoice: invoice} %>
-      <label class="sm-top control-label">Comments: <%= invoice.comment %></label>
+      <label class="sm-top control-label">Comments: <%= sanitize invoice.comment %></label>
     </div>
     <div class="pull-right">
       <% if my_unpaid_invoice?(invoice) %>

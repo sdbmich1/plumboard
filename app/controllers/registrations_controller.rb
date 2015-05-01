@@ -1,4 +1,5 @@
 class RegistrationsController < Devise::RegistrationsController
+  include ControllerManager
   skip_before_filter :verify_authenticity_token, :only => :create
   before_filter :set_params, only: [:create]
   respond_to :html, :json, :mobile, :js
@@ -31,7 +32,7 @@ class RegistrationsController < Devise::RegistrationsController
   end
 
   private
-	      
+
   def page_layout
     action_name == 'new' ? 'pages' : 'application'
   end

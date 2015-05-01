@@ -1,4 +1,5 @@
 module ApplicationHelper
+  include ControllerManager
 
   # Returns the full title on a per-page basis.
   def full_title page_title
@@ -74,9 +75,14 @@ module ApplicationHelper
     signed_in? ? set_home_path : root_path
   end
 
+  # route to my pixis page if possible
+  def get_return_path
+    @user.is_admin? ? listings_path(status: 'active') : @user.has_pixis? ? seller_listings_path(status: 'active') : get_home_path
+  end
+
   # set home path based on pixi count
   def set_home_path
-    Listing.has_enough_pixis?(@cat, @region) ? categories_path(loc: @region) : local_listings_path(loc: @region)
+    ControllerManager::set_root_path @cat, @region
   end
 
   # set image
@@ -280,7 +286,7 @@ module ApplicationHelper
 
   # add new picture for model
   def setup_picture(model)
-    picture = model.pictures.build rescue nil
+    model.pictures.build if model.pictures.empty? rescue nil
     return model
   end
 
@@ -297,5 +303,10 @@ module ApplicationHelper
       model.deny_item_list.collect {|item| concat(content_tag(:li, link_to(item, deny_pending_listing_path(model, reason: item), method: :put)))}
     end
     return ''
+  end
+
+  # removes html tags
+  def sanitize txt
+    simple_format(txt, {}, sanitize: false) 
   end
 end

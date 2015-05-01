@@ -1,37 +1,30 @@
 <table>
   <tr><label class='control-label'>
-    <td class="span1">Inquiry #: </td> 
-    <td class='width30'></td>
+    <td class="span1">Inquiry #: </td> <td class='width30'></td>
     <td class='span8'><%= inquiry.id %></td></label>
   </tr>
   <tr><label class='control-label'>
-    <td class='span1'>Date: </td>
-    <td class='width30'></td>
+    <td class='span1'>Date: </td><td class='width30'></td>
     <td class='span8'><%= get_local_date(inquiry.created_at) %></td></label>
   </tr>
   <tr><label class='control-label'>
-    <td class='span1'>From: </td>
-    <td class='width30'></td>
+    <td class='span1'>From: </td><td class='width30'></td>
     <td class='span8'><%= inquiry.user_name %></td></label>
   </tr>
   <tr><label class='control-label'>
-    <td class='span1'>Email: </td>
-    <td class='width30'></td>
+    <td class='span1'>Email: </td><td class='width30'></td>
     <td class='span8'><%= inquiry.email %></td></label>
   </tr>
   <tr><label class='control-label'>
-    <td class="span1">Subject: </td> 
-    <td class='width30'></td>
+    <td class="span1">Subject: </td> <td class='width30'></td>
     <td class='span8'><%= inquiry.subject %></td></label>
   </tr>
   <tr><label class='control-label'>
-    <td class="span1">Status: </td> 
-    <td class='width30'></td>
+    <td class="span1">Status: </td> <td class='width30'></td>
     <td class='span8'><%= inquiry.status.titleize %></td></label>
   </tr>
   <tr><label class='control-label'>
-    <td class="span1">Description: </td> 
-    <td class='width30'></td>
-    <td class='span8'><%= inquiry.comments %></td></label>
+    <td class="span1">Description: </td> <td class='width30'></td>
+    <td class='span8'><%= sanitize inquiry.comments %></td></label>
   </tr>
 </table>

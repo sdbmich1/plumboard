@@ -351,6 +351,9 @@ GEM
       rack
     rack-test (0.6.2)
       rack (>= 1.0)
+    rack_session_access (0.1.1)
+      builder (>= 2.0.0)
+      rack (>= 1.0.0)
     rails (3.2.12)
       actionmailer (= 3.2.12)
       actionpack (= 3.2.12)
@@ -568,6 +571,7 @@ DEPENDENCIES
   parsley-rails (~> 2.0.5.0)
   quiet_assets
   rack-google_analytics
+  rack_session_access
   rails (= 3.2.12)
   rails3-jquery-autocomplete
   rake (~> 10.3.1)
