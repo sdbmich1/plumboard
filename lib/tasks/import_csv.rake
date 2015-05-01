@@ -674,6 +674,29 @@ task :import_other_sites, [:file_name, :org_type] => [:environment] do |t, args|
   end
 end
 
+task :load_feeds => :environment do
+  #Feed.delete_all
+  CSV.foreach(Rails.root.join('db', 'site_feed_021515.csv'), :headers => true) do |row|
+
+    attrs = {
+      :site_name   => row[0],
+      :description => row[1],
+      :url         => row[2],
+      :site_id     => Site.find_by_name(row[0]).id    # causes task to fail on test database
+    }
+
+    # add status_type
+    new_feed = Feed.new(attrs)
+
+    # save user_type
+    if new_feed.save 
+      puts "Saved feed #{attrs.inspect}"
+    else
+      puts feed.errors
+    end
+  end
+end
+
 #to run all tasks at once
 task :run_all_tasks => :environment do
 
@@ -697,6 +720,7 @@ task :run_all_tasks => :environment do
   Rake::Task[:load_event_types].execute
   Rake::Task[:load_status_types].execute
   Rake::Task[:load_condition_types].execute
+  Rake::Task[:load_feeds].execute
   Rake::Task[:import_other_sites].execute :file_name => "state_site_data_012815.csv", :org_type => "state"
   Rake::Task[:import_other_sites].execute :file_name => "country_site_data_012815.csv", :org_type => "country"
 end

@@ -241,7 +241,7 @@ class Listing < ListingParent
       delete_temp_pixi self.pixi_id unless repost_flg
 
       # send approval message
-      UserMailer.delay.send_approval(self)
+      UserMailer.delay.send_approval(self) unless skip_approval_email
     end
   end
 

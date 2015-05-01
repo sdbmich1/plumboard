@@ -20,6 +20,8 @@ class ListingParent < ActiveRecord::Base
 	:event_start_time, :event_end_time, :explanation, :contacts_attributes, :repost_flg, :mileage, :other_id, :condition_type_code,
 	:color, :quantity, :item_type, :item_size
 
+  attr_accessor :skip_approval_email
+
   belongs_to :user, foreign_key: :seller_id
   belongs_to :site
   belongs_to :category
@@ -43,7 +45,7 @@ class ListingParent < ActiveRecord::Base
   validate :must_have_pictures
 
   # event date and time
-  validates_date :event_start_date, on_or_after: lambda { Date.current }, presence: true, if: :event?
+  validates_date :event_start_date, on_or_after: lambda { Date.today }, presence: true, if: :event?
   validates_date :event_end_date, on_or_after: :event_start_date, presence: true, if: :start_date?
   validates_datetime :event_start_time, presence: true, if: :start_date?
   validates_datetime :event_end_time, presence: true, after: :event_start_time, :if => :start_date?
@@ -375,13 +377,14 @@ class ListingParent < ActiveRecord::Base
     if tmpFlg && listing 
       listing.assign_attributes(get_attr(tmpFlg), :without_protection => true) 
       listing.status = 'active'
+      listing.skip_approval_email = self.skip_approval_email
     end
 
     # remove any dup in case of cleanup failures
     delete_temp_pixi listing.pixi_id if listing.is_a?(TempListing) && listing.new_record?
 
     # add dup
-    if listing.save
+    if listing.save!
       listing.delete_photo(file_ids, 0) if tmpFlg rescue false
       listing
     else

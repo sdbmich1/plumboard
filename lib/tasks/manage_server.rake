@@ -105,5 +105,8 @@ namespace :manage_server do
       end
     end
   end
-end
 
+  task :load_news_feeds => :environment do
+    LoadNewsFeed.read_feeds
+  end
+end

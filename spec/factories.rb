@@ -443,4 +443,10 @@ FactoryGirl.define do
     user_id 1
     pixi_id "xxxx"
   end
+
+  factory :feed do
+    site_name "SF Bay Area"
+    description "SF Examiner"
+    url "http://www.sfexaminer.com/sanfrancisco/Rss.xml?section=2124643"
+  end
 end
