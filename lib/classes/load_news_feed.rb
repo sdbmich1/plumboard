@@ -170,7 +170,7 @@ class LoadNewsFeed
         end
         if saved_event
           begin
-            event_listing = new_event.post_to_board
+            event_listing = TempListingProcessor.new(new_event).post_to_board
             event_listing.skip_approval_email = false
           rescue ActiveRecord::StatementInvalid
           end
