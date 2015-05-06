@@ -114,5 +114,11 @@ describe InvoiceObserver do
       @model.save!
       user.user_pixi_points.find_by_code('inv').code.should == 'inv'
     end
+
+    it 'should send decline email' do
+      UserMailer.stub(:delay).and_return(UserMailer)
+      UserMailer.should_receive(:send_invoice_notice).and_return(double("UserMailer", :deliver => true))
+      @model.save!
+    end
   end
 end

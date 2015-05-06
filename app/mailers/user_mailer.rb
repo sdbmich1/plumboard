@@ -247,4 +247,16 @@ class UserMailer < ActionMailer::Base
     # set message details
     mail(:to => "#{@invoice.seller_email}", :subject => env_check + ' ' + "Invoice Declined")
   end
+
+  # send notice for invoice
+  def send_invoice_notice invoice
+    @invoice = invoice
+    @title = invoice.listings.count > 1 ? "multiple pixis" : invoice.pixi_title
+
+    # set logo
+    attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
+    # set message details
+    mail(:to => "#{@invoice.buyer_email}", :subject => env_check + ' ' + "Invoice Received")
+  end
 end

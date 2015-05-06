@@ -35,8 +35,8 @@ class InvoiceObserver < ActiveRecord::Observer
     end
 
     if model.declined?
-      # send message in PixiChat (disable observer to avoid sending email notification that message was received)
-      Post.observers.disable(:all) { Post.add_post(model, model.listings.first, model.buyer, model.seller, model.decline_msg, 'inv') }
+      # send message in PixiChat
+      Post.add_post(model, model.listings.first, model.buyer, model.seller, model.decline_msg, 'inv')
 
       # send email
       UserMailer.delay.send_decline_notice(model, model.decline_msg)
@@ -50,7 +50,9 @@ class InvoiceObserver < ActiveRecord::Observer
 
   # notify buyer
   def send_post model
-    Post.send_invoice model, model.listings.first if model.listings 
+    Post.send_invoice model, model.listings.first if model.listings
+
+    UserMailer.delay.send_invoice_notice(model)
   end
 
   # mark pixi as sold

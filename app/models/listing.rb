@@ -292,7 +292,7 @@ class Listing < ListingParent
       self.save
       async_send_notification # send notification
     elsif sold?
-      repost_pixi
+      ListingProcessor.new(self).repost_pixi
     else
       false
     end

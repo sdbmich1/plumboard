@@ -4,5 +4,5 @@
   <%= f.fields_for :invoice_details do |form| %>  
     <%= render partial: 'invoice_detail_fields', locals: {f: form, invoice: invoice} %>
   <% end %>
-  <%= render partial: 'invoice_totals', locals: {f: f, invoice: invoice} %>
+  <%= render partial: 'shared/invoice_totals', locals: {f: f, invoice: invoice} %>
 </table>

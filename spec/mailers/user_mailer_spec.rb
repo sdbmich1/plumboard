@@ -216,4 +216,48 @@ describe UserMailer do
       expect(subject.body.encoded).to match(invoice.buyer_first_name)
     end
   end
+
+  describe "send_invoice_notice" do
+    subject { UserMailer.send_invoice_notice(invoice)}
+    let(:seller) { create :pixi_user }
+    let(:buyer) { create :pixi_user }
+    let(:listing) { create :listing, seller_id: seller.id, title: "Test" }
+    let(:invoice) { build :invoice, status: 'unpaid', buyer_id: buyer.id, seller_id: seller.id, id: 1 }
+    before :each do
+      invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: listing.pixi_id 
+      invoice.save!
+    end
+
+    it { expect{subject.deliver}.not_to change{ActionMailer::Base.deliveries.length}.by(0) }
+    its(:to) { should == [invoice.buyer_email] }
+    its(:subject) { should include "Invoice Received" }
+
+    it 'assigns buyer_first_name' do
+      expect(subject.body.encoded).to match(invoice.buyer_first_name)
+    end
+
+    it 'assigns id' do
+      expect(subject.body.encoded).to match(invoice.id.to_s)
+    end
+
+    it 'assigns seller_name' do
+      expect(subject.body.encoded).to match(invoice.seller_name)
+    end
+
+    it 'assigns amount' do
+      expect(subject.body.encoded).to match(invoice.amount.to_s)
+    end
+
+    it 'assigns pixi_title if the invoice is only for one listing' do
+      expect(subject.body.encoded).to match(invoice.pixi_title)
+    end
+
+    it 'assigns "multiple pixis" if the invoice is for more than one listing' do
+      listing2 = create :listing, seller_id: seller.id, title: "Test 2"
+      invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: listing2.pixi_id 
+      invoice.save!
+      multiple_listing_email = UserMailer.send_invoice_notice(invoice)
+      expect(multiple_listing_email.body.encoded).to match("multiple pixis")
+    end
+  end
 end
