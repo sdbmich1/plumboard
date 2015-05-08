@@ -42,8 +42,8 @@ module TempListingsHelper
   end
 
   # check if post is by seller 
-  def seller_post?
-    !@user.is_support? && @ptype.blank?
+  def seller_post? listing
+    !@user.is_support? && @ptype.blank? && listing.new_record?
   end
 
   # check if new pixi post
