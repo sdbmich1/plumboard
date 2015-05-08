@@ -2,7 +2,6 @@ ThinkingSphinx::Index.define :listing, :with => :active_record, :delta => true d
   indexes :title, :sortable => true
   indexes :description
   indexes [user(:first_name), user(:last_name)], :as => :name
-  indexes [buyer(:first_name), buyer(:last_name)], :as => :buyer_name
 
   has :id, :as => :listing_id 
   has category(:id), :as => :category_id
