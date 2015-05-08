@@ -44,7 +44,7 @@ namespace :manage_server do
     pixis = Listing.soon_expiring_pixis(a)
     if !pixis.nil?
       pixis.each do |pixi|
-        UserMailer.send_expiring_pixi_notice(args.arg1, pixi)
+        UserMailer.delay.send_expiring_pixi_notice(args.arg1, pixi)
       end
     end
   end
@@ -55,7 +55,7 @@ namespace :manage_server do
     pixis = TempListing.soon_expiring_pixis(a, ['edit', 'new'])
     if !pixis.nil?
       pixis.each do |pixi|
-        UserMailer.send_expiring_pixi_notice(args.arg1, pixi)
+        UserMailer.delay.send_expiring_pixi_notice(args.arg1, pixi)
       end
     end
   end	

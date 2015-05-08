@@ -710,11 +710,7 @@ function resetScroll(url) {
 
 // return masonry item size
 function get_item_size() {
-  if($('.board-top').length > 0) {
-    var sz = 1; }
-  else {
-    var sz = 180; }
-
+  var sz = 180; 
   return sz;
 }
 

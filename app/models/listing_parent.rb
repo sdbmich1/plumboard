@@ -381,12 +381,12 @@ class ListingParent < ActiveRecord::Base
     delete_temp_pixi listing.pixi_id if listing.is_a?(TempListing) && listing.new_record?
 
     # add dup
-    if listing.save
-      listing.delete_photo(file_ids, 0) if tmpFlg rescue false
-      listing
-    else
-      tmpFlg ? false : listing
-    end
+    listing.save!
+    listing.delete_photo(file_ids, 0) if tmpFlg rescue false
+    listing
+  #  else
+  #    tmpFlg ? false : listing
+  #  end
   end
 
   # seller pic

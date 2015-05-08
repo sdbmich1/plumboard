@@ -450,19 +450,19 @@ feature "TempListings" do
 
     it "cancels delete picture from listing", js: true do
       click_remove_cancel
-      page.should have_content 'Build Pixi'
+      page.should have_content 'Build Your Pixi'
     end
 
     it "deletes picture from listing", js: true do
       expect{
         click_remove_ok; sleep 2
       }.to change(Picture,:count).by(-1)
-      page.should have_content 'Build Pixi'
+      page.should have_content 'Build Your Pixi'
     end
 
     it "cancels build cancel", js: true do
       click_remove_cancel
-      page.should have_content "Build Pixi" 
+      page.should have_content "Build Your Pixi" 
     end
 
     it "changes a pixi price" do
@@ -623,7 +623,7 @@ feature "TempListings" do
       expect { 
 	      click_link 'Edit'
 	}.not_to change(TempListing, :count)
-      page.should have_content "Build Pixi" 
+      page.should have_content "Build Your Pixi" 
     end
   end
 
@@ -730,7 +730,7 @@ feature "TempListings" do
       @temp = TempListing.new attr
       @temp.save
       init_setup admin
-      visit edit_temp_listing_path(@temp)
+      visit edit_temp_listing_path(@temp, ptype: 'bus')
     end
 
     it "Changes a pixi title" do
@@ -739,6 +739,15 @@ feature "TempListings" do
               click_button submit
       }.to change(TempListing,:count).by(0)
       page.should have_content 'Leather Loveseat For Sale'
+      page.should have_content 'Review Your Pixi'
+      expect(@temp.reload.seller_id).to eq user.id
+    end
+
+    it "adds a pixi pic" do
+      expect{
+              attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
+              click_button submit
+      }.to change(@temp.pictures,:count).by(1)
       page.should have_content 'Review Your Pixi'
       expect(@temp.reload.seller_id).to eq user.id
     end

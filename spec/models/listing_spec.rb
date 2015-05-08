@@ -1027,7 +1027,8 @@ describe Listing do
 
     it "does not return new listing" do 
       listing = FactoryGirl.build :listing, seller_id: user.id 
-      listing.dup_pixi(false).should_not be_nil
+      dup_listing = listing.dup_pixi(false) rescue nil
+      expect(dup_listing).to be_nil
     end
 
     it "returns new listing" do 

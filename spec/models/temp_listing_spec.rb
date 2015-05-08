@@ -452,7 +452,8 @@ describe TempListing do
 
     it "does not return new listing" do 
       listing = FactoryGirl.build :temp_listing, seller_id: user.id 
-      listing.dup_pixi(true).should_not be_true
+      new_listing = listing.dup_pixi(true) rescue nil
+      expect(new_listing).to be_nil
     end
 
     it 'returns new listing' do

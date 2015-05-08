@@ -496,6 +496,15 @@ describe User do
     end
   end
 
+  describe 'is_business?' do
+    it { @user.is_business?.should_not be_true }
+
+    it 'is a business' do
+      @company = FactoryGirl.build(:pixi_user, user_type_code: 'BUS') 
+      expect(@company.is_business?).to be_true
+    end
+  end
+
   describe 'is_support?' do
     it { @user.is_support?.should be_false }
 

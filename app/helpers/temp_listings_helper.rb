@@ -43,7 +43,7 @@ module TempListingsHelper
 
   # check if post is by seller 
   def seller_post?
-    !@user.is_support? && action_name != 'edit' && @ptype.blank?
+    !@user.is_support? && @ptype.blank?
   end
 
   # check if new pixi post
@@ -85,5 +85,10 @@ module TempListingsHelper
   # toggle image slider title
   def set_image_title
     controller_name == 'temp_listings' ? '' : 'Pin it @ Pinterest'
+  end
+
+  # check for admin editor
+  def check_edit_status listing
+    listing.seller_id != @user.id ? can?(:manage_pixi_posts, @user) && listing.user.is_business? ? 'bus' : 'mbr' : ''
   end
 end

@@ -7,8 +7,10 @@ describe PixiPayment do
     @listing = FactoryGirl.create(:listing, seller_id: @user.id)
     @account = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account
     @txn = @user.transactions.create FactoryGirl.attributes_for(:balanced_transaction)
-    @invoice = @user.invoices.create FactoryGirl.attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id, transaction_id: @txn.id)
-    @payment = @invoice.pixi_payments.build FactoryGirl.attributes_for(:pixi_payment, pixi_id: @listing.pixi_id, buyer_id: @buyer.id,
+    @invoice = @user.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: @buyer.id, transaction_id: @txn.id, status: 'paid')
+    @details = @invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
+    @invoice.save!
+    @payment = @invoice.pixi_payments.build FactoryGirl.attributes_for(:pixi_payment, buyer_id: @buyer.id,
       transaction_id: @txn.id, seller_id: @user.id, amount: @invoice.amount)
   end
 
@@ -26,7 +28,6 @@ describe PixiPayment do
 
   it { should respond_to(:seller) }
   it { should respond_to(:buyer) }
-  it { should respond_to(:listing) }
   it { should respond_to(:transaction) }
   it { should respond_to(:invoice) }
   
@@ -50,16 +51,6 @@ describe PixiPayment do
   describe "when buyer_id is entered" do
     before { @payment.buyer_id = 1 }
     it { @payment.buyer_id.should == 1 }
-  end
-  
-  describe "when pixi_id is empty" do
-    before { @payment.pixi_id = "" }
-    it { should_not be_valid }
-  end
-
-  describe "when pixi_id is entered" do
-    before { @payment.pixi_id = "1" }
-    it { @payment.pixi_id.should == "1" }
   end
   
   describe "when invoice_id is empty" do
@@ -112,7 +103,7 @@ describe PixiPayment do
   end
   
   describe 'add_transaction' do
-    it { PixiPayment.add_transaction(@invoice, 0.99, @txn.token).should be_true }
-    it { PixiPayment.add_transaction(@invoice, 0.99, nil).should_not be_true }
+    it { PixiPayment.add_transaction(@invoice, 0.99, @txn.token, @txn.confirmation_no).should be_true }
+    it { PixiPayment.add_transaction(@invoice, 0.99, nil, nil).should_not be_true }
   end
 end

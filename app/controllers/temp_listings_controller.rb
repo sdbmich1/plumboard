@@ -5,7 +5,7 @@ class TempListingsController < ApplicationController
   before_filter :load_data, only: [:index, :unposted, :pending]
   before_filter :set_params, only: [:create, :update]
   before_filter :load_pixi, only: [:edit, :show, :update, :destroy, :submit]
-  before_filter :load_post_type, only: [:new]
+  before_filter :load_post_type, only: [:new, :edit]
   autocomplete :site, :name, :full => true, :limit => 20
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name, if: :has_pixan?
   include ResetDate
