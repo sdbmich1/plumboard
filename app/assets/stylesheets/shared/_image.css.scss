@@ -43,6 +43,7 @@
 
 .item { 
   @extend .pic-item; float: left; 
+  display: none;
   margin: 5px; }
 
 .pic-frame { 

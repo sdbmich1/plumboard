@@ -322,6 +322,11 @@ function initScroll(cntr, nav, nxt, item) {
     });
   }
 
+  // added to prevent screen jumping
+  $('.item').each(function(i){
+    $(this).fadeIn('fast');
+  });
+
   $("#spinner").hide('fast');
 }
 

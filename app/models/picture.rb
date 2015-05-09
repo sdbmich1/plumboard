@@ -103,8 +103,8 @@ class Picture < ActiveRecord::Base
 
     if pic.post_process_required?
       begin
-        url = pic.set_file_url(pic.direct_upload_url)
-        pic.photo = URI.parse(URI.escape(url))
+        # url = pic.set_file_url(pic.direct_upload_url)
+        pic.photo = URI.parse(URI.escape("#{pic.direct_upload_url}"))
       rescue URI::InvalidURIError
         host = url.match(".+\:\/\/([^\/]+)")[1]
 	path = url.partition(host)[2] || "/"
