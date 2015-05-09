@@ -337,6 +337,7 @@ function load_masonry(nav, nxt, item, sz){
 	gutter : 10,
 	isFitWidth: true,
         columnWidth : sz,
+	transitionDuration: 0,
 	layoutPriorities : {
 	   upperPosition: 1,
 	   shelfOrder: 1

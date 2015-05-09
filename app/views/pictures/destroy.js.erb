@@ -2,12 +2,14 @@
   $("#flash_notice").hide(300);
   $("#form_errors").html("<%= escape_javascript( render(partial: 'shared/error_messages', locals: {target: @listing})) %>");
 <% else %>
-  $("#flash_notice").html("<%= escape_javascript(flash[:notice])%>");
-  $("#flash_notice").show(300);
-  $("#listing_form").html("<%= escape_javascript( raw render(partial: 'shared/pixi_form', locals: {listing: @listing, s3Flg: false})) %>");
+  postFlashMsg('#flash_notice','success', 'Successfully removed image.');
+  $("#listing_form").html("<%= escape_javascript( raw render(partial: 'shared/pixi_form', locals: {listing: @listing, s3Flg: use_remote_pix?})) %>");
 <% end %>
 
 $('#spinner').hide(300);
 
+// initialize s3 image upload
+load_image_uploader();
+
 // reload file loader image
-SI.Files.stylizeById('#photo');
+SI.Files.stylizeAll();
