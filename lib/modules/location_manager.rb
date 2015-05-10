@@ -25,6 +25,11 @@ module LocationManager
     [@area.first.latitude, @area.first.longitude] rescue nil
   end
 
+  # get long, lat by zip
+  def self.get_lat_lng_by_zip zip
+    zip.to_latlon rescue nil
+  end
+
   # get area long, lat by location
   def self.get_lat_lng_by_loc loc
     @area = Geocoder.search(loc)

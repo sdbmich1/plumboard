@@ -167,6 +167,7 @@ Plumboard::Application.routes.draw do
 
   # custom user routes to edit member info
   get "/settings/contact", to: "settings#contact" 
+  get "/settings/details", to: "settings#details" 
   get "/settings/password", to: "settings#password" 
 
   # specify root route based on user sign in status

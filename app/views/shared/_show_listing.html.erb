@@ -10,21 +10,8 @@
       <div id='comment_form'><%= render partial: 'shared/comments', locals: {listing: listing} %></div>
     </div>
   </div>
-
   <%= render partial: 'shared/listing_details', locals: {listing: listing} %>
-
-  <% if signed_in? %>
-    <div class="row">
-      <div class="mtop pull-right">
-        <% unless pending_listings? %>
-          <%= render partial: 'shared/review_nav', locals: { listing: listing } if listing.editable?(@user) %>
-          <%= render partial: 'shared/show_temp_listing', locals: {listing: listing} if edit_mode %>
-        <% end %>
-      </div>
-      <%= check_pending_pixi listing %>
-    </div>
-  <% end %>
-
+  <%= render partial: 'shared/show_listing_nav', locals: {listing: listing, edit_mode: edit_mode} %>
   <%= render partial: 'shared/listing_footer', locals: {listing: listing} %>
 <% else %>
   <div class='center-wrapper'>Data connection lost.  Please reload page.</div>

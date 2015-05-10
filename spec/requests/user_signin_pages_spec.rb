@@ -23,7 +23,7 @@ feature "UserSignins" do
     page.should have_link('My Messages', href: conversations_path(status: 'received'))
     page.should have_link('My Invoices', href: sent_invoices_path)
     page.should have_link('My Accounts', href: new_bank_account_path)
-    page.should have_link('My Settings', href: settings_path)
+    page.should have_link('My Settings', href: user_path(@user))
     page.should have_link('My PixiPosts', href: seller_pixi_posts_path(status: 'active'))
     page.should have_link('Sign out', href: destroy_user_session_path)
     page.should_not have_link('Sign in', href: new_user_session_path)

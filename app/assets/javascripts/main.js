@@ -80,6 +80,10 @@ $(document).on("ajax:complete", '#mark-posts, #post-frm, #comment-doc, .pixi-cat
   toggleLoading();
 });	
 
+$(document).on("ajax:complete", '#acct-setting', function () {
+  reload_ratings();
+});	
+
 // handle 401 ajax error
 $(document).ajaxError( function(e, xhr, options){
   if(xhr.status == 401) {
@@ -143,7 +147,7 @@ $(document).ready(function(){
   else {
     // load board on doc ready
     if( $('.pixiPg').length == 0) {
-      load_masonry('#px-nav', '#px-nav a', '#pxboard .item', 220); 
+      load_masonry('#px-nav', '#px-nav a', '#pxboard .item', get_item_size()); 
     }
   }
 
@@ -170,16 +174,10 @@ $(document).ready(function(){
   });
 
   // repaint file fields
-  if( $('.cabinet').length > 0 ) {
-    SI.Files.stylizeAll();
-  }
+  stylize();
 
   // set rating elements
-  if ($('#rateit5').length > 0) {  
-    $('#rating-done-btn').attr('disabled', true);
-    $("#rateit5").bind("rated", function (event, value)  { $('#value5').val(value); $('#rating-done-btn').removeAttr('disabled'); });
-    $("#rateit5").bind('reset', function () { $('#value5').val(0); $('#rating-done-btn').attr('disabled', true); });
-  }
+  load_ratings();
 
   // set inquiry form elements
   if ($('#inquiry_frm').length > 0) {  
@@ -194,6 +192,9 @@ $(document).ready(function(){
   if ($('.item-cat').length > 0) {  
     $('#footer').hide('fast');
   }
+
+  // load featured band
+  load_featured_slider();
 });
 
 // masks phone number fields
@@ -405,41 +406,6 @@ function processUrl(url, ptype) {
     }
   });
 }
-
-// set autocomplete selection value
-$(document).on("railsAutocomplete.select", "#site_name", function(event, data){
-  if ($('#recent-link').length > 0) {
-   resetBoard(); // reset board display
-  }
-  else {
-    var loc = $('#site_id').val(); // grab the selected location 
-
-    if ($('#cat-wrap').length > 0) { 
-      var url = '/categories/location?' + 'loc=' + loc;
-      processUrl(url);
-    } 
-    else if ($('#status_type').length > 0) {
-      get_pixi_url();
-    }
-    else {
-      checkLocID(loc);
-    }
-  }
-});
-
-// set autocomplete selection value
-$(document).on("railsAutocomplete.select", "#buyer_name, #slr_name, #pixan_name, #search_user", function(event, data){
-  var bname = data.item.first_name + ' ' + data.item.last_name;
-  $('#pixan_name, #search_user, #slr_name, #buyer_name').val(bname);
-  if ($('#search_user').length > 0) {
-    $('#submit-btn').click();
-  }
-});
-
-// set autocomplete selection value
-$(document).on("railsAutocomplete.select", "#search", function(event, data){
-  $('#submit-btn').click();
-});
 
 // toggle profile state
 $(document).on('click', '#edit-txn-addr, #edit-addr-btn', function(e) {
@@ -722,7 +688,7 @@ function resetScroll(url) {
 
 // return masonry item size
 function get_item_size() {
-  var sz = 180; 
+  var sz = 220;
   return sz;
 }
 
@@ -900,3 +866,25 @@ $(document).on("keydown", function (e) {
     e.preventDefault();
   }
 });
+
+// used to styleize file input buttons
+function stylize() {
+  if( $('.cabinet').length > 0 ) {
+    SI.Files.stylizeAll();
+  }
+}
+
+// used to initialize ratings
+function load_ratings() {
+  if ($('#rateit5').length > 0) {  
+    $('#rating-done-btn').attr('disabled', true);
+    $("#rateit5").bind("rated", function (event, value)  { $('#value5').val(value); $('#rating-done-btn').removeAttr('disabled'); });
+    $("#rateit5").bind('reset', function () { $('#value5').val(0); $('#rating-done-btn').attr('disabled', true); });
+  }
+}
+
+function reload_ratings() {
+  if ($('#rating').length > 0) {  
+    $(".rateit").rateit();
+  }
+}

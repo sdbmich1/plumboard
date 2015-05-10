@@ -1,7 +1,7 @@
 require 'will_paginate/array' 
 class UsersController < ApplicationController
   before_filter :authenticate_user!
-  before_filter :load_data, :check_permissions, only: [:index, :show]
+  before_filter :load_data, :check_permissions, only: [:index]
   before_filter :load_target, :check_update_permissions, only: [:update]
   before_filter :get_user, only: [:show, :edit, :update]
   respond_to :html, :js, :json, :mobile, :csv
@@ -21,14 +21,13 @@ class UsersController < ApplicationController
     changing_email = params[:user][:email] != @usr.email
     if @usr.update_attributes(params[:user])
       if is_profile?  
-        redirect_to get_user_path, notice: 'Saved changes successfully'
+	flash[:notice] = 'Saved changes successfully'
       else 
         flash.now[:notice] = flash_msg changing_email
         get_user
       end
-    else
-      respond_with(@usr)
     end
+    respond_with(@usr)
   end
 
   def states
@@ -48,8 +47,7 @@ class UsersController < ApplicationController
   # loads confirmation message
   def flash_msg chg_email
     if chg_email 
-      (@usr.pending_reconfirmation?) ?
-        t("devise.registrations.update_needs_confirmation") : t("devise.registrations.updated")
+      (@usr.pending_reconfirmation?) ? t("devise.registrations.update_needs_confirmation") : t("devise.registrations.updated")
     else 
       'Saved changes successfully.'
     end
@@ -68,7 +66,7 @@ class UsersController < ApplicationController
   end
 
   def is_profile?
-    !@target.match(/form/).nil?
+    !@target.match(/form|contact|details/).nil?
   end
 
   def get_user_path

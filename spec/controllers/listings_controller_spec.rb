@@ -38,6 +38,7 @@ describe ListingsController do
       @listings = stub_model(Listing)
       Listing.stub_chain(:check_category_and_location).and_return(@listings)
       @listings.stub!(:paginate).and_return( @listings )
+      Listing.any_instance.stub(:geocode) { [1,1] }
       controller.stub_chain(:get_location).and_return(:success)
       do_get
     end
@@ -95,9 +96,11 @@ describe ListingsController do
     before(:each) do
       @listings = stub_model(Listing)
       @category = stub_model Category
+      @sellers = stub_model User
       Listing.stub_chain(:get_by_city).and_return(@listings)
       @listings.stub!(:set_page).and_return(@listings)
       Category.stub!(:find).and_return(@category)
+      User.stub!(:get_sellers).and_return(@sellers)
       controller.stub!(:load_data).and_return(:success)
       do_get
     end
@@ -133,8 +136,10 @@ describe ListingsController do
   describe 'GET local' do
     before(:each) do
       @listings = stub_model(Listing)
+      @sellers = stub_model(User)
       Listing.stub!(:get_by_city).and_return(@listings)
       @listings.stub!(:set_page).and_return(@listings)
+      User.stub!(:get_sellers).and_return(@sellers)
       controller.stub!(:load_data).and_return(:success)
       do_get
     end

@@ -86,9 +86,13 @@ module ApplicationHelper
   end
 
   # set image
-  def get_image model, file_name
+  def get_image model, file_name, nxtImageFlg=false
     if model
-      !model.any_pix? ? file_name : get_pixi_image(model.pictures[0])
+      if nxtImageFlg && model.any_pix?
+        model.pictures[1].photo_file_name.nil? ? file_name : get_pixi_image(model.pictures[1], 'cover')
+      else
+        !model.any_pix? ? file_name : get_pixi_image(model.pictures[0])
+      end
     else
       file_name
     end
@@ -308,5 +312,36 @@ module ApplicationHelper
   # removes html tags
   def sanitize txt
     simple_format(txt, {}, sanitize: false) 
+  end
+
+  # toggle font color for rating
+  def get_rating_class wFlg=true
+    wFlg ? 'tiny-white' : 'tiny-black'
+  end
+
+  # toggle class for rating
+  def set_rating_class flg
+    flg ? 'med-pixis' : 'smpixis'
+  end
+
+  # toggle class for rating
+  def set_rating_val flg, hFlg=false
+    flg ? hFlg ? 21 : 24 : 16
+  end
+
+  # set list tag id for photo uploader
+  def get_list_id tag
+    tag == 'usr_photo2' ? 'list2' : 'list'
+  end
+
+  # dynamically set background image
+  def load_bkgnd model, cnt=1
+    return "gm_grey.jpg" if model.blank?
+    model.pictures[cnt] ? get_pixi_image(model.pictures[cnt], 'cover') : "gm_grey.jpg"
+  end
+
+  # check usr access
+  def access? usr
+    can?(:manage_users, usr)
   end
 end

@@ -1,10 +1,11 @@
 class UserObserver < ActiveRecord::Observer
   observe User
+  include NameParse
 
-  # set default user type
-  def before_create usr
-    usr.user_type_code = 'mbr' if usr.user_type_code.blank?
-    usr.user_url = usr.name unless usr.guest?
+  def before_update usr
+    if usr.description_changed?
+      NameParse::encode_string usr.description
+    end
   end
 
   # update points

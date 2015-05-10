@@ -65,6 +65,6 @@ class SearchesController < ApplicationController
   end
 
   def load_url_data
-    @listings = Listing.search(query, {:sql=>{:include=>[:pictures, :site, :category]}} ) rescue nil 
+    @listings = Listing.search(query, {:sql=>{:include=>[:pictures, :site, :category, :job_type]}} ) rescue nil 
   end
 end

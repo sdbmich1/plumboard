@@ -1,19 +1,21 @@
-<div class='row'>
-<div class='offset4'>
-  <table>
-    <tr><td class='span3'>Name:</td>
-      <td><%= render partial: 'shared/show_photo', locals: {model: user, file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
-        <span class='mleft10'><%= user.name %></span></td>
-    </tr>
-    <tr><td class='span3'>Email:</td><td><%= user.email %></td></tr>
-    <tr><td class='span3'>Gender:</td><td><%= user.gender %></td></tr>
-    <tr><td class='span3'>Birth Date: </td><td><%= user.birth_dt %></td></tr>
-    <tr><td class='span3'>Home Zip: </td><td><%= user.home_zip %></td></tr>
-    <tr><td class='span3'>Type: </td><td><%= user.type_descr %></td></tr>
-    <tr><td class='span3'>Facebook Login: </td><td><%= toggle_bool(user.fb_user) %></td></tr>
-    <tr><td class='span3'>Enrolled: </td><td><%= user.nice_date(user.created_at) %></td></tr>
-    <tr><td class='span3'>Last Sign In: </td><td><%= user.nice_date(user.last_sign_in_at) %></td></tr>
-    <tr><td class='span3'>Address on File: </td><td><%= toggle_bool(user.has_address?) %></td></tr>
-  </table>
+<div class='row offset2'>
+  <div class="span8">
+    <table class="table table-hover table-condensed table-bordered">
+      <tr><td class='span3 field-hdr'>Email</td><td><%= user.email %></td></tr>
+      <% unless user.is_business? %>
+        <tr><td class='span3 field-hdr'>Gender</td><td><%= user.gender %></td></tr>
+        <tr><td class='span3 field-hdr'>Birth Date </td><td><%= user.birth_dt %></td></tr>
+      <% end %>
+      <tr><td class='span3 field-hdr'>Home Zip </td><td><%= user.home_zip %></td></tr>
+      <tr><td class='span3 field-hdr'>Type </td><td><%= user.type_descr %></td></tr>
+      <tr><td class='span3 field-hdr'>Member Since </td><td><%= user.nice_date(user.created_at) %></td>
+      <% if @user.is_admin? %>
+        <tr><td class='span3 field-hdr'>Facebook Login </td><td><%= toggle_bool(user.fb_user) %></td></tr>
+        <tr><td class='span3 field-hdr'>Last Sign In </td><td><%= user.nice_date(user.current_sign_in_at) %></td></tr>
+      <% end %>
+      <tr><td class='span3 field-hdr'>Primary Address</td><td><%= load_address user %></td></tr>
+      <tr><td class='span3 field-hdr'>URL</td><td><%= user.user_url %></td></tr>
+      <tr><td class='span3 field-hdr'>About</td><td><%= sanitize user.description %></td></tr>
+    </table>
   </div>
 </div>

@@ -1,2 +1,2 @@
-<%= collection_select :invoice, :tmp_buyer_id, Listing.wanted_users(pid).reorder('name ASC'), :id, :name, 
+<%= collection_select :invoice, :tmp_buyer_id, Listing.wanted_users(pid).reorder('first_name ASC'), :id, :name, 
     {prompt: 'Select Buyer', selected: @invoice.blank? ? nil : @invoice.buyer_id}, {id: 'tmp_buyer_id', class: 'width360 pixi-select'} %>

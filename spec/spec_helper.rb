@@ -43,26 +43,24 @@ Spork.prefork do
     config.include(EmailSpec::Matchers)
     config.mock_with :rspec
     config.include Paperclip::Shoulda::Matchers
+    config.include PaperclipStub
     config.include Capybara::RSpecMatchers
     config.include Capybara::DSL, :type => :request
     config.include FactoryGirl::Syntax::Methods
     config.fixture_path = "#{::Rails.root}/spec/fixtures"
     config.use_transactional_fixtures = false
-
     config.extend ControllerMacros, :type => :controller
     config.infer_base_class_for_anonymous_controllers = false
     config.include Rails.application.routes.url_helpers
     config.include(MailerMacros)  
     config.include IntegrationSpecHelper, :type => :request
-    config.include PaperclipStub
+    config.include SphinxHelpers, type: :feature
     # config.include TokenInputHelper, :type => :feature
 
     config.before(:suite) do
       DatabaseCleaner.clean_with :truncation
-    end
-
-    config.before(:each) do
-      DatabaseCleaner.strategy = :transaction
+      ThinkingSphinx::Test.init
+      ThinkingSphinx::Test.start_with_autostop  # stop Sphinx at the end of the test suite.
     end
 
     config.before(:each, :js => true) do
@@ -71,14 +69,13 @@ Spork.prefork do
     end
 
     config.before(:each) do
-      set_selenium_window_size(1250, 800) if Capybara.current_driver == :selenium
-    end
-
-    config.before(:each) do
+      DatabaseCleaner.strategy = :transaction
       DatabaseCleaner.start
+      set_selenium_window_size(1250, 800) if Capybara.current_driver == :selenium
       reset_email
       Contact.any_instance.stub(:geocode) { [1,1] }
       Listing.any_instance.stub(:geocode) { [1,1] }
+      User.any_instance.stub(:geocode).and_return([1,1]) 
       AWS.stub!
     end
 

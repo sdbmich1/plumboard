@@ -36,4 +36,9 @@ module PagesHelper
     item = action_name == 'home' ? 'shared/home_page_footer' : 'shared/main_footer'
     render item
   end
+
+  # set class for signup form
+  def signup_class src
+    src == 'modal' ? 'span4' : 'offset1 span4'
+  end
 end

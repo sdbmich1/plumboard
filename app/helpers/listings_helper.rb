@@ -295,8 +295,8 @@ module ListingsHelper
   end
 
   # set item title based on controller
-  def item_title listing
-    controller_name == 'pages' ? listing.short_title(false, 16) : listing.nice_title(false)
+  def item_title listing, flg=true
+    controller_name == 'pages' || !flg ? listing.short_title(false, 16) : listing.nice_title(false)
   end
 
   # toggle category title based on controller
@@ -311,5 +311,97 @@ module ListingsHelper
   # render footer if needed
   def pixi_footer listing
     render partial: 'shared/pixi_footer', locals: {listing: listing} # unless controller_name == 'pages'
+  end
+   
+  # set class based on controller
+  def set_item_class flg
+    !flg ? 'featured-item' : controller_name == 'pages' ? 'home-item' : 'item'
+  end
+
+  # set top banner image
+  def set_banner btype
+    case btype
+      when 'biz'
+        usr = User.find_by_url @url rescue nil
+        content_tag(:div, render(partial: 'shared/user_band', locals: {user: usr, pxFlg: false}), class: ["mneg-top", "mbot"]) if usr
+      when 'loc'
+        site = Site.find @loc rescue nil
+        content_tag(:div, render(partial: 'shared/location_band', locals: {site: site}), class: ["mneg-top", "mbot"]) if site
+      else
+    end
+  end
+
+  # check ownership
+  def is_owner?(usr)
+    usr.id == @user.id
+  end
+
+  def has_featured_pixis? model
+    model.size >= MIN_FEATURED_PIXIS
+  end
+
+  def has_featured_users?
+    @sellers.size >= MIN_FEATURED_USERS
+  end
+
+  # display featured items/sellers based on band type
+  def set_featured_banner model, btype
+    case btype
+      when 'biz'
+        content_tag(:div, render(partial: 'shared/pixi_band'), class: ["mneg-top", "mbot"]) if has_featured_pixis?(model)
+      when 'loc'
+        content_tag(:div, render(partial: 'shared/seller_band'), class: ["mneg-top", "mbot"]) if has_featured_users?
+    end
+  end
+
+  # check if manage pixis
+  def show_loc_name loc_name
+    action_name == 'index' ? loc_name : ''
+  end
+
+  # display featured pixis
+  def featured_pixis model
+    val = model.size/2
+    cnt = val < MIN_FEATURED_PIXIS*2 ? val : MIN_FEATURED_PIXIS*2 
+    return model[0..cnt-1]
+  end
+
+  # pixi title
+  def render_title model
+    content_tag(:span, model.site_name, class: "loc-descr") 
+  end
+
+  # display correct image based on model type
+  def show_view_image model, pix_size, img_size
+    if temp_listing?(model) 
+      render partial: 'shared/show_photo', locals: {model: model, psize: '180x180', file_name: img_size, display_cnt: 0}
+    else
+      view_pixi_image model, pix_size, (model.is_a?(User) ? model.local_user_path : listing_path(model))
+    end
+  end
+
+  def view_pixi_image model, pix_size, path
+    link_to path do
+      render partial: 'shared/show_picture', locals: {model: model, psize: pix_size}
+    end 
+  end
+
+  # show follow button if business
+  def follow_button usr
+    if usr.is_business? && controller_name != 'users'
+      link_to('+ Follow', '#', id: 'follow-btn', class: 'sm-top no-left span2 btn btn-primary submit-btn') unless is_owner?(usr) 
+    end
+  end
+
+  # show edit cover icon for owner
+  def show_edit_cover_icon usr
+    link_to image_tag('rsz_photo_camera.png', class: 'camera'), edit_user_path(@user), title: 'Change Cover Photo' if is_owner?(usr)
+  end
+
+  # show repost btn
+  def show_repost_button listing
+    if repost? listing
+      link_to "Repost!", repost_listing_path(listing), method: :put, class: "btn btn-large btn-primary submit-btn", id: 'px-repost-btn' 
+    end
   end
 end

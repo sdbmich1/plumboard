@@ -22,23 +22,31 @@ body {
     font-size: 36px;
   }
   .home-title-white {
-    font-family: "Helvetica";
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 36px;
   }
+  .small-title-white {
+    position: absolute;
+    top: 2%;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 24px;
+  }
+}
+
+.home-page-title {
+  text-shadow: 2px 2px #000;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #fff;
+  font-size: 50px;
+  font-weight: bold;
 }
 
 .helv-white {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: #ffffff;
 }
-
-.home-page-title {
-  text-shadow: 2px 2px #000;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    color: #fff;
-    font-size: 50px;
-    font-weight: bold;
-}
+.tiny-black { @extend .helv-white; color: #000; font-size: 0.75em; }
+.tiny-white { @extend .helv-white; font-size: 0.75em; }
 
 .mobile-tag {
   @extend .helv-white;
@@ -51,6 +59,13 @@ body {
   font-size: 20px;
   line-height: 24px;
 }
+
+.tm-line {
+  @extend .helv-white;
+  font-size: 20px;
+}
+
+.sup { vertical-align: top; font-size: 0.6em; }
 
 .pxp-tag {
   @extend .mobile-tag;
@@ -78,6 +93,17 @@ body {
   @extend .helv-white;
   font-weight: normal;
   font-size: 28px;
+}
+
+.bold-tag-line {
+  @extend .helv-white;
+  font-weight: bold;
+  font-size: 28px;
+}
+
+.seller-name {
+  @extend .helv-white;
+  font-size: 26px;
 }
 
 .trend-tag {
@@ -157,8 +183,8 @@ body {
 }
 
 body #signupDialog.modal {
-  width: 70%; /* desired relative width */
-  left: 15%; /* (100%-width)/2 */
+  width: 60%; /* desired relative width */
+  left: 20%; /* (100%-width)/2 */
   margin-left:auto;
   margin-right:auto; 
  }

@@ -33,11 +33,17 @@ module ResetDate
     end
   end
 
+  def self.get_offset
+    zone = ActiveSupport::TimeZone.new("Pacific Time (US & Canada)")
+    zone.formatted_offset.to_i
+  end
+
   # format display date by zip
-  def self.format_date tm, zip
+  def self.format_date tm, zip, tmFlg=true
+    return nil unless tm
     val = zip ? zip.to_gmt_offset.to_i : 0 rescue 0
     val == 0 ? tm : tm.advance(hours: val)
-    tm.strftime('%m/%d/%Y %l:%M %p') rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
+    tmFlg ? tm.strftime('%m/%d/%Y %l:%M %p') : tm.strftime('%m/%d/%Y') rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
   end
 
   # returns start_date and end_date based on passed date_range
@@ -68,15 +74,22 @@ module ResetDate
     val < 10 ? "0#{val}" : val
   end
 
+  # convert time fields
   def self.convert_time_fld val, arr
     arr.each do |fld|
       val.parse_time_select! fld.to_sym
     end
   end
 
+  # convert date fields
   def self.convert_date_fld val, arr
     arr.each do |fld|
       val[fld.to_sym] = parse_date(val[fld.to_sym]) if val[fld.to_sym] 
     end
+  end
+
+  # set file timestamp
+  def self.set_file_timestamp loc='San Francisco, CA'
+    display_date_by_loc(Time.now, Geocoder.coordinates(loc), false).strftime("%Y_%m_%d")
   end
 end

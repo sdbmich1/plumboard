@@ -3,11 +3,13 @@ class Listing < ListingParent
   include ThinkingSphinx::Scopes
 
   before_create :activate
-  after_commit :async_send_notification, :on => :create
-  after_commit :send_saved_pixi_removed, :sync_saved_pixis, :set_invoice_status, :on => :update
+  after_commit :async_send_notification, :update_counter_cache, :on => :create
+  after_commit :send_saved_pixi_removed, :sync_saved_pixis, :set_invoice_status, :update_counter_cache, :on => :update
+  # after_save :update_counter_cache
 
   attr_accessor :parent_pixi_id
 
+  belongs_to :user, foreign_key: :seller_id, counter_cache: 'active_listings_count'
   belongs_to :buyer, foreign_key: 'buyer_id', class_name: 'User'
   has_many :conversations, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :posts, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
@@ -314,6 +316,11 @@ class Listing < ListingParent
   # returns sold pixis from seller
   def self.sold_list 
     where("listings.status not in (?)", closed_arr(false)).joins(:invoices).where("invoices.status = ?", 'paid').uniq
+  end
+
+  # refresh counter cache
+  def update_counter_cache
+    ListingProcessor.new(self).update_counter_cache
   end
 
   # sphinx scopes

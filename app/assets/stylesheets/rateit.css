@@ -152,3 +152,31 @@ div.smpixis div.rateit-reset:hover
 {
     background: url(pixi_blank16.png);
 }
+
+div.med-pixis div.rateit-range
+{
+    background: url(pixi_blank24.png);
+    height: 24px;
+}
+
+div.med-pixis div.rateit-hover
+{
+    background: url(pixi_orange24.png);
+}
+
+div.med-pixis div.rateit-selected
+{
+    background: url(pixi_orange24.png);
+}
+
+div.med-pixis div.rateit-reset
+{
+    background: url(pixi_blank24.png);
+    width: 24px;
+    height: 21px;
+}
+
+div.med-pixis div.rateit-reset:hover
+{
+    background: url(pixi_blank24.png);
+}

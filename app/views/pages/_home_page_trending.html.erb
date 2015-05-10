@@ -7,7 +7,7 @@
     <% end %>
   </div>
   <div class='mtop row'>
-    <%= render partial: 'shared/home_page_trending_pixis', collection: @listings, as: :listing %>
+    <%= render partial: 'shared/listing', collection: @listings, as: :listing, locals: {px_size: 'large', ftrFlg: true} %>
   </div>
   <div class='mtop row'>
     <div class='center-wrapper'>

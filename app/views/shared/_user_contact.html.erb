@@ -1,35 +1,14 @@
 <div class="row">
-  <%= form_for(setup_user(@user), url: user_path(@user, target: 'shared/user_contact'), html: {method: :put, class: "form-horizontal uform", 
-    id: 'contact-form'}, remote: true) do |f| %>
-      <div id="form_errors"><%= render partial: 'shared/error_messages', :locals => { :target => @user } %></div>
+  <%= form_for(setup_user(user), url: user_path(user, target: 'shared/user_contact'), html: {method: :put, class: "form-horizontal uform", 
+    id: 'contact-form'}) do |f| %>
+      <div id="form_errors"><%= render partial: 'shared/error_messages', :locals => { :target => user } %></div>
       <div class="sm-top span6 offset3">
         <div id='signup'>
-	  <%= f.fields_for :contacts do |form| %>
-	    <div class="control-group">
-	      <label class="control-label">Home Phone</label>
-	      <div class='controls'><%= form.text_field :home_phone, placeholder: "Home Phone", id: 'home_phone', size: 10 %></div>
-	      <label class="control-label">Work Phone</label>
-	      <div class='controls'><%= form.text_field :work_phone, placeholder: "Work Phone", id: 'work_phone', size: 10 %></div>
-	      <label class="control-label">Mobile Phone</label>
-	      <div class='controls'><%= form.text_field :mobile_phone, placeholder: "Mobile Phone", id: 'mobile_phone', size: 10 %></div>
-	      <label class="control-label">Address</label>
-	      <div class='controls'><%= form.text_field :address, placeholder: "Address"  %></div>
-	      <label class="control-label">Address2</label>
- 	      <div class='controls'><%= form.text_field :address2, placeholder: "Address2"  %></div>
-	      <label class="control-label">City</label>
-	      <div class='controls'><%= form.text_field :city, placeholder: "City"  %></div>
-	      <label class="control-label">State</label>
-	      <div class='controls mbot'><%= form.collection_select :state, State.all, :code, :state_name, {:prompt => 'Select State'} %></div>
-	      <label class="control-label">Zip</label>
-	      <div class='controls'><%= form.text_field :zip, placeholder: "Zip" , size: 5 %></div>
-	      <label class="control-label">Country</label>
-	      <div class='controls'><%= country_select "contact", "country", ["United States"], :class => 'country' %></div>
-	    </div>
-	  <% end %>
+	  <%= render partial: 'shared/user_contact_details', locals: { f: f } %>
+	  <div class='mtop offset2'>
+            <%= f.submit "Save Changes", class: "btn btn-large btn-primary submit-btn", data: {disable_with: "Submitting..."} %>
+	  </div>
         </div>
       </div>
-    <div class="span4 offset5">
-      <%= f.submit "Save Changes", class: "btn btn-large btn-primary submit-btn", data: {disable_with: "Submitting..."} %>
-    </div>
   <% end %>
 </div>

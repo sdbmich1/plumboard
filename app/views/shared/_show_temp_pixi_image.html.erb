@@ -1,7 +1,1 @@
-<% if temp_listing?(model) %>
-  <%= render partial: 'shared/show_photo', locals: {model: model, psize: '180x180', file_name: img_size, display_cnt: 0} %>
-<% else %>
-   <%= link_to listing_path(model) do %>
-     <%= render partial: 'shared/show_picture', locals: {model: model, psize: pix_size} %>
-   <% end %>
-<% end %>
+<%= show_view_image model, pix_size, img_size %>

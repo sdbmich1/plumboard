@@ -138,5 +138,10 @@ class ListingProcessor < ListingDataProcessor
   def sold_list 
     Listing.where("listings.status not in (?)", closed_arr(false)).joins(:invoices).where("invoices.status = ?", 'paid').uniq
   end
+
+  # update active counter for user
+  def update_counter_cache
+    User.reset_counters(@listing.seller_id, :active_listings)
+  end
 end
 

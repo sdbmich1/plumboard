@@ -1,22 +1,29 @@
 // when the user type field changes
 $(document).on("change", "#ucode", function(e){
-  var utype = $(this).val().toLowerCase();
   var fldList = '#user_gender, #user_birth_date_1i, #user_birth_date_2i, #user_birth_date_3i';
+  var utype = $(this).val().toLowerCase();
+  var uid = $('#uid').val();
   if(utype.match(/^bus/) != null) {
-    var showList = '#bus_code, #user_business_name';
-    var hideList = '#mbr_code, #gender_code';
-    $(showList).attr('required', 'required');
-    $(fldList).removeAttr('required'); 
+    var txt = uid.length > 0 ? '#bus_url,' : ''; 
+    toggleBusFlds('#mbr_code, #gender_code, '+url+fldList, '#bus_code, #user_business_name', fldList, true);
   }  
   else {
-    var hideList = '#bus_code, #user_business_name'; 
-    var showList = '#mbr_code, #gender_code';
+    toggleBusFlds('#bus_code, #user_business_name, #bus_url', '#mbr_code, #gender_code, '+fldList, fldList, false);
+  }
+});
+
+function toggleBusFlds(hideList, showList, fldList, reqFlg) {
+  if(reqFlg) {
+    $(showList).attr('required', 'required');
+    $(fldList).removeAttr('required'); 
+  }
+  else {
     $(fldList).attr('required', 'required');
     $(showList).removeAttr('required'); 
   }
   $(showList).show('fast');
   $(hideList).hide('fast');
-});
+}
 
 // business name field changes
 $(document).on("change", "#user_business_name", function(e){

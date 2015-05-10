@@ -1,0 +1,2 @@
+$("#user_form").html("<%= escape_javascript( raw render(:partial => fname, locals: {user: user}) ).html_safe %>");
+$("#spinner, .progress").hide('fast'); 

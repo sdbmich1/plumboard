@@ -35,3 +35,18 @@ function load_slider(cntl) {
     });
   }
 }
+
+// load featured band carousel
+function load_featured_slider() {
+  if($('.featured').length > 0) {
+    $('.featured').bxSlider({
+      minSlides: 5,
+      maxSlides: 5,
+      slideWidth: 180,
+      slideMargin: 30,
+      auto: false,
+      pager: false,
+      autoControls: false
+    });
+  }
+}

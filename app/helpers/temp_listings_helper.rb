@@ -91,4 +91,21 @@ module TempListingsHelper
   def check_edit_status listing
     listing.seller_id != @user.id ? can?(:manage_pixi_posts, @user) && listing.user.is_business? ? 'bus' : 'mbr' : ''
   end
+
+  # show edit button
+  def render_edit_button listing
+    ptype = access?(@user) && listing.seller_id != @user.id ? listing.user.is_business? ? 'bus' : 'mbr' : ''
+    link_to 'Edit', edit_temp_listing_path(listing, ptype: ptype), id: 'pixi-edit-btn', class: 'btn btn-large' unless expired_or_sold?(listing)
+  end
+
+  # toggle display buttons
+  def toggle_buttons listing
+    if listing.edit?
+      render partial: 'shared/return_buttons', locals: {model: listing}
+    elsif listing.active? && controller_name == 'listings'
+      render partial: 'shared/button_menu', locals: {model: listing, atype: 'Remove'}
+    else
+      link_to 'Remove', listing, method: :delete, confirm: msg, class: 'btn btn-large', title: 'Remove Pixi' unless expired_or_sold?(listing)
+    end
+  end
 end

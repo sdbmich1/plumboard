@@ -338,7 +338,7 @@ class ListingParent < ActiveRecord::Base
 
   # seller pic
   def seller_rating_count
-    user.seller_ratings.size rescue 0
+    user.rating_count rescue 0
   end
 
   # display first image

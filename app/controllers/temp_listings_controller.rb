@@ -83,12 +83,22 @@ class TempListingsController < ApplicationController
   def pending
     respond_with(@listings = TempListing.get_by_status('pending').get_by_seller(@user, @adminFlg).paginate(page: @page))
   end
+
+  def autocomplete_user_first_name
+    users = User.search term, star: true
+    render :json => users 
+  end
   
   protected
 
   def page_layout
     mobile_device? ? 'form' : 'application'
   end
+
+  # wrap query text for special characters
+  def term
+    Riddle::Query.escape params[:term]
+  end  
 
   def load_data
     @page, @cat, @loc, @loc_name = params[:page] || 1, params[:cid], params[:loc], params[:loc_name] 

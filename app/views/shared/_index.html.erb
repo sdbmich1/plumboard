@@ -2,17 +2,14 @@
 <%= content_for :subhead do %>
   <%= render partial: 'shared/navbar', locals: { menu_name: page_title, loc_name: @loc_name } %>
 <% end %>
-
+<%= content_for :top_banner do %>
+  <div id='tbanner'><%= render partial: 'shared/load_banner', locals: { btype: btype } %></div>
+<% end %>
+<%= content_for :feature_banner do %>
+  <div id='fbanner'><%= render partial: 'shared/feature_banner', locals: { model: @listings, btype: btype } %></div>
+<% end %>
 <%= content_for :content do %>
-  <div id="pxboard">
-    <%= render 'shared/listings' %>
-  </div> 
-
-  <nav id="px-nav">
-    <%= render set_init_next_page_path %>
-  </nav>
-
-  <div class='span1 sm-bot'>
-    <%= link_to 'Scroll', '#', class: 'scrollup clear-link' %>
-  </div>
+  <div id="pxboard"><%= render 'shared/listings' %></div> 
+  <nav id="px-nav"><%= render set_init_next_page_path %></nav>
+  <div class='span1 sm-bot'><%= link_to 'Scroll', '#', class: 'scrollup clear-link' %></div>
 <% end %>

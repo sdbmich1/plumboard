@@ -5,10 +5,11 @@
   </td>
   <td class=''><%= user.name %></td>
   <td class=''><%= user.email %></td>
+  <td class=''><%= user.type_descr %></td>
   <td class=''><%= user.home_zip %></td>
   <td class=''><%= user.birth_dt %></td>
-  <td class=''><%= user.nice_date(user.created_at) %></td>
-  <td class=''><%= user.nice_date(user.last_sign_in_at) %></td>
+  <td class=''><%= user.nice_date(user.created_at, false) %></td>
+  <td class=''><%= user.nice_date(user.current_sign_in_at) %></td>
   <td class='center-wrapper'><%= link_to 'Details', user, class: 'btn btn-small' %></td>
 </tr>
 <% end %>

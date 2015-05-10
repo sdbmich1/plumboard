@@ -74,7 +74,7 @@ class ListingsController < ApplicationController
   protected
 
   def load_data
-    @page, @cat = params[:page] || 1, params[:cid]
+    @page, @cat, @loc, @loc_name = params[:page] || 1, params[:cid], params[:loc], params[:loc_name]
     @adminFlg = params[:adminFlg].to_bool rescue false
     @status = NameParse::transliterate params[:status] if params[:status]
     @loc, @loc_name = LocationManager::setup request.remote_ip, @loc || @region, @loc_name, @user.home_zip
@@ -100,6 +100,7 @@ class ListingsController < ApplicationController
   def load_city
     @category = Category.find @cat rescue nil if action_name == 'category'
     @listings = Listing.get_by_city(@cat, @loc).set_page @page
+    @sellers = User.get_sellers @cat, @loc
   end
 
   def render_csv format

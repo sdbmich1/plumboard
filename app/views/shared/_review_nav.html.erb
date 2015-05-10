@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 <%= link_to 'Edit', edit_temp_listing_path(listing, ptype: check_edit_status(listing)), id: 'pixi-edit-btn', class: 'btn btn-large' unless expired_or_sold? listing %>
 <% if listing.edit? %>
   <%= link_to 'Remove', listing, method: :delete, confirm: msg, class: 'btn btn-large' %>
@@ -9,3 +10,8 @@
 <% end %>
 
 <%= link_to "Repost!", repost_listing_path(listing), method: :put, class: "btn btn-large btn-primary submit-btn", id: 'px-repost-btn' if repost? listing %>
+=======
+<%= render_edit_button listing %>
+<%= render_return_buttons listing %>
+<%= show_repost_button listing %>
+>>>>>>> Stashed changes

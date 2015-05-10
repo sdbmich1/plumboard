@@ -1,5 +1,5 @@
 class UserProcessor
-  include LocationManager, PointManager, ImageManager
+  include LocationManager, PointManager, ImageManager, NameParse
 
   def initialize usr
     @user = usr
@@ -10,6 +10,7 @@ class UserProcessor
     begin
       new_url = cnt == 0 ? value.gsub(/\s+/, "") : [value.gsub(/\s+/, ""), cnt.to_s].join('')
       cnt += 1
+      new_url = NameParse::transliterate new_url, true, true
     end while User.where(:url => new_url).exists?
     new_url
   end
@@ -82,5 +83,69 @@ class UserProcessor
       @user.contacts.update_all(contactable_id: usr.id) unless usr.has_address? 
       @user.temp_listings.update_all({seller_id: usr.id, status: 'new'}, {})
     end
+  end
+
+  # display image with name for autocomplete
+  def pic_with_name
+    pic = @user.photo rescue nil
+    pic ? "<img src='#{pic}' class='inv-pic' /> #{@user.name}" : nil
+  end
+
+  # set csv filename
+  def filename utype
+    (utype.blank? ? "All" : UserType.where(code: utype).first.description) + "_" + ResetDate::set_file_timestamp
+  end
+
+  def csv_data
+    { "Name" => @user.name, "Email" => @user.email, "Home Zip" => @user.home_zip, "Birth Date" => @user.birth_dt, 
+      "Enrolled" => nice_date(@user.created_at), "Last Login" => nice_date(@user.last_sign_in_at), "Gender" => @user.gender, "Age" => @user.age }
+  end
+
+  # initialize data
+  def set_flds
+    NameParse::encode_string @user.description if @user.description
+    @user.user_type_code = 'MBR' if @user.user_type_code.blank?
+    @user.user_url, @user.status = @user.name, 'active' unless @user.guest?
+  end
+
+  # convert date/time display
+  def nice_date(tm, tmFlg=true)
+    ll = LocationManager::get_lat_lng_by_zip @user.home_zip
+    ResetDate::display_date_by_loc tm, ll, tmFlg rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
+  end
+
+  # used to add pictures for new user
+  def with_picture
+    @user.pictures.build if @user.pictures.blank? || @user.pictures.size < 2
+    @user.preferences.build if @user.preferences.blank?
+    @user
+  end
+
+  def get_mbr_type
+    @user.is_business? ? 'biz' : 'mbr'
+  end
+
+  # getter for url
+  def user_url 
+    ['https://pixiboard.com/', get_mbr_type, '/', @user.url].join('') rescue nil
+  end
+
+  def local_user_path
+    ['/', get_mbr_type, '/', @user.url].join('') rescue nil
+  end
+
+  # get active sellers by category and/or location
+  def get_seller_ids cat, loc
+    Listing.get_by_city(cat, loc).uniq.pluck(:seller_id)
+  end
+
+  # get seller list based on category and location
+  def get_sellers cat, loc
+    User.includes(:pictures, :preferences).active.get_by_type('BUS').where(id: get_seller_ids(cat, loc)).select { |usr| usr.pixi_count > 1 }
+  end
+
+  # get site name from zip
+  def site_name
+    LocationManager::get_loc_name nil, nil, @user.home_zip
   end
 end

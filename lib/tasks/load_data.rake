@@ -66,8 +66,16 @@ namespace :db do
     set_user_url
   end
 
+  task :load_user_status => :environment do
+    set_user_status
+  end
+
   task :reload_pixi_posts => :environment do
     load_pixi_post_details
+  end
+
+  task :load_active_listings_counter => :environment do
+    set_active_listings_count
   end
 end
 
@@ -229,5 +237,14 @@ def set_want_status
 end
 
 def set_user_url
-  User.where(first_name: 'Sean').find_each {|u| u.update_attribute(:user_url, u.name)}
+  User.where("url IS NULL and status = ?", 'active').find_each {|u| u.update_attribute(:user_url, u.name)}
+end
+
+def set_user_status
+  User.where("status IS NULL").update_all(status: 'active')
+end
+
+def set_active_listings_count
+  User.update_all("active_listings_count = (SELECT COUNT(listings.id) FROM listings 
+    WHERE listings.seller_id = users.id AND listings.status = 'active' AND listings.end_date >= curdate())")
 end

@@ -2,6 +2,8 @@ class TempListing < ListingParent
   self.table_name = "temp_listings"
   resourcify
 
+  belongs_to :user, foreign_key: :seller_id
+
   before_create :set_flds
   after_commit :async_send_notification, :on => :update
 

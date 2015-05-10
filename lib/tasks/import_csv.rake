@@ -335,11 +335,8 @@ task :update_categories => :environment do
   end
 end
 
-
 task :update_category_pictures => :environment do
-
   CSV.foreach(Rails.root.join('db', 'category_data_042214.csv'), :headers => true) do |row|
-
     attrs = {:name             => row[1].titleize}
 
     #find category
@@ -358,6 +355,30 @@ task :update_category_pictures => :environment do
       puts "Saved category #{attrs.inspect}"
     else
       puts updated_category.errors
+    end
+  end
+end
+
+task :update_region_pictures => :environment do
+  CSV.foreach(Rails.root.join('db', 'region_data_052414.csv'), :headers => true) do |row|
+    attrs = {:name             => row[0].titleize}
+
+    #find site
+    updated_site = Site.find(:first, :conditions => ["name = ?", attrs[:name]])
+
+    #add photo
+    while updated_site.pictures.size > 0
+      updated_site.pictures.map { |pic| updated_site.pictures.delete(pic) }
+    end
+
+    picture = updated_site.pictures.build
+    picture.photo = File.new("#{Rails.root}" + row[3]) if picture
+
+    #save site
+    if updated_site.save
+      puts "Saved site #{attrs.inspect}"
+    else
+      puts updated_site.errors
     end
   end
 end

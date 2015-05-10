@@ -1,7 +1,10 @@
-<div class='neg-top center hdr mbot'><h3 class='grp-hdr'>View User</div>
-<%= render partial: 'shared/show_user_details', locals: {user: user, showFlg: true} %>
-<div class="mtop pull-right">
-  <%= link_to 'Edit', edit_user_path(user), class: 'btn btn-large' %>
-  <%= link_to 'Done', users_path(utype: user.user_type_code), class: 'btn btn-large btn-primary submit-btn' %>
+<div class="row offset2">
+  <div class="span8"><%= render partial: 'shared/user_band', locals: {user: user, pxFlg: true} %></div>
 </div>
-
+<%= render partial: 'shared/show_user_details', locals: {user: user, showFlg: true} %>
+<% if @user.is_admin? %>
+  <div class="mtop pull-right">
+    <%= link_to 'Edit', edit_user_path(user), class: 'btn btn-large' %>
+    <%= link_to 'Done', users_path(utype: user.user_type_code), class: 'btn btn-large btn-primary submit-btn' %>
+  </div>
+<% end %>

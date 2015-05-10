@@ -13,11 +13,11 @@ class ListingQueryProcessor
     Contact.get_sites(city, state)
   end
 
-  def get_states state, get_active
+  def get_states state
     Contact.uniq.where(state: state).pluck(:contactable_id)
   end
 
-  def get_cnty country, get_active
+  def get_cnty country
     Contact.uniq.where(country: country).pluck(:contactable_id)
   end
 
@@ -65,7 +65,7 @@ class ListingQueryProcessor
 
   # get active pixis by state
   def active_by_state state, flg, cid
-    exec_query(flg, set_params(cid, get_states(state, flg)))
+    exec_query(flg, set_params(cid, get_states(state)))
   end
 
   # get pixis by category id
@@ -75,7 +75,7 @@ class ListingQueryProcessor
 
   # get active pixis by country
   def active_by_country c, flg, cid
-    exec_query(flg, set_params(cid, get_cnty(c, flg)))
+    exec_query(flg, set_params(cid, get_cnty(c)))
   end
 
   # get active pixis by site id

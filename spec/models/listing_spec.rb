@@ -1492,4 +1492,22 @@ describe Listing do
       expect(Listing.sold_list.size).to eq 2
     end
   end
+
+  describe 'update_counter_cache', process: true do
+    it "updates cache on create" do
+      @listing.save!
+      expect(@user.reload.active_listings_count).to eq 1
+    end
+    it "zeroes cache on non-active status" do
+      listing = FactoryGirl.create(:listing, seller_id: @user.id, quantity: 1, status: 'active') 
+      listing.update_attribute(:status, 'inactive')
+      expect(Listing.active.size).to eq 0
+      expect(User.find(@listing.seller_id).active_listings_count).to eq 0
+    end
+    it "resets cache on update" do
+      listing = FactoryGirl.create(:listing, seller_id: @user.id, quantity: 1, status: 'inactive') 
+      listing.update_attribute(:status, 'active')
+      expect(@user.reload.active_listings_count).to eq 1
+    end
+  end
 end

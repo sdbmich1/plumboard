@@ -106,6 +106,30 @@ namespace :manage_server do
     end
   end
 
+  task :cleanup_guests => :environment do
+    User.where(guest: :true).where("created_at < ?", 1.week.ago).destroy_all
+  end
+
+  task :reprocess_listing_images => :environment do
+    Listing.active.find_each do |pixi|
+      pixi.pictures.each do |pic|
+        %w(preview medium large).each do |style|
+          pic.photo.reprocess! style.to_sym
+	end
+      end
+    end
+  end
+
+  task :reprocess_user_images => :environment do
+    User.active.find_each do |user|
+      user.pictures.each do |pic|
+        %w(thumb medium cover).each do |style|
+          pic.photo.reprocess!(style.to_sym)
+	end
+      end
+    end
+  end
+
   task :load_news_feeds => :environment do
     LoadNewsFeed.read_feeds
   end

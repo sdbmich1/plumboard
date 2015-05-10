@@ -1,0 +1,13 @@
+<div class="item-container" style="background: url(<%= asset_path(load_bkgnd(user)) %>) no-repeat;">
+  <div class='xlg-top span2'>
+    <%= render partial: 'shared/show_photo', locals: {model: user, file_name: "usr-profile-photo", psize: '80x80', display_cnt: 0 } %>
+  </div>
+  <div class='big-top sm-top neg-left span4 mbot'><span class='seller-name'><%= user.name %></span>
+    <div id='rating' class='sm-top'><%= render partial: 'shared/user_rating', locals: {model: user, colorFlg: true} %></div>
+    <%= render_user_details user, pxFlg %>
+    <%= follow_button user %>
+  </div>
+  <div class='img-right pad20 comm-section'>
+    <%= show_edit_cover_icon user %>
+  </div>
+</div>

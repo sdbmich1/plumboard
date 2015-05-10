@@ -141,7 +141,7 @@ function resizePixi () {
       orig_width = orig_width == 0 ? set_item_size() : orig_width;
       $('.item').css({'width': parseInt(orig_width*factor)});
     }
-    $(item).css({'width': '100%' });
+    $(item).css({'width': '100%'});
 
     //GET THE NEW WIDTH AFTER RESIZE
     var new_width = $(item).width();

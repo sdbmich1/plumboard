@@ -72,6 +72,7 @@ describe "Users", :type => :feature do
       page.should have_content @member.birth_dt
       page.should have_content "Facebook"
       page.should have_content "Address"
+      page.should_not have_selector('#follow-btn', visible: true)
       page.should have_link 'Edit', href: edit_user_path(@member) 
       page.should have_link 'Done', href: users_path(utype: @member.user_type_code) 
       page.should_not have_content @user.name
@@ -90,7 +91,8 @@ describe "Users", :type => :feature do
     before do
       user = create(:pixi_user) 
       init_setup user
-      visit settings_path 
+      visit user_path(@user) 
+      click_link 'Profile'
     end
 
     it "empty first name should not change a profile", js: true do
@@ -163,6 +165,7 @@ describe "Users", :type => :feature do
     end
 
     it "Changes profile file pic" do
+      visit settings_path
       expect{
               attach_file('user_pic', Rails.root.join("spec", "fixtures", "photo0.jpg"))
 	      click_save
@@ -184,15 +187,17 @@ describe "Users", :type => :feature do
       create_user_types
       user = create(:pixi_user, business_name: 'PixiBizz', gender: nil, birth_date: nil, user_type_code: 'BUS') 
       init_setup user
-      visit settings_path 
+      visit user_path(@user) 
     end
 
     it "changes business name and url", js: true do
+      click_link 'Profile'
       check_page_selectors ['#user_url, #user_business_name'], true, false
       # check_page_selectors ['#user_gender'], false
       expect { 
         fill_in 'user_business_name', :with => 'Company A'
 	fill_in "user_url", with: "PXB"
+	fill_in "user_description", with: "PXB is a great company."
 	click_save
 	}.not_to change(User, :count)
       @user.reload.url.should == "PXB"
@@ -202,10 +207,10 @@ describe "Users", :type => :feature do
   describe 'Edit user contact info', js: true do
     let(:contact) { FactoryGirl.build :contact }
     before :each do
-      @pxuser = create(:pixi_user) 
+      pxuser = create(:pixi_user) 
       create :state
-      init_setup @pxuser
-      visit settings_path
+      init_setup pxuser
+      visit user_path(@user)
       click_link 'Contact'
     end
 
@@ -313,7 +318,7 @@ describe "Users", :type => :feature do
   describe 'Change password', js: true do
     before :each do
       init_setup user
-      visit settings_path
+      visit user_path(@user)
       click_link 'Password'
     end
 

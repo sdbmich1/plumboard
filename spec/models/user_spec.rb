@@ -740,6 +740,12 @@ describe User do
       user2 = create :pixi_user, first_name: @user.first_name, last_name: @user.last_name
       expect(user2.url).not_to eq @user.url
     end
+
+    it 'generates url for business' do
+      user = build :contact_user, user_type_code: 'BUS', business_name: 'Toy Shack'
+      user.save!
+      expect(user.url).to eq user.business_name.gsub!(/\s+/, "").downcase
+    end
   end
 
   describe 'code_type' do
@@ -801,6 +807,78 @@ describe User do
       usr = create :pixi_user
       usr.move_to(nil)
       expect(usr.contacts.size).to eq 1
+    end
+  end
+
+  describe "user status" do
+    it { User.active.should_not be_nil }
+    it 'have no active users' do
+      @user.update_attribute(:status, 'inactive')
+      expect(User.active).to be_blank
+    end
+  end
+
+  describe 'set_flds' do
+    let(:user) { build :pixi_user }
+    it { expect{ user.save }.to change{ user.status } }
+    it { expect{ user.save }.to change{ user.user_type_code } }
+    it 'sets url' do
+      user.save!
+      expect( user.url ).not_to be_blank
+    end
+    it 'does not set user_type' do
+      user.user_type_code = 'AD'
+      expect{ user.save }.not_to change { user.user_type_code } 
+    end
+    it 'does not set status for guest' do
+      user.guest = true  
+      expect{ user.save }.not_to change{ user.status } 
+    end
+  end
+
+  describe 'primary_address', address: true do
+    it { expect(@user.primary_address).not_to be_blank }
+    it 'has no address' do
+      user = build :pixi_user
+      expect(user.primary_address).to be_blank
+    end
+  end
+
+  describe 'site_name' do
+    it { expect(@user.site_name).not_to be_nil }
+    it 'returns nil' do
+      @user.home_zip = '00000'
+      expect(@user.site_name).to be_nil
+    end
+  end
+
+  describe 'get_sellers' do
+    before :each, run: true do
+      @listing = create :listing, seller_id: @user.id
+      @site = create :site, org_type: 'city', name: 'SF'
+      @site.contacts.create(FactoryGirl.attributes_for(:contact, address: '101 California', city: 'SF', state: 'CA', zip: '94111'))
+      @listing.update_attribute(:site_id, @site.id)
+    end
+    it { expect(User.get_sellers(0, 1)).to be_empty }
+    it 'has no business users', run: true do
+      expect(User.get_sellers(@listing.category_id, @listing.site_id)).to be_empty
+    end
+    it 'has a business user in different site', run: true do
+      @user.update_attribute(:user_type_code, 'BUS')
+      expect(User.get_sellers(@listing.category_id, 100)).to be_empty
+    end
+    it 'has a business user in different category', run: true do
+      @user.update_attribute(:user_type_code, 'BUS')
+      expect(User.get_sellers(100, @listing.site_id)).to be_empty
+    end
+    it 'has a business user w insufficient pixis', run: true do
+      @user.update_attribute(:user_type_code, 'BUS')
+      expect(User.get_sellers(@listing.category_id, @listing.site_id)).to be_empty
+    end
+    it 'has a business user w sufficient pixis', run: true do
+      @user.update_attribute(:user_type_code, 'BUS')
+      listing = create :listing, seller_id: @user.id, title: 'Leather Coat', site_id: @site.id
+      expect(User.get_sellers(@listing.category_id, @listing.site_id)).not_to be_empty
     end
   end
 end

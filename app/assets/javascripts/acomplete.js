@@ -12,3 +12,38 @@ $(document).ready(function(){
   }
 });
 
+// set autocomplete selection value
+$(document).on("railsAutocomplete.select", "#site_name", function(event, data){
+  if ($('#recent-link').length > 0) {
+   resetBoard(); // reset board display
+  }
+  else {
+    var loc = $('#site_id').val(); // grab the selected location 
+
+    if ($('#cat-wrap').length > 0) { 
+      var url = '/categories/location?' + 'loc=' + loc;
+      processUrl(url);
+    } 
+    else if ($('#status_type').length > 0) {
+      get_pixi_url();
+    }
+    else {
+      checkLocID(loc);
+    }
+  }
+});
+
+// set autocomplete selection value
+$(document).on("railsAutocomplete.select", "#buyer_name, #slr_name, #pixan_name, #search_user", function(event, data){
+  var bname = data.item.name != undefined ? data.item.name : data.item.first_name + ' ' + data.item.last_name;
+  $('#pixan_name, #search_user, #slr_name, #buyer_name').val(bname);
+  if ($('#search_user').length > 0) {
+    $('#submit-btn').click();
+  }
+});
+
+// set autocomplete selection value
+$(document).on("railsAutocomplete.select", "#search", function(event, data){
+  $('#submit-btn').click();
+});
+

@@ -1,6 +1,6 @@
 module NameParse
 
-  def self.transliterate str, hFlg=true 
+  def self.transliterate str, hFlg=true, andFlg=false
     # Based on permalink_fu by Rick Olsen
 
     # Escape str by transliterating to UTF-8 with Iconv
@@ -11,6 +11,9 @@ module NameParse
 
     # Remove apostrophes so isn't changes to isnt
     s.gsub!(/'/, '')
+
+    # Remove ampersand so & changes to and
+    s.gsub!(/&/, 'and') if andFlg
 
     # Replace any non-letter or non-number character with a space
     s.gsub!(/[^A-Za-z0-9]+/, ' ')

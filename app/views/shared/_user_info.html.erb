@@ -2,8 +2,7 @@
 <div><%= f.text_field :last_name, :placeholder=> 'Last Name', required: true  %></div>
 <div><%= f.email_field :email, :placeholder=>'Email Address', id: 'email', required: true  %></div>
 <div>
-  <%= f.collection_select :user_type_code, check_access(user), :code, :description, {selected: user.code_type}, 
-      {class: 'mbot', id: 'ucode'} %>
+  <%= f.collection_select :user_type_code, check_access(user), :code, :description, {selected: user.code_type}, {class: 'mbot', id: 'ucode'} %>
 </div>
 <div id='mbr_code' style="<%= user.is_business? ? 'display:none' : '' %>">
   <div><%= f.label :birth_date, 'Birth Date' %>
@@ -13,11 +12,21 @@
 </div>
 <div id='bus_code' style="<%= !user.is_business? ? 'display:none' : '' %>">
   <%= f.text_field :business_name, :placeholder=>'Business Name', required: user.is_business? %>
-  <% render partial: 'shared/user_url', locals:{f: f, user: user} if show_url?(user) %>
+</div>
+<div id='bus_url' style="<%= show_url?(user) ? '' : 'display:none' %>">
+    <div class="input-prepend">
+      <span class="fld-pad add-on">https://pixiboard.com/biz/</span>
+      <%= f.text_field :url, placeholder: 'URL', value: user.url, id: 'prependedInput', class: 'width275', required: show_url?(user) %>
+    </div>
 </div>
 <div id='gender_code' style="<%= user.is_business? ? 'display:none' : '' %>" class='left-form'>
-  <%= f.select :gender, options_for_select(['Male', 'Female'], selected: user.gender), {prompt: 'Gender'}, {class: 'width240 mright', 
-    required: !user.is_business?} %></div>
-  <%= f.fields_for :preferences do |form| %>
-       <%= form.text_field :zip, placeholder: 'Home Zip', size: 5, id: 'home_zip', class: 'width120', required: true %>
-     <% end %>
+  <%= f.select :gender, options_for_select(['Male', 'Female', 'Other'], selected: user.gender), {prompt: 'Gender'}, {class: 'width240 mright', 
+    required: !user.is_business?} %>
+</div>
+<%= f.fields_for :preferences do |form| %>
+  <%= form.text_field :zip, placeholder: 'Home Zip', size: 5, id: 'home_zip', class: 'width120', required: true %>
+<% end %>
+<div id='about_acct' style="<%= !edit_account? ? 'display:none' : '' %>">
+  <%= f.text_field :description, size: 30, placeholder: 'Describe yourself or your business', required: edit_business?(user) %>
+</div>
+<%= f.hidden_field :id, value: user.id, id: 'uid', readonly: true %>

@@ -56,6 +56,21 @@ shared_examples "an address" do
   end
 end
 
+shared_examples 'a full address' do |model|
+  describe "full address", address: true do
+    before { @contact = model }
+    it 'has address' do
+      addr = [@contact.address, @contact.city, @contact.state].compact.join(', ') + ' ' + [@contact.zip, @contact.country].compact.join(', ')
+      expect(@contact.full_address).to eq(addr)
+    end
+
+    it 'has no address' do
+      @contact.address = @contact.city = @contact.state = @contact.zip = @contact.country = nil
+      expect(@contact.full_address).to be_empty
+    end
+  end
+end
+
 shared_examples "an ID" do |fld|
   describe 'attributes', base: true do
     it { should allow_value(1).for(fld.to_sym) }

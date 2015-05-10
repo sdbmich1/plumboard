@@ -61,12 +61,9 @@ class ListingDataProcessor < ListingQueryProcessor
     listing = update_fields listing, tmpFlg if tmpFlg && listing 
 
     # add dup
-    if listing.save
-      listing.delete_photo(get_file_ids(listing), 0) if tmpFlg rescue false
-      listing
-    else
-      tmpFlg ? false : listing
-    end
+    listing.save!
+    listing.delete_photo(get_file_ids(listing), 0) if tmpFlg rescue false
+    listing
   end
 
   # get existing attributes
@@ -140,6 +137,6 @@ class ListingDataProcessor < ListingQueryProcessor
 
   # set csv filename
   def filename status
-    status.capitalize + '_' + ResetDate::display_date_by_loc(Time.now, Geocoder.coordinates("San Francisco, CA"), false).strftime("%Y_%m_%d")
+    status.capitalize + '_' + ResetDate::set_file_timestamp
   end
 end

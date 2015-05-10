@@ -6,6 +6,7 @@ feature "Listings" do
   let(:user) { create(:contact_user) }
   let(:pixter) { create :pixter, user_type_code: 'PT', confirmed_at: Time.now }
   let(:admin) { create :admin, confirmed_at: Time.now }
+  let(:category) { create :category }
   let(:site) { create :site }
   let(:site_contact) { site.contacts.create attributes_for(:contact) }
   let(:condition_type) { create :condition_type, code: 'UG', description: 'Used - Good', hide: 'no', status: 'active' }
@@ -19,6 +20,14 @@ feature "Listings" do
 
   def set_site_id val=@site.id
     page.execute_script %Q{ $('#site_id').val("#{val}") }
+  end
+
+  def add_business_sellers
+    @seller1 =  create(:contact_user, user_type_code: 'BUS', business_name: 'Rhythm Music') 
+    @seller2 =  create(:contact_user, user_type_code: 'BUS', business_name: 'Star Music')   
+    @seller3 =  create(:contact_user, user_type_code: 'BUS', business_name: 'Joy Music')   
+    @seller4 =  create(:contact_user, user_type_code: 'BUS', business_name: 'Merry Music')   
+    @seller5 =  create(:contact_user, user_type_code: 'BUS', business_name: 'Geary Music')   
   end
   
   def pixi_edit_access listing
@@ -557,9 +566,30 @@ feature "Listings" do
       end
     end  
 
+    describe "featured sellers" do  
+      before(:each) do
+        add_business_sellers
+        create(:listing, title: "Guitar", seller_id: @user.id, site_id: site.id, category_id: category.id) 
+        create(:listing, title: "Acoustic Guitar", seller_id: @seller1.id, site_id: site.id, category_id: category.id) 
+        create(:listing, title: "Bass Guitar", seller_id: @seller2.id, site_id: site.id, category_id: category.id) 
+        create(:listing, title: "Electric Guitar", seller_id: @seller3.id, site_id: site.id, category_id: category.id) 
+        create(:listing, title: "Uke Guitar", seller_id: @seller4.id, site_id: site.id, category_id: category.id) 
+        create(:listing, title: "Rhodes Guitar", seller_id: @seller5.id, site_id: site.id, category_id: category.id) 
+        create(:listing, title: "Fender Guitar", seller_id: @seller1.id, site_id: site.id, category_id: category.id) 
+        create(:listing, title: "Rhythm Guitar", seller_id: @seller2.id, site_id: site.id, category_id: category.id) 
+        create(:listing, title: "White Guitar", seller_id: @seller3.id, site_id: site.id, category_id: category.id) 
+        create(:listing, title: "Black Guitar", seller_id: @seller4.id, site_id: site.id, category_id: category.id) 
+        create(:listing, title: "Blue Guitar", seller_id: @seller5.id, site_id: site.id, category_id: category.id) 
+        visit local_listings_path(cid: category.id, loc: site.id) 
+      end
+
+      it 'has featured band' do
+        page.should have_content 'Featured Sellers'
+        page.should have_content @seller1.name
+      end
+    end  
+
     describe "GET /local" do  
-      let(:category) { create :category }
-      let(:site) { create :site }
       let(:listings) { 10.times { create(:listing, seller_id: @user.id, category_id: category.id, site_id: site.id) } }
 
       before(:each) do
@@ -570,6 +600,7 @@ feature "Listings" do
       it "views pixi category page" do
         page.should have_content('Pixis')
         page.should have_content 'Guitar'
+        page.should_not have_content 'Featured Sellers'
         page.should_not have_content 'No pixis found'
       end
 

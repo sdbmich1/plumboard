@@ -6,33 +6,19 @@
     <div class='clear-all'></div>
     <div class='sm-top'>
       <table class="table table-hover table-condensed table-bordered">
-        <thead>
-          <tr>
-            <th></th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Home Zip</th>
-            <th>Birth Date</th>
-            <th>Enrolled</th>
-            <th>Last Login</th>
-            <th></th>
-          </tr>
-        </thead>
+        <%= render partial: 'shared/user_list_top' %>
         <tbody>
           <%= render partial: 'shared/user_row', collection: @users, as: :user %>
         </tbody>
       </table>
     </div> 
-
     <div id="sm-top">
       <%= page_entries_info @users, :model => 'users' %>
     </div> 
-
     <div id='user-list' class="nav pull-right">
       <%= will_paginate @users if @users.respond_to?(:total_pages) %>
     </div> 
   </div> 
-
 <% else %>
   <div class='center-wrapper'>No users found.</div>
 <% end %>

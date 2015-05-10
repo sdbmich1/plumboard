@@ -13,10 +13,11 @@ class User < ActiveRecord::Base
   # Setup accessible (or protected) attributes for your model
   attr_accessible :first_name, :last_name, :email, :password, :password_confirmation, :remember_me, :birth_date, :gender, :pictures_attributes,
     :fb_user, :provider, :uid, :contacts_attributes, :status, :acct_token, :preferences_attributes, :user_type_code, :business_name, :ref_id, :url,
-    :user_url
+    :user_url, :description, :active_listings_count
   attr_accessor :user_url
 
   before_save :ensure_authentication_token, unless: :guest_or_test?
+  before_create :set_flds
   after_commit :async_send_notification, :on => :create, unless: :guest?
 
   # define pixi relationships
@@ -130,18 +131,26 @@ class User < ActiveRecord::Base
 
   # getter & setter for url
   def user_url
-    self[:url] 
+    UserProcessor.new(self).user_url
   end
 
   def user_url=value
     self[:url] = UserProcessor.new(self).generate_url value 
   end
 
+  # getter for local url
+  def local_user_path
+    UserProcessor.new(self).local_user_path
+  end
+
   # used to add pictures for new user
   def with_picture
-    self.pictures.build if self.pictures.blank?
-    self.preferences.build if self.preferences.blank?
-    self
+    UserProcessor.new(self).with_picture
+  end
+
+  # return active types
+  def self.active
+    where(:status => 'active')
   end
 
   # eager load associations
@@ -176,7 +185,12 @@ class User < ActiveRecord::Base
 
   # get pixi count
   def pixi_count
-    pixis.size rescue 0
+    active_listings_count rescue 0
+  end
+
+  # get ratings count
+  def rating_count
+    seller_ratings.size rescue 0
   end
 
   # return whether user has pixis
@@ -249,8 +263,8 @@ class User < ActiveRecord::Base
   end
 
   # display image for user
-  def photo
-    self.pictures[0].photo.url(:tiny) rescue nil
+  def photo num=0, sz='tiny'
+    self.pictures[num].photo.url(sz.to_sym) rescue nil
   end
 
   # check if address is populated
@@ -258,10 +272,14 @@ class User < ActiveRecord::Base
     UserProcessor.new(self).has_address?
   end
 
+  # gets primary address
+  def primary_address
+    contacts.first.full_address rescue nil
+  end
+
   # display image with name for autocomplete
   def pic_with_name
-    pic = self.photo rescue nil
-    pic ? "<img src='#{pic}' class='inv-pic' /> #{self.name}" : nil
+    UserProcessor.new(self).pic_with_name
   end
 
   # return any unpaid invoices count 
@@ -290,18 +308,18 @@ class User < ActiveRecord::Base
   end
 
   # convert date/time display
-  def nice_date(tm)
-    tm.utc.getlocal.strftime('%m/%d/%Y %l:%M %p') rescue nil
+  def nice_date(tm, tmFlg=true)
+    UserProcessor.new(self).nice_date tm, tmFlg
   end
 
   # define include list
   def self.include_list
-    includes(:pictures, :preferences)
+    includes(:pictures, :preferences, :user_type)
   end
 
   # return users by type
   def self.get_by_type val
-    val.blank? ? all : where(:user_type_code => val)
+    val.blank? ? active : active.where(:user_type_code => val)
   end
   
   # check user is pixter
@@ -339,16 +357,26 @@ class User < ActiveRecord::Base
     user_type_code.upcase rescue 'MBR'
   end
 
+  # get site name
+  def site_name
+    UserProcessor.new(self).site_name
+  end
+
   # send notice & add points
   def async_send_notification
     UserProcessor.new(self).process_data
   end
 
+  def value
+    self.name
+  end
+
   # set json string
   def as_json(options={})
     super(only: [:id, :first_name, :last_name, :email, :birth_date, :gender, :current_sign_in_ip, :fb_user, :business_name], 
-          methods: [:name, :photo, :unpaid_invoice_count, :pixi_count, :unread_count, :birth_dt, :home_zip], 
-          include: {active_listings: {}, unpaid_received_invoices: {}, bank_accounts: {}, contacts: {}, card_accounts: {}})
+      methods: [:name, :photo, :unpaid_invoice_count, :pixi_count, :unread_count, :birth_dt, :home_zip, :value], 
+      include: {pictures: { only: [:photo_file_name], methods: [:photo] }, active_listings: {}, unpaid_received_invoices: {}, 
+	bank_accounts: {}, contacts: {}, card_accounts: {}})
   end
 
   # get user conversations
@@ -381,18 +409,22 @@ class User < ActiveRecord::Base
     UserProcessor.new(self).move_to usr
   end
 
+  # set key fields on save
   def set_flds
-    user_url = name unless guest?
+    UserProcessor.new(self).set_flds
+  end
+
+  # get active sellers
+  def self.get_sellers cat, loc
+    UserProcessor.new(self).get_sellers cat, loc
   end
 
   def as_csv(options={})
-    { "Name" => name, "Email" => email, "Home Zip" => home_zip, "Birth Date" => birth_dt, "Enrolled" => nice_date(created_at),
-      "Last Login" => nice_date(last_sign_in_at), "Gender" => gender, "Age" => age }
+    UserProcessor.new(self).csv_data
   end
 
   def self.filename utype
-    (utype.blank? ? "All" : UserType.where(code: utype).first.description) + "_" +
-      ResetDate::display_date_by_loc(Time.now, Geocoder.coordinates("San Francisco, CA"), false).strftime("%Y_%m_%d")
+    UserProcessor.new(self).filename utype
   end
 
   # set sphinx scopes

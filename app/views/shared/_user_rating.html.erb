@@ -1,0 +1,4 @@
+<div class="rateit <%= set_rating_class(colorFlg) %>" data-rateit-value="<%= get_rating model %>" data-rateit-ispreset="true" 
+  data-rateit-readonly="true" data-rateit-starwidth="<%= set_rating_val(colorFlg) %>" 
+  data-rateit-starheight="<%= set_rating_val(colorFlg, true) %>"></div>
+<span class="<%= get_rating_class(colorFlg) %>"><%= "(#{nth(model.rating_count)} users)" %></span>

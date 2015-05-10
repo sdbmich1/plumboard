@@ -8,11 +8,15 @@ class SettingsController < ApplicationController
   end
 
   def password
-    respond_with(@user = current_user)
+    respond_with(@usr = current_user)
   end
 
   def contact
-    respond_with(@user = current_user)
+    respond_with(@usr = current_user)
+  end
+
+  def details
+    respond_with(@usr = current_user)
   end
    
   private
@@ -20,5 +24,4 @@ class SettingsController < ApplicationController
   def page_layout
     mobile_device? ? 'form' : 'application'
   end
-
 end

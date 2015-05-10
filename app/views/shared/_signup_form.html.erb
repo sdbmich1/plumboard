@@ -2,15 +2,16 @@
     <%= form_for([resource_name, resource.with_picture], url: registration_path(resource_name), data: {validate: 'parsley'}, 
       html: { multipart: true, id: 'register-form', class: 'uform no-bot'}) do |f| %>
       <%= render partial: 'shared/error_messages', :locals => { :target => resource } %>
-      <%= render partial: 'shared/show_user_photo', locals: { f: f, model: resource, file_name: 'person_icon.jpg' } %>
-      <div id='signup' class="span4">
-          <%= render partial: 'shared/user_info', locals: { f: f, user: @user } %>
-	  <% if @user.password_required? %>
-    	    <div><%= f.password_field :password, placeholder: 'New password (min. 8 characters)', value: nil, required: true %></div>
-	  <% end %>
+      <div class="span3 center-wrapper">
+        <%= render partial: 'shared/show_user_photo', locals: {f: f, model: resource, file_name: 'person_icon.jpg', idName: 'usr_photo', mFlg: false} %>
+      </div>
+      <div id='signup' class="<%= signup_class(src) %>">
+        <%= render partial: 'shared/user_info', locals: { f: f, user: @user } %>
+	<% if @user.password_required? %>
+    	  <div><%= f.password_field :password, placeholder: 'New password (min. 8 characters)', value: nil, required: true %></div>
+	<% end %>
 	<%= render partial: set_signup_partial(src), locals: {f: f} if src == 'new' %>
       </div>
       <%= render partial: set_signup_partial(src), locals: {f: f} unless src == 'new' %>
     <% end %>
   </div>
-

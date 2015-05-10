@@ -349,7 +349,9 @@ input, select, .uneditable-input {
 .width180 {width: 180px!important}
 .width240 {width: 240px!important}
 .width250 {width: 250px!important}
+.width275 {width: 275px!important}
 .width280 {width: 280px!important}
+.width300 {width: 300px!important}
 .width320 {width: 320px!important}
 .width360 {width: 360px!important}
 .height240 {height: 240px!important}
@@ -368,6 +370,7 @@ input, select, .uneditable-input {
 .cb-label { display:inline; vertical-align:middle }
 .hdescr { font-size: 0.75em; color: #ccc; }
 .pg-text { font-size: 14px; }
+.field-hdr { font-weight: bolder; font-size: 1em; color: $pixiBlue; padding-bottom: 5px; }
 .section-hdr { font-weight: bolder; font-size: 1.5em; color: $pixiBlue; padding-bottom: 5px; }
 
 h3 { padding: 10px }
@@ -625,15 +628,19 @@ a.btn-mask {
   }
 }
 
+.fld-height { height: 28px!important; }
+.lheight { line-height: 30px!important; }
+.fld-pad { padding: 5px!important; }
+
 .pixi-select {
   margin-bottom: 0px!important;
-  height: 28px!important;
   font-size: 14px!important;
+  height: 28px!important; 
 }
 
 .cat-select {
   margin-bottom: 0px!important;
-  height: 28px!important;
+  height: 28px!important; 
   font-size: 14px!important;
   margin-top: -3px!important;
 }

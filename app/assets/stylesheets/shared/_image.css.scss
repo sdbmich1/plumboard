@@ -61,9 +61,21 @@
   overflow: hidden;
 }
 
+.home-item {
+  @extend .item;
+  margin-left: 20px;
+}
+
+.featured-item {
+  @extend .item;
+  width: 180px;
+  background: white;
+  box-shadow: none;
+  margin-left: 45px;
+}
+
 img.img-board {
   width:100%;
-  //height: 70%;
   overflow: hidden;
 }
 
@@ -150,10 +162,11 @@ img.img-board {
 
 /* user image thumbnails */
 .usr-photo {
-  height: 180px;
-  width: 180px;
+  height: 150px;
+  width: 150px;
   @extend .pic-item;
   margin: 10px 5px 10px 0;
+  border-radius: 4px;
 }
 
 .usr-sm-photo img {
@@ -172,6 +185,14 @@ img.img-board {
   margin: 10px 5px 10px 0;
 }
 
+.usr-profile-photo img {
+  float: left;
+  height: 125px!important;
+  width: 125px!important;
+  border: 1px solid #FFF; 
+  border-radius: 4px;
+}
+
 img.usr-med-photo {
   height: 100px!important;
   width: 100px!important;
@@ -183,6 +204,8 @@ img.usr-med-photo {
 .no-left {
   margin-left: 0!important;
 }
+
+.neg-left { margin-left: -20px!important; }
 
 .float-left {
   float: left;
@@ -257,6 +280,11 @@ img.checkmark  {
   height: 30px!important;
 }
 
+img.camera  {
+  width: 32px!important;
+  height: 32px!important;
+}
+
 .img-zoom {
   -webkit-transition: all .2s ease-in-out;
   -moz-transition: all .2s ease-in-out;
@@ -270,4 +298,38 @@ img.checkmark  {
   -o-transform: scale(2);
   transform: scale(2);
   z-index: 100;
+}
+
+.frame-container {
+  position: relative;
+  height: 200px;
+  width:100%!important; 
+  background-size: 100% 100%;
+  background-size: cover!important;
+  -moz-background-size: cover!important;
+  border-radius: 3px;
+}
+
+.item-container {
+  background: url("gm_grey.jpg") no-repeat;
+  @extend .frame-container;
+}
+
+.featured-container {
+  background: url("black.png") no-repeat;
+  @extend .frame-container;
+  height: 320px;
+}
+
+.featured-container > .bx-wrapper {
+  max-width: 100%!important;
+  .bx-viewport {
+    border: none!important;
+    box-shadow: none!important;
+    background: transparent!important;
+  }
+}
+
+.img-right {
+  right: 0;
 }
