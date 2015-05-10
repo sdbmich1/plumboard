@@ -1,4 +1,4 @@
-<%= link_to 'Edit', edit_temp_listing_path(listing), id: 'pixi-edit-btn', class: 'btn btn-large' unless expired_or_sold? listing %>
+<%= link_to 'Edit', edit_temp_listing_path(listing, ptype: check_edit_status(listing)), id: 'pixi-edit-btn', class: 'btn btn-large' unless expired_or_sold? listing %>
 <% if listing.edit? %>
   <%= link_to 'Remove', listing, method: :delete, confirm: msg, class: 'btn btn-large' %>
   <%= link_to 'Cancel', get_return_path, confirm: msg, class: 'btn btn-large' %>

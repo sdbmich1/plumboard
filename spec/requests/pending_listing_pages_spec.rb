@@ -5,18 +5,13 @@ describe "PendingListings", :type => :feature do
   let(:user) { FactoryGirl.create :pixi_user }
   let(:listing) { FactoryGirl.create :temp_listing_with_transaction, seller_id: user.id }
 
-  def init_setup usr
-    login_as(usr, :scope => :user, :run_callbacks => false)
-    @user = usr
-  end
-
   before(:each) do
     user = FactoryGirl.create :editor, email: 'jsnow@pixitext.com', confirmed_at: Time.now 
     init_setup user
   end
 
   describe "Review Pending Orders" do 
-    before { visit pending_listing_path(listing, status: 'pending') }
+    before { visit pending_listing_path(listing) }
 
     it 'shows content' do
       page.should have_selector('title', text: 'Review Pending Order')
@@ -30,7 +25,7 @@ describe "PendingListings", :type => :feature do
       page.should_not have_content('Saved')
       page.should have_link 'Active'
       page.should have_link 'Denied'
-      page.should have_link 'Edit', href: edit_temp_listing_path(listing)
+      page.should have_link 'Edit'
       page.should have_link 'Back', href: pending_listings_path(status: 'pending')
       page.should have_button('Deny')
       page.should have_link 'Improper Content', href: deny_pending_listing_path(listing, reason: 'Improper Content')
@@ -43,14 +38,14 @@ describe "PendingListings", :type => :feature do
 
     it "Returns to pending order list" do
       click_link 'Back'
-      page.should have_content("Pending Orders")
+      page.should have_content("Manage Pixis")
     end
 
     it 'edits content' do
       click_link 'Edit'
       page.should have_selector('.sm-thumb')
       page.should have_selector('#photo')
-      page.should have_content 'Build Pixi'
+      page.should have_content 'Build Your Pixi'
       page.should have_button 'Next'
       expect{
 	      fill_in 'Description', with: "Acoustic bass"
@@ -61,11 +56,25 @@ describe "PendingListings", :type => :feature do
       page.should have_content listing.seller_name
     end
 
+    it "adds a pixi pic" do
+      click_link 'Edit'
+      page.should have_selector('.sm-thumb')
+      page.should have_selector('#photo')
+      page.should have_content 'Build Your Pixi'
+      expect{
+              attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
+              click_button 'Next'
+      }.to change(listing.pictures,:count).by(1)
+      page.should have_content 'Review Your Pixi'
+      page.should_not have_content @user.name
+      page.should have_content listing.seller_name
+    end
+
     it 'Approves an order' do
       expect {
         click_link 'Approve'
         page.should_not have_content listing.title 
-        page.should have_content("Pending Orders")
+        page.should have_content("Manage Pixis")
 	}.to change(Listing, :count).by(1)
     end
 
@@ -73,7 +82,7 @@ describe "PendingListings", :type => :feature do
       expect {
         click_link 'Improper Content'; sleep 2
         page.should_not have_content listing.title 
-        page.should have_content("Pending Orders")
+        page.should have_content("Manage Pixis")
 	listing.reload.status.should == 'denied'
       }.to change(Listing, :count).by(0)
     end
@@ -82,7 +91,7 @@ describe "PendingListings", :type => :feature do
       expect {
         click_link 'Bad Pictures'; sleep 2
         page.should_not have_content listing.title 
-        page.should have_content("Pending Orders")
+        page.should have_content("Manage Pixis")
 	}.to change(Listing, :count).by(0)
     end
 
@@ -93,9 +102,10 @@ describe "PendingListings", :type => :feature do
 
     it "displays active listings" do
       click_link 'Active'
-      page.should have_link 'Active'
+      page.should have_content("Manage Pixis")
       page.should have_content 'Location'
       page.should have_content 'Last Updated'
+      page.should have_content listing.title
     end
   end
 
@@ -109,12 +119,10 @@ describe "PendingListings", :type => :feature do
 
     it 'shows content' do
       visit pending_listings_path(status: 'pending')
-      page.should have_content('Pending Orders')
+      page.should have_content('Manage Pixis')
       page.should_not have_content('No pixis found')
-      page.should have_selector('#denied-pixis')
-      page.should have_selector('#pending-pixis')
-      page.should have_link 'Active'
-      page.should have_link 'Denied'
+      # page.should have_selector('#denied-pixis')
+      # page.should have_selector('#pending-pixis')
       page.should have_content(@pending_listing.title)
     end
     

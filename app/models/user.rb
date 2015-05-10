@@ -314,6 +314,11 @@ class User < ActiveRecord::Base
     code_type == 'MBR' rescue false
   end
   
+  # check user is business
+  def is_business?
+    user_type_code.upcase == 'BUS' rescue false
+  end
+  
   # check user is support
   def is_support?
     code_type == 'SP' rescue false

@@ -77,7 +77,7 @@ describe InvoiceObserver do
       listing.pictures.create attributes_for(:picture)
       listing.conversations.create attributes_for :conversation, user_id: user.id, recipient_id: buyer.id
       listing.conversations.first.posts.create attributes_for :post, user_id: user.id, recipient_id: buyer.id, pixi_id: listing.pixi_id
-      @invoice.save
+      @invoice.save; sleep 3
     end
 
     it 'should send a post' do

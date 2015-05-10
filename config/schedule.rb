@@ -12,3 +12,8 @@ end
 every "30 2 * * *", :roles => [:app] do
   rake "memcached:flush"
 end
+
+# expire pixis every day
+every "30 3 * * *", :roles => [:app] do
+  rake "manage_server:close_expired_pixis"
+end

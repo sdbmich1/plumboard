@@ -449,6 +449,12 @@ describe TempListing do
     let(:user) { FactoryGirl.create :pixi_user }
     let(:temp_listing) { FactoryGirl.create :temp_listing_with_transaction, seller_id: user.id }
 
+    it "does not return new listing" do 
+      listing = FactoryGirl.build :temp_listing, seller_id: user.id 
+      new_listing = listing.dup_pixi(true) rescue nil
+      expect(new_listing).to be_nil
+    end
+
     it 'returns new listing' do
       @new_listing = @temp_listing.dup_pixi(true)
       expect(@new_listing.pixi_id).to eq(@temp_listing.pixi_id)

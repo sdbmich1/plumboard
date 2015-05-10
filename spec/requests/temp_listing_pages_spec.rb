@@ -755,7 +755,7 @@ feature "TempListings" do
       @temp = TempListing.new attr
       @temp.save
       init_setup admin
-      visit edit_temp_listing_path(@temp)
+      visit edit_temp_listing_path(@temp, ptype: 'bus')
     end
 
     it "Changes a pixi title" do
@@ -764,6 +764,15 @@ feature "TempListings" do
               click_button submit
       }.to change(TempListing,:count).by(0)
       page.should have_content 'Leather Loveseat For Sale'
+      page.should have_content 'Review Your Pixi'
+      expect(@temp.reload.seller_id).to eq user.id
+    end
+
+    it "adds a pixi pic" do
+      expect{
+              attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
+              click_button submit
+      }.to change(@temp.pictures,:count).by(1)
       page.should have_content 'Review Your Pixi'
       expect(@temp.reload.seller_id).to eq user.id
     end
