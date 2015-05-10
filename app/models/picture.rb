@@ -1,4 +1,3 @@
-require 'net/http'
 require "open-uri"
 require 'open_uri_redirections'
 require "nokogiri"
@@ -102,14 +101,7 @@ class Picture < ActiveRecord::Base
     s3 = AWS::S3.new
 
     if pic.post_process_required?
-      begin
-        # url = pic.set_file_url(pic.direct_upload_url)
-        pic.photo = URI.parse(URI.escape("#{pic.direct_upload_url}"))
-      rescue URI::InvalidURIError
-        host = url.match(".+\:\/\/([^\/]+)")[1]
-	path = url.partition(host)[2] || "/"
-	Net::HTTP.get host, path
-      end
+      pic.photo = URI.parse(URI.escape(pic.direct_upload_url))
     else
       paperclip_file_path = "photos/#{id}/original/#{direct_upload_url_data[:filename]}"
       s3.buckets[S3FileField.config.bucket].objects[paperclip_file_path].copy_from(direct_upload_url_data[:path])
@@ -119,9 +111,6 @@ class Picture < ActiveRecord::Base
     pic.save
 
     s3.buckets[S3FileField.config.bucket].objects[direct_upload_url_data[:path]].delete
-  end
-
-  def self.parse_uri pic
   end
 
   # load image from s3 upload folder
