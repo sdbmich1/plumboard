@@ -485,4 +485,19 @@ describe Invoice do
       expect(@invoice.decline_reason).to eq "No Longer Interested"
     end
   end
+
+  describe "get_pixi amt left" do
+    before :each do
+      @invoice.save!; sleep 2
+    end
+    it { expect(@invoice.get_pixi_amt_left(@listing.pixi_id)).to eq 1 }
+    it "has count > 1" do
+      @listing.update_attribute(:quantity, 3)
+      @new_inv = @user.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: @buyer.id, status: 'paid')
+      @inv_det = @new_inv.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id, quantity: 1
+      @new_inv.save!
+      expect(@listing.reload.amt_left).to eq 2
+      expect(@invoice.get_pixi_amt_left(@listing.pixi_id)).to eq 2
+    end
+  end
 end

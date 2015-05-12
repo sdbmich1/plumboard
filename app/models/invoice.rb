@@ -301,4 +301,9 @@ class Invoice < ActiveRecord::Base
       include: {seller: { only: [:first_name], methods: [:photo] }, 
                 buyer: { only: [:first_name], methods: [:photo] }})
   end
+
+  # get amount
+  def get_pixi_amt_left pid
+    listings.where(pixi_id: pid).first.amt_left rescue 1
+  end
 end

@@ -105,4 +105,9 @@ module InvoicesHelper
     str = inv.pixi_count > 1 ? ' +' : ''
     inv.pixi_title + str
   end
+
+  # get pixi amt
+  def get_amt_left amt, invoice, pid
+    amt || invoice.get_pixi_amt_left(pid)
+  end
 end

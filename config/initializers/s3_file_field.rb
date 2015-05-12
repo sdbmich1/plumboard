@@ -4,5 +4,5 @@ S3FileField.config do |c|
   c.secret_access_key = AWS_KEYS['secret_access_key'] 
   c.bucket = AWS_KEYS['bucket'] 
   c.region = 's3-' + AWS_KEYS['region'] 
-  c.url = nil
+  c.url = "https://#{c.bucket}.#{c.region}.s3.amazonaws.com/" # nil
 end

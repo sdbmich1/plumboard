@@ -46,7 +46,7 @@ class ConversationsController < ApplicationController
       redirect_to conversations_path(status: @status)
     else
       flash[:error] = "Conversation was not removed. Please try again."
-      render :nothing => true
+      render :action => :index
     end
   end
 

@@ -416,4 +416,22 @@ describe Conversation do
     end
   end
 
+  describe 'process_pixi_requests' do
+    it 'processes want request' do
+      new_conv 'want'
+      expect(PixiWant.first.quantity).to eq 2
+    end
+    
+    it 'does not process want request' do
+      new_conv 'inv'
+      expect(PixiWant.count).not_to eq 1
+    end
+
+    it 'processes want request' do
+      new_conv 'want'
+      @conv.update_attribute(:status, 'removed')
+      expect(PixiWant.count).to eq 1
+    end
+  end
+
 end

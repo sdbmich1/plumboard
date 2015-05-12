@@ -53,10 +53,6 @@ feature "Conversations" do
     sleep 3
   end
 
-  def click_remove_ok
-    page.driver.browser.switch_to.alert.accept
-  end
-
   describe 'Received conversations w no conversations' do
     before :each do
       visit listings_path 

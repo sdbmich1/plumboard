@@ -268,7 +268,7 @@ class Post < ActiveRecord::Base
     new_dt = listing.display_date created_at, false rescue created_at
   end
 
-    # add pixi requests
+  # add pixi requests
   def process_pixi_requests
     user.pixi_asks.create(pixi_id: self.pixi_id) if msg_type == 'ask'
   end
