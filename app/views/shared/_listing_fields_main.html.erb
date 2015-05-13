@@ -6,7 +6,8 @@
     <%= f.hidden_field :site_id, id: 'site_id', required: true %>
   </div>
   <div class='span2' id='price-fld' style="<%= listing.job? ? 'display:none' : '' %>"><%= f.label :price, 'Price $' %>
-    <%= f.text_field :price, step: 0.01, size: 10, value: num_display(f.object, "price"), class: 'width120', placeholder: 'Ex. 50.00', max: '15000' %>
+    <%= f.text_field :price, step: 0.01, size: 10, value: num_display(f.object, "price"), class: 'width120', placeholder: 'Ex. 50.00', 
+      max: "#{MAX_PIXI_AMT}" %>
   </div>
   <div class='span2' id='qty-fld' style="<%= !has_qty?(listing) ? 'display:none' : '' %>"><%= f.label :quantity, 'Qty' %>
     <%= f.select 'quantity', options_for_select(get_ary, :selected => set_quantity(listing)), {}, {id: 'pixi_qty', class: 'pixi-select', 

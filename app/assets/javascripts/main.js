@@ -260,9 +260,10 @@ $(document).on("click", "#build-pixi-btn", function(showElem){
 // check for valid price
 $(document).on("change", "#temp_listing_price", function(showElem){
   var price = $(this).val(); 
+  var max_price = parseInt($(this).attr('max'));
 
   // reset field
-  if(!checkPrice(price))
+  if(!checkPrice(price, max_price))
     $(this).val('');
 
   // validate fields prior to submitting form
@@ -800,9 +801,9 @@ function checkLocID(loc) {
 }
 
 // check if price is valid
-function checkPrice(price) {
-  if(price.length > 0 && parseInt(price) > 15000 && $('#pixi-form').length > 0) {
-    postFlashMsg('#form_errors','error', 'Price must be less than or equal to $15,000');
+function checkPrice(price, max_price) {
+  if(price.length > 0 && parseInt(price) > max_price && $('#pixi-form').length > 0) {
+    postFlashMsg('#form_errors','error', 'Price must be less than or equal to $' + max_price);
     return false;
   }
   return true;
