@@ -1,5 +1,11 @@
 Plumboard::Application.routes.draw do
 
+  get "favorite_sellers/create"
+
+  get "favorite_sellers/index"
+
+  get "favorite_sellers/update"
+
   devise_for :users, :controllers => { registrations: "registrations", sessions: "sessions", omniauth_callbacks: "users/omniauth_callbacks",
       confirmations: "confirmations" } 
   
@@ -146,6 +152,8 @@ Plumboard::Application.routes.draw do
 
   resources :pixi_likes, only: [:create, :destroy]
   resources :saved_listings, only: [:create, :index, :destroy]
+
+  resources :favorite_sellers, only: [:create, :index, :update]
 
   # custom routes
   get "/about", to: "pages#about" 
