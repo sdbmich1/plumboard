@@ -87,6 +87,11 @@ describe User do
     it { should validate_length_of(:url).is_at_least(2) }
     it { should allow_value('Tom').for(:url) }
     it { should_not allow_value("a").for(:url) }
+
+    it { should have_many(:favorite_sellers) }
+    it { should have_many(:sellers) }
+    it { should have_many(:inverse_favorite_sellers).class_name('FavoriteSeller').with_foreign_key('seller_id') }
+    it { should have_many(:followers) }
   end
 
   describe 'name' do

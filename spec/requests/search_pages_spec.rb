@@ -33,6 +33,15 @@ feature "Searches" do
       # page.should have_content 'Acoustic Guitar'
       # page.should have_content 'Bass Guitar'
     end
+
+    it "can follow and unfollow a business" do
+      visit '/biz/rhythmmusic'
+      page.should have_selector('#follow-btn', visible: true)
+      find('#follow-btn').click
+      page.should have_selector('#unfollow-btn', visible: true)
+      find('#unfollow-btn').click
+      page.should have_selector('#follow-btn', visible: true)
+    end
   end
 
   describe 'mbr' do

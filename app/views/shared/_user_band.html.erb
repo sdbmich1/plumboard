@@ -5,7 +5,7 @@
   <div class='big-top sm-top neg-left span4 mbot'><span class='seller-name'><%= user.name %></span>
     <div id='rating' class='sm-top'><%= render partial: 'shared/user_rating', locals: {model: user, colorFlg: true} %></div>
     <%= render_user_details user, pxFlg %>
-    <%= follow_button user %>
+    <%= follow_button @user, user %>
   </div>
   <div class='img-right pad20 comm-section'>
     <%= show_edit_cover_icon user %>
