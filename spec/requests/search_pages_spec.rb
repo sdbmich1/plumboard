@@ -38,8 +38,10 @@ feature "Searches" do
       visit '/biz/rhythmmusic'
       page.should have_selector('#follow-btn', visible: true)
       find('#follow-btn').click
+      visit '/biz/rhythmmusic'
       page.should have_selector('#unfollow-btn', visible: true)
       find('#unfollow-btn').click
+      visit '/biz/rhythmmusic'
       page.should have_selector('#follow-btn', visible: true)
     end
   end
