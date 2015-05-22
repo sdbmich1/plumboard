@@ -143,6 +143,11 @@ class User < ActiveRecord::Base
     UserProcessor.new(self).local_user_path
   end
 
+  # getter for http url string
+  def url_str
+    UserProcessor.new(self).url_str
+  end
+
   # used to add pictures for new user
   def with_picture
     UserProcessor.new(self).with_picture

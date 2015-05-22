@@ -28,7 +28,7 @@ class Listing < ListingParent
   # finds specific pixi
   def self.find_pixi pid
     includes(:pictures, :pixi_likes, :active_pixi_wants, :active_saved_listings, :category, :user => [:pictures], 
-      :comments=> {:user=>:pictures}).where(pixi_id: pid).first
+      :comments=> {:user=>[:pictures]}).where(pixi_id: pid).first
   end
 
   # set active status

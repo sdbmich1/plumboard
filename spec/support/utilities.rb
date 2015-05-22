@@ -163,7 +163,7 @@
       if notFlg
         page.should_not have_content "#{str} #{txt}"
       else
-        page.should have_content "#{str} #{txt}"
+        page.should have_content "#{str}#{txt}"
       end
     end
   end

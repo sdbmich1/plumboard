@@ -32,8 +32,8 @@ feature "Listings" do
   
   def pixi_edit_access listing
     page.should have_content listing.category_name
-    page.should have_content "Quantity: #{(listing.amt_left)}"
-    page.should have_content "Posted By: #{listing.seller_name}"
+    page.should have_content "Amount Left: #{(listing.amt_left)}"
+    page.should have_content "#{listing.seller_name}"
     page.should have_link 'Want'
     page.should have_link 'Ask'
     page.should have_link 'Cool'
@@ -47,7 +47,7 @@ feature "Listings" do
     page.should have_link 'Edit', href: edit_temp_listing_path(listing)
   end
 
-  describe "Non-signed in user" do
+  describe "Non-signed in user", contact: true do
     before(:each) do
       visit listing_path(pixi_post_listing) 
     end
@@ -89,7 +89,7 @@ feature "Listings" do
       page.should have_content 'Sign in'
       sleep 2;
       user_login user
-      page.should have_content pixi_post_listing.nice_title
+      page.should have_content pixi_post_listing.nice_title(false)
     end
   end
 
@@ -113,19 +113,19 @@ feature "Listings" do
       expect(PixiWant.first.quantity).to eql(qty)
     end
 
-  describe "Contact Owner" do 
+  describe "Contact Owner", seller: true do 
     before(:each) do
       pixi_user = create(:pixi_user)
       init_setup pixi_user
       visit listing_path(pixi_post_listing) 
     end
 
-    it "Wants a pixi", js: true do
-      want_request
-      expect(Conversation.count).to eq 1
+    context "Wants a pixi", js: true do
+      it_should_behave_like 'want_request'
     end
 
-    it "Contacts a seller", js: true do
+    context "Contacts a seller", js: true do
+      it 'asks a question' do
       expect{
           page.should have_link 'Ask'
           page.should have_link 'Cool'
@@ -136,10 +136,11 @@ feature "Listings" do
           sleep 5
           page.should have_content 'Successfully sent message to seller'
       }.to change(Post,:count).by(1)
-      want_request
-      expect(Conversation.count).to eq 1
+
+      it_should_behave_like 'want_request'
 
       expect{
+          page.find('#comment-tab').click
       	  fill_in 'comment_content', with: "Great pixi. I highly recommend it.\n" 
 	        sleep 3
       }.to change(Comment,:count).by(1)
@@ -147,6 +148,7 @@ feature "Listings" do
       page.should have_content "Great pixi. I highly recommend it." 
       page.should have_content @user.name 
       expect(page).not_to have_field('#comment_content', with: 'Great pixi')      
+    end
     end
 
     it "Asks a seller", js: true do
@@ -208,7 +210,7 @@ feature "Listings" do
           page.should have_link 'Uncool'
           page.should_not have_link 'Cool'
       }.to change(PixiLike,:count).by(1)
-      page.should have_content listing.nice_title
+      page.should have_content listing.nice_title(false)
       page.should have_content "(#{listing.liked_count})"
     end
 
@@ -219,11 +221,11 @@ feature "Listings" do
           page.should have_link 'Unsave'
       }.to change(SavedListing,:count).by(1)
 
-      page.should have_content listing.nice_title
+      page.should have_content listing.nice_title(false)
     end
   end
 
-  describe "Contact Owner w/ quantity > 1" do 
+  describe "Contact Owner w/ quantity > 1", contact: true do 
     before(:each) do
       pixi_user = create(:pixi_user)
       init_setup pixi_user
@@ -235,7 +237,7 @@ feature "Listings" do
     end
   end
 
-  describe "View Pixi w/ buyer flags set" do 
+  describe "View Pixi w/ buyer flags set", contact: true do 
     before(:each) do
       pixi_user = create(:pixi_user) 
       init_setup pixi_user
@@ -262,7 +264,7 @@ feature "Listings" do
           page.should_not have_link 'Uncool'
           page.should have_link 'Cool'
       }.to change(PixiLike,:count).by(-1)
-      page.should have_content listing.nice_title
+      page.should have_content listing.nice_title(false)
       page.should have_content "(#{listing.liked_count})"
     end
 
@@ -272,92 +274,18 @@ feature "Listings" do
 	  sleep 3
           page.should have_link 'Save'
       }.to change(SavedListing,:count).by(-1)
-      page.should have_content listing.nice_title
+      page.should have_content listing.nice_title(false)
     end
   end
 
-    def show_content
-      page.should have_content event_listing.seller_name
-      page.should have_content "Start Date: #{short_date(event_listing.event_start_date)}"
-      page.should have_content "End Date: #{short_date(event_listing.event_end_date)}"
-      #page.should have_content "Start Time: #{short_time(event_listing.event_start_time)}"
-      #page.should have_content "End Time: #{short_time(event_listing.event_end_time)}"
-      page.should have_content "Event Type: #{event_listing.event_type_descr}"
-      page.should_not have_content "Compensation: #{(event_listing.compensation)}"
-      page.should_not have_content "Condition: #{(event_listing.condition)}"
-      page.should have_content "Quantity: #{(event_listing.amt_left)}"
-    end
-
-  describe "View Event Pixi", process: true do 
-    let(:event_type) { create :event_type }
-    let(:category) { create :category, name: 'Event', category_type_code: 'event' }
-    let(:event_listing) { create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id, 
-      category_id: category.id, event_start_date: Date.tomorrow, event_end_date: Date.tomorrow, event_start_time: Time.now+2.hours, 
-      event_end_time: Time.now+3.hours, event_type_code: event_type.code, quantity: 1 ) }
-
-    before(:each) do
-      pixi_user = create(:pixi_user) 
-      init_setup pixi_user
-      visit listing_path(event_listing) 
-    end
-     
-    it "views pixi page w/ price", js: true do
-      page.should have_content "#{event_listing.nice_title}$100.00"
-      show_content
-    end
+  describe "View Event Pixi", event: true do 
+    it_should_behave_like "event_listings", 100.00
+    it_should_behave_like "event_listings", nil
   end
 
-  describe "View Event Pixi w/o price", process: true do 
-    let(:event_type) { create :event_type }
-    let(:category) { create :category, name: 'Event', category_type_code: 'event' }
-    let(:event_listing) { create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, pixi_id: temp_listing.pixi_id, 
-      category_id: category.id, event_start_date: Date.tomorrow, event_end_date: Date.tomorrow, event_start_time: Time.now+2.hours, price: nil,
-      event_end_time: Time.now+3.hours, event_type_code: event_type.code, quantity: 1 ) }
-
-    before(:each) do
-      pixi_user = create(:pixi_user) 
-      init_setup pixi_user
-      visit listing_path(event_listing) 
-    end
-     
-    it "views pixi page w/o price", js: true do
-      page.should have_content "#{event_listing.nice_title}$0"
-      show_content
-    end
-  end
-
-  describe "View Sold Pixi", process: true do 
-    let(:sold_listing) { create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, 
-      site_id: site.id, status: 'sold', quantity: 1, condition_type_code: condition_type.code) }
-    before(:each) do
-      init_setup user
-      visit listing_path(sold_listing) 
-    end
-
-    it "views pixi page" do
-      page.should have_content "Posted By: #{sold_listing.seller_name}"
-      page.should_not have_selector('#contact_content')
-      page.should_not have_selector('#comment_content')
-      page.should_not have_selector('#want-btn')
-      page.should_not have_selector('#ask-btn')
-      page.should_not have_selector('#send-want-btn')
-      page.should_not have_selector('#cool-btn')
-      page.should_not have_selector('#save-btn')
-      page.should_not have_selector('#fb-link')
-      page.should_not have_selector('#tw-link')
-      page.should_not have_selector('#pin-link')
-      page.should_not have_link 'Follow', href: '#'
-      page.should_not have_content "Quantity: #{sold_listing.amt_left}"
-      page.should have_content "Condition: #{sold_listing.condition}"
-      page.should have_content "Want (#{sold_listing.wanted_count})"
-      page.should have_content "Cool (#{sold_listing.liked_count})"
-      page.should have_content "Saved (#{sold_listing.saved_count})"
-      page.should have_content "Comments (#{sold_listing.comments.size})"
-      page.should have_content "Ask (#{sold_listing.asked_count})"
-      page.should_not have_link 'Cancel', href: root_path
-      page.should_not have_button 'Remove'
-      page.should_not have_link 'Edit', href: edit_temp_listing_path(sold_listing)
-    end
+  describe "View Owned Pixi", owned: true do 
+    it_should_behave_like 'owner_listings', 'sold', 'pixi_user'
+    it_should_behave_like 'owner_listings', 'active', 'pixi_user'
   end
 
   describe "View Compensation Pixi", process: true do 
@@ -380,75 +308,26 @@ feature "Listings" do
       page.should_not have_content "Price: #{(job_listing.price)}"
       page.should_not have_content "Event Type: #{job_listing.event_type_descr}"
       page.should_not have_content "Condition: #{(job_listing.condition)}"
-      page.should_not have_content "Quantity: #{(job_listing.amt_left)}"
+      page.should_not have_content "Amount Left: #{(job_listing.amt_left)}"
       page.should have_content "Job Type: #{(job_listing.job_type_name)}"
       page.should have_content "Compensation: #{(job_listing.compensation)}"
     end
   end
 
-  describe "Owner-viewed Pixi", process: true do 
-    before(:each) do
-      init_setup user
-      visit listing_path(listing) 
-    end
-
-    it "views pixi page" do
-      page.should have_content "Posted By: #{listing.seller_name}"
-      page.should_not have_selector('#contact_content')
-      page.should_not have_selector('#comment_content')
-      page.should_not have_selector('#want-btn')
-      page.should_not have_selector('#send-want-btn')
-      page.should_not have_selector('#cool-btn')
-      page.should_not have_selector('#save-btn')
-      page.should_not have_selector('#ask-btn')
-      page.should have_selector('#fb-link')
-      page.should have_selector('#tw-link')
-      page.should have_selector('#pin-link')
-      page.should_not have_link 'Follow', href: '#'
-      page.should have_content "Want (#{listing.wanted_count})"
-      page.should have_content "Ask (#{listing.asked_count})"
-      page.should have_content "Cool (#{listing.liked_count})"
-      page.should have_content "Saved (#{listing.saved_count})"
-      page.should have_content "Comments (#{listing.comments.size})"
-      page.should have_content "Quantity: #{(listing.amt_left)}"
-      page.should have_content "Condition: #{(listing.condition)}"
-      page.should_not have_link 'Cancel', href: root_path
-      page.should have_button 'Remove'
-      page.should have_link 'Changed Mind', href: listing_path(listing, reason: 'Changed Mind')
-      page.should have_link 'Donated Item', href: listing_path(listing, reason: 'Donated Item')
-      page.should have_link 'Gave Away Item', href: listing_path(listing, reason: 'Gave Away Item')
-      page.should have_link 'Sold Item', href: listing_path(listing, reason: 'Sold Item')
-      page.should have_link 'Edit', href: edit_temp_listing_path(listing)
-    end
+  describe "Pixter-viewed Pixi", owned: true do 
+    it_should_behave_like 'owner_listings', 'active', 'pixter'
   end
 
-  describe "Pixter-viewed Pixi" do 
-    before(:each) do
-      init_setup pixter
-      visit listing_path(pixi_post_listing) 
-    end
-
-    it "views pixi page" do
-      pixi_edit_access pixi_post_listing
-    end
+  describe "Admin-viewed Pixi", owned: true do 
+    it_should_behave_like 'owner_listings', 'active', 'admin'
   end
 
-  describe "Admin-viewed Pixi", process: true do 
-    before(:each) do
-      init_setup admin
-      visit listing_path(listing) 
-    end
-
-    it "views pixi page" do
-      pixi_edit_access listing
-    end
-  end
-
-  describe "Add Comments" do 
+  describe "Add Comments", process: true do 
     before(:each) do
       pixi_user = create(:pixi_user) 
       init_setup pixi_user
       visit listing_path(listing) 
+      page.find('#comment-tab').click
     end
 
     it "views pixi page" do
@@ -475,12 +354,13 @@ feature "Listings" do
     end
   end
 
-  describe "pagination" do
+  describe "comments pagination", process: true do
     before(:each) do
       pixi_user = create(:pixi_user) 
       init_setup pixi_user
       10.times { listing.comments.create attributes_for(:comment, user_id: pixi_user.id) } 
       visit listing_path(listing) 
+      page.find('#comment-tab').click
     end
 
     it { should have_selector('div.pagination') }
@@ -492,7 +372,7 @@ feature "Listings" do
     end
   end
 
-  describe "Check Pixis" do 
+  describe "Check Pixis", main: true do 
     before(:each) do
       editor = create :editor, email: 'jsnow@pixitext.com', confirmed_at: Time.now 
       @listing = create :listing, seller_id: editor.id
@@ -501,7 +381,7 @@ feature "Listings" do
       init_setup editor
     end
 
-    describe "Review Pixis" do 
+    context "Review Pixis" do 
       before { visit listing_path(@listing) }
 
       it "Deletes a pixi" do
@@ -667,77 +547,6 @@ feature "Listings" do
         page.should have_content @category.name_title
         page.should_not have_content @listing1.title
         page.should have_content 'Guitar'
-      end
-    end
-
-    describe "Repost button" do
-      before do
-        @active_listing = create(:listing, seller_id: @user.id, title: 'Bookshelf')
-        @active_listing.status = 'active'
-        @active_listing.save!
-        @sold_listing = create(:listing, seller_id: @user.id, title: 'Leather Briefcase') 
-        @sold_listing.status = 'sold'
-        @sold_listing.save!
-        @expired_listing = create(:listing, seller_id: @user.id, title: 'TV')
-        @expired_listing.status = 'expired'
-        @expired_listing.save!
-        @removed_listing = create(:listing, seller_id: @user.id, title: 'Suede Jacket') 
-        @removed_listing.status = 'removed'
-        @removed_listing.save!
-      end
-
-      it "should appear for expired pixi" do
-        visit listing_path(@expired_listing)
-        page.should have_link 'Repost!', href: repost_listing_path(@expired_listing)
-      end
-
-      it "should appear for sold pixi" do
-        visit listing_path(@sold_listing)
-        page.should have_link 'Repost!', href: repost_listing_path(@sold_listing)
-        page.should_not have_link 'Edit', href: edit_temp_listing_path(listing)
-        page.should_not have_button 'Remove'
-      end
-
-      it "should appear for removed pixi" do
-        visit listing_path(@removed_listing)
-        page.should_not have_link 'Edit', href: edit_temp_listing_path(listing)
-        page.should have_link 'Repost!', href: repost_listing_path(@removed_listing)
-        page.should_not have_button 'Remove'
-      end
-
-      it "should not appear for pixi with other status" do
-        visit listing_path(@active_listing)
-        page.should_not have_link 'Repost!', href: repost_listing_path(@active_listing)
-      end
-
-      it "reposts an expired pixi", js: true do
-        visit listing_path(@expired_listing)
-        page.should_not have_link 'Edit', href: edit_temp_listing_path(listing)
-        page.should_not have_button 'Remove'
-        click_link 'Repost!'
-        page.should have_content 'Pixis'    # should go back to home page
-        visit listing_path(@expired_listing)
-        page.should_not have_link 'Repost!', href: repost_listing_path(@expired_listing)   # pixi shouldn't be expired anymore
-      end
-
-      it "reposts a sold pixi", js: true do
-        visit listing_path(@sold_listing)
-        page.should_not have_link 'Edit', href: edit_temp_listing_path(listing)
-        page.should_not have_button 'Remove'
-	expect{
-          click_link 'Repost!'
-          page.should have_content 'Pixis'    # should go back to home page
-        }.to change(Listing.active,:count).by(1)
-      end
-
-      it "reposts a removed pixi", js: true do
-        visit listing_path(@removed_listing)
-        page.should_not have_link 'Edit', href: edit_temp_listing_path(listing)
-        page.should_not have_button 'Remove'
-	expect{
-          click_link 'Repost!'
-          page.should have_content 'Pixis'    # should go back to home page
-        }.to change(Listing.active,:count).by(1)
       end
     end
   end

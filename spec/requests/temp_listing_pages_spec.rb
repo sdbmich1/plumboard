@@ -517,14 +517,15 @@ feature "TempListings" do
 
     def check_buttons model
       page.should_not have_link 'Follow', href: '#'
-      page.should have_link 'Edit', href: edit_temp_listing_path(model)
+      check_page_selectors ['#fb-link', '#tw-link', '#pin-link'], false, true
+      page.should have_link 'Edit', href: edit_temp_listing_path(model, ptype:'')
       page.should have_link 'Remove', href: temp_listing_path(model)
       page.should have_link 'Done!', href: submit_temp_listing_path(model)
       page.should_not have_button 'Next'
     end
 
     it 'shows content' do
-      check_page_expectations ["Step 2 of 2:", "Posted By: #{temp_listing.seller_name}", "ID: #{temp_listing.pixi_id}", "Posted:", "Updated:", 
+      check_page_expectations ["Step 2 of 2:", "#{temp_listing.seller_name}", "ID: #{temp_listing.pixi_id}", "Posted:", "Updated:", 
        "Condition: Used", 'Acoustic Guitar'], '', false
       check_page_selectors ['#contact_content', '#comment_content'], false, true
       check_page_expectations ["Start Date:", "End Date:", "Start Time:", "End Time:", "Event Type:", "Compensation:", "Job Type:", 
@@ -537,8 +538,8 @@ feature "TempListings" do
         event_start_date: Date.today+2.days, event_end_date: Date.today+3.days, event_start_time: Time.now+2.hours, event_end_time: Time.now+3.hours,
 	title: 'The Event')
       visit temp_listing_path(@temp_listing) 
-      check_page_expectations ["Step 2 of 2:", "Posted By: #{@temp_listing.seller_name}", "ID: #{@temp_listing.pixi_id}", "Posted:", "Updated:", 
-       "Start Date:", "End Date:", "Start Time:", "End Time:", "Event Type:", 'The Event'], '', false
+      check_page_expectations ["Step 2 of 2:", "#{@temp_listing.seller_name}", "ID: #{@temp_listing.pixi_id}", "Posted:", "Updated:", 
+       "Date(s):", "Time(s):", "Event Type:", 'The Event'], '', false
       check_page_selectors ['#contact_content', '#comment_content'], false, true
       check_page_expectations ["Condition:", "Compensation:", "Job Type:", "Year:", 'VIN #:', 'Product Code:', 'Color:', 'Size:'], '', true
       check_buttons @temp_listing
@@ -550,7 +551,7 @@ feature "TempListings" do
       visit temp_listing_path(@temp_listing) 
       check_page_expectations ["Start Date:", "End Date:", "Start Time:", "End Time:", "Event Type:", "Compensation:", "Job Type:", "Year:", 'VIN #:'], '', true
       check_page_selectors ['#contact_content', '#comment_content'], false, true
-      check_page_expectations ["Step 2 of 2:", "Posted By: #{@temp_listing.seller_name}", "ID: #{@temp_listing.pixi_id}", "Posted:", "Updated:",
+      check_page_expectations ["Step 2 of 2:", "#{@temp_listing.seller_name}", "ID: #{@temp_listing.pixi_id}", "Posted:", "Updated:",
         'The Product', "Condition:", 'Product Code:', 'Color:', 'Size:'], '', false
       check_buttons @temp_listing
     end
@@ -561,7 +562,7 @@ feature "TempListings" do
       check_page_expectations ["Start Date:", "End Date:", "Start Time:", "End Time:", "Event Type:", "Compensation:", "Job Type:", "Year:", 'VIN #:',
         "Condition:", 'Product Code:', 'Color:', 'Size:', 'Quantity'], '', true
       check_page_selectors ['#contact_content', '#comment_content'], false, true
-      check_page_expectations ["Step 2 of 2:", "Posted By: #{@temp_listing.seller_name}", "ID: #{@temp_listing.pixi_id}", "Posted:", "Updated:",
+      check_page_expectations ["Step 2 of 2:", "#{@temp_listing.seller_name}", "ID: #{@temp_listing.pixi_id}", "Posted:", "Updated:",
         'The Service'], '', false
       check_buttons @temp_listing
     end
@@ -573,8 +574,8 @@ feature "TempListings" do
       check_page_expectations ["Start Date:", "End Date:", "Start Time:", "End Time:", "Event Type:", "Compensation:", "Job Type:",
         'Product Code:', 'Size:', 'Quantity:'], '', true
       check_page_selectors ['#contact_content', '#comment_content'], false, true
-      check_page_expectations ["Step 2 of 2:", "Posted By: #{@temp_listing.seller_name}", "ID: #{@temp_listing.pixi_id}", "Posted:", "Updated:",
-        "Condition:", 'The Vehicle', 'Color:', 'Blue', 'Mileage:', '50000', "Year:", '2001', 'VIN #:', '123456'], '', false
+      check_page_expectations ["Step 2 of 2:", "#{@temp_listing.seller_name}", "ID: #{@temp_listing.pixi_id}", "Posted:", "Updated:",
+        "Condition:", 'The Vehicle', 'Color:', 'Blue', 'Mileage:', '50,000', "Year:", '2001', 'VIN #:', '123456'], '', false
       check_buttons @temp_listing
     end
 
@@ -585,7 +586,7 @@ feature "TempListings" do
       check_page_expectations ["Start Date:", "End Date:", "Start Time:", "End Time:", "Event Type:", "Condition:", 
         'Product Code:', 'Size:', 'Color:', 'Mileage:', "Year:", 'VIN #:', 'Quantity'], '', true
       check_page_selectors ['#contact_content', '#comment_content'], false, true
-      check_page_expectations ["Step 2 of 2:", "Posted By: #{@temp_listing.seller_name}", "ID: #{@temp_listing.pixi_id}", "Posted:", "Updated:",
+      check_page_expectations ["Step 2 of 2:", "#{@temp_listing.seller_name}", "ID: #{@temp_listing.pixi_id}", "Posted:", "Updated:",
 	"Compensation:", "Job Type:", 'The Job'], '', false
       check_buttons @temp_listing
     end

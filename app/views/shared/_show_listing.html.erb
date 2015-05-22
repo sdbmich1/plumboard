@@ -1,18 +1,11 @@
-<% if listing %>  
   <%= render partial: 'shared/show_listing_header', locals: {listing: listing} %>
   <div class='row mbot'>
-    <div class='span6 verticalLine'>
-      <%= render partial: 'shared/listing_top', locals: {listing: listing} %>
-      <div class="clear-all"></div>
+    <div class='span6'>
       <%= render partial: 'shared/show_listing_images', locals: {listing: listing} %>
     </div>
-    <div class="span5">
-      <div id='comment_form'><%= render partial: 'shared/comments', locals: {listing: listing} %></div>
+    <div id='pixi-tabs' class="span6">
+      <%= render partial: 'shared/show_listing_details', locals: {listing: listing} %>
     </div>
   </div>
-  <%= render partial: 'shared/listing_details', locals: {listing: listing} %>
   <%= render partial: 'shared/show_listing_nav', locals: {listing: listing, edit_mode: edit_mode} %>
   <%= render partial: 'shared/listing_footer', locals: {listing: listing} %>
-<% else %>
-  <div class='center-wrapper'>Data connection lost.  Please reload page.</div>
-<% end %>

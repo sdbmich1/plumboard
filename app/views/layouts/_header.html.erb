@@ -9,14 +9,7 @@
     <div class="nav-collapse">
       <nav>
 	<div id='search'><%= display_search %></div>
-	<% if signed_in? %>
-	  <div id='msg-link'><%= render 'shared/msg_indicator' %></div>
-	  <%= render 'layouts/display_menu' %>
-	<% else %>
-          <ul class="nav pull-right">
-            <li><%= link_to "Sign in", new_user_session_path %></li>
-          </ul>
-	<% end %>
+	<%= top_menu %>
       </nav>
     </div>
   </div>

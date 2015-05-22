@@ -200,7 +200,7 @@ describe ListingsController do
     end
 
     before :each do
-      Listing.stub(:find_by_pixi_id).and_return(@listing)
+      Listing.stub(:find_pixi).and_return(@listing)
     end
 
     context "success" do
@@ -209,18 +209,18 @@ describe ListingsController do
       end
 
       it "should load the requested listing" do
-        Listing.stub(:find_by_pixi_id) { @listing }
+        Listing.stub(:find_pixi) { @listing }
         do_repost
       end
 
       it "should update the requested listing" do
-        Listing.stub(:find_by_pixi_id).with("1") { mock_listing }
+        Listing.stub(:find_pixi).with("1") { mock_listing }
         mock_listing.should_receive(:repost).and_return(:success)
         do_repost
       end
 
       it "should assign @listing" do
-        Listing.stub(:find_by_pixi_id) { mock_listing(:repost => true) }
+        Listing.stub(:find_pixi) { mock_listing(:repost => true) }
         do_repost
         assigns(:listing).should_not be_nil 
       end
@@ -237,7 +237,7 @@ describe ListingsController do
       end
 
       it "should assign listing" do
-        Listing.stub(:find_by_pixi_id) { mock_listing(:repost => false) }
+        Listing.stub(:find_pixi) { mock_listing(:repost => false) }
         do_repost
         assigns(:listing).should_not be_nil 
       end
@@ -352,7 +352,7 @@ describe ListingsController do
   describe 'GET show/:id' do
     before :each do
       @comments = mock('comments')
-      Listing.stub_chain(:find_by_pixi_id).with('1').and_return( @listing )
+      Listing.stub_chain(:find_pixi).with('1').and_return( @listing )
       @listing.stub_chain(:comments, :build).and_return( @comments )
       controller.stub!(:load_comments).and_return(@comments)
       controller.stub!(:add_points).and_return(:success)
@@ -368,7 +368,7 @@ describe ListingsController do
     end
 
     it "should load the requested listing" do
-      Listing.stub(:find_by_pixi_id).with('1').and_return(@listing)
+      Listing.stub(:find_pixi).with('1').and_return(@listing)
       do_get
     end
 
@@ -391,7 +391,7 @@ describe ListingsController do
   describe 'xhr GET show/:id' do
     before :each do
       @comments = stub_model(Comment)
-      Listing.stub!(:find_by_pixi_id).with('1').and_return( @listing )
+      Listing.stub!(:find_pixi).with('1').and_return( @listing )
       @listing.stub_chain(:comments, :build).and_return( @comments )
       controller.stub!(:load_comments).and_return(:success)
       controller.stub!(:add_points).and_return(:success)
@@ -407,7 +407,7 @@ describe ListingsController do
     end
 
     it "should load the requested listing" do
-      Listing.stub(:find_by_pixi_id).with('1').and_return(@listing)
+      Listing.stub(:find_pixi).with('1').and_return(@listing)
       do_get
     end
 
@@ -425,7 +425,7 @@ describe ListingsController do
   describe 'xhr GET pixi_price' do
     before :each do
       @listing = mock_listing
-      Listing.stub_chain(:find_by_pixi_id).and_return( @listing )
+      Listing.stub_chain(:find_pixi).and_return( @listing )
       do_get
     end
 
@@ -454,7 +454,7 @@ describe ListingsController do
 
   describe "PUT /:id" do
     before (:each) do
-      Listing.stub!(:find_by_pixi_id).and_return( @listing )
+      Listing.stub!(:find_pixi).and_return( @listing )
     end
 
     def do_update
@@ -467,18 +467,18 @@ describe ListingsController do
       end
 
       it "should load the requested listing" do
-        Listing.stub(:find_by_pixi_id) { @listing }
+        Listing.stub(:find_pixi) { @listing }
         do_update
       end
 
       it "should update the requested listing" do
-        Listing.stub(:find_by_pixi_id).with("1") { mock_listing }
+        Listing.stub(:find_pixi).with("1") { mock_listing }
 	mock_listing.should_receive(:update_attributes).with({:explanation=>"test", :status=>"removed"})
         do_update
       end
 
       it "should assign @listing" do
-        Listing.stub(:find_by_pixi_id) { mock_listing(:update_attributes => true) }
+        Listing.stub(:find_pixi) { mock_listing(:update_attributes => true) }
         do_update
         assigns(:listing).should_not be_nil 
       end
@@ -496,18 +496,18 @@ describe ListingsController do
       end
 
       it "should load the requested listing" do
-        Listing.stub(:find_by_pixi_id) { @listing }
+        Listing.stub(:find_pixi) { @listing }
         do_update
       end
 
       it "should assign @listing" do
-        Listing.stub(:find_by_pixi_id) { mock_listing(:update_attributes => false) }
+        Listing.stub(:find_pixi) { mock_listing(:update_attributes => false) }
         do_update
         assigns(:listing).should_not be_nil 
       end
 
       it "renders the edit form" do 
-        Listing.stub(:find_by_pixi_id) { mock_listing(:update_attributes => false) }
+        Listing.stub(:find_pixi) { mock_listing(:update_attributes => false) }
         do_update
 	response.should render_template(:show)
       end

@@ -1,14 +1,7 @@
-<% unless temp_listing?(listing) %>
-  <div id='comment-entry' class='valign'>
-    <div id='comment-hdr' class='sm-top left-form'><%= get_comment_header %></div>
-    <% unless signed_in? && !listing.active? %>
-      <%= link_to image_tag('rsz_plus-blue.png', class: 'social-img mleft10 mbot'), comments_path, class: 'pixi-link', remote: true,
-        title: 'Add Comment', id: 'add-comment-btn' %>
-    <% else %>
-      <%= render partial: "#{get_comment_form}", locals: {listing: listing} unless !listing.active? || listing.seller?(@user) %>
-    <% end %>
+  <div id='comment-entry'>
+    <%= add_comments listing %>
   </div> 
-  <div id='comment-item' class="<%= listing.seller?(@user) || !listing.active? ? 'sm-top' : 'med-neg-top' %>">
+  <div class='clear-all'></div>
+  <div id='comment-item' class="black-txt <%= set_comment_list_top(listing) %>">
     <%= render 'shared/comment_list' %>
   </div> 
-<% end %>

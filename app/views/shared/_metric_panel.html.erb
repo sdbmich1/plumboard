@@ -1,6 +1,18 @@
-<div id='met-panel' class='sm-top sm-bot'>
-  <span id='want-cnt'><%= "Want (#{nth(listing.wanted_count)})" %></span>
-  <span id='ask-cnt' class='mleft10'><%= "Ask (#{nth(listing.asked_count)})" %></span>
-  <span id='cool-cnt' class='mleft10'><%= "Cool (#{nth(listing.liked_count)})" %></span>
-  <span id='save-cnt' class='mleft10'><%= "Saved (#{nth(listing.saved_count)})" %></span>
+<div id='met-panel' class='mtop sm-bot'>
+  <div id='want-cnt' class='box'><div class='metric-box'>
+    <span class='metric-tag-bold'><%= "#{nth(listing.wanted_count)}" %></span><br />
+    <span class='metric-tag-small'>Wants</span></div>
+  </div>
+  <div id='ask-cnt' class='ask-box'><div class='metric-box'>
+    <span class='metric-tag-bold'><%= "#{nth(listing.asked_count)}" %></span><br />
+    <span class='metric-tag-small'>Asks</span></div>
+  </div>
+  <div id='cool-cnt' class='cool-box'><div class='metric-box'>
+    <span class='metric-tag-bold'><%= "#{nth(listing.liked_count)}" %></span><br />
+    <span class='metric-tag-small'>Cools</span></div>
+  </div>
+  <div id='save-cnt' class='save-box'><div class='metric-box'>
+    <span class='metric-tag-bold'><%= "#{nth(listing.saved_count)}" %></span><br />
+    <span class='metric-tag-small'>Saves</span></div>
+  </div>
 </div>

@@ -94,7 +94,7 @@ class ListingsController < ApplicationController
   end
 
   def load_pixi
-    @listing = Listing.find_by_pixi_id params[:id]
+    @listing = Listing.find_pixi params[:id]
   end
 
   def load_city

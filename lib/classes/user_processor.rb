@@ -125,9 +125,13 @@ class UserProcessor
     @user.is_business? ? 'biz' : 'mbr'
   end
 
+  def url_str
+    ['https://pixiboard.com/', get_mbr_type, '/'].join('')
+  end
+
   # getter for url
   def user_url 
-    ['https://pixiboard.com/', get_mbr_type, '/', @user.url].join('') rescue nil
+    [url_str, @user.url].join('') rescue nil
   end
 
   def local_user_path

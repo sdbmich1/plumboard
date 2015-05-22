@@ -36,7 +36,7 @@ class PictureProcessor
       s3 = AWS::S3.new
 
       if pic.post_process_required?
-        pic.photo = URI.parse(URI.escape(pic.direct_upload_url)) 
+        pic.photo = URI.parse(URI.escape(pic.direct_upload_url))
       else
         paperclip_file_path = "photos/#{id}/original/#{direct_upload_url_data[:filename]}"
         s3.buckets[S3FileField.config.bucket].objects[paperclip_file_path].copy_from(direct_upload_url_data[:path])
@@ -97,9 +97,9 @@ class PictureProcessor
     when 'Category'
       { styles: { :medium => "180x180#", :thumb => "125x125>", :small => "60x60>", :tiny => "30x30>"}} 
     when 'Listing', 'TempListing'
-      { styles: { :large => "300x300>", :preview => "200x200#", :medium => "180x180#", :thumb => "125x125>", :small => "60x60>", :tiny => "30x30>"}}
+      { styles: { :large => "550x450>", :preview => "200x200#", :medium => "180x180#", :thumb => "125x125>", :small => "60x60>", :tiny => "30x30>"}}
     else
-      { styles: { :large => "300x300>", :medium => "180x180#", :thumb => "125x125>", :small => "60x60>", :tiny => "30x30>"}}
+      { styles: { :large => "550x450>", :medium => "180x180#", :thumb => "125x125>", :small => "60x60>", :tiny => "30x30>"}}
     end
   end
 end

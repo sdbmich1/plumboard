@@ -1,0 +1,9 @@
+<div class='neg-left neg-top'>
+  <%= render partial: 'shared/user_details', locals: {user: listing.user, topCls: 'med-top', cls: 'mtop', pxFlg: true, colorFlg: true} %>
+</div>
+<div class='clear-all'></div>
+<%= show_listing_panel listing %>
+<%= show_metric_panel listing %>
+<div class='clear-all'></div>
+<div class='mtop mleft10 pixi-price'><%= ntc(listing.price) %></div>
+<div class='mleft10'><%= render partial: 'shared/listing_details', locals: {listing: listing} %></div>

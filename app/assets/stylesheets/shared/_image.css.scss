@@ -185,12 +185,16 @@ img.img-board {
   margin: 10px 5px 10px 0;
 }
 
-.usr-profile-photo img {
+.usr-profile-photo img, .blk-profile-photo img {
   float: left;
   height: 125px!important;
   width: 125px!important;
   border: 1px solid #FFF; 
   border-radius: 4px;
+}
+
+.blk-profile-photo img {
+  border: 1px solid #000; 
 }
 
 img.usr-med-photo {
@@ -245,6 +249,12 @@ img.tiny {
   border: 1px solid #AAAAAA; 
 }
 
+.pager-photo {
+  width: 60px!important;
+  height: 60px!important;
+  border: 1px solid #AAAAAA; 
+}
+
 .tip-image img {
   float: left;
   width: 30px!important;
@@ -252,8 +262,8 @@ img.tiny {
 }
 
 .lrg_pic_frame {
-  width: auto!important;
-  height: 300px!important;
+  width: 550px!important;
+  height: 450px!important;
 }
 
 .big_logo {
@@ -330,6 +340,49 @@ img.camera  {
   }
 }
 
+#item-pix > .bx-wrapper {
+  .bx-viewport {
+    border: none!important;
+    box-shadow: none!important;
+    background: transparent!important;
+  }
+}
+
 .img-right {
   right: 0;
+}
+
+.ftr-img {
+  margin-left: 10px!important;
+  vertical-align: middle;
+  height: 32px!important;
+  width: 32px!important;
+}
+
+.social-img {
+  height: 24px!important;
+  width: 24px!important;
+}
+
+.img-icon {
+  height: 18px;
+  width: 18px;
+}
+
+.lrg-img-icon {
+  height: 40px;
+  width: 40px;
+}
+
+.home-img {
+  margin-top: 5px!important;
+  margin-right: 15px!important;
+  vertical-align: middle;
+  height: 28px!important;
+  width: 28px!important;
+}
+
+.farrow {
+  height: 6px;
+  width: 10px;
 }

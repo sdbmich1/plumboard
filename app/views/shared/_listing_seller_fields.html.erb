@@ -1,5 +1,5 @@
 <div class='row'>
-  <div class='span7' style="<%= edit_mode?(listing) ? 'display:none' : '' %>">
+  <div class='span7' style="<%= set_style(edit_mode?(listing)) %>">
     <%= f.label :seller_id, 'Seller' %>
     <%= autocomplete_field_tag 'slr_name', listing.seller_name, autocomplete_user_first_name_temp_listings_path,
 	        :update_elements => { :id => '#seller_id' }, :placeholder => 'Seller Name', id: 'slr_name', 

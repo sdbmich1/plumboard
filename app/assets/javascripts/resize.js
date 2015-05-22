@@ -86,7 +86,7 @@ function adjustWindow() {
 
   orig_win_width = orig_win_width == 0 ? winWidth : orig_win_width;
 
-  if($('#cat-wrap').length > 0 || $('#wrap').length > 0) {
+  if($(('#cat-wrap').length > 0 || $('#wrap').length > 0) && $('#footer').length > 0) {
     var footerTop = $('#footer').position().top + footerHeight;
   } else {
     var footerTop = winHeight - footerHeight;

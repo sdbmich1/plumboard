@@ -1,11 +1,8 @@
-<% if model %>
-  <div class='center-wrapper'>
-    <div class="bxslider">
-      <% for pic in model.pictures %>
-        <div class='slide'>
-          <%= image_tag set_element(pic), class: 'lazy lrg_pic_frame', title: set_image_title, lazy: true if pic.photo? %>
-        </div>
-      <% end %>
-    </div>
-  </div>
-<% end %>
+<div class="bxslider">
+  <% for pic in model.pictures %>
+    <div class='center-wrapper'><%= show_slide pic %></div>
+  <% end %>
+</div>
+<div class="bx-pager med-top mleft5">
+  <%= set_pager model %>
+</div>

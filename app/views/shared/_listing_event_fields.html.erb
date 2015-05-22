@@ -1,4 +1,4 @@
-<div class='row' id='event-fields' style="<%= !listing.event? ? 'display:none' : '' %>">
+<div class='row' id='event-fields' style="<%= set_style(!listing.event?) %>">
   <div class='span2'> 
     <%= f.label :event_start_date, 'Start Date', class: 'med-top' %>
     <%= f.text_field :event_start_date, value: get_local_date(listing.event_start_date), size: 10, id: "start-date", required: listing.event? %>

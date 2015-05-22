@@ -1,4 +1,4 @@
-<div class='row' id='product-fields' style="<%= !listing.is_category_type?('product') ? 'display:none' : '' %>">
+<div class='row' id='product-fields' style="<%= set_style(!listing.is_category_type?('product')) %>">
   <div class='span3'>
     <%= f.label :item_color, 'Color(s)', class: 'med-top' %>
     <%= f.text_field :item_color, value: listing.item_color, placeholder: 'Enter item_color(s)' %>

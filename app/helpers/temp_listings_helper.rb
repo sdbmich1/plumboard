@@ -58,7 +58,7 @@ module TempListingsHelper
 
   # check if pixi is an item
   def is_item? listing, flg=true
-    val = %w(event employment service vehicle)
+    val = %w(employment service)
     flg ? !(listing.is_category_type? val) : (listing.is_category_type? val)
   end
 
@@ -94,14 +94,15 @@ module TempListingsHelper
 
   # show edit button
   def render_edit_button listing
-    ptype = access?(@user) && listing.seller_id != @user.id ? listing.user.is_business? ? 'bus' : 'mbr' : ''
-    link_to 'Edit', edit_temp_listing_path(listing, ptype: ptype), id: 'pixi-edit-btn', class: 'btn btn-large' unless expired_or_sold?(listing)
+    unless expired_or_sold?(listing)
+      link_to 'Edit', edit_temp_listing_path(listing, ptype: check_edit_status(listing)), id: 'pixi-edit-btn', class: 'btn btn-large' 
+    end
   end
 
   # toggle display buttons
   def toggle_buttons listing
     if listing.edit?
-      render partial: 'shared/return_buttons', locals: {model: listing}
+      render partial: 'shared/return_buttons', locals: {listing: listing}
     elsif listing.active? && controller_name == 'listings'
       render partial: 'shared/button_menu', locals: {model: listing, atype: 'Remove'}
     else

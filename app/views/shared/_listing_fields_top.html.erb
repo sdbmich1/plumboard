@@ -6,15 +6,15 @@
     <%= f.label :category_id, 'Category' %>
     <%= f.collection_select :category_id, Category.active, :id, :name_title, {:prompt => 'Select'}, {class: 'pixi-select', required: true} %>
   </div>
-  <div class='span2' id='cond-type-fld' style="<%= !has_condition?(listing) ? 'display:none' : '' %>">
+  <div class='span2' id='cond-type-fld' style="<%= set_style(!has_condition?(listing)) %>">
     <%= f.label :condition_type_code, 'Condition' %>
     <%= f.collection_select :condition_type_code, ConditionType.unhidden, :code, :nice_descr, {:prompt => 'Select'}, {class: 'pixi-select', 
       id: 'cond-type-code', required: is_item?(listing)} %>
   </div>
-  <div class='span2' id='job-fld' style="<%= !listing.job? ? 'display:none' : '' %>"><%= f.label :job_type, 'Job Type' %>
+  <div class='span2' id='job-fld' style="<%= set_style(!listing.job?) %>"><%= f.label :job_type, 'Job Type' %>
     <%= f.collection_select :job_type_code, JobType.active, :code, :job_name, {:prompt => 'Select'}, {class: 'pixi-select'} %>
   </div>
-  <div class='span2' id='event-type-fld' style="<%= !listing.event? ? 'display:none' : '' %>">
+  <div class='span2' id='event-type-fld' style="<%= set_style(!listing.event?) %>">
     <%= f.label :event_type, 'Event Type' %>
     <%= f.collection_select :event_type_code, EventType.active, :code, :nice_descr, {prompt: 'Select'}, {class: 'pixi-select', id: 'et_code'} %>
   </div>

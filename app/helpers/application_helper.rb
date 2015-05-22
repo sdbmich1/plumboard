@@ -224,16 +224,19 @@ module ApplicationHelper
     listing.pending? && controller_name == 'pending_listings'
   end
 
+  # build dynamic path for cache
+  def set_cache_path listing
+    is_pending?(listing) ? 'pending_listings' : %w(new edit).detect {|x| x == listing.status}.blank? ? 'listings' : 'temp_listings'
+  end
+
   # build dynamic cache key for pixi show page
   def cache_key_for_pixi_item(listing, fldName='title')
-    path = is_pending?(listing) ? 'pending_listings' : %w(new edit).detect {|x| x == listing.status}.blank? ? 'listings' : 'temp_listings'
-    path + "/#{listing.pixi_id}-#{listing.title}-#{listing.updated_at.to_i}-user-#{@user.id}-#{fldName}"
+    set_cache_path(listing) + "/#{listing.pixi_id}-#{listing.title}-#{listing.updated_at.to_i}-user-#{@user.id}-#{fldName}" if listing
   end
 
   # build dynamic cache key for pixi show page
   def cache_key_for_pixi_page(listing, fldName='title')
-    path = is_pending?(listing) ? 'pending_listings' : %w(new edit).detect {|x| x == listing.status}.blank? ? 'listings' : 'temp_listings'
-    path + "/#{listing.pixi_id}-#{listing.title}-#{listing.amt_left}-#{listing.updated_at.to_i}-#{fldName}"
+    set_cache_path(listing) + "/#{listing.pixi_id}-#{listing.title}-#{listing.amt_left}-#{listing.updated_at.to_i}-#{fldName}" if listing
   end
 
   # check for menu display of footer items
@@ -316,17 +319,17 @@ module ApplicationHelper
 
   # toggle font color for rating
   def get_rating_class wFlg=true
-    wFlg ? 'tiny-white' : 'tiny-black'
+    wFlg ? 'tiny-black' : 'tiny-white'
   end
 
   # toggle class for rating
   def set_rating_class flg
-    flg ? 'med-pixis' : 'smpixis'
+    flg ? 'smpixis' : 'med-pixis'
   end
 
   # toggle class for rating
   def set_rating_val flg, hFlg=false
-    flg ? hFlg ? 21 : 24 : 16
+    flg ? 16 : hFlg ? 21 : 24
   end
 
   # set list tag id for photo uploader
@@ -343,5 +346,29 @@ module ApplicationHelper
   # check usr access
   def access? usr
     can?(:manage_users, usr)
+  end
+
+  # set top menu navigation based on sign in status
+  def top_menu
+    if signed_in?
+      content_tag(:div, render('shared/msg_indicator'), id: 'msg-link')
+      render 'layouts/display_menu'
+    else
+      content_tag(:ul, content_tag(:li, link_to("Sign in", new_user_session_path)), class: "nav pull-right")
+    end
+  end
+
+  # toggle menu access based on user privileges
+  def show_post_for_menu str=[]
+    if can? :manage_pixi_posts, @user
+      str << link_to("For Seller", new_temp_listing_path(pixan_id: @user), id: 'pixi-post') 
+      str << link_to("For Business", new_temp_listing_path(pixan_id: @user, ptype: 'bus'), id: 'bus-ppost')
+      content_tag(:li, str.join(" ").html_safe)
+    end
+  end
+
+  # toggle field display visible
+  def set_style flg
+    flg ? 'display:none' : ''
   end
 end

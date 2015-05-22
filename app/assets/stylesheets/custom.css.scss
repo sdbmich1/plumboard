@@ -354,6 +354,7 @@ input, select, .uneditable-input {
 .width300 {width: 300px!important}
 .width320 {width: 320px!important}
 .width360 {width: 360px!important}
+.width-all {width: 100%!important}
 .height240 {height: 240px!important}
 .height360 {height: 360px!important}
 .height480 {height: 480px!important}
@@ -420,16 +421,6 @@ h3 { padding: 10px }
 }
 
 .bar-top { margin-top: 20px; }
-
-.img-icon {
-  height: 18px;
-  width: 18px;
-}
-
-.lrg-img-icon {
-  height: 40px;
-  width: 40px;
-}
 
 #submenu .navbar .nav, .navbar .nav > li {
   float:none;
@@ -557,6 +548,11 @@ a.btn-mask {
   height: 30px!important;
 }
 
+#comment-entry {
+  display: inline-block;
+  vertical-align: middle;
+}
+
 .recent {
   font-size: 14px;
   display: inline;
@@ -604,7 +600,7 @@ a.btn-mask {
 }
  
 #comment_content {
-  width: 365px!important;
+ // width: 365px!important;
   @extend .ta_content;
 }
 
@@ -662,7 +658,7 @@ a.btn-mask {
 
 #comment_form {
   float: left;
-  width: 365px!important;
+ // width: 365px!important;
   height: 325px!important;
 }
 
@@ -681,33 +677,12 @@ hr.vertical
   margin-right: 20px;
 }
 
-.home-img {
-  margin-top: 5px!important;
-  margin-right: 15px!important;
-  vertical-align: middle;
-  height: 28px!important;
-  width: 28px!important;
-}
-
-.ftr-img {
-  margin-left: 10px!important;
-  vertical-align: middle;
-  height: 32px!important;
-  width: 32px!important;
-}
-
 ul#social-links {
   margin-left: -10px!important;
   list-style: none;
   li {
     margin-top: 10px!important;
   }
-}
-
-.social-img {
-  vertical-align: middle;
-  height: 32px!important;
-  width: 32px!important;
 }
 
 a#home-link, a.home-link {
@@ -777,18 +752,6 @@ a.white-browse-link {
     text-decoration: none;
   }
 }
- 
-.pad10 {padding: 10px!important;}
-.pad15 {padding: 15px!important;}
-.pad20 {padding: 20px!important;}
-.pad5 {padding: 5px!important;}
-.pad-top10 {padding-top: 10px!important;}
-.pad-top20 {padding-top: 20px!important;}
-.pad-top30 {padding-top: 30px!important;}
-.pad-bot10 {padding-bottom: 10px!important;}
-.pad-bot5 {padding-bottom: 5px!important;}
-.pad-left20 {padding-left: 20px!important;}
-.pad-right20 {padding-right: 20px!important;}
 
 .ui-autocomplete {
   z-index: 9999 !important;
