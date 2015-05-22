@@ -47,6 +47,9 @@ class Ability
 
       can :update, Listing, :user_id => user.id
 
+      can [:create, :index, :update], FavoriteSeller, :user_id => user.id
+      can [:index], FavoriteSeller, :seller_id => user.id
+
       if user.has_role? :editor
         can [:read, :update], TempListing, status: 'pending'
         can :access, '/pending_listings'

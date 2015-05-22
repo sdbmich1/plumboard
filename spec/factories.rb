@@ -443,4 +443,10 @@ FactoryGirl.define do
     pixi_post_id 1
     pixi_id "xxxx"
   end
+
+  factory :favorite_seller do
+    user_id 1
+    seller_id 2
+    status "active"
+  end
 end

@@ -44,6 +44,10 @@ class User < ActiveRecord::Base
   has_many :user_interests, :dependent => :destroy
   has_many :interests, :through => :user_interests
   has_many :user_pixi_points, dependent: :destroy
+  has_many :favorite_sellers
+  has_many :sellers, through: :favorite_sellers
+  has_many :inverse_favorite_sellers, :class_name => "FavoriteSeller", :foreign_key => "seller_id"
+  has_many :followers, :through => :inverse_favorite_sellers, :source => :user
 
   # define message relationships
   has_many :posts, dependent: :destroy
