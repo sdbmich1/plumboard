@@ -321,13 +321,20 @@ module ListingsHelper
   def set_banner btype
     case btype
       when 'biz'
-        usr = User.find_by_url @url rescue nil
-        content_tag(:div, render(partial: 'shared/user_band', locals: {user: usr, pxFlg: false}), class: ["mneg-top", "mbot"]) if usr
+        set_biz_banner
       when 'loc'
-        site = Site.find @loc rescue nil
-        content_tag(:div, render(partial: 'shared/location_band', locals: {site: site}), class: ["mneg-top", "mbot"]) if site
-      else
+        set_loc_banner
     end
+  end
+
+  def set_biz_banner
+    usr = User.find_by_url @url rescue nil
+    content_tag(:div, render(partial: 'shared/user_band', locals: {user: usr, pxFlg: false, colorFlg: false}), class: ["mneg-top", "mbot"]) if usr
+  end
+
+  def set_loc_banner
+    site = Site.find @loc rescue nil
+    content_tag(:div, render(partial: 'shared/location_band', locals: {site: site}), class: ["mneg-top", "mbot"]) if site
   end
 
   # check ownership
@@ -387,12 +394,13 @@ module ListingsHelper
 
   # show follow button if business
   def follow_button buyer, seller
-    if seller.is_business? && buyer.id != seller.id && controller_name != 'users'
+    if seller.is_business? && buyer.id != seller.id && controller_name != 'users' && action_name != 'show'
       favorite = FavoriteSeller.find_by_user_id_and_seller_id(buyer.id, seller.id)
       toggle_follow_btn seller, favorite
     end
   end
 
+  # toggle button
   def toggle_follow_btn seller, favorite
     if favorite && favorite.status != 'removed'
       button_to('- Unfollow', favorite_seller_path(id: favorite.id, seller_id: seller.id),

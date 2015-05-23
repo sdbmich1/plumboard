@@ -1,5 +1,5 @@
 <div class="row offset2">
-  <div class="span8"><%= render partial: 'shared/user_band', locals: {user: user, pxFlg: true} %></div>
+  <div class="span8"><%= render partial: 'shared/user_band', locals: {user: user, pxFlg: true, colorFlg: false} %></div>
 </div>
 <%= render partial: 'shared/show_user_details', locals: {user: user, showFlg: true} %>
 <% if @user.is_admin? %>

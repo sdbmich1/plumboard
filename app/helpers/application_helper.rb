@@ -324,12 +324,12 @@ module ApplicationHelper
 
   # toggle class for rating
   def set_rating_class flg
-    flg ? 'smpixis' : 'med-pixis'
+    flg ? 'bmed-pixis' : 'med-pixis'
   end
 
   # toggle class for rating
   def set_rating_val flg, hFlg=false
-    flg ? 16 : hFlg ? 21 : 24
+    hFlg ? 21 : 24
   end
 
   # set list tag id for photo uploader
