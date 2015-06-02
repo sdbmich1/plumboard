@@ -3,10 +3,8 @@
     <div id="comment_errors">
       <%= render partial: 'shared/error_messages', :locals => { :target => f.object } %>
     </div>
-
     <%= f.hidden_field 'pixi_id', value: listing.pixi_id %>
     <%= f.hidden_field 'user_id', value: @user.id %>
-
     <div id="cmnt_content">
       <%= f.text_area 'content', placeholder: 'Add a comment to item and press Enter to submit...', class: 'span5', required: true %>  
       <%= f.submit 'Comment', :class=>'btn btn-warning', id: 'comment-btn' %>

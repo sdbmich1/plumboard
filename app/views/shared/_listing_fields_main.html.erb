@@ -5,17 +5,17 @@
 	        :update_elements => { :id => '#site_id' }, :placeholder => 'Enter School, City or Neighborhood', required: true %> 
     <%= f.hidden_field :site_id, id: 'site_id', required: true %>
   </div>
-  <div class='span2' id='price-fld' style="<%= listing.job? ? 'display:none' : '' %>"><%= f.label :price, 'Price $' %>
+  <div class='span2' id='price-fld' style="<%= set_style(listing.job?) %>"><%= f.label :price, 'Price $' %>
     <%= f.text_field :price, step: 0.01, size: 10, value: num_display(f.object, "price"), class: 'width120', placeholder: 'Ex. 50.00', 
       max: "#{MAX_PIXI_AMT}" %>
   </div>
-  <div class='span2' id='qty-fld' style="<%= !has_qty?(listing) ? 'display:none' : '' %>"><%= f.label :quantity, 'Qty' %>
+  <div class='span2' id='qty-fld' style="<%= set_style(!has_qty?(listing)) %>"><%= f.label :quantity, 'Qty' %>
     <%= f.select 'quantity', options_for_select(get_ary, :selected => set_quantity(listing)), {}, {id: 'pixi_qty', class: 'pixi-select', 
       required: is_item?(listing)} %>
   </div>
-  <div class='span2' id='yr-fld' style="<%= !listing.has_year? ? 'display:none' : '' %>"><%= f.label 'Year' %>
+  <div class='span2' id='yr-fld' style="<%= set_style(!listing.has_year?) %>"><%= f.label 'Year' %>
     <%= f.select 'year_built', options_for_select(get_year_ary, :selected => listing.year_built), {:prompt => 'Select'}, 
           {id: 'yr_built', class: 'pixi-select'} %></div>
-  <div class='span4' id='comp-fld' style="<%= !listing.job? ? 'display:none' : '' %>"><%= f.label :compensation %>
+  <div class='span4' id='comp-fld' style="<%= set_style(!listing.job?) %>"><%= f.label :compensation %>
     <%= f.text_field :compensation, id: 'salary' %></div>
 </div>

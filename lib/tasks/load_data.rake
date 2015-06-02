@@ -245,6 +245,5 @@ def set_user_status
 end
 
 def set_active_listings_count
-  User.update_all("active_listings_count = (SELECT COUNT(listings.id) FROM listings 
-    WHERE listings.seller_id = users.id AND listings.status = 'active' AND listings.end_date >= curdate())")
+  Listing.active.find_each { |listing| User.reset_counters(listing.seller_id, :active_listings) }
 end

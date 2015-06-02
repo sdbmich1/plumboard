@@ -97,7 +97,7 @@
 /* DIRECTION CONTROLS (NEXT / PREV) */
 
 .bx-wrapper .bx-prev {
-	left: 10px;
+	left: 0;
 	background: url(pxb_left_arrow.png) no-repeat 0 0px;
 }
 

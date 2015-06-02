@@ -39,6 +39,7 @@ FactoryGirl.define do
   end
 
   factory :pixter, :class => "User", :parent => :pixi_user do
+    after(:build) {|usr| usr.user_type_code = 'PT' }
     after(:create) {|usr| usr.add_role(:pixter)}
   end
 

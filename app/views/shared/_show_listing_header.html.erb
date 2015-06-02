@@ -1,7 +1,9 @@
 <% cache cache_key_for_pixi_page(listing, 'header') do %>
   <div class='row'>
-    <div class="med-neg-top span12">
-      <h4 class='mbot'><%= set_title listing %></h4>
+    <div class="<%= get_header_cls listing %> span12">
+      <span class='pixi-title'><%= show_listing_title listing, false %></span>
+      <%= show_social_links listing %>
+      <div class='med-neg-top black'><hr></div>
     </div>
   </div>
 <% end %>

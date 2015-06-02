@@ -1,4 +1,4 @@
-<div class='row' id='vehicle-fields' style="<%= !listing.is_category_type?('vehicle') ? 'display:none' : '' %>">
+<div class='row' id='vehicle-fields' style="<%= set_style(!listing.is_category_type?('vehicle')) %>">
   <div class='span2'>
     <%= f.label :car_id, 'VIN #', class: 'med-top' %>
     <%= f.text_field :car_id, value: listing.car_id, size: 16, placeholder: 'Enter VIN #' %>

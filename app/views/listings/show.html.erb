@@ -1,9 +1,7 @@
-<% if @listing %>
-  <% provide(:title, @listing.nice_title(false)) %>
+  <% provide(:title, show_listing_title(@listing, false)) %>
   <%= content_for :subhead do %>
     <%= render partial: 'shared/navbar', locals: { menu_name: 'Pixi' } %>
   <% end %>
   <%= content_for :content do %>
-    <%= render partial: 'shared/show_listing', locals: {listing: @listing, edit_mode: false} %>
+    <%= show_listing @listing, false %>
   <% end %>
-<% end %>

@@ -66,12 +66,26 @@ module UsersHelper
   end
 
   # toggle user display text
-  def render_user_details usr, flg
+  def render_user_details usr, flg, colorFlg
     txt = flg ? "Pixis Posted: #{usr.pixi_count}" : "#{usr.description}"
-    content_tag(:span, txt, class: 'pxp-tag-line')
+    render_txt txt, (colorFlg ? 'black-section-title' : 'pxp-tag-line')
   end
 
   def edit_business? usr
     edit_account? && usr.is_business?
+  end
+
+  # toggle user display name text
+  def render_seller_name usr, flg
+    txt = flg ? link_to(usr.name, usr.local_user_path) : usr.name
+    render_txt txt, (flg ? 'black-seller-name' : 'seller-name')
+  end
+
+  def render_txt txt, cls
+    content_tag(:span, txt, class: cls)
+  end
+
+  def set_profile_photo flg
+    flg ? 'blk-profile-photo' : 'usr-profile-photo'
   end
 end

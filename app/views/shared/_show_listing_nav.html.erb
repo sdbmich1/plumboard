@@ -1,11 +1,7 @@
-  <% if signed_in? %>
-    <div class="row">
-      <div class="mtop pull-right">
-        <% unless pending_listings? %>
-          <%= render partial: 'shared/review_nav', locals: { listing: listing } if listing.editable?(@user) %>
-          <%= render partial: 'shared/show_temp_listing', locals: {listing: listing} if edit_mode %>
-        <% end %>
-      </div>
-      <%= check_pending_pixi listing %>
-    </div>
-  <% end %>
+<div class="row">
+  <div class="mtop pull-right">
+    <%= listing_nav listing %>
+    <%= temp_listing_nav listing, edit_mode %>
+    <%= show_listing_nav listing %>
+  </div>
+</div>

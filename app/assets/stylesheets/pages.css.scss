@@ -88,6 +88,18 @@ body {
   font-size: 16px;
 }
 
+.metric-tag-small {
+  @extend .helv-white;
+  font-size: 12px;
+  font-weight: medium;
+}
+
+.metric-tag-bold {
+  @extend .helv-white;
+  font-size: 24px;
+  font-weight: bold;
+}
+
 .tag-line {
   text-shadow: 2px 2px #000;
   @extend .helv-white;
@@ -104,6 +116,12 @@ body {
 .seller-name {
   @extend .helv-white;
   font-size: 26px;
+}
+
+.black-seller-name {
+  @extend .seller-name;
+  color: black;
+  font-size: 22px;
 }
 
 .trend-tag {
@@ -136,6 +154,19 @@ body {
 .trend-tag-line {
     @extend .trend-tag-norm;
     font-size: 20px;
+}
+
+.black-section-title {
+  @extend .pxp-tag-line;
+  color: black;
+  font-size: 18px;
+}
+
+.black-txt {
+  @extend .pxp-tag-line;
+  display: inline-block;
+  color: black;
+  font-size: 13px;
 }
 
 .px-calendar {

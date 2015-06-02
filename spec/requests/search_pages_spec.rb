@@ -25,7 +25,7 @@ feature "Searches" do
     end
 
     it 'renders seller page for user' do
-      visit '/biz/rhythmmusic'
+      visit seller.local_user_path
       page.should have_content seller.name
       page.should have_content seller.description
       page.should have_selector('#follow-btn', visible: true)

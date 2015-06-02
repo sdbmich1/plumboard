@@ -101,8 +101,7 @@ module ListingsHelper
 
   # get host
   def get_host
-    (Rails.env.test? || Rails.env.development?) ? "localhost:3000" :
-        ((Rails.env.staging?) ? "test.pixiboard.com" : PIXI_WEB_SITE)
+    (Rails.env.test? || Rails.env.development?) ? "localhost:3000" : ((Rails.env.staging?) ? "test.pixiboard.com" : PIXI_WEB_SITE)
   end
    
   # set absolute url for current pixi
@@ -130,7 +129,7 @@ module ListingsHelper
     'https://www.facebook.com/dialog/feed?app_id=' + API_KEYS['facebook']['api_key'] + 
     '&display=popup&caption=Check out this pixi on Pixiboard!' +
     '&link=' + get_url(listing) + '&redirect_uri=' + get_url(listing) + 
-    '&picture=' + get_photo(listing) + '&name=' + listing.nice_title + '&description=' + listing.description
+    '&picture=' + get_photo(listing) + '&name=' + listing.nice_title(false) + '&description=' + listing.description
   end
 
   # set path based on like existance and type 
@@ -224,7 +223,7 @@ module ListingsHelper
   # get region for show pixi display menu
   def get_current_region listing
     if listing
-      loc, loc_name = LocationManager::get_region listing.site_name
+      loc, loc_name = LocationManager::get_region listing.site_name rescue nil
       link_to loc_name, category_listings_path(cid: listing.category_id, loc: loc)
     end
   end
@@ -322,13 +321,20 @@ module ListingsHelper
   def set_banner btype
     case btype
       when 'biz'
-        usr = User.find_by_url @url rescue nil
-        content_tag(:div, render(partial: 'shared/user_band', locals: {user: usr, pxFlg: false}), class: ["mneg-top", "mbot"]) if usr
+        set_biz_banner
       when 'loc'
-        site = Site.find @loc rescue nil
-        content_tag(:div, render(partial: 'shared/location_band', locals: {site: site}), class: ["mneg-top", "mbot"]) if site
-      else
+        set_loc_banner
     end
+  end
+
+  def set_biz_banner
+    usr = User.find_by_url @url rescue nil
+    content_tag(:div, render(partial: 'shared/user_band', locals: {user: usr, pxFlg: false, colorFlg: false}), class: ["mneg-top", "mbot"]) if usr
+  end
+
+  def set_loc_banner
+    site = Site.find @loc rescue nil
+    content_tag(:div, render(partial: 'shared/location_band', locals: {site: site}), class: ["mneg-top", "mbot"]) if site
   end
 
   # check ownership
@@ -386,17 +392,14 @@ module ListingsHelper
     end 
   end
 
-  # show follow button if business
-  def follow_button buyer, seller
-    if seller.is_business? && buyer.id != seller.id && controller_name != 'users'
-      favorite = FavoriteSeller.find_by_user_id_and_seller_id(buyer.id, seller.id)
-      if favorite && favorite.status != 'removed'
-        button_to('Unfollow', favorite_seller_path(id: favorite.id, seller_id: seller.id),
+  # toggle button
+  def toggle_follow_btn seller, favorite
+    if favorite && favorite.status != 'removed'
+      button_to('Unfollow', favorite_seller_path(id: favorite.id, seller_id: seller.id),
           :method => :put, id: 'unfollow-btn', class: 'btn btn-primary font-bold span2', remote: true)
-      else
-        button_to('Follow', favorite_sellers_path(seller_id: seller.id),
+    else
+      button_to('Follow', favorite_sellers_path(seller_id: seller.id),
           id: 'follow-btn', class: 'btn btn-primary submit-btn span2', remote: true)
-      end
     end
   end
 
@@ -409,6 +412,166 @@ module ListingsHelper
   def show_repost_button listing
     if repost? listing
       link_to "Repost!", repost_listing_path(listing), method: :put, class: "btn btn-large btn-primary submit-btn", id: 'px-repost-btn' 
+    end
+  end
+
+  # check pixi is owned or inactive
+  def owned_or_inactive? listing
+    !listing.active? || listing.seller?(@user)
+  end
+
+  # set arrow for pixi details
+  def arrow_img
+    image_tag('pxb_features_arrow.png', class: 'farrow')
+  end
+
+  # show feature content for pixi
+  def show_content txt
+    content_tag(:div, arrow_img + ' ' + content_tag(:span, txt), class: 'v-align')
+  end
+
+  # process pixi feature content
+  def process_content arr, str=[]
+    arr.map { |item| str << show_content(item) }
+    content_tag(:div, str.join("").html_safe, class: 'med-top black-txt')
+  end
+
+  # display listing fields
+  def show_top_fields item, str=[]
+    str << "Condition: #{item.condition}" if is_item?(item) && item.condition
+    str << "Color: #{item.color}" unless item.color.blank?
+    str << "Amount Left: #{get_item_amt(item)}" if item_available?(item, true, 'quantity')
+    process_content str
+  end
+
+  def show_job_fields item
+    process_content ["Job Type: #{item.job_type_name}", "Compensation: #{item.compensation}"] if item.job?
+  end
+
+  def show_event_fields item, str=[]
+    if item.event?
+      str << "Event Type: #{item.event_type_descr}"
+      str << "Date(s): #{short_date item.event_start_date} - #{short_date item.event_end_date}"
+      str << "Time(s): #{short_time item.event_start_time} - #{short_time item.event_end_time}"
+      process_content str
+    end
+  end
+
+  def show_product_fields listing, str=[]
+    if listing.is_category_type?('product')
+      str << "Product Code: #{listing.other_id}" unless listing.other_id.blank?
+      str << "Size: #{listing.item_size}" unless listing.item_size.blank?
+      process_content str
+    end 
+  end
+
+  def show_vehicle_fields listing, str=[]
+    if listing.is_category_type?('vehicle')
+      str << "Year: #{listing.year_built}" if has_year?(listing)
+      str << "VIN #: #{listing.other_id}" if listing.other_id
+      str << "Mileage: #{number_with_delimiter(listing.mileage)}" if listing.mileage
+      process_content str
+    end
+  end
+
+  # set thumbnails
+  def set_pager model, i=0, images=[]
+    model.pictures.each do |pic| 
+      images << link_to(image_tag(get_pixi_image(pic, 'small'), class: 'pager-photo'), '#', 'data-slide-index'=>"#{i}") if pic.photo?
+      i+=1
+    end
+    content_tag(:span, images.join(" ").html_safe)
+  end
+
+  # show panel buttons when active for buyers
+  def show_listing_panel listing
+    unless !listing.active? || listing.seller?(@user)
+      content_tag(:div, render(partial: 'shared/listing_panel', locals: {listing: listing}), class: 'mleft10')
+    end
+  end
+
+  def show_metric_panel listing
+    content_tag(:div, render(partial: 'shared/metric_panel', locals: {listing: listing}), class: 'mleft10') if show_metric_panel? listing
+  end
+
+  def add_comments listing, str=[]
+    unless signed_in? && listing.active?
+      show_comment_btn listing
+    else
+      render partial: "#{get_comment_form}", locals: {listing: listing} unless owned_or_inactive? listing
+    end
+  end
+
+  # show comment button
+  def show_comment_btn listing, str=[]
+    img = image_tag('rsz_plus-blue.png', class: 'v-align social-img mleft10')
+    str << content_tag(:span, 'Add Comment', class: 'black-txt v-align')
+    str << link_to(img, comments_path, class: 'pixi-link', remote: true, title: 'Add Comment', id: 'add-comment-btn')
+    content_tag(:div, str.join(" ").html_safe)
+  end
+
+  # sets class for correct top spacing for comment list
+  def set_comment_list_top listing
+    owned_or_inactive?(listing) ? 'sm-top' : 'med-neg-top' 
+  end
+
+  # toggle tabs based on model
+  def set_tab_headers listing, str=[]
+    str << content_tag(:li, link_to('Details', '#details', 'data-toggle'=>'tab', id: 'detail-tab'), class: 'active')
+    str << content_tag(:li, link_to("#{get_comment_header}", '#comments', 'data-toggle'=>'tab', id: 'comment-tab')) unless temp_listing?(listing)
+    str << content_tag(:li, link_to("Map", '#map', 'data-toggle'=>'tab', id: 'map-tab')) if listing.user.is_business? && !temp_listing?(listing)
+    content_tag(:ul, str.join(" ").html_safe, class: "width-all nav nav-tabs black-txt")
+  end
+
+  # show comments if active listing
+  def show_comments listing
+    render(partial: 'shared/comments', locals: {listing: listing}) unless temp_listing?(listing)
+  end
+
+  def show_listing_nav listing
+    check_pending_pixi listing if signed_in?
+  end
+
+  def listing_nav listing
+    render(partial: 'shared/review_nav', locals: { listing: listing }) if signed_in? && listing.editable?(@user) && !pending_listings?
+  end
+
+  def temp_listing_nav listing, edit_mode
+    render(partial: 'shared/show_temp_listing', locals: {listing: listing}) if signed_in? && edit_mode && !pending_listings?
+  end
+
+  def show_listing_title listing, flg
+    listing.nice_title flg if listing
+  end
+
+  def show_listing listing, flg
+    render partial: 'shared/show_listing', locals: {listing: listing, edit_mode: flg} if listing
+  end
+
+  def get_header_cls listing
+    temp_listing?(listing) ? 'med-top' : 'ng-top'
+  end
+
+  def show_images listing, fname, sz
+    render partial: 'shared/photos', locals: {model: listing, file_name: fname, psize: '120x120'} if listing
+  end
+
+  def show_social_links listing
+    render partial: 'shared/social_links', locals: {listing: listing} unless temp_listing?(listing)
+  end
+
+  def show_slide pic
+    content_tag(:div, image_tag(set_element(pic), class: 'lazy lrg_pic_frame', title: set_image_title, lazy: true), class:'slide') if pic.photo?
+  end
+
+  def show_listing_menu listing, str=[]
+    if listing
+    str << content_tag(:li, get_current_region(listing))
+    str << content_tag(:span, '|', class: 'divider')
+    str << content_tag(:li, link_to(listing.site_name, category_listings_path(cid: listing.category_id, loc: listing.site_id))) 
+    str << content_tag(:span, '|', class: 'divider')
+    str << content_tag(:li, listing.category_name, class: 'med-top mleft10')
+    content_tag(:ul, str.join(" ").html_safe, class: "nav")
     end
   end
 end

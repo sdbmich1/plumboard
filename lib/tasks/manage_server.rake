@@ -123,7 +123,7 @@ namespace :manage_server do
   task :reprocess_user_images => :environment do
     User.active.find_each do |user|
       user.pictures.each do |pic|
-        %w(thumb medium cover).each do |style|
+        %w(tiny small thumb medium cover).each do |style|
           pic.photo.reprocess!(style.to_sym)
 	end
       end

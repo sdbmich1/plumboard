@@ -1,0 +1,17 @@
+<div class="row mtop">
+  <div class="span6">
+    <%= render partial: 'shared/listing_section_header', locals: {txt: 'Features'} %>
+    <div class='row med-neg-top'>
+      <%= render partial: 'shared/listing_feature_details', locals: {listing: listing} %>
+    </div>
+  </div>
+</div>
+<div class="row med-top">
+  <div class="span6">
+    <%= render partial: 'shared/listing_section_header', locals: {txt: 'Description'} %>
+    <div class='med-neg-top'>
+      <%= simple_format(listing.summary, {class: 'black-txt'}, :sanitize => false) %><br />
+    </div>
+  </div>
+</div>
+

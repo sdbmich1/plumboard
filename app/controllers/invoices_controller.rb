@@ -79,7 +79,7 @@ class InvoicesController < ApplicationController
     end
   end
 
-  private
+  protected
 
   def page_layout
     mobile_device? ? 'form' : 'application'
@@ -91,6 +91,12 @@ class InvoicesController < ApplicationController
 
   def load_invoice
     @invoice = Invoice.inc_list.find params[:id]
+  end
+
+  # parse results for active items only
+  def get_autocomplete_items(parameters)
+    items = super(parameters)
+    items = items.active rescue items
   end
 
   def set_params

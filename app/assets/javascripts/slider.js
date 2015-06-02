@@ -12,6 +12,7 @@ function load_slider(cntl) {
       minSlides: 2,
       auto: false,
       pager: cntl,
+      pagerCustom: '.bx-pager',
       autoControls: false,
       mode: 'fade',
       onSlideAfter: function() {

@@ -555,11 +555,7 @@ $(document).on("change", "#site_id, #category_id", function() {
 
 // check for recent link click
 $(document).on("click", "#recent-link", function() {
-
-  // reset board
   resetBoard();
-  
-  //prevent the default behavior of the click event
   return false;
 });
 
@@ -625,7 +621,6 @@ $(document).on('click', '.post-menu', function(e) {
 // toggle seller comments
 $(document).on('click', '#seller-cmt-btn', function(e) {
   $('#cmt-fld').toggle();
-
   $(this).text(function(i, text){
     return text === "Add Comment" ? "Hide Comment" : "Add Comment";
   });
@@ -728,7 +723,6 @@ function keySelectEnter(e, $this) {
 var processFlg = false;
 
 $(window).scroll(function(e) {
-
   if ($('#px-container').length > 0) {
     var url = $('a.nxt-pg').attr('href');
 
@@ -889,3 +883,9 @@ function reload_ratings() {
     $(".rateit").rateit();
   }
 }
+
+// tabs 
+$('#details a, #comments a, #map a').click(function (e) {
+  e.preventDefault();
+  $(this).tab('show');
+});
