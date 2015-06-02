@@ -886,4 +886,126 @@ describe User do
       expect(User.get_sellers(@listing.category_id, @listing.site_id)).not_to be_empty
     end
   end
+
+  describe "is_followed?" do
+    before :each do
+      @user2 = create :contact_user
+      @seller = create(:contact_user, user_type_code: 'BUS', business_name: 'Test')
+      @favorite_seller = create(:favorite_seller, user_id: @user.id, seller_id: @seller.id)
+    end
+
+    it "returns users that are following the seller" do
+      expect(@seller.is_followed?(@user)).to be_true
+    end
+
+    it "does not return users that aren't following the seller" do
+      expect(@seller.is_followed?(@user2)).to be_false
+    end
+  end
+
+  describe "is_following?" do
+    before :each do
+      @seller = create(:contact_user, user_type_code: 'BUS', business_name: 'Test')
+      @seller2 = create(:contact_user, user_type_code: 'BUS', business_name: 'Another Test')
+      @favorite_seller = create(:favorite_seller, user_id: @user.id, seller_id: @seller.id)
+    end
+
+    it "returns users that are following the seller" do
+      expect(@user.is_following?(@seller)).to be_true
+    end
+
+    it "does not return users that aren't following the seller" do
+      expect(@user.is_following?(@seller2)).to be_false
+    end
+  end
+
+  describe "get_by_ftype" do
+    it "calls get_by_seller if ftype='seller'" do
+      User.should_receive :get_by_seller
+      User.get_by_ftype('seller', nil, 'active')
+    end
+
+    it "calls get_by_user otherwise" do
+      User.should_receive :get_by_user
+      User.get_by_ftype('buyer', nil, 'active')
+    end
+  end
+
+  describe "get_by_seller" do
+    before :each do
+      @seller = create(:contact_user, user_type_code: 'BUS', business_name: 'Test')
+      @favorite_seller = create(:favorite_seller, user_id: @user.id, seller_id: @seller.id)
+    end
+
+    it "'active' status returns users following the seller_id provided" do
+      expect(UserProcessor.new(nil).get_by_seller(@favorite_seller.seller_id, 'active')).to include @user
+    end
+
+    it "'removed' status returns users that unfollowed the seller_id provided" do
+      @favorite_seller.update_attribute(:status, 'removed')
+      expect(UserProcessor.new(nil).get_by_seller(@favorite_seller.seller_id, 'removed')).to include @user
+    end
+
+    it "returns nil if there are no users following the seller_id provided" do
+      expect(UserProcessor.new(nil).get_by_seller(@favorite_seller.seller_id - 1, 'active')).to be_empty
+    end
+    
+    it "returns all followers if seller_id is blank" do
+      expect(UserProcessor.new(nil).get_by_seller(nil, 'active')).to include @user
+    end
+  end
+
+  describe "get_by_user" do
+    before :each do
+      @seller = create(:contact_user, user_type_code: 'BUS', business_name: 'Test')
+      @favorite_seller = create(:favorite_seller, user_id: @user.id, seller_id: @seller.id)
+    end
+
+    it "'active' status returns sellers followed by the user_id provided" do
+      expect(UserProcessor.new(nil).get_by_user(@favorite_seller.user_id, 'active')).to include @seller
+    end
+
+    it "'removed' status returns sellers that were unfollowed by the user_id provided" do
+      @favorite_seller.update_attribute(:status, 'removed')
+      expect(UserProcessor.new(nil).get_by_user(@favorite_seller.user_id, 'removed')).to include @seller
+    end
+
+    it "returns nil if there are no sellers followed by the seller_id provided" do
+      expect(UserProcessor.new(nil).get_by_user(@favorite_seller.user_id - 1, 'active')).to be_empty
+    end
+    
+    it "returns all sellers if seller_id is blank" do
+      expect(UserProcessor.new(nil).get_by_user(nil, 'active')).to include @seller
+    end
+  end
+
+  describe "date_followed" do
+    before :each do
+      @seller = create(:contact_user, user_type_code: 'BUS', business_name: 'Test')
+      @favorite_seller = create(:favorite_seller, user_id: @user.id, seller_id: @seller.id)
+    end
+
+    it "returns date followed if available" do
+      expect(@user.date_followed(@seller).to_s).to eq @favorite_seller.updated_at.to_s
+    end
+
+    it "returns nil otherwise" do
+      expect(@seller.date_followed(@user)).to be_nil
+    end
+  end
+
+  describe "favorite_seller_id" do
+    before :each do
+      @seller = create(:contact_user, user_type_code: 'BUS', business_name: 'Test')
+      @favorite_seller = create(:favorite_seller, user_id: @user.id, seller_id: @seller.id)
+    end
+
+    it "returns id of FavoriteSeller object if available" do
+      expect(@user.favorite_seller_id(@seller)).to eq @favorite_seller.id
+    end
+
+    it "returns nil otherwise" do
+      expect(@seller.favorite_seller_id(@user)).to be_nil
+    end
+  end
 end

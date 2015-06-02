@@ -148,4 +148,28 @@ class UserProcessor
   def site_name
     LocationManager::get_loc_name nil, nil, @user.home_zip
   end
+
+  # return users following seller_id
+  def get_by_seller(seller_id, status)
+    favorites = seller_id.blank? ? FavoriteSeller.where(status: status) : FavoriteSeller.where(seller_id: seller_id, status: status)
+    User.includes(:preferences, :pictures).where(id: favorites.pluck(:user_id)).order('last_name ASC')
+  end
+
+  # return sellers followed by user_id
+  def get_by_user(user_id, status)
+    favorites = user_id.blank? ? FavoriteSeller.where(status: status) : FavoriteSeller.where(user_id: user_id, status: status)
+    User.includes(:preferences, :pictures).where(id: favorites.pluck(:seller_id)).order('business_name ASC')
+  end
+
+  # return the date the current user followed seller_id
+  def date_followed(seller_id)
+    favorite_seller = @user.favorite_sellers.find_by_seller_id_and_status(seller_id, 'active')
+    favorite_seller ? favorite_seller.updated_at : nil
+  end
+
+  # return the ID of the FavoriteSeller object for the current user and seller_id
+  def favorite_seller_id(seller_id)
+    favorite_seller = @user.favorite_sellers.find_by_seller_id(seller_id)
+    favorite_seller ? favorite_seller.id : nil
+  end
 end

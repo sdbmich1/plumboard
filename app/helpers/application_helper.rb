@@ -135,6 +135,7 @@ module ApplicationHelper
       when 'Inquiries'; render 'shared/navbar_inquiry'
       when 'Users'; render 'shared/navbar_users'
       when 'Manage Pixis'; render 'shared/navbar_manage_pixis'
+      when 'My Sellers', 'Manage Followers', 'My Followers'; render 'shared/navbar_sellers'
       else render 'shared/navbar_main'
     end
   end

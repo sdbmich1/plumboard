@@ -11,7 +11,7 @@ feature "UserSignins" do
     click_button submit
   end
 
-  def user_menu_items showFlg=false
+  def user_menu_items showFlg=false, sellerFlg=false
     page.should have_button('Post')
     page.should have_link('By You', href: new_temp_listing_path)
     page.should have_link('By Us (PixiPost)', href: check_pixi_post_zips_path)
@@ -24,6 +24,11 @@ feature "UserSignins" do
     page.should have_link('My Invoices', href: sent_invoices_path)
     page.should have_link('My Accounts', href: new_bank_account_path)
     page.should have_link('My Settings', href: user_path(@user))
+    if sellerFlg
+      page.should have_link('My Followers', href: favorite_sellers_path(ftype: 'seller', id: @user.id, status: 'active'))
+    else
+      page.should have_link('My Sellers', href: favorite_sellers_path(ftype: 'buyer', id: @user.id, status: 'active'))
+    end
     page.should have_link('My PixiPosts', href: seller_pixi_posts_path(status: 'active'))
     page.should have_link('Sign out', href: destroy_user_session_path)
     page.should_not have_link('Sign in', href: new_user_session_path)
@@ -157,7 +162,8 @@ feature "UserSignins" do
         page.should_not have_link('PixiPosts', href: pixi_posts_path)
         page.should_not have_link('Users', href: users_path)
         page.should_not have_link('Inquiries', href: inquiries_path(ctype: 'inquiry'))
-	user_menu_items
+        page.should_not have_link('Followers', href: favorite_sellers_path(ftype: 'buyer', status: 'active'))
+        user_menu_items
         # page.should have_content "Welcome to Pixiboard, #{@user.first_name}!"
         # page.should_not have_content "To get a better user experience"
 
@@ -187,7 +193,8 @@ feature "UserSignins" do
         page.should have_link('Transactions', href: transactions_path)
         page.should have_link('Users', href: users_path)
         page.should have_link('Pixis', href: listings_path(status: 'active'))
-	user_menu_items true
+        page.should have_link('Followers', href: favorite_sellers_path(ftype: 'buyer', status: 'active'))
+        user_menu_items true
       end
 
       it "displays sign in link after signout" do
@@ -213,7 +220,8 @@ feature "UserSignins" do
         page.should have_link('For Seller', href: new_temp_listing_path(pixan_id: @user))
         page.should have_link('For Business', href: new_temp_listing_path(pixan_id: @user, ptype: 'bus'))
         page.should have_link('Pixis', href: listings_path(status: 'active'))
-	user_menu_items true
+        page.should have_link('Followers', href: favorite_sellers_path(ftype: 'buyer', status: 'active'))
+        user_menu_items true
       end
 
       it "displays sign in link after signout" do
@@ -240,7 +248,8 @@ feature "UserSignins" do
         page.should have_link('For Seller', href: new_temp_listing_path(pixan_id: @user))
         page.should have_link('For Business', href: new_temp_listing_path(pixan_id: @user, ptype: 'bus'))
         page.should_not have_link('Pixis', href: listings_path)
-	user_menu_items true
+        page.should_not have_link('Followers', href: favorite_sellers_path(ftype: 'buyer', status: 'active'))
+        user_menu_items true
       end
 
       it "displays sign in link after signout" do
@@ -279,7 +288,33 @@ feature "UserSignins" do
         page.should_not have_link('Transactions', href: transactions_path)
         page.should_not have_link('Users', href: users_path)
         page.should_not have_link('Pixis', href: listings_path(status: 'active'))
-	user_menu_items
+        page.should_not have_link('Followers', href: favorite_sellers_path(ftype: 'buyer', status: 'active'))
+        user_menu_items
+      end
+
+      it "displays sign in link after signout" do
+        click_link "Sign out"
+        page.should have_content 'How It Works'
+      end
+    end
+
+    describe 'registered business users' do
+      before(:each) do
+        @user = create :contact_user, user_type_code: 'BUS', business_name: 'Rhythm Music'
+        user_login @user
+      end
+
+      it 'shows content' do
+        page.should have_content(@user.first_name)
+        page.should_not have_content('Manage')
+        page.should_not have_link('PixiPosts', href: pixi_posts_path)
+        page.should_not have_link('Inquiries', href: inquiries_path(ctype: 'inquiry'))
+        page.should_not have_link('Categories', href: manage_categories_path)
+        page.should_not have_link('Transactions', href: transactions_path)
+        page.should_not have_link('Users', href: users_path)
+        page.should_not have_link('Pixis', href: listings_path(status: 'active'))
+        page.should_not have_link('Followers', href: favorite_sellers_path(ftype: 'buyer', status: 'active'))
+        user_menu_items(false, true)
       end
 
       it "displays sign in link after signout" do

@@ -54,6 +54,39 @@ describe FavoriteSellersController do
     end
   end
 
+  describe "GET index" do
+    before :each do
+      @user = stub_model User
+      controller.stub!(:current_user).and_return(@user)
+      User.stub!(:get_by_ftype).and_return(@users)
+      @users.stub!(:paginate).and_return(@users)
+    end
+
+    def do_get
+      get :index
+    end
+    
+    it "assigns @users" do
+      do_get
+      assigns(:users).should_not be_nil
+    end
+
+    it "renders :index template" do
+      do_get
+      response.should render_template(:index)
+    end
+
+    it "should render the correct layout" do
+      do_get
+      response.should render_template("layouts/application")
+    end
+
+    it "responds to JSON" do
+      get :index, :format => 'json'
+      expect(response).to be_success
+    end
+  end
+
   describe "PUT /:seller_id" do
     def setup success
       controller.stub!(:current_user).and_return(@user)
