@@ -460,12 +460,6 @@ $(document).on("keypress", "#contact_content", function(e){
   keyEnter(e, $(this), '#contact-btn');
 });
 
-// submit comment form on enter key
-$(document).on("keypress", "#comment_content", function(e){
-  var a = $(this).attr('id');
-  keyEnter(e, $(this), '#comment-btn');
-});
-
 // submit search form on enter key
 $(document).on("keypress", "#search", function(e){
   keyEnter(e, $(this), '#submit-btn');
@@ -601,16 +595,10 @@ $(function() {
 });
 
 // toggle menu post menu item
-$(document).on('click', '#send-want-btn, #want-modal-btn', function(e) {
+$(document).on('click', '#send-want-btn, #want-modal-btn, #send-ask-btn, #ask-modal-btn', function(e) {
   var target = $(e.target), action;
-  action = target.is('#want-modal-btn') ? 'hide' : 'show';
-  $('#wantDialog').modal(action);
-});
-
-$(document).on('click', '#send-ask-btn, #ask-modal-btn', function(e) {
-  var target = $(e.target), action;
-  action = target.is('#ask-modal-btn') ? 'hide' : 'show';
-  $('#askDialog').modal(action);
+  action = target.is('#want-modal-btn, #ask-modal-btn') ? 'hide' : 'show';
+  $('#wantDialog, #askDialog').modal(action);
 });
 
 // toggle menu post menu item
@@ -885,7 +873,11 @@ function reload_ratings() {
 }
 
 // tabs 
-$('#details a, #comments a, #map a').click(function (e) {
+$(document).on("click", '#map-tab, #detail-tab, #comment-tab', function(e){
   e.preventDefault();
+  var clicked = $(this).attr('id');
   $(this).tab('show');
+  if(clicked == 'map-tab') {
+    getLatLng(true);		
+  }
 });

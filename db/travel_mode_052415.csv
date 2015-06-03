@@ -1,0 +1,5 @@
+mode,type,description,status,hide
+DR,Vehicle,Driving,active,no
+TR,Vehicle,Transit,active,no
+BI,Bike,Bicycling,active,no
+WK,Foot,Walking,active,no

@@ -792,16 +792,16 @@ describe TempListing do
     end  
   end  
 
-  describe 'site_address' do
-    it 'has site address' do
+  describe 'primary_address' do
+    it 'has primary address' do
       @site = create :site
       @contact = @site.contacts.create FactoryGirl.attributes_for(:contact)
       temp_listing = create :temp_listing, seller_id: @user.id, site_id: @site.id
-      expect(temp_listing.site_address).to eq @contact.full_address
+      expect(temp_listing.primary_address).to eq @contact.full_address
     end
 
-    it 'has no site address' do
-      expect(@temp_listing.site_address).to eq @temp_listing.site_name
+    it 'has no primary address' do
+      expect(@temp_listing.primary_address).to eq @temp_listing.site_name
     end
   end
 

@@ -69,11 +69,10 @@ class CategoriesController < ApplicationController
 
   # parse results for active items only
   def get_autocomplete_items(parameters)
-    items = super(parameters)
-    items = items.active rescue items
+    super(parameters).active rescue nil
   end
 
-  # load category
+  # load categories
   def load_page
     respond_with(@categories = Category.active(true).paginate(page: @page, per_page: 60))
   end

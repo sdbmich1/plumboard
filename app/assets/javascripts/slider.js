@@ -44,7 +44,7 @@ function load_featured_slider() {
       minSlides: 5,
       maxSlides: 5,
       slideWidth: 180,
-      slideMargin: 30,
+      slideMargin: 20,
       auto: false,
       pager: false,
       autoControls: false

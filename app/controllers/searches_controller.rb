@@ -51,8 +51,7 @@ class SearchesController < ApplicationController
   end
 
   def get_autocomplete_items(parameters)
-    items = super(parameters)
-    items = items.get_by_site(site)
+    super(parameters).get_by_site(site) rescue nil
   end
  
   def load_data

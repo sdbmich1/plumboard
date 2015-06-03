@@ -64,6 +64,10 @@ describe Listing do
     it { should respond_to(:mileage) }
     it { should respond_to(:item_type) }
     it { should respond_to(:item_size) }
+    it { should respond_to(:bed_no) }
+    it { should respond_to(:bath_no) }
+    it { should respond_to(:term) }
+    it { should respond_to(:avail_date) }
 
     it { should respond_to(:user) }
     it { should respond_to(:site) }
@@ -91,6 +95,7 @@ describe Listing do
     it { should respond_to(:buyer) }
     it { should belong_to(:buyer).with_foreign_key('buyer_id') }
     it { should have_many(:active_pixi_wants).class_name('PixiWant').with_foreign_key('pixi_id').conditions(:status=>"active") }
+    it { should accept_nested_attributes_for(:contacts).allow_destroy(true) }
     context 'IDs' do
       %w(site_id seller_id category_id transaction_id).each do |fld|
         it_behaves_like 'an ID', fld
@@ -268,17 +273,28 @@ describe Listing do
     it "should not return site count > 0", run: true do 
       @listing.get_site_count.should == 0  
     end
-    it 'has site address' do
-      @site = create :site
-      @contact = @site.contacts.create FactoryGirl.attributes_for(:contact)
-      listing = create :listing, seller_id: @user.id, site_id: @site.id
-      expect(listing.site_address).to eq @contact.full_address
+    it { @listing.get_site_count.should_not == 0 } 
+  end
+
+  describe 'primary_address', main: true do
+    before :each, run: true do
+      @listing.save!
     end
 
-    it 'has no site address' do
-      expect(@listing.site_address).to eq @listing.site_name
+    it 'has primary address', run: true  do
+      @contact = @listing.contacts.create FactoryGirl.attributes_for(:contact)
+      expect(@listing.primary_address).to eq @contact.full_address
     end
-    it { @listing.get_site_count.should_not == 0 } 
+
+    it 'has seller primary address' do
+      seller = create :business_user
+      listing = create :listing, seller_id: seller.id
+      expect(listing.primary_address).to eq seller.primary_address
+    end
+
+    it 'has no primary address', run: true do
+      expect(@listing.primary_address).to be_nil
+    end
   end
 
   describe "should find correct category name", main: true  do 
@@ -316,14 +332,36 @@ describe Listing do
       expect(@listing.seller_rating_count).to eq(1)
     end
 
-    it "should verify if seller name is an alias" do 
+    it "checks if seller name is an alias" do 
       @listing.show_alias_flg = 'yes'
-      @listing.alias?.should be_true 
+      expect(@listing.alias?).to be_true 
     end
 
-    it "should not have an alias" do 
+    it "does not have an alias" do 
       @listing.show_alias_flg = 'no'
-      @listing.alias?.should_not be_true 
+      expect(@listing.alias?).not_to be_true 
+    end
+
+    context "does not have a business seller" do
+      it { expect(@listing.sold_by_business?).not_to be_true }
+      it { expect(@listing.seller_address?).not_to be_true }
+    end
+
+    context 'has a business seller' do
+      before :each do 
+        @seller = create :business_user
+        @listing2 = build :listing, seller_id: @seller.id, quantity: 2, title: 'Leather Coat'
+      end
+      it { expect(@listing2.sold_by_business?).to be_true }
+      it { expect(@listing2.seller_address?).to be_true }
+    end
+  end
+
+  describe 'any_locations?', main: true do
+    it { expect(@listing.any_locations?).not_to be_true }
+    it 'has locations' do
+      @listing.contacts.build attributes_for :contact
+      expect(@listing.any_locations?).to be_true
     end
   end
 

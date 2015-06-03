@@ -7,8 +7,9 @@ class TempListingsController < ApplicationController
   before_filter :load_pixi, only: [:edit, :show, :update, :destroy, :submit]
   before_filter :load_post_type, only: [:new, :edit]
   after_filter :set_uid, only: [:create]
+  autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name
+  autocomplete :user, :business_name, :extra_data => [:business_name], :display_value => :pic_with_business_name
   autocomplete :site, :name, :full => true, :limit => 20
-  autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name, if: :has_pixan?
   include ResetDate
   respond_to :html, :json, :js, :mobile, :csv
   layout :page_layout
@@ -83,11 +84,6 @@ class TempListingsController < ApplicationController
   def pending
     respond_with(@listings = TempListing.get_by_status('pending').get_by_seller(@user, @adminFlg).paginate(page: @page))
   end
-
-  def autocomplete_user_first_name
-    users = User.search term, star: true
-    render :json => users 
-  end
   
   protected
 
@@ -118,13 +114,16 @@ class TempListingsController < ApplicationController
 
   # parse results for active items only
   def get_autocomplete_items(parameters)
-    items = super(parameters)
-    items = items.active(false) rescue items
+    super(parameters).active rescue nil
   end
 
   # check if pixipost to enable buyer autocomplete
   def has_pixan?
     !params[:pixan_id].blank?
+  end
+
+  def for_business?
+    @ptype.upcase == 'BUS'
   end
 
   def load_pixi

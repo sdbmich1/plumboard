@@ -210,6 +210,11 @@
   padding: 0;
 }
 
+.featured-container .bx-wrapper .bx-viewport {
+  width: 85%;
+  margin: auto;
+}
+
 .bxslider-inner {
   vertical-align: middle;
   display: inline-block;

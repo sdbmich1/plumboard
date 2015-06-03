@@ -3,7 +3,7 @@ require 'spec_helper'
 describe CategoryType do
 
   before :each do
-  	@category_type = FactoryGirl.build(:category_type)
+    @category_type = FactoryGirl.build(:category_type)
   end
 
   subject { @category_type}
@@ -16,15 +16,13 @@ describe CategoryType do
   it { should validate_presence_of(:hide)}
   it { should have_many(:categories).with_foreign_key('category_type_code')}
 
-  
-
   describe "active category_types" do
-  	before {create(:category_type)}
-  	it {CategoryType.active.should_not be_nil}
+    before {create(:category_type)}
+    it {CategoryType.active.should_not be_nil}
   end
 
   describe "inactive category_types" do
-  	before {create(:inactive_category_type)}
-  	it {CategoryType.active.should be_empty}
+    before {create(:inactive_category_type)}
+    it {CategoryType.active.should be_empty}
   end
 end

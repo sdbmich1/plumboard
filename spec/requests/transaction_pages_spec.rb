@@ -4,12 +4,12 @@ feature "Transactions" do
   subject { page }
   let(:user) { create(:pixi_user) }
   let(:site) { create(:site) }
+  let!(:state) { create(:state) }
   let(:contact_user) { create(:contact_user) }
   let(:submit) { "Done!" }
   let(:save) { "Save" }
 
   before :each do
-    create :state
     create :promo_code
   end
 

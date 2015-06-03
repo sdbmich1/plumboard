@@ -1,9 +1,10 @@
 <%= render partial: 'shared/edit_photo_form', locals: {model: listing, psize: 'sm-thumb', form: f, remove_photo: true } %>
 <%= render partial: 'shared/display_photo_form', locals: { s3Flg: s3Flg } %>
-<%= render partial: 'shared/listing_seller_fields', locals: { f: f, listing: listing } if new_pixi_post?(listing) %>
+<%= show_seller_fields f, listing %>
 <%= render partial: 'shared/listing_fields_top', locals: { f: f, listing: listing } %>
 <%= render partial: 'shared/listing_fields_main', locals: { f: f, listing: listing } %>
 <%= render partial: 'shared/listing_event_fields', locals: { f: f, listing: listing } %>
+<%= render partial: 'shared/listing_housing_fields', locals: { f: f, listing: listing } %>
 <%= render partial: 'shared/listing_vehicle_fields', locals: { f: f, listing: listing } %>
 <%= render partial: 'shared/listing_product_fields', locals: { f: f, listing: listing } %>
 <div class='row'>

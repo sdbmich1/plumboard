@@ -1,0 +1,10 @@
+<div class="modal hide fade" id="mapDialog">
+  <div class="modal-header">
+    <a class="close" data-dismiss="modal">x</a>
+    <h3 class='center-wrapper'><%= map_loc(model) %></h3>
+  </div>
+  <div class="modal-body">
+    <%= render partial: 'shared/map_details', locals: {model: model, showFlg: false} %>
+  </div>
+</div>
+

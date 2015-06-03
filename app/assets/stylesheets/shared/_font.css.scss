@@ -1,0 +1,195 @@
+/* font definitions */
+.bot-descr { font-size: 0.675em; color: #555555; font-family: "Verdana"; }
+.item-descr { color: #000; font-family: "Verdana"; }
+.white-descr { color: #ffffff; }
+
+.bdescr {
+  @extend .item-descr;
+  width: 80%!important; 
+  font-size: 1em; line-height: 16px!important; 
+}
+
+.loc-descr {
+  @extend .item-descr;
+  width: 80%!important; 
+  font-size: 0.875em; line-height: 16px!important; 
+}
+
+/* bdescr class for category images */
+.catbdescr {
+  @extend .item-descr;
+  width: 100px!important;
+  font-size: 0.675em!important; line-height: 16px!important;
+}
+
+.mbdescr {
+  @extend .item-descr;
+  width: 80%!important; 
+  font-size: 0.7em!important; line-height: 14px!important; 
+}
+
+.signin-descr {
+  @extend .white-descr;
+  font-size: 0.675em;
+}
+
+.gdescr {
+  @extend .bot-descr;
+  font-size: 0.7em;
+}
+
+.mgdescr {
+  @extend .bot-descr;
+  font-size: 0.65em;
+}
+
+.helv-white {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #ffffff;
+}
+
+.tiny-black { @extend .helv-white; color: #000; font-size: 0.75em; }
+.tiny-white { @extend .helv-white; font-size: 0.75em; }
+
+.mobile-tag {
+  @extend .helv-white;
+  font-size: 36px;
+  line-height: 36px;
+}
+
+.mobile-tag-line {
+  @extend .helv-white;
+  font-size: 20px;
+  line-height: 24px;
+}
+
+.tm-line {
+  @extend .helv-white;
+  font-size: 20px;
+}
+
+.pxp-tag {
+  @extend .mobile-tag;
+  font-size: 36px;
+  line-height: 36px;
+}
+
+.pxp-tag-line {
+  @extend .helv-white;
+  font-size: 18px;
+}
+
+.comm-tag-small {
+  @extend .helv-white;
+  font-size: 16px;
+}
+
+.metric-tag-small {
+  @extend .helv-white;
+  font-size: 12px;
+  font-weight: medium;
+}
+
+.metric-tag-bold {
+  @extend .helv-white;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.tag-line {
+  text-shadow: 2px 2px #000;
+  @extend .helv-white;
+  font-weight: normal;
+  font-size: 28px;
+}
+
+.bold-tag-line {
+  @extend .helv-white;
+  font-weight: bold;
+  font-size: 28px;
+}
+
+.seller-name {
+  @extend .helv-white;
+  font-size: 26px;
+}
+
+.black-seller-name {
+  @extend .seller-name;
+  color: black;
+  font-size: 22px;
+}
+
+a.seller-name {
+  @extend .seller-name;
+  &:visited { color: white; text-decoration: none }
+  &:hover { background: none; text-decoration: underline; }
+}
+
+a.black-seller-name {
+  @extend .black-seller-name;
+  &:visited { color: black; text-decoration: none }
+  &:hover { background: none; text-decoration: underline; }
+}
+
+.trend-tag {
+    @extend .trend-tag-norm;
+    font-weight: bold;
+}
+
+.trend-tag-norm {
+    color: #505050;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 42px;
+}
+
+.community-title {
+  @extend .trend-tag;
+  font-size: 50px;
+  font-weight: bold;
+}
+
+.why-tag {
+  @extend .trend-tag;
+  font-size: 18px;
+}
+
+.why-tag-line {
+    @extend .trend-tag-norm;
+    font-size: 14px;
+}
+
+.trend-tag-line {
+    @extend .trend-tag-norm;
+    font-size: 20px;
+}
+
+.black-section-title {
+  @extend .pxp-tag-line;
+  color: black;
+  font-size: 18px;
+}
+
+.black-txt {
+  @extend .pxp-tag-line;
+  display: inline-block;
+  color: black;
+  font-size: 13px;
+}
+
+.comm-tag-line {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.cal-text {
+  position: absolute; 
+  top: 45%;
+  left: 17%;
+  font-size:36px;
+  font-weight:bold;
+  width: 100%; 
+}
+

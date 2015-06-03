@@ -3,53 +3,9 @@
   box-shadow: 1px 1px 1px 1px #ccc;
 }
 
-.bot-descr { font-size: 0.675em; color: #555555; font-family: "Verdana"; }
-.item-descr { color: #000; font-family: "Verdana"; }
-.white-descr { color: #ffffff; }
-
-.bdescr {
-  @extend .item-descr;
-  width: 80%!important; 
-  font-size: 1em; line-height: 16px!important; 
-}
-
-.loc-descr {
-  @extend .item-descr;
-  width: 80%!important; 
-  font-size: 0.875em; line-height: 16px!important; 
-}
-
-/* bdescr class for category images */
-.catbdescr {
-  @extend .item-descr;
-  width: 100px!important;
-  font-size: 0.675em!important; line-height: 16px!important;
-}
-
-.mbdescr {
-  @extend .item-descr;
-  width: 80%!important; 
-  font-size: 0.7em!important; line-height: 14px!important; 
-}
-
-.signin-descr {
-  @extend .white-descr;
-  font-size: 0.675em;
-}
-
-.gdescr {
-  @extend .bot-descr;
-  font-size: 0.7em;
-}
-
-.mgdescr {
-  @extend .bot-descr;
-  font-size: 0.65em;
-}
-
 .item { 
   @extend .pic-item; float: left; 
-  width: 200px;
+  width: 200px!important;
   margin: 0 auto;
   overflow: hidden;
   @include border-radius(.3em);
@@ -68,10 +24,10 @@
 
 .featured-item {
   @extend .item;
-  width: 180px;
+  width: 180px!important;
   background: white;
   box-shadow: none;
-  margin-left: 45px;
+  margin-left: 20px;
 }
 
 img.img-board {
@@ -205,21 +161,11 @@ img.usr-med-photo {
   margin-top: -4px;
 }
 
-.no-left {
-  margin-left: 0!important;
-}
-
-.neg-left { margin-left: -20px!important; }
-
 .float-left {
   float: left;
 }
 
 .grey-text { color: #ccc; }
-.mtop {margin-top: 20px!important;}
-.mbot {margin-bottom: 15px!important;}
-.mbot30 {margin-bottom: 30px!important;}
-.no-bot {margin-bottom: 0!important;}
 
 .img-valign {
   vertical-align: middle!important;

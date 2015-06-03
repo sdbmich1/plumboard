@@ -18,7 +18,7 @@ class ListingParent < ActiveRecord::Base
   	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id, :year_built, :pixan_id, 
 	:job_type_code, :event_type_code, :edited_by, :edited_dt, :post_ip, :lng, :lat, :event_start_date, :event_end_date, :compensation,
 	:event_start_time, :event_end_time, :explanation, :contacts_attributes, :repost_flg, :mileage, :other_id, :condition_type_code,
-	:color, :quantity, :item_type, :item_size
+	:color, :quantity, :item_type, :item_size, :bed_no, :bath_no, :term, :avail_date
 
   attr_accessor :skip_approval_email
 
@@ -34,7 +34,7 @@ class ListingParent < ActiveRecord::Base
   accepts_nested_attributes_for :pictures, :allow_destroy => true
 
   has_many :contacts, :as => :contactable, :dependent => :destroy
-  accepts_nested_attributes_for :contacts, :allow_destroy => true
+  accepts_nested_attributes_for :contacts, :allow_destroy => true, :reject_if => :all_blank
 
   validates :title, :presence => true, :length => { :maximum => 80 }
   validates_presence_of :seller_id, :site_id, :start_date, :category_id, :description
@@ -51,7 +51,7 @@ class ListingParent < ActiveRecord::Base
   validates_datetime :event_end_time, presence: true, after: :event_start_time, :if => :start_date?
 
   # geocode
-  geocoded_by :site_address, :latitude => :lat, :longitude => :lng
+  geocoded_by :primary_address, :latitude => :lat, :longitude => :lng
   after_validation :geocode
 
   # used to handle pagination settings
@@ -116,9 +116,14 @@ class ListingParent < ActiveRecord::Base
     pictures.detect { |x| x && !x.photo_file_name.nil? }
   end
 
+  # check if pictures already exists
+  def any_locations?
+    contacts.detect { |x| x && !x.address.nil? }
+  end
+
   # define where clause based on rails env
   def self.where_stmt
-    Rails.env.development? || Rails.env.test? ? "listings.status = 'active'" : "listings.status = 'active' AND listings.end_date >= curdate()"
+    "listings.status = 'active'" + (Rails.env.development? || Rails.env.test? ? '' : " AND listings.end_date >= curdate()")
   end
 
   # select active listings
@@ -133,7 +138,7 @@ class ListingParent < ActiveRecord::Base
 
   # eager load assns
   def self.include_list
-    includes(:pictures, :site, :category, :job_type)
+    includes(:pictures, :site, :category, :job_type, :contacts, :user)
   end
 
   # leaves out job_type to avoid unused eager loading
@@ -143,7 +148,7 @@ class ListingParent < ActiveRecord::Base
 
   # find listings by status
   def self.get_by_status val
-    val == 'sold' ? include_list_without_job_type.sold_list : include_list_without_job_type.where(:status => val)
+    val == 'sold' ? include_list.sold_list : include_list.where(:status => val)
   end
   
   # get active pixis by site id
@@ -158,7 +163,8 @@ class ListingParent < ActiveRecord::Base
 
   # find all listings where a given user is the seller, or all listings if the user is an admin
   def self.get_by_seller user, adminFlg=true
-    user.is_admin? && adminFlg ? where("seller_id IS NOT NULL") : where(:seller_id => user.id)
+    query = user.is_admin? && adminFlg ? "seller_id IS NOT NULL" : "seller_id = #{user.id}"
+    include_list.where(query).reorder('listings.updated_at DESC')
   end
 
   # get listings by status and, if provided, category and location
@@ -276,6 +282,20 @@ class ListingParent < ActiveRecord::Base
     user.email rescue nil
   end
 
+  # check if sold by business
+  def sold_by_business? 
+    user.is_business? rescue false
+  end
+
+  # check if seller has address
+  def seller_address? 
+    sold_by_business? && user.has_address? rescue false
+  end
+
+  def has_address?
+    any_locations? || seller_address?
+  end
+
   # short description
   def brief_descr val=96
     ListingDataProcessor.new(self).set_str description, val
@@ -362,8 +382,12 @@ class ListingParent < ActiveRecord::Base
   end
 
   # get site address
-  def site_address
-    site.contacts.first.full_address rescue site_name
+  def primary_address
+    if any_locations?
+      contacts.first.full_address rescue site_name
+    else
+      user.primary_address if sold_by_business?
+    end
   end
 
   # get job type name

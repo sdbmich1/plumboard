@@ -18,6 +18,7 @@ body {
 @import "compass";
 @import "shared/form";
 @import "shared/image";
+@import "shared/font";
 
 /* responsive mobile fix */
 @media screen and (max-width: 320px) { 
@@ -274,7 +275,11 @@ textarea {
 
 input, select, .uneditable-input {
   height: auto !important;
-  }
+}
+
+select {
+  padding: 1px!important;
+}
 
 #error_explanation {
   @extend .alert;
@@ -355,6 +360,7 @@ input, select, .uneditable-input {
 .width320 {width: 320px!important}
 .width360 {width: 360px!important}
 .width-all {width: 100%!important}
+
 .height240 {height: 240px!important}
 .height360 {height: 360px!important}
 .height480 {height: 480px!important}
@@ -626,7 +632,7 @@ a.btn-mask {
 
 .fld-height { height: 28px!important; }
 .lheight { line-height: 30px!important; }
-.fld-pad { padding: 6px!important; }
+.fld-pad { padding: 5px!important; height: 18px!important; }
 
 .pixi-select {
   margin-bottom: 0px!important;
@@ -635,9 +641,7 @@ a.btn-mask {
 }
 
 .cat-select {
-  margin-bottom: 0px!important;
-  height: 28px!important; 
-  font-size: 14px!important;
+  @extend .pixi-select;
   margin-top: -3px!important;
 }
 
@@ -662,7 +666,7 @@ a.btn-mask {
   height: 325px!important;
 }
 
-#contact-btn, #comment-btn, #add-item-btn, .inv-fld {
+#contact-btn, #add-item-btn, .inv-fld {
   visibility: hidden;
 }
 
@@ -685,10 +689,12 @@ ul#social-links {
   }
 }
 
-a#home-link, a.home-link {
+a#home-link, a.home-link, a.img-btn {
   &:hover {
     text-decoration: none;
     background: transparent!important;
+    outline: none;
+    border: 0;
   }
 }
 

@@ -6,10 +6,10 @@
       </div>
     <% end %>
   </div>
-  <div class='mtop row'>
+  <div id='trend-pixi' class='mtop mbot row offset1 span10'>
     <%= render partial: 'shared/listing', collection: @listings, as: :listing, locals: {px_size: 'large', ftrFlg: true} %>
   </div>
-  <div class='mtop row'>
+  <div class='row'>
     <div class='center-wrapper'>
       <div class="col-sm-offset-5 col-sm-2 text-center">
 	<%= link_to 'View More >', set_home_path, class: "btn btn-large btn-primary pxb-btn width180" %>

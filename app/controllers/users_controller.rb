@@ -19,14 +19,7 @@ class UsersController < ApplicationController
 
   def update
     changing_email = params[:user][:email] != @usr.email
-    if @usr.update_attributes(params[:user])
-      if is_profile?  
-	flash[:notice] = 'Saved changes successfully'
-      else 
-        flash.now[:notice] = flash_msg changing_email
-        get_user
-      end
-    end
+    check_profile if @usr.update_attributes(params[:user])
     respond_with(@usr)
   end
 
@@ -42,6 +35,15 @@ class UsersController < ApplicationController
 
   def load_target
     @target = params[:target]
+  end
+  
+  def check_profile
+    if is_profile?  
+      flash[:notice] = 'Saved changes successfully'
+    else 
+      flash.now[:notice] = flash_msg changing_email
+      get_user
+    end
   end
 
   # loads confirmation message
@@ -63,6 +65,11 @@ class UsersController < ApplicationController
 
   def get_user
     @usr = User.find params[:id]
+  end
+
+  # parse results for active items only
+  def get_autocomplete_items(parameters)
+    super(parameters).active rescue nil
   end
 
   def is_profile?

@@ -17,3 +17,8 @@ end
 every "30 3 * * *", :roles => [:app] do
   rake "manage_server:close_expired_pixis"
 end
+
+# run every sunday
+every "30 3 * * 0", :roles => [:app] do
+  rake "manage_server:cleanup_guests"
+end

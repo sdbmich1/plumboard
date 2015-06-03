@@ -1,11 +1,5 @@
 Plumboard::Application.routes.draw do
 
-  get "favorite_sellers/create"
-
-  get "favorite_sellers/index"
-
-  get "favorite_sellers/update"
-
   devise_for :users, :controllers => { registrations: "registrations", sessions: "sessions", omniauth_callbacks: "users/omniauth_callbacks",
       confirmations: "confirmations" } 
   
@@ -111,7 +105,7 @@ Plumboard::Application.routes.draw do
 
   resources :temp_listings do
     collection do
-      get :autocomplete_site_name, :autocomplete_user_first_name, 'unposted', 'pending', 'invoiced'
+      get :autocomplete_site_name, :autocomplete_user_business_name, :autocomplete_user_first_name, 'unposted', 'pending', 'invoiced'
     end
     member do
       put 'resubmit', 'submit'
@@ -152,7 +146,6 @@ Plumboard::Application.routes.draw do
 
   resources :pixi_likes, only: [:create, :destroy]
   resources :saved_listings, only: [:create, :index, :destroy]
-
   resources :favorite_sellers, only: [:create, :index, :update]
 
   # custom routes

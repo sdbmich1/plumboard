@@ -58,9 +58,12 @@ FactoryGirl.define do
     end
   end
 
-  factory :state do
-    code  "CA"
-    state_name  "California"
+  factory :business_user, :class => "User", :parent => :contact_user do
+    after(:build) do |usr| 
+      usr.user_type_code = 'BUS' 
+      usr.business_name = 'The Community Store' 
+      usr.user_url = usr.business_name
+    end
   end
 
   factory :site do
@@ -448,5 +451,18 @@ FactoryGirl.define do
     user_id 1
     seller_id 2
     status "active"
+  end
+
+  factory :travel_mode do
+    mode  "DR"
+    travel_type "Car"
+    description "Driving"
+    status  "active"
+    hide "no"
+  end
+
+  factory :state do
+    code  "CA"
+    state_name  "California"
   end
 end

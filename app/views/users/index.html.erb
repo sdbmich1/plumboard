@@ -4,7 +4,7 @@
 <% end %>
 <%= content_for :content do %>
   <div id="user_form">
-    <%= render :partial => 'shared/user_list' %>
+    <%= render partial: 'shared/user_list', locals: {model: @users, utype: @utype} %>
   </div>
 <% end %>
 

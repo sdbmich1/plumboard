@@ -4,8 +4,9 @@
     <%= render partial: 'shared/listing_details_tab', locals: {listing: listing} %>
   </div>
   <div class="tab-pane" id="comments">
-    <div id='comment_form' class='mtop span6'><%= show_comments listing %></div>
+    <div id='comment_form' class='no-left span6'><%= show_comments listing %></div>
   </div>
   <div class="tab-pane" id="map">
+    <%= render partial: 'shared/map_details', locals: {model: listing, showFlg: true} %>
   </div>
 </div>

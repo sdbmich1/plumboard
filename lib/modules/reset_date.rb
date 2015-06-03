@@ -14,7 +14,7 @@ module ResetDate
   def self.reset_dates(val, cType='TempListing')
     if cType == 'TempListing'
       convert_time_fld val, %w(event_start_time event_end_time)
-      convert_date_fld val, %w(event_start_date event_end_date)
+      convert_date_fld val, %w(event_start_date event_end_date avail_date)
     else
       convert_time_fld val, %w(preferred_time alt_time appt_time completed_time)
       convert_date_fld val, %w(preferred_date alt_date appt_date completed_date)

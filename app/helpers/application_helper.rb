@@ -1,14 +1,10 @@
 module ApplicationHelper
-  include ControllerManager
+  include ControllerManager, LocationManager
 
   # Returns the full title on a per-page basis.
   def full_title page_title
     base_title = "Pixiboard"
-    if page_title.empty?
-      base_title
-    else
-      "#{base_title} | #{page_title}"
-    end
+    page_title.empty? ? base_title : "#{base_title} | #{page_title}"
   end
 
   # devise settings
@@ -260,6 +256,11 @@ module ApplicationHelper
     end
   end
 
+  # check if image exists
+  def check_image model, psize
+    image_tag(get_pixi_image(model.pictures[0], psize), class: zoom_image) if picture_exists?(model)
+  end
+
   # check for model errors
   def check_errors? model
     model.errors.any? rescue false
@@ -370,5 +371,31 @@ module ApplicationHelper
   # toggle field display visible
   def set_style flg
     flg ? 'display:none' : ''
+  end
+
+  # set pagination
+  def paginate_list id, model
+    content_tag(:div, (will_paginate(model) if model.respond_to?(:total_pages)), id: id, class: 'nav pull-right')
+  end
+
+  # get address for map
+  def map_loc model
+    model.primary_address if model.has_address?  
+  end
+
+  def get_lnglat model
+    LocationManager::get_google_lng_lat(model.primary_address) if model.has_address?  
+  end
+
+  def show_progress_meter flg
+    content_tag(:div, render(partial: 'shared/progress_meter'), class: 'mtop left-form mleft30') if flg
+  end
+
+  def photo_cabinet form, s3Flg, keyName, mFlg
+    if s3Flg 
+      form.s3_file_field :photo, { id: keyName, multiple: mFlg, class: 'file js-s3_file_field' } 
+    else 
+      form.file_field :photo, { id: keyName, multiple: mFlg, class: 'file' } 
+    end 
   end
 end

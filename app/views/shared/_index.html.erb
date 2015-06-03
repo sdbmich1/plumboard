@@ -9,7 +9,7 @@
   <div id='fbanner'><%= render partial: 'shared/feature_banner', locals: { model: @listings, btype: btype } %></div>
 <% end %>
 <%= content_for :content do %>
-  <div id="pxboard"><%= render 'shared/listings' %></div> 
+  <div id="pxboard"><%= show_listings @listings %></div> 
   <nav id="px-nav"><%= render set_init_next_page_path %></nav>
   <div class='span1 sm-bot'><%= link_to 'Scroll', '#', class: 'scrollup clear-link' %></div>
 <% end %>

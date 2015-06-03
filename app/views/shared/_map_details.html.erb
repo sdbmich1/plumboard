@@ -1,0 +1,5 @@
+<%= show_map_title model, showFlg %>
+<%= render :partial => 'shared/load_map_data', locals: {model: model} %>
+<div id='map_content' class="sm-bot boxed">
+  <%= render :partial => 'shared/map_index' %>
+</div>

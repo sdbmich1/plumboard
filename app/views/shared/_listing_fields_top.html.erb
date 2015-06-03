@@ -2,7 +2,7 @@
   <div class='span7'>
     <%= f.label :title %><%= f.text_field :title, :placeholder => 'Enter Pixi Title', required: true %>
   </div>
-  <div id='cat-fld' class='span2'>
+  <div id='cat-fld' class="<%= set_category_size(listing) %>">
     <%= f.label :category_id, 'Category' %>
     <%= f.collection_select :category_id, Category.active, :id, :name_title, {:prompt => 'Select'}, {class: 'pixi-select', required: true} %>
   </div>

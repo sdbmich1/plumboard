@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150514174659) do
+ActiveRecord::Schema.define(:version => 20150527032406) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -407,8 +407,13 @@ ActiveRecord::Schema.define(:version => 20150514174659) do
     t.string   "other_id"
     t.string   "item_type"
     t.string   "item_size"
+    t.integer  "bed_no"
+    t.integer  "bath_no"
+    t.string   "term"
+    t.datetime "avail_date"
   end
 
+  add_index "listings", ["avail_date"], :name => "index_listings_on_avail_date"
   add_index "listings", ["category_id"], :name => "index_listings_on_category_id"
   add_index "listings", ["condition_type_code"], :name => "index_listings_on_condition_type_code"
   add_index "listings", ["end_date", "start_date"], :name => "index_listings_on_end_date_and_start_date"
@@ -420,6 +425,7 @@ ActiveRecord::Schema.define(:version => 20150514174659) do
   add_index "listings", ["pixi_id"], :name => "index_listings_on_pixi_id", :unique => true
   add_index "listings", ["site_id", "seller_id", "start_date"], :name => "index_listings_on_org_id_and_seller_id_and_start_date"
   add_index "listings", ["status"], :name => "index_listings_on_status"
+  add_index "listings", ["term"], :name => "index_listings_on_term"
   add_index "listings", ["transaction_id"], :name => "index_listings_on_transaction_id"
 
   create_table "listings_sites", :id => false, :force => true do |t|
@@ -472,6 +478,10 @@ ActiveRecord::Schema.define(:version => 20150514174659) do
     t.string   "job_type_code"
     t.string   "explanation"
     t.string   "event_type_code"
+    t.integer  "bed_no"
+    t.integer  "bath_no"
+    t.string   "term"
+    t.datetime "avail_date"
   end
 
   add_index "old_listings", ["category_id"], :name => "index_old_listings_on_category_id"
@@ -821,6 +831,10 @@ ActiveRecord::Schema.define(:version => 20150514174659) do
     t.string   "other_id"
     t.string   "item_type"
     t.string   "item_size"
+    t.integer  "bed_no"
+    t.integer  "bath_no"
+    t.string   "term"
+    t.datetime "avail_date"
   end
 
   add_index "temp_listings", ["condition_type_code"], :name => "index_temp_listings_on_condition_type_code"
@@ -873,6 +887,16 @@ ActiveRecord::Schema.define(:version => 20150514174659) do
   add_index "transactions", ["transaction_type"], :name => "index_transactions_on_transaction_type"
   add_index "transactions", ["updated_at"], :name => "index_transactions_on_updated_at"
   add_index "transactions", ["user_id"], :name => "index_transactions_on_user_id"
+
+  create_table "travel_modes", :force => true do |t|
+    t.string   "mode"
+    t.string   "travel_type"
+    t.string   "status"
+    t.string   "hide"
+    t.string   "description"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
 
   create_table "user_interests", :force => true do |t|
     t.integer  "user_id"

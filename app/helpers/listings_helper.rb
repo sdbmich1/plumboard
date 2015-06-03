@@ -319,12 +319,7 @@ module ListingsHelper
 
   # set top banner image
   def set_banner btype
-    case btype
-      when 'biz'
-        set_biz_banner
-      when 'loc'
-        set_loc_banner
-    end
+    btype == 'loc' ? set_loc_banner : set_biz_banner
   end
 
   def set_biz_banner
@@ -335,6 +330,22 @@ module ListingsHelper
   def set_loc_banner
     site = Site.find @loc rescue nil
     content_tag(:div, render(partial: 'shared/location_band', locals: {site: site}), class: ["mneg-top", "mbot"]) if site
+  end
+
+  # show menu if location page
+  def set_pixi_menu btype, menu_name, loc_name
+    render partial: 'shared/navbar', locals: { menu_name: menu_name, loc_name: @loc_name } if btype == 'loc' 
+  end
+
+  # set status type
+  def show_menu_status val, sFlg
+    if sFlg
+      collection_select :status_type, :id, StatusType.unhidden, :code, :code_title, {selected: val}, {id: 'status_type', class: 'span2 cat-select'}
+    end
+  end
+
+  def show_menu_fields ptype
+    render partial: 'shared/menu_fields', locals: { ptype: ptype } if controller_name == 'listings'
   end
 
   # check ownership
@@ -368,7 +379,7 @@ module ListingsHelper
   # display featured pixis
   def featured_pixis model
     val = model.size/2
-    cnt = val < MIN_FEATURED_PIXIS*2 ? val : MIN_FEATURED_PIXIS*2 
+    cnt = val < MIN_FEATURED_PIXIS ? MIN_FEATURED_PIXIS : MIN_FEATURED_PIXIS*2 
     return model[0..cnt-1]
   end
 
@@ -387,7 +398,7 @@ module ListingsHelper
   end
 
   def view_pixi_image model, pix_size, path
-    link_to path do
+    link_to path, class: 'img-btn' do
       render partial: 'shared/show_picture', locals: {model: model, psize: pix_size}
     end 
   end
@@ -413,7 +424,22 @@ module ListingsHelper
 
   # show edit cover icon for owner
   def show_edit_cover_icon usr
-    link_to image_tag('rsz_photo_camera.png', class: 'camera'), edit_user_path(@user), title: 'Change Cover Photo' if is_owner?(usr)
+    if is_owner?(usr)
+      link_to image_tag('rsz_photo_camera.png', class: 'camera'), edit_user_path(@user), title: 'Change Cover Photo', class: 'img-btn' 
+    else
+      link_to image_tag('pxb_map_icon.png', class: 'camera'), '#mapDialog', title: 'View Map', 'data-toggle'=>"modal", id: 'map_icon', 
+        class: 'img-btn' if usr.is_business? && usr.has_address? && controller_name != 'users'
+    end
+  end
+
+  # show map title
+  def show_map_title model, flg
+    content_tag(:div, map_loc(model), class:'center-wrapper sm-bot black-section-title') if flg
+  end
+
+  # show map if business
+  def show_map_modal usr
+    render partial: 'shared/map_modal', locals: { model: usr } if usr.is_business? && usr.has_address?
   end
 
   # show repost btn
@@ -439,9 +465,9 @@ module ListingsHelper
   end
 
   # process pixi feature content
-  def process_content arr, str=[]
+  def process_content arr, cls='', str=[]
     arr.map { |item| str << show_content(item) }
-    content_tag(:div, str.join("").html_safe, class: 'med-top black-txt')
+    content_tag(:div, str.join("").html_safe, class: cls + 'med-top black-txt')
   end
 
   # display listing fields
@@ -480,6 +506,24 @@ module ListingsHelper
       str << "Mileage: #{number_with_delimiter(listing.mileage)}" if listing.mileage
       process_content str
     end
+  end
+
+  def show_housing_fields listing, str=[]
+    if listing.is_category_type?('housing')
+      str << "Beds: #{listing.bed_no}" unless listing.bed_no.blank?
+      str << "Baths: #{listing.bath_no}" unless listing.bath_no.blank?
+      str << "Size: #{listing.item_size}" unless listing.item_size.blank?
+      process_content str
+    end 
+  end
+
+  def more_housing_fields listing, str=[]
+    if listing.is_category_type?('housing')
+      str << "Available: #{short_date listing.avail_date}"
+      str << "Term: #{listing.term}" unless listing.term.blank?
+      str << "Amount Left: #{get_item_amt(listing)}" 
+      process_content str
+    end 
   end
 
   # set thumbnails
@@ -527,8 +571,8 @@ module ListingsHelper
   def set_tab_headers listing, str=[]
     str << content_tag(:li, link_to('Details', '#details', 'data-toggle'=>'tab', id: 'detail-tab'), class: 'active')
     str << content_tag(:li, link_to("#{get_comment_header}", '#comments', 'data-toggle'=>'tab', id: 'comment-tab')) unless temp_listing?(listing)
-    str << content_tag(:li, link_to("Map", '#map', 'data-toggle'=>'tab', id: 'map-tab')) if listing.user.is_business? && !temp_listing?(listing)
-    content_tag(:ul, str.join(" ").html_safe, class: "width-all nav nav-tabs black-txt")
+    str << content_tag(:li, link_to("Map", '#map', 'data-toggle'=>'tab', id: 'map-tab')) if has_locations?(listing) && !temp_listing?(listing)
+    content_tag(:ul, str.join(" ").html_safe, class: "width-all nav nav-tabs black-txt", id: 'pxTab')
   end
 
   # show comments if active listing
@@ -572,14 +616,51 @@ module ListingsHelper
     content_tag(:div, image_tag(set_element(pic), class: 'lazy lrg_pic_frame', title: set_image_title, lazy: true), class:'slide') if pic.photo?
   end
 
+  # define nav menu on show listing page
   def show_listing_menu listing, str=[]
     if listing
-    str << content_tag(:li, get_current_region(listing))
-    str << content_tag(:span, '|', class: 'divider')
-    str << content_tag(:li, link_to(listing.site_name, category_listings_path(cid: listing.category_id, loc: listing.site_id))) 
-    str << content_tag(:span, '|', class: 'divider')
-    str << content_tag(:li, listing.category_name, class: 'med-top mleft10')
-    content_tag(:ul, str.join(" ").html_safe, class: "nav")
+      str << content_tag(:li, get_current_region(listing))
+      str << content_tag(:span, '|', class: 'divider')
+      str << content_tag(:li, link_to(listing.site_name, category_listings_path(cid: listing.category_id, loc: listing.site_id))) 
+      str << content_tag(:span, '|', class: 'divider')
+      str << content_tag(:li, listing.category_name, class: 'med-top mleft10')
+      content_tag(:ul, str.join(" ").html_safe, class: "nav")
+    end
+  end
+  
+  # check for locations
+  def has_locations? listing
+    listing.any_locations? || (listing.sold_by_business? && listing.seller_address?)
+  end
+
+  # render want content
+  def wanted_content str=[]
+    str << image_tag('rsz_check-mark-md.png', class: 'checkmark')
+    str << content_tag(:span, 'Want', class: 'mleft5 black-txt')
+    content_tag(:div, str.join(" ").html_safe)
+  end
+
+  # render wanted listing content
+  def wanted_listing listing, want_msg, cls
+    listing.user_wanted?(@user) ? wanted_content : toggle_action_btn(listing, want_msg, cls, 'want')
+  end
+
+  # display want button
+  def toggle_action_btn listing, msg, cls, atype
+    unless signed_in?
+      link_to atype.titleize, send("set_#{atype}_path", listing.pixi_id), method: 'post', class: cls, id: send("set_#{atype}_id"), remote: !signed_in?, 
+        title: msg
+    else
+      render partial: "shared/show_listing_#{atype}", locals: {listing: listing, msg: msg, cls: cls}
+    end
+  end
+
+  # show all pixis if not empty
+  def show_listings model
+    unless model.blank?
+      render partial: 'shared/listings', locals: {listings: model}
+    else
+      content_tag(:div, NO_PIXI_FOUND_MSG, class:'width240 center-wrapper')
     end
   end
 end

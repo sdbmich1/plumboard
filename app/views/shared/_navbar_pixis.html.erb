@@ -2,10 +2,6 @@
   <%= render partial: 'shared/site_menu', locals: { loc_name: loc_name, rFlg: rFlg } %>
 </ul>
 <div class="pixi-select pull-right">
-  <% if statusFlg %>
-    <%= collection_select :status_type, :id, StatusType.unhidden, :code, :code_title, {selected: @status},
-    {id: 'status_type', class: 'span2 cat-select'} %>
-  <% end %>
-  <%= render partial: 'shared/category_list', locals: { ptype: false } %>
-  <%= render partial: 'shared/sites' %>
+  <%= show_menu_status @status, statusFlg %>
+  <%= show_menu_fields false %>
 </div>

@@ -91,6 +91,12 @@ class UserProcessor
     pic ? "<img src='#{pic}' class='inv-pic' /> #{@user.name}" : nil
   end
 
+  # display image with name for autocomplete
+  def pic_with_business_name
+    pic = @user.photo rescue nil
+    pic ? "<img src='#{pic}' class='inv-pic' /> #{@user.business_name}" : nil
+  end
+
   # set csv filename
   def filename utype
     (utype.blank? ? "All" : UserType.where(code: utype).first.description) + "_" + ResetDate::set_file_timestamp

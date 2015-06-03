@@ -1,8 +1,3 @@
-<% unless @listings.blank? %>
-  <div class='row'>
-    <%= render partial: 'shared/listing', collection: @listings, as: :listing, locals: {px_size: 'large', ftrFlg: true} %>
-  </div>
-<% else %>
-  <div class='width240 center-wrapper'><%= NO_PIXI_FOUND_MSG %></div>
-<% end %>
-
+<div class='row'>
+  <%= render partial: 'shared/listing', collection: listings, as: :listing, locals: {px_size: 'large', ftrFlg: true} %>
+</div>

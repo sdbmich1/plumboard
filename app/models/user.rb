@@ -159,7 +159,7 @@ class User < ActiveRecord::Base
 
   # return active types
   def self.active
-    where(:status => 'active')
+    includes(:pictures).where(:status => 'active')
   end
 
   # eager load associations
@@ -291,6 +291,11 @@ class User < ActiveRecord::Base
     UserProcessor.new(self).pic_with_name
   end
 
+  # display image with name for autocomplete
+  def pic_with_business_name
+    UserProcessor.new(self).pic_with_business_name
+  end
+
   # return any unpaid invoices count 
   def unpaid_invoice_count
     unpaid_received_invoices.size rescue 0
@@ -328,7 +333,8 @@ class User < ActiveRecord::Base
 
   # return users by type
   def self.get_by_type val
-    val.blank? ? active : active.where(:user_type_code => val)
+    txt = val && val.upcase == 'BUS' ? 'business_name ASC' : 'first_name ASC'
+    val.blank? ? active : active.where(:user_type_code => val).order(txt)
   end
   
   # check user is pixter
@@ -343,7 +349,7 @@ class User < ActiveRecord::Base
   
   # check user is business
   def is_business?
-    user_type_code.upcase == 'BUS' rescue false
+    code_type == 'BUS' rescue false
   end
   
   # check user is support
@@ -400,7 +406,7 @@ class User < ActiveRecord::Base
 
   # check user type is business
   def is_business?
-    user_type_code == 'BUS' rescue false
+    code_type == 'BUS' rescue false
   end
 
   # check if guest or non-person

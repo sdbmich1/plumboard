@@ -77,6 +77,10 @@ namespace :db do
   task :load_active_listings_counter => :environment do
     set_active_listings_count
   end
+
+  task :reload_user_types => :environment do
+    reset_user_types
+  end
 end
 
 def set_keys
@@ -103,11 +107,12 @@ end
 
 def updateCategoryType
   Category.where(name: ['GIGS', 'JOBS', 'EMPLOYMENT']).update_all(category_type_code: 'employment')
-  Category.where(name: ['EVENT', 'EVENTS', 'HAPPENINGS', 'TICKETS FOR SALE']).update_all(category_type_code: 'event')
+  Category.where(name: ['EVENT', 'EVENTS', 'TRAVEL', 'HAPPENINGS', 'TICKETS FOR SALE']).update_all(category_type_code: 'event')
   Category.where(name: ['ANTIQUES', 'COLLECTIBLES', 'REAL ESTATE']).update_all(category_type_code: 'asset')
   Category.where(name: ['AUTOMOTIVE', 'BOATS', 'MOTORCYCLE']).update_all(category_type_code: 'vehicle')
-  Category.where(name: ['BEAUTY', 'SERVICES', 'TRAVEL', 'CLASSES & LESSONS', 'LOST & FOUND' ]).update_all(category_type_code: 'service')
+  Category.where(name: ['BEAUTY', 'SERVICES', 'CLASSES & LESSONS', 'LOST & FOUND' ]).update_all(category_type_code: 'service')
   Category.where(name: ['PETS']).update_all(category_type_code: 'item')
+  Category.where(name: ['HOUSING: FOR RENT', 'HOUSING: FOR SALE']).update_all(category_type_code: 'housing')
   Category.where('category_type_code is null').update_all(category_type_code: 'sales')
 end
 
@@ -246,4 +251,10 @@ end
 
 def set_active_listings_count
   Listing.active.find_each { |listing| User.reset_counters(listing.seller_id, :active_listings) }
+end
+
+def reset_user_types
+  User.where(status: 'active').find_each do |usr|
+    usr.update_attribute :user_type_code, usr.user_type_code.upcase
+  end 
 end

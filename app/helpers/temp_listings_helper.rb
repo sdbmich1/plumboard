@@ -58,7 +58,7 @@ module TempListingsHelper
 
   # check if pixi is an item
   def is_item? listing, flg=true
-    val = %w(employment service)
+    val = %w(employment service item housing)
     flg ? !(listing.is_category_type? val) : (listing.is_category_type? val)
   end
 
@@ -69,7 +69,12 @@ module TempListingsHelper
 
   # check if pixi has condition
   def has_condition? listing
-    !listing.is_category_type? %w(employment service event)
+    !listing.is_category_type? %w(employment service event housing)
+  end
+
+  # set large size if condition is not visible
+  def set_category_size listing
+    has_condition?(listing) ? 'span2' : 'span4'
   end
 
   # check if pixi is chargeable
@@ -107,6 +112,24 @@ module TempListingsHelper
       render partial: 'shared/button_menu', locals: {model: listing, atype: 'Remove'}
     else
       link_to 'Remove', listing, method: :delete, confirm: msg, class: 'btn btn-large', title: 'Remove Pixi' unless expired_or_sold?(listing)
+    end
+  end
+
+  # check for pixi post
+  def show_seller_fields f, listing
+    render partial: 'shared/listing_seller_fields', locals: { f: f, listing: listing } if new_pixi_post?(listing)
+  end
+
+  # set autocomplete path based on user type
+  def autocomplete_path ptype
+    ptype && ptype.upcase == 'BUS' ? autocomplete_user_business_name_temp_listings_path : autocomplete_user_first_name_temp_listings_path
+  end
+
+  def show_temp_listing listing
+    if listing.free?
+      link_to "Done!", submit_temp_listing_path(listing), method: :put, class: "btn btn-large btn-primary submit-btn", id: 'px-done-btn'
+    else
+      render partial: 'shared/item_purchase', locals: {listing: listing} if chargeable? listing 
     end
   end
 end

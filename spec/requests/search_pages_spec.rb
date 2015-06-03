@@ -4,6 +4,8 @@ feature "Searches" do
   subject { page }
 
   let(:user) { create(:contact_user) }
+  let(:user2) { create(:contact_user) }
+  let(:bus_user) { create(:business_user) }
   let(:category) { create :category }
   let(:site) { create :site }
   let(:condition_type) { create :condition_type, code: 'UG', description: 'Used - Good', hide: 'no', status: 'active' }
@@ -18,21 +20,13 @@ feature "Searches" do
       condition_type_code: condition_type.code)  
   end
 
-  describe 'biz' do
+  describe 'biz w/o address', base: true do
     before(:each) do
       add_pixis seller
       init_setup user
     end
-
-    it 'renders seller page for user' do
-      visit seller.local_user_path
-      page.should have_content seller.name
-      page.should have_content seller.description
-      page.should have_selector('#follow-btn', visible: true)
-      expect(Listing.count).not_to eq 0
-      # page.should have_content 'Acoustic Guitar'
-      # page.should have_content 'Bass Guitar'
-    end
+    
+    it_should_behave_like 'seller_url_pages', true, false
 
     it "can follow and unfollow a business" do
       visit '/biz/rhythmmusic'
@@ -46,7 +40,22 @@ feature "Searches" do
     end
   end
 
+  describe 'biz w/ address', address: true do
+    before(:each) do
+      add_pixis bus_user
+      init_setup user
+    end
+    
+    it_should_behave_like 'seller_url_pages', true, true
+  end
+
   describe 'mbr' do
+    before(:each) do
+      add_pixis user2
+      init_setup user
+    end
+    
+    it_should_behave_like 'seller_url_pages', false, false
   end
 end
 

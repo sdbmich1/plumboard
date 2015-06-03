@@ -3,13 +3,15 @@
   <div class='span6 no-left black-txt'>
     <div class='no-left span5'>
       <div class='sender'>
-        <span class='width120'><%= comment.sender_name %></span>
+        <span class='width180'><%= comment.sender_name %></span>
         <span class="mleft20 timestamp">Posted <%= ts_in_words(comment.created_at) %>.</span>
       </div>
       <span class="content"><%= strip_links comment.full_content %>
     </div>
     <div class='span1'>
-      <div class='pull-right'><%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: comment.user} %></div>
+      <div class='pull-right'>
+        <%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: comment.user} %>
+      </div>
     </div>
   </div>
   <div class='clear-all'></div>

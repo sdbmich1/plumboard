@@ -8,7 +8,7 @@ class TempListing < ListingParent
   after_commit :async_send_notification, :on => :update
 
   attr_accessor :slr_name
-  attr_accessible :slr_name, :item_color, :item_id, :car_color, :car_id
+  attr_accessible :slr_name, :item_color, :item_id, :car_color, :car_id, :location_size, :product_size
 
   default_scope :order => "temp_listings.updated_at DESC"
 
@@ -50,9 +50,25 @@ class TempListing < ListingParent
     self[:other_id] = value if is_category_type?('vehicle')
   end
 
+  def location_size
+    self[:item_size] if is_category_type?('housing')
+  end
+
+  def location_size=value
+    self[:item_size] = value if is_category_type?('housing')
+  end
+
+  def product_size
+    self[:item_size] if is_category_type?('product')
+  end
+
+  def product_size=value
+    self[:item_size] = value if is_category_type?('product')
+  end
+
   # sets values from assessor fields to table fields
   def set_item_flds
-    self.color, self.other_id = item_color || car_color, item_id || car_id
+    self.color, self.other_id, self.item_size = item_color || car_color, item_id || car_id, location_size || product_size
   end
 
   # finds specific pixi

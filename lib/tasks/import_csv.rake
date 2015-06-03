@@ -696,6 +696,30 @@ task :import_other_sites, [:file_name, :org_type] => [:environment] do |t, args|
   end
 end
 
+task :import_travel_modes => :environment do
+  TravelMode.delete_all
+  CSV.foreach(Rails.root.join('db', 'travel_mode_052415.csv'), :headers => true) do |row|
+
+    attrs = {
+      :mode	       => row[0],
+      :travel_type     => row[1],
+      :description     => row[2],
+      :status	       => row[3],
+      :hide            => row[4]
+    }
+
+    # add travel_mode
+    new_travel_mode = TravelMode.new(attrs)
+
+    # save travel_mode
+    if new_travel_mode.save 
+      puts "Saved travel_mode #{attrs.inspect}"
+    else
+      puts new_travel_mode.errors
+    end
+  end
+end
+
 task :load_feeds => :environment do
   #Feed.delete_all
   CSV.foreach(Rails.root.join('db', 'site_feed_021515.csv'), :headers => true) do |row|
@@ -742,6 +766,7 @@ task :run_all_tasks => :environment do
   Rake::Task[:load_event_types].execute
   Rake::Task[:load_status_types].execute
   Rake::Task[:load_condition_types].execute
+  Rake::Task[:import_travel_modes].execute
   Rake::Task[:load_feeds].execute
   Rake::Task[:import_other_sites].execute :file_name => "state_site_data_012815.csv", :org_type => "state"
   Rake::Task[:import_other_sites].execute :file_name => "country_site_data_012815.csv", :org_type => "country"

@@ -8,7 +8,7 @@
         </div>
       </td>
     <% else %>
-      <td class='v-align'><%= get_conv_title invoice %></td>
+      <td class=''><%= get_conv_title invoice %></td>
       <td>
       <div class='price'>
         <%= render partial: 'shared/tooltip', locals: { msg: get_conv_fee_msg(invoice) } if action_name == 'new' %>

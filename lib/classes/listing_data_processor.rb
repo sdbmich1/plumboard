@@ -59,8 +59,6 @@ class ListingDataProcessor < ListingQueryProcessor
     listing = get_listing tmpFlg
     listing = add_photos tmpFlg, listing
     listing = update_fields listing, tmpFlg if tmpFlg && listing 
-
-    # add dup
     listing.save!
     listing.delete_photo(get_file_ids(listing), 0) if tmpFlg rescue false
     listing
@@ -96,7 +94,7 @@ class ListingDataProcessor < ListingQueryProcessor
   # format date based on location
   def display_date dt, dFlg=true
     lat, lng = @listing.lat, @listing.lng
-    ll = lat && lat > 0 ? [lat, lng] : LocationManager::get_lat_lng_by_loc(@listing.site_address)
+    ll = lat && lat > 0 ? [lat, lng] : LocationManager::get_lat_lng_by_loc(@listing.primary_address)
     ResetDate::display_date_by_loc dt, ll, dFlg rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
   end
 
