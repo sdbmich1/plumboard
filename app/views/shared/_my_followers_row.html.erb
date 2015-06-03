@@ -1,0 +1,8 @@
+<tr>
+  <td class='span1 center-wrapper'>
+  	<%= render partial: 'shared/show_photo', locals: {model: user, file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
+  </td>
+  <td class='span2'><%= user.name %></td>
+  <td class='span2'><%= get_user_loc(user) %></td>
+  <td class='span2'><%= @user.nice_date(user.date_followed(@user.id)) %></td>
+</tr>

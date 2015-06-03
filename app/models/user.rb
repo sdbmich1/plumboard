@@ -362,6 +362,31 @@ class User < ActiveRecord::Base
     code_type == 'AD' rescue false
   end
 
+  # check if user (a seller) is being followed by user_id
+  def is_followed?(user_id)
+    followers.exists?(user_id: user_id)
+  end
+
+  # check if user is following seller_id
+  def is_following?(seller_id)
+    favorite_sellers.exists?(seller_id: seller_id)
+  end
+
+  # toggle between seller and user (follower)
+  def self.get_by_ftype(ftype, id, status)
+    ftype == 'seller' ? UserProcessor.new(nil).get_by_seller(id, status) : UserProcessor.new(nil).get_by_user(id, status)
+  end
+
+  # return the date the current user followed seller_id
+  def date_followed(seller_id)
+    UserProcessor.new(self).date_followed(seller_id)
+  end
+
+  # return the ID of the FavoriteSeller object for the current user and seller_id
+  def favorite_seller_id(seller_id)
+    UserProcessor.new(self).favorite_seller_id(seller_id)
+  end
+
   # display user type
   def type_descr
     user_type.description rescue nil

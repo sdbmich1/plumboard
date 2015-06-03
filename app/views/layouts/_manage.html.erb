@@ -5,6 +5,7 @@
       <li><%= link_to "Pixis", listings_path(status: 'active') %></li>
       <li><%= link_to "PixiPosts", pixi_posts_path(status: 'active') %></li>
       <li><%= link_to "Inquiries", inquiries_path(ctype: 'inquiry') %></li>
+      <li><%= link_to "Followers", favorite_sellers_path(ftype: 'buyer', status: 'active') %></li>
     <% elsif can? :manage_pixi_posts, @user %>
       <li><%= link_to "PixiPosts", pixter_pixi_posts_path(status: 'scheduled') %></li>
     <% end %>

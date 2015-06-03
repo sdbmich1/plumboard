@@ -403,21 +403,13 @@ module ListingsHelper
     end 
   end
 
-  # show follow button if business
-  def follow_button buyer, seller
-    if seller.is_business? && buyer.id != seller.id && controller_name != 'users' && action_name != 'show'
-      favorite = FavoriteSeller.find_by_user_id_and_seller_id(buyer.id, seller.id)
-      toggle_follow_btn seller, favorite
-    end
-  end
-
   # toggle button
   def toggle_follow_btn seller, favorite
     if favorite && favorite.status != 'removed'
-      button_to('- Unfollow', favorite_seller_path(id: favorite.id, seller_id: seller.id),
+      button_to('Unfollow', favorite_seller_path(id: favorite.id, seller_id: seller.id),
           :method => :put, id: 'unfollow-btn', class: 'btn btn-primary font-bold span2', remote: true)
     else
-      button_to('+ Follow', favorite_sellers_path(seller_id: seller.id),
+      button_to('Follow', favorite_sellers_path(seller_id: seller.id),
           id: 'follow-btn', class: 'btn btn-primary submit-btn span2', remote: true)
     end
   end
