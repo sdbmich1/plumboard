@@ -107,10 +107,10 @@ end
 
 def updateCategoryType
   Category.where(name: ['GIGS', 'JOBS', 'EMPLOYMENT']).update_all(category_type_code: 'employment')
-  Category.where(name: ['EVENT', 'EVENTS', 'TRAVEL', 'HAPPENINGS', 'TICKETS FOR SALE']).update_all(category_type_code: 'event')
+  Category.where(name: ['EVENT', 'EVENTS', 'HAPPENINGS', 'TICKETS FOR SALE']).update_all(category_type_code: 'event')
   Category.where(name: ['ANTIQUES', 'COLLECTIBLES', 'REAL ESTATE']).update_all(category_type_code: 'asset')
   Category.where(name: ['AUTOMOTIVE', 'BOATS', 'MOTORCYCLE']).update_all(category_type_code: 'vehicle')
-  Category.where(name: ['BEAUTY', 'SERVICES', 'CLASSES & LESSONS', 'LOST & FOUND' ]).update_all(category_type_code: 'service')
+  Category.where(name: ['BEAUTY', 'SERVICES', 'TRAVEL', 'CLASSES & LESSONS', 'LOST & FOUND' ]).update_all(category_type_code: 'service')
   Category.where(name: ['PETS']).update_all(category_type_code: 'item')
   Category.where(name: ['HOUSING: FOR RENT', 'HOUSING: FOR SALE']).update_all(category_type_code: 'housing')
   Category.where('category_type_code is null').update_all(category_type_code: 'sales')

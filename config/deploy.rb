@@ -204,6 +204,14 @@ namespace :whenever do
   end    
 end
 
+namespace :pxb do    
+  desc "Update the PXB server data."
+  task :update_server, :roles => [:app] do
+    puts "\n\n=== Updating the Server Database! ===\n\n"
+    run "cd #{latest_release} && RAILS_ENV=#{rails_env} rake manage_server:run_update_tasks"
+  end    
+end
+
 # load in the deploy scripts installed by vulcanize for each rubber module
 Dir["#{File.dirname(__FILE__)}/rubber/deploy-*.rb"].each do |deploy_file|
   load deploy_file
@@ -246,4 +254,4 @@ end
 # Delayed Job  
 after "deploy:stop",    "delayed_job:stop"  
 after "deploy:start",   "delayed_job:start"  
-after "deploy:restart", "sphinx:symlink_indexes", "sphinx:configure", "sphinx:rebuild", "whenever:update_crontab"
+after "deploy:restart", "sphinx:symlink_indexes", "sphinx:configure", "sphinx:rebuild", "whenever:update_crontab", "pxb:update_server"
