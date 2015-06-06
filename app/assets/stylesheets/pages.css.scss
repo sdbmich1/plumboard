@@ -138,6 +138,13 @@ body #signupDialog.modal, #mapDialog.modal {
   position: relative;
   height: 200px;
 }
+  
+.pixi-post-bkgnd {
+  background: url("pxb_pixipost_page.jpg") no-repeat; 
+  @extend .bkgnd-elem;
+  position: relative;
+  height: 680px;
+}
 
 .carousel .one {
   background: url("pxb_header_one_2015_02_26.jpg") no-repeat; 

@@ -20,7 +20,6 @@ class PixiPostZipsController < ApplicationController
 
   # parse results for active items only
   def get_autocomplete_items(parameters)
-    items = super(parameters)
-    items = items.active rescue items
+    super(parameters).active rescue nil
   end
 end

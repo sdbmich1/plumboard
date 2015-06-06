@@ -321,9 +321,17 @@ module ListingsHelper
   def set_banner btype
     btype == 'loc' ? set_loc_banner : set_biz_banner
   end
+  
+  def get_usr
+    User.find_by_url @url rescue nil
+  end
+
+  def get_seller_name
+    get_usr.name rescue 'Pixis'
+  end
 
   def set_biz_banner
-    usr = User.find_by_url @url rescue nil
+    usr = get_usr
     content_tag(:div, render(partial: 'shared/user_band', locals: {user: usr, pxFlg: false, colorFlg: false}), class: ["mneg-top", "mbot"]) if usr
   end
 
@@ -551,7 +559,7 @@ module ListingsHelper
     img = image_tag('rsz_plus-blue.png', class: 'v-align social-img mleft10')
     str << content_tag(:span, 'Add Comment', class: 'black-txt v-align')
     str << link_to(img, comments_path, class: 'pixi-link', remote: true, title: 'Add Comment', id: 'add-comment-btn')
-    content_tag(:div, str.join(" ").html_safe)
+    content_tag(:div, str.join(" ").html_safe, class: 'mtop')
   end
 
   # sets class for correct top spacing for comment list
@@ -650,7 +658,7 @@ module ListingsHelper
   # show all pixis if not empty
   def show_listings model
     unless model.blank?
-      render partial: 'shared/listings', locals: {listings: model}
+      render partial: 'shared/listing', collection: model, as: :listing, locals: {px_size: 'large', ftrFlg: true}
     else
       content_tag(:div, NO_PIXI_FOUND_MSG, class:'width240 center-wrapper')
     end

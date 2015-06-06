@@ -16,15 +16,11 @@
       <%= yield :topcontent %>
       <%= render 'layouts/flash_messages', flash: flash %>
     </div>
+    <div id="spinner" class="round" style="display:none"></div>
+    <%= yield :content %>
   </div>
-  <div class='pg-bkgnd-gray'>
-    <div class="container" id='frame-container'>
-      <div id="spinner" class="round" style="display:none"></div>
-      <%= yield :content %>
-    </div>
-    <div class="container">
-      <%= render 'layouts/footer' %>
-    </div>
+  <div class="container">
+    <%= render 'layouts/footer' %>
   </div>
 </body>
 </html>

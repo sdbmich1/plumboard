@@ -151,6 +151,7 @@ form#new_post {margin-bottom: -0px!important;}
 
 .submit-btn { @extend .custom-btn; font-weight: bold; }
 .pixi-btn { color: white!important; background: $pixiBlue!important; border: 1px solid $pixiBlue!important; }
+.bold-btn { color: white!important; background: $pixiBlue!important; border: 1px solid $pixiBlue!important; font-weight: bold;}
 .pxb-btn { @extend .custom-btn; font-weight: normal; }
 .post-btn { @extend .custom-btn; font-weight: normal; height: 30px!important;}
 .basic-btn { @extend .custom-btn; font-weight: normal;

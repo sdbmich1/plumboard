@@ -1,12 +1,11 @@
-  <%= render partial: 'layouts/header' if @xhr %>
-  <div class="mtop center">
-    <p><h3>Sign in</h3></p>
+<%= render partial: 'layouts/header' if @xhr %>
+<div class="mtop center">
+  <p><h3>Sign in</h3></p>
+</div>
+<div class="row">
+  <div id='signInForm' class="mtop span4 offset4">
+    <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
+      <%= render partial: 'shared/signin_form', locals: { rmbrFlg: true, src: 'new' } %>
+    <% end %>
   </div>
-
-  <div class="row">
-    <div class="mtop span4 offset4">
-      <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
-        <%= render partial: 'shared/signin_form', locals: { rmbrFlg: true, src: 'new' } %>
-      <% end %>
-    </div>
-  </div>
+</div>

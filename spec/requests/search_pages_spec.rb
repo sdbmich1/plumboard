@@ -57,5 +57,20 @@ feature "Searches" do
     
     it_should_behave_like 'seller_url_pages', false, false
   end
+
+  describe "Non-signed in user" do
+    before(:each) do
+      add_pixis seller
+    end
+     
+    it "does not follow a seller" do
+      expect{
+        visit '/biz/rhythmmusic'
+        page.should have_selector('#follow-btn', visible: true)
+        find('#follow-btn').click
+      }.not_to change(FavoriteSeller,:count).by(1)
+      # page.should have_content 'Sign in'
+    end
+  end
 end
 

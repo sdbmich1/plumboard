@@ -138,13 +138,13 @@ namespace :manage_server do
     Rake::Task[:import_travel_modes].execute
     Rake::Task[:load_feeds].execute
     Rake::Task[:load_fulfillment_types].execute
-    Rake::Task[db:update_cat_types].execute
-    Rake::Task[db:load_user_urls].execute
-    Rake::Task[db:load_user_status].execute
-    Rake::Task[db:reload_pixi_posts].execute
-    Rake::Task[db:load_active_listings_counter].execute
-    Rake::Task[db:reload_user_types].execute
-    Rake::Task[manage_server:reprocess_user_images].execute
-    Rake::Task[manage_server:reprocess_listing_images].execute
+    Rake::Task["db:update_cat_types"].invoke
+    Rake::Task["db:load_user_urls"].invoke
+    Rake::Task["db:load_user_status"].invoke
+    Rake::Task["db:reload_pixi_posts"].invoke
+    Rake::Task["db:load_active_listings_counter"].invoke
+    Rake::Task["db:reload_user_types"].invoke
+    Rake::Task["manage_server:reprocess_user_images"].invoke
+    Rake::Task["manage_server:reprocess_listing_images"].invoke
   end
 end

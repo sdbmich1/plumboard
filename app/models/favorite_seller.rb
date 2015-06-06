@@ -9,6 +9,6 @@ class FavoriteSeller < ActiveRecord::Base
   validates :status, :presence => true
 
   def self.get_by_status val
-  	where(:status => val)
+    where(:status => val)
   end
 end

@@ -44,7 +44,9 @@ class User < ActiveRecord::Base
   has_many :user_interests, :dependent => :destroy
   has_many :interests, :through => :user_interests
   has_many :user_pixi_points, dependent: :destroy
-  has_many :favorite_sellers
+
+  # follow relationships
+  has_many :favorite_sellers, foreign_key: 'user_id', dependent: :destroy
   has_many :sellers, through: :favorite_sellers
   has_many :inverse_favorite_sellers, :class_name => "FavoriteSeller", :foreign_key => "seller_id"
   has_many :followers, :through => :inverse_favorite_sellers, :source => :user
@@ -364,17 +366,22 @@ class User < ActiveRecord::Base
 
   # check if user (a seller) is being followed by user_id
   def is_followed?(user_id)
-    followers.exists?(user_id: user_id)
+    followers.where("favorite_sellers.status = 'active'").exists?(id: user_id)
   end
 
   # check if user is following seller_id
   def is_following?(seller_id)
-    favorite_sellers.exists?(seller_id: seller_id)
+    favorite_sellers.where(status: 'active').exists?(seller_id: seller_id)
   end
 
   # toggle between seller and user (follower)
   def self.get_by_ftype(ftype, id, status)
     ftype == 'seller' ? UserProcessor.new(nil).get_by_seller(id, status) : UserProcessor.new(nil).get_by_user(id, status)
+  end
+
+  def get_follow_status(ftype, id)
+    result = ftype == 'seller' ? is_following?(id) : is_followed?(id)
+    result ? 'active' : 'inactive'
   end
 
   # return the date the current user followed seller_id

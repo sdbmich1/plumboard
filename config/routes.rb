@@ -180,6 +180,6 @@ Plumboard::Application.routes.draw do
 
   # personalized paths
   get '/biz/:search', to: "searches#biz"
-  get '/mbr/:search', to: "searches#biz"
+  get '/mbr/:search', to: "searches#member"
   get '/careers', to: "searches#jobs"
 end

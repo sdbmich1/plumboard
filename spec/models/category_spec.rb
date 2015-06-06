@@ -148,7 +148,6 @@ describe Category do
   end  
 
   describe "must have pictures" do
-
     it "does not save w/o at least one picture" do
       @category.should_not be_valid
     end
@@ -161,4 +160,8 @@ describe Category do
     end
   end
 
+  describe 'get_by_name' do
+    it { expect(Category.get_by_name(@category.name)).to eq @category.id }
+    it { expect(Category.get_by_name('')).to be_nil }
+  end
 end

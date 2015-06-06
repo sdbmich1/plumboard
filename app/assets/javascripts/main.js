@@ -117,8 +117,7 @@ $(document).ready(function(){
   // select last accordion panel on window load
   window.onload = function () {
     open_panel();
-    if($('#accordion').length > 0)
-      $("#accordion").accordion('option', "active", -1 );
+    open_board();
   }
 
   // enable tooltip
@@ -143,12 +142,6 @@ $(document).ready(function(){
   // enable placeholder text for input fields
   if( $('#px-container').length == 0 ) {
     $('input, textarea').placeholder();
-  }
-  else {
-    // load board on doc ready
-    if( $('.pixiPg').length == 0) {
-      load_masonry('#px-nav', '#px-nav a', '#pxboard .item', get_item_size()); 
-    }
   }
 
   // used to scroll up page
@@ -196,6 +189,13 @@ $(document).ready(function(){
   // load featured band
   load_featured_slider();
 });
+
+// load board on doc ready
+function open_board() {
+  if( $('#px-container').length != 0 && $('.pixiPg').length == 0) {
+    load_masonry('#px-nav', '#px-nav a', '#pxboard .item', get_item_size()); 
+  }
+}
 
 // masks phone number fields
 var mask_flds = '#pixi_post_home_phone, #pixi_post_mobile_phone, #home_phone, #mobile_phone, #work_phone, #transaction_home_phone';
@@ -334,7 +334,6 @@ function initScroll(cntr, nav, nxt, item) {
       loadingBoard = false;
     });
   }
-
   $("#spinner").hide('fast');
 }
 
@@ -881,3 +880,10 @@ $(document).on("click", '#map-tab, #detail-tab, #comment-tab', function(e){
     getLatLng(true);		
   }
 });
+
+// toggle field display based on category value
+function resetSpan(ctype) {
+  if(ctype.match(new RegExp('biz', 'i'))) {
+    $('#signInForm').removeClass('offset4').addClass('offset5');
+  }
+}
