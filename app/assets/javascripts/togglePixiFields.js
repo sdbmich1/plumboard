@@ -1,7 +1,7 @@
 // when the user type field changes
 $(document).on("change", "#ucode", function(e){
   var fldList = '#user_gender, #user_birth_date_1i, #user_birth_date_2i, #user_birth_date_3i';
-  var bus_flds = ''#bus_code, #user_business_name, #bus_url' ;
+  var bus_flds = '#bus_code, #user_business_name, #bus_url';
   var utype = $(this).val().toLowerCase();
   var uid = $('#uid').val();
   if(utype.match(/^bus/) != null) {
