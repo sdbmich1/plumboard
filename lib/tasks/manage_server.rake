@@ -136,14 +136,15 @@ namespace :manage_server do
 
   task :run_upgrade_tasks => :environment do
     Rake::Task[:import_travel_modes].execute
+    Rake::Task[:import_user_type].execute
     Rake::Task[:load_feeds].execute
     Rake::Task[:load_fulfillment_types].execute
     Rake::Task["db:update_cat_types"].invoke
-    Rake::Task["db:load_user_urls"].invoke
     Rake::Task["db:load_user_status"].invoke
     Rake::Task["db:reload_pixi_posts"].invoke
     Rake::Task["db:load_active_listings_counter"].invoke
     Rake::Task["db:reload_user_types"].invoke
+    Rake::Task["db:load_user_urls"].invoke
     Rake::Task["manage_server:reprocess_user_images"].invoke
     Rake::Task["manage_server:reprocess_listing_images"].invoke
   end

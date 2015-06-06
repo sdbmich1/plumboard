@@ -117,7 +117,6 @@ $(document).ready(function(){
   // select last accordion panel on window load
   window.onload = function () {
     open_panel();
-    open_board();
   }
 
   // enable tooltip
@@ -196,6 +195,8 @@ function open_board() {
     load_masonry('#px-nav', '#px-nav a', '#pxboard .item', get_item_size()); 
   }
 }
+
+$(window).load( function(){ open_board(); });
 
 // masks phone number fields
 var mask_flds = '#pixi_post_home_phone, #pixi_post_mobile_phone, #home_phone, #mobile_phone, #work_phone, #transaction_home_phone';

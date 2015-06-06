@@ -236,6 +236,10 @@ module ApplicationHelper
     set_cache_path(listing) + "/#{listing.pixi_id}-#{listing.title}-#{listing.amt_left}-#{listing.updated_at.to_i}-#{fldName}" if listing
   end
 
+  def cache_key_for_fragment(section)
+    "#{section}-#{controller_name}-#{action_name}"
+  end
+
   # check for menu display of footer items
   def show_footer_items?
     controller_name == 'listings' && %w(index category local).detect {|x| action_name == x}

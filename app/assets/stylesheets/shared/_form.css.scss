@@ -452,7 +452,10 @@ table.noborder {
   color: $pixiOrange;
 }
 
-.tab-content {overflow-x: hidden;}
+.tab-content {
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
 
 .boxed {
   border: 1px solid gray;
