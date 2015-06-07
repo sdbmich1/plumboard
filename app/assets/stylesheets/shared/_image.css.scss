@@ -280,6 +280,7 @@ img.camera  {
 .featured-container > .bx-wrapper {
   max-width: 100%!important;
   .bx-viewport {
+    min-height: 255px;
     border: none!important;
     box-shadow: none!important;
     background: transparent!important;

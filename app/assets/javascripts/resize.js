@@ -145,9 +145,11 @@ function resizePixi () {
   if($(fname).length > 0) {
     $(fname).css({'width': set_item_size(0, true)});
   }
+  /*
   $('.item.masonry-brick img').each(function(i, item) {
     resizeElement(item, i, 200, true);
   }); 
+  */
 }
 
 // resize each element
