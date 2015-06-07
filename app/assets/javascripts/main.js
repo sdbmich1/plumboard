@@ -138,14 +138,6 @@ $(document).ready(function(){
     $('.vimeo-thumb').smartVimeoEmbed();
   }
 
-  // enable placeholder text for input fields
-  if( $('#px-container').length == 0 ) {
-    $('input, textarea').placeholder();
-  }
-  else {
-    open_board();
-  }
-
   // used to scroll up page
   $(window).scroll(function(){
     if ($(this).scrollTop() > 100) {
@@ -184,6 +176,14 @@ $(document).ready(function(){
 
   // load featured band
   load_featured_slider();
+
+  // enable placeholder text for input fields
+  if( $('#px-container').length == 0 ) {
+    $('input, textarea').placeholder();
+  }
+  else {
+    open_board();
+  }
 });
 
 // load board on doc ready
@@ -193,7 +193,7 @@ function open_board() {
   }
 }
 
-//$(window).load( function(){ reload_board($(this)); });
+$(window).load( function(){ $('#px-container').masonry('reload');});
 
 function set_inquiry_form() {
   if ($('#inquiry_frm').length > 0) {  
