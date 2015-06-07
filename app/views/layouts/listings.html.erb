@@ -11,7 +11,6 @@
 <body>
   <div id='wrap'>
     <%= render 'layouts/header' %>
-    <div id="section-container">
       <%= yield :subhead %>
       <%= yield :top_banner %>
       <%= yield :feature_banner %>
@@ -20,7 +19,6 @@
         <div id="spinner" class="round" style="display:none"></div>
         <%= yield :content %>
       </div>
-    </div>
     <div id="push"></div>
   </div>
   <div id='footer'>
