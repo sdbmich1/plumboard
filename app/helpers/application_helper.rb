@@ -357,7 +357,6 @@ module ApplicationHelper
   # set top menu navigation based on sign in status
   def top_menu
     if signed_in?
-      content_tag(:div, render('shared/msg_indicator'), id: 'msg-link')
       render 'layouts/display_menu'
     else
       content_tag(:ul, content_tag(:li, link_to("Sign in", new_user_session_path)), class: "nav pull-right")

@@ -171,15 +171,15 @@ Plumboard::Application.routes.draw do
   get "/settings/details", to: "settings#details" 
   get "/settings/password", to: "settings#password" 
 
+  # personalized paths
+  get '/biz/:search', to: "searches#biz"
+  get '/mbr/:search', to: "searches#member"
+  get '/careers', to: "searches#jobs"
+
   # specify root route based on user sign in status
   root to: 'listings#local', :constraints => lambda {|r| r.env["warden"].authenticate? }
   root to: 'pages#home'
 
   # exception handling
   # match '/*path', :to => 'application#rescue_with_handler'
-
-  # personalized paths
-  get '/biz/:search', to: "searches#biz"
-  get '/mbr/:search', to: "searches#member"
-  get '/careers', to: "searches#jobs"
 end
