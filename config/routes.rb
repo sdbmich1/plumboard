@@ -172,8 +172,8 @@ Plumboard::Application.routes.draw do
   get "/settings/password", to: "settings#password" 
 
   # personalized paths
-  get '/biz/:search', to: "searches#biz"
-  get '/mbr/:search', to: "searches#member"
+  match '/biz/:search' => "searches#biz", via: :get, as: :biz
+  match '/mbr/:search' => "searches#member", via: :get, as: :member
   get '/careers', to: "searches#jobs"
 
   # specify root route based on user sign in status

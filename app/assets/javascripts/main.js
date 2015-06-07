@@ -142,6 +142,9 @@ $(document).ready(function(){
   if( $('#px-container').length == 0 ) {
     $('input, textarea').placeholder();
   }
+  else {
+    open_board();
+  }
 
   // used to scroll up page
   $(window).scroll(function(){
@@ -191,12 +194,12 @@ $(document).ready(function(){
 
 // load board on doc ready
 function open_board() {
-  if( $('#px-container').length != 0 && $('.pixiPg').length == 0) {
+  if( $('.pixiPg').length == 0) {
     load_masonry('#px-nav', '#px-nav a', '#pxboard .item', get_item_size()); 
   }
 }
 
-$(window).load( function(){ open_board(); });
+$(window).load( function(){ reload_board($(this)); });
 
 // masks phone number fields
 var mask_flds = '#pixi_post_home_phone, #pixi_post_mobile_phone, #home_phone, #mobile_phone, #work_phone, #transaction_home_phone';
@@ -359,6 +362,7 @@ function load_masonry(nav, nxt, item, sz){
 
     // initialize infinite scroll
     initScroll('#px-container', nav, nxt, item);
+    reload_board($(this));
   }
 }
 

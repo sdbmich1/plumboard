@@ -5,7 +5,7 @@
 
 .item { 
   @extend .pic-item; float: left; 
-  //width: 200px!important;
+  width: 200px!important;
   margin: 0 auto;
   overflow: hidden;
   @include border-radius(.3em);
