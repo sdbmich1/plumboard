@@ -9,7 +9,7 @@ $(document).on("change", "#ucode", function(e){
     toggleBusFlds('#mbr_code, #gender_code, '+fldList, '#user_description, '+bus_flds, fldList, true);
   }  
   else {
-    toggleBusFlds(bus_flds,'#mbr_code, #gender_code '+fldList, '#user_description, '+bus_flds, false);
+    toggleBusFlds(bus_flds, '#mbr_code, #gender_code, '+fldList, '#user_description, '+bus_flds, false);
   }
 });
 

@@ -327,7 +327,7 @@ module ListingsHelper
   end
 
   def get_seller_name
-    get_usr.name rescue 'Pixis'
+    get_usr.name.html_safe rescue 'Pixis'
   end
 
   def set_biz_banner

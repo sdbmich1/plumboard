@@ -187,6 +187,9 @@ $(document).ready(function(){
 
   // load featured band
   load_featured_slider();
+
+  // load board
+  open_board();
 });
 
 // load board on doc ready
@@ -196,7 +199,7 @@ function open_board() {
   }
 }
 
-$(window).load( function(){ open_board(); });
+//$(window).load( function(){ open_board(); });
 
 // masks phone number fields
 var mask_flds = '#pixi_post_home_phone, #pixi_post_mobile_phone, #home_phone, #mobile_phone, #work_phone, #transaction_home_phone';
