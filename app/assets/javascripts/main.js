@@ -193,8 +193,6 @@ function open_board() {
   }
 }
 
-$(window).load( function(){ $('#px-container').masonry('reload');});
-
 function set_inquiry_form() {
   if ($('#inquiry_frm').length > 0) {  
     if($('#inq_status').is(':visible')) {
