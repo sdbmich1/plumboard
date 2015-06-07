@@ -142,6 +142,9 @@ $(document).ready(function(){
   if( $('#px-container').length == 0 ) {
     $('input, textarea').placeholder();
   }
+  else {
+    open_board();
+  }
 
   // used to scroll up page
   $(window).scroll(function(){
@@ -187,14 +190,11 @@ $(document).ready(function(){
 
   // load featured band
   load_featured_slider();
-
-  // load board
-  open_board();
 });
 
 // load board on doc ready
 function open_board() {
-  if( $('#px-container').length != 0 && $('.pixiPg').length == 0) {
+  if($('.pixiPg').length == 0) {
     load_masonry('#px-nav', '#px-nav a', '#pxboard .item', get_item_size()); 
   }
 }
