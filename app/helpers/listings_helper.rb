@@ -232,6 +232,10 @@ module ListingsHelper
     end
   end
 
+  def cache_key_for_pixi
+    "#{controller_name}-#{action_name}"
+  end
+
   # get region for show pixi display menu
   def get_current_region listing
     if listing
@@ -326,15 +330,7 @@ module ListingsHelper
    
   # set class based on controller
   def set_item_class flg
-    if flg 
-      if controller_name == "pages"
-        'home-item' 
-      else
-        'item'
-      end
-    else
-      'featured-item' 
-    end
+    !flg ? 'featured-item' : (controller_name == 'pages' && action_name == 'home') ? 'home-item' : 'item'
   end
 
   # set top banner image
