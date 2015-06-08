@@ -326,7 +326,15 @@ module ListingsHelper
    
   # set class based on controller
   def set_item_class flg
-    !flg ? 'featured-item' : (controller_name == 'pages' && action_name == 'home') ? 'home-item' : 'item'
+    if flg 
+      if controller_name == "pages"
+        'home-item' 
+      else
+        'item'
+      end
+    else
+      'featured-item' 
+    end
   end
 
   # set top banner image
