@@ -51,9 +51,9 @@ module ListingsHelper
       when "local"
         "#{local_listings_path page: @listings.next_page, loc: params[:loc]}"
       when "biz"
-        "#{biz_path page: @listings.next_page}, search: params[:search]"
+        "#{biz_path page: @listings.next_page, search: params[:search]}"
       when "member"
-        "#{member_path page: @listings.next_page}, search: params[:search]"
+        "#{member_path page: @listings.next_page, search: params[:search]}"
       else
         "#{listings_path page: @listings.next_page}"
     end
@@ -128,7 +128,7 @@ module ListingsHelper
   # set string to share content on pinterest
   def pin_share listing
     "//www.pinterest.com/pin/create/button/?url=" + get_url(listing) + "&media=" + get_photo(listing) + 
-    "&description=Check out this pixi on Pixiboard! " + listing.nice_title
+    "&description=Check out this pixi on Pixiboard! " + listing.nice_title(false)
   end
 
   # set string to share content on twitter
