@@ -3,6 +3,5 @@
 </ul>
 <div class="pixi-select pull-right">
   <%= render partial: 'shared/status_menu', locals: { val: @status } if statusFlg %>
-  <%= render partial: 'shared/category_list', locals: { ptype: false } %>
-  <%= render partial: 'shared/sites' %>
+  <%= show_menu_fields false %>
 </div>

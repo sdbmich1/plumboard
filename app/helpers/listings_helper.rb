@@ -366,8 +366,8 @@ module ListingsHelper
     render(partial: 'shared/status_menu', locals: { val: val }) if sFlg
   end
 
-  def show_menu_fields ptype, sFlg
-    render partial: 'shared/menu_fields', locals: { ptype: ptype, statusFlg: sFlg } if controller_name == 'listings'
+  def show_menu_fields ptype
+    render partial: 'shared/menu_fields', locals: { ptype: ptype } if controller_name == 'listings'
   end
 
   # check ownership
