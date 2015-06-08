@@ -922,7 +922,6 @@ ActiveRecord::Schema.define(:version => 20150527032406) do
     t.string   "status"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
-    t.string   "hide"
   end
 
   add_index "user_types", ["code"], :name => "index_user_types_on_code"
