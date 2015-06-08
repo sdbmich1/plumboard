@@ -117,7 +117,6 @@ $(document).ready(function(){
   // select last accordion panel on window load
   window.onload = function () {
     open_panel();
-    open_board();
   }
 
   // enable tooltip
@@ -182,12 +181,13 @@ $(document).ready(function(){
   if( $('#px-container').length == 0 ) {
     $('input, textarea').placeholder();
   }
+  open_board();
 });
 
 // load board on doc ready
 function open_board() {
   if($('.pixiPg').length == 0) {
-    load_masonry('#px-nav', '#px-nav a', '#pxboard .item', 220); 
+    load_masonry('#px-nav', '#px-nav a', '#pxboard .item', get_item_size()); 
   }
 }
 

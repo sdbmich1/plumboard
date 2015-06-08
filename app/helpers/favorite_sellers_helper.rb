@@ -17,7 +17,7 @@ module FavoriteSellersHelper
 
   def follow_or_unfollow_button(status, user, seller, sz='')
     bcls = [(sz.blank? ? 'span2' : "btn-{sz} span1"), 'no-left'].join(' ')
-    if seller.is_business? && controller_name != 'listings' && controller_name != 'users'
+    if seller.is_business? && controller_name.match(/listings|users/).nil? 
       if status == 'active'
         link_to('- Unfollow', favorite_seller_path(id: user.favorite_seller_id(seller.id), seller_id: seller.id),
                 :method => :put, id: "unfollow-btn", class: "btn btn-primary #{bcls} bold-btn", remote: true)

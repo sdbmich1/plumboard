@@ -367,7 +367,7 @@ module ListingsHelper
   end
 
   def show_menu_fields ptype
-    render partial: 'shared/menu_fields', locals: { ptype: ptype } if controller_name == 'listings'
+    render partial: 'shared/menu_fields', locals: { ptype: ptype } if !controller_name.match(/listings|users/).nil?
   end
 
   # check ownership
