@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150527032406) do
+ActiveRecord::Schema.define(:version => 20150608211944) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -491,6 +491,17 @@ ActiveRecord::Schema.define(:version => 20150527032406) do
   add_index "old_listings", ["title"], :name => "index_old_listings_on_title"
   add_index "old_listings", ["user_id"], :name => "index_old_listings_on_user_id"
 
+  create_table "org_types", :force => true do |t|
+    t.string   "code"
+    t.string   "status"
+    t.string   "hide"
+    t.string   "description"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "org_types", ["code"], :name => "index_org_types_on_code"
+
   create_table "pictures", :force => true do |t|
     t.string   "delete_flg"
     t.integer  "imageable_id"
@@ -922,6 +933,7 @@ ActiveRecord::Schema.define(:version => 20150527032406) do
     t.string   "status"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
+    t.string   "hide"
   end
 
   add_index "user_types", ["code"], :name => "index_user_types_on_code"
