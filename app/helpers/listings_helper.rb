@@ -326,7 +326,7 @@ module ListingsHelper
    
   # set class based on controller
   def set_item_class flg
-    !flg ? 'featured-item' : controller_name == 'pages' ? 'home-item' : 'item'
+    !flg ? 'featured-item' : (controller_name == 'pages' && action_name == 'home') ? 'home-item' : 'item'
   end
 
   # set top banner image
@@ -359,13 +359,11 @@ module ListingsHelper
 
   # set status type
   def show_menu_status val, sFlg
-    if sFlg
-      collection_select :status_type, :id, StatusType.unhidden, :code, :code_title, {selected: val}, {id: 'status_type', class: 'span2 cat-select'}
-    end
+    render(partial: 'shared/status_menu', locals: { val: val }) if sFlg
   end
 
-  def show_menu_fields ptype
-    render partial: 'shared/menu_fields', locals: { ptype: ptype } if controller_name == 'listings'
+  def show_menu_fields ptype, sFlg
+    render partial: 'shared/menu_fields', locals: { ptype: ptype, statusFlg: sFlg } if controller_name == 'listings'
   end
 
   # check ownership
