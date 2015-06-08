@@ -4,9 +4,7 @@
 }
 
 .item { 
-  @extend .pic-item; float: left; 
-  width: 200px!important;
-  margin: 0 auto;
+  @extend .pic-item; 
   overflow: hidden;
   @include border-radius(.3em);
   margin-bottom: 10px; }
@@ -19,6 +17,8 @@
 
 .home-item {
   @extend .item;
+  width: 200px!important;
+  float: left; 
   margin-left: 20px;
 }
 

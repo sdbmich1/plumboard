@@ -117,6 +117,7 @@ $(document).ready(function(){
   // select last accordion panel on window load
   window.onload = function () {
     open_panel();
+    open_board();
   }
 
   // enable tooltip
@@ -175,14 +176,11 @@ $(document).ready(function(){
   }
 
   // load featured band
-  //load_featured_slider();
+  load_featured_slider();
 
   // enable placeholder text for input fields
   if( $('#px-container').length == 0 ) {
     $('input, textarea').placeholder();
-  }
-  else {
-    open_board();
   }
 });
 
