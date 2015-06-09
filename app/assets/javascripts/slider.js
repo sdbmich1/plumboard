@@ -41,7 +41,7 @@ function load_slider(cntl) {
 function load_featured_slider() {
   if($('.featured').length > 0) {
     $('.featured').bxSlider({
-      minSlides: 5,
+      minSlides: 3,
       maxSlides: 5,
       slideWidth: 180,
       slideMargin: 20,
