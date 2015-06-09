@@ -1,4 +1,3 @@
-<% cache cache_key_for_pixi_item(listing, listing.seller_name) do %>
 <div class="<%= set_item_class(ftrFlg) %>">
   <div class="center-wrapper">
     <%= render partial: 'shared/show_temp_pixi_image', locals: {model: listing, pix_size: px_size, img_size: 'pixi-image'} %>
@@ -8,4 +7,3 @@
     <%= pixi_footer listing %>
   </div>
 </div>
-<% end %>
