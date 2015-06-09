@@ -38,7 +38,7 @@
 
     function confirm_can_use_cached_images() {
       var result = 'Good browser';
-      var arr_known_browsers_with_issues = ['MSIE 10.0', 'MSIE 9.0'];
+      var arr_known_browsers_with_issues = ['MSIE 11.0', 'MSIE 10.0', 'MSIE 9.0'];
 
       // block to check for specific know buggy browsers.
       if (window.navigator.appName.match(/Microsoft/)) {
