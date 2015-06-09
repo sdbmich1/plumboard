@@ -174,6 +174,9 @@ $(document).ready(function(){
     $('#footer').hide('fast');
   }
 
+  // load main board
+  open_board();
+
   // load featured band
   load_featured_slider();
 
@@ -181,7 +184,6 @@ $(document).ready(function(){
   if( $('#px-container').length == 0 ) {
     $('input, textarea').placeholder();
   }
-  open_board();
 });
 
 // load board on doc ready
@@ -190,6 +192,10 @@ function open_board() {
     load_masonry('#px-nav', '#px-nav a', '#pxboard .item', get_item_size()); 
   }
 }
+
+$(window).load(function(){ 
+  reload_board($(this));
+});
 
 function set_inquiry_form() {
   if ($('#inquiry_frm').length > 0) {  
@@ -353,6 +359,7 @@ function load_masonry(nav, nxt, item, sz){
 	gutter : 10,
 	isFitWidth: true,
         columnWidth : sz,
+	transitionDuration: '0.2s',
 	layoutPriorities : {
 	   upperPosition: 1,
 	   shelfOrder: 1

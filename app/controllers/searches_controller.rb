@@ -69,11 +69,10 @@ class SearchesController < ApplicationController
   end
 
   def load_url_data
-    @listings = Listing.search(query, {:sql=>{:include=>[:pictures, :site, :category, :job_type]}} ) rescue nil 
+    @listings = Listing.search(query, :sql=>{:include=>[:pictures, :site, :category, :job_type]}, :page => @page) rescue nil 
   end
 
   def set_location
     session[:back_to] = request.fullpath
-    Rails.logger.info "PXB path: #{session[:back_to]}"
   end
 end
