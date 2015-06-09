@@ -116,4 +116,9 @@ module UsersHelper
       content_tag(:tr, str.join('').html_safe)
     end
   end
+
+  # build dynamic cache key for seller
+  def cache_key_for_seller(usr, fldName='title')
+    "/#{usr.name}-#{usr.updated_at.to_i}-#{fldName}" if usr
+  end
 end

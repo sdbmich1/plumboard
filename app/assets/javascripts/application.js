@@ -44,4 +44,5 @@
 //= require lazyload
 //= require data-confirm-modal
 //= require jquery.tokenize
+//= require IE_fix_for_imagesLoaded_plugin_issue
 //= require_tree .

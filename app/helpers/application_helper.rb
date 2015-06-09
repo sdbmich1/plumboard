@@ -223,10 +223,14 @@ module ApplicationHelper
 
   # build dynamic path for cache
   def set_cache_path listing
-    is_pending?(listing) ? 'pending_listings' : %w(new edit).detect {|x| x == listing.status}.blank? ? 'listings' : 'temp_listings'
+    if controller_name == 'searches'
+      'searches'
+    else
+      is_pending?(listing) ? 'pending_listings' : %w(new edit).detect {|x| x == listing.status}.blank? ? 'listings' : 'temp_listings'
+    end
   end
 
-  # build dynamic cache key for pixi show page
+  # build dynamic cache key for pixis
   def cache_key_for_pixi_item(listing, fldName='title')
     set_cache_path(listing) + "/#{listing.pixi_id}-#{listing.title}-#{listing.updated_at.to_i}-user-#{@user.id}-#{fldName}" if listing
   end

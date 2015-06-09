@@ -346,7 +346,6 @@ function initScroll(cntr, nav, nxt, item) {
 function load_masonry(nav, nxt, item, sz){
 
   if( $('#px-container').length > 0 ) {
-    console.log('in load masonry');
     var $container = $('#px-container');
  
     $container.imagesLoaded( function(){
