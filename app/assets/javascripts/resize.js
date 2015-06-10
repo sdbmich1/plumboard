@@ -196,3 +196,23 @@ function set_item_size (origSize, wFlg) {
   }
   return col;
 }
+
+// set default item size based on window size
+function set_banner_slides () {
+  var width = $(window).width();
+  var col = 5;
+
+  if(width < 1200 && width >= 980) {
+    col = 5;
+  }
+  else if(width < 980 && width >= 768) {
+    col = 4;
+  }
+  else if(width < 768 && width >= 480) {
+    col = 3;
+  }
+  else if(width < 480) {
+    col = 2;
+  }
+  return col;
+}
