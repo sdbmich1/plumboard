@@ -574,4 +574,12 @@ module ListingsHelper
     content_tag(:ul, str.join(" ").html_safe, class: "nav")
     end
   end
+
+  def toggle_buyer_name_header status
+    content_tag(:th, 'Buyer Name') if status == 'sold'
+  end
+
+  def toggle_buyer_name_row status, listing
+    content_tag(:td, listing.invoices.first.buyer_name, class: 'span2') if status == 'sold'
+  end
 end

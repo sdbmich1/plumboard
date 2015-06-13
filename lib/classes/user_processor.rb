@@ -97,8 +97,8 @@ class UserProcessor
   end
 
   def csv_data
-    { "Name" => @user.name, "Email" => @user.email, "Home Zip" => @user.home_zip, "Birth Date" => @user.birth_dt, 
-      "Enrolled" => nice_date(@user.created_at), "Last Login" => nice_date(@user.last_sign_in_at), "Gender" => @user.gender, "Age" => @user.age }
+    { "Name" => @user.name, "Email" => @user.email, "Type" => @user.type_descr, "Zip" => @user.home_zip, "Birth Date" => @user.birth_dt, 
+      "Enrolled" => nice_date(@user.created_at), "Last Login" => nice_date(@user.last_sign_in_at) }
   end
 
   # initialize data

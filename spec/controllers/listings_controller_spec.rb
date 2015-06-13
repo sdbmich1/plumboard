@@ -165,7 +165,7 @@ describe ListingsController do
   describe 'GET seller' do
     before :each do
       @listings = stub_model(Listing)
-      Listing.stub_chain(:get_by_seller, :get_by_status).and_return( @listings )
+      Listing.stub_chain(:sold_list).and_return( @listings )
       @listings.stub!(:paginate).and_return( @listings )
       do_get
     end

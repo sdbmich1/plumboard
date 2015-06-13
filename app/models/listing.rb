@@ -302,12 +302,21 @@ class Listing < ListingParent
 
   # returns purchased pixis from buyer
   def self.purchased usr
-    where("listings.status not in (?)", closed_arr(false)).joins(:invoices).where("invoices.buyer_id = ? AND invoices.status = ?", usr.id, 'paid').uniq
+    joins(:invoices).where("invoices.buyer_id = ? AND invoices.status = ?", usr.id, 'paid').uniq
   end
 
   # returns sold pixis from seller
-  def self.sold_list 
-    where("listings.status not in (?)", closed_arr(false)).joins(:invoices).where("invoices.status = ?", 'paid').uniq
+  def self.sold_list usr=nil
+    if usr
+      include_list_without_job_type.joins(:invoices).where("invoices.seller_id = ? AND invoices.status = ?", usr.id, 'paid')
+    else
+      include_list_without_job_type.joins(:invoices).where("invoices.seller_id IS NOT NULL AND invoices.status = ?", 'paid')  
+    end
+  end
+
+  # toggle get_by_seller call based on status
+  def self.get_by_status_and_seller val, usr, adminFlg
+    val == 'sold' ? sold_list(usr) : get_by_seller(usr, adminFlg).get_by_status(val)
   end
 
   # refresh counter cache
