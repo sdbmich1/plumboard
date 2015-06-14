@@ -677,4 +677,12 @@ module ListingsHelper
       content_tag(:div, NO_PIXI_FOUND_MSG, class:'width240 center-wrapper')
     end
   end
+
+  def toggle_buyer_name_header status
+    content_tag(:th, 'Buyer Name') if status == 'sold'
+  end
+
+  def toggle_buyer_name_row status, listing
+    content_tag(:td, listing.invoices.first.buyer_name, class: 'span2') if status == 'sold'
+  end
 end

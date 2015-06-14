@@ -148,9 +148,9 @@ class ListingParent < ActiveRecord::Base
 
   # find listings by status
   def self.get_by_status val
-    val == 'sold' ? include_list.sold_list : include_list.where(:status => val)
+    val == 'sold' ? sold_list : include_list_without_job_type.where(:status => val)
   end
-  
+ 
   # get active pixis by site id
   def self.get_by_site sid, get_active=true
     ListingDataProcessor.new(self).get_by_site sid, get_active
@@ -199,7 +199,7 @@ class ListingParent < ActiveRecord::Base
 
   # verify if listing is sold
   def sold?
-    status == 'sold'
+    invoices.exists?(status: 'paid')
   end
 
   # verify if listing is inactive
@@ -432,7 +432,10 @@ class ListingParent < ActiveRecord::Base
   end
 
   def as_csv(options={})
-    { "Title" => title, "Category" => category_name, "Description" => description, "Location" => site_name, "Last Updated" => display_date(updated_at) }
+    row = { "Title" => title, "Category" => category_name, "Description" => description, "Location" => site_name }
+    row["Buyer Name"] = invoices.first.buyer_name if options[:style] == "sold"
+    row["Last Updated"] = display_date(updated_at)
+    row
   end
 
   # get expiring pixis

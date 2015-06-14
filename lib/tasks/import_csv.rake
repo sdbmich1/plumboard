@@ -359,30 +359,6 @@ task :update_category_pictures => :environment do
   end
 end
 
-task :update_region_pictures => :environment do
-  CSV.foreach(Rails.root.join('db', 'region_data_052414.csv'), :headers => true) do |row|
-    attrs = {:name             => row[0].titleize}
-
-    #find site
-    updated_site = Site.find(:first, :conditions => ["name = ?", attrs[:name]])
-
-    #add photo
-    while updated_site.pictures.size > 0
-      updated_site.pictures.map { |pic| updated_site.pictures.delete(pic) }
-    end
-
-    picture = updated_site.pictures.build
-    picture.photo = File.new("#{Rails.root}" + row[3]) if picture
-
-    #save site
-    if updated_site.save
-      puts "Saved site #{attrs.inspect}"
-    else
-      puts updated_site.errors
-    end
-  end
-end
-
 task :import_point_system => :environment do
 
   PixiPoint.delete_all
@@ -607,7 +583,7 @@ task :load_status_types => :environment do
     # add status_type
     new_status_type = StatusType.new(attrs)
 
-    # save user_type
+    # save status_type
     if new_status_type.save 
       puts "Saved status_type #{attrs.inspect}"
     else
@@ -721,24 +697,40 @@ task :import_travel_modes => :environment do
 end
 
 task :load_feeds => :environment do
-  #Feed.delete_all
+
   CSV.foreach(Rails.root.join('db', 'site_feed_021515.csv'), :headers => true) do |row|
 
     attrs = {
       :site_name   => row[0],
       :description => row[1],
       :url         => row[2],
-      :site_id     => Site.find_by_name(row[0]).id    # causes task to fail on test database
+      :site_id     => Site.find_by_name(row[0]).id
     }
 
-    # add status_type
+    # add feed
     new_feed = Feed.new(attrs)
 
-    # save user_type
+    # save feed
     if new_feed.save 
       puts "Saved feed #{attrs.inspect}"
     else
       puts feed.errors
+    end
+  end
+end
+
+task :update_site_images, [:file_name] => [:environment] do |t, args|
+  CSV.foreach(Rails.root.join('db', args[:file_name]), :headers => true) do |row|
+
+    site = Site.find_by_name(row[0])
+    site.pictures.destroy_all
+    pic = site.pictures.build
+    pic.photo = File.new(Rails.root.join('db', 'images', row[3]))
+
+    if site.save
+      puts "Saved image for #{site.name}"
+    else
+      puts "Error: #{site.errors.full_messages.first}"
     end
   end
 end
@@ -770,4 +762,5 @@ task :run_all_tasks => :environment do
   Rake::Task[:load_feeds].execute
   Rake::Task[:import_other_sites].execute :file_name => "state_site_data_012815.csv", :org_type => "state"
   Rake::Task[:import_other_sites].execute :file_name => "country_site_data_012815.csv", :org_type => "country"
+  Rake::Task[:update_site_images].execute :file_name => "region_image_data_051415.csv"
 end

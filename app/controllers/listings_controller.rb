@@ -11,7 +11,7 @@ class ListingsController < ApplicationController
 
   def index
     @unpaginated_listings = Listing.check_category_and_location(@status, @cat, @loc, true)
-    respond_with(@listings = @unpaginated_listings.paginate(page: @page, per_page: 15)) { |format| render_csv format }
+    respond_with(@listings = @unpaginated_listings.paginate(page: @page, per_page: 15), style: @status.to_sym) { |format| render_csv format }
   end
 
   def show
@@ -30,7 +30,7 @@ class ListingsController < ApplicationController
   end
 
   def seller
-    respond_with(@listings = Listing.get_by_seller(@user, @adminFlg).get_by_status(@status).paginate(page: @page))
+    respond_with(@listings = Listing.get_by_status_and_seller(@status, @user, @adminFlg).paginate(page: @page))
   end
 
   def seller_wanted
@@ -104,6 +104,6 @@ class ListingsController < ApplicationController
   end
 
   def render_csv format
-    format.csv { send_data(render_to_string(csv: @unpaginated_listings), disposition: "attachment; filename=#{Listing.filename @status}.csv") }
+    format.csv { send_data(render_to_string(csv: @unpaginated_listings, style: @status), disposition: "attachment; filename=#{Listing.filename @status}.csv") }
   end
 end
