@@ -423,6 +423,13 @@ FactoryGirl.define do
     status "active"
     description 'New'
   end
+        
+  factory :org_type do
+    code "N"
+    hide "no"
+    status "active"
+    description "school"
+  end                    
 
   factory :fulfillment_type do
     code "SHP"

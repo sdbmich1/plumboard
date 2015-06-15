@@ -30,6 +30,43 @@ describe 'import_csv' do
       {code: %w(N RF ULN UVG UG), description: 'New', status: 'active', hide: %w(no yes)})
   end
 
+  describe 'load_org_types' do
+   it_behaves_like("import_csv", "load_org_types", nil, OrgType, {code: %w(region school city area country newspaper magazine state), description: ["Major Metro Area", "College or University", "City", "Neighborhood or District", "Nation", "Newspaper Publication", "Magazine Publication", "State or Province"], status: 'active', hide: %w(no)})
+=begin
+    before do 
+      # Need regions in order to assign site id
+      load File.expand_path("../../../lib/tasks/import_csv.rake", __FILE__)
+      Rake::Task.define_task(:environment)
+      Rake::Task["load_org_types"].invoke
+    end
+    it "" do 
+          
+      expect(OrgType.exists?(code: "region")).to eq(true)
+      expect(OrgType.exists?(code: "school")).to eq(true)
+      expect(OrgType.exists?(code: "city")).to eq(true)
+      expect(OrgType.exists?(code: "area")).to eq(true)
+      expect(OrgType.exists?(code: "country")).to eq(true)
+      expect(OrgType.exists?(code: "newspaper")).to eq(true)       
+      expect(OrgType.exists?(code: "magazine")).to eq(true)
+      expect(OrgType.exists?(code: "state")).to eq(true)       
+
+
+      expect(OrgType.exists?(description: "Major Metro Area")).to eq(true)
+      expect(OrgType.exists?(description: "College or University")).to eq(true)
+      expect(OrgType.exists?(description: "City")).to eq(true)
+      expect(OrgType.exists?(description: "Neighborhood or District")).to eq(true)
+      expect(OrgType.exists?(description: "Nation")).to eq(true)
+      expect(OrgType.exists?(description: "Newspaper Publication")).to eq(true)
+      expect(OrgType.exists?(description: "Magazine Publication")).to eq(true)
+      expect(OrgType.exists?(description: "State or Province")).to eq(true)
+
+      expect(OrgType.exists?(:status != "active")).to eq(false)
+
+      expect(OrgType.exists?(:hide != "no")).to eq(false)
+    end
+=end
+  end           
+
   describe "load_event_types" do
     it_behaves_like("import_csv", "load_event_types", nil, EventType, { code: %w(session fund art) })
   end

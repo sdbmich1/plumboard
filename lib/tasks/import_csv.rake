@@ -738,7 +738,35 @@ task :load_feeds => :environment do
     if new_feed.save 
       puts "Saved feed #{attrs.inspect}"
     else
-      puts feed.errors
+      puts feed.errors      
+    end
+  end
+end
+
+task :load_org_types => :environment do
+  OrgType.delete_all
+  CSV.foreach(Rails.root.join('db', 'org_type_060215.csv'), :headers => true) do |row|
+
+    hide_val = row[3]
+    if hide_val.nil? or hide_val.empty?
+      hide_val = "no"
+    end
+    attrs = {
+      :code   => row[0],
+      :description => row[1],
+      :status   => row[2],
+      :hide => hide_val
+    }
+
+    #add org_type
+    new_org_type = OrgType.new(attrs)
+
+    #save org_type
+    if new_org_type.save
+      puts "Saved org_type #{attrs.inspect}"
+    else
+      puts new_org_type.errors
+      # puts new_org_type.errors.full_messages
     end
   end
 end
