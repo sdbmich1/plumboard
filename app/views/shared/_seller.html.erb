@@ -1,4 +1,4 @@
-<% cache ['seller', user] do %>
+<% cache cache_key_for_seller(user, 'seller') do %>
 <div class="<%= set_item_class(ftrFlg) %>">
   <div class="center-wrapper">
     <%= render partial: 'shared/show_temp_pixi_image', locals: {model: user, pix_size: px_size, img_size: 'pixi-image'} %>

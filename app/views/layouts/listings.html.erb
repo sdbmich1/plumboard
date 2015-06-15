@@ -11,13 +11,15 @@
 <body>
   <div id='wrap'>
     <%= render 'layouts/header' %>
-    <%= yield :subhead %>
-    <%= yield :top_banner %>
-    <%= yield :feature_banner %>
-    <%= render 'layouts/flash_messages', flash: flash %>
-    <div class="container" id="px-container">
-      <div id="spinner" class="round" style="display:none"></div>
-      <%= yield :content %>
+    <div id='default-container'> 
+      <%= yield :subhead %>
+      <%= yield :top_banner %>
+      <%= yield :feature_banner %>
+      <%= render 'layouts/flash_messages', flash: flash %>
+      <div class="container" id="px-container">
+        <div id="spinner" class="round" style="display:none"></div>
+        <%= yield :content %>
+      </div>
     </div>
     <div id="push"></div>
   </div>

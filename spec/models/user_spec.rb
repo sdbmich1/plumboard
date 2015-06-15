@@ -1008,4 +1008,24 @@ describe User do
       expect(@seller.favorite_seller_id(@user)).to be_nil
     end
   end
+
+  describe 'get_follow_status' do
+    before :each do
+      @seller = create(:contact_user, user_type_code: 'BUS', business_name: 'Test')
+      @favorite_seller = create(:favorite_seller, user_id: @user.id, seller_id: @seller.id)
+    end
+
+    it { expect(@user.get_follow_status('seller', @seller.id)).to eq 'active' }
+    it { expect(@seller.get_follow_status('follower', @user.id)).to eq 'active' }
+    context 'inactive' do
+      it 'returns inactive following' do
+        @favorite_seller.update_attribute(:status, 'inactive')
+        expect(@user.get_follow_status('seller', @seller.id)).to eq 'inactive' 
+      end
+      it 'returns inactive followed' do
+        @favorite_seller.update_attribute(:status, 'inactive')
+        expect(@seller.get_follow_status('follower', @user.id)).to eq 'inactive' 
+      end
+    end
+  end
 end

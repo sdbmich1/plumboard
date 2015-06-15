@@ -12,10 +12,10 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require jquery.masonry.min
 //= require jquery-ui
 //= require jquery.ui.all
 //= require jquery.bxslider.min
-//= require jquery.masonry.min
 //= require jquery.infinitescroll.min
 //= require jquery.placeholder.min
 //= require bootstrap-datepicker
@@ -44,4 +44,5 @@
 //= require lazyload
 //= require data-confirm-modal
 //= require jquery.tokenize
+//= require IE_fix_for_imagesLoaded_plugin_issue
 //= require_tree .

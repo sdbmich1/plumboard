@@ -223,10 +223,14 @@ module ApplicationHelper
 
   # build dynamic path for cache
   def set_cache_path listing
-    is_pending?(listing) ? 'pending_listings' : %w(new edit).detect {|x| x == listing.status}.blank? ? 'listings' : 'temp_listings'
+    if controller_name == 'searches'
+      'searches'
+    else
+      is_pending?(listing) ? 'pending_listings' : %w(new edit).detect {|x| x == listing.status}.blank? ? 'listings' : 'temp_listings'
+    end
   end
 
-  # build dynamic cache key for pixi show page
+  # build dynamic cache key for pixis
   def cache_key_for_pixi_item(listing, fldName='title')
     set_cache_path(listing) + "/#{listing.pixi_id}-#{listing.title}-#{listing.updated_at.to_i}-user-#{@user.id}-#{fldName}" if listing
   end
@@ -234,6 +238,10 @@ module ApplicationHelper
   # build dynamic cache key for pixi show page
   def cache_key_for_pixi_page(listing, fldName='title')
     set_cache_path(listing) + "/#{listing.pixi_id}-#{listing.title}-#{listing.amt_left}-#{listing.updated_at.to_i}-#{fldName}" if listing
+  end
+
+  def cache_key_for_fragment(section)
+    "#{section}-#{controller_name}-#{action_name}"
   end
 
   # check for menu display of footer items
@@ -353,7 +361,6 @@ module ApplicationHelper
   # set top menu navigation based on sign in status
   def top_menu
     if signed_in?
-      content_tag(:div, render('shared/msg_indicator'), id: 'msg-link')
       render 'layouts/display_menu'
     else
       content_tag(:ul, content_tag(:li, link_to("Sign in", new_user_session_path)), class: "nav pull-right")

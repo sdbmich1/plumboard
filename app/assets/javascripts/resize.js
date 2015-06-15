@@ -145,9 +145,11 @@ function resizePixi () {
   if($(fname).length > 0) {
     $(fname).css({'width': set_item_size(0, true)});
   }
+  /*
   $('.item.masonry-brick img').each(function(i, item) {
     resizeElement(item, i, 200, true);
   }); 
+  */
 }
 
 // resize each element
@@ -181,7 +183,7 @@ function set_item_size (origSize, wFlg) {
   var col = !wFlg ? origSize : '85%';
 
   if(width < 1200 && width >= 980) {
-    col = !wFlg ? 160 : '82%';
+    col = !wFlg ? 160 : '80%';
   }
   else if(width < 980 && width >= 768) {
     col = !wFlg ? 140 : '75%';
@@ -190,7 +192,27 @@ function set_item_size (origSize, wFlg) {
     col = !wFlg ? 120 : '70%';
   }
   else if(width < 480) {
-    col = !wFlg ? 100 : '65%';
+    col = !wFlg ? 100 : '70%';
+  }
+  return col;
+}
+
+// set default item size based on window size
+function set_banner_slides () {
+  var width = $(window).width();
+  var col = 5;
+
+  if(width < 1200 && width >= 980) {
+    col = 5;
+  }
+  else if(width < 980 && width >= 768) {
+    col = 4;
+  }
+  else if(width < 768 && width >= 480) {
+    col = 3;
+  }
+  else if(width < 480) {
+    col = 2;
   }
   return col;
 }

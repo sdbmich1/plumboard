@@ -2,9 +2,10 @@ require 'will_paginate/array'
 class SearchesController < ApplicationController
   before_filter :load_data
   before_filter :load_job, only: [:jobs]
-  before_filter :pxb_url, only: [:biz] 
-  before_filter :load_url_data, only: [:biz, :jobs]
-  after_filter :add_points, only: [:index, :biz]
+  before_filter :pxb_url, only: [:biz, :member] 
+  before_filter :load_url_data, only: [:biz, :member, :jobs]
+  after_filter :add_points, only: [:index, :biz, :member]
+  after_filter :set_location, only: [:biz, :member]
   autocomplete :listing, :title, :full => true
   include PointManager, LocationManager
   layout :page_layout
@@ -19,6 +20,10 @@ class SearchesController < ApplicationController
   end
 
   def biz
+    respond_with(@listings)
+  end
+
+  def member
     respond_with(@listings)
   end
 
@@ -43,7 +48,7 @@ class SearchesController < ApplicationController
 
   def load_job
     params[:search] = 'Pixiboard'
-    @cat = Category.find_by_name('Jobs').id rescue nil
+    @cat = Category.get_by_name('Jobs') 
   end
 
   def pxb_url
@@ -64,6 +69,10 @@ class SearchesController < ApplicationController
   end
 
   def load_url_data
-    @listings = Listing.search(query, {:sql=>{:include=>[:pictures, :site, :category, :job_type]}} ) rescue nil 
+    @listings = Listing.search(query, :sql=>{:include=>[:pictures, :site, :category, :job_type]}, :page => @page, :per_page=>20) rescue nil 
+  end
+
+  def set_location
+    session[:back_to] = request.fullpath
   end
 end

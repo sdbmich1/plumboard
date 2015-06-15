@@ -1,6 +1,6 @@
 <% provide(:title, page_title) %>
 <%= content_for :subhead do %>
-  <%= render partial: 'shared/navbar', locals: { menu_name: page_title, loc_name: @loc_name } %>
+  <%= render partial: 'shared/navbar', locals: { menu_name: menu_name, loc_name: @loc_name } %>
 <% end %>
 <%= content_for :top_banner do %>
   <div id='tbanner'><%= render partial: 'shared/load_banner', locals: { btype: btype } %></div>
@@ -9,7 +9,7 @@
   <div id='fbanner'><%= render partial: 'shared/feature_banner', locals: { model: @listings, btype: btype } %></div>
 <% end %>
 <%= content_for :content do %>
-  <div id="pxboard"><%= show_listings @listings %></div> 
+  <div id="pxboard"><%= render 'shared/listings' %></div> 
   <nav id="px-nav"><%= render set_init_next_page_path %></nav>
   <div class='span1 sm-bot'><%= link_to 'Scroll', '#', class: 'scrollup clear-link' %></div>
 <% end %>

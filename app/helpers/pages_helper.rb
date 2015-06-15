@@ -33,8 +33,10 @@ module PagesHelper
 
   # render footer based on action
   def toggle_footer
-    item = action_name == 'home' ? 'shared/home_page_footer' : 'shared/main_footer'
-    render item
+    unless signed_in?
+      item = action_name == 'home' ? 'shared/home_page_footer' : 'shared/main_footer'
+      render item
+    end
   end
 
   # set class for signup form

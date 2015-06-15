@@ -39,10 +39,11 @@ function load_slider(cntl) {
 
 // load featured band carousel
 function load_featured_slider() {
+  var val = set_banner_slides();
   if($('.featured').length > 0) {
     $('.featured').bxSlider({
-      minSlides: 5,
-      maxSlides: 5,
+      minSlides: val,
+      maxSlides: val,
       slideWidth: 180,
       slideMargin: 20,
       auto: false,

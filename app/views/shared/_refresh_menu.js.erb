@@ -3,5 +3,6 @@ $("#search").html("<%= escape_javascript( raw render(partial: 'shared/search') )
 $("#tbanner").html("<%= escape_javascript( raw render(partial: 'shared/load_banner', locals: {btype: btype}) ) %>");
 $("#fbanner").html("<%= escape_javascript( raw render(partial: 'shared/feature_banner', locals: {model: @listings, btype: btype}) ) %>");
 load_featured_slider();
+resizePixi();
 $("#site_name").val('');
 $("#spinner").hide('fast');

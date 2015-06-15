@@ -2,13 +2,14 @@
 //
 
 $.ajaxSetup({  
-  'beforeSend': function (xhr) {
+  beforeSend: function (xhr) {
   	var token = $("meta[name='csrf-token']").attr("content");
 	xhr.setRequestHeader("X-CSRF-Token", token);
   	toggleLoading();
     },
-  'success': function(){ toggleLoading(); },
-  'complete': function(){ toggleLoading(); }
+  success: function(){ toggleLoading(); },
+  complete: function(){ toggleLoading(); }, 
+  cache: false 
 }); 
 
 // when the #category id field changes
@@ -117,8 +118,6 @@ $(document).ready(function(){
   // select last accordion panel on window load
   window.onload = function () {
     open_panel();
-    if($('#accordion').length > 0)
-      $("#accordion").accordion('option', "active", -1 );
   }
 
   // enable tooltip
@@ -138,17 +137,6 @@ $(document).ready(function(){
   // enable video clip
   if( $('.vimeo-thumb').length > 0 ) {
     $('.vimeo-thumb').smartVimeoEmbed();
-  }
-
-  // enable placeholder text for input fields
-  if( $('#px-container').length == 0 ) {
-    $('input, textarea').placeholder();
-  }
-  else {
-    // load board on doc ready
-    if( $('.pixiPg').length == 0) {
-      load_masonry('#px-nav', '#px-nav a', '#pxboard .item', get_item_size()); 
-    }
   }
 
   // used to scroll up page
@@ -180,13 +168,7 @@ $(document).ready(function(){
   load_ratings();
 
   // set inquiry form elements
-  if ($('#inquiry_frm').length > 0) {  
-    if($('#inq_status').is(':visible')) {
-      $('#inq-done-btn').removeAttr('disabled');
-    } else {
-      $('#inq-done-btn').attr('disabled', true);
-    }
-  }
+  set_inquiry_form();
 
   // hide footer on main board
   if ($('.item-cat').length > 0) {  
@@ -195,7 +177,30 @@ $(document).ready(function(){
 
   // load featured band
   load_featured_slider();
+
+  // enable placeholder text for input fields
+  if( $('#px-container').length == 0 ) {
+    $('input, textarea').placeholder();
+  }
+  else {
+    open_board();
+  }
 });
+
+// load board on doc ready
+function open_board() {
+  load_masonry('#px-nav', '#px-nav a', '#pxboard .item', get_item_size()); 
+}
+
+function set_inquiry_form() {
+  if ($('#inquiry_frm').length > 0) {  
+    if($('#inq_status').is(':visible')) {
+      $('#inq-done-btn').removeAttr('disabled');
+    } else {
+      $('#inq-done-btn').attr('disabled', true);
+    }
+  }
+}
 
 // masks phone number fields
 var mask_flds = '#pixi_post_home_phone, #pixi_post_mobile_phone, #home_phone, #mobile_phone, #work_phone, #transaction_home_phone';
@@ -334,7 +339,6 @@ function initScroll(cntr, nav, nxt, item) {
       loadingBoard = false;
     });
   }
-
   $("#spinner").hide('fast');
 }
 
@@ -350,7 +354,7 @@ function load_masonry(nav, nxt, item, sz){
 	gutter : 10,
 	isFitWidth: true,
         columnWidth : sz,
-	transitionDuration: 0,
+	transitionDuration: '0.2s',
 	layoutPriorities : {
 	   upperPosition: 1,
 	   shelfOrder: 1
@@ -881,3 +885,10 @@ $(document).on("click", '#map-tab, #detail-tab, #comment-tab', function(e){
     getLatLng(true);		
   }
 });
+
+// toggle field display based on category value
+function resetSpan(ctype) {
+  if(ctype.match(new RegExp('biz', 'i'))) {
+    $('#signInForm').removeClass('offset4').addClass('offset5');
+  }
+}

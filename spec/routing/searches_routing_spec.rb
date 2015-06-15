@@ -6,7 +6,7 @@ describe "routes for Searches" do
   end
 
   it "routes /mbr/:route to the searches controller" do
-    expect( :get => "/mbr/test" ).to route_to(:controller=>"searches", :action=>"biz", :search =>"test")
+    expect( :get => "/mbr/test" ).to route_to(:controller=>"searches", :action=>"member", :search =>"test")
   end
 
   it "routes /careers the searches controller" do

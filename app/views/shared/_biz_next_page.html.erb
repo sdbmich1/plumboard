@@ -1,0 +1,3 @@
+<% if valid_next_page? @listings %>
+  <%= link_to 'Next', biz_path(page: @listings.next_page, search: params[:search]), class: 'nxt-pg', remote: true %>
+<% end %>

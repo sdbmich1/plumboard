@@ -161,17 +161,19 @@ p {
   //margin: 0 auto -60px;
 }
 
-#section-container, #px-container {
+#default-container {
   min-height: 100%;
   height: auto !important;
   height: 100%;
+}
+
+#section-container, #px-container {
+  @extend #default-container;
   padding-bottom: 60px;
 }
 
 #frame-container {
-  min-height: 100%;
-  height: auto !important;
-  height: 100%;
+  @extend #default-container;
   padding-bottom: 20px;
 }
 
@@ -275,10 +277,6 @@ textarea {
 
 input, select, .uneditable-input {
   height: auto !important;
-}
-
-select {
-  padding: 1px!important;
 }
 
 #error_explanation {
@@ -632,7 +630,7 @@ a.btn-mask {
 
 .fld-height { height: 28px!important; }
 .lheight { line-height: 30px!important; }
-.fld-pad { padding: 5px!important; height: 18px!important; }
+.fld-pad { padding: 6px!important; height: 18px!important; }
 
 .pixi-select {
   margin-bottom: 0px!important;

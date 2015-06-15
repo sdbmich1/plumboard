@@ -79,6 +79,11 @@ class Category < ActiveRecord::Base
     !subcategories.empty?
   end
 
+  # get by name
+  def self.get_by_name val
+    where(name: val).first.id rescue nil
+  end
+
   # get category pixi count
   def pixi_count loc
     active_pixis_by_site(loc).size rescue 0

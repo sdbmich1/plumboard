@@ -42,16 +42,20 @@ module ListingsHelper
     case action_name
       when 'index'
         if controller_name == 'searches'
-	  '#{searches_path page: @listings.next_page, search: params[:search], loc: params[:loc], cid: params[:cid]}' 
+	  "#{searches_path page: @listings.next_page, search: params[:search], loc: params[:loc], cid: params[:cid]}" 
 	else
-          '#{listings_path page: @listings.next_page}'
+          "#{listings_path page: @listings.next_page}"
 	end
-      when 'category'
-        '#{category_listings_path page: @listings.next_page, loc: params[:loc], cid: params[:cid]}'
-      when 'local'
+      when "category"
+        "#{category_listings_path page: @listings.next_page, loc: params[:loc], cid: params[:cid]}"
+      when "local"
         "#{local_listings_path page: @listings.next_page, loc: params[:loc]}"
+      when "biz"
+        "#{biz_path page: @listings.next_page, search: params[:search]}"
+      when "member"
+        "#{member_path page: @listings.next_page, search: params[:search]}"
       else
-        '#{listings_path page: @listings.next_page}'
+        "#{listings_path page: @listings.next_page}"
     end
   end
 
@@ -64,6 +68,10 @@ module ListingsHelper
         'cat_list_next_page'
       when 'local'
         controller_name == 'categories' ? 'category_next_page' : 'loc_list_next_page'
+      when 'biz'
+        'biz_next_page'
+      when 'member'
+        'member_next_page'
       else
         'listing_next_page'
     end
@@ -89,6 +97,10 @@ module ListingsHelper
         "/listings/category?page="
       when 'local'
         "/listings/local?page="
+      when 'biz'
+        "/biz?page="
+      when 'member'
+        "/member?page="
       else
         '/listings?page='
     end
@@ -116,7 +128,7 @@ module ListingsHelper
   # set string to share content on pinterest
   def pin_share listing
     "//www.pinterest.com/pin/create/button/?url=" + get_url(listing) + "&media=" + get_photo(listing) + 
-    "&description=Check out this pixi on Pixiboard! " + listing.nice_title
+    "&description=Check out this pixi on Pixiboard! " + listing.nice_title(false)
   end
 
   # set string to share content on twitter
@@ -220,6 +232,10 @@ module ListingsHelper
     end
   end
 
+  def cache_key_for_pixi
+    "#{controller_name}-#{action_name}"
+  end
+
   # get region for show pixi display menu
   def get_current_region listing
     if listing
@@ -314,16 +330,24 @@ module ListingsHelper
    
   # set class based on controller
   def set_item_class flg
-    !flg ? 'featured-item' : controller_name == 'pages' ? 'home-item' : 'item'
+    !flg ? 'featured-item' : (controller_name == 'pages' && action_name == 'home') ? 'home-item' : 'item'
   end
 
   # set top banner image
   def set_banner btype
     btype == 'loc' ? set_loc_banner : set_biz_banner
   end
+  
+  def get_usr
+    User.find_by_url @url rescue nil
+  end
+
+  def get_seller_name
+    get_usr.name.html_safe rescue 'Pixis'
+  end
 
   def set_biz_banner
-    usr = User.find_by_url @url rescue nil
+    usr = get_usr
     content_tag(:div, render(partial: 'shared/user_band', locals: {user: usr, pxFlg: false, colorFlg: false}), class: ["mneg-top", "mbot"]) if usr
   end
 
@@ -339,13 +363,11 @@ module ListingsHelper
 
   # set status type
   def show_menu_status val, sFlg
-    if sFlg
-      collection_select :status_type, :id, StatusType.unhidden, :code, :code_title, {selected: val}, {id: 'status_type', class: 'span2 cat-select'}
-    end
+    render(partial: 'shared/status_menu', locals: { val: val }) if sFlg
   end
 
   def show_menu_fields ptype
-    render partial: 'shared/menu_fields', locals: { ptype: ptype } if controller_name == 'listings'
+    render partial: 'shared/menu_fields', locals: { ptype: ptype } if !controller_name.match(/listings|users/).nil?
   end
 
   # check ownership
@@ -551,7 +573,7 @@ module ListingsHelper
     img = image_tag('rsz_plus-blue.png', class: 'v-align social-img mleft10')
     str << content_tag(:span, 'Add Comment', class: 'black-txt v-align')
     str << link_to(img, comments_path, class: 'pixi-link', remote: true, title: 'Add Comment', id: 'add-comment-btn')
-    content_tag(:div, str.join(" ").html_safe)
+    content_tag(:div, str.join(" ").html_safe, class: 'mtop')
   end
 
   # sets class for correct top spacing for comment list
@@ -650,9 +672,17 @@ module ListingsHelper
   # show all pixis if not empty
   def show_listings model
     unless model.blank?
-      render partial: 'shared/listings', locals: {listings: model}
+      render partial: 'shared/listing', collection: model, as: :listing, locals: {px_size: 'large', ftrFlg: true}
     else
       content_tag(:div, NO_PIXI_FOUND_MSG, class:'width240 center-wrapper')
     end
+  end
+
+  def toggle_buyer_name_header status
+    content_tag(:th, 'Buyer Name') if status == 'sold'
+  end
+
+  def toggle_buyer_name_row status, listing
+    content_tag(:td, listing.invoices.first.buyer_name, class: 'span2') if status == 'sold'
   end
 end

@@ -9,6 +9,6 @@
     <%= render partial: 'shared/photo_cabinet', locals: {form: form, s3Flg: use_remote_pix?, keyName: get_idName(form.object_name), mFlg: false} %>
   </div>
   <%= show_user_tooltip(form.object_name) %>
-  <div class='mtop clear-all'></div>
+  <div class='lg-top clear-all'></div>
 <% end %>
 <%= show_progress_meter use_remote_pix? %>

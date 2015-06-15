@@ -2,11 +2,11 @@
 <li id="<%= comment.id %>">
   <div class='span6 no-left black-txt'>
     <div class='no-left span5'>
-      <div class='sender'>
-        <span class='width180'><%= comment.sender_name %></span>
-        <span class="mleft20 timestamp">Posted <%= ts_in_words(comment.created_at) %>.</span>
-      </div>
-      <span class="content"><%= strip_links comment.full_content %>
+      <table class='helv-bold'>
+        <tr><td class='width180'><%= comment.sender_name %></td>
+        <td class="mleft20 timestamp">Posted <%= ts_in_words(comment.created_at) %>.</td></tr>
+      </table>
+      <span class="sm-top content"><%= strip_links comment.full_content %>
     </div>
     <div class='span1'>
       <div class='pull-right'>
