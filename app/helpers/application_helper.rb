@@ -114,12 +114,17 @@ module ApplicationHelper
     (val.is_a? String) ? val : val[item.to_sym]
   end
 
+  # toggle recent menu item
+  def show_recent?
+    controller_name != 'searches'
+  end
+
   # set appropriate submenu nav bar
   def set_submenu *args
     case parse_item(args[0], 'name')
       when 'Invoices'; render partial: 'shared/navbar_invoices', locals: { active: parse_item(args[0], 'action') || 'sent' }
       when 'Categories'; render 'shared/navbar_categories'
-      when 'Pixis'; render partial: 'shared/navbar_pixis', locals: { loc_name: @loc_name, rFlg: true, statusFlg: false }
+      when 'Pixis'; render partial: 'shared/navbar_pixis', locals: { loc_name: @loc_name, rFlg: show_recent?, statusFlg: false }
       when 'Pixi'; render 'shared/navbar_show_pixi'
       when 'My Pixis'; render 'shared/navbar_mypixis'
       when 'My Accounts'; render 'shared/navbar_accounts'
@@ -348,9 +353,10 @@ module ApplicationHelper
   end
 
   # dynamically set background image
-  def load_bkgnd model, cnt=1
-    return "gm_grey.jpg" if model.blank?
-    model.pictures[cnt] ? get_pixi_image(model.pictures[cnt], 'cover') : "gm_grey.jpg"
+  def load_bkgnd model, cnt=1, locFlg=false
+    img = locFlg ? "bokeh.jpg" : "gm_grey.jpg"
+    return img if model.blank?
+    model.pictures[cnt] ? get_pixi_image(model.pictures[cnt], 'cover') : img
   end
 
   # check usr access
@@ -391,19 +397,27 @@ module ApplicationHelper
     model.primary_address if model.has_address?  
   end
 
+  # return map coords if address is found
   def get_lnglat model
     LocationManager::get_google_lng_lat(model.primary_address) if model.has_address?  
   end
 
+  # show progress meter if needed
   def show_progress_meter flg
     content_tag(:div, render(partial: 'shared/progress_meter'), class: 'mtop left-form mleft30') if flg
   end
 
+  # set file_field
   def photo_cabinet form, s3Flg, keyName, mFlg
     if s3Flg 
       form.s3_file_field :photo, { id: keyName, multiple: mFlg, class: 'file js-s3_file_field' } 
     else 
       form.file_field :photo, { id: keyName, multiple: mFlg, class: 'file' } 
     end 
+  end
+
+  # show link if member or business
+  def my_site_link
+    content_tag(:li, link_to("My Site", @user.local_user_path)) if @user.is_business? || @user.is_member?
   end
 end

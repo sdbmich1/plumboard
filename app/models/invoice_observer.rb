@@ -1,6 +1,6 @@
 class InvoiceObserver < ActiveRecord::Observer
   observe Invoice
-  include PointManager, CalcTotal
+  include PointManager, Payment
 
   # update points
   def after_create model
@@ -19,19 +19,7 @@ class InvoiceObserver < ActiveRecord::Observer
       mark_pixi(model) 
 
       # credit seller account
-      if model.amount > 0
-        fee = model.get_convenience_fee
-        result = model.bank_account.credit_account(model.amount - fee) rescue nil
-
-        # record payment
-        if result
-          PixiPayment.add_transaction(model, fee, result.uri, result.id) rescue nil
-
-          # send receipt upon approval
-          # UserMailer.delay.send_payment_receipt(model, result)
-          UserMailer.send_payment_receipt(model, result).deliver rescue nil
-        end
-      end
+      Payment::credit_seller_account model if model.amount > 0
     end
 
     if model.declined?
@@ -51,7 +39,6 @@ class InvoiceObserver < ActiveRecord::Observer
   # notify buyer
   def send_post model
     Post.send_invoice model, model.listings.first if model.listings
-
     UserMailer.delay.send_invoice_notice(model)
   end
 

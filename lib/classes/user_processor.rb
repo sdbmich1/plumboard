@@ -109,7 +109,7 @@ class UserProcessor
 
   # initialize data
   def set_flds
-    NameParse::encode_string @user.description if @user.description
+    @user.description = nil unless @user.description.blank?
     @user.user_type_code = 'MBR' if @user.user_type_code.blank?
     @user.user_url, @user.status = @user.name, 'active' unless @user.guest?
   end

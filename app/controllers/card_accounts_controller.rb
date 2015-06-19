@@ -1,54 +1,45 @@
 class CardAccountsController < ApplicationController
   load_and_authorize_resource
   before_filter :authenticate_user!
+  before_filter :load_data, only: [:show, :destroy]
   respond_to :html, :json, :js, :mobile
   layout :page_layout
 
   def new
-    @account = @user.card_accounts.build
+    respond_with(@account = @user.card_accounts.build)
   end
 
   def index
-    @accounts = @user.card_accounts
-    respond_with(@accounts) do |format|
-      format.json { render json: {accounts: @accounts} }
-    end
+    respond_with(@accounts = @user.card_accounts)
   end
 
   def show
-    @account = @user.card_accounts.first
-    respond_with(@account) do |format|
-      format.json { render json: {account: @account} }
-    end
+    respond_with(@account)
   end
 
   def create
     @account = CardAccount.new params[:card_account]
     respond_with(@account) do |format|
       if @account.save_account
-        flash.now[:notice] = 'Successfully created account.'
         format.json { render json: @account }
       else
-        flash.now[:error] = 'Error occurred creating account. Please try again.'
 	format.json { render :json => { :errors => @account.errors.full_messages }, :status => 422 }
       end
     end
   end
 
   def destroy
-    @account = CardAccount.find params[:id]
-    if @account.delete_card
-      flash.now[:notice] = 'Successfully removed account.'
-      redirect_to get_root_path 
-    else
-      flash.now[:error] = @account.errors
-      render nothing: true 
-    end
+    @account.delete_card if @account
+    respond_with(@account, location: get_root_path)
   end
 
   private
 
   def page_layout
-    mobile_device? ? 'form' : 'application'
+    mobile_device? ? 'form' : 'transactions'
+  end
+
+  def load_data
+    @account = CardAccount.find params[:id]
   end
 end

@@ -77,7 +77,7 @@ class Invoice < ActiveRecord::Base
       # set pixi id if possible
       det = inv.invoice_details.build
       det.pixi_id = !pixi_id.blank? ? pixi_id : !pixi.blank? ? pixi.id : nil rescue nil
-      det.quantity = det.listing.pixi_wants.where(user_id: buyer_id).first.quantity rescue 1
+      det.quantity = det.listing.active_pixi_wants.where(user_id: buyer_id).first.quantity rescue 1
       det.price = det.listing.price || 0 if det.listing
       det.amt_left = det.listing.amt_left rescue 1
       det.subtotal = inv.amount = det.listing.price * det.quantity if det.listing rescue 0
@@ -140,14 +140,10 @@ class Invoice < ActiveRecord::Base
     end
   end
 
-  # credit account
+  # credit account & process payment
   def credit_account
     if amount
-      # calculate fee
-      txn_fee = CalcTotal::get_convenience_fee amount, pixan_id
-
-      # process payment
-      result = bank_account.credit_account(amount - txn_fee) rescue 0
+      result = bank_account.credit_account(seller_amount) rescue false
     else
       false
     end
@@ -159,15 +155,14 @@ class Invoice < ActiveRecord::Base
   end
 
   # get txn fee
-  def get_fee sellerFlg=false
-    fee = 0.0
+  def get_fee sellerFlg=false, fee=0.0
     if amount
       if sellerFlg
         invoice_details.each do |x|
           fee += CalcTotal::get_convenience_fee(x.subtotal, x.listing.pixan_id) unless x.listing.pixan_id.blank?
         end
       end
-      fee += CalcTotal::get_convenience_fee(amount) 
+      fee += CalcTotal::get_convenience_fee(amount) if fee == 0.0
       fee += CalcTotal::get_processing_fee(amount) unless sellerFlg
       fee.round(2)
     else
@@ -213,6 +208,11 @@ class Invoice < ActiveRecord::Base
   # get seller email
   def seller_email
     seller.email rescue nil
+  end
+
+  # get seller token
+  def seller_token
+    seller.cust_token rescue nil
   end
 
   # get pixan id
@@ -305,5 +305,32 @@ class Invoice < ActiveRecord::Base
   # get amount
   def get_pixi_amt_left pid
     listings.where(pixi_id: pid).first.amt_left rescue 1
+  end
+
+  # get seller amount minus fees
+  def seller_amount
+    amt = amount - CalcTotal::get_convenience_fee(amount, pixan_id) rescue amount
+    amt.round(2)
+  end
+
+  # get description for completed txn
+  def description
+    transaction.description rescue nil
+  end
+
+  def bank_name
+    bank_account.bank_name rescue nil
+  end
+
+  def acct_no
+    bank_account.acct_no rescue nil
+  end
+
+  def confirmation_no
+    transaction.confirmation_no rescue nil
+  end
+
+  def transaction_amount
+    transaction.amt rescue 0.0
   end
 end

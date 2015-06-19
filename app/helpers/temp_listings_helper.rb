@@ -69,7 +69,7 @@ module TempListingsHelper
 
   # check if pixi has condition
   def has_condition? listing
-    !listing.is_category_type? %w(employment service event housing)
+    !listing.is_category_type? %w(employment service event housing item)
   end
 
   # set large size if condition is not visible

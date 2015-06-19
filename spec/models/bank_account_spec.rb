@@ -18,6 +18,8 @@ describe BankAccount do
   it { should respond_to(:token) }
   it { should respond_to(:description) }
   it { should respond_to(:default_flg) }
+  it { should respond_to(:currency_type_code) }
+  it { should respond_to(:country_code) }
 
   it { should respond_to(:user) }
   it { should respond_to(:invoices) }
@@ -85,22 +87,19 @@ describe BankAccount do
   end
 
   describe 'save_account' do
-    before do
-      @bank_acct = mock('Balanced::BankAccount', uri: '/v1/bank_accounts/BA1KZ46FcuH6dSzWCkSqViec', account_number: 'xxx0001', bank_name: 'BofA')
-      @bank_acct.stub_chain(:new, :save).and_return(true)
-      @bank_acct.stub_chain(:uri, :account_number, :bank_name).and_return(@bank_acct)
-      Balanced::BankAccount.stub_chain(:new, :save).and_return(@bank_acct)
-      Balanced::BankAccount.stub_chain(:uri, :account_number, :bank_name).and_return(@bank_acct)
+    context 'success' do
+      before do
+        BankAccount.any_instance.stub(:save_account).and_return({user_id: 1, acct_name: 'My Account', acct_no: '1234', bank_name: 'BoA',
+                  status: 'active', token: 'xxx1234', acct_type: 'checking' })
+      end
+      it { expect(@account.save_account).to be_true }
     end
 
-    it 'should save account' do
-      account = @user.bank_accounts.build FactoryGirl.attributes_for :bank_account, token: nil
-      account.save_account.should be_true
-    end
-
-    it 'should not save account' do
-      account = @user.bank_accounts.build FactoryGirl.attributes_for :bank_account, acct_name: nil
-      account.save_account.should_not be_true
+    context 'save_account w/ bad data' do
+      before do
+        BankAccount.any_instance.stub(:save_account).and_return(false)
+      end
+      it { expect(@account.save_account).not_to be_true }
     end
   end
 
@@ -122,22 +121,28 @@ describe BankAccount do
   end
 
   describe 'delete_account' do
-    before do
-      @bank_acct = mock('Balanced::BankAccount')
-      Balanced::BankAccount.stub!(:find).with(@account.token).and_return(@bank_acct)
-      Balanced::BankAccount.stub!(:unstore).and_return(true)
-      @bank_acct.stub!(:unstore).and_return(true)
+    context 'success' do
+      before do
+        Payment.should_receive(:delete_account).and_return(true)
+      end
+
+      it 'should delete account' do
+        @account.save!
+	@account.delete_account
+	expect(@account.reload.status).to eq 'removed'
+      end
     end
 
-    it 'should delete account' do
-      account = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account
-      account.errors.any?.should_not be_true
-      # account.delete_account.should be_true
-    end
+    context 'failure' do
+      before do
+        Payment.should_receive(:delete_account).and_return(false)
+      end
 
-    it 'should not delete account' do
-      @account.token = nil
-      @account.delete_account.should_not be_true
+      it 'should not delete account' do
+        @account.save!
+	@account.delete_account
+        expect(@account.status).not_to eq 'removed'
+      end
     end
   end
 
@@ -169,6 +174,16 @@ describe BankAccount do
       @account2 = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, acct_no: '9002'
       expect(BankAccount.get_default_acct.acct_no).to eq '9000'
       expect(BankAccount.get_default_acct.acct_no).not_to eq '9002'
+    end
+  end
+
+  describe 'acct_token' do
+    before :each, run: true do
+      @user.update_attribute(:acct_token, 'XXX123')
+    end
+    it { expect(@account.acct_token).to be_nil }
+    it 'has acct_token', run: true do
+      expect(@account.acct_token).to eq @user.acct_token
     end
   end
 end

@@ -9,13 +9,17 @@ module Payment
   def self.get_bank_account token, acct
     if PAYMENT_API == 'balanced' 
       BalancedPayment::get_bank_account(token, acct)
+    else
+      StripePayment::get_bank_account(token, acct)
     end
   end
 
   # add bank account
-  def self.add_bank_account acct
+  def self.add_bank_account acct, ip
     if PAYMENT_API == 'balanced' 
       BalancedPayment::add_bank_account(acct)
+    else
+      StripePayment::add_bank_account(acct, ip)
     end
   end
 
@@ -23,6 +27,8 @@ module Payment
   def self.credit_account token, amt, acct
     if PAYMENT_API == 'balanced' 
       BalancedPayment::credit_account(token, amt, acct)
+    else
+      StripePayment::credit_account(token, amt, acct)
     end
   end
 
@@ -34,28 +40,32 @@ module Payment
   end
 
   # create credit card
-  def self.create_card card_no, exp_month, exp_yr, cvv, zip
+  def self.create_card acct
     case CREDIT_CARD_API
     when 'balanced' 
-      result = BalancedPayment::create_card card_no, exp_month, exp_yr, cvv, zip
+      result = BalancedPayment::create_card acct
+    when 'stripe' 
+      result = StripePayment::create_card acct
     end
   end
 
   # assign credit card
-  def self.assign_card cust_token, card_token
+  def self.assign_card card, acct, token
     case CREDIT_CARD_API
     when 'balanced' 
-      result = BalancedPayment::assign_card cust_token, card_token
+      result = BalancedPayment::assign_card card, acct, token
+    when 'stripe' 
+      result = StripePayment::assign_card card, acct, token
     end
   end
 
   # charge credit card
-  def self.charge_card token, amt, descr, txn
+  def self.charge_card txn
     case CREDIT_CARD_API
     when 'balanced' 
-      result = BalancedPayment::charge_card token, amt, descr, txn
+      result = BalancedPayment::charge_card txn
     when 'stripe'
-      result = StripePayment::charge_card token, amt, descr, txn
+      result = StripePayment::charge_card txn
     end
   end
 
@@ -76,6 +86,25 @@ module Payment
       result = BalancedPayment::process_result result, txn
     when 'stripe'
       result = StripePayment::process_result result, txn
+    end
+  end
+
+  # add transaction
+  def self.add_transaction model, fee, result
+    case CREDIT_CARD_API
+    when 'balanced' 
+      PixiPayment.add_transaction(model, fee, result.uri, result.id) rescue nil
+    when 'stripe'
+      PixiPayment.add_transaction(model, fee, result.id, result.id) rescue nil
+    end
+  end
+
+  def self.credit_seller_account model
+    case CREDIT_CARD_API
+    when 'balanced' 
+      BalancedPayment.credit_seller_account(model) rescue nil
+    when 'stripe'
+      StripePayment.credit_seller_account(model) rescue nil
     end
   end
 end

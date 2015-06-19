@@ -1,12 +1,12 @@
 <div class='row' id='housing-fields' style="<%= set_style(!listing.is_category_type?('housing')) %>">
   <div class='span2'>
     <%= f.label :bed_no, 'Beds' %>
-    <%= f.select 'bed_no', options_for_select(get_ary, :selected => set_quantity(listing)), {}, {class: 'pixi-select', 
+    <%= f.select 'bed_no', options_for_select(get_ary, :selected => set_quantity(listing, 'bed_no', false)), {}, {class: 'pixi-select', 
       required: listing.is_category_type?('housing') } %>
   </div>
   <div class='span2'>
     <%= f.label :bath_no, 'Baths' %>
-    <%= f.select 'bath_no', options_for_select(get_ary, :selected => set_quantity(listing)), {}, {class: 'pixi-select', 
+    <%= f.select 'bath_no', options_for_select(get_ary, :selected => set_quantity(listing, 'bath_no', false)), {}, {class: 'pixi-select', 
       required: listing.is_category_type?('housing') } %>
   </div>
   <div class='span3'>

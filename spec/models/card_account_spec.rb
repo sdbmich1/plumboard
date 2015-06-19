@@ -19,6 +19,7 @@ describe CardAccount do
   it { should respond_to(:expiration_year) }
   it { should respond_to(:zip) }
   it { should respond_to(:default_flg) }
+  it { should respond_to(:card_token) }
 
   it { should respond_to(:user) }
   it { should respond_to(:set_flds) }
@@ -98,23 +99,19 @@ describe CardAccount do
   end
 
   describe 'save_account' do
-    before do
-      CardAccount.any_instance.stub(:save_account).and_return({user_id: 1, card_number: '4111111111111111', status: 'active', card_code: '123',
+    context 'success' do
+      before do
+        CardAccount.any_instance.stub(:save_account).and_return({user_id: 1, card_number: '4111111111111111', status: 'active', card_code: '123',
                   expiration_month: 6, expiration_year: 2019, zip: '94108'})
+      end
+      it { expect(@account.save_account).to be_true }
     end
 
-    it 'saves account' do
-      @account.save_account.should be_true
-    end
-  end
-
-  describe 'save_account w/ bad data' do
-    before do
-      CardAccount.any_instance.stub(:save_account).and_return(false)
-    end
-
-    it 'does not save account' do
-      @account.save_account.should_not be_true
+    context 'save_account w/ bad data' do
+      before do
+        CardAccount.any_instance.stub(:save_account).and_return(false)
+      end
+      it { expect(@account.save_account).not_to be_true }
     end
   end
 
@@ -188,16 +185,16 @@ describe CardAccount do
 
   describe 'delete_card' do
     before do
-      @card_acct = mock('Balanced::Card')
-      Balanced::Card.stub!(:find).with(@account.token).and_return(@card_acct)
-      Balanced::Card.stub!(:unstore).and_return(true)
-      @card_acct.stub!(:unstore).and_return(true)
+      @card_acct = mock('Stripe::Customer')
+      Stripe::Customer.stub!(:retrieve).with(@account.cust_token).and_return(@card_acct)
+      @card_acct.stub_chain(:sources, :retrieve, :delete).and_return(true)
+      Payment.should_receive(:delete_card).and_return(true)
     end
 
     it 'should delete account' do
       @account.save!
       @account.delete_card
-      @account.errors.any?.should_not be_true
+      expect(@account.reload.status).to eq 'removed'
     end
 
     it 'should not delete account' do
@@ -221,6 +218,24 @@ describe CardAccount do
       @account2 = @user.card_accounts.create FactoryGirl.attributes_for :card_account, card_no: '5100'
       expect(CardAccount.get_default_acct.card_no).to eq '9000'
       expect(CardAccount.get_default_acct.card_no).not_to eq '5100'
+    end
+  end
+
+  describe 'email' do
+    it { expect(@account.email).to eq @user.email }
+  end
+
+  describe 'buyer_name' do
+    it { expect(@account.buyer_name).to eq @user.name }
+  end
+
+  describe 'cust_token' do
+    before :each, run: true do
+      @user.update_attribute(:cust_token, 'XXX123')
+    end
+    it { expect(@account.cust_token).to be_nil }
+    it 'has cust_token', run: true do
+      expect(@account.cust_token).to eq @user.cust_token
     end
   end
 end

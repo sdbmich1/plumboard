@@ -8,7 +8,7 @@ class TempListing < ListingParent
   after_commit :async_send_notification, :on => :update
 
   attr_accessor :slr_name
-  attr_accessible :slr_name, :item_color, :item_id, :car_color, :car_id, :location_size, :product_size
+  attr_accessible :slr_name, :item_color, :item_id, :car_color, :car_id, :location_size, :product_size, :product_color, :item_size2
 
   default_scope :order => "temp_listings.updated_at DESC"
 
@@ -19,11 +19,19 @@ class TempListing < ListingParent
 
   # getter & setter for shared color & other_id fields
   def item_color
-    self[:color] unless is_category_type?('vehicle')
+    self[:color] if is_category_type?('item')
   end
 
   def item_color=value
-    self[:color] = value unless is_category_type?('vehicle')
+    self[:color] = value if is_category_type?('item')
+  end
+
+  def product_color
+    self[:color] if is_category_type?('product')
+  end
+
+  def product_color=value
+    self[:color] = value if is_category_type?('product')
   end
 
   def item_id
@@ -66,9 +74,17 @@ class TempListing < ListingParent
     self[:item_size] = value if is_category_type?('product')
   end
 
+  def item_size2
+    self[:item_size] if is_category_type?('item')
+  end
+
+  def item_size2=value
+    self[:item_size] = value if is_category_type?('item')
+  end
+
   # sets values from assessor fields to table fields
   def set_item_flds
-    self.color, self.other_id, self.item_size = item_color || car_color, item_id || car_id, location_size || product_size
+    self.color, self.other_id, self.item_size = item_color || car_color || product_color, item_id || car_id, location_size || product_size || item_size2
   end
 
   # finds specific pixi

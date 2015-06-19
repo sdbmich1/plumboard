@@ -7,8 +7,8 @@ module InvoicesHelper
   end
 
   # set default quantity
-  def set_quantity model
-    model.quantity || 1
+  def set_quantity model, method='quantity', flg=true
+    flg ? (model.send(method) || 1) : 0
   end
 
   # set default sales tax

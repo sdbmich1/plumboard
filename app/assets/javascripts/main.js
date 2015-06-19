@@ -2,7 +2,7 @@
 //
 
 $.ajaxSetup({  
-  beforeSend: function (xhr) {
+  'beforeSend': function (xhr) {
   	var token = $("meta[name='csrf-token']").attr("content");
 	xhr.setRequestHeader("X-CSRF-Token", token);
   	toggleLoading();
@@ -415,12 +415,6 @@ function processUrl(url, ptype) {
 // toggle profile state
 $(document).on('click', '#edit-txn-addr, #edit-addr-btn', function(e) {
   $('.user-tbl, .addr-tbl').toggle();
-});
-
-// toggle credit card edit view
-$(document).on('click', '#edit-card-btn', function(e) {
-  $('#pay_token').val('');
-  $('.card-tbl, .card-dpl').toggle();
 });
 
 // toggle contact form for show pixi

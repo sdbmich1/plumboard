@@ -5,26 +5,21 @@ feature "BankAccounts" do
   let(:user) { FactoryGirl.create(:pixi_user, first_name: 'Jack', last_name: 'Snow', email: 'jack.snow@pixitest.com') }
 
   def add_data
-    fill_in 'routing_number', with: '021000021'
-    fill_in 'acct_number', with: 9900000002
+    fill_in 'routing_number', with: '110000000'
+    fill_in 'acct_number', with: '000123456789'
     fill_in 'bank_account_acct_name', with: "SDB Business"
     fill_in 'bank_account_description', with: "My business"
     select("checking", :from => "bank_account_acct_type")
   end
 
   def change_data
-    fill_in 'acct_number', with: 9900000004
+    fill_in 'acct_number', with: '000123456789'
     fill_in 'bank_account_acct_name', with: "Personal Business"
   end
 
-  def balanced
-    @api_key = Balanced::ApiKey.new.save
-    Balanced.configure @api_key.secret
-  end
-
   def invalid_acct
-    fill_in 'routing_number', with: '100000007'
-    fill_in 'acct_number', with: 8887776665555
+    fill_in 'routing_number', with: '110000000'
+    fill_in 'acct_number', with: '000111111113'
     fill_in 'bank_account_acct_name', with: "SDB Business"
     fill_in 'bank_account_description', with: "My business"
     select("checking", :from => "bank_account_acct_type")
@@ -45,13 +40,11 @@ feature "BankAccounts" do
   end
 
   describe "Create Bank Account" do 
-    before do
+    before :each do
       px_user = create :pixi_user
       init_setup px_user
       @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
-      visit root_path
-      click_link 'My Accounts'
-      add_data
+      visit new_bank_account_path
     end
 
     it "shows content" do
@@ -62,6 +55,7 @@ feature "BankAccounts" do
 
     it "creates an new account" do
       expect {
+          add_data
           click_on 'Save'; sleep 3;
       }.to change(BankAccount, :count).by(1)
 

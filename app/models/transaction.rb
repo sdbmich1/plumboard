@@ -1,10 +1,11 @@
 class Transaction < ActiveRecord::Base
   resourcify
 
-  attr_accessor :cvv, :card_number, :exp_month, :exp_year, :mobile_phone
+  attr_accessor :cvv, :card_number, :exp_month, :exp_year, :mobile_phone, :seller_token, :seller_inv_amt
   attr_accessible :address, :address2, :amt, :city, :code, :country, :credit_card_no, :description, :email, :first_name, 
   	:home_phone, :last_name, :payment_type, :promo_code, :state, :work_phone, :zip, :user_id, :confirmation_no, :token, :status,
-	:convenience_fee, :processing_fee, :transaction_type, :debit_token, :cvv, :card_number, :exp_month, :exp_year, :mobile_phone, :updated_at
+	:convenience_fee, :processing_fee, :transaction_type, :debit_token, :cvv, :card_number, :exp_month, :exp_year, :mobile_phone, :updated_at,
+	:seller_token, :seller_inv_amt
 
   belongs_to :user
   has_many :invoices
@@ -153,6 +154,10 @@ class Transaction < ActiveRecord::Base
 
   def self.get_by_date start_date, end_date
     includes(:invoices => [{:invoice_details => :listing}, :seller]).where("updated_at >= ? AND updated_at <= ?", start_date, end_date)
+  end
+
+  def cust_token
+    user.cust_token rescue nil
   end
 
   # set json string

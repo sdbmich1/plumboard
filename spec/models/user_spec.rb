@@ -20,6 +20,7 @@ describe User do
     it { should respond_to(:pictures) }
     it { should respond_to(:status) }
     it { should respond_to(:acct_token) }
+    it { should respond_to(:cust_token) }
     it { should respond_to(:user_type_code) }
     it { should respond_to(:business_name) }
     it { should respond_to(:ref_id) }

@@ -5,7 +5,6 @@ class Listing < ListingParent
   before_create :activate
   after_commit :async_send_notification, :update_counter_cache, :on => :create
   after_commit :send_saved_pixi_removed, :sync_saved_pixis, :set_invoice_status, :update_counter_cache, :on => :update
-  # after_save :update_counter_cache
 
   attr_accessor :parent_pixi_id
 
@@ -19,7 +18,7 @@ class Listing < ListingParent
   has_many :saved_listings, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :active_saved_listings, primary_key: 'pixi_id', foreign_key: 'pixi_id', class_name: 'SavedListing', conditions: { :status => 'active' }
   has_many :pixi_asks, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
-  has_many :site_listings, :dependent => :destroy
+  #has_many :site_listings, :dependent => :destroy
   #has_many :sites, :through => :site_listings, :dependent => :destroy
   has_many :invoice_details, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :invoices, through: :invoice_details, :dependent => :destroy

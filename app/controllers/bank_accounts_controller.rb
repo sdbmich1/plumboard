@@ -2,6 +2,7 @@ class BankAccountsController < ApplicationController
   load_and_authorize_resource
   before_filter :authenticate_user!
   before_filter :load_target, only: [:new, :create, :edit, :update]
+  before_filter :load_data, only: [:show, :destroy]
   respond_to :html, :json, :js, :mobile
   layout :page_layout
 
@@ -11,29 +12,21 @@ class BankAccountsController < ApplicationController
   end
 
   def index
-    @accounts = @user.bank_accounts
-    respond_with(@accounts) do |format|
-      format.json { render json: {accounts: @accounts} }
-    end
+    respond_with(@accounts = @user.bank_accounts.active)
   end
 
   def show
-    @account = @user.bank_accounts.first
-    respond_with(@account) do |format|
-      format.json { render json: {account: @account} }
-    end
+    respond_with(@account)
   end
 
   def create
     @account = BankAccount.new params[:bank_account]
     respond_with(@account) do |format|
-      if @account.save_account
-        flash.now[:notice] = 'Successfully created account.'
+      if @account.save_account request.remote_ip
         format.js { reload_data }
 	format.html { redirect_path }
         format.json { render json: {account: @account} }
       else
-        flash.now[:error] = 'Error occurred creating account. Please try again.'
 	format.html { render :new }
 	format.json { render :json => { :errors => @account.errors.full_messages }, :status => 422 }
       end
@@ -41,7 +34,6 @@ class BankAccountsController < ApplicationController
   end
 
   def destroy
-    @account = BankAccount.find params[:id]
     @account.delete_account if @account
     respond_with(@account, location: get_root_path)
   end
@@ -50,6 +42,10 @@ class BankAccountsController < ApplicationController
 
   def page_layout
     mobile_device? ? 'form' : 'transactions'
+  end
+
+  def load_data
+    @account = BankAccount.find params[:id]
   end
 
   # load target partial form
@@ -73,9 +69,5 @@ class BankAccountsController < ApplicationController
     else
       redirect_to @account
     end
-  end
-
-  def check_permissions
-    authorize! :crud, BankAccount
   end
 end

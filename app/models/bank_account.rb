@@ -1,11 +1,11 @@
 class BankAccount < ActiveRecord::Base
   include Payment
 
-  before_save :set_flds, :must_have_token
+  before_create :set_flds, :must_have_token
 
   attr_accessor :acct_number, :routing_number
   attr_accessible :acct_name, :acct_no, :acct_type, :status, :token, :user_id, :description, :acct_number, :routing_number, :bank_name,
-    :default_flg
+    :default_flg, :currency_type_code, :country_code
 
   belongs_to :user
   has_many :invoices
@@ -43,22 +43,19 @@ class BankAccount < ActiveRecord::Base
   end
 
   # add new account
-  def save_account
-    acct = Payment::add_bank_account self
+  def save_account ip	
+    acct = Payment::add_bank_account self, ip
 
     # check for errors
     if acct 
       return false if self.errors.any?
-
-      # set fields
-      self.token, self.acct_no, self.bank_name = acct.uri, acct.account_number, acct.bank_name
     else
       errors.add :base, "Account number, routing number, or account name is invalid."
       return false
     end
 
     # save new account
-    save
+    save!
   end
 
   # issue account credit
@@ -80,7 +77,7 @@ class BankAccount < ActiveRecord::Base
 
     # remove account
     if result 
-      self.errors.any? ? false : self.destroy 
+      self.errors.any? ? false : self.update_attribute(:status, 'removed') 
     else
       errors.add :base, "Error: There was a problem with your bank account."
       false
@@ -105,5 +102,9 @@ class BankAccount < ActiveRecord::Base
   # returns default account 
   def self.get_default_acct
     where(default_flg: 'Y').first
+  end
+
+  def acct_token
+    user.acct_token rescue nil
   end
 end

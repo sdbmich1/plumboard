@@ -123,13 +123,13 @@
 a.seller-name {
   @extend .seller-name;
   &:visited { color: white; text-decoration: none }
-  &:hover { background: transparent; text-decoration: underline; }
+  &:hover { color: white; background: transparent; text-decoration: underline; }
 }
 
 a.black-seller-name {
   @extend .black-seller-name;
   &:visited { color: black; text-decoration: none }
-  &:hover { background: transparent; text-decoration: underline; }
+  &:hover { color: black; background: transparent; text-decoration: underline; }
 }
 
 .trend-tag {
