@@ -30,7 +30,12 @@ class InvoiceObserver < ActiveRecord::Observer
       UserMailer.delay.send_decline_notice(model, model.decline_msg)
 
       # delete wants if buyer selected "Did Not Want"
-      model.listings.each { |listing| model.buyer.pixi_wants.find_by_pixi_id(listing.pixi_id).destroy } if model.decline_reason == "Did Not Want"
+      if model.decline_reason == "Did Not Want"
+        model.listings.each do |listing|
+          want = model.buyer.pixi_wants.find_by_pixi_id(listing.pixi_id)
+          want.destroy if want
+        end
+      end
     end
   end
 

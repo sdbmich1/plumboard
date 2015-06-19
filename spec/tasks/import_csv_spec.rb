@@ -27,7 +27,7 @@ describe 'import_csv' do
 
   describe 'load_condition_types' do
     it_behaves_like("import_csv", "load_condition_types", nil, ConditionType,
-      {code: %w(N RF ULN UVG UG), description: 'New', status: 'active', hide: %w(no yes)})
+      {code: %w(N RF ULN UVG UG), description: ["New", "Refurbished", "Used - Like New", "Used - Very Good", "Used - Good"], status: 'active', hide: %w(no yes)})
   end
 
   describe "load_event_types" do
@@ -53,5 +53,19 @@ describe 'import_csv' do
   describe 'load_status_types' do
     it_behaves_like("import_csv", "load_status_types", nil, StatusType,
       { code: %w(pending active draft expired sold removed denied invoiced wanted), hide: 'yes' })
+  end
+
+  describe "update_site_images" do
+    before do
+      # Need regions in order to assign their pictures
+      load File.expand_path("../../../lib/tasks/import_csv.rake", __FILE__)
+      Rake::Task.define_task(:environment)
+      Rake::Task["load_regions"].invoke
+    end
+
+    it "loads images" do
+      Rake::Task[:update_site_images].execute :file_name => "region_image_data_051415.csv"
+      expect(Site.find_by_name("SF Bay Area").pictures.first.photo.to_s).to include "bay_bridge.jpg"
+    end
   end
 end

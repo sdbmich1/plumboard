@@ -5,6 +5,6 @@
   <td class='span2'><%= user.business_name %></td>
   <td class='span2'><%= get_user_loc(user) %></td>
   <td class='span2'><div class='price'><%= user.listings.active.count %></div></td>
-  <td class='span2'><div class='price'><%= user.followers.count %></div></td>
+  <td class='span2'><div class='price'><%= user.followers.where(status: 'active').count %></div></td>
   <td class='span1 center-wrapper'><%= link_to 'View', user.local_user_path, class: 'btn btn-small' %></td>
 </tr>

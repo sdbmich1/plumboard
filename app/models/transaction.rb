@@ -167,8 +167,8 @@ class Transaction < ActiveRecord::Base
   end
 
   def as_csv(options={})
-    { "Transaction Date" => updated_at.strftime("%F"), "Item Title" => pixi_title, "Buyer" => buyer_name, "Seller" => seller_name, 
-      "Price" => get_invoice.price, "Quantity" => get_invoice.quantity, "Buyer Total" => amt, 
+    { "Transaction Date" => updated_at.strftime("%F"), "Item Title" => pixi_title,
+      "Buyer" => buyer_name, "Seller" => seller_name, "Buyer Total" => amt, 
       "Seller Total" => get_invoice.amount - get_invoice.get_fee(true) }
   end
 
