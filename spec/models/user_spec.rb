@@ -73,6 +73,8 @@ describe User do
     it { should have_many(:preferences).dependent(:destroy) }
     it { should accept_nested_attributes_for(:preferences).allow_destroy(true) }
     it { should belong_to(:user_type).with_foreign_key('user_type_code') }
+    it { should have_many(:active_bank_accounts).class_name('BankAccount').conditions(:status=>"active") }
+    it { should have_many(:active_card_accounts).class_name('CardAccount').conditions(:status=>"active") }
 
     it { should respond_to(:unpaid_invoice_count) } 
     it { should respond_to(:has_unpaid_invoices?) } 

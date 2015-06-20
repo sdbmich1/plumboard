@@ -200,7 +200,7 @@ class ListingParent < ActiveRecord::Base
 
   # verify if listing is sold
   def sold?
-    invoices.exists?(status: 'paid')
+    status == 'sold'
   end
 
   # verify if listing is inactive

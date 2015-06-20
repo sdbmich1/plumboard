@@ -65,7 +65,9 @@ class User < ActiveRecord::Base
   has_many :unpaid_received_invoices, foreign_key: :buyer_id, :class_name => "Invoice", conditions: { :status => 'unpaid' }
 
   has_many :bank_accounts, dependent: :destroy
+  has_many :active_bank_accounts, :class_name => "BankAccount", conditions: { :status => 'active' }
   has_many :card_accounts, dependent: :destroy
+  has_many :active_card_accounts, :class_name => "CardAccount", conditions: { :status => 'active' }
   has_many :transactions, dependent: :destroy
   has_many :comments, dependent: :destroy
   has_many :inquiries, dependent: :destroy
@@ -211,18 +213,18 @@ class User < ActiveRecord::Base
 
   # return whether user has any bank accounts
   def has_bank_account?
-    bank_accounts.size > 0 rescue nil
+    active_bank_accounts.size > 0 rescue nil
   end
 
   # return whether user has any card accounts
   def has_card_account?
-    card_accounts.size > 0 rescue nil
+    active_card_accounts.size > 0 rescue nil
   end
 
   # return any valid card 
   def get_valid_card
     mo, yr = Date.today.month, Date.today.year
-    card_accounts.detect { |x| x.expiration_year > yr || (x.expiration_year == yr && x.expiration_month >= mo) }
+    active_card_accounts.detect { |x| x.expiration_year > yr || (x.expiration_year == yr && x.expiration_month >= mo) }
   end
 
   # process facebook user
