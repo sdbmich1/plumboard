@@ -3,8 +3,8 @@
 </div>
 <div class="row">
   <%= form_for(account, url: set_account_path, html: {id: 'bank-acct-form', class: "form-horizontal uform"}, data: {validate: 'parsley'}) do |f| %>
+    <div id="form_errors"><%= render partial: 'shared/error_messages', locals: { :target => f.object } %></div>
     <div id="data_error" style="display:none" class="error"></div>
-    <%= render partial: 'shared/error_messages', locals: { :target => account } %>
     <div class="sm-top span6 offset3">
       <div id='signup'>
         <%= render partial: 'shared/bank_account_fields', locals: {f: f, account: account} %>
@@ -13,7 +13,7 @@
     <%= f.hidden_field :user_id, value: @user.id %>
     <%= f.hidden_field :token, id: 'pay_token' %>
     <div class="span4 offset5 mbot">
-      <%= f.submit set_btn_name, id: 'bank-btn', class: "btn btn-large btn-primary submit-btn" %>
+      <%= f.submit set_btn_name, class: "btn btn-large btn-primary submit-btn", data: {disable_with: 'Processing...'} %>
     </div>
   <% end %>
   <div class="span4 offset5 sm-top mbot"><%= image_tag "check_sample.gif" %></div>

@@ -65,10 +65,15 @@ class CardProcessor
 
     # remove card
     if result 
-      @acct.errors.any? ? false : @acct.update_attribute(:status, 'removed') 
+      @acct.errors.any? ? false : reset_card
     else
       @acct.errors.add :base, "Error: There was a problem with your account."
       false
     end
+  end
+
+  def reset_card
+    @acct.update_attributes(status: 'removed', default_flg: nil) 
+    CardAccount.active.first.update_attribute(:default_flg, 'Y') rescue nil
   end
 end

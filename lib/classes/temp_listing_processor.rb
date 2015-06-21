@@ -23,7 +23,7 @@ class TempListingProcessor < ListingDataProcessor
       false
     end
   end
-  handle_asynchronously :post_to_board, :queue => 'pixi'
+  # handle_asynchronously :post_to_board, :queue => 'pixi'
 
   # add listing to board and process transaction
   def async_send_notification 

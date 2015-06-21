@@ -300,7 +300,7 @@ describe BankAccountsController do
       it "redirects to the accounts list" do
         BankAccount.stub(:find) { mock_account }
         do_delete
-        response.should_not be_redirect
+        response.should be_redirect
       end
 
       it "decrements the BankAccount count" do

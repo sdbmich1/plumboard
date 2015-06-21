@@ -17,9 +17,9 @@ module InvoicesHelper
   end
 
   # check if user has bank account to determine correct routing
-  def get_invoice_path uid=nil, pid=nil
+  def get_invoice_path uid=nil, pid=nil, cid=nil
     form = mobile_device? ? 'mobile/invoice_form' : 'shared/invoice_form'
-    @user.has_bank_account? ? new_invoice_path(buyer_id: uid, pixi_id: pid) : new_bank_account_path(target: form)
+    @user.has_bank_account? ? new_invoice_path(buyer_id: uid, pixi_id: pid, cid: cid) : new_bank_account_path(target: form)
   end
 
   # set page title based on action

@@ -34,8 +34,11 @@ module Payment
 
   # delete bank account
   def self.delete_account token, acct
-    if PAYMENT_API == 'balanced' 
+    case CREDIT_CARD_API
+    when 'balanced' 
       BalancedPayment::delete_account(token, acct)
+    when 'stripe' 
+      result = StripePayment::delete_account(token, acct)
     end
   end
 

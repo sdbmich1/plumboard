@@ -175,9 +175,6 @@ $(document).ready(function(){
     $('#footer').hide('fast');
   }
 
-  // load featured band
-  load_featured_slider();
-
   // enable placeholder text for input fields
   if( $('#px-container').length == 0 ) {
     $('input, textarea').placeholder();

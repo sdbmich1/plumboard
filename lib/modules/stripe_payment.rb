@@ -50,7 +50,7 @@ module StripePayment
 
   # process credit card messages
   def self.process_error acct, e
-    acct.errors.add :base, "Account declined or invalid. Please re-submit."
+    acct.errors.add :base, "Account declined or invalid. Please re-submit." if acct
     Rails.logger.info "Request failed: #{e.message}" 
     acct
   end
@@ -61,8 +61,8 @@ module StripePayment
 
     # add customer
     if slrFlg
+      Rails.logger.info "PXB adding account email: #{model.email} token: #{token}"
       account = Stripe::Account.create(country: 'US', email: model.email, managed: true)
-      update_account model.user, account.id, ip
       model.user.acct_token = account.id
     else
       Rails.logger.info "PXB adding customer: #{name} token: #{token}"
@@ -80,15 +80,19 @@ module StripePayment
 
   # complete settings for managed accounts
   def self.update_account model, acct_id, ip
-    btype = model.is_business? ? 'company' : 'individual'
+    Rails.logger.info "PXB updating account: #{acct_id} ip: #{ip}"
     account = Stripe::Account.retrieve(acct_id)
-    account.legal_entity.type = btype
-    account.tos_acceptance.date = Time.now.to_i
-    account.tos_acceptance.ip = ip
-    account.legal_entity.first_name, account.legal_entity.last_name = model.first_name, model.last_name
-    account.legal_entity.business_name = model.business_name if model.is_business?
-    account.legal_entity.dob.day, account.legal_entity.dob.month, account.legal_entity.dob.year = model.birth_date.day, model.birth_date.month, model.birth_date.year  unless model.is_business?
-    account.save
+    if account
+      btype = model.is_business? ? 'company' : 'individual'
+      account.legal_entity.type = btype
+      account.tos_acceptance.date = Time.now.to_i
+      account.tos_acceptance.ip = ip
+      account.legal_entity.first_name, account.legal_entity.last_name = model.first_name, model.last_name
+      account.legal_entity.business_name = model.business_name if model.is_business?
+      account.legal_entity.dob.day, account.legal_entity.dob.month, account.legal_entity.dob.year = model.birth_date.day, model.birth_date.month, 
+        model.birth_date.year  unless model.is_business?
+      account.save
+    end
 
     rescue => ex
       process_error model, ex
@@ -166,20 +170,29 @@ module StripePayment
 
   #  add bank account to managed account
   def self.add_bank_account acct, ip
-
-    # get buyer token
-    id = acct.acct_token
+    Rails.logger.info "PXB add bank account w/ token: #{acct.acct_token}"
 
     # determine account
-    account = get_customer id, acct, true, nil, ip
+    account = get_customer acct.acct_token, acct, true, nil, ip
 
     # add account to customer record
-    update_account acct.user, id, ip if account && account.tos_acceptance.date.blank?
-    account.bank_account = acct.token if acct.token
-    account.save
+    Rails.logger.info "PXB calling update account w/ token: #{acct.acct_token}"
+    update_account acct.user, acct.acct_token, ip if account && account.tos_acceptance.date.blank?
+    
+    if acct.token.blank?
+      Rails.logger.info "PXB calling external account w/ token: #{acct.acct_token}"
+      bank = account.external_accounts.create(external_account: {object: 'bank_account', currency: acct.currency_type_code, 
+        country: acct.country_code, routing_number: acct.routing_number, account_number: acct.acct_number})
+      acct.token = bank.id
+      acct.bank_name = bank.bank_name
+      acct.acct_no = bank.last4
+    else
+      account.bank_account = acct.token
+      account.save
+      acct.bank_name = account.bank_accounts.data.last.bank_name
+      acct.acct_no = account.bank_accounts.data.last.last4
+    end
 
-    acct.bank_name = account.bank_accounts.data.last.bank_name
-    acct.acct_no = account.bank_accounts.data.last.last4
     return account
 
     rescue => ex
@@ -227,15 +240,19 @@ module StripePayment
 
   # delete stored card
   def self.delete_card token, model
-    id = model.cust_token
-    customer = get_customer id, model, false
+    customer = get_customer model.cust_token, model, false
     card = customer.sources.retrieve(model.card_token).delete() if customer
 
     rescue => ex
       process_error model, ex
   end
 
+  # delete stored account
   def self.delete_account token, model
-    return true
+    account = get_account model.acct_token, model, false
+    bank = account.sources.retrieve(model.token).delete() if account
+
+    rescue => ex
+      process_error model, ex
   end
 end

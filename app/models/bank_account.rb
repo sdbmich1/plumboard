@@ -101,7 +101,7 @@ class BankAccount < ActiveRecord::Base
 
   # returns default account 
   def self.get_default_acct
-    where(default_flg: 'Y').first
+    active.where(default_flg: 'Y').first
   end
 
   def acct_token

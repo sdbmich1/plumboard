@@ -6,6 +6,7 @@ var orig_win_width = 0;
 
 // used to resize window top menu
 function resizeFrame() {
+  load_featured_slider();
   resizePixi();
 
   // check window width to see if resize is needed
@@ -14,7 +15,6 @@ function resizeFrame() {
     $("#submenu").removeClass('.bar-top').removeClass('.mtop');
     $("#sellerName").removeClass('neg-left');
     $("#trend-pixi").removeClass('offset1').removeClass('span10');
-
     $('#wrap').css({'margin-top': 0 });
     $(".navbar-fixed-top").css({'margin-bottom': 0 });
 
@@ -107,7 +107,12 @@ function adjustWindow() {
   var total = footerTop - winHeight;
   var ftr_total = docHeight - footerTop;
 
-  // adjust footer so that it doesn't render atop of page content
+  adjustFooter(footerTop, winHeight, mtop, docHeight, total);
+  resizeFrame();
+}
+
+// adjust footer so that it doesn't render atop of page content
+function adjustFooter(footerTop, winHeight, mtop, docHeight, total) {
   if (footerTop > winHeight && $(window).width() < 1024) {
     if(navigator.userAgent.match(/msie/i)) {
       mtop = 80 + total;
@@ -120,10 +125,8 @@ function adjustWindow() {
   else {
     mtop = ($('#cat-wrap').length > 0) ? 120 : 80;
   }
-
   $('#footer').css('margin-top', mtop + 'px');
   $('.scrollup').css('margin-top', mtop + 'px');
-  resizeFrame();
 }
 
 function checkMenuHgt(str) {

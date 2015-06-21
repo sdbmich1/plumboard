@@ -8,7 +8,7 @@ class BankAccountsController < ApplicationController
 
   def new
     flash.now[:notice] = 'You need to setup a bank account before creating an invoice.' unless @user.has_bank_account?
-    @account = @user.bank_accounts.build
+    respond_with(@account = @user.bank_accounts.build)
   end
 
   def index
@@ -34,8 +34,12 @@ class BankAccountsController < ApplicationController
   end
 
   def destroy
-    @account.delete_account if @account
-    respond_with(@account, location: get_root_path)
+    if @account.delete_account 
+      redirect_to new_bank_account_path 
+    else
+      flash[:error] = @account.errors.full_messages
+      render action: :show 
+    end
   end
 
   private

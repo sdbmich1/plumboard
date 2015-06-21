@@ -201,6 +201,13 @@ describe CardAccount do
       @account.token = nil
       @account.delete_card.should_not be_true
     end
+
+    it 'resets default card' do
+      @account.save!
+      @account2 = @user.card_accounts.create FactoryGirl.attributes_for :card_account, card_no: '5556'
+      @account.delete_card
+      expect(@account2.reload.default_flg).to eq 'Y'
+    end
   end
 
   describe 'get_default_acct' do

@@ -178,10 +178,10 @@ module ApplicationHelper
   end
 
   # set path based on invoice count
-  def get_unpaid_path
+  def get_unpaid_path cid=nil
     if @user.unpaid_invoice_count > 0
       @invoice = @user.unpaid_received_invoices.first
-      invoice_path(@invoice)
+      invoice_path(@invoice, cid: cid)
     end
   end
 
@@ -380,6 +380,19 @@ module ApplicationHelper
       str << link_to("For Business", new_temp_listing_path(pixan_id: @user, ptype: 'bus'), id: 'bus-ppost')
       content_tag(:li, str.join(" ").html_safe)
     end
+  end
+
+  # toggle menu access based on user privileges
+  def show_manage_menu
+    render 'layouts/manage' if can? :manage_pixi_posts, @user
+  end
+
+  def show_bill_menu_btn
+    content_tag(:li, link_to("Bill", get_invoice_path, id: 'bill-pixi')) if @user.has_pixis?
+  end
+
+  def show_pay_menu_btn
+    content_tag(:li, link_to("Pay", get_unpaid_path, id: 'pay-pixi')) if @user.has_unpaid_invoices?
   end
 
   # toggle field display visible

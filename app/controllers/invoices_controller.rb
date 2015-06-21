@@ -6,6 +6,7 @@ class InvoicesController < ApplicationController
   before_filter :load_data, only: [:index, :sent, :received]
   before_filter :load_invoice, only: [:show, :edit, :update, :destroy, :remove, :decline]
   before_filter :set_params, only: [:create, :update]
+  after_filter :mark_message, only: [:new, :show]
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name
   respond_to :html, :js, :json, :mobile
   layout :page_layout
@@ -100,5 +101,10 @@ class InvoicesController < ApplicationController
 
   def set_params
     params[:invoice] = JSON.parse(params[:invoice]) if request.xhr?
+  end
+
+  def mark_message
+    @conversation = Conversation.find(params[:cid]) if params[:cid]
+    @conversation.mark_all_posts(@user) if @conversation
   end
 end

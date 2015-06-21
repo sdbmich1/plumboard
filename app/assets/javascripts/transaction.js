@@ -59,7 +59,7 @@ function StripeCard() {
 }
 
 // process Stripe bank account form for ACH payments
-$(document).on("click", "#bank-btn", function () {
+$(document).on('click', '#bank-btn', function () {
   Stripe.setPublishableKey($('meta[name="stripe-key"]').attr('content'));  // get stripe key		
 
   // set form id
@@ -73,7 +73,7 @@ $(document).on("click", "#bank-btn", function () {
     return false 
   }
   else {
-    $formID.trigger("submit.rails");
+    //$formID.trigger("submit.rails");
     return true
   }
 });

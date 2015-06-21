@@ -29,8 +29,12 @@ class CardAccountsController < ApplicationController
   end
 
   def destroy
-    @account.delete_card if @account
-    respond_with(@account, location: get_root_path)
+    if @account.delete_card 
+      redirect_to new_card_account_path 
+    else
+      flash[:error] = @account.errors.full_messages
+      render :show 
+    end
   end
 
   private

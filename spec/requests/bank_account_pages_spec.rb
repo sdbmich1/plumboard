@@ -3,6 +3,7 @@ require 'spec_helper'
 feature "BankAccounts" do
   subject { page }
   let(:user) { FactoryGirl.create(:pixi_user, first_name: 'Jack', last_name: 'Snow', email: 'jack.snow@pixitest.com') }
+  let(:submit) { "Save" }
 
   def add_data
     fill_in 'routing_number', with: '110000000'
@@ -17,9 +18,9 @@ feature "BankAccounts" do
     fill_in 'bank_account_acct_name', with: "Personal Business"
   end
 
-  def invalid_acct
-    fill_in 'routing_number', with: '110000000'
-    fill_in 'acct_number', with: '000111111113'
+  def invalid_acct rte='110000000', acct='000111111113'
+    fill_in 'routing_number', with: rte
+    fill_in 'acct_number', with: acct
     fill_in 'bank_account_acct_name', with: "SDB Business"
     fill_in 'bank_account_description', with: "My business"
     select("checking", :from => "bank_account_acct_type")
@@ -29,9 +30,10 @@ feature "BankAccounts" do
     page.execute_script %Q{ $('#token').val("X98XX88X") }
   end
 
-  def submit_invalid_acct
+  def submit_invalid_acct rte, acct
     expect {
-      find('#bank-btn').click; sleep 3;
+      invalid_acct rte, acct
+      click_on 'Next'; sleep 3;
     }.to change(BankAccount, :count).by(0)
 
     page.should_not have_content 'Bill To'
@@ -86,8 +88,8 @@ feature "BankAccounts" do
           click_on 'Remove'; sleep 3;
       }.to change(BankAccount, :count).by(0)
 
-      page.should have_content 'Pixis'
-      page.should_not have_content 'Account #'
+      # page.should_not have_content 'Pixis'
+      page.should have_content 'Account #'
     end
   end
 
@@ -96,8 +98,7 @@ feature "BankAccounts" do
       px_user = create :pixi_user
       init_setup px_user
       @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
-      visit root_path
-      click_link 'Bill'
+      visit new_bank_account_path(target: 'shared/invoice_form')
       add_data
     end
 
@@ -125,7 +126,7 @@ feature "BankAccounts" do
       @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
     end
 
-    describe 'visit create page', js: true do
+    describe 'visit create page' do
       before do
         visit new_bank_account_path(target: 'shared/invoice_form')
         add_data
@@ -146,17 +147,8 @@ feature "BankAccounts" do
       end
 
       it "attempts to create an invalid account" do
-        fill_in 'bank_account_acct_name', with: ""
-	submit_invalid_acct
-
-        fill_in 'acct_number', with: ""
-	submit_invalid_acct
-
-        fill_in 'routing_number', with: ""
-	submit_invalid_acct
-
-        fill_in 'routing_number', with: "100000007"
-	submit_invalid_acct
+	submit_invalid_acct '110000000', '000'
+	submit_invalid_acct '0000', '000111111113'
       end
     end
   end
