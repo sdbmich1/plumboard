@@ -6,7 +6,6 @@ var orig_win_width = 0;
 
 // used to resize window top menu
 function resizeFrame() {
-  load_featured_slider();
   resizePixi();
 
   // check window width to see if resize is needed
@@ -146,7 +145,8 @@ function resizePixi () {
     resizeElement(item, i, 180, false);
   }); 
   if($(fname).length > 0) {
-    $(fname).css({'width': set_item_size(0, true)});
+    //$(fname).css({'width': set_item_size(0, true)});
+    $(fname).width(set_item_size(0, true));
   }
   /*
   $('.item.masonry-brick img').each(function(i, item) {
@@ -186,16 +186,16 @@ function set_item_size (origSize, wFlg) {
   var col = !wFlg ? origSize : '85%';
 
   if(width < 1200 && width >= 980) {
-    col = !wFlg ? 160 : '80%';
+    col = !wFlg ? 160 : '75%';
   }
   else if(width < 980 && width >= 768) {
     col = !wFlg ? 140 : '70%';
   }
   else if(width < 768 && width >= 480) {
-    col = !wFlg ? 120 : '60%';
+    col = !wFlg ? 120 : '65%';
   }
   else if(width < 480) {
-    col = !wFlg ? 100 : '60%';
+    col = !wFlg ? 100 : '55%';
   }
   return col;
 }

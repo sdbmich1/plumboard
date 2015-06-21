@@ -182,7 +182,10 @@ $(document).ready(function(){
   else {
     open_board();
   }
+
 });
+
+$(window).load(function() { load_featured_slider(); });
 
 // load board on doc ready
 function open_board() {
