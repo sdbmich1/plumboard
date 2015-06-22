@@ -20,4 +20,10 @@ module ControllerManager
   def self.set_uid session, model, fld='user_id'
     session[:guest_user_id] = model.send(fld) if model.user.guest?
   end
+
+  # mark message read for a give conversation
+  def self.mark_message cid, user
+    conversation = Conversation.find(cid) if cid
+    conversation.mark_all_posts(user) if conversation
+  end
 end

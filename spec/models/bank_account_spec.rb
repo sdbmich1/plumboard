@@ -104,19 +104,24 @@ describe BankAccount do
   end
 
   describe 'credit_account' do
-    before do
-      @bank_acct = mock('Balanced::BankAccount', amount: '50000', appears_on_statement_as: 'pixiboard.com') 
-      Balanced::BankAccount.stub!(:find).with(@account.token).and_return(@bank_acct)
-      Balanced::BankAccount.stub!(:credit).with(:amount=>50000, :appears_on_statement_as=>'pixiboard.com').and_return(@bank_acct)
-      @bank_acct.stub!(:credit).with(:amount=>50000, :appears_on_statement_as=>'pixiboard.com').and_return(true)
+    context 'success' do
+      before do
+        Payment.should_receive(:credit_account).and_return(true)
+      end
+
+      it 'should credit account' do
+        @account.credit_account(500.00).should be_true
+      end
     end
 
-    it 'should credit account' do
-      @account.credit_account(500.00).should be_true
-    end
+    context 'failure' do
+      before do
+        Payment.should_receive(:credit_account).and_return(false)
+      end
 
-    it 'should not credit account' do
-      @account.credit_account(0.00).should_not be_true
+      it 'should not credit account' do
+        @account.credit_account(0.00).should_not be_true
+      end
     end
   end
 
@@ -172,7 +177,7 @@ describe BankAccount do
     it 'does not return acct' do
       @account.save
       @account2 = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, acct_no: '9002'
-      expect(BankAccount.get_default_acct.acct_no).to eq '9000'
+      expect(BankAccount.get_default_acct.acct_no).to eq @account.acct_no
       expect(BankAccount.get_default_acct.acct_no).not_to eq '9002'
     end
   end

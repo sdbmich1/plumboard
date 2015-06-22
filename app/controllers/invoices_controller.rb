@@ -10,6 +10,7 @@ class InvoicesController < ApplicationController
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name
   respond_to :html, :js, :json, :mobile
   layout :page_layout
+  include ControllerManager
 
   def new
     @invoice = Invoice.load_new(@user, params[:buyer_id], params[:pixi_id])
@@ -104,7 +105,6 @@ class InvoicesController < ApplicationController
   end
 
   def mark_message
-    @conversation = Conversation.find(params[:cid]) if params[:cid]
-    @conversation.mark_all_posts(@user) if @conversation
+    ControllerManager::mark_message params[:cid], @user if params[:cid]
   end
 end

@@ -230,7 +230,7 @@ describe UserMailer do
 
     it { expect{subject.deliver}.not_to change{ActionMailer::Base.deliveries.length}.by(0) }
     its(:to) { should == [invoice.buyer_email] }
-    its(:subject) { should include "Invoice Received" }
+    its(:subject) { should include "PixiPay Invoice from #{invoice.seller_name}" }
 
     it 'assigns buyer_first_name' do
       expect(subject.body.encoded).to match(invoice.buyer_first_name)

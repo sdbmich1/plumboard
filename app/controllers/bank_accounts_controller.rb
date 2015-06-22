@@ -3,8 +3,10 @@ class BankAccountsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :load_target, only: [:new, :create, :edit, :update]
   before_filter :load_data, only: [:show, :destroy]
+  after_filter :mark_message, only: [:new]
   respond_to :html, :json, :js, :mobile
   layout :page_layout
+  include ControllerManager
 
   def new
     flash.now[:notice] = 'You need to setup a bank account before creating an invoice.' unless @user.has_bank_account?
@@ -73,5 +75,9 @@ class BankAccountsController < ApplicationController
     else
       redirect_to @account
     end
+  end
+
+  def mark_message
+    ControllerManager::mark_message params[:cid], @user if params[:cid]
   end
 end

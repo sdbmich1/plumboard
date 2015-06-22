@@ -249,7 +249,7 @@ module StripePayment
 
   # delete stored account
   def self.delete_account token, model
-    account = get_account model.acct_token, model, false
+    account = get_customer model.acct_token, model, false
     bank = account.sources.retrieve(model.token).delete() if account
 
     rescue => ex

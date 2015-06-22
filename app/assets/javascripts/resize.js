@@ -186,13 +186,13 @@ function set_item_size (origSize, wFlg) {
   var col = !wFlg ? origSize : '85%';
 
   if(width < 1200 && width >= 980) {
-    col = !wFlg ? 160 : '75%';
+    col = !wFlg ? 160 : '70%';
   }
   else if(width < 980 && width >= 768) {
-    col = !wFlg ? 140 : '70%';
+    col = !wFlg ? 140 : '65%';
   }
   else if(width < 768 && width >= 480) {
-    col = !wFlg ? 120 : '65%';
+    col = !wFlg ? 120 : '60%';
   }
   else if(width < 480) {
     col = !wFlg ? 100 : '50%';

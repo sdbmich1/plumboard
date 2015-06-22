@@ -1,6 +1,4 @@
 class BankAccount < ActiveRecord::Base
-  include Payment
-
   before_create :set_flds, :must_have_token
 
   attr_accessor :acct_number, :routing_number
@@ -16,12 +14,12 @@ class BankAccount < ActiveRecord::Base
 
   # verify token exists before creating record
   def must_have_token
-    if self.token.blank?
-      errors.add(:base, 'Must have a token')
-      false
-    else
-      true
-    end
+    BankProcessor.new(self).must_have_token
+  end
+
+  # set flds
+  def set_flds
+    BankProcessor.new(self).set_flds
   end
 
   # get active accounts
@@ -29,59 +27,24 @@ class BankAccount < ActiveRecord::Base
     where(:status=>'active')
   end
 
-  # set flds
-  def set_flds
-    self.status, self.default_flg = 'active', 'Y' unless self.user.has_bank_account?
-  end
-
   # get account
   def get_account
-    Payment::get_bank_account token, self
-
-    # check for errors
-    return false if self.errors.any?
+    BankProcessor.new(self).get_account
   end
 
   # add new account
   def save_account ip	
-    acct = Payment::add_bank_account self, ip
-
-    # check for errors
-    if acct 
-      return false if self.errors.any?
-    else
-      errors.add :base, "Account number, routing number, or account name is invalid."
-      return false
-    end
-
-    # save new account
-    save!
+    BankProcessor.new(self).save_account ip	
   end
 
   # issue account credit
   def credit_account amt
-    result = Payment::credit_account token, amt, self
-
-    # check for errors
-    if result 
-      self.errors.any? ? false : result 
-    else
-      errors.add :base, "Error: There was a problem with your bank account."
-      false
-    end
+    BankProcessor.new(self).credit_account amt
   end
 
   # delete account
   def delete_account
-    result = Payment::delete_account token, self if token
-
-    # remove account
-    if result 
-      self.errors.any? ? false : self.update_attribute(:status, 'removed') 
-    else
-      errors.add :base, "Error: There was a problem with your bank account."
-      false
-    end
+    BankProcessor.new(self).delete_account
   end
 
   # account owner name
