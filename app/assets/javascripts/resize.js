@@ -195,7 +195,7 @@ function set_item_size (origSize, wFlg) {
     col = !wFlg ? 120 : '65%';
   }
   else if(width < 480) {
-    col = !wFlg ? 100 : '55%';
+    col = !wFlg ? 100 : '50%';
   }
   return col;
 }

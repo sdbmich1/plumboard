@@ -42,7 +42,7 @@ function load_featured_slider() {
   var val = set_banner_slides();
   if($('.featured').length > 0) {
     feature_slider = $('.featured').bxSlider({
-      minSlides: val,
+      minSlides: 3,
       maxSlides: val,
       slideWidth: 180,
       slideMargin: 20,
