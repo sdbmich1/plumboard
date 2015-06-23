@@ -32,6 +32,7 @@ module BalancedPayment
     # add account to customer record
     seller.add_bank_account(@bank_account.uri)
 
+    acct.token, acct.acct.no, acct.bank_name = @bank_account.uri, @bank_account.account_number, @bank_account.bank_name
     return @bank_account
 
     rescue => ex
@@ -86,28 +87,32 @@ module BalancedPayment
   end
 
   # create card account
-  def self.create_card card_no, exp_month, exp_yr, cvv, zip
+  def self.create_card acct
     initialize
 
     card = Balanced::Card.new(
-      card_number: card_no, 
-      expiration_month: exp_month,
-      expiration_year: exp_yr, 
-      security_code: cvv, 
-      postal_code: zip).save
+      card_number: acct.card_number, 
+      expiration_month: acct.expiration_month, 
+      expiration_year: acct.expiration_year, 
+      security_code: acct.card_code,
+      postal_code: acct.zip).save
   end
 
   # assign card account to customer
-  def self.assign_card cust_token, card_token
+  def self.assign_card card, acct, token
     initialize
-    Rails.logger.info "PXB assign card: #{card_token}"
-    Rails.logger.info "PXB assign cust token: #{cust_token}"
-    customer = Balanced::Customer.find cust_token
-    response = customer.add_card card_token
+    Rails.logger.info "PXB assign card: #{token}"
+    Rails.logger.info "PXB assign cust token: #{acct.cust_token}"
+
+    # set fields
+    acct.token, acct.card_no, acct.expiration_month, acct.expiration_year, acct.card_type = card.uri, card.last_four, card.expiration_month,
+		        card.expiration_year, card.card_type.titleize
+    customer = Balanced::Customer.find acct.cust_token
+    response = customer.add_card token
   end
 
   # charge card account
-  def self.charge_card token, amt, descr, txn 
+  def self.charge_card txn 
     initialize
 
     # get buyer token
@@ -117,11 +122,11 @@ module BalancedPayment
     meta = { 'address'=> txn.address, 'city'=> txn.city, 'state'=> txn.state, 'zip'=> txn.zip, 'pixi_id'=> txn.pixi_id }
 
     # determine buyer
-    buyer = get_customer uri, txn, false, token
+    buyer = get_customer uri, txn, false, txn.token
 
     # charge card
-    result = buyer.debit(amount: (amt * 100).to_i.to_s, appears_on_statement_as: 'pixiboard.com', meta: meta, source_uri: 
-      card_token(txn, token, txn.card_number.blank?))
+    result = buyer.debit(amount: (txn.amt * 100).to_i.to_s, appears_on_statement_as: 'pixiboard.com', meta: meta, source_uri: 
+      card_token(txn, txn.token, txn.card_number.blank?))
 
     rescue => ex
       process_error txn, ex
@@ -194,5 +199,16 @@ module BalancedPayment
     acct.errors.add :base, "Account declined or invalid. Please re-submit."
     Rails.logger.info "Request failed: #{e.message}" 
     acct
+  end
+
+  def self.credit_seller_account model
+    fee = model.get_convenience_fee
+    result = model.credit_account
+
+    # record payment & send receipt
+    if result
+      Payment::add_transaction(model, fee, result)
+      UserMailer.delay.send_payment_receipt(model, result) rescue nil
+    end
   end
 end

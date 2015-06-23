@@ -283,9 +283,11 @@ FactoryGirl.define do
     acct_name "Joe's Checking"
     status  'active'
     acct_type 'checking'
-    acct_number '90009000'
-    acct_no '9000'
-    token "/v1/marketplaces/TEST-MP2Q4OaIanQuIDJIixHGmhQA/bank_accounts/BA7ehO1oDwPUBAR9cz71sd2g"
+    acct_number '123456789'
+    acct_no '6789'
+    currency_type_code 'usd'
+    country_code 'us'
+    token "tr_16Cl6DEfOGOjxI0wnFK1wy8Z"
   end
 
   factory :card_account do

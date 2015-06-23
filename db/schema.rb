@@ -12,7 +12,8 @@
 # It's strongly recommended to check this file into your version control system.
 
 
-ActiveRecord::Schema.define(:version => 20150608220924) do
+ActiveRecord::Schema.define(:version => 20150614200401) do
+
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -50,11 +51,13 @@ ActiveRecord::Schema.define(:version => 20150608220924) do
     t.string   "acct_name"
     t.string   "acct_type"
     t.string   "status"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
     t.string   "description"
     t.string   "bank_name"
     t.string   "default_flg"
+    t.string   "currency_type_code"
+    t.string   "country_code"
   end
 
   add_index "bank_accounts", ["user_id"], :name => "index_bank_accounts_on_user_id"
@@ -80,6 +83,7 @@ ActiveRecord::Schema.define(:version => 20150608220924) do
     t.datetime "updated_at",       :null => false
     t.string   "zip"
     t.string   "default_flg"
+    t.string   "card_token"
   end
 
   add_index "card_accounts", ["card_no"], :name => "index_card_accounts_on_card_no"
@@ -976,6 +980,7 @@ ActiveRecord::Schema.define(:version => 20150608220924) do
     t.boolean  "guest"
     t.string   "description"
     t.integer  "active_listings_count",  :default => 0
+    t.string   "cust_token"
   end
 
   add_index "users", ["acct_token"], :name => "index_users_on_acct_token"

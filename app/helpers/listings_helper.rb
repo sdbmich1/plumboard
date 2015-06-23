@@ -246,7 +246,7 @@ module ListingsHelper
 
   # check model type
   def temp_listing? model
-    model.is_a? TempListing
+    model.respond_to? :car_id
   end
 
   # toggle csv output based on status type
@@ -372,15 +372,15 @@ module ListingsHelper
 
   # check ownership
   def is_owner?(usr)
-    usr.id == @user.id
+    usr.id == @user.id rescue false
   end
 
   def has_featured_pixis? model
-    model.size >= MIN_FEATURED_PIXIS
+    model.size >= MIN_FEATURED_PIXIS rescue false
   end
 
   def has_featured_users?
-    @sellers.size >= MIN_FEATURED_USERS
+    @sellers.size >= MIN_FEATURED_USERS rescue false
   end
 
   # display featured items/sellers based on band type
@@ -507,8 +507,16 @@ module ListingsHelper
 
   def show_product_fields listing, str=[]
     if listing.is_category_type?('product')
-      str << "Product Code: #{listing.other_id}" unless listing.other_id.blank?
       str << "Size: #{listing.item_size}" unless listing.item_size.blank?
+      str << "Product Code: #{listing.other_id}" unless listing.other_id.blank?
+      process_content str
+    end 
+  end
+
+  def show_item_fields listing, str=[]
+    if listing.is_category_type?('item')
+      str << "Size: #{listing.item_size}" unless listing.item_size.blank?
+      str << "Amount Left: #{get_item_amt(listing)}" 
       process_content str
     end 
   end
@@ -651,7 +659,7 @@ module ListingsHelper
   def wanted_content str=[]
     str << image_tag('rsz_check-mark-md.png', class: 'checkmark')
     str << content_tag(:span, 'Want', class: 'mleft5 black-txt')
-    content_tag(:div, str.join(" ").html_safe)
+    content_tag(:div, str.join(" ").html_safe, class: 'width80 left-form')
   end
 
   # render wanted listing content

@@ -308,4 +308,14 @@ describe Transaction do
       Transaction.get_by_date(DateTime.current - 2.days, DateTime.current - 1.days).should be_empty
     end
   end
+
+  describe 'cust_token' do
+    before :each, run: true do
+      @user.update_attribute(:cust_token, 'XXX123')
+    end
+    it { expect(@transaction.cust_token).to be_nil }
+    it 'has cust_token', run: true do
+      expect(@transaction.cust_token).to eq @user.cust_token
+    end
+  end
 end

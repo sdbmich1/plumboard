@@ -1,7 +1,7 @@
+var feature_slider;
+
 // process slider
 function load_slider(cntl) {
-
-  // picture slider
   if( $('.bxslider').length > 0 ) {
 
     // check slider length to toggle slideshow
@@ -41,8 +41,8 @@ function load_slider(cntl) {
 function load_featured_slider() {
   var val = set_banner_slides();
   if($('.featured').length > 0) {
-    $('.featured').bxSlider({
-      minSlides: val,
+    feature_slider = $('.featured').bxSlider({
+      minSlides: 3,
       maxSlides: val,
       slideWidth: 180,
       slideMargin: 20,

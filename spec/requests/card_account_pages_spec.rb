@@ -38,7 +38,7 @@ feature "CardAccounts" do
 
     it "creates an new account" do
       expect {
-        load_credit_card "4111111111111111", "123", true, false; sleep 2.5
+        load_credit_card "4242424242424242", "123", true, false; sleep 2.5
       }.to change(CardAccount, :count).by(1)
       page.should have_content 'Card #'
 

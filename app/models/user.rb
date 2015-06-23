@@ -13,7 +13,7 @@ class User < ActiveRecord::Base
   # Setup accessible (or protected) attributes for your model
   attr_accessible :first_name, :last_name, :email, :password, :password_confirmation, :remember_me, :birth_date, :gender, :pictures_attributes,
     :fb_user, :provider, :uid, :contacts_attributes, :status, :acct_token, :preferences_attributes, :user_type_code, :business_name, :ref_id, :url,
-    :user_url, :description, :active_listings_count
+    :user_url, :description, :active_listings_count, :cust_token
   attr_accessor :user_url
 
   before_save :ensure_authentication_token, unless: :guest_or_test?
@@ -65,7 +65,9 @@ class User < ActiveRecord::Base
   has_many :unpaid_received_invoices, foreign_key: :buyer_id, :class_name => "Invoice", conditions: { :status => 'unpaid' }
 
   has_many :bank_accounts, dependent: :destroy
+  has_many :active_bank_accounts, :class_name => "BankAccount", conditions: { :status => 'active' }
   has_many :card_accounts, dependent: :destroy
+  has_many :active_card_accounts, :class_name => "CardAccount", conditions: { :status => 'active' }
   has_many :transactions, dependent: :destroy
   has_many :comments, dependent: :destroy
   has_many :inquiries, dependent: :destroy
@@ -211,18 +213,18 @@ class User < ActiveRecord::Base
 
   # return whether user has any bank accounts
   def has_bank_account?
-    bank_accounts.size > 0 rescue nil
+    active_bank_accounts.size > 0 rescue nil
   end
 
   # return whether user has any card accounts
   def has_card_account?
-    card_accounts.size > 0 rescue nil
+    active_card_accounts.size > 0 rescue nil
   end
 
   # return any valid card 
   def get_valid_card
     mo, yr = Date.today.month, Date.today.year
-    card_accounts.detect { |x| x.expiration_year > yr || (x.expiration_year == yr && x.expiration_month >= mo) }
+    active_card_accounts.detect { |x| x.expiration_year > yr || (x.expiration_year == yr && x.expiration_month >= mo) }
   end
 
   # process facebook user

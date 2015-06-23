@@ -36,13 +36,13 @@ class PictureProcessor
       s3 = AWS::S3.new
 
       if pic.post_process_required?
-        pic.photo = URI.parse(URI.escape(pic.direct_upload_url))
+        pic.photo = URI.parse(URI.escape(pic.direct_upload_url)) 
       else
         paperclip_file_path = "photos/#{id}/original/#{direct_upload_url_data[:filename]}"
         s3.buckets[S3FileField.config.bucket].objects[paperclip_file_path].copy_from(direct_upload_url_data[:path])
       end
 
-      pic.processing = true
+      pic.processing = false
       pic.save
       s3.buckets[S3FileField.config.bucket].objects[direct_upload_url_data[:path]].delete
     end
@@ -59,6 +59,9 @@ class PictureProcessor
   # Set attachment attributes from the direct upload
   def set_page_attributes
     tries ||= 5
+
+    @pic.processing = !@pic.direct_upload_url.blank?
+    @pic.direct_upload_url ||= @pic.photo.url
     direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(@pic.direct_upload_url)
     s3 = AWS::S3.new
     
@@ -84,10 +87,9 @@ class PictureProcessor
 
   # generate styles (downloads original first)
   def regenerate_styles!
-    return unless (!@pic.processing)
+    return unless @pic.processing
+    @pic.processing = false
     @pic.photo.reprocess! 
-    @pic.processing = false   
-    @pic.save(validations: false)
   end
 
   def image_options

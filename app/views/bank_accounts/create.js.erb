@@ -1,9 +1,8 @@
 $('#spinner').hide(300);
 <% if @account.errors.any? %>
-  $("#notice").hide(300);
+  $("#flash_notice").hide(300);
   $("#form_errors").html("<%= escape_javascript( render(partial: 'shared/error_messages', locals: {target: @account})) %>");
 <% else %>
-  $("#notice").html("<%= escape_javascript(flash.now[:notice])%>");
-  $("#notice").show(300);
+  postFlashMsg('#flash_notice','success', 'Successfully saved account.');
   $("#inv_form").html("<%= escape_javascript( raw render(partial: 'shared/invoice_form') ) %>");
 <% end %>

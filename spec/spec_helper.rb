@@ -59,8 +59,8 @@ Spork.prefork do
 
     config.before(:suite) do
       DatabaseCleaner.clean_with :truncation
-      ThinkingSphinx::Test.init
-      ThinkingSphinx::Test.start_with_autostop  # stop Sphinx at the end of the test suite.
+#      ThinkingSphinx::Test.init
+#      ThinkingSphinx::Test.start_with_autostop  # stop Sphinx at the end of the test suite.
     end
 
     config.before(:each, :js => true) do

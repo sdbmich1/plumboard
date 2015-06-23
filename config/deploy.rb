@@ -200,7 +200,7 @@ namespace :whenever do
   desc "Update the crontab file for the Whenever Gem."
   task :update_crontab, :roles => [:app] do
     puts "\n\n=== Updating the Crontab! ===\n\n"
-    run "cd #{release_path} && #{whenever_command} --update-crontab" 
+    run "cd #{release_path} && #{whenever_command} --update-crontab #{application}" 
   end    
 end
 

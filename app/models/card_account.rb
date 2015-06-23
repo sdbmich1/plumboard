@@ -3,7 +3,7 @@ class CardAccount < ActiveRecord::Base
 
   attr_accessor :card_number, :card_code
   attr_accessible :card_no, :card_type, :description, :expiration_month, :expiration_year, :status, :token, :user_id,
-    :card_number, :card_code, :zip, :default_flg
+    :card_number, :card_code, :zip, :default_flg, :card_token
 
   belongs_to :user
 
@@ -68,7 +68,19 @@ class CardAccount < ActiveRecord::Base
 
   # returns default account 
   def self.get_default_acct
-    where(default_flg: 'Y').first
+    active.where(default_flg: 'Y').first
+  end
+
+  def email
+    user.email rescue nil
+  end
+
+  def buyer_name
+    user.name rescue nil
+  end
+
+  def cust_token
+    user.cust_token rescue nil
   end
 
   rescue => ex

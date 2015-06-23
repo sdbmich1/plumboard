@@ -6,11 +6,12 @@
     <li><%= link_to "My Pixis", seller_listings_path(status: 'active') %></li>
     <li><%= link_to "My PixiPosts", seller_pixi_posts_path(status: 'active') %></li>
     <li><%= link_to "My Messages", conversations_path(status: 'received') %></li>
+    <%= my_site_link %>
+    <li><%= favorite_sellers_menu_item(@user) %></li>
     <li class="divider"></li>
     <li><%= link_to "My Invoices", sent_invoices_path %></li>
     <li><%= link_to "My Accounts", get_account_path %></li>
     <li><%= link_to "My Settings", @user %></li>
-    <li><%= favorite_sellers_menu_item(@user) %></li>
     <li class="divider"></li>
     <li><%= link_to "About", about_path %></li>
     <li><%= link_to "Contact", contact_path %></li>

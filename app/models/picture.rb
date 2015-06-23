@@ -10,7 +10,7 @@ class Picture < ActiveRecord::Base
   belongs_to :imageable, :polymorphic => true
 
   before_create :set_flg, if: :process_locally?
-  before_create :set_page_attributes, if: :process_remotely?
+  after_create :set_page_attributes, if: :process_remotely?
   before_post_process :transliterate_file_name
   after_save :queue_processing, if: :process_remotely?
 
@@ -96,7 +96,7 @@ class Picture < ActiveRecord::Base
 
   # Queue file processing
   def queue_processing
-    PictureProcessor.new(self).delay(:queue => 'images').transfer_and_cleanup(id)
+    PictureProcessor.new(self).delay(:queue => 'images').transfer_and_cleanup(id) if processing
   end
 
   # local processing

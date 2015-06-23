@@ -95,17 +95,22 @@ describe CardAccountsController do
 
   describe 'GET show/:id' do
     before :each do
+      CardAccount.stub!(:find).and_return( @account )
       controller.stub!(:current_user).and_return(@user)
-      @user.stub_chain(:card_accounts, :first).and_return( @account )
     end
 
     def do_get
-      get :show, :id => '1'
+      get :show, id: '1'
     end
 
-    it "should show the requested account" do
+    it "should show the requested transaction" do
       do_get
       response.should be_success
+    end
+
+    it "should load the requested transaction" do
+      CardAccount.stub!(:find).with('1').and_return(@account)
+      do_get
     end
 
     it "should assign @account" do
@@ -119,12 +124,8 @@ describe CardAccountsController do
     end
 
     it "responds to JSON" do
-      @expected = { 
-        :account  => @account
-      }.to_json
-
       get  :show, :id => '1', format: :json
-      response.body.should == @expected
+      response.status.should eq(200)
     end
   end
 

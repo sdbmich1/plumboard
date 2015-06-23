@@ -10,9 +10,9 @@ feature 'Favorite Sellers' do
     ftype = page_name == 'My Followers' ? 'seller' : 'buyer'
     user_id = page_name == 'My Followers' ? seller.id : nil
     page.should have_content page_name
-    page.should have_link 'Active', href: favorite_sellers_path(ftype: ftype,
+    page.should have_link 'Followed', href: favorite_sellers_path(ftype: ftype,
       id: user_id, status: 'active'), class: (status == 'active' ? 'active' : '')
-    page.should have_link 'Inactive', href: favorite_sellers_path(ftype: ftype,
+    page.should have_link 'Unfollowed', href: favorite_sellers_path(ftype: ftype,
       id: user_id, status: 'removed'), class: (status == 'removed' ? 'active' : '')
   end
 
@@ -32,7 +32,7 @@ feature 'Favorite Sellers' do
       init_setup user
     end
 
-    it 'renders Active' do
+    it 'renders Followed' do
       create :favorite_seller, user_id: user.id, seller_id: seller.id, status: 'active'
       visit favorite_sellers_path(ftype: 'seller', id: seller.id, status: 'active')
       test_navbar('My Followers', 'active')
@@ -40,7 +40,7 @@ feature 'Favorite Sellers' do
       page.should have_content 'Displaying ' << FavoriteSeller.count.to_s << ' followers'
     end
 
-    it 'renders Inactive' do
+    it 'renders Unfollowed' do
       create :favorite_seller, user_id: user.id, seller_id: seller.id, status: 'removed'
       visit favorite_sellers_path(ftype: 'seller', id: seller.id, status: 'removed')
       test_navbar('My Followers', 'removed')
@@ -60,12 +60,13 @@ feature 'Favorite Sellers' do
         create :favorite_seller, user_id: @follower.id, seller_id: seller.id, status: 'active'
       end
       create :favorite_seller, user_id: user.id, seller_id: seller.id, status: 'active'
+      user.update_attribute(:last_name, 'Zywiec')    # user must appear last in alphabetical order
       visit favorite_sellers_path(ftype: 'seller', id: seller.id, status: 'active')
       page.should have_content 'Displaying followers'
       page.should have_selector('div.pagination')
       click_link '2'
       test_navbar('My Followers', 'active')
-      test_table(@follower)
+      test_table(user)
     end
 
     it 'displays follower address if available' do
@@ -82,13 +83,13 @@ feature 'Favorite Sellers' do
       addr = has_addr ? seller.primary_address : seller.home_zip
       page.should have_content 'Seller Name'
       page.should have_content 'Location'
-      page.should have_content '# Active Pixis'
-      page.should have_content '# Current Followers'
+      page.should have_content '# Pixis'
+      page.should have_content '# Followers'
       page.should have_css 'img'
       page.should have_content seller.business_name
       page.should have_content addr
       page.should have_content seller.listings.count
-      page.should have_content seller.followers.count
+      page.should have_content seller.followers.where(status: 'active').count
       page.should have_content('View')
     end
 
@@ -96,7 +97,7 @@ feature 'Favorite Sellers' do
       init_setup user
     end
 
-    it 'renders Active' do
+    it 'renders Followed' do
       create :favorite_seller, user_id: user.id, seller_id: seller.id, status: 'active'
       visit favorite_sellers_path(ftype: 'buyer', status: 'active')
       test_navbar('Manage Followers', 'active')
@@ -104,7 +105,7 @@ feature 'Favorite Sellers' do
       page.should have_content 'Displaying ' << FavoriteSeller.count.to_s << ' sellers'
     end
 
-    it 'renders Inactive' do
+    it 'renders Unfollowed' do
       create :favorite_seller, user_id: user.id, seller_id: seller.id, status: 'removed'
       visit favorite_sellers_path(ftype: 'buyer', status: 'removed')
       test_navbar('Manage Followers', 'removed')

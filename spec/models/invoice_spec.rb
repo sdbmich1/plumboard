@@ -153,7 +153,6 @@ describe Invoice do
 
   describe 'credit_account' do
     before do
-      @account = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account
       @invoice.bank_account_id = @account.id
       @bank_acct = mock('Balanced::BankAccount', :amount=>50000)
       Balanced::BankAccount.stub!(:find).with(@account.token).and_return(@bank_acct)
@@ -235,13 +234,34 @@ describe Invoice do
 
   describe "transactions" do
     let(:transaction) { FactoryGirl.create :transaction }
-
-    it "does not submit payment" do 
-      @invoice.submit_payment(nil).should_not be_true
+    before :each, run: true do
+      @invoice.update_attribute(:transaction_id, transaction.id)
     end
 
-    it "submits payment" do 
-      @invoice.submit_payment(transaction.id).should be_true
+    context 'submit_payment' do
+      it { @invoice.submit_payment(nil).should_not be_true }
+      it { @invoice.submit_payment(transaction.id).should be_true }
+    end
+
+    context 'description' do
+      it { expect(@invoice.description).to be_nil }
+      it "shows txn description", run: true do
+        expect(@invoice.description).to eq transaction.description
+      end
+    end
+
+    context 'confirmation_no' do
+      it { expect(@invoice.confirmation_no).to be_nil }
+      it "shows txn confirmation_no", run: true do
+        expect(@invoice.confirmation_no).to eq transaction.confirmation_no
+      end
+    end
+
+    context 'transaction_amount' do
+      it { expect(@invoice.transaction_amount).to eq 0.0 }
+      it "shows txn amt", run: true do
+        expect(@invoice.transaction_amount).to eq transaction.amt
+      end
     end
   end
 
@@ -498,6 +518,25 @@ describe Invoice do
       @new_inv.save!
       expect(@listing.reload.amt_left).to eq 2
       expect(@invoice.get_pixi_amt_left(@listing.pixi_id)).to eq 2
+    end
+  end
+
+  describe 'bank_account' do
+    before :each, run: true do
+      @invoice.bank_account_id = @account.id
+    end
+    context 'acct_no' do
+      it { expect(@invoice.acct_no).not_to eq @account.acct_no }
+      it 'has acct_no', run: true do
+        expect(@invoice.acct_no).to eq @account.acct_no
+      end
+    end
+
+    context 'bank_name' do
+      it { expect(@invoice.bank_name).to be_nil }
+      it 'has bank_name', run: true do
+        expect(@invoice.bank_name).to eq @account.bank_name
+      end
     end
   end
 end

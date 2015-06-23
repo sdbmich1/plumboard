@@ -183,7 +183,7 @@ feature "Transactions" do
 
     it "creates shipping transaction with valid visa card", :js=>true do
       expect { 
-        credit_card_data '4111111111111111'
+        credit_card_data '4242424242424242'
         page.should have_content("Purchase Complete")
       }.to change(Transaction, :count).by(1)
     end

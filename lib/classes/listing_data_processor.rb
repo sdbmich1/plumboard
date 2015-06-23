@@ -137,4 +137,13 @@ class ListingDataProcessor < ListingQueryProcessor
   def filename status
     status.capitalize + '_' + ResetDate::set_file_timestamp
   end
+
+  # get site address
+  def primary_address
+    if @listing.any_locations?
+      @listing.include_list.contacts.first.full_address rescue @listing.site_name
+    else
+      @listing.user.primary_address if @listing.sold_by_business?
+    end
+  end
 end
