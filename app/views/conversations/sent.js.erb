@@ -1,3 +1,4 @@
 $("#post-frm").html("<%= escape_javascript( raw render(:partial => 'shared/conversations', locals: { sentFlg: true }) ) %>");
+$("#msg-link").html("<%= escape_javascript( raw render(partial: 'shared/msg_indicator') ) %>");
 $("#spinner").hide('fast'); 
 

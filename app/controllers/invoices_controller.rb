@@ -6,9 +6,11 @@ class InvoicesController < ApplicationController
   before_filter :load_data, only: [:index, :sent, :received]
   before_filter :load_invoice, only: [:show, :edit, :update, :destroy, :remove, :decline]
   before_filter :set_params, only: [:create, :update]
+  after_filter :mark_message, only: [:new, :show]
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name
   respond_to :html, :js, :json, :mobile
   layout :page_layout
+  include ControllerManager
 
   def new
     @invoice = Invoice.load_new(@user, params[:buyer_id], params[:pixi_id])
@@ -100,5 +102,9 @@ class InvoicesController < ApplicationController
 
   def set_params
     params[:invoice] = JSON.parse(params[:invoice]) if request.xhr?
+  end
+
+  def mark_message
+    ControllerManager::mark_message params[:cid], @user if params[:cid]
   end
 end

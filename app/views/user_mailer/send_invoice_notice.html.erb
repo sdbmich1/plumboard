@@ -9,7 +9,7 @@
 
   <span style="height:30px;">
     Good news! You received invoice #<%= @invoice.id %> from <%= @invoice.seller_name %>
-    for $<%= @invoice.amount %> for <%= @title %>. <br /> <br />  
+    for <%= number_to_currency(@invoice.amount) %> for <%= @title %>. <br /> <br />  
     Click <%= link_to 'View Invoice', invoice_url(@invoice) %> to review the invoice.</span><br /><br />
 
     Ok, now what? Well, you can:

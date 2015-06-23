@@ -226,13 +226,10 @@ feature "Listings" do
   end
 
   describe "Contact Owner w/ quantity > 1", contact: true do 
-    before(:each) do
+    it "seller want request", js: true do
       pixi_user = create(:pixi_user)
       init_setup pixi_user
       visit listing_path(post_listing) 
-    end
-
-    it "seller want request", js: true do
       want_request false, 2
     end
   end

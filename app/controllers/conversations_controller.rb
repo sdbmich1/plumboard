@@ -5,6 +5,7 @@ class ConversationsController < ApplicationController
   before_filter :load_data, only: [:index, :reply, :show, :remove]
   before_filter :load_convo, only: [:reply, :destroy, :remove] 
   before_filter :ajax?, only: [:create, :update]
+  after_filter :mark_message, only: [:show]
   respond_to :html, :js, :xml, :json, :mobile
   layout :page_layout
 
@@ -62,9 +63,7 @@ class ConversationsController < ApplicationController
   end
 
   def show
-    @conversation = Conversation.inc_show_list.find(params[:id])
-    @conversation.mark_all_posts(@user) if @conversation
-    respond_with(@conversation)
+    respond_with(@conversation = Conversation.inc_show_list.find(params[:id]))
   end
 
   private
@@ -88,5 +87,9 @@ class ConversationsController < ApplicationController
 
   def ajax?
     @xhr_flag = request.xhr?
+  end
+
+  def mark_message
+    @conversation.mark_all_posts(@user) if @conversation
   end
 end

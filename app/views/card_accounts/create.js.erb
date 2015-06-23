@@ -1,2 +1,8 @@
-$("#inv_form").html("<%= escape_javascript( raw render(:partial => "shared/show_card_account", locals: {account: @account}) ) %>");
+<% if @account.errors.any? %>
+  $("#flash_notice").hide(300);
+  $("#form_errors").html("<%= escape_javascript( render(partial: 'shared/error_messages', locals: {target: @account})) %>");
+<% else %>
+  postFlashMsg('#flash_notice','success', 'Successfully saved account.');
+  $("#inv_form").html("<%= escape_javascript( raw render(:partial => "shared/show_card_account", locals: {account: @account}) ) %>");
+<% end %>
 $("#spinner").hide('fast'); 

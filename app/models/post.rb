@@ -183,15 +183,18 @@ class Post < ActiveRecord::Base
   # check invoice status for buyer or seller
   def check_invoice usr, flg, fld
     if listing.active?
-      listing.invoices.where(buyer_id: recipient_id).find_each do |invoice|
+      list = listing.invoices.where(buyer_id: recipient_id)
+      list.find_each do |invoice|
         result = flg ? invoice.owner?(usr) : !invoice.owner?(usr) 
         if result && invoice.unpaid? && invoice.send(fld) == usr.name
           invoice.invoice_details.find_each do |item|
             return true if item.pixi_id == pixi_id 
           end
+	else
+	  return false if invoice.paid?
         end
       end
-      return flg ? listing.seller_id == usr.id : false
+      return flg ? (listing.seller_id == usr.id && !list.any?) : false
     end
     false
   end

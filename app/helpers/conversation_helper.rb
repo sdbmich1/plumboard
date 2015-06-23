@@ -42,4 +42,18 @@ module ConversationHelper
     conv.posts.active_status(@user).reorder('created_at ASC') rescue nil if conv
   end
 
+  # check if bill icon should show
+  def show_bill_icon conv
+    if conv.can_bill?(@user)
+      content_tag(:td, link_to(image_tag('bill-icon.png'), get_invoice_path(conv.other_user(@user).id, conv.pixi_id, conv.id), 
+	  class: 'btn btn-small', id: 'conv-bill-btn', title: 'Bill')) 
+    end
+  end
+
+  def show_due_icon conv
+    if conv.due_invoice?(@user)
+      content_tag(:td, link_to(image_tag('pay-icon.png'), get_unpaid_path(conv.id), class: 'btn btn-small', id: 'conv-pay-btn', title: 'Pay'), 
+        align: 'right')
+    end
+  end
 end

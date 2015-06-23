@@ -143,7 +143,7 @@ class ListingParent < ActiveRecord::Base
 
   # leaves out job_type to avoid unused eager loading
   def self.include_list_without_job_type
-    includes(:pictures, :site, :category)
+    includes(:pictures, :site, :category, :contacts, :user)
   end
 
   # find listings by status
@@ -163,8 +163,9 @@ class ListingParent < ActiveRecord::Base
 
   # find all listings where a given user is the seller, or all listings if the user is an admin
   def self.get_by_seller user, adminFlg=true
-    query = user.is_admin? && adminFlg ? "seller_id IS NOT NULL" : "seller_id = #{user.id}"
-    include_list.where(query).reorder('listings.updated_at DESC')
+    model = self.respond_to?(:sold_list) ? 'listings' : 'temp_listings'
+    query = user.is_admin? && adminFlg ? "#{model}.seller_id IS NOT NULL" : "#{model}.seller_id = #{user.id}"
+    include_list.where(query).reorder("#{model}.updated_at DESC")
   end
 
   # get listings by status and, if provided, category and location
@@ -199,7 +200,7 @@ class ListingParent < ActiveRecord::Base
 
   # verify if listing is sold
   def sold?
-    invoices.exists?(status: 'paid')
+    self.is_a?(Listing) && invoices.exists?(status: 'paid')
   end
 
   # verify if listing is inactive
@@ -383,11 +384,7 @@ class ListingParent < ActiveRecord::Base
 
   # get site address
   def primary_address
-    if any_locations?
-      contacts.first.full_address rescue site_name
-    else
-      user.primary_address if sold_by_business?
-    end
+    ListingDataProcessor.new(self).primary_address
   end
 
   # get job type name
@@ -409,7 +406,7 @@ class ListingParent < ActiveRecord::Base
 
   # specifies which child is used
   def self.get_class
-    self.is_a?(Listing) ? Listing.new : TempListing.new
+    self.respond_to?(:sold_list) ? Listing.new : TempListing.new
   end
 
   # check site's org_type and call the corresponding active_by method, or get pixis by ids if this fails

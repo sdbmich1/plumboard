@@ -115,9 +115,6 @@ function callbackHandler(response) {
       $('#exp_month').val(response.data.expiration_month);
       $('#exp_year').val(response.data.expiration_year);
 
-      if($('#bank_account_acct_no').length > 0) {
-        $('#bank_account_acct_no').val(response.data.account_number); }
-
       // submit to the server
       $formID.trigger("submit.rails");    	  
       break;

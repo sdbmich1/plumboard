@@ -2,7 +2,7 @@
 //
 
 $.ajaxSetup({  
-  beforeSend: function (xhr) {
+  'beforeSend': function (xhr) {
   	var token = $("meta[name='csrf-token']").attr("content");
 	xhr.setRequestHeader("X-CSRF-Token", token);
   	toggleLoading();
@@ -175,9 +175,6 @@ $(document).ready(function(){
     $('#footer').hide('fast');
   }
 
-  // load featured band
-  load_featured_slider();
-
   // enable placeholder text for input fields
   if( $('#px-container').length == 0 ) {
     $('input, textarea').placeholder();
@@ -185,7 +182,10 @@ $(document).ready(function(){
   else {
     open_board();
   }
+
 });
+
+$(window).load(function() { load_featured_slider(); });
 
 // load board on doc ready
 function open_board() {
@@ -415,12 +415,6 @@ function processUrl(url, ptype) {
 // toggle profile state
 $(document).on('click', '#edit-txn-addr, #edit-addr-btn', function(e) {
   $('.user-tbl, .addr-tbl').toggle();
-});
-
-// toggle credit card edit view
-$(document).on('click', '#edit-card-btn', function(e) {
-  $('#pay_token').val('');
-  $('.card-tbl, .card-dpl').toggle();
 });
 
 // toggle contact form for show pixi

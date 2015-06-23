@@ -11,7 +11,7 @@ feature "UserSignins" do
     click_button submit
   end
 
-  def user_menu_items showFlg=false, sellerFlg=false
+  def user_menu_items showFlg=false, sellerFlg=false, adminFlg=false
     page.should have_button('Post')
     page.should have_link('By You', href: new_temp_listing_path)
     page.should have_link('By Us (PixiPost)', href: check_pixi_post_zips_path)
@@ -21,6 +21,7 @@ feature "UserSignins" do
     end
     page.should have_link('My Pixis', href: seller_listings_path(status: 'active'))
     page.should have_link('My Messages', href: conversations_path(status: 'received'))
+    page.should have_link('My Site', href: @user.local_user_path) unless adminFlg
     page.should have_link('My Invoices', href: sent_invoices_path)
     page.should have_link('My Accounts', href: new_bank_account_path)
     page.should have_link('My Settings', href: user_path(@user))
@@ -147,7 +148,7 @@ feature "UserSignins" do
       end
     end
 
-    describe 'registered confirmed users' do
+    describe 'registered confirmed users', base: true do
       before(:each) do
         @user = FactoryGirl.create :pixi_user, confirmed_at: Time.now 
         user_login @user
@@ -178,7 +179,7 @@ feature "UserSignins" do
       end
     end
 
-    describe 'registered admin users' do
+    describe 'registered admin users', base: true  do
       before(:each) do
         @user = FactoryGirl.create :admin, confirmed_at: Time.now 
         user_login @user
@@ -194,7 +195,7 @@ feature "UserSignins" do
         page.should have_link('Users', href: users_path)
         page.should have_link('Pixis', href: listings_path(status: 'active'))
         page.should have_link('Followers', href: favorite_sellers_path(ftype: 'buyer', status: 'active'))
-        user_menu_items true
+        user_menu_items true, false, true
       end
 
       it "displays sign in link after signout" do
@@ -203,7 +204,7 @@ feature "UserSignins" do
       end
     end
 
-    describe 'registered editor users' do
+    describe 'registered editor users', base: true  do
       before(:each) do
         @user = FactoryGirl.create :editor, confirmed_at: Time.now 
         user_login @user
@@ -221,7 +222,7 @@ feature "UserSignins" do
         page.should have_link('For Business', href: new_temp_listing_path(pixan_id: @user, ptype: 'bus'))
         page.should have_link('Pixis', href: listings_path(status: 'active'))
         page.should have_link('Followers', href: favorite_sellers_path(ftype: 'buyer', status: 'active'))
-        user_menu_items true
+        user_menu_items true, false, true
       end
 
       it "displays sign in link after signout" do
@@ -230,7 +231,7 @@ feature "UserSignins" do
       end
     end
 
-    describe 'registered pixter users' do
+    describe 'registered pixter users', base: true  do
       before(:each) do
         @user = FactoryGirl.create :pixter, confirmed_at: Time.now 
         user_login @user
@@ -249,7 +250,7 @@ feature "UserSignins" do
         page.should have_link('For Business', href: new_temp_listing_path(pixan_id: @user, ptype: 'bus'))
         page.should_not have_link('Pixis', href: listings_path)
         page.should_not have_link('Followers', href: favorite_sellers_path(ftype: 'buyer', status: 'active'))
-        user_menu_items true
+        user_menu_items true, false, true
       end
 
       it "displays sign in link after signout" do
@@ -258,7 +259,7 @@ feature "UserSignins" do
       end
     end
 
-    describe "displays my accounts link" do
+    describe "displays my accounts link", base: true  do
       before(:each) do
         @user = FactoryGirl.create :subscriber, confirmed_at: Time.now 
         user_login @user
@@ -273,7 +274,7 @@ feature "UserSignins" do
       end
     end
 
-    describe 'registered subscriber users' do
+    describe 'registered subscriber users', base: true  do
       before(:each) do
         @user = FactoryGirl.create :subscriber, confirmed_at: Time.now 
         user_login @user
@@ -298,7 +299,7 @@ feature "UserSignins" do
       end
     end
 
-    describe 'registered business users' do
+    describe 'registered business users', base: true  do
       before(:each) do
         @user = create :contact_user, user_type_code: 'BUS', business_name: 'Rhythm Music'
         user_login @user

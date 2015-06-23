@@ -53,7 +53,7 @@ class Conversation < ActiveRecord::Base
 
   # checks whether user can bill
   def can_bill? usr
-    posts.detect { |post| post.can_bill? usr }
+    !posts.detect { |post| post.can_bill? usr }.nil?
   end
 
   # pixi title
@@ -120,7 +120,7 @@ class Conversation < ActiveRecord::Base
 
   # set list of included assns for eager loading
   def self.inc_list
-    includes(:posts, :recipient => :pictures, :user => :pictures, :listing => {:invoices => [:invoice_details, :buyer, :seller]})
+    includes(:posts, :recipient => :pictures, :user => :pictures, :listing => [:contacts, :user, {:invoices => [:invoice_details, :buyer, :seller]}])
   end
 
   # set list of included assns for eager loading

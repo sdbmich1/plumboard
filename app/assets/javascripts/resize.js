@@ -14,7 +14,6 @@ function resizeFrame() {
     $("#submenu").removeClass('.bar-top').removeClass('.mtop');
     $("#sellerName").removeClass('neg-left');
     $("#trend-pixi").removeClass('offset1').removeClass('span10');
-
     $('#wrap').css({'margin-top': 0 });
     $(".navbar-fixed-top").css({'margin-bottom': 0 });
 
@@ -107,7 +106,12 @@ function adjustWindow() {
   var total = footerTop - winHeight;
   var ftr_total = docHeight - footerTop;
 
-  // adjust footer so that it doesn't render atop of page content
+  adjustFooter(footerTop, winHeight, mtop, docHeight, total);
+  resizeFrame();
+}
+
+// adjust footer so that it doesn't render atop of page content
+function adjustFooter(footerTop, winHeight, mtop, docHeight, total) {
   if (footerTop > winHeight && $(window).width() < 1024) {
     if(navigator.userAgent.match(/msie/i)) {
       mtop = 80 + total;
@@ -120,10 +124,8 @@ function adjustWindow() {
   else {
     mtop = ($('#cat-wrap').length > 0) ? 120 : 80;
   }
-
   $('#footer').css('margin-top', mtop + 'px');
   $('.scrollup').css('margin-top', mtop + 'px');
-  resizeFrame();
 }
 
 function checkMenuHgt(str) {
@@ -143,7 +145,8 @@ function resizePixi () {
     resizeElement(item, i, 180, false);
   }); 
   if($(fname).length > 0) {
-    $(fname).css({'width': set_item_size(0, true)});
+    //$(fname).css({'width': set_item_size(0, true)});
+    $(fname).width(set_item_size(0, true));
   }
   /*
   $('.item.masonry-brick img').each(function(i, item) {
@@ -183,16 +186,16 @@ function set_item_size (origSize, wFlg) {
   var col = !wFlg ? origSize : '85%';
 
   if(width < 1200 && width >= 980) {
-    col = !wFlg ? 160 : '80%';
+    col = !wFlg ? 160 : '70%';
   }
   else if(width < 980 && width >= 768) {
-    col = !wFlg ? 140 : '75%';
+    col = !wFlg ? 140 : '65%';
   }
   else if(width < 768 && width >= 480) {
-    col = !wFlg ? 120 : '70%';
+    col = !wFlg ? 120 : '60%';
   }
   else if(width < 480) {
-    col = !wFlg ? 100 : '70%';
+    col = !wFlg ? 100 : '50%';
   }
   return col;
 }

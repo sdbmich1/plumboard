@@ -7,6 +7,7 @@
 <%= render partial: 'shared/listing_housing_fields', locals: { f: f, listing: listing } %>
 <%= render partial: 'shared/listing_vehicle_fields', locals: { f: f, listing: listing } %>
 <%= render partial: 'shared/listing_product_fields', locals: { f: f, listing: listing } %>
+<%= render partial: 'shared/listing_item_fields', locals: { f: f, listing: listing } %>
 <div class='row'>
   <div class='span11'>
     <%= f.label :description, class: 'med-top' %><%= f.text_area :description, :placeholder => 'Describe Your Pixi', required: true %>
