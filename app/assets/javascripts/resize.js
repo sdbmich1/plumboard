@@ -189,8 +189,7 @@ function resizeElement(item, i, origSz, hFlg) {
 // set default item size based on window size
 function set_item_size (origSize, wFlg) {
   var width = $(window).width();
-  var vPort = (navigator.userAgent.match(/msie/i) || navigator.userAgent.match(/trident/i) ) ? '90%' : '85%';
-  var col = !wFlg ? origSize : vPort;
+  var col = !wFlg ? origSize : '85%';
 
   if(width < 1200 && width >= 980) {
     col = !wFlg ? 160 : '70%';

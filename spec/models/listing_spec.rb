@@ -1567,4 +1567,15 @@ describe Listing do
     end
     it { expect(@listing.latlng[0]).to be_nil }
   end
+
+  describe 'any_sold?' do
+    before :each, run: true do
+      create_invoice 'paid'
+    end
+
+    it { expect(@listing.any_sold?).not_to be_true } 
+    it "has paid invoices", run: true do 
+      expect(@listing.any_sold?).to be_true  
+    end
+  end
 end

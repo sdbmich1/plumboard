@@ -198,6 +198,11 @@ class ListingParent < ActiveRecord::Base
 
   # verify if listing is sold
   def sold?
+    status == 'sold'
+  end
+
+  # verify if any sold
+  def any_sold?
     self.is_a?(Listing) && invoices.exists?(status: 'paid')
   end
 
