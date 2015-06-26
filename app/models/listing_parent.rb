@@ -143,7 +143,7 @@ class ListingParent < ActiveRecord::Base
 
   # leaves out job_type to avoid unused eager loading
   def self.include_list_without_job_type
-    includes(:pictures, :site, :category)
+    includes(:pictures, :site, :category, :contacts, :user)
   end
 
   # find listings by status
@@ -198,7 +198,7 @@ class ListingParent < ActiveRecord::Base
 
   # verify if listing is sold
   def sold?
-    status == 'sold'
+    self.is_a?(Listing) && invoices.exists?(status: 'paid')
   end
 
   # verify if listing is inactive
