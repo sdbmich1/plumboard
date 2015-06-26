@@ -135,13 +135,18 @@ class ListingProcessor < ListingDataProcessor
   end
 
   # returns sold pixis from seller
-  def sold_list 
-    Listing.where("listings.status not in (?)", closed_arr(false)).joins(:invoices).where("invoices.status = ?", 'paid').uniq
+  def sold_list usr=nil
+    query = usr ? "invoices.seller_id = #{usr.id} AND invoices.status = 'paid'" : "invoices.seller_id IS NOT NULL AND invoices.status = 'paid'"  
+    Listing.include_list_without_job_type.joins(:invoices).where(query).uniq
   end
 
   # update active counter for user
   def update_counter_cache
     User.reset_counters(@listing.seller_id, :active_listings)
+  end
+
+  def get_by_url url, page=1
+    Listing.active.get_by_seller(User.get_by_url(url)).set_page page rescue nil
   end
 end
 

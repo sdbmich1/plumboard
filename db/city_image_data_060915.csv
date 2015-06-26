@@ -1,10 +1,76 @@
-Region,City,Filename
-Los Angeles Metropolitan Area,Anaheim,Anaheim.jpg
-Los Angeles Metropolitan Area,Beverly Hills,Beverly Hills.jpg
-Los Angeles Metropolitan Area,Chino Hills,Chino Hills.jpg
-Los Angeles Metropolitan Area,Downtown LA,DowntownLA.jpg
-Los Angeles Metropolitan Area,Encino,Encino.jpg
-Los Angeles Metropolitan Area,Malibu,Malibu.jpg
-Los Angeles Metropolitan Area,Manhattan Beach,ManhattanBeach.jpg
-Los Angeles Metropolitan Area,Westwood,Westwood.jpg
-Los Angeles Metropolitan Area,Santa Monica,SantaMonica.jpg
+Region,City,Filename,Assigned To
+Los Angeles Metropolitan Area,Anaheim,Anaheim.jpg,
+Los Angeles Metropolitan Area,Beverly Hills,Beverly Hills.jpg,
+Los Angeles Metropolitan Area,Chino Hills,Chino Hills.jpg,
+Los Angeles Metropolitan Area,Downtown LA,DowntownLA.jpg,
+Los Angeles Metropolitan Area,Encino,Encino.jpg,
+Los Angeles Metropolitan Area,Malibu,Malibu.jpg,
+Los Angeles Metropolitan Area,Manhattan Beach,ManhattanBeach.jpg,
+Los Angeles Metropolitan Area,Westwood,Westwood.jpg,
+Los Angeles Metropolitan Area,Santa Monica,SantaMonica.jpg,
+Los Angeles Metropolitan Area,Venice Beach,,Mahesh
+Los Angeles Metropolitan Area,Irvine,,Mahesh
+Los Angeles Metropolitan Area,Long Beach,,Mahesh
+SF Bay Area,Alameda,,Mahesh
+SF Bay Area,Berkeley,,Mahesh
+SF Bay Area,Burlingame,,Mahesh
+SF Bay Area,Foster City,,Mahesh
+SF Bay Area,Fremont,,Mahesh
+SF Bay Area,Hayward,,Mahesh
+SF Bay Area,Menlo Park,,Mahesh
+SF Bay Area,Mill Valley,,Mahesh
+SF Bay Area,Millbrae,,Mahesh
+SF Bay Area,Mountain View,,Mahesh
+SF Bay Area,Oakland,,Mahesh
+SF Bay Area,Palo Alto,,Mahesh
+SF Bay Area,Pleasanton,,Mahesh
+SF Bay Area,Redwood City,,Barisa
+SF Bay Area,Richmond,,Barisa
+SF Bay Area,San Bruno,,Barisa
+SF Bay Area,San Francisco,,Barisa
+SF Bay Area,San Jose,,Barisa
+SF Bay Area,San Rafael,,Barisa
+SF Bay Area,Sausalito,,Barisa
+SF Bay Area,Walnut Creek,,Barisa
+,New York (Manhattan),,Barisa
+,Brooklyn,,Barisa
+,Queens,,Barisa
+,The Bronx,,Barisa
+,Staten Island,,Barisa
+,Chicago,,Barisa
+,Philadelphia,,Barisa
+,Dallas,,Barisa
+,Boston,,Thomas
+,"Washington, DC",,Thomas
+,Atlanta,,Thomas
+,Houston,,Thomas
+,Detroit,,Thomas
+,Phoenix,,Thomas
+,Seattle,,Thomas
+,Tampa,,Thomas
+,Minneapolis,,Thomas
+,Miami,,Thomas
+,Denver,,Thomas
+,Orlando,,Thomas
+,Cleveland,,Thomas
+,Sacramento,,Thomas
+,St. Louis,,Thomas
+,"Portland, OR",,Thomas
+,Pittsburgh,,Thomas
+,Raleigh,,Soham
+,Charlotte,,Soham
+,Indianapolis,,Soham
+,Baltimore,,Soham
+,San Diego,,Soham
+,Nashville,,Soham
+,"Hartford, CT",,Soham
+,"Kansas City, MO",,Soham
+,"Columbus, OH",,Soham
+,Salt Lake City,,Soham
+,Milwaukee,,Soham
+,Cincinnati,,Soham
+,San Antonio,,Soham
+,Austin,,Soham
+,Oklahoma City,,Soham
+,Las Vegas,,Soham
+,Norfolk,,Soham

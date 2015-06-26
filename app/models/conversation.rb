@@ -114,8 +114,8 @@ class Conversation < ActiveRecord::Base
         end
       end
     end
-    # return convos.where(["id in (?)", conv_ids]).sort_by {|x| x.posts.first.created_at }.reverse 
-    return convos.where(["id in (?)", conv_ids]).sort_by {|x| x.updated_at }.reverse 
+    return convos.where(["id in (?)", conv_ids]).sort_by {|x| x.posts.last.created_at }.reverse 
+    # return convos.where(["id in (?)", conv_ids]).sort_by {|x| x.updated_at }.reverse 
   end
 
   # set list of included assns for eager loading

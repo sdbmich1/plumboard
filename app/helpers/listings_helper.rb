@@ -51,9 +51,11 @@ module ListingsHelper
       when "local"
         "#{local_listings_path page: @listings.next_page, loc: params[:loc]}"
       when "biz"
-        "#{biz_path page: @listings.next_page, search: params[:search]}"
+        "#{biz_path page: @listings.next_page, url: params[:url]}"
       when "member"
-        "#{member_path page: @listings.next_page, search: params[:search]}"
+        "#{member_path page: @listings.next_page, url: params[:url]}"
+      when "career"
+        "#{career_path page: @listings.next_page, url: params[:url]}"
       else
         "#{listings_path page: @listings.next_page}"
     end
@@ -72,6 +74,8 @@ module ListingsHelper
         'biz_next_page'
       when 'member'
         'member_next_page'
+      when 'career'
+        'career_next_page'
       else
         'listing_next_page'
     end
@@ -101,6 +105,8 @@ module ListingsHelper
         "/biz?page="
       when 'member'
         "/member?page="
+      when 'career'
+        "/career?page="
       else
         '/listings?page='
     end
@@ -239,7 +245,7 @@ module ListingsHelper
   # get region for show pixi display menu
   def get_current_region listing
     if listing
-      loc, loc_name = LocationManager::get_region listing.site_name rescue nil
+      loc, loc_name = LocationManager::get_region listing.latlng rescue [@loc, @loc_name]
       link_to loc_name, category_listings_path(cid: listing.category_id, loc: loc)
     end
   end
@@ -691,6 +697,7 @@ module ListingsHelper
   end
 
   def toggle_buyer_name_row status, listing
-    content_tag(:td, listing.invoices.first.buyer_name, class: 'span2') if status == 'sold'
+    name = listing.invoices.first.buyer_name rescue ''
+    content_tag(:td, name, class: 'span2') if status == 'sold'
   end
 end

@@ -31,28 +31,34 @@ function resizeFrame() {
 
 // clear dynamic added nav menu classes
 function restoreWindow() {
-    $("body").removeClass('no-pad');
-    $(".bar-top").removeClass('no-mtop mneg-top');
-    $(".navbar").removeClass('mneg-top');
-    $(".navbar-fixed-top").removeClass('affix mneg-top xneg-top big-neg-bot');
-    $("#msg_Container").removeClass('top5');
-    $(".pixi-logo").removeClass('mleft30');
-    $('#fb-btn').addClass('span3').removeClass('width240');
-    $("#sellerName").addClass('neg-left');
-    $("#trend-pixi").addClass('offset1').addClass('span10');
+  $("body").removeClass('no-pad');
+  $(".bar-top").removeClass('no-mtop mneg-top');
+  $(".navbar").removeClass('mneg-top');
+  $(".navbar-fixed-top").removeClass('affix mneg-top xneg-top big-neg-bot');
+  $("#msg_Container").removeClass('top5');
+  $(".pixi-logo").removeClass('mleft30');
+  $('#fb-btn').addClass('span3').removeClass('width240');
+  $("#sellerName").addClass('neg-left');
+  $("#trend-pixi").addClass('offset1').addClass('span10');
+  $('#wrap').css({'margin-top': '40px' });
+  $(".navbar-fixed-top").css({'margin-bottom': '20px' });
 
-    $('#wrap').css({'margin-top': '40px' });
-    $(".navbar-fixed-top").css({'margin-bottom': '20px' });
+  if($('.carousel-overlay').length > 0) {
+    $(".carousel-overlay").css({'top': '25%'});
+  }
 
-    if($('#slr-pic').length > 0) {
-      $("#slr-pic").removeClass('width60');
-      $("#slr-det").removeClass('width320');
-    }
+  if($('#slr-pic').length > 0) {
+    $("#slr-pic").removeClass('width60');
+    $("#slr-det").removeClass('width320');
+  }
 }
 
 // check if small window
 function resizeSmallWindow() {
     if($(window).width() < 768) {
+      if($('.carousel-overlay').length > 0) {
+        $(".carousel-overlay").css({'top': '10%'});
+      }
         if($('.navbar-fixed-top').length > 0) {
           //console.log('top menu offset: ' + $(".navbar-fixed-top").offset().top);
           if($('.navbar-fixed-top').offset().top > 20) {
@@ -113,7 +119,7 @@ function adjustWindow() {
 // adjust footer so that it doesn't render atop of page content
 function adjustFooter(footerTop, winHeight, mtop, docHeight, total) {
   if (footerTop > winHeight && $(window).width() < 1024) {
-    if(navigator.userAgent.match(/msie/i)) {
+    if(navigator.userAgent.match(/msie/i) || navigator.userAgent.match(/trident/i)) {
       mtop = 80 + total;
     } else {
       if($('#cat-wrap').length > 0) {
@@ -189,10 +195,10 @@ function set_item_size (origSize, wFlg) {
     col = !wFlg ? 160 : '70%';
   }
   else if(width < 980 && width >= 768) {
-    col = !wFlg ? 140 : '65%';
+    col = !wFlg ? 140 : '63.5%';
   }
   else if(width < 768 && width >= 480) {
-    col = !wFlg ? 120 : '60%';
+    col = !wFlg ? 120 : '58.5%';
   }
   else if(width < 480) {
     col = !wFlg ? 100 : '50%';
