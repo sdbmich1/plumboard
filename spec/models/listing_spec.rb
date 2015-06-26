@@ -1353,9 +1353,9 @@ describe Listing do
       @listing.save
       expect(@listing.repost).to be_true
       expect(Listing.all.count).to eq 2
-      expect(Listing.first.active?).to be_true
-      expect(Listing.first.pictures.size).to eq @listing.pictures.size
-      expect(Listing.first.repost_flg).to be_true
+      expect(Listing.last.active?).to be_true
+      expect(Listing.last.pictures.size).to eq @listing.pictures.size
+      expect(Listing.last.repost_flg).to be_true
     end
 
     it 'returns false if listing is not expired/sold' do
@@ -1547,5 +1547,24 @@ describe Listing do
       listing.update_attribute(:status, 'active')
       expect(@user.reload.active_listings_count).to eq 1
     end
+  end
+
+  describe 'get_by_url', process: true do
+    before :each do
+      @listing.save!
+    end
+    it { expect(Listing.get_by_url(@user.url)).to include @listing }
+    it { expect(Listing.get_by_url('abcd')).to be_nil }
+  end
+
+  describe 'latlng', process: true do
+    before :each, run: true do
+      @listing.lat, @listing.lng = [42.4348, -83.125]
+    end
+
+    it 'has coordinates', run: true do
+      expect(@listing.latlng).not_to be_nil
+    end
+    it { expect(@listing.latlng[0]).to be_nil }
   end
 end

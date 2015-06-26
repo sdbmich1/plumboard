@@ -1,18 +1,6 @@
 require "spec_helper"
 
 describe "routes for Searches" do
-  it "routes /biz/:route to the searches controller" do
-    expect( :get => "/biz/test" ).to route_to(:controller=>"searches", :action=>"biz", :search =>"test")
-  end
-
-  it "routes /mbr/:route to the searches controller" do
-    expect( :get => "/mbr/test" ).to route_to(:controller=>"searches", :action=>"member", :search =>"test")
-  end
-
-  it "routes /careers the searches controller" do
-    expect( :get => "/careers" ).to route_to(:controller=>"searches", :action=>"jobs")
-  end
-
   it "does route to #destroy" do
     delete("/searches/1").should_not route_to("searches#destroy", :id => "1")
   end

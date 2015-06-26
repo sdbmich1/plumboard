@@ -1031,4 +1031,9 @@ describe User do
       end
     end
   end
+
+  describe "get by url" do
+    it { expect(User.get_by_url(@user.url)).not_to be_blank }
+    it { expect(User.get_by_url('abcd')).to be_blank }
+  end
 end

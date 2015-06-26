@@ -39,12 +39,12 @@ class ListingQueryProcessor
     return fld, val
   end
 
-  def get_data params
-    @listing.is_a?(TempListing) ? TempListing.where(params) : Listing.where(params)
+  def get_data flg, params
+    flg ? Listing.where(params) : TempListing.where(params)
   end
 
   def exec_query flg, params
-    flg ? Listing.active.where(params) : get_data(params)
+    flg ? Listing.active.where(params) : get_data(flg, params)
   end
 
   # paginate
@@ -110,5 +110,31 @@ class ListingQueryProcessor
     else
       Listing.active.joins(:pixi_wants).where("pixi_wants.user_id = ? AND pixi_wants.status = ?", usr.id, 'active')
     end
+  end
+
+  # find all listings where a given user is the seller, or all listings if the user is an admin
+  def get_by_seller user, adminFlg=true
+    return nil if user.blank?
+    model = @listing.respond_to?(:car_color) ? 'temp_listings' : 'listings'
+    query = user.is_admin? && adminFlg ? "#{model}.seller_id IS NOT NULL" : "#{model}.seller_id = #{user.id}"
+    toggle_query @listing.respond_to?(:car_color), model, query
+  end
+
+  def get_by_status val
+    val == 'sold' ? Listing.sold_list : get_unsold(val)
+  end
+
+  def is_temp? val
+    !%w(pending new edit).detect {|x| x == val}.nil? 
+  end
+
+  def toggle_query flg, model, query
+    data = flg ? TempListing.include_list.where(query) : Listing.include_list.where(query) 
+    data.order("#{model}.updated_at DESC")
+  end
+
+  def get_unsold val
+    model = is_temp?(val) ? 'temp_listings' : 'listings'
+    toggle_query is_temp?(val), model, "status = '#{val}'"
   end
 end

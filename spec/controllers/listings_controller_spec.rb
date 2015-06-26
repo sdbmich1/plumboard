@@ -33,14 +33,21 @@ describe ListingsController do
     @listing = stub_model(Listing, :id=>1, pixi_id: '1', site_id: 1, seller_id: 1, title: "Guitar for Sale", description: "Guitar for Sale")
   end
 
+  def set_index_data
+    allow_message_expectations_on_nil
+    @listings = stub_model(Listing)
+    controller.instance_variable_set(:@status, 'active')
+    @status.stub!(:to_sym).and_return(:active)
+    Listing.stub_chain(:check_category_and_location).and_return(@listings)
+    @listings.stub_chain(:paginate).and_return( @listings )
+    Listing.any_instance.stub(:geocode) { [1,1] }
+    controller.stub!(:get_location).and_return(:success)
+    do_get
+  end
+
   describe 'GET index' do
     before(:each) do
-      @listings = stub_model(Listing)
-      Listing.stub_chain(:check_category_and_location).and_return(@listings)
-      @listings.stub!(:paginate).and_return( @listings )
-      Listing.any_instance.stub(:geocode) { [1,1] }
-      controller.stub_chain(:get_location).and_return(:success)
-      do_get
+      set_index_data
     end
 
     def do_get
@@ -72,11 +79,7 @@ describe ListingsController do
 
   describe 'xhr GET index' do
     before(:each) do
-      @listings = mock("listings")
-      Listing.stub_chain(:check_category_and_location).and_return(@listings)
-      @listings.stub!(:paginate).and_return( @listings )
-      controller.stub_chain(:load_data, :get_location).and_return(:success)
-      do_get
+      set_index_data
     end
 
     def do_get
@@ -537,6 +540,79 @@ describe ListingsController do
     it "responds to JSON" do
       xhr :get, :invoiced, :format => 'json'
       expect(response).to be_success
+    end
+  end
+
+  def set_url_data
+    @listings = stub_model(Listing)
+    Listing.stub!(:get_by_url).and_return(@listings)
+    @listings.stub!(:paginate).and_return( @listings )
+    do_get
+  end
+
+  describe 'GET /biz' do
+    before :each do
+      set_url_data
+    end
+
+    def do_get
+      get :biz, use_route: "/biz/test", :params => {url: 'test'}
+    end
+
+    it "should load the requested listing" do
+      Listing.stub!(:get_by_url).with('test').and_return(@listings)
+    end
+
+    it "should assign @listings" do
+      assigns(:listings).should == @listings
+    end
+
+    it "action should render template" do
+      response.should render_template :biz
+    end
+  end
+
+  describe 'GET /mbr' do
+    before :each do
+      set_url_data
+    end
+
+    def do_get
+      get :member, use_route: "/mbr/test", :params => {url: 'test'}
+    end
+
+    it "should load the requested listing" do
+      Listing.stub!(:get_by_url).with('test').and_return(@listings)
+    end
+
+    it "should assign @listings" do
+      assigns(:listings).should == @listings
+    end
+
+    it "action should render template" do
+      response.should render_template :member
+    end
+  end
+
+  describe 'GET /career' do
+    before :each do
+      set_url_data
+    end
+
+    def do_get
+      get :career, use_route: "/career"
+    end
+
+    it "should load the requested listing" do
+      Listing.stub!(:get_by_url).with('pixiboard').and_return(@listings)
+    end
+
+    it "should assign @listings" do
+      assigns(:listings).should == @listings
+    end
+
+    it "action should render template" do
+      response.should render_template :career
     end
   end
 end
