@@ -19,15 +19,18 @@ module FavoriteSellersHelper
 
   def follow_or_unfollow_button(status, user, seller, sz='')
     bcls = [(sz.blank? ? 'span2' : "btn-{sz} span1"), 'no-left'].join(' ')
-    if seller.is_business? && controller_name.match(/users/).nil? && !%w(biz member).detect {|x| action_name == x}.nil? 
-      if status == 'active'
-        link_to('- Unfollow', favorite_seller_path(id: user.favorite_seller_id(seller.id), seller_id: seller.id),
-                :method => :put, id: "unfollow-btn", class: "btn btn-primary #{bcls} bold-btn", remote: true)
-      else
-        link_to('+ Follow', set_follow_path(seller), method: :post,
-                id: "follow-btn", class: "btn btn-primary #{bcls} submit-btn", remote: true, title: "Follow this seller")
-      end
+    if seller.is_business? && follow_action? && user.id != seller.id 
+      toggle_follow_button status, user, seller, bcls
     end
+  end
+
+  def follow_action?
+    !controller_name.match(/listings|favorite_sellers/).nil? && !%w(biz member create update).detect {|x| action_name == x}.nil? 
+  end
+
+  def toggle_follow_button status, user, seller, bcls  
+    str = status == 'active' ? 'show_unfollow_button' : 'show_follow_button'
+    render partial: "shared/#{str}", locals: { user: user, seller: seller, bcls: bcls }
   end
 
   def set_follow_path seller
