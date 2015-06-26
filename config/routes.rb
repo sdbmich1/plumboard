@@ -172,9 +172,10 @@ Plumboard::Application.routes.draw do
   get "/settings/password", to: "settings#password" 
 
   # personalized paths
-  match '/biz/:search' => "searches#biz", via: :get, as: :biz
-  match '/mbr/:search' => "searches#member", via: :get, as: :member
-  get '/careers', to: "searches#jobs"
+  match '/biz/:url' => "listings#biz", via: :get, as: :biz
+  match '/mbr/:url' => "listings#member", via: :get, as: :member
+  match '/careers' => "listings#career", via: :get, as: :career
+  # get '/careers', to: "listings#jobs"
 
   # specify root route based on user sign in status
   root to: 'listings#local', :constraints => lambda {|r| r.env["warden"].authenticate? }

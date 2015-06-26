@@ -103,26 +103,12 @@ class User < ActiveRecord::Base
 
   # validate picture exists
   def must_have_picture
-    if !any_pix?
-      errors.add(:base, 'Must have a picture')
-      false
-    else
-      true
-    end
+    UserProcessor.new(self).must_have_picture
   end
 
   # validate zip exists
   def must_have_zip
-    if provider.blank?
-      if !home_zip.blank? && (home_zip.length == 5 && home_zip.to_region) 
-        true
-      else
-        errors.add(:base, 'Must have a valid zip')
-        false
-      end
-    else
-      true
-    end
+    UserProcessor.new(self).must_have_zip
   end
 
   # get home zip
@@ -339,6 +325,10 @@ class User < ActiveRecord::Base
   def self.get_by_type val
     txt = val && val.upcase == 'BUS' ? 'business_name ASC' : 'first_name ASC'
     val.blank? ? active : active.where(:user_type_code => val).order(txt)
+  end
+
+  def self.get_by_url val
+    active.where(:url => val).first
   end
   
   # check user is pixter

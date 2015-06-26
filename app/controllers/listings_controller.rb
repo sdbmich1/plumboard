@@ -1,24 +1,26 @@
 require 'will_paginate/array' 
 class ListingsController < ApplicationController
   include PointManager, LocationManager, NameParse, ResetDate
-  before_filter :authenticate_user!, except: [:local, :category, :show]
-  before_filter :load_data, only: [:index, :seller, :category, :show, :local, :invoiced, :wanted]
+  before_filter :authenticate_user!, except: [:local, :category, :show, :biz, :member, :career]
+  before_filter :load_data, except: [:pixi_price, :repost, :update]
   before_filter :load_pixi, only: [:show, :pixi_price, :repost, :update]
   before_filter :load_city, only: [:local, :category]
-  after_filter :add_points, :set_session, only: [:show]
+  before_filter :load_job, only: [:career]
+  before_filter :pxb_url, only: [:biz, :member] 
+  before_filter :load_url_data, only: [:biz, :member, :career]
+  after_filter :set_location, only: [:biz, :member]
+  after_filter :add_points, only: [:show, :biz, :member]
+  after_filter :set_session, :load_comments, only: [:show]
   respond_to :html, :json, :js, :mobile, :csv
   layout :page_layout
 
   def index
     @unpaginated_listings = Listing.check_category_and_location(@status, @cat, @loc, true)
-    respond_with(@listings = @unpaginated_listings.paginate(page: @page, per_page: 15), style: @status.to_sym) { |format| render_csv format }
+    respond_with(@listings = @unpaginated_listings.paginate(page: @page, per_page: 15), style: status) { |format| render_csv format }
   end
 
   def show
-    load_comments
-    respond_with(@listing) do |format|
-      format.json { render json: {listing: @listing, comments: @comments} }
-    end
+    respond_with(@listing)
   end
 
   def update
@@ -71,6 +73,18 @@ class ListingsController < ApplicationController
     end
   end
 
+  def career
+    respond_with(@listings)
+  end
+
+  def biz
+    respond_with(@listings)
+  end
+
+  def member
+    respond_with(@listings)
+  end
+
   protected
 
   def load_data
@@ -81,7 +95,7 @@ class ListingsController < ApplicationController
   end
 
   def page_layout
-    %w(category local).detect {|x| action_name == x} ? 'listings' : mobile_device? ? 'form' : action_name == 'show' ? 'pixi' : 
+    %w(category local biz member career).detect {|x| action_name == x} ? 'listings' : mobile_device? ? 'form' : action_name == 'show' ? 'pixi' : 
       'application'
   end
 
@@ -101,6 +115,27 @@ class ListingsController < ApplicationController
     @category = Category.find @cat rescue nil if action_name == 'category'
     @listings = Listing.get_by_city(@cat, @loc).set_page @page
     @sellers = User.get_sellers @cat, @loc
+  end
+
+  def load_job
+    params[:url] = 'Pixiboard'
+    @cat = Category.get_by_name('Jobs') 
+  end
+
+  def pxb_url
+    @url = request.original_url.to_s.split('/')[4].split('?')[0] rescue nil
+  end
+
+  def load_url_data
+    @listings = Listing.get_by_url(@url, @page)
+  end
+
+  def set_location
+    session[:back_to] = request.fullpath
+  end
+
+  def status
+    @status.to_sym
   end
 
   def render_csv format

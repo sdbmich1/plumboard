@@ -5,6 +5,30 @@ class UserProcessor
     @user = usr
   end
 
+  # validate picture exists
+  def must_have_picture
+    if !@user.any_pix?
+      @user.errors.add(:base, 'Must have a picture')
+      false
+    else
+      true
+    end
+  end
+
+  # validate zip exists
+  def must_have_zip
+    if @user.provider.blank?
+      if !@user.home_zip.blank? && (@user.home_zip.length == 5 && @user.home_zip.to_region) 
+        true
+      else
+        @user.errors.add(:base, 'Must have a valid zip')
+        false
+      end
+    else
+      true
+    end
+  end
+
   # create unique url for user
   def generate_url value, cnt=0
     begin

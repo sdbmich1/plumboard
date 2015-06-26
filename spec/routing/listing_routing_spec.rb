@@ -28,7 +28,7 @@ describe ListingsController do
     end
 
     it "does route to #destroy" do
-      delete("/listings/1").should route_to("listings#destroy", :id => "1")
+      delete("/listings/1").should_not route_to("listings#destroy", :id => "1")
     end
 
     it "routes to #seller_wanted" do
@@ -45,6 +45,18 @@ describe ListingsController do
 
     it "does not route to #edit" do
       get("/listings/1/edit").should_not route_to("listings#edit", :id => "1")
+    end
+
+    it "routes /biz/:route to the searches controller" do
+      expect( :get => "/biz/test" ).to route_to(:controller=>"listings", :action=>"biz", :url =>"test")
+    end
+
+    it "routes /mbr/:route to the listings controller" do
+      expect( :get => "/mbr/test" ).to route_to(:controller=>"listings", :action=>"member", :url =>"test")
+    end
+
+    it "routes /careers the listings controller" do
+      expect( :get => "/careers" ).to route_to(:controller=>"listings", :action=>"career")
     end
   end
 end

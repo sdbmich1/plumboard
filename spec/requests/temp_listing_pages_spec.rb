@@ -248,7 +248,7 @@ feature "TempListings" do
       end
     end
 
-    describe "Create with valid information" do
+    describe "Create with valid information", base: true do
       it "Adds a new listing w/o price" do
         expect{
 	  add_photo 'Foo Bar', false

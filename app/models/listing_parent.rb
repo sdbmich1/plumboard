@@ -148,7 +148,7 @@ class ListingParent < ActiveRecord::Base
 
   # find listings by status
   def self.get_by_status val
-    val == 'sold' ? sold_list : include_list_without_job_type.where(:status => val)
+    ListingQueryProcessor.new(self).get_by_status val
   end
  
   # get active pixis by site id
@@ -163,9 +163,7 @@ class ListingParent < ActiveRecord::Base
 
   # find all listings where a given user is the seller, or all listings if the user is an admin
   def self.get_by_seller user, adminFlg=true
-    model = self.respond_to?(:sold_list) ? 'listings' : 'temp_listings'
-    query = user.is_admin? && adminFlg ? "#{model}.seller_id IS NOT NULL" : "#{model}.seller_id = #{user.id}"
-    include_list.where(query).reorder("#{model}.updated_at DESC")
+    ListingQueryProcessor.new(self).get_by_seller user, adminFlg
   end
 
   # get listings by status and, if provided, category and location
@@ -200,6 +198,11 @@ class ListingParent < ActiveRecord::Base
 
   # verify if listing is sold
   def sold?
+    status == 'sold'
+  end
+
+  # verify if any sold
+  def any_sold?
     self.is_a?(Listing) && invoices.exists?(status: 'paid')
   end
 
@@ -411,7 +414,7 @@ class ListingParent < ActiveRecord::Base
 
   # check site's org_type and call the corresponding active_by method, or get pixis by ids if this fails
   def self.get_by_city cid, sid, get_active=true
-    ListingDataProcessor.new(get_class).get_by_city cid, sid, get_active
+    ListingDataProcessor.new(self).get_by_city cid, sid, get_active
   end
 
   # set unique key
@@ -453,5 +456,9 @@ class ListingParent < ActiveRecord::Base
   # set csv filename
   def self.filename status
     ListingDataProcessor.new(self).filename status
+  end
+
+  def latlng
+    [lat, lng] rescue nil
   end
 end
