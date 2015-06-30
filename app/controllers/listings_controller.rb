@@ -2,7 +2,7 @@ require 'will_paginate/array'
 class ListingsController < ApplicationController
   include PointManager, LocationManager, NameParse, ResetDate
   before_filter :authenticate_user!, except: [:local, :category, :show]
-  before_filter :load_data, only: [:index, :seller, :category, :show, :local, :invoiced, :wanted]
+  before_filter :load_data, only: [:index, :seller, :seller_wanted, :category, :show, :local, :invoiced, :wanted, :purchased]
   before_filter :load_pixi, only: [:show, :pixi_price, :repost, :update]
   before_filter :load_city, only: [:local, :category]
   after_filter :add_points, :set_session, only: [:show]
@@ -10,7 +10,7 @@ class ListingsController < ApplicationController
   layout :page_layout
 
   def index
-    @unpaginated_listings = Listing.check_category_and_location(@status, @cat, @loc, true)
+    @unpaginated_listings = Listing.check_category_and_location(@status, @cat, @loc, @status == 'active')
     respond_with(@listings = @unpaginated_listings.paginate(page: @page, per_page: 15), style: @status.to_sym) { |format| render_csv format }
   end
 

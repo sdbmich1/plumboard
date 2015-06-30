@@ -63,16 +63,6 @@ class Listing < ListingParent
     active.joins(:invoices).where("invoices.status = 'unpaid'")
   end
 
-  # get saved list by user
-  def self.saved_list usr, pg=1
-    active.joins(:saved_listings).where("saved_listings.status = 'active' AND saved_listings.user_id = ?", usr.id).paginate page: pg
-  end
-
-  # get wanted list by user
-  def self.wanted_list usr, cid=nil, loc=nil, adminFlg=true
-    ListingDataProcessor.new(Listing.new).wanted_list(usr, cid, loc, adminFlg)
-  end
-
   # get cool list by user
   def self.cool_list usr, pg=1
     active.joins(:pixi_likes).where("pixi_likes.user_id = ?", usr.id).paginate page: pg
@@ -301,16 +291,28 @@ class Listing < ListingParent
 
   # returns purchased pixis from buyer
   def self.purchased usr
-    joins(:invoices).where("invoices.buyer_id = ? AND invoices.status = ?", usr.id, 'paid').uniq
+    select_fields('invoices.updated_at').joins(:invoices).where("invoices.buyer_id = ? AND invoices.status = ?", usr.id, 'paid').uniq
   end
 
   # returns sold pixis from seller
   def self.sold_list usr=nil
+    result = select_fields('invoices.updated_at').include_list_without_job_type.joins(:invoices)
     if usr
-      include_list_without_job_type.joins(:invoices).where("invoices.seller_id = ? AND invoices.status = ?", usr.id, 'paid')
+      result.where("invoices.seller_id = ? AND invoices.status = ?", usr.id, 'paid')
     else
-      include_list_without_job_type.joins(:invoices).where("invoices.seller_id IS NOT NULL AND invoices.status = ?", 'paid')  
+      result.where("invoices.seller_id IS NOT NULL AND invoices.status = ?", 'paid')  
     end
+  end
+
+  # get saved list by user
+  def self.saved_list usr, pg=1
+    result = select_fields('saved_listings.updated_at').active.joins(:saved_listings)
+    result.where("saved_listings.status = 'active' AND saved_listings.user_id = ?", usr.id).paginate page: pg
+  end
+
+  # get wanted list by user
+  def self.wanted_list usr, cid=nil, loc=nil, adminFlg=true
+    ListingDataProcessor.new(Listing.new).wanted_list(usr, cid, loc, adminFlg)
   end
 
   # toggle get_by_seller call based on status
@@ -321,6 +323,11 @@ class Listing < ListingParent
   # refresh counter cache
   def update_counter_cache
     ListingProcessor.new(self).update_counter_cache
+  end
+
+  # select date provided (field_name)
+  def self.select_fields field_name
+    ListingDataProcessor.new(self).select_fields(field_name)
   end
 
   # sphinx scopes

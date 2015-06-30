@@ -766,6 +766,7 @@ describe Listing do
       @usr.saved_listings.create FactoryGirl.attributes_for :saved_listing, pixi_id: @listing.pixi_id, status: 'sold'
     end
 
+    it { expect(Listing.saved_list(@user).first.created_date.to_s).to eq @saved_listing.created_at.to_s }
     it "checks saved list" do
       Listing.saved_list(@usr).should_not include @listing  
       Listing.saved_list(@user).should_not be_empty 
@@ -854,14 +855,15 @@ describe Listing do
       @usr = create :pixi_user
       @buyer = create :pixi_user
       @listing.save!
-      @pixi_want = @buyer.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
       @pixi_want = @user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id, status: 'sold'
+      @pixi_want = @buyer.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
     end
 
     it { Listing.wanted_list(@usr, nil, nil, false).should_not include @listing } 
     it { Listing.wanted_list(@buyer, nil, nil, false).should_not be_empty }
     it { expect(@listing.wanted_count).to eq(1) }
     it { expect(@listing.is_wanted?).to eq(true) }
+    it { expect(Listing.wanted_list(@buyer, nil, nil, false).first.created_date.to_s).to eq(@pixi_want.updated_at.to_s) }
 
     it "is not wanted" do
       listing = create(:listing, seller_id: @user.id, title: 'Hair brush') 
@@ -1514,6 +1516,9 @@ describe Listing do
     end
 
     it { Listing.purchased(@user).should_not include @listing } 
+    it "assigns created_date", run: true do
+      expect(Listing.purchased(@invoice.buyer).last.created_date.to_s).to eq @invoice.updated_at.to_s
+    end
     it "includes buyer listings", run: true do 
       expect(Listing.purchased(@invoice.buyer).size).to eq 2
     end
@@ -1525,6 +1530,9 @@ describe Listing do
     end
 
     it { Listing.sold_list.should_not include @listing } 
+    it "assigns created_date", run: true do
+      expect(Listing.sold_list.last.created_date.to_s).to eq @invoice.updated_at.to_s
+    end
     it "includes sold listings", run: true do 
       @listing.save
       expect(Listing.sold_list.size).to eq 2

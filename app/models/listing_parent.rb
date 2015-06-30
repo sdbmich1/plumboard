@@ -430,8 +430,9 @@ class ListingParent < ActiveRecord::Base
 
   def as_csv(options={})
     row = { "Title" => title, "Category" => category_name, "Description" => description, "Location" => site_name }
-    row["Buyer Name"] = invoices.first.buyer_name if options[:style] == "sold"
-    row["Last Updated"] = display_date(updated_at)
+    row["Buyer Name"] = invoices.where(status: "paid").first.buyer_name if options[:style] == "sold"
+    date_entry = %w(sold wanted purchased saved).include?(options[:style]) ? created_date : updated_at
+    row[options[:style].titleize + " Date"] = display_date(date_entry)
     row
   end
 

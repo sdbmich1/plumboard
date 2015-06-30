@@ -13,18 +13,13 @@ feature "Listings" do
       else
         listing = create :listing, seller_id: user.id, title: "#{val.titleize} Listing"
       end
-      user.pixi_wants.create FactoryGirl.attributes_for :pixi_like, pixi_id: listing.pixi_id
+      if val == 'wanted'
+        user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: listing.pixi_id
+      else
+        user.pixi_wants.create FactoryGirl.attributes_for :pixi_like, pixi_id: listing.pixi_id
+      end
       user.saved_listings.create FactoryGirl.attributes_for :saved_listing, pixi_id: listing.pixi_id
-      if val == 'sold'
-        invoice = listing.invoices.build FactoryGirl.attributes_for :invoice, buyer_id: other_id, seller_id: user.id, status: 'paid'
-        listing.buyer_id = other_id
-      elsif val == 'purchased'
-        invoice = listing.invoices.build FactoryGirl.attributes_for :invoice, buyer_id: user.id, seller_id: other_id, status: 'paid'
-      end
-      if val == 'sold' || val == 'purchased'
-        invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: listing.pixi_id
-        invoice.save!
-      end
+      add_invoice(val, other_id, listing)
     else
       listing = create :temp_listing, seller_id: user.id, title: "#{val.titleize} Listing"
     end
@@ -42,10 +37,31 @@ feature "Listings" do
     end
   end
 
-  def process_element val
+  def add_invoice val, other_id, listing
+    if val == 'sold'
+      invoice = listing.invoices.build FactoryGirl.attributes_for :invoice, buyer_id: other_id, seller_id: user.id, status: 'paid'
+      listing.buyer_id = other_id
+    elsif val == 'purchased'
+      invoice = listing.invoices.build FactoryGirl.attributes_for :invoice, buyer_id: user.id, seller_id: other_id, status: 'paid'
+    end
+    if val == 'sold' || val == 'purchased'
+      invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: listing.pixi_id
+      invoice.save!
+    end
+  end
+
+  def process_element val, saved=false
     str_arr = %w(Sold Active Expired Purchased Removed Draft Denied)
     str_arr.select! { |x| x != val.titleize }
-    page.should have_content "#{val.titleize} Listing" 
+    page.should have_content(saved ? "Active Listing" : "#{val.titleize} Listing")
+    if val == "draft"
+      date_column = "Last Updated"
+    elsif saved
+      date_column = "Saved Date"
+    else
+      date_column = "#{val.titleize} Date"
+    end
+    page.should have_content date_column
     check_page_expectations str_arr, 'Listing'
     page.should_not have_content 'No pixis found.'
   end
@@ -69,12 +85,12 @@ feature "Listings" do
       visit seller_listings_path(status: 'active', adminFlg: false)
       page.should have_content('My Pixis')
       page.should have_link 'Active', href: seller_listings_path(status: 'active', adminFlg: false)
-      page.should have_link 'Draft', href: unposted_temp_listings_path(adminFlg: false)
-      page.should have_link 'Pending', href: pending_temp_listings_path
-      page.should have_link 'Purchased', href: purchased_listings_path
+      page.should have_link 'Draft', href: unposted_temp_listings_path(status: 'draft', adminFlg: false)
+      page.should have_link 'Pending', href: pending_temp_listings_path(status: 'pending', adminFlg: false)
+      page.should have_link 'Purchased', href: purchased_listings_path(status: 'purchased')
       page.should have_link 'Sold', href: seller_listings_path(status: 'sold', adminFlg: false)
-      page.should have_link 'Saved', href: saved_listings_path
-      page.should have_link 'Wanted', href: wanted_listings_path
+      page.should have_link 'Saved', href: saved_listings_path(status: 'saved')
+      page.should have_link 'Wanted', href: seller_wanted_listings_path(status: 'wanted')
       page.should have_link 'Expired', href: seller_listings_path(status: 'expired', adminFlg: false)
     end
 
@@ -92,32 +108,32 @@ feature "Listings" do
 
     it "displays draft listings", js: true do
       add_listing 'draft', false
-      visit unposted_temp_listings_path(adminFlg: false)
+      visit unposted_temp_listings_path(status: 'draft', adminFlg: false)
       process_element 'draft'
     end
 
     it "displays pending listings", js: true do
       add_listing 'pending', false
-      visit pending_temp_listings_path
+      visit pending_temp_listings_path(status: 'pending', adminFlg: false)
       process_element 'pending'
     end
 
     it "displays saved listings", js: true do
       add_listing 'active'
-      visit saved_listings_path
-      process_element 'active'
+      visit saved_listings_path(status: 'saved')
+      process_element 'active', true
     end
 
     it "display wanted listings", js: true do
       add_listing 'wanted'
-      visit wanted_listings_path
+      visit seller_wanted_listings_path(status: 'wanted')
       process_element 'wanted'
     end
 
     it "display purchased listings", js: true do
-      add_listing 'sold', true, @other_user.id
-      visit purchased_listings_path
-      process_element 'sold'
+      add_listing 'purchased', true, @other_user.id
+      visit purchased_listings_path(status: 'purchased')
+      process_element 'purchased'
     end
 
     it "display expired listings", js: true do

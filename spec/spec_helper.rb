@@ -63,13 +63,16 @@ Spork.prefork do
 #      ThinkingSphinx::Test.start_with_autostop  # stop Sphinx at the end of the test suite.
     end
 
+    config.before(:each) do
+      DatabaseCleaner.strategy = :transaction
+    end
+
     config.before(:each, :js => true) do
       DatabaseCleaner.strategy = :truncation
       # page.driver.browser.manage.window.maximize
     end
 
     config.before(:each) do
-      DatabaseCleaner.strategy = :transaction
       DatabaseCleaner.start
       set_selenium_window_size(1250, 800) if Capybara.current_driver == :selenium
       reset_email

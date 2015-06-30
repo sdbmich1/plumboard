@@ -43,5 +43,6 @@ class SavedListingsController < ApplicationController
 
   def load_data
     @page = params[:page] || 1
+    @status = NameParse::transliterate params[:status] if params[:status]
   end
 end
