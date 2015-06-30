@@ -692,12 +692,27 @@ module ListingsHelper
     end
   end
 
+  # display 'Buyer Name' if sold
   def toggle_buyer_name_header status
     content_tag(:th, 'Buyer Name') if status == 'sold'
   end
 
+  # display name of buyer if sold
   def toggle_buyer_name_row status, listing
     name = listing.invoices.first.buyer_name rescue ''
     content_tag(:td, name, class: 'span2') if status == 'sold'
+  end
+
+  # assign header of date column
+  def set_date_column status
+    status == "draft" ? "Last Updated" : "#{status.titleize} Date"
+  end
+
+  # assign row of date column
+  def set_date_field listing, status
+    case status
+    when "sold", "purchased", "wanted", "saved"; listing.created_date
+    else; listing.updated_at
+    end
   end
 end
