@@ -136,8 +136,12 @@ class ListingProcessor < ListingDataProcessor
 
   # returns sold pixis from seller
   def sold_list usr=nil
-    query = usr ? "invoices.seller_id = #{usr.id} AND invoices.status = 'paid'" : "invoices.seller_id IS NOT NULL AND invoices.status = 'paid'"  
-    Listing.include_list_without_job_type.joins(:invoices).where(query).uniq
+    result = select_fields('invoices.updated_at').include_list_without_job_type.joins(:invoices)
+    if usr
+      result.where("invoices.seller_id = ? AND invoices.status = ?", usr.id, 'paid')
+    else
+      result.where("invoices.seller_id IS NOT NULL AND invoices.status = ?", 'paid')  
+    end
   end
 
   # update active counter for user

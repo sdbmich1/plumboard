@@ -103,15 +103,6 @@ class ListingQueryProcessor
     end
   end
 
-  # get wanted list by user
-  def wanted_list usr, cid, loc, adminFlg
-    if adminFlg
-      Listing.active.joins(:pixi_wants).where("pixi_wants.user_id is not null AND pixi_wants.status = ?", 'active').get_by_city(cid, loc, true)
-    else
-      Listing.active.joins(:pixi_wants).where("pixi_wants.user_id = ? AND pixi_wants.status = ?", usr.id, 'active')
-    end
-  end
-
   # find all listings where a given user is the seller, or all listings if the user is an admin
   def get_by_seller user, val, adminFlg=true
     return nil if user.blank?

@@ -8,7 +8,7 @@
   <td class='span2'><%= listing.brief_descr %></td>
   <td class='span2'><%= listing.site_name %></td>
   <%= toggle_buyer_name_row(@status, listing) %>
-  <td class='span2'><%= listing.display_date listing.updated_at %></td>
+  <td class='span2'><%= listing.display_date(set_date_field(listing, @status)) %></td>
   <td class='span1 center-wrapper'><%= link_to 'Details', set_pixi_path(listing), class: 'btn btn-small' %></td>
 </tr>
 <% end %>

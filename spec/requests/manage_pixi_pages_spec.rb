@@ -37,14 +37,19 @@ feature "ManagePixis" do
     elsif val == 'draft'
       visit unposted_temp_listings_path(status: 'new/edit', loc: @site.id, cid: @category.id)
     elsif val == 'invoiced'
-      @invoice = @user.invoices.build attributes_for(:invoice, buyer_id: buyer.id, status: 'active')
+      @invoice = @user.invoices.build attributes_for(:invoice, buyer_id: buyer.id, status: 'unpaid')
       @details = @invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: listing.pixi_id 
       @invoice.save!
-      visit invoiced_listings_path(loc: @site.id, cid: @category.id)
+      visit invoiced_listings_path(status: 'invoiced', loc: @site.id, cid: @category.id)
     elsif val == 'wanted'
       buyer.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: listing.pixi_id
-      visit wanted_listings_path(loc: @site.id, cid: @category.id)
+      visit wanted_listings_path(status: 'wanted', loc: @site.id, cid: @category.id)
     else
+      if val == 'sold'
+        @invoice = @user.invoices.build attributes_for(:invoice, buyer_id: buyer.id, status: 'paid')
+        @details = @invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: listing.pixi_id 
+        @invoice.save!
+      end
       visit listings_path(status: val, loc: @site.id, cid: @category.id)
     end
     process_element val, flg if flg
@@ -54,6 +59,8 @@ feature "ManagePixis" do
     str_arr = %w(Sold Active Expired Purchased Removed Draft Denied Invoiced)
     str_arr.select! { |x| x != val.titleize }
     page.should have_content "#{val.titleize} Listing" 
+    date_header = val == "draft" ? "Last Updated" : "#{val.titleize} Date"
+    page.should have_content date_header
     str_arr.each do |str|
       page.should_not have_content "#{str} Listing"
     end
