@@ -1,7 +1,7 @@
 require 'will_paginate/array' 
 class ListingsController < ApplicationController
   include PointManager, LocationManager, NameParse, ResetDate
-  before_filter :authenticate_user!, except: [:local, :category, :show]
+  before_filter :authenticate_user!, except: [:local, :category, :show, :biz, :member, :career]
   before_filter :load_data, except: [:pixi_price, :repost, :update]
   before_filter :load_pixi, only: [:show, :pixi_price, :repost, :update]
   before_filter :load_city, only: [:local, :category]
