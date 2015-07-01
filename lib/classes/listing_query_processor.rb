@@ -121,7 +121,6 @@ class ListingQueryProcessor
 
   def toggle_query flg, model, query
     data = flg ? TempListing.include_list.where(query) : Listing.include_list.where(query) 
-    data.order("#{model}.updated_at DESC")
   end
 
   def get_unsold val
