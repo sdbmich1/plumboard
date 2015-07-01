@@ -1036,4 +1036,12 @@ describe User do
     it { expect(User.get_by_url(@user.url)).not_to be_blank }
     it { expect(User.get_by_url('abcd')).to be_blank }
   end
+
+  describe 'board_fields' do
+    it "contains correct fields" do
+      usr = User.active.board_fields
+      expect(usr.first.id).to eq @user.id  
+    end
+    it { expect(User.active.board_fields).not_to include @user.created_at }
+  end
 end

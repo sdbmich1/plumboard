@@ -33,11 +33,15 @@ describe ListingsController do
     @listing = stub_model(Listing, :id=>1, pixi_id: '1', site_id: 1, seller_id: 1, title: "Guitar for Sale", description: "Guitar for Sale")
   end
 
-  def set_index_data
+  def set_status
     allow_message_expectations_on_nil
-    @listings = stub_model(Listing)
     controller.instance_variable_set(:@status, 'active')
     @status.stub!(:to_sym).and_return(:active)
+  end
+
+  def set_index_data
+    set_status
+    @listings = stub_model(Listing)
     Listing.stub_chain(:check_category_and_location).and_return(@listings)
     @listings.stub_chain(:paginate).and_return( @listings )
     Listing.any_instance.stub(:geocode) { [1,1] }
@@ -97,15 +101,9 @@ describe ListingsController do
 
   describe 'GET category' do
     before(:each) do
-      @listings = stub_model(Listing)
       @category = stub_model Category
-      @sellers = stub_model User
-      Listing.stub_chain(:get_by_city).and_return(@listings)
-      @listings.stub!(:set_page).and_return(@listings)
       Category.stub!(:find).and_return(@category)
-      User.stub!(:get_sellers).and_return(@sellers)
-      controller.stub!(:load_data).and_return(:success)
-      do_get
+      get_board_data
     end
 
     def do_get
@@ -136,15 +134,19 @@ describe ListingsController do
     end
   end
 
+  def get_board_data
+    @listings = stub_model(Listing)
+    @sellers = stub_model(User)
+    Listing.stub_chain(:get_by_city, :board_fields).and_return(@listings)
+    @listings.stub!(:set_page).and_return(@listings)
+    User.stub!(:get_sellers).and_return(@sellers)
+    controller.stub!(:load_data).and_return(:success)
+    do_get
+  end
+
   describe 'GET local' do
     before(:each) do
-      @listings = stub_model(Listing)
-      @sellers = stub_model(User)
-      Listing.stub!(:get_by_city).and_return(@listings)
-      @listings.stub!(:set_page).and_return(@listings)
-      User.stub!(:get_sellers).and_return(@sellers)
-      controller.stub!(:load_data).and_return(:success)
-      do_get
+      get_board_data
     end
 
     def do_get
@@ -167,8 +169,9 @@ describe ListingsController do
 
   describe 'GET seller' do
     before :each do
+      set_status
       @listings = stub_model(Listing)
-      Listing.stub_chain(:sold_list).and_return( @listings )
+      Listing.stub!(:get_by_status_and_seller).and_return( @listings )
       @listings.stub!(:paginate).and_return( @listings )
       do_get
     end

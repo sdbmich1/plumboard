@@ -165,12 +165,12 @@ describe TempListing do
 
   describe "seller listings", base: true do
     before { @temp_listing.save! }
-    it { TempListing.get_by_seller(@user, false).should_not be_empty }
+    it { TempListing.get_by_seller(@user, 'new', false).should_not be_empty }
 
     it "does not get all listings for non-admin" do
       @temp_listing.seller_id = 100
       @temp_listing.save
-      TempListing.get_by_seller(@user, false).should_not include @temp_listing
+      TempListing.get_by_seller(@user, 'new', false).should_not include @temp_listing
     end
 
     it "gets all listings for admin" do
@@ -179,7 +179,7 @@ describe TempListing do
       @user.user_type_code = "AD"
       @user.uid = 0
       @user.save
-      expect(TempListing.get_by_seller(@user).count).to eq 2
+      expect(TempListing.get_by_seller(@user, 'new').count).to eq 2
     end
   end
 

@@ -1,5 +1,5 @@
 class ListingProcessor < ListingDataProcessor
-  include CalcTotal, SystemMessenger, NameParse
+  include CalcTotal, SystemMessenger, NameParse, ProcessMethod
 
   # set active status
   def activate
@@ -60,7 +60,7 @@ class ListingProcessor < ListingDataProcessor
     if closed_arr(true).detect { |x| x == @listing.status }
       val = @listing.status == 'sold' ? 'closed' : @listing.status
       @listing.invoices.find_each do |inv|
-	inv.update_attribute(:status, val) if inv.unpaid? #  inv.invoice_details.size == 1 
+	inv.update_attribute(:status, val) if inv.unpaid? && inv.invoice_details.size == 1 
       end
     end
   end
@@ -146,7 +146,11 @@ class ListingProcessor < ListingDataProcessor
   end
 
   def get_by_url url, page=1
-    Listing.active.get_by_seller(User.get_by_url(url)).set_page page rescue nil
+    Listing.active.get_by_seller(User.get_by_url(url), 'active').board_fields.set_page page rescue nil
+  end
+
+  def get_board_flds
+    ProcessMethod::get_board_flds
   end
 end
 

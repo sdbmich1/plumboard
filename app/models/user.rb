@@ -466,6 +466,10 @@ class User < ActiveRecord::Base
     UserProcessor.new(self).filename utype
   end
 
+  def self.board_fields
+    select('users.id, users.business_name, users.url, users.user_type_code')
+  end
+
   # set sphinx scopes
    sphinx_scope(:first_name) { 
      {:order => 'first_name, last_name ASC'}

@@ -1,9 +1,11 @@
 class SearchBuilder
-  include LocationManager
+  include LocationManager, ProcessMethod
 
   def initialize(cat, loc, pg, ip)
     @cat, @loc, @page = cat, loc, pg
     @lat, @lng = LocationManager::get_lat_lng ip rescue nil
+    @sql = ProcessMethod::get_board_flds
+    @models = [:pictures, :site, :category]
   end
 
   # dynamically define search options based on selections
@@ -14,14 +16,14 @@ class SearchBuilder
   # build standard search options
   def build_search_options sid
     unless @loc.blank?
-      @cat.blank? ? {:include => [:pictures, :site, :category], with: {site_id: sid}, star: true, page: @page} : 
-        {:include => [:pictures, :site, :category], with: {category_id: @cat, site_id: sid}, star: true, page: @page}
+      @cat.blank? ? {sql: {select: @sql}, include: @models,  with: {site_id: sid}, star: true, page: @page} : 
+        {sql: {select: @sql}, :include => @models, with: {category_id: @cat, site_id: sid}, star: true, page: @page}
     else
       unless @cat.blank?
-        {:include => [:pictures, :site, :category], with: {category_id: @cat}, geo: [@lat, @lng], order: "geodist ASC, @weight DESC", 
+        {sql: {select: @sql}, include: @models, with: {category_id: @cat}, geo: [@lat, @lng], order: "geodist ASC, @weight DESC", 
 	  star: true, page: @page}
       else
-        {:include => [:pictures, :site, :category], star: true, page: @page} #, geo: [@lat, @lng], order: "geodist ASC, @weight DESC"
+        {sql: {select: @sql}, include: @models, star: true, page: @page} #, geo: [@lat, @lng], order: "geodist ASC, @weight DESC"
       end
     end
   end
@@ -29,14 +31,14 @@ class SearchBuilder
   # build search w/ url
   def build_url_options url, sid
     unless @loc.blank?
-      @cat.blank? ? {:include => [:pictures, :site, :category], with: {site_id: sid}, conditions: {url: url}, star: true, page: @page} : 
-        {:include => [:pictures, :site, :category], with: {category_id: @cat, site_id: sid}, conditions: {url: url}, star: true, page: @page}
+      @cat.blank? ? {sql: {select: @sql}, include: @models,  with: {site_id: sid}, conditions: {url: url}, star: true, page: @page} : 
+        {sql: {select: @sql}, include: @models, with: {category_id: @cat, site_id: sid}, conditions: {url: url}, star: true, page: @page}
     else
       unless @cat.blank?
-        {:include => [:pictures, :site, :category], with: {category_id: @cat}, conditions: {url: url}, geo: [@lat, @lng], 
+        {sql: {select: @sql}, include: @models, with: {category_id: @cat}, conditions: {url: url}, geo: [@lat, @lng], 
 	  order: "geodist ASC, @weight DESC", star: true, page: @page}
       else
-        {:include => [:pictures, :site, :category], conditions: {url: url}, star: true, page: @page}  
+        {sql: {select: @sql}, include: @models, conditions: {url: url}, star: true, page: @page}  
       end
     end
   end

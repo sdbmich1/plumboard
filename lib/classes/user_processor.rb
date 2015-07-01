@@ -175,7 +175,7 @@ class UserProcessor
 
   # get seller list based on category and location
   def get_sellers cat, loc
-    User.includes(:pictures, :preferences).active.get_by_type('BUS').where(id: get_seller_ids(cat, loc)).select { |usr| usr.pixi_count > 1 }
+    User.includes(:pictures, :preferences).active.get_by_type('BUS').board_fields.where(id: get_seller_ids(cat, loc)).select {|usr| usr.reload.pixi_count > 1}
   end
 
   # get site name from zip

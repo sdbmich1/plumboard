@@ -229,13 +229,13 @@ describe Listing do
       @listing.save
       @user.uid = 1
       @user.save
-      Listing.get_by_seller(@user, false).should_not be_empty  
+      Listing.get_by_seller(@user, 'active', false).should_not be_empty  
     end
 
     it "does not get all listings for non-admin" do
       @listing.seller_id = 100
       @listing.save
-      Listing.get_by_seller(@user, false).should_not include @listing
+      Listing.get_by_seller(@user, 'active', false).should_not include @listing
     end
 
     it "gets all listings for admin" do
@@ -245,7 +245,7 @@ describe Listing do
       @user.user_type_code = "AD"
       @user.uid = 0
       @user.save
-      expect(Listing.get_by_seller(@user).count).to eq 2
+      expect(Listing.get_by_seller(@user, 'active').count).to eq 2
     end
   end
 
@@ -1577,5 +1577,17 @@ describe Listing do
     it "has paid invoices", run: true do 
       expect(@listing.any_sold?).to be_true  
     end
+  end
+
+  describe 'board_fields' do
+    before :each do
+      @listing.save!
+    end
+
+    it "contains correct fields" do
+      listing = Listing.active.board_fields
+      expect(listing.first.pixi_id).to eq @listing.pixi_id  
+    end
+    it { expect(Listing.active.board_fields).not_to include @listing.created_at }
   end
 end

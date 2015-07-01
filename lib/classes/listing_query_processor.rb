@@ -113,11 +113,11 @@ class ListingQueryProcessor
   end
 
   # find all listings where a given user is the seller, or all listings if the user is an admin
-  def get_by_seller user, adminFlg=true
+  def get_by_seller user, val, adminFlg=true
     return nil if user.blank?
-    model = @listing.respond_to?(:car_color) ? 'temp_listings' : 'listings'
+    model = is_temp?(val) ? 'temp_listings' : 'listings'
     query = user.is_admin? && adminFlg ? "#{model}.seller_id IS NOT NULL" : "#{model}.seller_id = #{user.id}"
-    toggle_query @listing.respond_to?(:car_color), model, query
+    toggle_query is_temp?(val), model, query
   end
 
   def get_by_status val
@@ -125,7 +125,7 @@ class ListingQueryProcessor
   end
 
   def is_temp? val
-    !%w(pending new edit).detect {|x| x == val}.nil? 
+    !val.match('pending|new|edit/i').nil?
   end
 
   def toggle_query flg, model, query

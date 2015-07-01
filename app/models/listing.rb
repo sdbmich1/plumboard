@@ -229,7 +229,7 @@ class Listing < ListingParent
 
   # toggle get_by_seller call based on status
   def self.get_by_status_and_seller val, usr, adminFlg
-    val == 'sold' ? sold_list(usr).reorder('listings.updated_at DESC') : get_by_seller(usr, adminFlg).get_by_status(val)
+    val == 'sold' ? sold_list(usr).reorder('listings.updated_at DESC') : get_by_seller(usr, val, adminFlg).get_by_status(val)
   end
 
   # refresh counter cache
@@ -239,6 +239,10 @@ class Listing < ListingParent
 
   def self.get_by_url url, page=1
     ListingProcessor.new(self).get_by_url url, page
+  end
+
+  def self.board_fields
+    select("#{ListingProcessor.new(self).get_board_flds}")
   end
 
   # sphinx scopes

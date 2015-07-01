@@ -2,6 +2,6 @@
   <%= render partial: 'shared/site_menu', locals: { loc_name: loc_name, rFlg: rFlg } %>
 </ul>
 <div class="pixi-select pull-right">
-  <%= render partial: 'shared/status_menu', locals: { val: @status } if statusFlg %>
+  <%= show_status_menu @status, statusFlg %>
   <%= show_menu_fields false %>
 </div>

@@ -162,8 +162,8 @@ class ListingParent < ActiveRecord::Base
   end
 
   # find all listings where a given user is the seller, or all listings if the user is an admin
-  def self.get_by_seller user, adminFlg=true
-    ListingQueryProcessor.new(self).get_by_seller user, adminFlg
+  def self.get_by_seller user, val, adminFlg=true
+    ListingQueryProcessor.new(self).get_by_seller user, val, adminFlg
   end
 
   # get listings by status and, if provided, category and location

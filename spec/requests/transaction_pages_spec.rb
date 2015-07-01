@@ -15,11 +15,15 @@ feature "Transactions" do
 
   def page_setup usr
     init_setup usr
+    stub_const("PIXI_PERCENT", 2.9)
+    stub_const("EXTRA_PROCESSING_FEE", 0.30)
+    stub_const("PXB_TXN_PERCENT", 0.25)
+    stub_const("PIXI_FEE", 0.99)
     @listing = create :temp_listing, seller_id: @user.id, quantity: 1
   end
 
   def add_invoice mFlg=false
-    @seller = create(:pixi_user)
+    @seller = create(:pixi_user, acct_token: "acct_16HJbsDEdnXv7t4y")
     @listing2 = create(:listing, seller_id: @seller.id, title: 'Leather Coat', quantity: 2)
     @account = @seller.bank_accounts.create attributes_for :bank_account, status: 'active'
     @invoice = @seller.invoices.build attributes_for(:invoice, buyer_id: @user.id, bank_account_id: @account.id)
@@ -41,8 +45,8 @@ feature "Transactions" do
   def visit_inv_txn_path ship=nil
     add_invoice 
     visit new_transaction_path id1: @listing.pixi_id, promo_code: '', title: "Invoice # #{@invoice.id} from #{@invoice.seller_name}", seller: @seller.name,
-        "item1" => @listing.title, "quantity1" => 1, "cnt"=> 1, "qtyCnt"=> 1, "price1" => 100.00, transaction_type: 'invoice',
-	"tax_total"=> 8.25, "invoice_id"=> @invoice.id, "ship_amt"=> ship, "inv_total"=>100.00 
+        "item1" => @listing.title, "quantity1" => 2, "cnt"=> 1, "qtyCnt"=> 2, "price1" => 185.00, transaction_type: 'invoice',
+	"tax_total"=> @invoice.tax_total, "invoice_id"=> @invoice.id, "ship_amt"=> ship, "inv_total"=>@invoice.amount+ship
   end
 
   def visit_multi_txn_path ship=0.0
@@ -221,7 +225,7 @@ feature "Transactions" do
 
     it "creates a balanced transaction with valid visa card", :js=>true do
       expect { 
-        credit_card_data '4111111111111111'
+        credit_card_data '4242424242424242'
         page.should have_content("Purchase Complete")
         page.should have_content("Please Rate Your Seller")
         page.should have_link('Add Comment', href: '#') 
@@ -230,7 +234,7 @@ feature "Transactions" do
 
     it "creates a balanced transaction with valid mc card", :js=>true do
       expect { 
-        credit_card_data '5105105105105100'
+        credit_card_data '5200828282828210'
         page.should have_content("Purchase Complete")
         page.should have_content("Please Rate Your Seller")
         page.should have_link('Add Comment', href: '#') 

@@ -287,7 +287,7 @@ FactoryGirl.define do
     acct_no '6789'
     currency_type_code 'usd'
     country_code 'us'
-    token "tr_16Cl6DEfOGOjxI0wnFK1wy8Z"
+    token "ba_16HJc8DEdnXv7t4ytCIXAzAs"
   end
 
   factory :card_account do

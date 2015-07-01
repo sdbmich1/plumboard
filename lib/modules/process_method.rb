@@ -20,4 +20,10 @@ module ProcessMethod
     end
     model
   end
+
+  # set fields for main board
+  def self.get_board_flds
+    'listings.id, listings.title, listings.pixi_id, listings.price, listings.quantity, listings.site_id, listings.category_id,
+      listings.job_type_code, listings.event_type_code'
+  end
 end

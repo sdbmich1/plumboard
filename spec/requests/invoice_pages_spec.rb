@@ -60,6 +60,7 @@ feature "Invoices" do
       @pxp_listing = create(:listing, seller_id: @user.id, pixan_id: @person.id)
     end
     @user.bank_accounts.create FactoryGirl.attributes_for :bank_account, status: 'active'
+    @user.reload
   end
 
   def add_paid_invoice pxpFlg=true

@@ -113,7 +113,7 @@ class ListingsController < ApplicationController
 
   def load_city
     @category = Category.find @cat rescue nil if action_name == 'category'
-    @listings = Listing.get_by_city(@cat, @loc).set_page @page
+    @listings = Listing.get_by_city(@cat, @loc).board_fields.set_page @page
     @sellers = User.get_sellers @cat, @loc
   end
 

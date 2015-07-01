@@ -368,12 +368,12 @@ module ListingsHelper
   end
 
   # set status type
-  def show_menu_status val, sFlg
+  def show_status_menu val, sFlg
     render(partial: 'shared/status_menu', locals: { val: val }) if sFlg
   end
 
   def show_menu_fields ptype
-    render partial: 'shared/menu_fields', locals: { ptype: ptype } if !controller_name.match(/listings|users/).nil?
+    render partial: 'shared/menu_fields', locals: { ptype: ptype } if @url.blank?
   end
 
   # check ownership
@@ -699,5 +699,9 @@ module ListingsHelper
   def toggle_buyer_name_row status, listing
     name = listing.invoices.first.buyer_name rescue ''
     content_tag(:td, name, class: 'span2') if status == 'sold'
+  end
+
+  def show_recent_link rFlg
+    content_tag(:li, link_to("Recent", '#', id: 'recent-link', class: 'submenu'), id: 'li_home', class: 'active') if rFlg
   end
 end
