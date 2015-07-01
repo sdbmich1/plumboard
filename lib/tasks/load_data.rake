@@ -70,6 +70,10 @@ namespace :db do
     set_user_status
   end
 
+  task :reset_acct_token => :environment do
+    reset_user_acct_token
+  end
+
   task :reload_pixi_posts => :environment do
     load_pixi_post_details
   end
@@ -243,7 +247,7 @@ def set_want_status
 end
 
 def set_user_url
-  User.where("url IS NULL and status = ?", 'active').find_each {|u| u.update_attribute(:user_url, u.name)}
+  User.where("(url IS NULL or url = '') and status = ?", 'active').find_each {|u| u.update_attribute(:user_url, u.name)}
 end
 
 def set_user_status
@@ -258,4 +262,8 @@ def reset_user_types
   User.where(status: 'active').find_each do |usr|
     usr.update_attribute :user_type_code, usr.user_type_code.upcase
   end 
+end
+
+def reset_user_acct_token
+  User.where("acct_token IS NOT NULL").update_all(acct_token: nil)
 end

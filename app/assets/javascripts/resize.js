@@ -55,22 +55,23 @@ function restoreWindow() {
 
 // check if small window
 function resizeSmallWindow() {
-    if($(window).width() < 768) {
-      if($('.carousel-overlay').length > 0) {
-        $(".carousel-overlay").css({'top': '10%'});
+  if(window.innerHeight > window.innerWidth){
+    if($('.carousel-overlay').length > 0) 
+      $(".carousel-overlay").css({'top': '15%'});
+  }
+
+  if($(window).width() < 768) {
+    if($('.navbar-fixed-top').length > 0) {
+      if($('.navbar-fixed-top').offset().top > 20) {
+        $(".navbar-fixed-top").addClass('xneg-top big-neg-bot');
       }
-        if($('.navbar-fixed-top').length > 0) {
-          //console.log('top menu offset: ' + $(".navbar-fixed-top").offset().top);
-          if($('.navbar-fixed-top').offset().top > 20) {
-            $(".navbar-fixed-top").addClass('xneg-top big-neg-bot');
-	  }
-	  else
-            if(!navigator.userAgent.match(/firefox/i)) 
-              $(".navbar-fixed-top").addClass('mneg-top big-neg-bot');
-	    else
-              $(".navbar-fixed-top").addClass('mneg-top');
-	}
+      else
+        if(!navigator.userAgent.match(/firefox/i)) 
+          $(".navbar-fixed-top").addClass('mneg-top big-neg-bot');
+	else
+          $(".navbar-fixed-top").addClass('mneg-top');
     }
+  }
 }
 
 function resizeSafari() {
@@ -195,10 +196,10 @@ function set_item_size (origSize, wFlg) {
     col = !wFlg ? 160 : '70%';
   }
   else if(width < 980 && width >= 768) {
-    col = !wFlg ? 140 : '63.5%';
+    col = !wFlg ? 140 : '60%';
   }
   else if(width < 768 && width >= 480) {
-    col = !wFlg ? 120 : '58.5%';
+    col = !wFlg ? 120 : '55%';
   }
   else if(width < 480) {
     col = !wFlg ? 100 : '50%';

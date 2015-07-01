@@ -130,6 +130,16 @@ namespace :manage_server do
     end
   end
 
+  task :reprocess_category_images => :environment do
+    Category.all.each do |category|
+      category.pictures.each do |pic|
+        %w(thumb large).each do |style|
+          pic.photo.reprocess!(style.to_sym)
+	end
+      end
+    end
+  end
+
   task :load_news_feeds => :environment do
     LoadNewsFeed.read_feeds
   end
@@ -137,6 +147,7 @@ namespace :manage_server do
   task :run_upgrade_tasks => :environment do
     Rake::Task[:import_travel_modes].execute
     Rake::Task[:import_user_type].execute
+    Rake::Task[:load_org_types].execute
     Rake::Task[:load_feeds].execute
     Rake::Task[:load_fulfillment_types].execute
     Rake::Task[:update_site_images].execute :file_name => "region_image_data_051415.csv"
@@ -146,7 +157,9 @@ namespace :manage_server do
     Rake::Task["db:load_active_listings_counter"].invoke
     Rake::Task["db:reload_user_types"].invoke
     Rake::Task["db:load_user_urls"].invoke
+    Rake::Task["db:reset_acct_token"].invoke
     Rake::Task["manage_server:reprocess_user_images"].invoke
     Rake::Task["manage_server:reprocess_listing_images"].invoke
+    Rake::Task["manage_server:reprocess_category_images"].invoke
   end
 end
