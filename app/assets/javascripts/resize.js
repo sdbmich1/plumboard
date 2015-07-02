@@ -53,13 +53,33 @@ function restoreWindow() {
   }
 }
 
-// check if small window
-function resizeSmallWindow() {
+function resizeMobileWindow() {
   if(window.innerHeight > window.innerWidth){
     if($('.carousel-overlay').length > 0) 
       $(".carousel-overlay").css({'top': '15%'});
   }
+  else
+    if($('.carousel-overlay').length > 0) {
+      $(".carousel-overlay").css({'top': '35%'});
+    }
 
+  if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+    if($('.carousel-overlay').length > 0) {
+      $("#homePgFtr").addClass('mauto40').removeClass('mauto35');
+      $("#homePgLink").addClass('mauto30').removeClass('mauto20');
+    }
+  }
+  else {
+    if($('.carousel-overlay').length > 0) {
+      $("#homePgFtr").addClass('mauto35').removeClass('mauto40');
+      $("#homePgLink").addClass('mauto20').removeClass('mauto30');
+    }
+  }
+}
+
+// check if small window
+function resizeSmallWindow() {
+  resizeMobileWindow();
   if($(window).width() < 768) {
     if($('.navbar-fixed-top').length > 0) {
       if($('.navbar-fixed-top').offset().top > 20) {

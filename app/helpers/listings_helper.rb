@@ -485,9 +485,9 @@ module ListingsHelper
   end
 
   # process pixi feature content
-  def process_content arr, cls='', str=[]
+  def process_content arr, cls='med-top', str=[]
     arr.map { |item| str << show_content(item) }
-    content_tag(:div, str.join("").html_safe, class: cls + 'med-top black-txt')
+    content_tag(:div, str.join("").html_safe, class: cls + ' black-txt')
   end
 
   # display listing fields
@@ -507,7 +507,7 @@ module ListingsHelper
       str << "Event Type: #{item.event_type_descr}"
       str << "Date(s): #{short_date item.event_start_date} - #{short_date item.event_end_date}"
       str << "Time(s): #{short_time item.event_start_time} - #{short_time item.event_end_time}"
-      process_content str
+      process_content str, ''
     end
   end
 

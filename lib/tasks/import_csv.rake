@@ -792,4 +792,5 @@ task :run_all_tasks => :environment do
   Rake::Task[:import_other_sites].execute :file_name => "state_site_data_012815.csv", :org_type => "state"
   Rake::Task[:import_other_sites].execute :file_name => "country_site_data_012815.csv", :org_type => "country"
   Rake::Task[:update_site_images].execute :file_name => "region_image_data_051415.csv"
+  Rake::Task[:update_site_images].execute :file_name => "city_image_data_060915.csv"
 end

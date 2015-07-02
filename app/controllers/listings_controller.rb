@@ -15,7 +15,7 @@ class ListingsController < ApplicationController
   layout :page_layout
 
   def index
-    @unpaginated_listings = Listing.check_category_and_location(@status, @cat, @loc, true)
+    @unpaginated_listings = Listing.check_category_and_location(@status, @cat, @loc, is_active?)
     respond_with(@listings = @unpaginated_listings.paginate(page: @page, per_page: 15), style: status) { |format| render_csv format }
   end
 
@@ -136,6 +136,10 @@ class ListingsController < ApplicationController
 
   def status
     @status.to_sym
+  end
+
+  def is_active?
+    @status == 'active'
   end
 
   def render_csv format

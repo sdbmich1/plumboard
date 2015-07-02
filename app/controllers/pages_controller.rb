@@ -9,7 +9,7 @@ class PagesController < ApplicationController
   end
 
   def home
-    @listings = Listing.active.paginate(page: @page, per_page: @per_page) unless mobile_device?
+    @listings = Listing.active.board_fields.paginate(page: @page, per_page: @per_page) 
   end
 
   def about
