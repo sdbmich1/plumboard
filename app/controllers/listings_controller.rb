@@ -15,7 +15,7 @@ class ListingsController < ApplicationController
   layout :page_layout
 
   def index
-    @unpaginated_listings = Listing.check_category_and_location(@status, @cat, @loc, true)
+    @unpaginated_listings = Listing.check_category_and_location(@status, @cat, @loc, @status == 'active')
     respond_with(@listings = @unpaginated_listings.paginate(page: @page, per_page: 15), style: status) { |format| render_csv format }
   end
 
@@ -32,11 +32,11 @@ class ListingsController < ApplicationController
   end
 
   def seller
-    respond_with(@listings = Listing.get_by_status_and_seller(@status, @user, @adminFlg).paginate(page: @page))
+    respond_with(@listings = Listing.get_by_status_and_seller(@status, @user, @adminFlg).paginate(page: @page, per_page: 15))
   end
 
   def seller_wanted
-    respond_with(@listings = Listing.wanted_list(@user, nil, nil, false).paginate(page: @page))
+    respond_with(@listings = Listing.wanted_list(@user, nil, nil, false).paginate(page: @page, per_page: 15))
   end
 
   def wanted
@@ -45,7 +45,7 @@ class ListingsController < ApplicationController
   end
 
   def purchased
-    respond_with(@listings = Listing.purchased(@user).paginate(page: @page))
+    respond_with(@listings = Listing.purchased(@user).paginate(page: @page, per_page: 15))
   end
 
   def category
