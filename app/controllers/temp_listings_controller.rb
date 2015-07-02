@@ -78,11 +78,11 @@ class TempListingsController < ApplicationController
   end
 
   def unposted
-    respond_with(@listings = TempListing.draft.get_by_seller(@user, 'new|edit', @adminFlg).paginate(page: @page))
+    respond_with(@listings = TempListing.draft.get_by_seller(@user, 'new|edit', @adminFlg).paginate(page: @page, per_page: 15))
   end
 
   def pending
-    respond_with(@listings = TempListing.get_by_status('pending').get_by_seller(@user, 'pending', @adminFlg).paginate(page: @page))
+    respond_with(@listings = TempListing.get_by_status('pending').get_by_seller(@user, 'pending', @adminFlg).paginate(page: @page, per_page: 15))
   end
   
   protected

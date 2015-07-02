@@ -1452,8 +1452,9 @@ describe Listing do
       @site = create :site, org_type: 'city', name: 'SF'
       @site.contacts.create(FactoryGirl.attributes_for(:contact, address: '101 California', city: 'SF', state: 'CA', zip: '94111'))
       @listing.update_attribute(:site_id, @site.id)
-      Listing.get_by_city(@listing.category_id, @listing.site_id, true).should_not be_empty
-      Listing.get_by_city(@listing.category_id, @listing.site_id, false).should be_empty
+      @listing.update_attribute(:status, 'removed')
+      Listing.get_by_city(@listing.category_id, @listing.site_id, true).should be_empty
+      Listing.get_by_city(@listing.category_id, @listing.site_id, false).should_not be_empty
     end
 
     it "finds active pixis by org_type" do

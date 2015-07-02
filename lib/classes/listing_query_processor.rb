@@ -40,7 +40,7 @@ class ListingQueryProcessor
   end
 
   def get_data flg, params
-    flg ? Listing.where(params) : TempListing.where(params)
+    is_temp? ? TempListing.where(params) : Listing.where(params)
   end
 
   def exec_query flg, params
@@ -106,25 +106,16 @@ class ListingQueryProcessor
   # find all listings where a given user is the seller, or all listings if the user is an admin
   def get_by_seller user, val, adminFlg=true
     return nil if user.blank?
-    model = is_temp?(val) ? 'temp_listings' : 'listings'
+    model = is_temp? ? 'temp_listings' : 'listings'
     query = user.is_admin? && adminFlg ? "#{model}.seller_id IS NOT NULL" : "#{model}.seller_id = #{user.id}"
-    toggle_query is_temp?(val), model, query
+    exec_query(val == "active", query)
   end
 
   def get_by_status val
-    val == 'sold' ? Listing.sold_list : get_unsold(val)
+    val == 'sold' ? Listing.sold_list : exec_query(val == "active", "status = '#{val}'")
   end
 
-  def is_temp? val
-    !val.match('pending|new|edit/i').nil?
-  end
-
-  def toggle_query flg, model, query
-    data = flg ? TempListing.include_list.where(query) : Listing.include_list.where(query) 
-  end
-
-  def get_unsold val
-    model = is_temp?(val) ? 'temp_listings' : 'listings'
-    toggle_query is_temp?(val), model, "status = '#{val}'"
+  def is_temp?
+    @listing.is_a?(TempListing) || @listing == TempListing
   end
 end
