@@ -3,7 +3,7 @@ class InvoicesController < ApplicationController
   load_and_authorize_resource
   before_filter :authenticate_user!
   skip_authorize_resource :only => [:autocomplete_user_first_name]
-  before_filter :load_data, only: [:index, :sent, :received]
+  before_filter :load_data, only: [:index, :sent, :received, :new, :show]
   before_filter :load_invoice, only: [:show, :edit, :update, :destroy, :remove, :decline]
   before_filter :set_params, only: [:create, :update]
   after_filter :mark_message, only: [:new, :show]
@@ -88,7 +88,7 @@ class InvoicesController < ApplicationController
   end
 
   def load_data
-    @page = params[:page] || 1
+    @page, @cid = params[:page] || 1, params[:cid]
   end
 
   def load_invoice
@@ -105,6 +105,6 @@ class InvoicesController < ApplicationController
   end
 
   def mark_message
-    ControllerManager::mark_message params[:cid], @user if params[:cid]
+    ControllerManager::mark_message @cid, @user if @cid
   end
 end
