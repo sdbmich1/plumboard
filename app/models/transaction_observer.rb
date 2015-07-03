@@ -28,7 +28,7 @@ class TransactionObserver < ActiveRecord::Observer
   end
 
   def send_message txn
-    UserMailer.send_transaction_receipt(txn).deliver if txn.approved?
+    UserMailer.delay.send_transaction_receipt(txn) if txn.approved?
   end
 
   # notify seller          

@@ -55,8 +55,10 @@ function restoreWindow() {
 
 function resizeMobileWindow() {
   if(window.innerHeight > window.innerWidth){
-    if($('.carousel-overlay').length > 0) 
-      $(".carousel-overlay").css({'top': '15%'});
+    if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+      if($('.carousel-overlay').length > 0) 
+        $(".carousel-overlay").css({'top': '15%'});
+    }
   }
   else
     if($('.carousel-overlay').length > 0) {
