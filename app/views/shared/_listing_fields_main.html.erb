@@ -17,5 +17,5 @@
     <%= f.select 'year_built', options_for_select(get_year_ary, :selected => listing.year_built), {:prompt => 'Select'}, 
           {id: 'yr_built', class: 'pixi-select'} %></div>
   <div class='span4' id='comp-fld' style="<%= set_style(!listing.job?) %>"><%= f.label :compensation %>
-    <%= f.text_field :compensation, id: 'salary' %></div>
+    <%= f.text_field :compensation, size: 30, id: 'salary' %></div>
 </div>

@@ -178,10 +178,10 @@ module ApplicationHelper
   end
 
   # set path based on invoice count
-  def get_unpaid_path cid=nil
+  def get_unpaid_path pid=nil, cid=nil
     if @user.unpaid_invoice_count > 0
-      @invoice = @user.unpaid_received_invoices.first
-      invoice_path(@invoice, cid: cid)
+      @invoice = pid.blank? ? @user.unpaid_received_invoices : Invoice.get_by_status_and_pixi('unpaid', @user.id, pid)
+      invoice_path(@invoice.first, cid: cid)
     end
   end
 

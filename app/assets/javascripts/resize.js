@@ -44,7 +44,7 @@ function restoreWindow() {
   $(".navbar-fixed-top").css({'margin-bottom': '20px' });
 
   if($('.carousel-overlay').length > 0) {
-    $(".carousel-overlay").css({'top': '25%'});
+    $(".carousel-overlay").css({'top': '35%'});
   }
 
   if($('#slr-pic').length > 0) {

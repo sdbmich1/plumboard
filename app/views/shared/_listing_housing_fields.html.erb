@@ -11,11 +11,11 @@
   </div>
   <div class='span3'>
     <%= f.label :location_size, 'Size(s)' %>
-    <%= f.text_field :location_size, value: listing.location_size, placeholder: 'Ex. 1000 sq ft.' %>
+    <%= f.text_field :location_size, value: listing.location_size, size: 30, placeholder: 'Ex. 1000 sq ft.' %>
   </div>
   <div class='span2'>
     <%= f.label :term, 'Term' %>
-    <%= f.text_field :term, value: listing.term, placeholder: 'Ex. 1yr lease', required: listing.is_category_type?('housing') %>
+    <%= f.text_field :term, value: listing.term, placeholder: 'Ex. 1yr lease', size: 30, required: listing.is_category_type?('housing') %>
   </div>
   <div class='span2'>
     <%= f.label :avail_date, 'Available' %>

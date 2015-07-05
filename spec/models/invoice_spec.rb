@@ -526,4 +526,39 @@ describe Invoice do
       end
     end
   end
+
+  describe 'get_by_keys' do
+    before :each do
+      @invoice.save! 
+    end
+    context 'get_by_buyer' do
+      it { expect(Invoice.get_by_buyer(@buyer.id)).to include @invoice }
+      it { expect(Invoice.get_by_buyer(@user.id)).not_to include @invoice }
+    end
+    context 'get_by_seller' do
+      it { expect(Invoice.get_by_seller(@buyer.id)).not_to include @invoice }
+      it { expect(Invoice.get_by_seller(@user.id)).to include @invoice }
+    end
+    context 'get_by_pixi' do
+      it { expect(Invoice.get_by_pixi('1234')).not_to include @invoice }
+      it { expect(Invoice.get_by_pixi(@listing.pixi_id)).to include @invoice }
+    end
+    context 'get_by_status_and_pixi' do
+      it { expect(Invoice.get_by_status_and_pixi('unpaid', @buyer.id, '1234')).not_to include @invoice }
+      it { expect(Invoice.get_by_status_and_pixi('unpaid', @user.id, @listing.pixi_id)).not_to include @invoice }
+      it { expect(Invoice.get_by_status_and_pixi('unpaid', @buyer.id, @listing.pixi_id, false)).not_to include @invoice }
+      it { expect(Invoice.get_by_status_and_pixi('paid', @buyer.id, @listing.pixi_id)).not_to include @invoice }
+      it { expect(Invoice.get_by_status_and_pixi('unpaid', @buyer.id, @listing.pixi_id)).to include @invoice }
+      it { expect(Invoice.get_by_status_and_pixi('unpaid', @user.id, @listing.pixi_id, false)).to include @invoice }
+      it 'successfully handles paid invoices' do
+        @invoice.update_attribute(:status, 'paid')
+        expect(Invoice.get_by_status_and_pixi('paid', @user.id, '1234', false)).not_to include @invoice 
+        expect(Invoice.get_by_status_and_pixi('paid', @user.id, @listing.pixi_id)).not_to include @invoice 
+        expect(Invoice.get_by_status_and_pixi('unpaid', @user.id, @listing.pixi_id, false)).not_to include @invoice 
+        expect(Invoice.get_by_status_and_pixi('paid', @buyer.id, @listing.pixi_id, false)).not_to include @invoice 
+        expect(Invoice.get_by_status_and_pixi('paid', @buyer.id, @listing.pixi_id)).to include @invoice 
+        expect(Invoice.get_by_status_and_pixi('paid', @user.id, @listing.pixi_id, false)).to include @invoice 
+      end
+    end
+  end
 end

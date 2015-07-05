@@ -274,4 +274,21 @@ class Invoice < ActiveRecord::Base
   def transaction_amount
     transaction.amt rescue 0.0
   end
+
+  def self.get_by_buyer uid
+    where(buyer_id: uid)
+  end
+
+  def self.get_by_seller uid
+    where(seller_id: uid)
+  end
+
+  def self.get_by_pixi pid
+    where("listings.pixi_id = ?", pid).joins(:listings)
+  end
+
+  def self.get_by_status_and_pixi val, uid, pid, buyerFlg=true
+    str = buyerFlg ? "get_by_buyer" : 'get_by_seller'
+    get_by_status(val).send(str, uid).get_by_pixi(pid) rescue nil
+  end
 end

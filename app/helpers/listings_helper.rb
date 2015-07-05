@@ -119,7 +119,16 @@ module ListingsHelper
 
   # get host
   def get_host
-    (Rails.env.test? || Rails.env.development?) ? "localhost:3000" : ((Rails.env.staging?) ? "test.pixiboard.com" : PIXI_WEB_SITE)
+    case Rails.env
+    when 'test', 'development'
+      "localhost:3000"
+    when 'demo'
+      "demo.pixiboard.com"
+    when 'staging'
+      "test.pixiboard.com"
+    else
+      PIXI_WEB_SITE
+    end
   end
    
   # set absolute url for current pixi
@@ -493,7 +502,7 @@ module ListingsHelper
   # display listing fields
   def show_top_fields item, str=[]
     str << "Condition: #{item.condition}" if is_item?(item) && item.condition
-    str << "Color: #{item.color}" unless item.color.blank?
+    str << "Color: #{item.color[0..29]}" unless item.color.blank?
     str << "Amount Left: #{get_item_amt(item)}" if item_available?(item, true, 'quantity')
     process_content str
   end
@@ -709,7 +718,7 @@ module ListingsHelper
 
   # assign header of date column
   def set_date_column status
-    status == "draft" ? "Last Updated" : "#{status.titleize} Date"
+    status == "draft" || status.blank? ? "Last Updated" : "#{status.titleize} Date"
   end
 
   # assign row of date column

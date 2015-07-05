@@ -12,7 +12,7 @@ set :assets_role, [:app, :worker]
 load "deploy/assets"
 
 # set stages
-set :stages, %w(production staging)
+set :stages, %w(production staging demo)
 set :default_stage, "production"
 
 set :rails_env, Rubber.env
@@ -65,7 +65,7 @@ set :keep_releases, 5
 set :push_instance_config, true
 
 # don't waste time bundling gems that don't need to be there 
-set :bundle_without, [:development, :test, :staging] if Rubber.env == 'production'
+set :bundle_without, [:development, :test, :staging, :demo] if Rubber.env == 'production'
 
 # set whenever command
 set :whenever_command, "bundle exec whenever"

@@ -85,14 +85,14 @@ class ApplicationController < ActionController::Base
 
   # exception handling
   def rescue_with_handler(exception)
-    if Rails.env.production? || Rails.env.staging?
+    if Rails.env.production? || Rails.env.staging? || Rails.env.demo?
       ExceptionNotifier::Notifier.exception_notification(request.env, exception).deliver 
       redirect_to '/500.html'
     end
   end       
 
   def action_missing(id, *args)
-    if Rails.env.production? || Rails.env.staging?
+    if Rails.env.production? || Rails.env.staging? || Rails.env.demo?
       redirect_to '/404.html'
     end
   end

@@ -1,11 +1,11 @@
 <div class='row' id='item-fields' style="<%= set_style(!listing.is_category_type?('item')) %>">
   <div class='span3'>
     <%= f.label :item_color, 'Color(s)', class: 'med-top' %>
-    <%= f.text_field :item_color, value: listing.item_color, placeholder: 'Enter item_color(s)' %>
+    <%= f.text_field :item_color, value: listing.item_color, size: 30, placeholder: 'Enter item_color(s)' %>
   </div>
   <div class='span2'>
     <%= f.label :item_size2, 'Size(s)', class: 'med-top' %>
-    <%= f.text_field :item_size2, value: listing.item_size2, placeholder: 'Ex. 40 lbs.' %>
+    <%= f.text_field :item_size2, value: listing.item_size2, size: 30, placeholder: 'Ex. 40 lbs.' %>
   </div>
 </div>
 

@@ -36,7 +36,7 @@ module StripePayment
     rescue Stripe::APIConnectionError => e
       process_error txn, e
     rescue Stripe::StripeError => e
-      ExceptionNotifier::Notifier.exception_notification('StripeError', e).deliver if Rails.env.production? || Rails.env.staging?
+      ExceptionNotifier::Notifier.exception_notification('StripeError', e).deliver if Rails.env.production? || Rails.env.staging? || Rails.env.demo?
       process_error txn, e
     rescue => e
       process_error txn, e
