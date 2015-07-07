@@ -212,7 +212,7 @@ function resizeElement(item, i, origSz, hFlg) {
 // set default item size based on window size
 function set_item_size (origSize, wFlg) {
   var width = $(window).width();
-  var col = !wFlg ? origSize : '85%';
+  var col = !wFlg ? origSize : setViewPort();
 
   if(width < 1200 && width >= 980) {
     col = !wFlg ? 160 : '70%';
@@ -227,6 +227,10 @@ function set_item_size (origSize, wFlg) {
     col = !wFlg ? 100 : '50%';
   }
   return col;
+}
+
+function setViewPort() {
+  return ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) ? '80%' : '85%';
 }
 
 // set default item size based on window size
