@@ -95,7 +95,7 @@ class PictureProcessor
   def image_options
     case @pic.imageable_type 
     when 'User', 'Site'
-      { styles: { :medium => "180x180>", :thumb => "125x125>", :small => "60x60>", :tiny => "30x30>", :cover => "1280x200!" }}
+      { styles: { :medium => "180x180!", :thumb => "125x125>", :small => "60x60>", :tiny => "30x30>", :cover => "1280x200!" }}
     when 'Category'
       { styles: { :medium => "180x180>", :thumb => "125x125>", :small => "60x60>", :tiny => "30x30>"}} 
     when 'Listing', 'TempListing'
