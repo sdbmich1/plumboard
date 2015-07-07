@@ -5,6 +5,6 @@
   <%= f.hidden_field 'user_id', value: @user.id %>
   <div id="cmnt_content">
     <%= f.text_area 'content', placeholder: 'Add a comment to item...', class: 'span5', required: true %>  
-    <%= f.submit 'Send', class: 'span1 btn btn-small btn-primary', data: {disable_with: 'Sending...'} %>
+    <%= f.submit 'Send', class: 'btn btn-small btn-primary', data: {disable_with: 'Sending...'} %>
   </div>
 <% end %>

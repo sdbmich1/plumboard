@@ -8,9 +8,9 @@ class ListingsController < ApplicationController
   before_filter :load_job, only: [:career]
   before_filter :pxb_url, only: [:biz, :member] 
   before_filter :load_url_data, only: [:biz, :member, :career]
+  after_filter :set_session, only: [:show]
   after_filter :set_location, only: [:biz, :member]
   after_filter :add_points, only: [:show, :biz, :member]
-  after_filter :set_session, :load_comments, only: [:show]
   respond_to :html, :json, :js, :mobile, :csv
   layout :page_layout
 
@@ -20,7 +20,7 @@ class ListingsController < ApplicationController
   end
 
   def show
-    respond_with(@listing)
+    @comments = @listing.comments.paginate(page: @page, per_page: PIXI_COMMENTS) rescue nil
   end
 
   def update
@@ -78,11 +78,9 @@ class ListingsController < ApplicationController
   end
 
   def biz
-    respond_with(@listings)
   end
 
   def member
-    respond_with(@listings)
   end
 
   protected
@@ -101,10 +99,6 @@ class ListingsController < ApplicationController
 
   def add_points
     PointManager::add_points @user, 'vpx' if signed_in?
-  end
-
-  def load_comments
-    @comments = @listing.comments.paginate(page: @page, per_page: PIXI_COMMENTS) rescue nil
   end
 
   def load_pixi

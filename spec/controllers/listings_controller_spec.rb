@@ -360,7 +360,7 @@ describe ListingsController do
       @comments = mock('comments')
       Listing.stub_chain(:find_pixi).with('1').and_return( @listing )
       @listing.stub_chain(:comments, :build).and_return( @comments )
-      controller.stub!(:load_comments).and_return(@comments)
+      # controller.stub!(:load_comments).and_return(@comments)
       controller.stub!(:add_points).and_return(:success)
     end
 
