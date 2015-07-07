@@ -67,7 +67,7 @@ module UsersHelper
 
   # render user tooltip based on image type
   def show_user_tooltip val
-    txt = cover_photo?(val) ? 'For best results, use a 1280x200 image.' : 'Upload your photo or logo.'
+    txt = cover_photo?(val) ? 'For best results, use a 1280x200 image.' : 'For best results, use a square image (i.e. 200x200) of your photo or logo.'
     content_tag(:div, render(partial: 'shared/tooltip', locals: { msg: txt }), class: 'right-form px-neg-top')
   end
 

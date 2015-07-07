@@ -40,7 +40,7 @@ class ListingQueryProcessor
   end
 
   def get_data flg, params
-    is_temp? ? TempListing.where(params) : Listing.where(params)
+    is_temp? ? TempListing.include_list.where(params) : Listing.include_list.where(params)
   end
 
   def exec_query flg, params

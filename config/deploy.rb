@@ -12,7 +12,7 @@ set :assets_role, [:app, :worker]
 load "deploy/assets"
 
 # set stages
-set :stages, %w(production staging demo)
+set :stages, %w(production staging)
 set :default_stage, "production"
 
 set :rails_env, Rubber.env
@@ -65,7 +65,7 @@ set :keep_releases, 5
 set :push_instance_config, true
 
 # don't waste time bundling gems that don't need to be there 
-set :bundle_without, [:development, :test, :staging, :demo] if Rubber.env == 'production'
+set :bundle_without, [:development, :test, :staging] if Rubber.env == 'production'
 
 # set whenever command
 set :whenever_command, "bundle exec whenever"
@@ -174,6 +174,7 @@ namespace :files do
     upload("#{rails_root}/config/aws.yml", "#{release_path}/config/aws.yml", :via => :scp)
     upload("#{rails_root}/config/api_keys.yml", "#{release_path}/config/api_keys.yml")
     upload("#{rails_root}/config/pixi_keys.yml", "#{release_path}/config/pixi_keys.yml")
+    upload("#{rails_root}/config/pxb_home_page.yml", "#{release_path}/config/pxb_home_page.yml")
     upload("#{rails_root}/config/gateway.yml", "#{release_path}/config/gateway.yml")
     upload("#{rails_root}/config/sendmail.yml", "#{release_path}/config/sendmail.yml")
     upload("#{rails_root}/config/thinking_sphinx.yml", "#{release_path}/config/thinking_sphinx.yml")
@@ -200,15 +201,7 @@ namespace :whenever do
   desc "Update the crontab file for the Whenever Gem."
   task :update_crontab, :roles => [:app] do
     puts "\n\n=== Updating the Crontab! ===\n\n"
-    run "cd #{release_path} && #{whenever_command} --update-crontab #{application}" 
-  end    
-end
-
-namespace :pxb do    
-  desc "Update the PXB server data."
-  task :update_server, :roles => [:app] do
-    puts "\n\n=== Updating the Server Database! ===\n\n"
-    run "cd #{latest_release} && RAILS_ENV=#{rails_env} rake manage_server:run_update_tasks"
+    run "cd #{release_path} && #{whenever_command} --update-crontab" 
   end    
 end
 
@@ -253,5 +246,5 @@ end
 
 # Delayed Job  
 after "deploy:stop",    "delayed_job:stop"  
-after "deploy:start",   "delayed_job:start", "whenever:update_crontab", "pxb:update_server"  
-after "deploy:restart"
+after "deploy:start",   "delayed_job:start"  
+after "deploy:restart", "sphinx:symlink_indexes" #, "sphinx:configure", "sphinx:rebuild", "whenever:update_crontab"

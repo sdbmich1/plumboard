@@ -1,15 +1,15 @@
 <div class='row' id='vehicle-fields' style="<%= set_style(!listing.is_category_type?('vehicle')) %>">
   <div class='span2'>
     <%= f.label :car_id, 'VIN #', class: 'med-top' %>
-    <%= f.text_field :car_id, value: listing.car_id, size: 16, placeholder: 'Enter VIN #' %>
+    <%= f.text_field :car_id, value: listing.car_id, size: 16, maxlength: 16, placeholder: 'Enter VIN #' %>
   </div>
   <div class='span3'>
     <%= f.label :car_color, 'Color', class: 'med-top' %>
-    <%= f.text_field :car_color, value: listing.car_color, size: 30, placeholder: 'Enter Color' %>
+    <%= f.text_field :car_color, value: listing.car_color, size: 30, maxlength: 30, placeholder: 'Enter Color' %>
   </div>
   <div class='span2'>
     <%= f.label :mileage, 'Mileage', class: 'med-top' %>
-    <%= f.text_field :mileage, value: listing.mileage, size: 10, placeholder: 'Ex. 75,000' %>
+    <%= f.text_field :mileage, value: listing.mileage, size: 10, maxlength: 10, placeholder: 'Ex. 75,000' %>
   </div>
 </div>
 

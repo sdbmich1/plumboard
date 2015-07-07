@@ -5,8 +5,8 @@ class InvoicesController < ApplicationController
   skip_authorize_resource :only => [:autocomplete_user_first_name]
   before_filter :load_data, only: [:index, :sent, :received, :new, :show, :edit]
   before_filter :load_invoice, only: [:show, :edit, :update, :destroy, :remove, :decline]
+  before_filter :mark_message, only: [:new, :show, :edit]
   before_filter :set_params, only: [:create, :update]
-  after_filter :mark_message, only: [:new, :show, :edit]
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name
   respond_to :html, :js, :json, :mobile
   layout :page_layout
@@ -88,7 +88,7 @@ class InvoicesController < ApplicationController
   end
 
   def load_data
-    @page, @cid = params[:page] || 1, params[:cid]
+    @page = params[:page] || 1
   end
 
   def load_invoice
@@ -105,6 +105,6 @@ class InvoicesController < ApplicationController
   end
 
   def mark_message
-    ControllerManager::mark_message @cid, @user if @cid
+    ControllerManager::mark_message params[:cid], @user if params[:cid]
   end
 end

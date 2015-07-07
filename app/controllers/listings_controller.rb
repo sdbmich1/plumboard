@@ -135,7 +135,7 @@ class ListingsController < ApplicationController
   end
 
   def status
-    @status.to_sym
+    @status.to_sym rescue :active
   end
 
   def is_active?

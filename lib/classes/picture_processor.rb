@@ -95,13 +95,13 @@ class PictureProcessor
   def image_options
     case @pic.imageable_type 
     when 'User', 'Site'
-      { styles: { :medium => "180x180#", :thumb => "125x125>", :small => "60x60>", :tiny => "30x30>", :cover => "1280x200#" }}
+      { styles: { :medium => "180x180>", :thumb => "125x125>", :small => "60x60>", :tiny => "30x30>", :cover => "1280x200!" }}
     when 'Category'
-      { styles: { :medium => "180x180#", :thumb => "125x125>", :small => "60x60>", :tiny => "30x30>"}} 
+      { styles: { :medium => "180x180>", :thumb => "125x125>", :small => "60x60>", :tiny => "30x30>"}} 
     when 'Listing', 'TempListing'
       { styles: { :large => "550x450>", :preview => "200x200>", :medium => "180x180>", :thumb => "125x125>", :small => "60x60>", :tiny => "30x30>"}}
     else
-      { styles: { :large => "550x450>", :medium => "180x180#", :thumb => "125x125>", :small => "60x60>", :tiny => "30x30>"}}
+      { styles: { :large => "550x450>", :medium => "180x180>", :thumb => "125x125>", :small => "60x60>", :tiny => "30x30>"}}
     end
   end
 end

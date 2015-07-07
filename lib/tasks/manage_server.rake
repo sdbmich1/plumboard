@@ -151,6 +151,8 @@ namespace :manage_server do
     Rake::Task[:load_feeds].execute
     Rake::Task[:load_fulfillment_types].execute
     Rake::Task[:update_site_images].execute :file_name => "region_image_data_051415.csv"
+    Rake::Task[:import_other_sites].execute :file_name => "country_site_data_012815.csv", :org_type => "country"
+    Rake::Task["db:load_countries"].invoke
     Rake::Task["db:update_cat_types"].invoke
     Rake::Task["db:load_user_status"].invoke
     Rake::Task["db:reload_pixi_posts"].invoke

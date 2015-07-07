@@ -136,4 +136,8 @@ module TempListingsHelper
       render partial: 'shared/item_purchase', locals: {listing: listing} if chargeable? listing 
     end
   end
+
+  def set_draft_partial aFlg
+    aFlg ? 'shared/manage_pixis' : 'shared/mypixis_list'
+  end
 end
