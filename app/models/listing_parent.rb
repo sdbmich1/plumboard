@@ -20,8 +20,6 @@ class ListingParent < ActiveRecord::Base
 	:event_start_time, :event_end_time, :explanation, :contacts_attributes, :repost_flg, :mileage, :other_id, :condition_type_code,
 	:color, :quantity, :item_type, :item_size, :bed_no, :bath_no, :term, :avail_date
 
-  attr_accessor :skip_approval_email
-
   belongs_to :user, foreign_key: :seller_id
   belongs_to :site
   belongs_to :category

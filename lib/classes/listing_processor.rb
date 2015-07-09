@@ -74,7 +74,7 @@ class ListingProcessor < ListingDataProcessor
       # update points & send message
       PointManager::add_points @listing.user, ptype if @listing.user
       SystemMessenger::send_message @listing.user, @listing, val rescue nil
-      UserMailer.delay.send_approval(@listing) unless @listing.skip_approval_email
+      UserMailer.delay.send_approval(@listing) if @listing.user.active?
 
       # remove temp pixi
       delete_temp_pixi @listing.pixi_id unless @listing.repost_flg

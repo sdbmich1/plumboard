@@ -130,12 +130,11 @@ class LoadNewsFeed
       unless Listing.exists?({title: title})
         start_date, end_date = get_start_and_end_dates(n)
         if start_date && end_date && start_date.to_date >= Date.today
-          if (price = get_price(n)) > 0
-            if (description = process_description(get_description(n), n))
-              attrs = get_event_attrs(title, description, price, start_date, end_date, n)
-              LoadNewsFeed.delay(queue: "feeds").add_event_job(self.class, get_attrs, attrs, @item_xpath[n].text,
-                @description_xpath[n].text, get_img_loc_text(n))
-            end
+          price = get_price(n)
+          if (description = process_description(get_description(n), n))
+            attrs = get_event_attrs(title, description, price, start_date, end_date, n)
+            LoadNewsFeed.delay(queue: "feeds").add_event_job(self.class, get_attrs, attrs, @item_xpath[n].text,
+              @description_xpath[n].text, get_img_loc_text(n))
           end
         end
       end
@@ -161,8 +160,7 @@ class LoadNewsFeed
       new_event.seller_id = user.id
       new_event.status = "approved"
       lnf_obj.add_image(new_event.pictures.build, img_loc_text)
-      if new_event.pictures.first.save && new_event.pictures.first.photo?
-        new_event.skip_approval_email = true
+      if new_event.pictures.first.save && new_event.pictures.first.photo? 
         begin
           saved_event = new_event.save
         rescue ActiveRecord::StatementInvalid    # see collation error note above
@@ -170,11 +168,9 @@ class LoadNewsFeed
         end
         if saved_event
           begin
-            event_listing = TempListingProcessor.new(new_event).post_to_board
-            event_listing.skip_approval_email = false
+            TempListingProcessor.new(new_event).post_to_board
           rescue ActiveRecord::StatementInvalid
           end
-          new_event.skip_approval_email = false
         end
       end
     end
