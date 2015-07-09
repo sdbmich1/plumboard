@@ -135,7 +135,7 @@ class UserProcessor
   def set_flds
     @user.description = nil unless @user.description.blank?
     @user.user_type_code = 'MBR' if @user.user_type_code.blank?
-    @user.user_url, @user.status = @user.name, 'active' unless @user.guest?
+    @user.user_url, @user.status = @user.name, 'active' if @user.status.blank? && !@user.guest?
   end
 
   # convert date/time display

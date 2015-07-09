@@ -10,6 +10,11 @@ Irvine,CA,Orange
 Glendale,CA,Los Angeles
 Huntington Beach,CA,Orange
 Santa Clarita,CA,Los Angeles
+Beverly Hills,CA,Los Angeles
+Chino Hills,CA,Riverside
+Malibu,CA,Los Angeles
+Manhattan Beach,CA,Los Angeles
+Santa Monica,CA,Los Angeles
 Arlington Heights,IL,Cook
 Berwyn,IL,Cook
 Cicero,IL,Cook
@@ -34,7 +39,7 @@ Philadelphia,PA,Philadelphia
 Reading,PA,Berks
 Camden,NJ,Camden
 Wilmington,DE,New Castle
-Washington,D.C.
+Washington,D.C.,
 Fort Lauderdale,FL,Broward
 Hialeah,FL,Miami-Dade
 Pembroke Pines,FL,Broward
@@ -138,9 +143,9 @@ Georgetown,TX,Williamson
 Murfreesboro,TN,Rutherford
 Franklin,TN,Williamson
 Hendersonville,TN,Sumner
-Norfolk,VA
-Chesapeake,VA
-Newport News,VA
+Norfolk,VA,
+Chesapeake,VA,
+Newport News,VA,
 Warwick,RI,Kent
 Cranston,RI,Providence
 Racine,WI,Racine
@@ -157,11 +162,11 @@ Edmond,OK,Oklahoma
 Noble,OK,Cleveland
 Anchorage,KY,Jefferson
 Audubon Park,KY,Jefferson
-Petersburg,VA
+Petersburg,VA,
 Hopewell,VA,Prince George
-Colonial Heights,VA
-Kenner,LA
-Metairie,LA
+Colonial Heights,VA,
+Kenner,LA,
+Metairie,LA,
 Avon,CT,Hartford
 Berlin,CT,Hartford
 Durham,NC,Durham

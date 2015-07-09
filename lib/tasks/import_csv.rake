@@ -162,7 +162,7 @@ end
 # loads neighborhoods of top 50 cities in US
 task :load_neighborhoods => :environment do
 
-   CSV.foreach(Rails.root.join('db', 'DMA_50_neighborhoods_transposed.csv'), :headers => false) do |row|
+    CSV.foreach(Rails.root.join('db', 'DMA_50_neighborhoods_transposed.csv'), :headers => false) do |row|
    
       # converting the row to an array by splitting ','
       row_array = row.split(',');
@@ -174,12 +174,11 @@ task :load_neighborhoods => :environment do
       county = row[2]
       
       # iterating through the elements of the neighborhoods and setting them to area 
-      for element in row[3..row.length]    
+      for area in row[3..row.length]    
           # Testing code
           #puts "Inside the for loop"
           
-          area = element
-      
+        unless area.blank?
           # setting site attributes
           attrs = {
             :name        => [city, area].join(' - '),
@@ -196,21 +195,22 @@ task :load_neighborhoods => :environment do
           }
           
           # add site
-          unless site = Site.where(:name => row[0]).first
+          unless site = Site.where(:name => attrs[:name]).first
             new_site = Site.new(attrs)
       
-          # add contact info for site
-          new_site.contacts.build(loc_attrs)
+            # add contact info for site
+            new_site.contacts.build(loc_attrs)
       
-          # save site
-          if new_site.save 
-            puts "Saved site #{attrs.inspect}"
-          else
-            puts new_site.errors
+            # save site
+            if new_site.save 
+              puts "Saved site #{attrs.inspect}"
+            else
+              puts new_site.errors
+            end
           end
+        end
       end
     end
-  end
 end
   
 # method used by tasks to load cities
@@ -244,7 +244,7 @@ def load_cities(row)
       if new_site.save
         puts "Saved site #{attrs.inspect}"
       else
-        puts new_site.errors
+        puts "Error: #{new_site.errors.full_messages.first}\nCity: #{city}"
       end
   end
 end
@@ -252,10 +252,7 @@ end
 # loads top 50 cities in US
 task :load_top_50_cities => :environment do
   CSV.foreach(Rails.root.join('db', 'DMA_50_neighborhoods_transposed.csv'), :headers => false) do |row|
-
-    # converting the row to an array by splitting ','
-    row_array = row.split(',');
-    load_cities(row_array)
+    load_cities(row)
   end
 end
 

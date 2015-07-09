@@ -50,7 +50,6 @@ class ListingDataProcessor < ListingQueryProcessor
   def update_fields listing, tmpFlg
     listing.assign_attributes(get_attr(tmpFlg), :without_protection => true) 
     listing.status = 'active'
-    listing.skip_approval_email = @listing.skip_approval_email
     listing
   end
 
