@@ -1,13 +1,18 @@
 // when the user type field changes
 $(document).on("change", "#ucode", function(e){
   var fldList = '#user_gender, #user_birth_date_1i, #user_birth_date_2i, #user_birth_date_3i';
-  var bus_flds = '#bus_code, #user_business_name, #bus_url';
+  var bus_flds = '#bus_code, #user_business_name';
   var utype = $(this).val().toLowerCase();
   var uid = $('#uid').val();
+
+  if($('#signupDialog').length == 0) 
+    bus_flds += ', #bus_url';
+
   if(utype.match(/^bus/) != null) {
     //var txt = uid.length > 0 ? '#bus_url,' : ''; 
     toggleBusFlds('#mbr_code, #gender_code, '+fldList, '#user_description, '+bus_flds, fldList, true);
-    $("[name='user[url]']").attr('required', 'required');
+    if($('#signupDialog').length == 0) 
+      $("[name='user[url]']").attr('required', 'required');
   }  
   else {
     toggleBusFlds(bus_flds, '#mbr_code, #gender_code, '+fldList, '#user_description, '+bus_flds, false);

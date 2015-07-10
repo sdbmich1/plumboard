@@ -148,7 +148,9 @@ namespace :manage_server do
     Rake::Task[:import_travel_modes].execute
     Rake::Task[:import_user_type].execute
     Rake::Task[:load_org_types].execute
+    Rake::Task[:load_event_types].execute
     Rake::Task[:load_feeds].execute
+    Rake::Task[:load_neighborhoods].execute
     Rake::Task[:load_fulfillment_types].execute
     Rake::Task[:update_site_images].execute :file_name => "region_image_data_051415.csv"
     Rake::Task[:import_other_sites].execute :file_name => "country_site_data_012815.csv", :org_type => "country"

@@ -12,7 +12,7 @@ set :assets_role, [:app, :worker]
 load "deploy/assets"
 
 # set stages
-set :stages, %w(production staging)
+set :stages, %w(production staging demo)
 set :default_stage, "production"
 
 set :rails_env, Rubber.env

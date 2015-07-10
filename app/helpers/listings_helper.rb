@@ -634,7 +634,7 @@ module ListingsHelper
   end
 
   def show_listing listing, flg
-    render partial: 'shared/show_listing', locals: {listing: listing, edit_mode: flg} if listing
+    render partial: 'shared/view_listing', locals: {listing: listing, edit_mode: flg} if listing
   end
 
   def get_header_cls listing
