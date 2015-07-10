@@ -842,6 +842,10 @@ describe User do
       user.guest = true  
       expect{ user.save }.not_to change{ user.status } 
     end
+    it 'does not set status for inactive users' do
+      user.status = 'inactive'  
+      expect{ user.save }.not_to change{ user.status } 
+    end
   end
 
   describe 'primary_address', address: true do
