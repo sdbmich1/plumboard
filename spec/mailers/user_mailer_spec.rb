@@ -58,6 +58,10 @@ describe UserMailer do
     it 'assigns message body' do
       expect(subject.body.encoded).to match("approved")
     end
+
+    it 'assigns user_url' do
+      expect(subject.body.encoded).to match(listing.seller_url)
+    end
   end
 
   describe "send_repost" do

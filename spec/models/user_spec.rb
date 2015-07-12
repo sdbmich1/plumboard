@@ -754,6 +754,10 @@ describe User do
       user.save!
       expect(user.url).to eq user.business_name.gsub!(/\s+/, "").downcase
     end
+
+    it 'shows full url path' do
+      expect(@user.user_url).to eq 'localhost:3000/mbr/' + @user.url
+    end
   end
 
   describe 'code_type' do

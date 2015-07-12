@@ -1,4 +1,5 @@
 module UsersHelper
+  include ProcessMethod
 
   # toggle boolean to string
   def toggle_bool val

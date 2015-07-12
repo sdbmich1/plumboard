@@ -26,4 +26,18 @@ module ProcessMethod
     'listings.id, listings.title, listings.pixi_id, listings.price, listings.quantity, listings.site_id, listings.category_id,
       listings.job_type_code, listings.event_type_code'
   end
+
+  # get host
+  def self.get_host
+    case Rails.env
+    when 'test', 'development'
+      "localhost:3000"
+    when 'demo'
+      "demo.pixiboard.com"
+    when 'staging'
+      "test.pixiboard.com"
+    else
+      PIXI_WEB_SITE
+    end
+  end
 end

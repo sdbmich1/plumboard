@@ -1,5 +1,5 @@
 module ListingsHelper
-  include RatingManager
+  include RatingManager, ProcessMethod
 
   # format time
   def get_local_time(tm)
@@ -119,16 +119,7 @@ module ListingsHelper
 
   # get host
   def get_host
-    case Rails.env
-    when 'test', 'development'
-      "localhost:3000"
-    when 'demo'
-      "demo.pixiboard.com"
-    when 'staging'
-      "test.pixiboard.com"
-    else
-      PIXI_WEB_SITE
-    end
+    ProcessMethod::get_host
   end
    
   # set absolute url for current pixi

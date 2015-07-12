@@ -125,7 +125,7 @@ class ListingsController < ApplicationController
   end
 
   def set_location
-    session[:back_to] = request.fullpath
+    session[:back_to] = request.fullpath.split('?')[0] rescue nil
   end
 
   def status

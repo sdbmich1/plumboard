@@ -1,5 +1,5 @@
 class UserProcessor
-  include LocationManager, PointManager, ImageManager, NameParse
+  include LocationManager, PointManager, ImageManager, NameParse, ProcessMethod
 
   def initialize usr
     @user = usr
@@ -156,7 +156,7 @@ class UserProcessor
   end
 
   def url_str
-    ['https://pixiboard.com/', get_mbr_type, '/'].join('')
+    [ProcessMethod::get_host, '/', get_mbr_type, '/'].join('')
   end
 
   # getter for url

@@ -318,6 +318,22 @@ describe Listing do
       expect(@listing.seller_email).not_to eq(@user.email)
     end
 
+    context "seller_first_name" do
+      it { expect(@listing.seller_first_name).to eq(@user.first_name) } 
+      it "does not find seller first_name" do 
+        @listing.seller_id = 100 
+        expect(@listing.seller_first_name).not_to eq(@user.first_name)
+      end
+    end
+
+    context "seller_url" do
+      it { expect(@listing.seller_url).to eq(@user.user_url) } 
+      it "does not find seller url" do 
+        @listing.seller_id = 100 
+        expect(@listing.seller_url).not_to eq(@user.user_url)
+      end
+    end
+
     it { @listing.seller_photo.should_not be_nil } 
     it 'does not return seller photo' do 
       @listing.seller_id = 100 

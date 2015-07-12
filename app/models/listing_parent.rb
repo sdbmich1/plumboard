@@ -284,6 +284,11 @@ class ListingParent < ActiveRecord::Base
     user.email rescue nil
   end
 
+  # get seller url for a listing
+  def seller_url
+    user.user_url rescue nil
+  end
+
   # check if sold by business
   def sold_by_business? 
     user.is_business? rescue false
