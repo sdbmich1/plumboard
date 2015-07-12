@@ -265,5 +265,7 @@ def reset_user_types
 end
 
 def reset_user_acct_token
+  CardAccount.destroy_all
+  BankAccount.destroy_all
   User.where("acct_token IS NOT NULL").update_all(acct_token: nil)
 end
