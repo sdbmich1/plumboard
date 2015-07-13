@@ -136,12 +136,12 @@ class ListingParent < ActiveRecord::Base
 
   # eager load assns
   def self.include_list
-    includes(:pictures, :site, :category, :job_type, :contacts, :user)
+    includes(:pictures, :category, :job_type, :user, :site => [:contacts])
   end
 
   # leaves out job_type to avoid unused eager loading
   def self.include_list_without_job_type
-    includes(:pictures, :site, :category, :contacts, :user)
+    includes(:pictures, :site, :category, :user)
   end
 
   # find listings by status
