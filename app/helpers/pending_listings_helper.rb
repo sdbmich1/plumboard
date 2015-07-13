@@ -1,8 +1,9 @@
 module PendingListingsHelper
+  include ProcessMethod
 
   # set absolute url for current pending pixi
   def get_pending_listing_url
-    Rails.application.routes.url_helpers.pending_listing_url(@listing, :host => get_host)
+    Rails.application.routes.url_helpers.pending_listing_url(@listing, :host => ProcessMethod::get_host)
   end
 
 end

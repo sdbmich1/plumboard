@@ -433,4 +433,23 @@ module ApplicationHelper
   def my_site_link
     content_tag(:li, link_to("My Site", @user.local_user_path)) if @user.is_business? || @user.is_member?
   end
+
+  def show_border_image model, display_cnt, file_name, psize
+    cls = display_cnt == 0 ? file_name : 'pic-frame'
+    content_tag(:div, image_tag(get_pixi_image(model.pictures[0]), :size => psize, class: 'img-zoom'), class: cls)
+  end
+
+  def process_show_photo_image model, display_cnt, file_name, psize
+    if display_cnt < 2
+      show_border_image model, display_cnt, file_name, psize
+    elsif display_cnt > 2
+      image_tag(get_pixi_image(model.pictures[0]), class: file_name)
+    else
+      render partial: 'shared/photos', locals: {model: model, psize: psize }
+    end
+  end
+
+  def show_photo model, display_cnt, file_name, psize
+    process_show_photo_image model, display_cnt, file_name, psize if picture_exists? model
+  end
 end
