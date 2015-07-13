@@ -418,7 +418,11 @@ module ListingsHelper
 
   # display correct image based on model type
   def show_view_image model, pix_size, img_size
-    render partial: 'shared/show_photo', locals: {model: model, psize: '180x180', file_name: img_size, display_cnt: 0}
+    if !action_name.match(/index|seller|pixter/).nil?
+      render partial: 'shared/show_photo', locals: {model: model, psize: '180x180', file_name: img_size, display_cnt: 0}
+    else
+      view_pixi_image model, pix_size, (model.is_a?(User) ? model.local_user_path : listing_path(model))
+    end
   end
 
   def view_pixi_image model, pix_size, path
