@@ -327,7 +327,7 @@ describe Listing do
     end
 
     context "seller_url" do
-      it { expect(@listing.seller_url).to eq(@user.user_url) } 
+      it { expect(@listing.seller_url).to eq(['http:',@user.user_url].join('//')) } 
       it "does not find seller url" do 
         @listing.seller_id = 100 
         expect(@listing.seller_url).not_to eq(@user.user_url)

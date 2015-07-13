@@ -32,10 +32,8 @@ module ProcessMethod
     case Rails.env
     when 'test', 'development'
       "localhost:3000"
-    when 'demo'
-      "demo.pixiboard.com"
-    when 'staging'
-      "test.pixiboard.com"
+    when 'demo', 'staging'
+      [Rails.env, PIXI_WEB_SITE].join('.')
     else
       PIXI_WEB_SITE
     end

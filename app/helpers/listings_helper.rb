@@ -699,8 +699,10 @@ module ListingsHelper
 
   # display name of buyer if sold
   def toggle_buyer_name_row status, listing
-    name = listing.invoices.first.buyer_name rescue ''
-    content_tag(:td, name, class: 'span2') if status == 'sold'
+    if status == 'sold'
+      name = listing.invoices.first.buyer_name rescue ''
+      content_tag(:td, name, class: 'span2') 
+    end
   end
 
   def show_recent_link rFlg

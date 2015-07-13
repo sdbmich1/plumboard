@@ -286,7 +286,7 @@ class ListingParent < ActiveRecord::Base
 
   # get seller url for a listing
   def seller_url
-    user.user_url rescue nil
+    ['http:', user.user_url].join('//') rescue nil
   end
 
   # check if sold by business

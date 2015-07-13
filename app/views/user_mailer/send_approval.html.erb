@@ -9,9 +9,9 @@
         Good news!  Your pixi has been <%= approve_type(@listing, false) %> on Pixiboard. Check it out at:<br><br>
 		<%= get_url(@listing) %> <br><br>
         Now what?  Well, you can wait and see if someone finds your item or
-        you can get out and spread the word.  Share your items on Facebook,
-        Pinterest, Twitter, or other social media.  It is easy to do.
-
+        you can get out and spread the word.  Share your private link with all your pixis at:
+		<%= @listing.seller_url %> <br><br>
+	Or, share your items on Facebook, Pinterest, Twitter, or other social media.  It is easy to do.
         <br>
         <ol>
             <li>
@@ -24,9 +24,6 @@
                 Fill out their form and submit
             </li>
         </ol>
-
-	Or, share your private link with all your pixis at:
-		<%= @listing.seller_url %> 
 
         Either way, you are one step closer to the sale!
         <br><br>
