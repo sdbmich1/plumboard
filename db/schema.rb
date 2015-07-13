@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150630151141) do
+ActiveRecord::Schema.define(:version => 20150713011645) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -772,6 +772,7 @@ ActiveRecord::Schema.define(:version => 20150630151141) do
   end
 
   add_index "sites", ["institution_id"], :name => "index_organizations_on_institution_id"
+  add_index "sites", ["name"], :name => "index_sites_on_name"
   add_index "sites", ["status", "org_type"], :name => "index_sites_on_status_and_org_type"
 
   create_table "sites_temp_listings", :id => false, :force => true do |t|
