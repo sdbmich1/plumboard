@@ -16,7 +16,7 @@ class UserObserver < ActiveRecord::Observer
     # set role if user type changes
     if usr.user_type_code_changed?
       case usr.user_type_code
-        when 'PX'; role = 'editor'
+        when 'PX', 'ED'; role = 'editor'
         when 'PT'; role = 'pixter'
         when 'AD'; role = 'admin'
         when 'SP'; role = 'support'

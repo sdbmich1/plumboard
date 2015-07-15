@@ -38,7 +38,7 @@ module UsersHelper
 
   # toggle title
   def set_user_title
-    @user.is_admin? ? @usr.name : 'Settings' rescue 'Users'
+    @user.is_admin? ? @usr.name.html_safe : 'Settings' rescue 'Users'
   end
 
   # toggle user info form

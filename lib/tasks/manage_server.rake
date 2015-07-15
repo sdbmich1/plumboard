@@ -144,6 +144,22 @@ namespace :manage_server do
     LoadNewsFeed.read_feeds
   end
 
+  # used to migrate 1.0 users to 2.0 business accounts
+  task :setup_bus_accts => :environment do
+    CSV.foreach(Rails.root.join('db', 'pxb_bus_acct_071415.csv'), :headers => true) do |row|
+      if user = User.where(email: row[0]).first 
+        user.business_name, user. user_type_code = row[1], 'BUS'
+
+        # save user
+        if user.save 
+          puts "Saved user #{user.business_name}"
+        else
+          puts user.errors.first
+        end
+      end
+    end
+  end
+
   task :run_upgrade_tasks => :environment do
     Rake::Task[:import_travel_modes].execute
     Rake::Task[:import_user_type].execute
@@ -162,6 +178,7 @@ namespace :manage_server do
     Rake::Task["db:reload_pixi_posts"].invoke
     Rake::Task["db:load_active_listings_counter"].invoke
     Rake::Task["db:reload_user_types"].invoke
+    Rake::Task["manage_server:setup_bus_accts"].invoke
     Rake::Task["db:load_user_urls"].invoke
     Rake::Task["db:reset_acct_token"].invoke
     Rake::Task["manage_server:reprocess_user_images"].invoke
