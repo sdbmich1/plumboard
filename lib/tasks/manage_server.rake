@@ -113,7 +113,7 @@ namespace :manage_server do
   task :reprocess_listing_images => :environment do
     Listing.active.find_each do |pixi|
       pixi.pictures.each do |pic|
-        %w(preview medium large).each do |style|
+        %w(preview medium large tiny).each do |style|
           pic.photo.reprocess! style.to_sym
 	end
       end

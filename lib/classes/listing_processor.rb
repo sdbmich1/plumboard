@@ -156,5 +156,23 @@ class ListingProcessor < ListingDataProcessor
   def get_board_flds
     ProcessMethod::get_board_flds
   end
+
+  # display 'Buyer Name' if sold
+  def toggle_user_name_header status
+    case status
+    when 'sold', 'invoiced', 'wanted' then 'Buyer Name'
+    else 'Seller Name'
+    end
+  end
+
+  # display name of buyer if sold
+  def toggle_user_name_row status, listing
+    case status
+    when 'sold' then listing.invoices.where(status: 'paid').first.buyer_name
+    when 'invoiced' then listing.invoices.first.buyer_name
+    when 'wanted' then listing.pixi_wants.first.user.name
+    else listing.seller_name
+    end
+  end
 end
 

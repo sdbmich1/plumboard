@@ -187,6 +187,11 @@ describe Listing do
     it "should not return anything if no listings meet the parameters" do
       Listing.check_category_and_location('removed', 100, 900, true).should be_empty
     end
+
+    it "only returns necessary attributes" do
+      expect(Listing.check_category_and_location('active', nil, nil, true).first.title).to eq @listing.title
+      expect(Listing.check_category_and_location('active', nil, nil, true).first.attributes[:color]).to be_nil
+    end
   end
 
   describe "check_invoiced_category_and_location", main: true  do
@@ -205,6 +210,11 @@ describe Listing do
 
     it "should not return anything if no listings meet the parameters" do
       Listing.check_invoiced_category_and_location(100, 900).should be_empty
+    end
+
+    it "only returns necessary attributes" do
+      expect(Listing.check_invoiced_category_and_location(nil, nil).last.title).to eq @listing.title
+      expect(Listing.check_invoiced_category_and_location(nil, nil).last.attributes[:color]).to be_nil
     end
   end
 
@@ -800,6 +810,11 @@ describe Listing do
       expect(listing.is_saved?).to eq(false)
       expect(@listing.user_saved?(@usr)).not_to eq(true) 
     end
+
+    it "only returns necessary attributes" do
+      expect(Listing.saved_list(@user).first.title).to eq @listing.title
+      expect(Listing.saved_list(@user).first.attributes[:color]).to be_nil
+    end    
   end
 
   describe "send_saved_pixi_removed", process: true  do
@@ -880,6 +895,11 @@ describe Listing do
     it { expect(@listing.wanted_count).to eq(1) }
     it { expect(@listing.is_wanted?).to eq(true) }
     it { expect(Listing.wanted_list(@buyer, nil, nil, false).first.created_date.to_s).to eq(@pixi_want.updated_at.to_s) }
+
+    it "only returns necessary attributes" do
+      expect(Listing.wanted_list(@buyer, nil, nil, false).first.title).to eq(@listing.title)
+      expect(Listing.wanted_list(@buyer, nil, nil, false).first.attributes[:color]).to be_nil
+    end
 
     it "is not wanted" do
       listing = create(:listing, seller_id: @user.id, title: 'Hair brush') 
@@ -1539,6 +1559,10 @@ describe Listing do
     it "includes buyer listings", run: true do 
       expect(Listing.purchased(@invoice.buyer).size).to eq 2
     end
+    it "only returns necessary attributes", run: true do
+      expect(Listing.purchased(@invoice.buyer).last.title).to eq(@listing.title)
+      expect(Listing.purchased(@invoice.buyer).last.attributes[:color]).to be_nil
+    end
   end
 
   describe "sold_list", process: true  do 
@@ -1553,6 +1577,10 @@ describe Listing do
     it "includes sold listings", run: true do 
       @listing.save
       expect(Listing.sold_list.size).to eq 2
+    end
+    it "only returns necessary attributes", run: true do
+      expect(Listing.sold_list.last.title).to eq(@invoice.listings.first.title)
+      expect(Listing.sold_list.last.attributes[:color]).to be_nil
     end
   end
 

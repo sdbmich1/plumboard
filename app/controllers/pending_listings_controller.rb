@@ -52,6 +52,6 @@ class PendingListingsController < ApplicationController
   end
 
   def render_csv format
-    format.csv { send_data(render_to_string(csv: @unpaginated_listings), disposition: "attachment; filename=#{TempListing.filename(@status)}.csv") }
+    format.csv { send_data(render_to_string(csv: @unpaginated_listings, style: @status), disposition: "attachment; filename=#{Listing.filename @status}.csv") }
   end
 end
