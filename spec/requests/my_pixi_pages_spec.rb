@@ -62,6 +62,8 @@ feature "Listings" do
       date_column = "#{val.titleize} Date"
     end
     page.should have_content date_column
+    name_column = %w(sold invoiced wanted).include?(val) ? 'Buyer Name' :  'Seller Name'
+    page.should have_content name_column
     check_page_expectations str_arr, 'Listing'
     page.should_not have_content 'No pixis found.'
   end

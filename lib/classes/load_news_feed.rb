@@ -223,7 +223,6 @@ class LoadNewsFeed
 
   # Removes all \n or \t characters only at the start of the string
   def remove_leading_spaces(string)
-    index = -1
     for i in 0..string.size-1
       return string[i..-1] if string[i] != "\n" && string[i] != "\t"
     end

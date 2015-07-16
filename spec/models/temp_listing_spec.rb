@@ -406,6 +406,11 @@ describe TempListing do
       @temp_listing.save
       TempListing.draft.should_not include @temp_listing 
     end
+
+    it "only returns necessary attributes" do
+      expect(TempListing.draft.first.title).to eq @temp_listing.title
+      expect(TempListing.draft.first.attributes[:color]).to be_nil
+    end
   end
 
   describe "pixter", base: true  do 

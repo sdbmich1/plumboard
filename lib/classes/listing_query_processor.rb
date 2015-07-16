@@ -112,10 +112,27 @@ class ListingQueryProcessor
   end
 
   def get_by_status val
-    val == 'sold' ? Listing.sold_list : exec_query(val == "active", "status = '#{val}'")
+    table_name = is_temp? ? "temp_listings" : "listings"
+    if val == 'sold'
+      Listing.sold_list
+    else
+      select_fields("#{table_name}.updated_at").exec_query(val == "active", "#{table_name}.status = '#{val}'")
+    end
   end
 
   def is_temp?
     @listing.is_a?(TempListing) || @listing == TempListing
+  end
+
+  # select date provided (field_name)
+  def select_fields field_name
+    table_name = is_temp? ? 'temp_listings' : 'listings'
+    attrs = ["#{table_name}.id", "#{table_name}.pixi_id", "#{table_name}.title",
+             "#{table_name}.description", "#{table_name}.seller_id",
+             "#{table_name}.site_id", "#{table_name}.category_id",
+             "#{table_name}.lat", "#{table_name}.lng", "#{table_name}.status",
+             "#{table_name}.show_alias_flg", "#{table_name}.alias_name", "#{field_name} AS created_date"]
+    model = is_temp? ? TempListing : Listing
+    model.select(attrs).reorder('created_date DESC')
   end
 end

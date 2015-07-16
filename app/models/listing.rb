@@ -77,7 +77,8 @@ class Listing < ListingParent
 
   # get invoiced listings by status and, if provided, category and location
   def self.check_invoiced_category_and_location cid, loc
-    cid || loc ? active_invoices.get_by_city(cid, loc, true) : active_invoices
+    result = select_fields("listings.updated_at").active_invoices
+    cid || loc ? result.get_by_city(cid, loc, true) : result
   end
 
   # get invoice
@@ -209,7 +210,7 @@ class Listing < ListingParent
 
   # returns purchased pixis from buyer
   def self.purchased usr
-    select_fields('invoices.updated_at').joins(:invoices).where("invoices.buyer_id = ? AND invoices.status = ?", usr.id, 'paid').uniq
+    include_list.select_fields('invoices.updated_at').joins(:invoices).where("invoices.buyer_id = ? AND invoices.status = ?", usr.id, 'paid').uniq
   end
 
   # returns sold pixis from seller
@@ -230,7 +231,7 @@ class Listing < ListingParent
 
   # toggle get_by_seller call based on status
   def self.get_by_status_and_seller val, usr, adminFlg
-    val == 'sold' ? sold_list(usr) : get_by_seller(usr, val, adminFlg).get_by_status(val)
+    val == 'sold' ? sold_list(usr) : select_fields("listings.updated_at").get_by_seller(usr, val, adminFlg).get_by_status(val)
   end
 
   # refresh counter cache

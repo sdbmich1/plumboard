@@ -93,8 +93,7 @@ class ListingDataProcessor < ListingQueryProcessor
   # format date based on location
   def display_date dt, dFlg=true
     lat, lng, loc = @listing.lat, @listing.lng, @listing.site.contacts.first
-    # ll = lat && lat > 0 ? [lat, lng] : LocationManager::get_lat_lng_by_site(@listing.site_id)
-    ll = lat && lat > 0 ? [lat, lng] : [loc.lat, loc.lng]
+    ll = lat && lat > 0 ? [lat, lng] : ([loc.lat, loc.lng] rescue nil)
     ResetDate::display_date_by_loc dt, ll, dFlg rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
   end
 
@@ -157,8 +156,13 @@ class ListingDataProcessor < ListingQueryProcessor
     end
   end
 
-  # select date provided (field_name)
-  def select_fields field_name
-    Listing.select("listings.*, #{field_name} AS created_date").reorder("created_date DESC")
+  def as_csv(options={})
+    row = { "Title" => @listing.title, "Category" => @listing.category_name,
+      "Description" => @listing.description, "Location" => @listing.site_name }
+    header = ListingProcessor.new(@listing).toggle_user_name_header(@listing.status)
+    entry = ListingProcessor.new(@listing).toggle_user_name_row(@listing.status, @listing)
+    row[header] = entry
+    row[options[:style].titleize + " Date"] = @listing.display_date(@listing.created_date)
+    row
   end
 end
