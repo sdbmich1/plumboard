@@ -148,7 +148,7 @@ namespace :manage_server do
   task :setup_bus_accts => :environment do
     CSV.foreach(Rails.root.join('db', 'pxb_bus_acct_071415.csv'), :headers => true) do |row|
       if user = User.where(email: row[0]).first 
-        user.business_name, user. user_type_code = row[1], 'BUS'
+        user.business_name, user.user_type_code = row[1], 'BUS'
 
         # save user
         if user.save 

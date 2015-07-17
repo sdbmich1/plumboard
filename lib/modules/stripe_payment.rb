@@ -101,11 +101,11 @@ module StripePayment
   # get customer 
   def self.get_customer id, txn, slrFlg=false, token='', ip=''
     unless id.blank?
-      Rails.logger.info "PXB get_customer: #{id}"
+      Rails.logger.info "PXB get_customer by id: #{id}"
       customer = !slrFlg ? Stripe::Customer.retrieve(id) : Stripe::Account.retrieve(id) rescue nil
       customer = set_token txn, slrFlg, token, ip unless customer
     else
-      Rails.logger.info "PXB get_customer: #{token}"
+      Rails.logger.info "PXB get_customer by token: #{token}"
       customer = set_token txn, slrFlg, token, ip
     end
     # check_for_card customer, txn, token, slrFlg unless slrFlg
@@ -240,7 +240,7 @@ module StripePayment
 
   # delete stored card
   def self.delete_card token, model
-    customer = get_customer model.cust_token, model, false
+    customer = get_customer model.cust_token, model, true
     card = customer.sources.retrieve(model.card_token).delete() if customer
 
     rescue => ex
