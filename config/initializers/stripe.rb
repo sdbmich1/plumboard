@@ -5,6 +5,6 @@ STRIPE_PUBLIC_KEY = PMT_API_KEYS['stripe']['public_key']
 
 module Stripe
   def self.execute_request(opts)
-    RestClient::Request.execute(opts.merge(ssl_version: :TLSv1)) unless Rails.env.production?
+    RestClient::Request.execute(opts.merge(ssl_version: :TLSv1))
   end
 end
