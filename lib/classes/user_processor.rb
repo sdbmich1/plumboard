@@ -168,19 +168,28 @@ class UserProcessor
     ['/', get_mbr_type, '/', @user.url].join('') rescue nil
   end
 
-  # get active sellers by category and/or location
-  def get_seller_ids cat, loc
-    Listing.get_by_city(cat, loc).uniq.pluck(:seller_id)
+  def get_ids listings
+    listings.map(&:seller_id).uniq
   end
 
-  # get seller list based on category and location
-  def get_sellers cat, loc
-    User.includes(:pictures, :preferences).active.get_by_type('BUS').board_fields.where(id: get_seller_ids(cat, loc)).select {|usr| usr.reload.pixi_count > 1}
+  # get seller list based on current pixis
+  def get_sellers listings
+    User.includes(:pictures).get_by_type('BUS').board_fields.where(id: get_ids(listings)).select {|usr| usr.reload.pixi_count >= 2}
   end
 
   # get site name from zip
   def site_name
     LocationManager::get_loc_name nil, nil, @user.home_zip
+  end
+
+  def order_txt val
+    result = val.is_a?(Array) ? !val.detect{|x| x=='BUS'}.nil? : val.upcase == 'BUS' rescue false
+    txt = val && result ? 'business_name ASC' : 'first_name ASC'
+  end
+
+  # return users by type
+  def get_by_type val
+    val.blank? ? User.active : User.active.where(:user_type_code => val).order(order_txt(val))
   end
 
   # return users following seller_id

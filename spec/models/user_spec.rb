@@ -576,6 +576,11 @@ describe User do
       expect(User.get_by_type(['PX', 'PT'])).not_to be_empty
     end
 
+    it "includes pixans" do
+      @user.update_attribute(:user_type_code, 'BUS')
+      expect(User.get_by_type('BUS')).not_to be_empty
+    end
+
     it "includes all" do
       expect(User.get_by_type(nil)).not_to be_empty
     end
@@ -875,26 +880,28 @@ describe User do
       @site.contacts.create(FactoryGirl.attributes_for(:contact, address: '101 California', city: 'SF', state: 'CA', zip: '94111'))
       @listing.update_attribute(:site_id, @site.id)
     end
-    it { expect(User.get_sellers(0, 1)).to be_empty }
+    it { expect(User.get_sellers(Listing.all)).to be_empty }
     it 'has no business users', run: true do
-      expect(User.get_sellers(@listing.category_id, @listing.site_id)).to be_empty
+      expect(User.get_sellers(Listing.all)).to be_empty
     end
     it 'has a business user in different site', run: true do
       @user.update_attribute(:user_type_code, 'BUS')
-      expect(User.get_sellers(@listing.category_id, 100)).to be_empty
+      expect(User.get_sellers(Listing.all)).to be_empty
     end
     it 'has a business user in different category', run: true do
       @user.update_attribute(:user_type_code, 'BUS')
-      expect(User.get_sellers(100, @listing.site_id)).to be_empty
+      expect(User.get_sellers(Listing.all)).to be_empty
     end
     it 'has a business user w insufficient pixis', run: true do
       @user.update_attribute(:user_type_code, 'BUS')
-      expect(User.get_sellers(@listing.category_id, @listing.site_id)).to be_empty
+      expect(User.get_sellers(Listing.all)).to be_empty
     end
     it 'has a business user w sufficient pixis', run: true do
       @user.update_attribute(:user_type_code, 'BUS')
-      listing = create :listing, seller_id: @user.id, title: 'Leather Coat', site_id: @site.id
-      expect(User.get_sellers(@listing.category_id, @listing.site_id)).not_to be_empty
+      listing = create :listing, seller_id: @user.id, title: 'Leather Coat', site_id: @site.id, category_id: @listing.category_id
+      listing = create :listing, seller_id: @user.id, title: 'Fur Coat', site_id: @site.id, category_id: @listing.category_id
+      @user.reload
+      expect(User.get_sellers(Listing.all)).not_to be_empty
     end
   end
 

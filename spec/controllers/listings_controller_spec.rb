@@ -355,13 +355,17 @@ describe ListingsController do
     end
   end
 
+  def load_comments
+    @comments = stub_model(Comment)
+    Listing.stub_chain(:find_pixi).with('1').and_return( @listing )
+    @listing.stub!(:comments).and_return( @comments )
+    @comments.stub!(:paginate).and_return(@comments)
+    controller.stub!(:add_points).and_return(:success)
+  end
+
   describe 'GET show/:id' do
     before :each do
-      @comments = mock('comments')
-      Listing.stub_chain(:find_pixi).with('1').and_return( @listing )
-      @listing.stub_chain(:comments, :build).and_return( @comments )
-      # controller.stub!(:load_comments).and_return(@comments)
-      controller.stub!(:add_points).and_return(:success)
+      load_comments
     end
 
     def do_get
@@ -396,11 +400,7 @@ describe ListingsController do
 
   describe 'xhr GET show/:id' do
     before :each do
-      @comments = stub_model(Comment)
-      Listing.stub!(:find_pixi).with('1').and_return( @listing )
-      @listing.stub_chain(:comments, :build).and_return( @comments )
-      controller.stub!(:load_comments).and_return(:success)
-      controller.stub!(:add_points).and_return(:success)
+      load_comments
     end
 
     def do_get

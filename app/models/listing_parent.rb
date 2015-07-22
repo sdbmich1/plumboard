@@ -14,11 +14,12 @@ class ListingParent < ActiveRecord::Base
   SITE_FREE_AMT = PIXI_KEYS['pixi']['site_init_free']
   MAX_PIXI_PIX = PIXI_KEYS['pixi']['max_pixi_pix']
 
+  attr_accessor :created_date
   attr_accessible :buyer_id, :category_id, :description, :title, :seller_id, :status, :price, :show_alias_flg, :show_phone_flg, :alias_name,
   	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id, :year_built, :pixan_id, 
 	:job_type_code, :event_type_code, :edited_by, :edited_dt, :post_ip, :lng, :lat, :event_start_date, :event_end_date, :compensation,
 	:event_start_time, :event_end_time, :explanation, :contacts_attributes, :repost_flg, :mileage, :other_id, :condition_type_code,
-	:color, :quantity, :item_type, :item_size, :bed_no, :bath_no, :term, :avail_date
+	:color, :quantity, :item_type, :item_size, :bed_no, :bath_no, :term, :avail_date, :created_date
 
   belongs_to :user, foreign_key: :seller_id
   belongs_to :site

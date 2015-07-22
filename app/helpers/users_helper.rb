@@ -122,4 +122,8 @@ module UsersHelper
   def cache_key_for_seller(usr, fldName='title')
     "/#{usr.name}-#{usr.updated_at.to_i}-#{fldName}" if usr
   end
+
+  def show_user_buttons user
+    render partial: 'shared/show_user_buttons', locals: {user: user} if @user.is_admin? 
+  end
 end

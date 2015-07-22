@@ -323,8 +323,7 @@ class User < ActiveRecord::Base
 
   # return users by type
   def self.get_by_type val
-    txt = val && val.upcase == 'BUS' ? 'business_name ASC' : 'first_name ASC'
-    val.blank? ? active : active.where(:user_type_code => val).order(txt)
+    UserProcessor.new(self).get_by_type val
   end
 
   def self.get_by_url val
@@ -454,8 +453,8 @@ class User < ActiveRecord::Base
   end
 
   # get active sellers
-  def self.get_sellers cat, loc
-    UserProcessor.new(self).get_sellers cat, loc
+  def self.get_sellers listings
+    UserProcessor.new(self).get_sellers listings
   end
 
   def as_csv(options={})

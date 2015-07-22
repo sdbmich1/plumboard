@@ -92,7 +92,8 @@ class ListingDataProcessor < ListingQueryProcessor
 
   # format date based on location
   def display_date dt, dFlg=true
-    lat, lng, loc = @listing.lat, @listing.lng, @listing.site.contacts.first
+    lat, lng = @listing.lat, @listing.lng
+    loc = @listing.site.contacts.first rescue nil
     ll = lat && lat > 0 ? [lat, lng] : ([loc.lat, loc.lng] rescue nil)
     ResetDate::display_date_by_loc dt, ll, dFlg rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
   end

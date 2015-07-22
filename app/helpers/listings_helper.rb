@@ -407,13 +407,18 @@ module ListingsHelper
   # display featured pixis
   def featured_pixis model
     val = model.size/2
-    cnt = val < MIN_FEATURED_PIXIS ? MIN_FEATURED_PIXIS : MIN_FEATURED_PIXIS*2 
+    cnt = val < MIN_FEATURED_PIXIS ? MIN_FEATURED_PIXIS : MAX_FEATURED_PIXIS
     return model[0..cnt-1]
+  end
+
+  # cap featured sellers
+  def featured_sellers model
+    model[0..MAX_FEATURED_USERS]
   end
 
   # pixi title
   def render_title model
-    content_tag(:span, model.site_name, class: "loc-descr") 
+    content_tag(:span, model.site_name, class: "loc-descr truncate") 
   end
 
   # display correct image based on model type
@@ -709,5 +714,14 @@ module ListingsHelper
   # assign header of date column
   def set_date_column status
     status == "draft" || status.blank? ? "Last Updated" : "#{status.titleize} Date"
+  end
+
+  def cache_key_for_seller_band(cat, loc)
+    "featured_seller_band/#{loc}-cat-#{cat}-user-#{@user}"
+  end
+
+  # toggles menu for private url page
+  def set_index_menu btype, menu_name, loc_name
+    render partial: 'shared/navbar', locals: { menu_name: menu_name, loc_name: @loc_name } if btype == 'loc'
   end
 end

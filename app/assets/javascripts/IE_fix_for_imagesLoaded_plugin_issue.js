@@ -41,7 +41,7 @@
       var arr_known_browsers_with_issues = ['MSIE 11.0', 'MSIE 10.0', 'MSIE 9.0'];
 
       // block to check for specific know buggy browsers.
-      if (window.navigator.appName.match(/Microsoft/)) {
+      if (window.navigator.appName.match(/Microsoft/) || navigator.userAgent.match(/trident/i)) {
         result = window.navigator.appVersion.match(/MSIE [^;/]+/);
         if(result) result = result[0];
       }

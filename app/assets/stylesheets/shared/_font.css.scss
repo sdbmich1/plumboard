@@ -198,3 +198,9 @@ a.black-seller-name {
   width: 100%; 
 }
 
+.truncate {
+  width: 160px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
