@@ -417,17 +417,18 @@ module ListingsHelper
   end
 
   # display correct image based on model type
-  def show_view_image model, pix_size, img_size
+  def show_view_image model, pix_size, img_size, lazy_flg=false
     if !action_name.match(/index|seller|pixter/).nil?
       render partial: 'shared/show_photo', locals: {model: model, psize: '180x180', file_name: img_size, display_cnt: 0}
     else
-      view_pixi_image model, pix_size, (model.is_a?(User) ? model.local_user_path : listing_path(model))
+      view_pixi_image model, pix_size, (model.is_a?(User) ? model.local_user_path : listing_path(model)), lazy_flg
     end
   end
 
-  def view_pixi_image model, pix_size, path
+  def view_pixi_image model, pix_size, path, lazy_flg=false
     link_to path, class: 'img-btn' do
-      render partial: 'shared/show_picture', locals: {model: model, psize: pix_size}
+      partial = lazy_flg ? 'shared/show_picture_lazy' : 'shared/show_picture'
+      render partial: partial, locals: {model: model, psize: pix_size}
     end 
   end
 
@@ -641,7 +642,7 @@ module ListingsHelper
   end
 
   def show_slide pic
-    content_tag(:div, image_tag(set_element(pic), class: 'lazy lrg_pic_frame', title: set_image_title, lazy: true), class:'slide') if pic.photo?
+    content_tag(:div, image_tag(set_element(pic), class: 'lazy lrg_pic_frame', title: set_image_title, lazy: true), class: 'slide') if pic.photo?
   end
 
   # define nav menu on show listing page

@@ -47,8 +47,27 @@ function load_featured_slider() {
       slideWidth: 180,
       slideMargin: 20,
       auto: false,
-      pager: false,
-      autoControls: false
+      pager: true,
+      pagerCustom: '.bx-pager',
+      autoControls: false,
+      mode: 'horizontal',
+      onSlideAfter: function() {
+        // trigger lazy to load new in-slided images
+        setTimeout(function() { $(window).trigger("scroll"); }, 100);
+      }
+    });
+    scrollEverySecond();
+
+    $('.lazy').lazyload({
+      effect: 'fadeIn'
     });
   }
+}
+
+// trigger lazy to load every image after the first one when slider is loaded
+function scrollEverySecond() {
+  setTimeout(function() {
+    $(window).trigger("scroll");
+    scrollEverySecond();
+  }, 1000);
 }
