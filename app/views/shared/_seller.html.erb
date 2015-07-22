@@ -1,7 +1,7 @@
 <% cache cache_key_for_seller(user, 'seller') do %>
 <div class="<%= set_item_class(ftrFlg) %>">
   <div class="center-wrapper">
-    <%= render partial: 'shared/show_temp_pixi_image', locals: {model: user, pix_size: px_size, img_size: 'pixi-image'} %>
+    <%= render partial: 'shared/show_temp_pixi_image_lazy', locals: {model: user, pix_size: px_size, img_size: 'pixi-image'} %>
     <div class='sm-top sm-bot'>
       <span class=' bdescr truncate'><%= "#{user.name}" %></span><br /><%= render_title user %>
     </div>
