@@ -336,7 +336,11 @@ module ListingsHelper
    
   # set class based on controller
   def set_item_class flg
-    !flg ? 'featured-item' : (controller_name == 'pages' && action_name == 'home') ? 'home-item' : 'item'
+    !flg ? 'featured-item' : pages_home? ? 'home-item' : 'item'
+  end
+
+  def pages_home?
+    controller_name == 'pages' && action_name == 'home' 
   end
 
   # set top banner image
@@ -724,5 +728,9 @@ module ListingsHelper
   # toggles menu for private url page
   def set_index_menu btype, menu_name, loc_name
     render partial: 'shared/navbar', locals: { menu_name: menu_name, loc_name: @loc_name } if btype == 'loc'
+  end
+
+  def toggle_image_partial flg
+    !flg && !pages_home? ? 'shared/show_temp_pixi_image_lazy' : 'shared/show_temp_pixi_image'
   end
 end

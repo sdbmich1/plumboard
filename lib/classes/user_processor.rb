@@ -174,7 +174,11 @@ class UserProcessor
 
   # get seller list based on current pixis
   def get_sellers listings
-    User.includes(:pictures).get_by_type('BUS').board_fields.where(id: get_ids(listings)).select {|usr| usr.reload.pixi_count >= 2}
+    User.includes(:pictures, :preferences).get_by_type('BUS').board_fields.where(id: get_ids(listings)).select {|usr| usr.reload.pixi_count >= min_count}
+  end
+
+  def min_count
+    Rails.env.production? ? MIN_FEATURED_PIXIS : 2
   end
 
   # get site name from zip
