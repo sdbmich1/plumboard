@@ -46,6 +46,7 @@ describe ListingsController do
     @listings.stub_chain(:paginate).and_return( @listings )
     Listing.any_instance.stub(:geocode) { [1,1] }
     controller.stub!(:get_location).and_return(:success)
+    Listing.any_instance.stub(:created_date).and_return(DateTime.current)
     do_get
   end
 

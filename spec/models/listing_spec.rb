@@ -1643,4 +1643,19 @@ describe Listing do
     end
     it { expect(Listing.active.board_fields).not_to include @listing.created_at }
   end
+
+  describe 'as_csv' do
+    before { @listing.save! }
+    it "exports data as CSV file" do
+      # call check_category_and_location to load created_date
+      listing = Listing.check_category_and_location('active', nil, nil, true).first
+      csv_string = listing.as_csv(style: 'active')
+      csv_string.keys.should =~ ['Title', 'Category', 'Description', 'Location',
+                                 ListingProcessor.new(listing).toggle_user_name_header(listing.status),
+                                 listing.status.titleize + ' Date'] 
+      csv_string.values.should =~ [listing.title, listing.category_name, listing.description, listing.site_name,
+                                   ListingProcessor.new(listing).toggle_user_name_row(listing.status, listing),
+                                   listing.display_date(listing.created_date)]
+    end
+  end
 end

@@ -671,9 +671,10 @@ describe User do
 
     it "exports data as CSV file" do
       csv_string = @user.as_csv
-      csv_string.keys.should =~ ["Name", "Email", "Home Zip", "Birth Date", "Enrolled", "Last Login", "Gender", "Age"] 
-      csv_string.values.should =~ [@user.name, @user.email, @user.home_zip, @user.birth_dt, @user.nice_date(@user.created_at), 
-        @user.nice_date(@user.last_sign_in_at), @user.gender, @user.age] 
+      csv_string.keys.should =~ ["Name", "Email", "Type", "Zip", "Birth Date", "Enrolled", "Last Login"]
+      csv_string.values.should =~ [@user.name, @user.email, @user.type_descr, @user.home_zip,
+                                   @user.birth_dt, @user.nice_date(@user.created_at),
+                                   @user.nice_date(@user.last_sign_in_at)] 
     end
 
     it "does not export any user data" do

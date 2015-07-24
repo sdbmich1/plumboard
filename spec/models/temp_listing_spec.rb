@@ -1171,4 +1171,22 @@ describe TempListing do
       expect(TempListing.add_listing(@attr, User.new).seller_id).not_to eq @user.id
     end
   end
+
+  describe 'as_csv' do
+    before do
+      @temp_listing.status = 'pending'
+      @temp_listing.save!
+    end
+    it "exports data as CSV file" do
+      # call check_category_and_location to load created_date
+      temp_listing = TempListing.check_category_and_location('pending', nil, nil, true).first
+      csv_string = temp_listing.as_csv(style: 'pending')
+      csv_string.keys.should =~ ['Title', 'Category', 'Description', 'Location',
+                                 ListingProcessor.new(temp_listing).toggle_user_name_header(temp_listing.status),
+                                 temp_listing.status.titleize + ' Date'] 
+      csv_string.values.should =~ [temp_listing.title, temp_listing.category_name, temp_listing.description, temp_listing.site_name,
+                                   ListingProcessor.new(temp_listing).toggle_user_name_row(temp_listing.status, temp_listing),
+                                   temp_listing.display_date(temp_listing.created_date)]
+    end
+  end
 end
