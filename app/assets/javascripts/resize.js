@@ -214,7 +214,10 @@ function set_item_size (origSize, wFlg) {
   var width = $(window).width();
   var col = !wFlg ? origSize : setViewPort();
 
-  if(width < 1300 && width >= 1200) {
+  if(width > 1400) {
+    col = !wFlg ? col : '80%';
+  }
+  else if(width < 1300 && width >= 1200) {
     col = !wFlg ? col : '90%';
   }
   else if(width < 1200 && width >= 980) {
