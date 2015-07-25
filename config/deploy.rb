@@ -70,6 +70,7 @@ set :bundle_without, [:development, :test, :staging] if Rubber.env == 'productio
 # set whenever command
 set :whenever_command, "bundle exec whenever"
 set :whenever_roles, :app 
+set :whenever_environment, defer { Rubber.env }
 
 # set delayed job settings
 # set :delayed_job_server_role, :worker

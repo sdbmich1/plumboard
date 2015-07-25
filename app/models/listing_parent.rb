@@ -49,8 +49,7 @@ class ListingParent < ActiveRecord::Base
   validates_datetime :event_end_time, presence: true, after: :event_start_time, :if => :start_date?
 
   # geocode
-  geocoded_by :primary_address, :latitude => :lat, :longitude => :lng
-  after_validation :geocode
+  # geocoded_by :primary_address, :latitude => :lat, :longitude => :lng
 
   # used to handle pagination settings
   def self.set_page pg=1
