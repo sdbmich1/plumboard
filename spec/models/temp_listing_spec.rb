@@ -146,6 +146,15 @@ describe TempListing do
       temp_listing = FactoryGirl.build(:temp_listing, seller_id: @user.id, start_date: nil)
       expect(temp_listing.set_end_date).to be_nil
     end
+
+    it 'sets to event_end_date' do
+      @cat = FactoryGirl.create(:category, category_type_code: 'event', name: 'Event', pixi_type: 'premium') 
+      @temp_listing.category_id = @cat.id
+      @temp_listing.event_type_code = 'party'
+      @temp_listing.event_start_date = Date.today+1.day 
+      @temp_listing.event_end_date = Date.today+3.days 
+      expect(@temp_listing.set_end_date).to eq @temp_listing.event_end_date
+    end
   end
 
   describe 'set_flds' do

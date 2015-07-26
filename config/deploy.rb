@@ -68,9 +68,9 @@ set :push_instance_config, true
 set :bundle_without, [:development, :test, :staging] if Rubber.env == 'production'
 
 # set whenever command
+set :whenever_environment, defer { Rubber.env }
 set :whenever_command, "bundle exec whenever"
 set :whenever_roles, :app 
-set :whenever_environment, defer { Rubber.env }
 
 # set delayed job settings
 # set :delayed_job_server_role, :worker
@@ -216,8 +216,8 @@ end
 #before 'deploy:setup', 'rvm:install_ruby' # install Ruby and create gemset
 before 'deploy:setup', 'sphinx:create_sphinx_dir'
 before 'rubber:config', 'deploy:enable_rubber', 'deploy:enable_rubber_current'
-after 'bundle:install', 'deploy:enable_rubber'
-after 'deploy:update_code', 'deploy:enable_rubber'
+# after 'bundle:install', 'deploy:enable_rubber'
+# after 'deploy:update_code', 'deploy:enable_rubber'
 after 'deploy:update_code', 'deploy:symlink_shared', 'sphinx:stop'
 #after "deploy:migrations", "cleanup"
 after "deploy", "cleanup", "memcached:flush"
@@ -248,4 +248,4 @@ end
 # Delayed Job  
 after "deploy:stop",    "delayed_job:stop"  
 after "deploy:start",   "delayed_job:start"  
-after "deploy:restart", "sphinx:symlink_indexes", "delayed_job:start", "sphinx:configure", "sphinx:rebuild", "whenever:update_crontab"
+after "deploy:restart" # , "sphinx:symlink_indexes", "delayed_job:start", "sphinx:configure", "sphinx:rebuild", "whenever:update_crontab"

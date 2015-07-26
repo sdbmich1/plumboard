@@ -421,8 +421,9 @@ module ListingsHelper
   end
 
   # pixi title
-  def render_title model
-    content_tag(:span, model.site_name, class: "loc-descr truncate") 
+  def render_title model, flg=true
+    str = !flg ? 'truncate' : ''
+    content_tag(:span, model.site_name, class: "loc-descr #{str}") 
   end
 
   # display correct image based on model type

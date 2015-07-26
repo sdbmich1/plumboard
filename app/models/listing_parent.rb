@@ -329,7 +329,7 @@ class ListingParent < ActiveRecord::Base
 
   # set end date to x days after start to denote when listing is no longer displayed on network
   def set_end_date
-    self.end_date = self.start_date + PIXI_DAYS.days rescue nil
+    self.end_date = event? ? event_end_date : self.start_date + PIXI_DAYS.days rescue nil
   end
 
   # get number of sites where pixi is posted

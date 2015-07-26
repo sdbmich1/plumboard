@@ -3,7 +3,7 @@
   <div class="center-wrapper">
     <%= render partial: 'shared/show_temp_pixi_image_lazy', locals: {model: user, pix_size: px_size, img_size: 'pixi-image'} %>
     <div class='sm-top sm-bot'>
-      <span class=' bdescr truncate'><%= "#{user.name}" %></span><br /><%= render_title user %>
+      <span class=' bdescr truncate'><%= "#{user.name}" %></span><br /><%= render_title user, ftrFlg %>
     </div>
   </div>
 </div>

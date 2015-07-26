@@ -54,27 +54,25 @@ function restoreWindow() {
 }
 
 function resizeMobileWindow() {
-  if(window.innerHeight > window.innerWidth){
-    if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-      if($('.carousel-overlay').length > 0) 
+  if($('.carousel-overlay').length > 0) {
+    if(window.innerHeight > window.innerWidth){
+      if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) 
         $(".carousel-overlay").css({'top': '15%'});
     }
-  }
-  else
-    if($('.carousel-overlay').length > 0) {
+    else
       $(".carousel-overlay").css({'top': '35%'});
-    }
 
-  if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-    if($('.carousel-overlay').length > 0) {
+    if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
       $("#homePgFtr").addClass('mauto40').removeClass('mauto35');
       $("#homePgLink").addClass('mauto30').removeClass('mauto20');
     }
-  }
-  else {
-    if($('.carousel-overlay').length > 0) {
-      $("#homePgFtr").addClass('mauto35').removeClass('mauto40');
-      $("#homePgLink").addClass('mauto20').removeClass('mauto30');
+    else if(width > 1400) {
+      $("#homePgFtr").addClass('mauto20').removeClass('mauto35');
+      $("#homePgLink").addClass('mauto15').removeClass('mauto20');
+    }
+    else {
+      $("#homePgFtr").addClass('mauto35').removeClass('mauto40').removeClass('mauto20');
+      $("#homePgLink").addClass('mauto20').removeClass('mauto30').removeClass('mauto15');
     }
   }
 }

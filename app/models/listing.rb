@@ -70,9 +70,9 @@ class Listing < ListingParent
     includes(:invoices).where('invoices.buyer_id = ?', val)
   end
 
-  # get all active pixis with an end_date less than today and update their statuses to closed
+  # get all active pixis with an end_date less than today and update their statuses to expired
   def self.close_pixis
-    active.where("end_date < ?", Date.today).update_all(status: 'closed')
+    active.where("end_date < ?", Date.today).update_all(status: 'expired')
   end
 
   # get invoiced listings by status and, if provided, category and location

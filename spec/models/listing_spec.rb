@@ -1239,17 +1239,17 @@ describe Listing do
     it "should not close pixi if end_date is invalid" do
       @listing.update_attribute(:end_date, nil)
       Listing.close_pixis
-      @listing.reload.status.should_not == 'closed'
+      @listing.reload.status.should_not == 'expired'
     end
     it "should not close pixi with an end_date >= today" do
       @listing.update_attribute(:end_date, Date.today + 1.days)
       Listing.close_pixis
-      @listing.reload.status.should_not == 'closed'
+      @listing.reload.status.should_not == 'expired'
     end
     it "should close pixi with an end_date < today" do
       @listing.update_attribute(:end_date, Date.today - 1.days)
       Listing.close_pixis
-      @listing.reload.status.should == 'closed'
+      @listing.reload.status.should == 'expired'
     end
   end
 
