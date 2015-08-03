@@ -166,6 +166,7 @@ feature "UserSignins" do
         page.should_not have_link('PixiPosts', href: pixi_posts_path)
         page.should_not have_link('Users', href: users_path)
         page.should_not have_link('Inquiries', href: inquiries_path(ctype: 'inquiry'))
+        page.should_not have_link('Sites', href: sites_path)
 	user_menu_items
         # page.should have_content "Welcome to Pixiboard, #{@user.first_name}!"
         # page.should_not have_content "To get a better user experience"
@@ -196,6 +197,7 @@ feature "UserSignins" do
         page.should have_link('Transactions', href: transactions_path)
         page.should have_link('Users', href: users_path)
         page.should have_link('Pixis', href: listings_path(status: 'active'))
+        page.should have_link('Sites', href: sites_path)
 	user_menu_items true
       end
 
