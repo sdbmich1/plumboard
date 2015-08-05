@@ -21,6 +21,9 @@ describe Site do
   it { should respond_to(:pictures) }
   it { should respond_to(:temp_listings) }
 
+  it { should validate_presence_of(:name) }
+  it { should validate_presence_of(:site_type_code) }
+
   it {should belong_to(:site_type).with_foreign_key('site_type_code') }
 
   describe "should include active sites" do
@@ -213,9 +216,9 @@ describe Site do
     
     cities = {
       'New York Metropolitan Area' => ['New York City', 'NY', 'Rye', 'New Rochelle', 'Poughkeepsie', 'Newburgh'],
-      'Los Angeles Metropolitan Area' => ['Los Angeles', 'CA', 'Anaheim', 'Santa Ana', 'Irvine', 'Glendale', 'Huntington Beach', 'Santa Clarita'],
+      'Los Angeles Metropolitan Area' => ['Los Angeles', 'CA', 'Anaheim', 'Santa Ana', 'Irvine', 'Huntington Beach', 'Santa Clarita'],
       'Chicagoland' => ['Chicago', 'IL', 'Arlington Heights', 'Berwyn', 'Cicero', 'DeKalb', 'Des Plaines', 'Evanston'],
-      'Dallas/Fort Worth Metroplex' => ['Dallas', 'TX', 'Fort Worth', 'Arlington', 'Plano', 'Irving', 'Frisco', 'McKinney', 'Carrollton', 'Denton', 'Garland', 'Richardson'],
+      'Dallas/Fort Worth Metroplex' => ['Dallas', 'TX', 'Fort Worth', 'Arlington', 'Plano', 'Irving', 'Frisco', 'McKinney', 'Carrollton', 'Garland', 'Richardson'],
       'Greater Houston' => ['Houston', 'TX', 'The Woodlands', 'Sugar Land', 'Baytown', 'Conroe'],
       'Delaware Valley' => ['Philadelphia', 'PA', 'Philadelphia', 'Reading'],
       'Washington Metropolitan Area' => ['Washington', 'D.C.', 'Washington'],
@@ -223,7 +226,6 @@ describe Site do
       'Metro Atlanta' => ['Atlanta', 'GA', 'Sandy Springs', 'Roswell', 'Johns Creek', 'Alpharetta', 'Marietta', 'Smyrna'],
       'Greater Boston' => ['Boston', 'MA', 'Boston', 'Cambridge', 'Framingham', 'Quincy'],
       'Valley of the Sun' => ['Phoenix', 'AZ', 'Mesa', 'Chandler', 'Glendale', 'Scottsdale', 'Gilbert'],
-      'Inland Empire' => ['Riverside', 'CA', 'San Bernardino', 'Fontana', 'Moreno Valley', 'Rancho Cucamonga', 'Ontario', 'Corona', 'Victorville', 'Murrieta', 'Temecula'],
       'Seattle Metro' => ['Seattle', 'WA', 'Tacoma', 'Bellevue', 'Everett'],
       'Minneapolis-Saint Paaul' => ['Minneapolis', 'MN', 'Saint Paul', 'Bloomington', 'Brooklyn Park', 'Plymouth'],
       'San Diego County' => ['San Diego', 'CA', 'Carlsbad', 'Chula Vista', 'Escondido', 'Oceanside'],
@@ -232,14 +234,14 @@ describe Site do
       'Central Maryland' => ['Baltimore', 'MD', 'Columbia', 'Towson'],
       'Denver Metropolitan Area' => ['Denver', 'CO', 'Arvada', 'Aurora', 'Centennial'],
       'Pittsburgh Metropolitan Area' => ['Pittsburgh', 'PA', 'Indiana', 'Jeannette', 'Latrobe', 'Lower Burrell'],
-      'Charlotte Metro' => ['Charlotte', 'NC', 'Concord', 'Gastonia', 'Cornelius', 'Hickory'],
+      'Charlotte Metro' => ['Charlotte', 'NC', 'Concord', 'Gastonia', 'Cornelius'],
       'Portland Metropolitan Area' => ['Portland', 'OR', 'Beaverton', 'Gresham', 'Hillsboro'],
       'Greater San Antonio' => ['San Antonio', 'TX', 'New Braunfels', 'Schertz', 'Seguin'],
-      'Metro Orlando' => ['Orlando', 'FL', 'Kissimmee', 'Sanford', 'Tavares', 'Winter Park'],
-      'Greater Sacramento' => ['Sacramento', 'CA', 'Roseville', 'Yuba City', 'South Lake Tahoe'],
-      'Greater Cincinnati' => ['Cincinnati', 'OH', 'Hamilton', 'Middletown', 'Fairfield', 'Mason'],
+      'Metro Orlando' => ['Orlando', 'FL', 'Kissimmee', 'Sanford', 'Tavares'],
+      'Greater Sacramento' => ['Sacramento', 'CA', 'Yuba City', 'South Lake Tahoe'],
+      'Greater Cincinnati' => ['Cincinnati', 'OH', 'Mason'],
       'Greater Cleveland' => ['Cleveland', 'OH', 'Parma', 'Lorain', 'Elyria', 'Lakewood'],
-      'Kansas City Metropolitan Area' => ['Kansas City', 'MO', 'Independence', "Lee's Summit", 'Blue Springs'],
+      'Kansas City Metropolitan Area' => ['Kansas City', 'MO', 'Independence', "Lee's Summit"],
       'Las Vegas Metropolitan Area' => ['Las Vegas', 'NV', 'Paradise', 'Henderson', 'Boulder City'],
       'Columbus Metropolitan Area' => ['Columbus', 'OH', 'Delaware', 'Newark', 'Lancaster', 'London'],
       'Greater Indianapolis' => ['Indianapolis', 'IN', 'Carmel', 'Greenwood', 'Noblesville'],
@@ -252,7 +254,7 @@ describe Site do
       'Memphis Metropolitan Area' => ['Memphis', 'TN','Bartlett', 'Collierville', 'Germantown'],
       'Oklahoma City Metro' => ['Oklahoma City', 'OK', 'Norman', 'Edmond', 'Noble'],
       'Louisville Metropolitan Area' => ['Louisville', 'KY', 'Anchorage', 'Audubon Park'],
-      'Richmond Metropolitan Area' => ['Richmond', 'VA', 'Petersburg', 'Hopewell', 'Colonial Heights'],
+      'Richmond Metropolitan Area' => ['Richmond', 'VA', 'Petersburg', 'Colonial Heights'],
       'New Orleans Metropolitan Area' => ['New Orleans', 'LA', 'Kenner', 'Metairie'],
       'Greater Hartford' => ['Hartford', 'CT', 'Avon', 'Berlin'],
       'Research Triangle' => ['Raleigh', 'NC', 'Durham', 'Cary', 'Chapel Hill'],
@@ -276,7 +278,7 @@ describe Site do
               city = FactoryGirl.create :site, name: city_name, site_type_code: 'city'
               lat, lng = Geocoder.coordinates(city_name + ',' + @region_state)
               city.contacts.create FactoryGirl.attributes_for :contact, city: city_name, state: @region_state, lat: lat, lng: lng
-              listing = FactoryGirl.create(:listing, site_id: city.id)
+              listing = FactoryGirl.create(:listing, site_id: city.id, category_id: 1)
               @listing_sites.push(listing.site_id)
             end
             @region = FactoryGirl.create(:site, name: region_name, site_type_code: 'region')
@@ -286,22 +288,22 @@ describe Site do
 
         it "renders all pixis in its cities", :run => true do
           site_ids = []
-          Listing.active_by_region(@region_city, @region_state, true, @range).each do |listing|
+          Listing.get_by_city(1, @region.id, true).each do |listing|
               site_ids.push(listing.site_id)
           end
           expect(site_ids.sort).to eql(@listing_sites)
         end
 
         it "only includes pixis for its cities", :run => true do
-          expect(Listing.active_by_region(@region_city, @region_state, true, @range).length).to eql(@city_array.length)
+          expect(Listing.get_by_city(1, @region.id, true).length).to eql(@city_array.length)
         end
-
+      end
+      context "checking that renders no pixis when none in any city" do
         it "renders no pixis when none in any city" do
-          expect(Listing.active_by_region(@region_city, @region_state, true, @range)).to be_nil
+          empty_region = FactoryGirl.create(:site, name: 'empty_region_0', site_type_code: 'region')
+          expect(Listing.get_by_city(1, empty_region, true)).to be_empty
         end
       end
     end
   end
-end
-
-
+end      

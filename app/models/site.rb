@@ -26,6 +26,7 @@ class Site < ActiveRecord::Base
   belongs_to :site_type, primary_key: 'code', foreign_key: 'site_type_code'
 
   validates :name, :presence => true
+  validates :site_type_code, :presence => true
 
   default_scope :order => "name ASC"
   

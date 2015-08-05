@@ -55,6 +55,7 @@ class ListingQueryProcessor
   # get active pixis by region
   def active_by_region city, state, flg, cid, range=100
     loc = [city, state].join(', ') if city && state
+
     exec_query(flg, set_params(cid, prox(nil, range, loc, true))) if loc
   end
 

@@ -414,7 +414,7 @@ class ListingParent < ActiveRecord::Base
 
   # check site's site_type_code and call the corresponding active_by method, or get pixis by ids if this fails
   def self.get_by_city cid, sid, get_active=true
-    ListingDataProcessor.new(self).get_by_city cid, sid, get_active
+    ListingQueryProcessor.new(self).get_by_city cid, sid, get_active
   end
 
   # set unique key
