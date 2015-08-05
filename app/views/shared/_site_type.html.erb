@@ -1,0 +1,1 @@
+<%= collection_select :site_type_code, :code, SiteType.active, :code, :description, {selected: @site.site_type_code}, {class: 'span2 cat-select'} %>

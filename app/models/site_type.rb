@@ -1,7 +1,9 @@
-class OrgType < ActiveRecord::Base
+class SiteType < ActiveRecord::Base
   attr_accessible :code, :description, :hide, :status
   
   validates_presence_of :code, :description, :hide, :status
+
+  has_many :sites, primary_key: 'code', foreign_key: 'site_type_code'
 
   #default scope
 

@@ -215,7 +215,7 @@ end
 # load country field for all Contacts
 def load_countries
   Contact.where(country: nil).update_all(:country => 'United States')
-  Site.where(:org_type => 'country').find_each do |site|
+  Site.where(:site_type_code => 'country').find_each do |site|
     site.contacts.find_each do |contact|
       contact.country = site.name
       contact.save

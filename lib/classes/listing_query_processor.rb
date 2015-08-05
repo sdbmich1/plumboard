@@ -88,7 +88,7 @@ class ListingQueryProcessor
     sid.blank? ? get_by_category(cid, flg) : exec_query(flg, set_params(cid, sid))
   end
 
-  # check site's org_type and call the corresponding active_by method, or get pixis by ids if this fails
+  # check site's site_type_code and call the corresponding active_by method, or get pixis by ids if this fails
   def get_by_city cid, sid, get_active
     if (loc = Site.check_site(sid, 'city')) && !loc.contacts.blank?
       active_by_city(loc.contacts[0].city, loc.contacts[0].state, get_active, cid)

@@ -863,7 +863,7 @@ describe User do
   describe 'get_sellers' do
     before :each, run: true do
       @listing = create :listing, seller_id: @user.id
-      @site = create :site, org_type: 'city', name: 'SF'
+      @site = create :site, site_type_code: 'city', name: 'SF'
       @site.contacts.create(FactoryGirl.attributes_for(:contact, address: '101 California', city: 'SF', state: 'CA', zip: '94111'))
       @listing.update_attribute(:site_id, @site.id)
     end
