@@ -40,7 +40,7 @@ class ListingQueryProcessor
   end
 
   def get_data flg, params
-    flg ? Listing.where(params) : TempListing.where(params)
+    is_temp? ? TempListing.include_list.where(params) : Listing.include_list.where(params)
   end
 
   def exec_query flg, params
@@ -104,38 +104,36 @@ class ListingQueryProcessor
     end
   end
 
-  # get wanted list by user
-  def wanted_list usr, cid, loc, adminFlg
-    if adminFlg
-      Listing.active.joins(:pixi_wants).where("pixi_wants.user_id is not null AND pixi_wants.status = ?", 'active').get_by_city(cid, loc, true)
-    else
-      Listing.active.joins(:pixi_wants).where("pixi_wants.user_id = ? AND pixi_wants.status = ?", usr.id, 'active')
-    end
-  end
-
   # find all listings where a given user is the seller, or all listings if the user is an admin
-  def get_by_seller user, adminFlg=true
+  def get_by_seller user, val, adminFlg=true
     return nil if user.blank?
-    model = @listing.respond_to?(:car_color) ? 'temp_listings' : 'listings'
+    model = is_temp? ? 'temp_listings' : 'listings'
     query = user.is_admin? && adminFlg ? "#{model}.seller_id IS NOT NULL" : "#{model}.seller_id = #{user.id}"
-    toggle_query @listing.respond_to?(:car_color), model, query
+    exec_query(val == "active", query)
   end
 
   def get_by_status val
-    val == 'sold' ? Listing.sold_list : get_unsold(val)
+    table_name = is_temp? ? "temp_listings" : "listings"
+    if val == 'sold'
+      Listing.sold_list
+    else
+      select_fields("#{table_name}.updated_at").exec_query(val == "active", "#{table_name}.status = '#{val}'")
+    end
   end
 
-  def is_temp? val
-    !%w(pending new edit).detect {|x| x == val}.nil? 
+  def is_temp?
+    @listing.is_a?(TempListing) || @listing == TempListing
   end
 
-  def toggle_query flg, model, query
-    data = flg ? TempListing.include_list.where(query) : Listing.include_list.where(query) 
-    data.order("#{model}.updated_at DESC")
-  end
-
-  def get_unsold val
-    model = is_temp?(val) ? 'temp_listings' : 'listings'
-    toggle_query is_temp?(val), model, "status = '#{val}'"
+  # select date provided (field_name)
+  def select_fields field_name
+    table_name = is_temp? ? 'temp_listings' : 'listings'
+    attrs = ["#{table_name}.id", "#{table_name}.pixi_id", "#{table_name}.title",
+             "#{table_name}.description", "#{table_name}.seller_id",
+             "#{table_name}.site_id", "#{table_name}.category_id",
+             "#{table_name}.lat", "#{table_name}.lng", "#{table_name}.status",
+             "#{table_name}.show_alias_flg", "#{table_name}.alias_name", "#{field_name} AS created_date"]
+    model = is_temp? ? TempListing : Listing
+    model.select(attrs).reorder('created_date DESC')
   end
 end

@@ -1,5 +1,5 @@
 module ListingsHelper
-  include RatingManager
+  include RatingManager, ProcessMethod
 
   # format time
   def get_local_time(tm)
@@ -119,7 +119,7 @@ module ListingsHelper
 
   # get host
   def get_host
-    (Rails.env.test? || Rails.env.development?) ? "localhost:3000" : ((Rails.env.staging?) ? "test.pixiboard.com" : PIXI_WEB_SITE)
+    ProcessMethod::get_host
   end
    
   # set absolute url for current pixi
@@ -336,7 +336,11 @@ module ListingsHelper
    
   # set class based on controller
   def set_item_class flg
-    !flg ? 'featured-item' : (controller_name == 'pages' && action_name == 'home') ? 'home-item' : 'item'
+    !flg ? 'featured-item' : pages_home? ? 'home-item' : 'item'
+  end
+
+  def pages_home?
+    controller_name == 'pages' && action_name == 'home' 
   end
 
   # set top banner image
@@ -368,12 +372,12 @@ module ListingsHelper
   end
 
   # set status type
-  def show_menu_status val, sFlg
+  def show_status_menu val, sFlg
     render(partial: 'shared/status_menu', locals: { val: val }) if sFlg
   end
 
   def show_menu_fields ptype
-    render partial: 'shared/menu_fields', locals: { ptype: ptype } if !controller_name.match(/listings|users/).nil?
+    render partial: 'shared/menu_fields', locals: { ptype: ptype } if @url.blank?
   end
 
   # check ownership
@@ -407,27 +411,34 @@ module ListingsHelper
   # display featured pixis
   def featured_pixis model
     val = model.size/2
-    cnt = val < MIN_FEATURED_PIXIS ? MIN_FEATURED_PIXIS : MIN_FEATURED_PIXIS*2 
+    cnt = val < MIN_FEATURED_PIXIS ? MIN_FEATURED_PIXIS : MAX_FEATURED_PIXIS
     return model[0..cnt-1]
   end
 
+  # cap featured sellers
+  def featured_sellers model
+    model[0..MAX_FEATURED_USERS]
+  end
+
   # pixi title
-  def render_title model
-    content_tag(:span, model.site_name, class: "loc-descr") 
+  def render_title model, flg=true
+    str = !flg ? 'truncate' : ''
+    content_tag(:span, model.site_name, class: "loc-descr #{str}") 
   end
 
   # display correct image based on model type
-  def show_view_image model, pix_size, img_size
-    if temp_listing?(model) 
+  def show_view_image model, pix_size, img_size, lazy_flg=false
+    if !action_name.match(/index|seller|pixter/).nil?
       render partial: 'shared/show_photo', locals: {model: model, psize: '180x180', file_name: img_size, display_cnt: 0}
     else
-      view_pixi_image model, pix_size, (model.is_a?(User) ? model.local_user_path : listing_path(model))
+      view_pixi_image model, pix_size, (model.is_a?(User) ? model.local_user_path : listing_path(model)), lazy_flg
     end
   end
 
-  def view_pixi_image model, pix_size, path
+  def view_pixi_image model, pix_size, path, lazy_flg=false
     link_to path, class: 'img-btn' do
-      render partial: 'shared/show_picture', locals: {model: model, psize: pix_size}
+      partial = lazy_flg ? 'shared/show_picture_lazy' : 'shared/show_picture'
+      render partial: partial, locals: {model: model, psize: pix_size}
     end 
   end
 
@@ -485,15 +496,15 @@ module ListingsHelper
   end
 
   # process pixi feature content
-  def process_content arr, cls='', str=[]
+  def process_content arr, cls='med-top', str=[]
     arr.map { |item| str << show_content(item) }
-    content_tag(:div, str.join("").html_safe, class: cls + 'med-top black-txt')
+    content_tag(:div, str.join("").html_safe, class: cls + ' black-txt')
   end
 
   # display listing fields
   def show_top_fields item, str=[]
     str << "Condition: #{item.condition}" if is_item?(item) && item.condition
-    str << "Color: #{item.color}" unless item.color.blank?
+    str << "Color: #{item.color[0..29]}" unless item.color.blank?
     str << "Amount Left: #{get_item_amt(item)}" if item_available?(item, true, 'quantity')
     process_content str
   end
@@ -507,7 +518,7 @@ module ListingsHelper
       str << "Event Type: #{item.event_type_descr}"
       str << "Date(s): #{short_date item.event_start_date} - #{short_date item.event_end_date}"
       str << "Time(s): #{short_time item.event_start_time} - #{short_time item.event_end_time}"
-      process_content str
+      process_content str, ''
     end
   end
 
@@ -625,7 +636,7 @@ module ListingsHelper
   end
 
   def show_listing listing, flg
-    render partial: 'shared/show_listing', locals: {listing: listing, edit_mode: flg} if listing
+    render partial: 'shared/view_listing', locals: {listing: listing, edit_mode: flg} if listing
   end
 
   def get_header_cls listing
@@ -641,7 +652,7 @@ module ListingsHelper
   end
 
   def show_slide pic
-    content_tag(:div, image_tag(set_element(pic), class: 'lazy lrg_pic_frame', title: set_image_title, lazy: true), class:'slide') if pic.photo?
+    content_tag(:div, image_tag(set_element(pic), class: 'lazy lrg_pic_frame', title: set_image_title, lazy: true), class: 'slide') if pic.photo?
   end
 
   # define nav menu on show listing page
@@ -692,12 +703,35 @@ module ListingsHelper
     end
   end
 
-  def toggle_buyer_name_header status
-    content_tag(:th, 'Buyer Name') if status == 'sold'
+  # display 'Buyer Name' if sold
+  def toggle_user_name_header status
+    ListingProcessor.new(Listing.new).toggle_user_name_header(status)
   end
 
-  def toggle_buyer_name_row status, listing
-    name = listing.invoices.first.buyer_name rescue ''
-    content_tag(:td, name, class: 'span2') if status == 'sold'
+  # display name of buyer if sold
+  def toggle_user_name_row status, listing
+    ListingProcessor.new(listing).toggle_user_name_row(status, listing)
+  end
+
+  def show_recent_link rFlg
+    content_tag(:li, link_to("Recent", '#', id: 'recent-link', class: 'submenu'), id: 'li_home', class: 'active') if rFlg
+  end
+
+  # assign header of date column
+  def set_date_column status
+    status == "draft" || status.blank? ? "Last Updated" : "#{status.titleize} Date"
+  end
+
+  def cache_key_for_seller_band(cat, loc)
+    "featured_seller_band/#{loc}-cat-#{cat}-user-#{@user}"
+  end
+
+  # toggles menu for private url page
+  def set_index_menu btype, menu_name, loc_name
+    render partial: 'shared/navbar', locals: { menu_name: menu_name, loc_name: @loc_name } if btype == 'loc'
+  end
+
+  def toggle_image_partial flg
+    !flg && !pages_home? ? 'shared/show_temp_pixi_image_lazy' : 'shared/show_temp_pixi_image'
   end
 end

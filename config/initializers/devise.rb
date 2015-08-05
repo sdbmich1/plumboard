@@ -219,6 +219,6 @@ Devise.setup do |config|
 
   API_KEYS = YAML::load_file("#{Rails.root}/config/api_keys.yml")[Rails.env]
   config.omniauth :facebook, API_KEYS['facebook']['api_key'], API_KEYS['facebook']['api_secret'], 
-    {:scope => 'email, user_birthday, user_events, user_interests, user_likes', :client_options => {:ssl => FACEBOOK_SSL_OPTIONS} }
+    {:scope => 'email, user_birthday, user_events, user_likes', :client_options => {:ssl => FACEBOOK_SSL_OPTIONS} }
   #  {:scope => 'email, user_birthday, user_events, user_interests, user_likes', :client_options => {:ssl => {:ca_path => "/etc/ssl/certs"}} }
 end

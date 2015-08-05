@@ -6,7 +6,7 @@
         <tr><td class='width180'><%= comment.sender_name %></td>
         <td class="mleft20 timestamp">Posted <%= ts_in_words(comment.created_at) %>.</td></tr>
       </table>
-      <span class="sm-top content"><%= strip_links comment.full_content %>
+      <span class="tiny-top content"><%= strip_links comment.full_content %>
     </div>
     <div class='span1'>
       <div class='pull-right'>

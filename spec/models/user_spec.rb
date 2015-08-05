@@ -576,6 +576,11 @@ describe User do
       expect(User.get_by_type(['PX', 'PT'])).not_to be_empty
     end
 
+    it "includes pixans" do
+      @user.update_attribute(:user_type_code, 'BUS')
+      expect(User.get_by_type('BUS')).not_to be_empty
+    end
+
     it "includes all" do
       expect(User.get_by_type(nil)).not_to be_empty
     end
@@ -666,9 +671,10 @@ describe User do
 
     it "exports data as CSV file" do
       csv_string = @user.as_csv
-      csv_string.keys.should =~ ["Name", "Email", "Home Zip", "Birth Date", "Enrolled", "Last Login", "Gender", "Age"] 
-      csv_string.values.should =~ [@user.name, @user.email, @user.home_zip, @user.birth_dt, @user.nice_date(@user.created_at), 
-        @user.nice_date(@user.last_sign_in_at), @user.gender, @user.age] 
+      csv_string.keys.should =~ ["Name", "Email", "Type", "Zip", "Birth Date", "Enrolled", "Last Login"]
+      csv_string.values.should =~ [@user.name, @user.email, @user.type_descr, @user.home_zip,
+                                   @user.birth_dt, @user.nice_date(@user.created_at),
+                                   @user.nice_date(@user.last_sign_in_at)] 
     end
 
     it "does not export any user data" do
@@ -753,6 +759,10 @@ describe User do
       user = build :contact_user, user_type_code: 'BUS', business_name: 'Toy Shack'
       user.save!
       expect(user.url).to eq user.business_name.gsub!(/\s+/, "").downcase
+    end
+
+    it 'shows full url path' do
+      expect(@user.user_url).to eq 'localhost:3000/mbr/' + @user.url
     end
   end
 
@@ -842,6 +852,10 @@ describe User do
       user.guest = true  
       expect{ user.save }.not_to change{ user.status } 
     end
+    it 'does not set status for inactive users' do
+      user.status = 'inactive'  
+      expect{ user.save }.not_to change{ user.status } 
+    end
   end
 
   describe 'primary_address', address: true do
@@ -867,26 +881,28 @@ describe User do
       @site.contacts.create(FactoryGirl.attributes_for(:contact, address: '101 California', city: 'SF', state: 'CA', zip: '94111'))
       @listing.update_attribute(:site_id, @site.id)
     end
-    it { expect(User.get_sellers(0, 1)).to be_empty }
+    it { expect(User.get_sellers(Listing.all)).to be_empty }
     it 'has no business users', run: true do
-      expect(User.get_sellers(@listing.category_id, @listing.site_id)).to be_empty
+      expect(User.get_sellers(Listing.all)).to be_empty
     end
     it 'has a business user in different site', run: true do
       @user.update_attribute(:user_type_code, 'BUS')
-      expect(User.get_sellers(@listing.category_id, 100)).to be_empty
+      expect(User.get_sellers(Listing.all)).to be_empty
     end
     it 'has a business user in different category', run: true do
       @user.update_attribute(:user_type_code, 'BUS')
-      expect(User.get_sellers(100, @listing.site_id)).to be_empty
+      expect(User.get_sellers(Listing.all)).to be_empty
     end
     it 'has a business user w insufficient pixis', run: true do
       @user.update_attribute(:user_type_code, 'BUS')
-      expect(User.get_sellers(@listing.category_id, @listing.site_id)).to be_empty
+      expect(User.get_sellers(Listing.all)).to be_empty
     end
     it 'has a business user w sufficient pixis', run: true do
       @user.update_attribute(:user_type_code, 'BUS')
-      listing = create :listing, seller_id: @user.id, title: 'Leather Coat', site_id: @site.id
-      expect(User.get_sellers(@listing.category_id, @listing.site_id)).not_to be_empty
+      listing = create :listing, seller_id: @user.id, title: 'Leather Coat', site_id: @site.id, category_id: @listing.category_id
+      listing = create :listing, seller_id: @user.id, title: 'Fur Coat', site_id: @site.id, category_id: @listing.category_id
+      @user.reload
+      expect(User.get_sellers(Listing.all)).not_to be_empty
     end
   end
 
@@ -1035,5 +1051,13 @@ describe User do
   describe "get by url" do
     it { expect(User.get_by_url(@user.url)).not_to be_blank }
     it { expect(User.get_by_url('abcd')).to be_blank }
+  end
+
+  describe 'board_fields' do
+    it "contains correct fields" do
+      usr = User.active.board_fields
+      expect(usr.first.id).to eq @user.id  
+    end
+    it { expect(User.active.board_fields).not_to include @user.created_at }
   end
 end

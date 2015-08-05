@@ -11,7 +11,6 @@ class InvoiceObserver < ActiveRecord::Observer
   end
 
   def after_update model
-    fee = 0.0
     send_post(model) if model.unpaid?
     
     # toggle status

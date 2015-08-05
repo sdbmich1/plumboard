@@ -146,6 +146,15 @@ describe TempListing do
       temp_listing = FactoryGirl.build(:temp_listing, seller_id: @user.id, start_date: nil)
       expect(temp_listing.set_end_date).to be_nil
     end
+
+    it 'sets to event_end_date' do
+      @cat = FactoryGirl.create(:category, category_type_code: 'event', name: 'Event', pixi_type: 'premium') 
+      @temp_listing.category_id = @cat.id
+      @temp_listing.event_type_code = 'party'
+      @temp_listing.event_start_date = Date.today+1.day 
+      @temp_listing.event_end_date = Date.today+3.days 
+      expect(@temp_listing.set_end_date).to eq @temp_listing.event_end_date
+    end
   end
 
   describe 'set_flds' do
@@ -165,12 +174,12 @@ describe TempListing do
 
   describe "seller listings", base: true do
     before { @temp_listing.save! }
-    it { TempListing.get_by_seller(@user, false).should_not be_empty }
+    it { TempListing.get_by_seller(@user, 'new', false).should_not be_empty }
 
     it "does not get all listings for non-admin" do
       @temp_listing.seller_id = 100
       @temp_listing.save
-      TempListing.get_by_seller(@user, false).should_not include @temp_listing
+      TempListing.get_by_seller(@user, 'new', false).should_not include @temp_listing
     end
 
     it "gets all listings for admin" do
@@ -179,7 +188,7 @@ describe TempListing do
       @user.user_type_code = "AD"
       @user.uid = 0
       @user.save
-      expect(TempListing.get_by_seller(@user).count).to eq 2
+      expect(TempListing.get_by_seller(@user, 'new').count).to eq 2
     end
   end
 
@@ -405,6 +414,11 @@ describe TempListing do
       @temp_listing.status = 'pending' 
       @temp_listing.save
       TempListing.draft.should_not include @temp_listing 
+    end
+
+    it "only returns necessary attributes" do
+      expect(TempListing.draft.first.title).to eq @temp_listing.title
+      expect(TempListing.draft.first.attributes[:color]).to be_nil
     end
   end
 
@@ -1164,6 +1178,24 @@ describe TempListing do
     it 'has no user id' do
       set_temp_attr ''
       expect(TempListing.add_listing(@attr, User.new).seller_id).not_to eq @user.id
+    end
+  end
+
+  describe 'as_csv' do
+    before do
+      @temp_listing.status = 'pending'
+      @temp_listing.save!
+    end
+    it "exports data as CSV file" do
+      # call check_category_and_location to load created_date
+      temp_listing = TempListing.check_category_and_location('pending', nil, nil, true).first
+      csv_string = temp_listing.as_csv(style: 'pending')
+      csv_string.keys.should =~ ['Title', 'Category', 'Description', 'Location',
+                                 ListingProcessor.new(temp_listing).toggle_user_name_header(temp_listing.status),
+                                 temp_listing.status.titleize + ' Date'] 
+      csv_string.values.should =~ [temp_listing.title, temp_listing.category_name, temp_listing.description, temp_listing.site_name,
+                                   ListingProcessor.new(temp_listing).toggle_user_name_row(temp_listing.status, temp_listing),
+                                   temp_listing.display_date(temp_listing.created_date)]
     end
   end
 end

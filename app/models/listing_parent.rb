@@ -20,8 +20,6 @@ class ListingParent < ActiveRecord::Base
 	:event_start_time, :event_end_time, :explanation, :contacts_attributes, :repost_flg, :mileage, :other_id, :condition_type_code,
 	:color, :quantity, :item_type, :item_size, :bed_no, :bath_no, :term, :avail_date
 
-  attr_accessor :skip_approval_email
-
   belongs_to :user, foreign_key: :seller_id
   belongs_to :site
   belongs_to :category
@@ -51,8 +49,7 @@ class ListingParent < ActiveRecord::Base
   validates_datetime :event_end_time, presence: true, after: :event_start_time, :if => :start_date?
 
   # geocode
-  geocoded_by :primary_address, :latitude => :lat, :longitude => :lng
-  after_validation :geocode
+  # geocoded_by :primary_address, :latitude => :lat, :longitude => :lng
 
   # used to handle pagination settings
   def self.set_page pg=1
@@ -138,12 +135,12 @@ class ListingParent < ActiveRecord::Base
 
   # eager load assns
   def self.include_list
-    includes(:pictures, :site, :category, :job_type, :contacts, :user)
+    includes(:pictures, :category, :job_type, :user, :site => [:contacts])
   end
 
   # leaves out job_type to avoid unused eager loading
   def self.include_list_without_job_type
-    includes(:pictures, :site, :category, :contacts, :user)
+    includes(:pictures, :site, :category, :user)
   end
 
   # find listings by status
@@ -162,8 +159,8 @@ class ListingParent < ActiveRecord::Base
   end
 
   # find all listings where a given user is the seller, or all listings if the user is an admin
-  def self.get_by_seller user, adminFlg=true
-    ListingQueryProcessor.new(self).get_by_seller user, adminFlg
+  def self.get_by_seller user, val, adminFlg=true
+    ListingQueryProcessor.new(self).get_by_seller user, val, adminFlg
   end
 
   # get listings by status and, if provided, category and location
@@ -286,6 +283,11 @@ class ListingParent < ActiveRecord::Base
     user.email rescue nil
   end
 
+  # get seller url for a listing
+  def seller_url
+    ['http:', user.user_url].join('//') rescue nil
+  end
+
   # check if sold by business
   def sold_by_business? 
     user.is_business? rescue false
@@ -327,7 +329,7 @@ class ListingParent < ActiveRecord::Base
 
   # set end date to x days after start to denote when listing is no longer displayed on network
   def set_end_date
-    self.end_date = self.start_date + PIXI_DAYS.days rescue nil
+    self.end_date = event? ? event_end_date : self.start_date + PIXI_DAYS.days rescue nil
   end
 
   # get number of sites where pixi is posted
@@ -432,10 +434,7 @@ class ListingParent < ActiveRecord::Base
   end
 
   def as_csv(options={})
-    row = { "Title" => title, "Category" => category_name, "Description" => description, "Location" => site_name }
-    row["Buyer Name"] = invoices.first.buyer_name if options[:style] == "sold"
-    row["Last Updated"] = display_date(updated_at)
-    row
+    ListingDataProcessor.new(self).as_csv(options)
   end
 
   # get expiring pixis
@@ -460,5 +459,13 @@ class ListingParent < ActiveRecord::Base
 
   def latlng
     [lat, lng] rescue nil
+  end
+
+  def self.exec_query flg, params
+    ListingQueryProcessor.new(self).exec_query(flg, params)
+  end
+
+  def self.select_fields field_name
+    ListingQueryProcessor.new(self).select_fields(field_name)
   end
 end

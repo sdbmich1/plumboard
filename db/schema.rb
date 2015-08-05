@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150724182212) do
+ActiveRecord::Schema.define(:version => 20150713034816) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -95,6 +95,8 @@ ActiveRecord::Schema.define(:version => 20150724182212) do
     t.datetime "updated_at",         :null => false
     t.string   "pixi_type"
   end
+
+  add_index "categories", ["status"], :name => "index_categories_on_status"
 
   create_table "categories_listings", :id => false, :force => true do |t|
     t.integer "listing_id"
@@ -414,6 +416,7 @@ ActiveRecord::Schema.define(:version => 20150724182212) do
     t.integer  "bath_no"
     t.string   "term"
     t.datetime "avail_date"
+    t.boolean  "buy_now_flg"
   end
 
   add_index "listings", ["avail_date"], :name => "index_listings_on_avail_date"
@@ -485,6 +488,7 @@ ActiveRecord::Schema.define(:version => 20150724182212) do
     t.integer  "bath_no"
     t.string   "term"
     t.datetime "avail_date"
+    t.boolean  "buy_now_flg"
   end
 
   add_index "old_listings", ["category_id"], :name => "index_old_listings_on_category_id"
@@ -652,8 +656,12 @@ ActiveRecord::Schema.define(:version => 20150724182212) do
     t.string   "zip"
     t.string   "email_msg_flg"
     t.string   "mobile_msg_flg"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
+    t.datetime "created_at",            :null => false
+    t.datetime "updated_at",            :null => false
+    t.boolean  "buy_now_flg"
+    t.float    "sales_tax"
+    t.float    "ship_amt"
+    t.string   "fulfillment_type_code"
   end
 
   add_index "preferences", ["user_id", "zip"], :name => "index_preferences_on_user_id_and_zip"
@@ -766,6 +774,8 @@ ActiveRecord::Schema.define(:version => 20150724182212) do
   end
 
   add_index "sites", ["institution_id"], :name => "index_organizations_on_institution_id"
+  add_index "sites", ["name"], :name => "index_sites_on_name"
+  add_index "sites", ["status", "org_type"], :name => "index_sites_on_status_and_org_type"
 
   create_table "sites_temp_listings", :id => false, :force => true do |t|
     t.integer "temp_listing_id"
@@ -790,6 +800,8 @@ ActiveRecord::Schema.define(:version => 20150724182212) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  add_index "status_types", ["hide"], :name => "index_status_types_on_hide"
 
   create_table "subcategories", :force => true do |t|
     t.string   "name"
@@ -849,6 +861,7 @@ ActiveRecord::Schema.define(:version => 20150724182212) do
     t.integer  "bath_no"
     t.string   "term"
     t.datetime "avail_date"
+    t.boolean  "buy_now_flg"
   end
 
   add_index "temp_listings", ["condition_type_code"], :name => "index_temp_listings_on_condition_type_code"

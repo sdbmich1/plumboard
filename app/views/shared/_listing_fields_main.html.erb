@@ -7,7 +7,7 @@
   </div>
   <div class='span2' id='price-fld' style="<%= set_style(listing.job?) %>"><%= f.label :price, 'Price $' %>
     <%= f.text_field :price, step: 0.01, size: 10, value: num_display(f.object, "price"), class: 'width120', placeholder: 'Ex. 50.00', 
-      max: "#{MAX_PIXI_AMT}" %>
+      max: "#{MAX_PIXI_AMT}", maxlength: 10 %>
   </div>
   <div class='span2' id='qty-fld' style="<%= set_style(!has_qty?(listing)) %>"><%= f.label :quantity, 'Qty' %>
     <%= f.select 'quantity', options_for_select(get_ary, :selected => set_quantity(listing)), {}, {id: 'pixi_qty', class: 'pixi-select', 
@@ -17,5 +17,5 @@
     <%= f.select 'year_built', options_for_select(get_year_ary, :selected => listing.year_built), {:prompt => 'Select'}, 
           {id: 'yr_built', class: 'pixi-select'} %></div>
   <div class='span4' id='comp-fld' style="<%= set_style(!listing.job?) %>"><%= f.label :compensation %>
-    <%= f.text_field :compensation, id: 'salary' %></div>
+    <%= f.text_field :compensation, size: 30, maxlength: 30, id: 'salary' %></div>
 </div>

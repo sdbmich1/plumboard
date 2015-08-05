@@ -187,6 +187,11 @@ describe Listing do
     it "should not return anything if no listings meet the parameters" do
       Listing.check_category_and_location('removed', 100, 900, true).should be_empty
     end
+
+    it "only returns necessary attributes" do
+      expect(Listing.check_category_and_location('active', nil, nil, true).first.title).to eq @listing.title
+      expect(Listing.check_category_and_location('active', nil, nil, true).first.attributes[:color]).to be_nil
+    end
   end
 
   describe "check_invoiced_category_and_location", main: true  do
@@ -205,6 +210,11 @@ describe Listing do
 
     it "should not return anything if no listings meet the parameters" do
       Listing.check_invoiced_category_and_location(100, 900).should be_empty
+    end
+
+    it "only returns necessary attributes" do
+      expect(Listing.check_invoiced_category_and_location(nil, nil).last.title).to eq @listing.title
+      expect(Listing.check_invoiced_category_and_location(nil, nil).last.attributes[:color]).to be_nil
     end
   end
 
@@ -229,13 +239,13 @@ describe Listing do
       @listing.save
       @user.uid = 1
       @user.save
-      Listing.get_by_seller(@user, false).should_not be_empty  
+      Listing.get_by_seller(@user, 'active', false).should_not be_empty  
     end
 
     it "does not get all listings for non-admin" do
       @listing.seller_id = 100
       @listing.save
-      Listing.get_by_seller(@user, false).should_not include @listing
+      Listing.get_by_seller(@user, 'active', false).should_not include @listing
     end
 
     it "gets all listings for admin" do
@@ -245,7 +255,7 @@ describe Listing do
       @user.user_type_code = "AD"
       @user.uid = 0
       @user.save
-      expect(Listing.get_by_seller(@user).count).to eq 2
+      expect(Listing.get_by_seller(@user, 'active').count).to eq 2
     end
   end
 
@@ -316,6 +326,22 @@ describe Listing do
     it "does not find seller email" do 
       @listing.seller_id = 100 
       expect(@listing.seller_email).not_to eq(@user.email)
+    end
+
+    context "seller_first_name" do
+      it { expect(@listing.seller_first_name).to eq(@user.first_name) } 
+      it "does not find seller first_name" do 
+        @listing.seller_id = 100 
+        expect(@listing.seller_first_name).not_to eq(@user.first_name)
+      end
+    end
+
+    context "seller_url" do
+      it { expect(@listing.seller_url).to eq(['http:',@user.user_url].join('//')) } 
+      it "does not find seller url" do 
+        @listing.seller_id = 100 
+        expect(@listing.seller_url).not_to eq(@user.user_url)
+      end
     end
 
     it { @listing.seller_photo.should_not be_nil } 
@@ -766,6 +792,7 @@ describe Listing do
       @usr.saved_listings.create FactoryGirl.attributes_for :saved_listing, pixi_id: @listing.pixi_id, status: 'sold'
     end
 
+    it { expect(Listing.saved_list(@user).first.created_date.to_s).to eq @saved_listing.created_at.to_s }
     it "checks saved list" do
       Listing.saved_list(@usr).should_not include @listing  
       Listing.saved_list(@user).should_not be_empty 
@@ -783,6 +810,11 @@ describe Listing do
       expect(listing.is_saved?).to eq(false)
       expect(@listing.user_saved?(@usr)).not_to eq(true) 
     end
+
+    it "only returns necessary attributes" do
+      expect(Listing.saved_list(@user).first.title).to eq @listing.title
+      expect(Listing.saved_list(@user).first.attributes[:color]).to be_nil
+    end    
   end
 
   describe "send_saved_pixi_removed", process: true  do
@@ -854,14 +886,20 @@ describe Listing do
       @usr = create :pixi_user
       @buyer = create :pixi_user
       @listing.save!
-      @pixi_want = @buyer.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
       @pixi_want = @user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id, status: 'sold'
+      @pixi_want = @buyer.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
     end
 
     it { Listing.wanted_list(@usr, nil, nil, false).should_not include @listing } 
     it { Listing.wanted_list(@buyer, nil, nil, false).should_not be_empty }
     it { expect(@listing.wanted_count).to eq(1) }
     it { expect(@listing.is_wanted?).to eq(true) }
+    it { expect(Listing.wanted_list(@buyer, nil, nil, false).first.created_date.to_s).to eq(@pixi_want.updated_at.to_s) }
+
+    it "only returns necessary attributes" do
+      expect(Listing.wanted_list(@buyer, nil, nil, false).first.title).to eq(@listing.title)
+      expect(Listing.wanted_list(@buyer, nil, nil, false).first.attributes[:color]).to be_nil
+    end
 
     it "is not wanted" do
       listing = create(:listing, seller_id: @user.id, title: 'Hair brush') 
@@ -1201,17 +1239,17 @@ describe Listing do
     it "should not close pixi if end_date is invalid" do
       @listing.update_attribute(:end_date, nil)
       Listing.close_pixis
-      @listing.reload.status.should_not == 'closed'
+      @listing.reload.status.should_not == 'expired'
     end
     it "should not close pixi with an end_date >= today" do
       @listing.update_attribute(:end_date, Date.today + 1.days)
       Listing.close_pixis
-      @listing.reload.status.should_not == 'closed'
+      @listing.reload.status.should_not == 'expired'
     end
     it "should close pixi with an end_date < today" do
       @listing.update_attribute(:end_date, Date.today - 1.days)
       Listing.close_pixis
-      @listing.reload.status.should == 'closed'
+      @listing.reload.status.should == 'expired'
     end
   end
 
@@ -1450,8 +1488,9 @@ describe Listing do
       @site = create :site, site_type_code: 'city', name: 'SF'
       @site.contacts.create(FactoryGirl.attributes_for(:contact, address: '101 California', city: 'SF', state: 'CA', zip: '94111'))
       @listing.update_attribute(:site_id, @site.id)
-      Listing.get_by_city(@listing.category_id, @listing.site_id, true).should_not be_empty
-      Listing.get_by_city(@listing.category_id, @listing.site_id, false).should be_empty
+      @listing.update_attribute(:status, 'removed')
+      Listing.get_by_city(@listing.category_id, @listing.site_id, true).should be_empty
+      Listing.get_by_city(@listing.category_id, @listing.site_id, false).should_not be_empty
     end
 
     it "finds active pixis by site_type_code" do
@@ -1514,8 +1553,15 @@ describe Listing do
     end
 
     it { Listing.purchased(@user).should_not include @listing } 
+    it "assigns created_date", run: true do
+      expect(Listing.purchased(@invoice.buyer).last.created_date.to_s).to eq @invoice.updated_at.to_s
+    end
     it "includes buyer listings", run: true do 
       expect(Listing.purchased(@invoice.buyer).size).to eq 2
+    end
+    it "only returns necessary attributes", run: true do
+      expect(Listing.purchased(@invoice.buyer).last.title).to eq(@listing.title)
+      expect(Listing.purchased(@invoice.buyer).last.attributes[:color]).to be_nil
     end
   end
 
@@ -1525,9 +1571,16 @@ describe Listing do
     end
 
     it { Listing.sold_list.should_not include @listing } 
+    it "assigns created_date", run: true do
+      expect(Listing.sold_list.last.created_date.to_s).to eq @invoice.updated_at.to_s
+    end
     it "includes sold listings", run: true do 
       @listing.save
       expect(Listing.sold_list.size).to eq 2
+    end
+    it "only returns necessary attributes", run: true do
+      expect(Listing.sold_list.last.title).to eq(@invoice.listings.first.title)
+      expect(Listing.sold_list.last.attributes[:color]).to be_nil
     end
   end
 
@@ -1576,6 +1629,33 @@ describe Listing do
     it { expect(@listing.any_sold?).not_to be_true } 
     it "has paid invoices", run: true do 
       expect(@listing.any_sold?).to be_true  
+    end
+  end
+
+  describe 'board_fields' do
+    before :each do
+      @listing.save!
+    end
+
+    it "contains correct fields" do
+      listing = Listing.active.board_fields
+      expect(listing.first.pixi_id).to eq @listing.pixi_id  
+    end
+    it { expect(Listing.active.board_fields).not_to include @listing.created_at }
+  end
+
+  describe 'as_csv' do
+    before { @listing.save! }
+    it "exports data as CSV file" do
+      # call check_category_and_location to load created_date
+      listing = Listing.check_category_and_location('active', nil, nil, true).first
+      csv_string = listing.as_csv(style: 'active')
+      csv_string.keys.should =~ ['Title', 'Category', 'Description', 'Location',
+                                 ListingProcessor.new(listing).toggle_user_name_header(listing.status),
+                                 listing.status.titleize + ' Date'] 
+      csv_string.values.should =~ [listing.title, listing.category_name, listing.description, listing.site_name,
+                                   ListingProcessor.new(listing).toggle_user_name_row(listing.status, listing),
+                                   listing.display_date(listing.created_date)]
     end
   end
 end

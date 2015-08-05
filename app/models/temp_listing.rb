@@ -124,7 +124,8 @@ class TempListing < ListingParent
 
   # find pixis in draft status
   def self.draft
-    include_list.where("temp_listings.status NOT IN ('approved', 'pending')").reorder('temp_listings.updated_at DESC')
+    result = select_fields("temp_listings.updated_at").include_list
+    result.where("temp_listings.status NOT IN ('approved', 'pending')").reorder('temp_listings.updated_at DESC')
   end
 
   # add listing to board and process transaction

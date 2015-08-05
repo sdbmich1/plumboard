@@ -15,11 +15,15 @@ feature "Transactions" do
 
   def page_setup usr
     init_setup usr
+    stub_const("PIXI_PERCENT", 2.9)
+    stub_const("EXTRA_PROCESSING_FEE", 0.30)
+    stub_const("PXB_TXN_PERCENT", 0.25)
+    stub_const("PIXI_FEE", 0.99)
     @listing = create :temp_listing, seller_id: @user.id, quantity: 1
   end
 
   def add_invoice mFlg=false
-    @seller = create(:pixi_user)
+    @seller = create(:pixi_user, acct_token: "acct_16HJbsDEdnXv7t4y")
     @listing2 = create(:listing, seller_id: @seller.id, title: 'Leather Coat', quantity: 2)
     @account = @seller.bank_accounts.create attributes_for :bank_account, status: 'active'
     @invoice = @seller.invoices.build attributes_for(:invoice, buyer_id: @user.id, bank_account_id: @account.id)
@@ -38,20 +42,20 @@ feature "Transactions" do
         "item1" => @listing.title, "quantity1" => 1, cnt: 1, qtyCnt: 1, "price1" => 5.00, transaction_type: 'pixi'
   end
 
-  def visit_inv_txn_path ship=nil
+  def visit_inv_txn_path ship=0.0
     add_invoice 
     visit new_transaction_path id1: @listing.pixi_id, promo_code: '', title: "Invoice # #{@invoice.id} from #{@invoice.seller_name}", seller: @seller.name,
-        "item1" => @listing.title, "quantity1" => 1, "cnt"=> 1, "qtyCnt"=> 1, "price1" => 100.00, transaction_type: 'invoice',
-	"tax_total"=> 8.25, "invoice_id"=> @invoice.id, "ship_amt"=> ship, "inv_total"=>100.00 
+        "item1" => @listing.title, "quantity1" => 2, "cnt"=> 1, "qtyCnt"=> 2, "price1" => 185.00, transaction_type: 'invoice',
+	"tax_total"=> @invoice.tax_total, "invoice_id"=> @invoice.id, "ship_amt"=> ship, "inv_total"=>@invoice.amount+ship
   end
 
   def visit_multi_txn_path ship=0.0
     add_invoice true
     visit new_transaction_path id1: @listing.pixi_id, promo_code: '', title: "Invoice # #{@invoice.id} from #{@invoice.seller_name}", seller: @seller.name,
-        "item1" => @listing.title, "quantity1" => 1, cnt: 2, "qtyCnt"=> 2, "price1" => 100.00, transaction_type: 'invoice',
+        "item1" => @listing.title, "quantity1" => 1, cnt: 2, "qtyCnt"=> 2, "price1" => @listing.price, transaction_type: 'invoice',
 	tax_total: 8.25, "invoice_id"=> @invoice.id, ship_amt: ship,
-        "quantity2"=> 2, "item2"=>@listing2.title, "price2"=> 50.00, "id2"=>@listing2.pixi_id,  
-        "inv_total"=>208.25, "transaction_type"=>'invoice', "promo_code"=>'' 
+        "quantity2"=> 2, "item2"=>@listing2.title, "price2"=> @listing2.price, "id2"=>@listing2.pixi_id,  
+        "inv_total"=>(@listing.price*3+8.25+ship), "transaction_type"=>'invoice', "promo_code"=>'' 
   end
 
   def user_data home_phone
@@ -91,11 +95,11 @@ feature "Transactions" do
   end
 
   def valid_dates
-    select "January", from: "cc_card_month"
-    select (Date.today.year+2).to_s, from: "cc_card_year"
+    select "January", from: "card_month"
+    select (Date.today.year+2).to_s, from: "card_year"
   end
 
-  def load_credit_card cid="4111111111111111", cvv="123", valid=true
+  def load_credit_card cid="4242424242424242", cvv="123", valid=true
     credit_card cid
     fill_in "card_code",  with: cvv
     valid ? valid_dates : invalid_card_dates
@@ -219,27 +223,27 @@ feature "Transactions" do
       page.should have_content "INVOICE" 
     end
 
-    it "creates a balanced transaction with valid visa card", :js=>true do
+    it "creates transaction with valid visa card", :js=>true do
       expect { 
-        credit_card_data '4111111111111111'
+        credit_card_data '4242424242424242'
         page.should have_content("Purchase Complete")
         page.should have_content("Please Rate Your Seller")
         page.should have_link('Add Comment', href: '#') 
       }.to change(Transaction, :count).by(1)
     end
 
-    it "creates a balanced transaction with valid mc card", :js=>true do
+    it "creates transaction with valid mc card", :js=>true do
       expect { 
-        credit_card_data '5105105105105100'
+        credit_card_data '5200828282828210'
         page.should have_content("Purchase Complete")
         page.should have_content("Please Rate Your Seller")
         page.should have_link('Add Comment', href: '#') 
       }.to change(Transaction, :count).by(1)
     end
 
-    it "creates a balanced transaction with valid amex card", :js=>true do
+    it "creates transaction with valid amex card", :js=>true do
       expect { 
-        credit_card_data '341111111111111', '1234'
+        credit_card_data '378282246310005', '1234'
         page.should have_content("Purchase Complete")
         page.should have_link('Add Comment', href: '#') 
       }.to change(Transaction, :count).by(1)
@@ -251,7 +255,7 @@ feature "Transactions" do
       stub_const("MIN_PIXI_COUNT", 0)
       expect(MIN_PIXI_COUNT).to eq(0)
       expect { 
-        credit_card_data '341111111111111', '1234'
+        credit_card_data '378282246310005', '1234'
         page.should have_content("Purchase Complete")
         page.should have_link('Add Comment', href: '#') 
         page.should have_selector("#rateit5", visible: true) 
@@ -281,9 +285,9 @@ feature "Transactions" do
       page.should have_button('Done!')
     end
 
-    it "creates a balanced transaction with valid mc card", :js=>true do
+    it "creates transaction with valid mc card", :js=>true do
       expect { 
-        credit_card_data '5105105105105100'; sleep 2
+        credit_card_data '5555555555554444'; sleep 2
         page.should have_content("Purchase Complete")
         page.should have_content("Please Rate Your Seller")
         page.should have_link('Add Comment', href: '#') 
@@ -311,11 +315,11 @@ feature "Transactions" do
       page.should have_button('Done!')
     end
 
-    it "creates a balanced transaction with valid mc card", :js=>true do
+    it "creates transaction with valid mc card", :js=>true do
       expect { 
         page.should have_content @listing.title
         page.should have_content @listing2.title
-        credit_card_data '5105105105105100'; sleep 4
+        credit_card_data '5555555555554444'; sleep 4
         page.should have_content("Purchase Complete")
         page.should have_content("Please Rate Your Seller")
         page.should have_link('Add Comment', href: '#') 
@@ -327,7 +331,7 @@ feature "Transactions" do
     before(:each) do
       usr = create(:contact_user) 
       page_setup usr
-      @acct = @user.card_accounts.create attributes_for :card_account, card_no: '1111'
+      @acct = @user.card_accounts.create attributes_for :card_account, card_no: '4242'
       visit_inv_txn_path 
     end
 
@@ -348,7 +352,7 @@ feature "Transactions" do
     it "edits the payment info" do
       expect { 
         page.find('#edit-card-btn').click; sleep 1
-        fill_in "card_number", with: '5105105105105100'
+        fill_in "card_number", with: '5555555555554444'
         page.should have_content("Credit Card #")
         page.should have_content("Code")
       }.to change(Transaction, :count).by(0)
@@ -357,7 +361,7 @@ feature "Transactions" do
 
   def add_card_account
       expect {
-        load_credit_card; sleep 2.5
+        load_credit_card '4242424242424242'; sleep 2.5
       }.to change(CardAccount, :count).by(1)
       page.should have_content 'Card #'
 
@@ -394,17 +398,17 @@ feature "Transactions" do
     it "creates transaction with new mc card", :js=>true do
       expect { 
         page.find('#edit-card-btn').click; sleep 1
-	credit_card_data '5105105105105100'
+	credit_card_data '5555555555554444'
         page.should have_content("Purchase Complete")
       }.to change(Transaction, :count).by(1)
-      expect(CardAccount.where(user_id: @user.id).count).to eq 1
-      expect(@user.card_accounts.get_default_acct.card_no).to eq '5100'
+      expect(CardAccount.where(user_id: @user.id).count).to eq 2
+      expect(@user.card_accounts.get_default_acct.card_no).not_to eq '4444'
     end
   end
 
   def add_bank_account_data
-    fill_in 'routing_number', with: '021000021'
-    fill_in 'acct_number', with: 9900000002
+    fill_in 'routing_number', with: '110000000'
+    fill_in 'acct_number', with: '000123456789'
     fill_in 'bank_account_acct_name', with: "SDB Business"
     fill_in 'bank_account_description', with: "My business"
     select("checking", :from => "bank_account_acct_type")
@@ -418,14 +422,14 @@ feature "Transactions" do
       add_bank_account_data
     end
 
-    it "creates a balanced transaction with valid amex card", :js=>true do
+    it "creates transaction with valid amex card", :js=>true do
       expect {
           click_on 'Save'; sleep 3;
       }.to change(BankAccount, :count).by(1)
 
       visit_inv_txn_path 
       expect { 
-        credit_card_data '341111111111111', '1234'
+        credit_card_data '378282246310005', '1234'
         page.should have_content("Purchase Complete")
         page.should have_link('Add Comment', href: '#') 
       }.to change(Transaction, :count).by(1)
@@ -442,7 +446,7 @@ feature "Transactions" do
       click_link 'Card'
 
       expect {
-        load_credit_card; sleep 2.5
+        load_credit_card '4242424242424242'; sleep 2.5
       }.to change(CardAccount, :count).by(1)
       page.should have_content 'Card #'
 
@@ -471,12 +475,12 @@ feature "Transactions" do
     it "creates transaction with new mc card", :js=>true do
       expect { 
         page.find('#edit-card-btn').click; sleep 1
-	credit_card_data '5105105105105100'
+	credit_card_data '5555555555554444'
         page.should have_content("Purchase Complete")
-        page.should have_content("mastercard")
+        page.should have_content("MasterCard")
       }.to change(Transaction, :count).by(1)
-      expect(CardAccount.where(user_id: @user.id).count).to eq 1
-      expect(@user.card_accounts.get_default_acct.card_no).to eq '5100'
+      expect(CardAccount.where(user_id: @user.id).count).to eq 2
+      expect(@user.card_accounts.get_default_acct.card_no).not_to eq '4444'
     end
   end
 

@@ -1,7 +1,6 @@
 <div class="featured-container">
   <div class='center-wrapper'><br /><div class='bold-tag-line mbot'>Featured Sellers</div></div>
   <div class='featured mleft20'>  
-    <%= render(partial: 'shared/seller', collection: @sellers, as: :user, locals: {px_size: 'medium', ftrFlg: false}) %>
+    <%= render(partial: 'shared/seller', collection: featured_sellers(@sellers), as: :user, locals: {px_size: 'medium', ftrFlg: false}) %>
   </div>
 </div>
-

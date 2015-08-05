@@ -8,19 +8,19 @@ class ListingsController < ApplicationController
   before_filter :load_job, only: [:career]
   before_filter :pxb_url, only: [:biz, :member] 
   before_filter :load_url_data, only: [:biz, :member, :career]
+  after_filter :set_session, only: [:show]
   after_filter :set_location, only: [:biz, :member]
   after_filter :add_points, only: [:show, :biz, :member]
-  after_filter :set_session, :load_comments, only: [:show]
   respond_to :html, :json, :js, :mobile, :csv
   layout :page_layout
 
   def index
-    @unpaginated_listings = Listing.check_category_and_location(@status, @cat, @loc, true)
+    @unpaginated_listings = Listing.check_category_and_location(@status, @cat, @loc, is_active?)
     respond_with(@listings = @unpaginated_listings.paginate(page: @page, per_page: 15), style: status) { |format| render_csv format }
   end
 
   def show
-    respond_with(@listing)
+    @comments = @listing.comments.paginate(page: @page, per_page: PIXI_COMMENTS) rescue nil
   end
 
   def update
@@ -32,11 +32,11 @@ class ListingsController < ApplicationController
   end
 
   def seller
-    respond_with(@listings = Listing.get_by_status_and_seller(@status, @user, @adminFlg).paginate(page: @page))
+    respond_with(@listings = Listing.get_by_status_and_seller(@status, @user, @adminFlg).paginate(page: @page, per_page: 15))
   end
 
   def seller_wanted
-    respond_with(@listings = Listing.wanted_list(@user, nil, nil, false).paginate(page: @page))
+    respond_with(@listings = Listing.wanted_list(@user, nil, nil, false).paginate(page: @page, per_page: 15))
   end
 
   def wanted
@@ -45,7 +45,7 @@ class ListingsController < ApplicationController
   end
 
   def purchased
-    respond_with(@listings = Listing.purchased(@user).paginate(page: @page))
+    respond_with(@listings = Listing.purchased(@user).paginate(page: @page, per_page: 15))
   end
 
   def category
@@ -78,11 +78,9 @@ class ListingsController < ApplicationController
   end
 
   def biz
-    respond_with(@listings)
   end
 
   def member
-    respond_with(@listings)
   end
 
   protected
@@ -103,18 +101,15 @@ class ListingsController < ApplicationController
     PointManager::add_points @user, 'vpx' if signed_in?
   end
 
-  def load_comments
-    @comments = @listing.comments.paginate(page: @page, per_page: PIXI_COMMENTS) rescue nil
-  end
-
   def load_pixi
     @listing = Listing.find_pixi params[:id]
   end
 
   def load_city
+    items = Listing.get_by_city(@cat, @loc).board_fields
+    @listings = items.set_page @page
+    @sellers = User.get_sellers items
     @category = Category.find @cat rescue nil if action_name == 'category'
-    @listings = Listing.get_by_city(@cat, @loc).set_page @page
-    @sellers = User.get_sellers @cat, @loc
   end
 
   def load_job
@@ -131,11 +126,15 @@ class ListingsController < ApplicationController
   end
 
   def set_location
-    session[:back_to] = request.fullpath
+    session[:back_to] = request.fullpath.split('?')[0] rescue nil
   end
 
   def status
-    @status.to_sym
+    @status.to_sym rescue :active
+  end
+
+  def is_active?
+    @status == 'active'
   end
 
   def render_csv format

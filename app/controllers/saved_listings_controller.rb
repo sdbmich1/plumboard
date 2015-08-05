@@ -5,7 +5,7 @@ class SavedListingsController < ApplicationController
   respond_to :html, :js, :mobile, :json
 
   def index
-    @listings = Listing.saved_list @user, @page
+    @listings = Listing.saved_list(@user, @page).paginate(page: @page, per_page: 15)
     respond_with(@listings) do |format|
       format.json { render json: {listings: @listings} }
     end
@@ -43,5 +43,6 @@ class SavedListingsController < ApplicationController
 
   def load_data
     @page = params[:page] || 1
+    @status = NameParse::transliterate params[:status] if params[:status]
   end
 end

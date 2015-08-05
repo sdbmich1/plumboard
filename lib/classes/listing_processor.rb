@@ -1,5 +1,5 @@
 class ListingProcessor < ListingDataProcessor
-  include CalcTotal, SystemMessenger, NameParse
+  include CalcTotal, SystemMessenger, NameParse, ProcessMethod
 
   # set active status
   def activate
@@ -60,7 +60,7 @@ class ListingProcessor < ListingDataProcessor
     if closed_arr(true).detect { |x| x == @listing.status }
       val = @listing.status == 'sold' ? 'closed' : @listing.status
       @listing.invoices.find_each do |inv|
-	inv.update_attribute(:status, val) if inv.unpaid? #  inv.invoice_details.size == 1 
+	inv.update_attribute(:status, val) if inv.unpaid? && inv.invoice_details.size == 1 
       end
     end
   end
@@ -74,7 +74,7 @@ class ListingProcessor < ListingDataProcessor
       # update points & send message
       PointManager::add_points @listing.user, ptype if @listing.user
       SystemMessenger::send_message @listing.user, @listing, val rescue nil
-      UserMailer.delay.send_approval(@listing) unless @listing.skip_approval_email
+      UserMailer.delay.send_approval(@listing) if @listing.user.active?
 
       # remove temp pixi
       delete_temp_pixi @listing.pixi_id unless @listing.repost_flg
@@ -136,8 +136,12 @@ class ListingProcessor < ListingDataProcessor
 
   # returns sold pixis from seller
   def sold_list usr=nil
-    query = usr ? "invoices.seller_id = #{usr.id} AND invoices.status = 'paid'" : "invoices.seller_id IS NOT NULL AND invoices.status = 'paid'"  
-    Listing.include_list_without_job_type.joins(:invoices).where(query).uniq
+    result = select_fields('invoices.updated_at').include_list_without_job_type.joins(:invoices)
+    if usr
+      result.where("invoices.seller_id = ? AND invoices.status = ?", usr.id, 'paid')
+    else
+      result.where("invoices.seller_id IS NOT NULL AND invoices.status = ?", 'paid')  
+    end
   end
 
   # update active counter for user
@@ -146,7 +150,29 @@ class ListingProcessor < ListingDataProcessor
   end
 
   def get_by_url url, page=1
-    Listing.active.get_by_seller(User.get_by_url(url)).set_page page rescue nil
+    Listing.active.get_by_seller(User.get_by_url(url), 'active').board_fields.set_page page rescue nil
+  end
+
+  def get_board_flds
+    ProcessMethod::get_board_flds
+  end
+
+  # display 'Buyer Name' if sold
+  def toggle_user_name_header status
+    case status
+    when 'sold', 'invoiced', 'wanted' then 'Buyer Name'
+    else 'Seller Name'
+    end
+  end
+
+  # display name of buyer if sold
+  def toggle_user_name_row status, listing
+    case status
+    when 'sold' then listing.invoices.where(status: 'paid').first.buyer_name
+    when 'invoiced' then listing.invoices.first.buyer_name
+    when 'wanted' then listing.pixi_wants.first.user.name
+    else listing.seller_name
+    end
   end
 end
 

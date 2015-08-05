@@ -55,16 +55,6 @@ class Listing < ListingParent
     active.joins(:invoices).where("invoices.status = 'unpaid'")
   end
 
-  # get saved list by user
-  def self.saved_list usr, pg=1
-    active.joins(:saved_listings).where("saved_listings.status = 'active' AND saved_listings.user_id = ?", usr.id).paginate page: pg
-  end
-
-  # get wanted list by user
-  def self.wanted_list usr, cid=nil, loc=nil, adminFlg=true
-    ListingDataProcessor.new(Listing.new).wanted_list(usr, cid, loc, adminFlg)
-  end
-
   # get cool list by user
   def self.cool_list usr, pg=1
     active.joins(:pixi_likes).where("pixi_likes.user_id = ?", usr.id).paginate page: pg
@@ -80,14 +70,15 @@ class Listing < ListingParent
     includes(:invoices).where('invoices.buyer_id = ?', val)
   end
 
-  # get all active pixis with an end_date less than today and update their statuses to closed
+  # get all active pixis with an end_date less than today and update their statuses to expired
   def self.close_pixis
-    active.where("end_date < ?", Date.today).update_all(status: 'closed')
+    where("status = ? AND end_date < ?", 'active', Date.today).update_all(status: 'expired')
   end
 
   # get invoiced listings by status and, if provided, category and location
   def self.check_invoiced_category_and_location cid, loc
-    cid || loc ? active_invoices.get_by_city(cid, loc, true) : active_invoices
+    result = select_fields("listings.updated_at").active_invoices
+    cid || loc ? result.get_by_city(cid, loc, true) : result
   end
 
   # get invoice
@@ -219,7 +210,7 @@ class Listing < ListingParent
 
   # returns purchased pixis from buyer
   def self.purchased usr
-    joins(:invoices).where("invoices.buyer_id = ? AND invoices.status = ?", usr.id, 'paid').uniq
+    include_list.select_fields('invoices.updated_at').joins(:invoices).where("invoices.buyer_id = ? AND invoices.status = ?", usr.id, 'paid').uniq
   end
 
   # returns sold pixis from seller
@@ -227,9 +218,20 @@ class Listing < ListingParent
     ListingProcessor.new(self).sold_list usr
   end
 
+  # get saved list by user
+  def self.saved_list usr, pg=1
+    result = select_fields('saved_listings.updated_at').active.joins(:saved_listings)
+    result.where("saved_listings.status = 'active' AND saved_listings.user_id = ?", usr.id).paginate page: pg
+  end
+
+  # get wanted list by user
+  def self.wanted_list usr, cid=nil, loc=nil, adminFlg=true
+    ListingDataProcessor.new(Listing.new).wanted_list(usr, cid, loc, adminFlg)
+  end
+
   # toggle get_by_seller call based on status
   def self.get_by_status_and_seller val, usr, adminFlg
-    val == 'sold' ? sold_list(usr).reorder('listings.updated_at DESC') : get_by_seller(usr, adminFlg).get_by_status(val)
+    val == 'sold' ? sold_list(usr) : select_fields("listings.updated_at").get_by_seller(usr, val, adminFlg).get_by_status(val)
   end
 
   # refresh counter cache
@@ -239,6 +241,15 @@ class Listing < ListingParent
 
   def self.get_by_url url, page=1
     ListingProcessor.new(self).get_by_url url, page
+  end
+
+  def self.board_fields
+    select("#{ListingProcessor.new(self).get_board_flds}")
+  end
+
+  # select date provided (field_name)
+  def self.select_fields field_name
+    ListingDataProcessor.new(self).select_fields(field_name)
   end
 
   # sphinx scopes

@@ -1,5 +1,5 @@
 class UserProcessor
-  include LocationManager, PointManager, ImageManager, NameParse
+  include LocationManager, PointManager, ImageManager, NameParse, ProcessMethod
 
   def initialize usr
     @user = usr
@@ -135,7 +135,7 @@ class UserProcessor
   def set_flds
     @user.description = nil unless @user.description.blank?
     @user.user_type_code = 'MBR' if @user.user_type_code.blank?
-    @user.user_url, @user.status = @user.name, 'active' unless @user.guest?
+    @user.user_url, @user.status = @user.name, 'active' if @user.status.blank? && !@user.guest?
   end
 
   # convert date/time display
@@ -156,7 +156,7 @@ class UserProcessor
   end
 
   def url_str
-    ['https://pixiboard.com/', get_mbr_type, '/'].join('')
+    [ProcessMethod::get_host, '/', get_mbr_type, '/'].join('')
   end
 
   # getter for url
@@ -168,19 +168,32 @@ class UserProcessor
     ['/', get_mbr_type, '/', @user.url].join('') rescue nil
   end
 
-  # get active sellers by category and/or location
-  def get_seller_ids cat, loc
-    Listing.get_by_city(cat, loc).uniq.pluck(:seller_id)
+  def get_ids listings
+    listings.map(&:seller_id).uniq
   end
 
-  # get seller list based on category and location
-  def get_sellers cat, loc
-    User.includes(:pictures, :preferences).active.get_by_type('BUS').where(id: get_seller_ids(cat, loc)).select { |usr| usr.pixi_count > 1 }
+  # get seller list based on current pixis
+  def get_sellers listings
+    User.includes(:pictures, :preferences).get_by_type('BUS').board_fields.where(id: get_ids(listings)).select {|usr| usr.reload.pixi_count >= min_count}
+  end
+
+  def min_count
+    Rails.env.production? ? MIN_FEATURED_PIXIS : 2
   end
 
   # get site name from zip
   def site_name
     LocationManager::get_loc_name nil, nil, @user.home_zip
+  end
+
+  def order_txt val
+    result = val.is_a?(Array) ? !val.detect{|x| x=='BUS'}.nil? : val.upcase == 'BUS' rescue false
+    txt = val && result ? 'business_name ASC' : 'first_name ASC'
+  end
+
+  # return users by type
+  def get_by_type val
+    val.blank? ? User.active : User.active.where(:user_type_code => val).order(order_txt(val))
   end
 
   # return users following seller_id

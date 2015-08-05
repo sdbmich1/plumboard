@@ -1,11 +1,1 @@
-<% if picture_exists? model %>
-  <% if display_cnt < 2 %>
-    <div class="<%= display_cnt == 0 ? file_name : 'pic-frame' %>">
-      <%= image_tag(get_pixi_image(model.pictures[0]), :size => psize, class: 'img-zoom') %>
-    </div>	
-  <% elsif display_cnt > 2 %>
-      <%= image_tag(get_pixi_image(model.pictures[0]), class: file_name) %>
-  <% else %>
-    <%= render partial: 'shared/photos', locals: {model: model, psize: psize } %>
-  <% end %>
-<% end %>
+<%= show_photo model, display_cnt, file_name, psize %>

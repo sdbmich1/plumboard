@@ -50,7 +50,6 @@ class ListingDataProcessor < ListingQueryProcessor
   def update_fields listing, tmpFlg
     listing.assign_attributes(get_attr(tmpFlg), :without_protection => true) 
     listing.status = 'active'
-    listing.skip_approval_email = @listing.skip_approval_email
     listing
   end
 
@@ -94,7 +93,8 @@ class ListingDataProcessor < ListingQueryProcessor
   # format date based on location
   def display_date dt, dFlg=true
     lat, lng = @listing.lat, @listing.lng
-    ll = lat && lat > 0 ? [lat, lng] : LocationManager::get_lat_lng_by_loc(@listing.primary_address)
+    loc = @listing.site.contacts.first rescue nil
+    ll = lat && lat > 0 ? [lat, lng] : ([loc.lat, loc.lng] rescue nil)
     ResetDate::display_date_by_loc dt, ll, dFlg rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
   end
 
@@ -145,5 +145,25 @@ class ListingDataProcessor < ListingQueryProcessor
     else
       @listing.user.primary_address if @listing.sold_by_business?
     end
+  end
+
+  # get wanted list by user
+  def wanted_list usr, cid, loc, adminFlg
+    result = select_fields('pixi_wants.updated_at').active.joins(:pixi_wants)
+    if adminFlg
+      result.where("pixi_wants.user_id is not null AND pixi_wants.status = ?", 'active').get_by_city(cid, loc, true)
+    else
+      result.where("pixi_wants.user_id = ? AND pixi_wants.status = ?", usr.id, 'active')
+    end
+  end
+
+  def as_csv(options={})
+    row = { "Title" => @listing.title, "Category" => @listing.category_name,
+      "Description" => @listing.description, "Location" => @listing.site_name }
+    header = ListingProcessor.new(@listing).toggle_user_name_header(@listing.status)
+    entry = ListingProcessor.new(@listing).toggle_user_name_row(@listing.status, @listing)
+    row[header] = entry
+    row[options[:style].titleize + " Date"] = @listing.display_date(@listing.created_date)
+    row
   end
 end

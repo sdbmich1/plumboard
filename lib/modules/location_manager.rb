@@ -23,8 +23,8 @@ module LocationManager
   # get area long, lat
   def self.get_lat_lng ip
     @ip = Rails.env.development? || Rails.env.test? ? '24.4.199.34' : ip
-    @area = Geocoder.search(@ip)
-    [@area.first.latitude, @area.first.longitude] rescue nil
+    @area = Geocoder.search(@ip).first rescue nil
+    [@area.latitude, @area.longitude] rescue nil
   end
 
   # get long, lat by zip
@@ -34,8 +34,15 @@ module LocationManager
 
   # get area long, lat by location
   def self.get_lat_lng_by_loc loc
-    @area = Geocoder.search(loc)
-    [@area.first.latitude, @area.first.longitude] rescue nil
+    @area = Geocoder.search(loc).first rescue nil
+    [@area.latitude, @area.longitude] rescue nil
+  end
+
+  # get area long, lat by site 
+  def self.get_lat_lng_by_site id
+    loc = Site.where(id: id).first 
+    @area = loc.contacts.first rescue nil
+    [@area.lat, @area.lng] rescue nil
   end
 
   # get location name by ip
@@ -56,7 +63,6 @@ module LocationManager
     site = Site.check_site(loc, ['city', 'region'])
     if site
       @contact = site.contacts.first
-
       if site.is_city?
         @slist = Contact.get_sites(@contact.city, @contact.state)
       else

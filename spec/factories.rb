@@ -52,7 +52,7 @@ FactoryGirl.define do
   end
 
   factory :contact_user, :class => "User", :parent => :pixi_user do
-    acct_token  "/v1/customers/CU3HH3hlEKbL04U2GOKgX8o2"
+    acct_token  "acct_16HJbsDEdnXv7t4y"
     before(:create) do |usr|
       usr.contacts.build FactoryGirl.attributes_for(:contact)
     end
@@ -287,7 +287,7 @@ FactoryGirl.define do
     acct_no '6789'
     currency_type_code 'usd'
     country_code 'us'
-    token "tr_16Cl6DEfOGOjxI0wnFK1wy8Z"
+    token "ba_16HJc8DEdnXv7t4ytCIXAzAs"
   end
 
   factory :card_account do

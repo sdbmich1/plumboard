@@ -1,4 +1,3 @@
-<% cache cache_key_for_pixi_item(listing) do %>
 <tr>
   <td class='span1 center-wrapper'>
     <%= render partial: 'shared/show_temp_pixi_image', locals: {model: listing, pix_size: 'tiny', img_size: 'usr-sm-photo'} %>
@@ -7,8 +6,7 @@
   <td class='span2'><%= listing.category_name %></td>
   <td class='span2'><%= listing.brief_descr %></td>
   <td class='span2'><%= listing.site_name %></td>
-  <%= toggle_buyer_name_row(@status, listing) %>
-  <td class='span2'><%= listing.display_date listing.updated_at %></td>
+  <td class='span2'><%= toggle_user_name_row(@status, listing) %></td>
+  <td class='span2'><%= listing.display_date(listing.created_date) %></td>
   <td class='span1 center-wrapper'><%= link_to 'Details', set_pixi_path(listing), class: 'btn btn-small' %></td>
 </tr>
-<% end %>

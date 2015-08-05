@@ -25,11 +25,11 @@ load_masonry('#px-nav', '#px-nav a.nxt-pg', '#pxboard .item', parseInt(get_item_
 // reload board
 reload_board(this);
 
+// reset status
+reload_ratings();
+
 // hide elements
 $('#nearby-map').hide('fast');
 
 // toggle spinner
 $('#spinner').hide('fast');
-
-// scroll to top
-//$(window).scrollTop(0);

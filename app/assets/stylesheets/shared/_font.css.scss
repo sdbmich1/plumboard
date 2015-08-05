@@ -179,7 +179,7 @@ a.black-seller-name {
   @extend .pxp-tag-line;
   display: inline-block;
   color: black;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .comm-tag-line {
@@ -198,3 +198,11 @@ a.black-seller-name {
   width: 100%; 
 }
 
+.truncate {
+  width: 160px;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;     /** IE6+, Firefox 7+, Opera 11+, Chrome, Safari **/
+  -o-text-overflow: ellipsis;  /** Opera 9 & 10 **/
+}

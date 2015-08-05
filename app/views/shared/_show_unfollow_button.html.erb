@@ -1,2 +1,2 @@
-<%= link_to('- Unfollow', favorite_seller_path(id: user.favorite_seller_id(seller.id), seller_id: seller.id),
+<%= link_to('Unfollow', favorite_seller_path(id: user.favorite_seller_id(seller.id), seller_id: seller.id),
                 :method => :put, id: "unfollow-btn", class: "btn btn-primary #{bcls} bold-btn", remote: true) %>

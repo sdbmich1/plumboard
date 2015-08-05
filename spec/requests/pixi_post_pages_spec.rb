@@ -90,7 +90,7 @@ feature "PixiPosts" do
     end
 
     it 'show content', js: true do
-      page.should have_content "PixiPost"
+      # page.should have_content "PixiPost"
       page.should have_content "Requested By: "
       page.should have_content @user.name
       page.should have_content @zip.city
@@ -119,7 +119,7 @@ feature "PixiPosts" do
     end
 
     it 'show content' do
-      page.should have_content "PixiPost"
+      # page.should have_content "PixiPost"
       page.should have_content "Requested By: "
       page.should have_content "Address Information"
       page.should have_content @user.contacts[0].address

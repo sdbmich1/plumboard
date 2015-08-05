@@ -96,17 +96,6 @@ describe Invoice do
     it { Invoice.find_invoice(order2).should be_nil }
   end
 
-  describe "find" do
-    before { @invoice.save! }
-    it 'finds a pixi' do
-      expect(Invoice.find(@invoice.id)).not_to be_nil
-    end
-
-    it 'does not find pixi' do
-      expect(Invoice.find(0)).to be_nil
-    end
-  end
-
   describe "paid" do 
     it "should not verify invoice is paid" do 
       @invoice.paid?.should_not be_true 
@@ -152,20 +141,18 @@ describe Invoice do
   end
 
   describe 'credit_account' do
-    before do
-      @invoice.bank_account_id = @account.id
-      @bank_acct = mock('Balanced::BankAccount', :amount=>50000)
-      Balanced::BankAccount.stub!(:find).with(@account.token).and_return(@bank_acct)
-      @bank_acct.stub!(:credit).and_return(true)
+    context 'credit_account w/ success' do
+      before do
+        Invoice.any_instance.stub(:credit_account).and_return(true)
+      end
+      it { expect(@invoice.credit_account).to be_true }
     end
 
-    it "should credit account" do 
-      @invoice.credit_account.should be_true
-    end
-
-    it "should not credit account" do 
-      @invoice.amount = nil
-      @invoice.credit_account.should_not be_true 
+    context 'credit_account w/ bad data' do
+      before do
+        Invoice.any_instance.stub(:credit_account).and_return(false)
+      end
+      it { expect(@invoice.credit_account).not_to be_true }
     end
   end
 
@@ -190,7 +177,7 @@ describe Invoice do
     end
 
     it "gets seller fee" do 
-      expect(@invoice.get_fee(true)).to eq(CalcTotal::get_convenience_fee(@details.subtotal, @invoice.pixan_id).round(2))
+      expect(@invoice.get_fee(true)).to eq(CalcTotal::get_convenience_fee(@invoice.amount, @invoice.pixan_id).round(2))
     end
 
     it "gets seller pixi post fee" do 
@@ -201,7 +188,7 @@ describe Invoice do
     end
 
     it "gets buyer fee" do 
-      expect(@invoice.get_fee).to eq((CalcTotal::get_convenience_fee(@invoice.subtotal) + CalcTotal::get_processing_fee(@invoice.subtotal)).round(2))
+      expect(@invoice.get_fee).to eq((CalcTotal::get_convenience_fee(@invoice.amount) + CalcTotal::get_processing_fee(@invoice.amount)).round(2))
     end
 
     it "return zero" do 
@@ -373,10 +360,10 @@ describe Invoice do
   
   describe "load invoice" do
     def check_inv flg=false
-      inv = Invoice.load_new(@user, @buyer.id, @listing.pixi_id)
+      inv = Invoice.load_new(@user.reload, @buyer.id, @listing.pixi_id)
       inv.should_not be_nil
       expect(inv.buyer_id).to eq @buyer.id
-      expect(inv.amount).to eq @listing.price
+      expect(inv.amount).to eq @listing.price unless flg
       expect(inv.invoice_details.first.quantity).to eq @pixi_want.quantity if flg
     end
 
@@ -406,7 +393,7 @@ describe Invoice do
     end
 
     it "does not load new invoice" do
-      Invoice.load_new(nil, nil, nil).should be_nil
+      expect(Invoice.load_new(nil, nil, nil)).not_to be_nil
     end
   end
 
@@ -472,9 +459,9 @@ describe Invoice do
       @details3 = @invoice3.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
       @details4 = @invoice3.invoice_details.build attributes_for :invoice_detail, pixi_id: listing.pixi_id 
       @invoice3.save!
-      @invoice.status = 'paid'
-      @invoice.save!; sleep 3
+      @invoice.update_attribute(:status, 'paid'); sleep 2
       expect(@invoice3.status).not_to eq 'closed'
+      expect(@invoice.status).to eq 'paid'
       expect(Invoice.where(status: 'closed').count).to eq 1
     end
   end
@@ -536,6 +523,41 @@ describe Invoice do
       it { expect(@invoice.bank_name).to be_nil }
       it 'has bank_name', run: true do
         expect(@invoice.bank_name).to eq @account.bank_name
+      end
+    end
+  end
+
+  describe 'get_by_keys' do
+    before :each do
+      @invoice.save! 
+    end
+    context 'get_by_buyer' do
+      it { expect(Invoice.get_by_buyer(@buyer.id)).to include @invoice }
+      it { expect(Invoice.get_by_buyer(@user.id)).not_to include @invoice }
+    end
+    context 'get_by_seller' do
+      it { expect(Invoice.get_by_seller(@buyer.id)).not_to include @invoice }
+      it { expect(Invoice.get_by_seller(@user.id)).to include @invoice }
+    end
+    context 'get_by_pixi' do
+      it { expect(Invoice.get_by_pixi('1234')).not_to include @invoice }
+      it { expect(Invoice.get_by_pixi(@listing.pixi_id)).to include @invoice }
+    end
+    context 'get_by_status_and_pixi' do
+      it { expect(Invoice.get_by_status_and_pixi('unpaid', @buyer.id, '1234')).not_to include @invoice }
+      it { expect(Invoice.get_by_status_and_pixi('unpaid', @user.id, @listing.pixi_id)).not_to include @invoice }
+      it { expect(Invoice.get_by_status_and_pixi('unpaid', @buyer.id, @listing.pixi_id, false)).not_to include @invoice }
+      it { expect(Invoice.get_by_status_and_pixi('paid', @buyer.id, @listing.pixi_id)).not_to include @invoice }
+      it { expect(Invoice.get_by_status_and_pixi('unpaid', @buyer.id, @listing.pixi_id)).to include @invoice }
+      it { expect(Invoice.get_by_status_and_pixi('unpaid', @user.id, @listing.pixi_id, false)).to include @invoice }
+      it 'successfully handles paid invoices' do
+        @invoice.update_attribute(:status, 'paid')
+        expect(Invoice.get_by_status_and_pixi('paid', @user.id, '1234', false)).not_to include @invoice 
+        expect(Invoice.get_by_status_and_pixi('paid', @user.id, @listing.pixi_id)).not_to include @invoice 
+        expect(Invoice.get_by_status_and_pixi('unpaid', @user.id, @listing.pixi_id, false)).not_to include @invoice 
+        expect(Invoice.get_by_status_and_pixi('paid', @buyer.id, @listing.pixi_id, false)).not_to include @invoice 
+        expect(Invoice.get_by_status_and_pixi('paid', @buyer.id, @listing.pixi_id)).to include @invoice 
+        expect(Invoice.get_by_status_and_pixi('paid', @user.id, @listing.pixi_id, false)).to include @invoice 
       end
     end
   end

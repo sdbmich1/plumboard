@@ -1,4 +1,5 @@
 module UsersHelper
+  include ProcessMethod
 
   # toggle boolean to string
   def toggle_bool val
@@ -37,7 +38,7 @@ module UsersHelper
 
   # toggle title
   def set_user_title
-    @user.is_admin? ? @usr.name : 'Settings' rescue 'Users'
+    @user.is_admin? ? @usr.name.html_safe : 'Settings' rescue 'Users'
   end
 
   # toggle user info form
@@ -67,7 +68,7 @@ module UsersHelper
 
   # render user tooltip based on image type
   def show_user_tooltip val
-    txt = cover_photo?(val) ? 'For best results, use a 1280x200 image.' : 'Upload your photo or logo.'
+    txt = cover_photo?(val) ? 'For best results, use a 1280x200 image.' : 'For best results, use a square image (i.e. 200x200) of your photo or logo.'
     content_tag(:div, render(partial: 'shared/tooltip', locals: { msg: txt }), class: 'right-form px-neg-top')
   end
 
@@ -120,5 +121,9 @@ module UsersHelper
   # build dynamic cache key for seller
   def cache_key_for_seller(usr, fldName='title')
     "/#{usr.name}-#{usr.updated_at.to_i}-#{fldName}" if usr
+  end
+
+  def show_user_buttons user
+    render partial: 'shared/show_user_buttons', locals: {user: user} if @user.is_admin? 
   end
 end

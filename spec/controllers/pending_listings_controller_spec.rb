@@ -28,7 +28,7 @@ describe PendingListingsController do
     @listings = mock("listings")
     TempListing.stub!(:get_by_status).and_return(@listings)
     @listings.stub!(:paginate).and_return(@listings)
-    controller.stub!(:load_data).and_return(:success)
+    TempListing.any_instance.stub(:created_date).and_return(DateTime.current)
   end
 
   describe 'GET index' do
@@ -49,6 +49,11 @@ describe PendingListingsController do
       TempListing.should_receive(:get_by_status).and_return(@listings)
       do_get 
       assigns(:listings).should_not be_nil
+    end
+
+    it "responds to CSV" do
+      get :index, :status => 'pending', :format => 'csv'
+      expect(response).to be_success
     end
   end
 

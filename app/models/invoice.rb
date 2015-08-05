@@ -1,6 +1,5 @@
 class Invoice < ActiveRecord::Base
   resourcify
-  include CalcTotal, ResetDate
   before_create :set_flds
   after_commit :mark_as_closed, :on => :update
 
@@ -15,9 +14,8 @@ class Invoice < ActiveRecord::Base
   belongs_to :bank_account
   has_many :pixi_payments
   has_many :invoice_details
-  accepts_nested_attributes_for :invoice_details, allow_destroy: true, :reject_if => :all_blank
-
   has_many :listings, through: :invoice_details
+  accepts_nested_attributes_for :invoice_details, allow_destroy: true, :reject_if => :all_blank
 
   validates :buyer_id, presence: true  
   validates :seller_id, presence: true  
@@ -33,24 +31,17 @@ class Invoice < ActiveRecord::Base
 
   # set flds
   def set_flds
-    self.status = 'unpaid' if status.nil?
-    self.inv_date = Time.now if inv_date.blank?
-    self.bank_account_id = seller.bank_accounts.first.id if seller.has_bank_account?
+    InvoiceProcessor.new(self).set_flds
   end
 
   # validate picture exists
   def must_have_pixis
-    if !any_pixi?
-      errors.add(:base, 'Must have a pixi')
-      false
-    else
-      true
-    end
+    InvoiceProcessor.new(self).must_have_pixis
   end
 
   # check for a pixi
   def any_pixi?
-    invoice_details.detect { |x| x && !x.pixi_id.nil? }
+    InvoiceProcessor.new(self).must_have_pixis
   end
 
   # get by status
@@ -67,22 +58,7 @@ class Invoice < ActiveRecord::Base
 
   # load new invoice with most recent pixi data
   def self.load_new usr, buyer_id, pixi_id
-    if usr && usr.has_pixis?
-      # get most recent pixi
-      pixi = usr.active_listings.first if usr.active_listings.size == 1
-
-      # load invoice with pixi data
-      inv = usr.invoices.build buyer_id: buyer_id
-
-      # set pixi id if possible
-      det = inv.invoice_details.build
-      det.pixi_id = !pixi_id.blank? ? pixi_id : !pixi.blank? ? pixi.id : nil rescue nil
-      det.quantity = det.listing.active_pixi_wants.where(user_id: buyer_id).first.quantity rescue 1
-      det.price = det.listing.price || 0 if det.listing
-      det.amt_left = det.listing.amt_left rescue 1
-      det.subtotal = inv.amount = det.listing.price * det.quantity if det.listing rescue 0
-    end
-    inv
+    InvoiceProcessor.new(self).load_new usr, buyer_id, pixi_id
   end
 
   # define eager load assns
@@ -132,21 +108,12 @@ class Invoice < ActiveRecord::Base
 
   # submit payment request for review
   def submit_payment val
-    if val
-      self.transaction_id, self.status = val, 'paid' 
-      save!
-    else
-      false
-    end
+    InvoiceProcessor.new(self).submit_payment val
   end
 
   # credit account & process payment
   def credit_account
-    if amount
-      result = bank_account.credit_account(seller_amount) rescue false
-    else
-      false
-    end
+    InvoiceProcessor.new(self).credit_account
   end
 
   # get convenience fee based on user
@@ -156,28 +123,17 @@ class Invoice < ActiveRecord::Base
 
   # get txn fee
   def get_fee sellerFlg=false, fee=0.0
-    if amount
-      if sellerFlg
-        invoice_details.each do |x|
-          fee += CalcTotal::get_convenience_fee(x.subtotal, x.listing.pixan_id) unless x.listing.pixan_id.blank?
-        end
-      end
-      fee += CalcTotal::get_convenience_fee(amount) if fee == 0.0
-      fee += CalcTotal::get_processing_fee(amount) unless sellerFlg
-      fee.round(2)
-    else
-      0.0
-    end
+    InvoiceProcessor.new(self).get_fee sellerFlg, fee
   end
 
   # get txn processing fee
   def get_processing_fee
-    fee = amount ? CalcTotal::get_processing_fee(amount).round(2) : 0.0
+    InvoiceProcessor.new(self).get_processing_fee
   end
 
   # get txn convenience fee
   def get_convenience_fee
-    fee = amount ? CalcTotal::get_convenience_fee(amount).round(2) : 0.0
+    InvoiceProcessor.new(self).get_convenience_fee
   end
 
   # get buyer name
@@ -217,8 +173,7 @@ class Invoice < ActiveRecord::Base
 
   # get pixan id
   def pixan_id
-    x = listings.detect {|x| !x.pixan_id.blank? } rescue nil
-    x.pixan_id if x
+    InvoiceProcessor.new(self).pixan_id
   end
 
   # get title
@@ -253,21 +208,12 @@ class Invoice < ActiveRecord::Base
 
   # load assn details
   def self.load_details
-    Invoice.find_each do |inv|
-      inv.invoice_details.create pixi_id: inv.pixi_id, quantity: inv.quantity, price: inv.price, subtotal: inv.subtotal
-    end
+    InvoiceProcessor.new(self).load_details
   end
 
   # marked as closed any other invoice associated with this pixi
   def mark_as_closed 
-    if paid?
-      listings.find_each do |listing|
-        inv_list = Invoice.where(status: 'unpaid').joins(:invoice_details).where("`invoice_details`.`pixi_id` = ?", listing.pixi_id).readonly(false)
-        inv_list.find_each do |inv|
-          inv.update_attribute(:status, 'closed') if inv.pixi_count == 1 && inv.id != self.id && inv.buyer_id == self.buyer_id
-        end
-      end
-    end
+    InvoiceProcessor.new(self).mark_as_closed
   end
 
   # return all unpaid invoices that are more than number_of_days old
@@ -281,12 +227,7 @@ class Invoice < ActiveRecord::Base
   end
 
   def decline_msg
-    case self.decline_reason
-      when "No Longer Interested"; "I am no longer interested in this pixi.  Thank you."
-      when "Incorrect Pixi"; "You have invoiced me for the wrong pixi.  Thank you."
-      when "Incorrect Price"; "This was not the price that I was expecting for this pixi. Thank you."
-      when "Did Not Want"; "You have mistakenly invoiced me for this pixi.  Thank you."
-    end
+    InvoiceProcessor.new(self).decline_msg
   end
 
   def decline reason
@@ -297,7 +238,8 @@ class Invoice < ActiveRecord::Base
   # set json string
   def as_json(options={})
     super(except: [:updated_at], 
-      methods: [:pixi_title, :buyer_name, :seller_name, :short_title, :nice_status, :inv_dt, :get_fee, :get_processing_fee, :get_convenience_fee], 
+      methods: [:pixi_title, :buyer_name, :seller_name, :short_title, :nice_status, :inv_dt, :get_fee, :get_processing_fee, :get_convenience_fee,
+        :seller_amount], 
       include: {seller: { only: [:first_name], methods: [:photo] }, 
                 buyer: { only: [:first_name], methods: [:photo] }})
   end
@@ -309,8 +251,7 @@ class Invoice < ActiveRecord::Base
 
   # get seller amount minus fees
   def seller_amount
-    amt = amount - CalcTotal::get_convenience_fee(amount, pixan_id) rescue amount
-    amt.round(2)
+    InvoiceProcessor.new(self).seller_amount
   end
 
   # get description for completed txn
@@ -332,5 +273,22 @@ class Invoice < ActiveRecord::Base
 
   def transaction_amount
     transaction.amt rescue 0.0
+  end
+
+  def self.get_by_buyer uid
+    where(buyer_id: uid)
+  end
+
+  def self.get_by_seller uid
+    where(seller_id: uid)
+  end
+
+  def self.get_by_pixi pid
+    where("listings.pixi_id = ?", pid).joins(:listings)
+  end
+
+  def self.get_by_status_and_pixi val, uid, pid, buyerFlg=true
+    str = buyerFlg ? "get_by_buyer" : 'get_by_seller'
+    get_by_status(val).send(str, uid).get_by_pixi(pid) rescue nil
   end
 end

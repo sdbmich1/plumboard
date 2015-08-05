@@ -3,10 +3,10 @@ class InvoicesController < ApplicationController
   load_and_authorize_resource
   before_filter :authenticate_user!
   skip_authorize_resource :only => [:autocomplete_user_first_name]
-  before_filter :load_data, only: [:index, :sent, :received]
+  before_filter :load_data, only: [:index, :sent, :received, :new, :show, :edit]
   before_filter :load_invoice, only: [:show, :edit, :update, :destroy, :remove, :decline]
+  before_filter :mark_message, only: [:new, :show, :edit]
   before_filter :set_params, only: [:create, :update]
-  after_filter :mark_message, only: [:new, :show]
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name
   respond_to :html, :js, :json, :mobile
   layout :page_layout

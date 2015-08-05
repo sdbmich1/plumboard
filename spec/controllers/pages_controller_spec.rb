@@ -1,15 +1,27 @@
 require 'spec_helper'
 
 describe PagesController do
-  render_views
+  # render_views
+
+  before(:each) do
+    @listing = stub_model(Listing, :id=>1, pixi_id: '1', site_id: 1, seller_id: 1, title: "Guitar for Sale", description: "Guitar for Sale")
+  end
 
   describe 'GET home' do
     before(:each) do
+      @listings = stub_model(Listing)
+      Listing.stub_chain(:active, :board_fields).and_return(@listings)
+      @listings.stub_chain(:paginate).and_return(@listings)
+      controller.stub!(:load_data).and_return(:success)
       do_get
     end
 
     def do_get
       get :home
+    end
+
+    it "assigns @listings" do
+      assigns(:listings).should == @listings
     end
 
     it "renders the :home view" do
@@ -95,8 +107,8 @@ describe PagesController do
 
   describe 'xhr GET location_name' do
     before :each do
-      @loc, @loc_name = 1234, 'SF Bay Area'
-      LocationManager.stub!(:get_region).and_return( [@loc, @loc_name] )
+      @region, @loc_name = 1234, 'SF Bay Area'
+      LocationManager.stub!(:get_region).and_return( [@region, @loc_name] )
       do_get
     end
 
@@ -112,8 +124,8 @@ describe PagesController do
       assigns(:loc_name).should_not be_nil
     end
 
-    it "should assign @loc" do
-      assigns(:loc).should_not be_nil
+    it "should assign @region" do
+      assigns(:region).should_not be_nil 
     end
 
     it "should show the requested location_name" do

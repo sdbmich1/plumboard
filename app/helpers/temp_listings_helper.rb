@@ -72,9 +72,13 @@ module TempListingsHelper
     !listing.is_category_type? %w(employment service event housing item)
   end
 
+  def has_event_type? listing
+    listing.is_category_type? %w(event)
+  end
+
   # set large size if condition is not visible
   def set_category_size listing
-    has_condition?(listing) ? 'span2' : 'span4'
+    has_condition?(listing) || has_event_type?(listing) ? 'span2' : 'span4'
   end
 
   # check if pixi is chargeable
@@ -131,5 +135,9 @@ module TempListingsHelper
     else
       render partial: 'shared/item_purchase', locals: {listing: listing} if chargeable? listing 
     end
+  end
+
+  def set_draft_partial aFlg
+    aFlg ? 'shared/manage_pixis' : 'shared/mypixis_list'
   end
 end

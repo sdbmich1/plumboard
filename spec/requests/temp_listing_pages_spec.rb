@@ -269,7 +269,7 @@ feature "TempListings" do
 	  add_photo 'Jobs', false, true; sleep 2
 	  check_page_selectors ['#temp_listing_job_type_code', '#salary'], true, false
  	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time', '#pixi_qty', '#et_code', '#cond-type-code', '#yr_built', 
-	    '#temp_listing_mileage', '#temp_listing_item_color', '#temp_listing_item_id', '#temp_listing_item_size', '#temp_listing_car_id', 
+	    '#temp_listing_mileage', '#temp_listing_item_color', '#temp_listing_item_id', '#temp_listing_product_size', '#temp_listing_car_id', 
 	    '#temp_listing_car_color', '#temp_listing_price'], false, false
           select('Full-Time', :from => 'temp_listing_job_type_code')
           fill_in 'salary', with: "Competitive"
@@ -282,7 +282,7 @@ feature "TempListings" do
           fill_in 'Title', with: "Buick Regal for sale"
 	  check_page_selectors ['#cond-type-code', '#yr_built', '#temp_listing_mileage', '#temp_listing_car_color', '#temp_listing_car_id'], true, false
  	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time', '#pixi_qty', '#et_code', '#temp_listing_job_type_code', '#salary',
-	    '#temp_listing_item_size', '#temp_listing_item_color', '#temp_listing_item_id'], false, false
+	    '#temp_listing_product_size', '#temp_listing_product_color', '#temp_listing_item_color', '#temp_listing_item_id'], false, false
           select('Used', :from => 'cond-type-code')
           select('2001', :from => 'yr_built')
           fill_in 'temp_listing_mileage', with: "100,000"
@@ -295,7 +295,7 @@ feature "TempListings" do
         expect{
 	  add_photo 'Events', true, true
 	  check_page_selectors ['#temp_listing_job_type_code', '#salary', '#cond-type-code', '#yr_built', '#temp_listing_mileage', 
-	    '#temp_listing_mileage', '#temp_listing_item_color', '#temp_listing_item_id', '#temp_listing_item_size', '#temp_listing_car_id', 
+	    '#temp_listing_mileage', '#temp_listing_item_color', '#temp_listing_item_id', '#temp_listing_product_size', '#temp_listing_car_id', 
 	    '#temp_listing_car_color'], false, false
  	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time', '#pixi_qty', '#et_code'], true, false
           select('Performance', :from => 'et_code'); sleep 0.5
@@ -311,14 +311,14 @@ feature "TempListings" do
         expect{
   	  add_photo 'Apparel', true, true; sleep 3
           fill_in 'Title', with: "Cosby Sweater"
-	  check_page_selectors ['#cond-type-code','#pixi_qty', '#temp_listing_item_color', '#temp_listing_item_id', '#temp_listing_item_size'], true, 
+	  check_page_selectors ['#cond-type-code','#pixi_qty', '#temp_listing_item_color', '#temp_listing_item_id', '#temp_listing_product_size'], true, 
 	  false 
  	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time','#et_code','#temp_listing_job_type_code', '#salary','#yr_built', 
 	  '#temp_listing_mileage', '#temp_listing_car_id', '#temp_listing_car_color'], false, false
           select('Used', :from => 'cond-type-code')
           select('4', :from => 'pixi_qty'); sleep 0.5
           fill_in 'temp_listing_item_color', with: "Baby Blue"
-          fill_in 'temp_listing_item_size', with: "Large"
+          fill_in 'temp_listing_product_size', with: "Large"
           fill_in 'temp_listing_item_id', with: "ABCDEF1234567890"
 	}.to change(TempListing,:count).by(0)
       end	      
@@ -328,7 +328,7 @@ feature "TempListings" do
   	  add_photo 'Books', true, true; sleep 3
           fill_in 'Title', with: "Harry Potter"
 	  check_page_selectors ['#cond-type-code','#pixi_qty'], true, false
- 	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time', '#et_code', '#temp_listing_job_type_code', '#salary','#yr_built', '#temp_listing_mileage', '#temp_listing_car_color', '#temp_listing_car_id', '#temp_listing_item_size', '#temp_listing_item_color'], false, false
+ 	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time', '#et_code', '#temp_listing_job_type_code', '#salary','#yr_built', '#temp_listing_mileage', '#temp_listing_car_color', '#temp_listing_car_id', '#temp_listing_product_size', '#temp_listing_item_color'], false, false
           select('Used', :from => 'cond-type-code')
           select('4', :from => 'pixi_qty'); sleep 0.5
 	}.to change(TempListing,:count).by(0)
@@ -341,7 +341,7 @@ feature "TempListings" do
 	  check_page_selectors ['#temp_listing_price'], true, false
  	  check_page_selectors ['#cond-type-code', '#start-date', '#end-date', '#start-time', '#end-time', '#et_code', '#temp_listing_job_type_code',
 	  '#salary','#yr_built', '#temp_listing_mileage', '#temp_listing_item_color','#temp_listing_car_color', '#temp_listing_car_id', 
-	  '#temp_listing_item_size', '#pixi_qty'], false, false
+	  '#temp_listing_product_size', '#pixi_qty'], false, false
 	}.to change(TempListing,:count).by(0)
       end	      
     end	      
@@ -547,7 +547,7 @@ feature "TempListings" do
 
     it 'shows product content' do
       @temp_listing = create(:temp_listing, seller_id: user.id, status: 'new', condition_type_code: 'U', quantity: 1, category_id: @cat2.id,
-	title: 'The Product', other_id: '123456', item_size: 'Large', color: 'Blue')
+	title: 'The Product', other_id: '123456', product_size: 'Large', color: 'Blue')
       visit temp_listing_path(@temp_listing) 
       check_page_expectations ["Start Date:", "End Date:", "Start Time:", "End Time:", "Event Type:", "Compensation:", "Job Type:", "Year:", 'VIN #:'], '', true
       check_page_selectors ['#contact_content', '#comment_content'], false, true
@@ -748,7 +748,7 @@ feature "TempListings" do
     before :each do
       attr = {"seller_id"=>"#{user.id}", "title"=>"Dilworth Leather Loveseat", "category_id"=>"31", "condition_type_code"=>"ULN", 
       "job_type_code"=>"", "event_type_code"=>"", "site_id"=>"9904", "price"=>"300", "quantity"=>"1", "year_built"=>"", "compensation"=>"", 
-      "event_start_date"=>"", "event_end_date"=>"", "car_id"=>"", "car_color"=>"","mileage"=>"", "item_color"=>"", "item_size"=>"", "item_id"=>"", 
+      "event_start_date"=>"", "event_end_date"=>"", "car_id"=>"", "car_color"=>"","mileage"=>"", "item_color"=>"", "product_size"=>"", "item_id"=>"", 
       "description"=>"great condition", "start_date"=>"2015-04-13 19:58:11 -0700", "status"=>"new", "post_ip"=>"127.0.0.1", 
       "pictures_attributes"=>{"0"=>{"direct_upload_url"=>"Dilworth-loveseat-Leather-22.jpg","photo_file_name"=>"Dilworth-loveseat-Leather-22.jpg", 
       "photo_file_path"=>"/uploads/1428981009986-dla2y3o9mjejnhfr-3c45659dc6c50163f3b8048e5b81e979/Dilworth-loveseat-Leather-22.jpg", 

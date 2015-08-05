@@ -1,8 +1,8 @@
 <div class="<%= set_item_class(ftrFlg) %>">
   <div class="center-wrapper">
-    <%= render partial: 'shared/show_temp_pixi_image', locals: {model: listing, pix_size: px_size, img_size: 'pixi-image'} %>
+    <%= render partial: toggle_image_partial(ftrFlg), locals: {model: listing, pix_size: px_size, img_size: 'pixi-image'} %>
     <div class='sm-top'>
-      <span class=' bdescr'><%= item_title(listing, ftrFlg) %></span><br /><%= render_title listing %>
+      <span class=' bdescr'><%= item_title(listing, ftrFlg) %></span><br /><%= render_title listing, ftrFlg %>
     </div>
     <%= pixi_footer listing %>
   </div>

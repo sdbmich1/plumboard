@@ -1,6 +1,6 @@
 <% provide(:title, page_title) %>
 <%= content_for :subhead do %>
-  <%= render partial: 'shared/navbar', locals: { menu_name: menu_name, loc_name: @loc_name } %>
+  <%= set_index_menu btype, menu_name, @loc_name %>
 <% end %>
 <%= content_for :top_banner do %>
   <div id='tbanner'><%= render partial: 'shared/load_banner', locals: { btype: btype } %></div>

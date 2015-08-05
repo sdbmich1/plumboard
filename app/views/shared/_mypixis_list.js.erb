@@ -1,2 +1,7 @@
+<% if @listings.blank? %>
+  $(".pg-entry").html("");
+<% else %>
+  $(".pg-entry").html("<%= escape_javascript( raw page_entries_info @listings, :model => 'pixis') %>");
+<% end %>
 $("#pendingOrder").html("<%= escape_javascript( raw render(:partial => 'shared/index_list') ) %>");
 $("#spinner").hide('fast');
