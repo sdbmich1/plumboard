@@ -718,7 +718,7 @@ end
 
 task :load_site_type_codes => :environment do
   SiteType.delete_all
-  CSV.foreach(Rails.root.join('db', 'site_type_code_060215.csv'), :headers => true) do |row|
+  CSV.foreach(Rails.root.join('db', 'site_type_060215.csv'), :headers => true) do |row|
 
     hide_val = row[3]
     if hide_val.nil? or hide_val.empty?
@@ -783,7 +783,7 @@ task :run_all_tasks => :environment do
   Rake::Task[:load_event_types].execute
   Rake::Task[:load_status_types].execute
   Rake::Task[:load_condition_types].execute
-  Rake::Task[:load_org_types].execute
+  Rake::Task[:load_site_type_codes].execute
   Rake::Task[:import_travel_modes].execute
   Rake::Task[:load_feeds].execute
   Rake::Task[:import_other_sites].execute :file_name => "state_site_data_012815.csv", :site_type_code => "state"
