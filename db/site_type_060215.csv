@@ -1,1 +1,8 @@
-site_type,description,status,hideregion,Major Metro Area,active,school,College or University,active,city,City,active,area,Neighborhood or District,active,country,Nation,active,newspaper,Newspaper Publication,active,magazine,Magazine Publication,active,state,State or Province,active,
+site_type,description,status,hide
+region,Region,active,
+school,College/University,active,
+city,City,active,
+area,Neighborhood/District,active,
+country,Nation/Country,active,
+pub,Newspaper/Magazine,active,
+state,State/Province,active,
