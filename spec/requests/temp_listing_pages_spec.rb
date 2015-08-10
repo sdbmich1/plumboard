@@ -783,7 +783,7 @@ feature "TempListings" do
 
   describe "Create Default Site Posted Pixis" do
     let(:temp_listing) { build(:temp_listing) }
-    let(:loc) {create :site, org_type: 'pub'}
+    let(:loc) {create :site, site_type_code: 'pub'}
 
     before(:each) do
       init_setup user

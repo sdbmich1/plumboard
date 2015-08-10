@@ -1056,9 +1056,9 @@ describe TempListing do
       TempListing.get_by_city(temp_listing.category_id, temp_listing.site_id, false).should_not be_empty
     end
 
-    it "finds by org_type" do
-      ['city', 'region', 'state', 'country'].each { |org_type|
-        site = create(:site, name: 'Detroit', org_type: org_type)
+    it "finds by site_type_code" do
+      ['city', 'region', 'state', 'country'].each { |site_type_code_name|
+        site = create(:site, name: 'Detroit', site_type_code: site_type_code_name)
         lat, lng = Geocoder.coordinates('Detroit, MI')
         site.contacts.create(FactoryGirl.attributes_for(:contact, address: 'Metro', city: 'Detroit', state: 'MI',
           country: 'United States of America', lat: lat, lng: lng))

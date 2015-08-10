@@ -163,7 +163,7 @@ namespace :manage_server do
   task :run_upgrade_tasks => :environment do
     Rake::Task[:import_travel_modes].execute
     Rake::Task[:import_user_type].execute
-    Rake::Task[:load_org_types].execute
+    Rake::Task[:load_site_type_codes].execute
     Rake::Task[:load_event_types].execute
     Rake::Task[:load_fulfillment_types].execute
     Rake::Task[:load_feeds].execute
@@ -171,7 +171,7 @@ namespace :manage_server do
     Rake::Task[:load_region_suburbs].execute
     Rake::Task[:update_site_images].execute :file_name => "region_image_data_051415.csv"
     Rake::Task[:update_site_images].execute :file_name => "city_image_data_060915.csv"
-    Rake::Task[:import_other_sites].execute :file_name => "country_site_data_012815.csv", :org_type => "country"
+    Rake::Task[:import_other_sites].execute :file_name => "country_site_data_012815.csv", :site_type_code => "country"
     Rake::Task["db:load_countries"].invoke
     Rake::Task["db:update_cat_types"].invoke
     Rake::Task["db:load_user_status"].invoke

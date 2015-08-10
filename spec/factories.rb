@@ -69,7 +69,7 @@ FactoryGirl.define do
   factory :site do
     name "SFSU"
     status  "active"
-    org_type  "school"
+    site_type_code  "school"
   end
 
   factory :picture do
@@ -426,7 +426,7 @@ FactoryGirl.define do
     description 'New'
   end
         
-  factory :org_type do
+  factory :site_type do
     code "N"
     hide "no"
     status "active"

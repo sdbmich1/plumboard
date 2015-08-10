@@ -498,17 +498,6 @@ ActiveRecord::Schema.define(:version => 20150802054738) do
   add_index "old_listings", ["title"], :name => "index_old_listings_on_title"
   add_index "old_listings", ["user_id"], :name => "index_old_listings_on_user_id"
 
-  create_table "org_types", :force => true do |t|
-    t.string   "code"
-    t.string   "status"
-    t.string   "hide"
-    t.string   "description"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
-  end
-
-  add_index "org_types", ["code"], :name => "index_org_types_on_code"
-
   create_table "pictures", :force => true do |t|
     t.string   "delete_flg"
     t.integer  "imageable_id"
@@ -763,9 +752,20 @@ ActiveRecord::Schema.define(:version => 20150802054738) do
   add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
   add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
 
+  create_table "site_types", :force => true do |t|
+    t.string   "code"
+    t.string   "status"
+    t.string   "hide"
+    t.string   "description"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "site_types", ["code"], :name => "index_org_types_on_code"
+
   create_table "sites", :force => true do |t|
     t.string   "name"
-    t.string   "org_type"
+    t.string   "site_type_code"
     t.string   "status"
     t.string   "email"
     t.datetime "created_at",     :null => false
@@ -777,7 +777,7 @@ ActiveRecord::Schema.define(:version => 20150802054738) do
 
   add_index "sites", ["institution_id"], :name => "index_organizations_on_institution_id"
   add_index "sites", ["name"], :name => "index_sites_on_name"
-  add_index "sites", ["status", "org_type"], :name => "index_sites_on_status_and_org_type"
+  add_index "sites", ["status", "site_type_code"], :name => "index_sites_on_status_and_org_type"
   add_index "sites", ["url"], :name => "index_sites_on_url"
 
   create_table "sites_temp_listings", :id => false, :force => true do |t|

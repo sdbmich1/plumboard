@@ -44,5 +44,4 @@ class SiteProcessor
   def active_with_pixis
     Site.where(id: Listing.active.pluck(:site_id).uniq)
   end
-
 end

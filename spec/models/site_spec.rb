@@ -11,7 +11,7 @@ describe Site do
 
   it { should respond_to(:name) }
   it { should respond_to(:email) }
-  it { should respond_to(:org_type) }
+  it { should respond_to(:site_type_code) }
   it { should respond_to(:status) }
   it { should respond_to(:institution_id) }
   it { should respond_to(:users) }
@@ -20,6 +20,11 @@ describe Site do
   it { should respond_to(:contacts) }
   it { should respond_to(:pictures) }
   it { should respond_to(:temp_listings) }
+
+  it { should validate_presence_of(:name) }
+  it { should validate_presence_of(:site_type_code) }
+
+  it {should belong_to(:site_type).with_foreign_key('site_type_code') }
 
   describe "should include active sites" do
     it { Site.active.should_not be_nil }
@@ -30,9 +35,9 @@ describe Site do
     it { Site.active.should_not include (site) } 
   end
 
-  describe "should not include sites with invalid org_type" do
-    ['region', 'state', 'country'].each { |org_type|
-      site = Site.create(:name=>'Item', :status=>'inactive', org_type: org_type)
+  describe "should not include sites with invalid site_type_code" do
+    ['region', 'state', 'country'].each { |name|
+      site = FactoryGirl.create(:site, name: 'Item', status: 'inactive', site_type_code: name)
       it { Site.active(false).should_not include (site) }
     }
   end
@@ -92,18 +97,18 @@ describe Site do
 
   describe 'get_by_type' do
     it 'returns sites' do
-      create :site, name: 'San Francisco State', org_type: 'school'
+      create :site, name: 'San Francisco State', site_type_code: 'school'
       expect(Site.get_by_type('school')).not_to be_empty 
     end  
 
     it 'does not return sites' do
-      expect(Site.get_by_type('school')).to be_empty 
+      expect(Site.get_by_type('region')).to be_empty 
     end  
   end
 
   describe 'get_by_name_and_type' do
     it 'returns sites' do
-      create :site, name: 'San Francisco State', org_type: 'school'
+      create :site, name: 'San Francisco State', site_type_code: 'school'
       expect(Site.get_by_name_and_type('San Francisco State', 'school')).not_to be_empty 
     end  
 
@@ -116,9 +121,22 @@ describe Site do
     end  
   end
 
+  describe 'get_by_status' do
+    it 'returns sites' do
+      create :site, name: 'San Francisco State', site_type_code: 'school'
+      expect(Site.get_by_status('active')).not_to be_empty
+      create :site, name: 'San Francsico', site_type_code: 'city', status: 'inactive'
+      expect(Site.get_by_status('inactive')).not_to be_empty
+    end
+    
+    it 'does not return sites' do
+      expect(Site.get_by_type('inactive')).to be_empty
+    end
+  end
+
   describe 'cities' do
     it 'returns sites' do
-      create :site, name: 'San Francisco', org_type: 'city'
+      create :site, name: 'San Francisco', site_type_code: 'city'
       expect(Site.cities).not_to be_empty 
     end  
 
@@ -129,7 +147,7 @@ describe Site do
 
   describe 'check_site' do
     it 'locates sites' do
-      @site1 = create :site, name: 'Detroit', org_type: 'city'
+      @site1 = create :site, name: 'Detroit', site_type_code: 'city'
       @site1.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro', city: 'Detroit', state: 'MI'
       expect(Site.check_site @site1.id, 'city').not_to be_nil 
     end
@@ -141,28 +159,28 @@ describe Site do
 
   describe 'check types' do
     it 'is a city' do
-      site = create :site, name: 'Detroit', org_type: 'city'
+      site = create :site, name: 'Detroit', site_type_code: 'city'
       expect(site.is_city?).to be_true
       expect(site.is_school?).not_to be_true
       expect(site.is_region?).not_to be_true
     end
 
     it 'is a school' do
-      site = create :site, name: 'Detroit College', org_type: 'school'
+      site = create :site, name: 'Detroit College', site_type_code: 'school'
       expect(site.is_school?).to be_true
       expect(site.is_city?).not_to be_true
       expect(site.is_region?).not_to be_true
     end
 
     it 'is a region' do
-      site = create :site, name: 'Detroit', org_type: 'region'
+      site = create :site, name: 'Detroit', site_type_code: 'region'
       expect(site.is_region?).to be_true
       expect(site.is_school?).not_to be_true
       expect(site.is_city?).not_to be_true
     end
 
     it 'is a pub' do
-      site = create :site, name: 'City Living', org_type: 'pub'
+      site = create :site, name: 'City Living', site_type_code: 'pub'
       expect(site.is_pub?).to be_true
       expect(site.is_region?).not_to be_true
       expect(site.is_school?).not_to be_true
@@ -172,9 +190,9 @@ describe Site do
 
   describe 'get_nearest_region' do
     before(:each, :run => true) do
-      @site1 = create :site, name: 'Detroit', org_type: 'city'
+      @site1 = create :site, name: 'Detroit', site_type_code: 'city'
       @site1.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro', city: 'Detroit', state: 'MI', zip: '48238'
-      @site2 = create :site, name: 'Metro Detroit', org_type: 'region'
+      @site2 = create :site, name: 'Metro Detroit', site_type_code: 'region'
     end
 
     it "finds nearest region", :run => true do
@@ -182,28 +200,28 @@ describe Site do
     end
 
     it "doesn't find nearest region" do
-      @site2 = create :site, name: 'SF Bay Area', org_type: 'region'
+      @site2 = create :site, name: 'SF Bay Area', site_type_code: 'region'
       expect(Site.get_nearest_region('Detroit')).to include('SF Bay Area')
       expect(Site.get_nearest_region('')).to include('SF Bay Area')
     end
   end
 
-  describe 'check_org_type' do
+  describe 'check_site_type_code' do
 
-    it 'finds site w/ org type' do
-      site = create :site, name: 'Detroit', org_type: 'region'
-      expect(Site.check_org_type(['city','region'])).not_to be_nil
+    it 'finds site w/ site type code' do
+      site = create :site, name: 'Detroit', site_type_code: 'region'
+      expect(Site.check_site_type_code(['city','region'])).not_to be_nil
     end
 
-    it 'does not find site w/ org type' do
-      site = create :site, name: 'Detroit', org_type: 'region'
-      expect(Site.check_org_type(['city'])).to be_empty
+    it 'does not find site w/ site type code' do
+      site = create :site, name: 'Detroit', site_type_code: 'region'
+      expect(Site.check_site_type_code(['city'])).to be_empty
     end
   end
   
   describe 'get_site' do
     it 'should return site' do
-      site = create :site, name: 'Berkeley', org_type: 'city'
+      site = create :site, name: 'Berkeley', site_type_code: 'city'
       Site.get_site(site.id).first.name.should == 'Berkeley'
     end
 
@@ -219,9 +237,9 @@ describe Site do
     
     cities = {
       'New York Metropolitan Area' => ['New York City', 'NY', 'Rye', 'New Rochelle', 'Poughkeepsie', 'Newburgh'],
-      'Los Angeles Metropolitan Area' => ['Los Angeles', 'CA', 'Anaheim', 'Santa Ana', 'Irvine', 'Glendale', 'Huntington Beach', 'Santa Clarita'],
+      'Los Angeles Metropolitan Area' => ['Los Angeles', 'CA', 'Anaheim', 'Santa Ana', 'Irvine', 'Huntington Beach', 'Santa Clarita'],
       'Chicagoland' => ['Chicago', 'IL', 'Arlington Heights', 'Berwyn', 'Cicero', 'DeKalb', 'Des Plaines', 'Evanston'],
-      'Dallas/Fort Worth Metroplex' => ['Dallas', 'TX', 'Fort Worth', 'Arlington', 'Plano', 'Irving', 'Frisco', 'McKinney', 'Carrollton', 'Denton', 'Garland', 'Richardson'],
+      'Dallas/Fort Worth Metroplex' => ['Dallas', 'TX', 'Fort Worth', 'Arlington', 'Plano', 'Irving', 'Frisco', 'McKinney', 'Carrollton', 'Garland', 'Richardson'],
       'Greater Houston' => ['Houston', 'TX', 'The Woodlands', 'Sugar Land', 'Baytown', 'Conroe'],
       'Delaware Valley' => ['Philadelphia', 'PA', 'Philadelphia', 'Reading'],
       'Washington Metropolitan Area' => ['Washington', 'D.C.', 'Washington'],
@@ -229,7 +247,6 @@ describe Site do
       'Metro Atlanta' => ['Atlanta', 'GA', 'Sandy Springs', 'Roswell', 'Johns Creek', 'Alpharetta', 'Marietta', 'Smyrna'],
       'Greater Boston' => ['Boston', 'MA', 'Boston', 'Cambridge', 'Framingham', 'Quincy'],
       'Valley of the Sun' => ['Phoenix', 'AZ', 'Mesa', 'Chandler', 'Glendale', 'Scottsdale', 'Gilbert'],
-      'Inland Empire' => ['Riverside', 'CA', 'San Bernardino', 'Fontana', 'Moreno Valley', 'Rancho Cucamonga', 'Ontario', 'Corona', 'Victorville', 'Murrieta', 'Temecula'],
       'Seattle Metro' => ['Seattle', 'WA', 'Tacoma', 'Bellevue', 'Everett'],
       'Minneapolis-Saint Paaul' => ['Minneapolis', 'MN', 'Saint Paul', 'Bloomington', 'Brooklyn Park', 'Plymouth'],
       'San Diego County' => ['San Diego', 'CA', 'Carlsbad', 'Chula Vista', 'Escondido', 'Oceanside'],
@@ -238,14 +255,14 @@ describe Site do
       'Central Maryland' => ['Baltimore', 'MD', 'Columbia', 'Towson'],
       'Denver Metropolitan Area' => ['Denver', 'CO', 'Arvada', 'Aurora', 'Centennial'],
       'Pittsburgh Metropolitan Area' => ['Pittsburgh', 'PA', 'Indiana', 'Jeannette', 'Latrobe', 'Lower Burrell'],
-      'Charlotte Metro' => ['Charlotte', 'NC', 'Concord', 'Gastonia', 'Cornelius', 'Hickory'],
+      'Charlotte Metro' => ['Charlotte', 'NC', 'Concord', 'Gastonia', 'Cornelius'],
       'Portland Metropolitan Area' => ['Portland', 'OR', 'Beaverton', 'Gresham', 'Hillsboro'],
       'Greater San Antonio' => ['San Antonio', 'TX', 'New Braunfels', 'Schertz', 'Seguin'],
-      'Metro Orlando' => ['Orlando', 'FL', 'Kissimmee', 'Sanford', 'Tavares', 'Winter Park'],
-      'Greater Sacramento' => ['Sacramento', 'CA', 'Roseville', 'Yuba City', 'South Lake Tahoe'],
-      'Greater Cincinnati' => ['Cincinnati', 'OH', 'Hamilton', 'Middletown', 'Fairfield', 'Mason'],
+      'Metro Orlando' => ['Orlando', 'FL', 'Kissimmee', 'Sanford', 'Tavares'],
+      'Greater Sacramento' => ['Sacramento', 'CA', 'Yuba City', 'South Lake Tahoe'],
+      'Greater Cincinnati' => ['Cincinnati', 'OH', 'Mason'],
       'Greater Cleveland' => ['Cleveland', 'OH', 'Parma', 'Lorain', 'Elyria', 'Lakewood'],
-      'Kansas City Metropolitan Area' => ['Kansas City', 'MO', 'Independence', "Lee's Summit", 'Blue Springs'],
+      'Kansas City Metropolitan Area' => ['Kansas City', 'MO', 'Independence', "Lee's Summit"],
       'Las Vegas Metropolitan Area' => ['Las Vegas', 'NV', 'Paradise', 'Henderson', 'Boulder City'],
       'Columbus Metropolitan Area' => ['Columbus', 'OH', 'Delaware', 'Newark', 'Lancaster', 'London'],
       'Greater Indianapolis' => ['Indianapolis', 'IN', 'Carmel', 'Greenwood', 'Noblesville'],
@@ -258,7 +275,7 @@ describe Site do
       'Memphis Metropolitan Area' => ['Memphis', 'TN','Bartlett', 'Collierville', 'Germantown'],
       'Oklahoma City Metro' => ['Oklahoma City', 'OK', 'Norman', 'Edmond', 'Noble'],
       'Louisville Metropolitan Area' => ['Louisville', 'KY', 'Anchorage', 'Audubon Park'],
-      'Richmond Metropolitan Area' => ['Richmond', 'VA', 'Petersburg', 'Hopewell', 'Colonial Heights'],
+      'Richmond Metropolitan Area' => ['Richmond', 'VA', 'Petersburg', 'Colonial Heights'],
       'New Orleans Metropolitan Area' => ['New Orleans', 'LA', 'Kenner', 'Metairie'],
       'Greater Hartford' => ['Hartford', 'CT', 'Avon', 'Berlin'],
       'Research Triangle' => ['Raleigh', 'NC', 'Durham', 'Cary', 'Chapel Hill'],
@@ -279,31 +296,33 @@ describe Site do
             @region_state = cities[region_name][1]
             @listing_sites = []
             @city_array.each do |city_name|
-              city = FactoryGirl.create :site, name: city_name, org_type: 'city'
+              city = FactoryGirl.create :site, name: city_name, site_type_code: 'city'
               lat, lng = Geocoder.coordinates(city_name + ',' + @region_state)
               city.contacts.create FactoryGirl.attributes_for :contact, city: city_name, state: @region_state, lat: lat, lng: lng
-              listing = FactoryGirl.create(:listing, site_id: city.id)
+              listing = FactoryGirl.create(:listing, site_id: city.id, category_id: 1)
               @listing_sites.push(listing.site_id)
             end
-            @region = FactoryGirl.create(:site, name: region_name, org_type: 'region')
+            @region = FactoryGirl.create(:site, name: region_name, site_type_code: 'region')
             lat, lng = Geocoder.coordinates(@region_city + ',' + @region_state)
             @region.contacts.create FactoryGirl.attributes_for :contact, city: @region_city, state: @region_state, lat: lat, lng: lng
         end
 
         it "renders all pixis in its cities", :run => true do
           site_ids = []
-          Listing.active_by_region(@region_city, @region_state, true, @range).each do |listing|
+          Listing.get_by_city(1, @region.id, true).each do |listing|
               site_ids.push(listing.site_id)
           end
           expect(site_ids.sort).to eql(@listing_sites)
         end
 
         it "only includes pixis for its cities", :run => true do
-          expect(Listing.active_by_region(@region_city, @region_state, true, @range).length).to eql(@city_array.length)
+          expect(Listing.get_by_city(1, @region.id, true).length).to eql(@city_array.length)
         end
-
+      end
+      context "checking that renders no pixis when none in any city" do
         it "renders no pixis when none in any city" do
-          expect(Listing.active_by_region(@region_city, @region_state, true, @range)).to be_nil
+          empty_region = FactoryGirl.create(:site, name: 'empty_region_0', site_type_code: 'region')
+          expect(Listing.get_by_city(1, empty_region, true)).to be_empty
         end
       end
     end
@@ -312,17 +331,17 @@ describe Site do
   describe "url" do
     before :each, run: true do
       @site.site_url = @site.name 
-      @site.org_type = 'pub'
+      @site.site_type_code = 'pub'
       @site.save!
     end
 
     it 'generates url' do
-      site2 = create :site, org_type: 'pub'
+      site2 = create :site, site_type_code: 'pub'
       expect(site2.url).to eq site2.name.downcase.gsub!(/\s+/, "")
     end
 
     it 'generates unique url', run: true do
-      site2 = create :site, name: @site.name, org_type: 'pub'
+      site2 = create :site, name: @site.name, site_type_code: 'pub'
       expect(site2.url).not_to eq @site.url
     end
 
@@ -338,7 +357,7 @@ describe Site do
       expect( site.url ).to be_blank
     end
     it 'calls set_flds' do
-      site = build :site, org_type: 'pub' 
+      site = build :site, site_type_code: 'pub' 
       site.should_receive(:set_flds)
       site.save
     end
@@ -348,5 +367,3 @@ describe Site do
     it_behaves_like 'a url', 'Site', :site, false
   end
 end
-
-

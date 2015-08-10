@@ -50,9 +50,9 @@
   def add_region
     stub_const("PIXI_LOCALE", 'Metro Detroit')
     @usr = FactoryGirl.create :pixi_user, confirmed_at: Time.now 
-    @site1 = create :site, name: 'Detroit', org_type: 'city'
+    @site1 = create :site, name: 'Detroit', site_type_code: 'city'
     @site1.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro', city: 'Detroit', state: 'MI', zip: '48238'
-    @site2 = create :site, name: 'Metro Detroit', org_type: 'region'
+    @site2 = create :site, name: 'Metro Detroit', site_type_code: 'region'
     @site2.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro', city: 'Detroit', state: 'MI', zip: '48238'
     @pixi = create(:listing, title: "Guitar", description: "Lessons", seller_id: @usr.id, site_id: @site1.id) 
     @loc = @site1.id

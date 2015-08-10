@@ -7,7 +7,7 @@ feature "Repost Listings" do
     let(:pixter) { create :pixter, user_type_code: 'PT', confirmed_at: Time.now }
     let(:admin) { create :admin, confirmed_at: Time.now }
     let(:category) { create :category }
-    let(:site) { create :site, name: 'Detroit', org_type: 'city' }
+    let(:site) { create :site, name: 'Detroit', site_type_code: 'city' }
     let(:contact) { site.contacts.create attributes_for :contact, address: 'Metro', city: 'Detroit', state: 'MI', zip: '48227'}
     let(:condition_type) { create :condition_type, code: 'UG', description: 'Used - Good', hide: 'no', status: 'active' }
 

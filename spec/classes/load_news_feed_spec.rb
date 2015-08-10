@@ -202,7 +202,7 @@ describe LoadNewsFeed do
 
   describe "get_zip" do
     it "returns zip code associated with site" do
-      site = create :site, name: "SF Bay Area", org_type: "region"
+      site = create :site, name: "SF Bay Area", site_type_code: "region"
       site.contacts.create FactoryGirl.attributes_for :contact, address: "Metro", city: "San Francisco", state: "CA", zip: "94101"
       @lnf_obj.site = site
       expect(@lnf_obj.get_zip).to eq "94101"

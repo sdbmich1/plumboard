@@ -1,5 +1,5 @@
 class Site < ActiveRecord::Base
-  attr_accessible :email, :name, :org_type, :status, :institution_id, :pictures_attributes, :contacts_attributes, :url, :site_url
+  attr_accessible :email, :name, :site_type_code, :status, :institution_id, :pictures_attributes, :contacts_attributes, :url, :site_url
   attr_accessor :site_url
 
   before_create :set_flds
@@ -23,13 +23,18 @@ class Site < ActiveRecord::Base
   has_many :contacts, :as => :contactable, :dependent => :destroy
   accepts_nested_attributes_for :contacts, :allow_destroy => true
 
+
+
+  belongs_to :site_type, primary_key: 'code', foreign_key: 'site_type_code'
+
   validates :name, :presence => true
+  validates :site_type_code, :presence => true
 
   default_scope :order => "name ASC"
   
   # select active sites and remove dups
   def self.active regionFlg=true
-    where_stmt = regionFlg ? "status = 'active'" : "status = 'active' AND org_type NOT IN ('region', 'state', 'country')"
+    where_stmt = regionFlg ? "status = 'active'" : "status = 'active' AND site_type_code NOT IN ('region', 'state', 'country')"
     where(where_stmt).sort_by { |e| e[:name] }.inject([]) { |m,e| m.last.nil? ? [e] : m.last[:name] == e[:name] ? m : m << e }
   end
 
@@ -44,7 +49,11 @@ class Site < ActiveRecord::Base
 
   # select by type
   def self.get_by_type val
-    where("status = 'active' AND org_type = ?", val)
+    where("status = 'active' AND site_type_code = ?", val)
+  end
+
+  def self.get_by_status val
+    where("status = ?", val)
   end
 
   # select cities
@@ -54,27 +63,27 @@ class Site < ActiveRecord::Base
 
   # check if site is city
   def is_city?
-    org_type == 'city'
+    site_type_code == 'city'
   end
 
   # check if site is school
   def is_school?
-    org_type == 'school'
+    site_type_code == 'school'
   end
 
   # check if site is region
   def is_region?
-    org_type == 'region'
+    site_type_code == 'region'
   end
 
   # check if site is pub
   def is_pub?
-    org_type == 'pub'
+    site_type_code == 'pub'
   end
 
   # check site type by id
   def self.check_site sid, val
-    where(id: sid).check_org_type(val).first
+    where(id: sid).check_site_type_code(val).first
   end
 
   # get site by id
@@ -83,8 +92,8 @@ class Site < ActiveRecord::Base
   end
 
   # check site type
-  def self.check_org_type val
-    where(org_type: val)
+  def self.check_site_type_code val
+    where(site_type_code: val)
   end
 
   # get nearest region
