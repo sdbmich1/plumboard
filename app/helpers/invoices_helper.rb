@@ -115,4 +115,16 @@ module InvoicesHelper
   def get_amt_left amt, invoice, pid
     amt || invoice.get_pixi_amt_left(pid)
   end
+
+  def add_blank_column
+    content_tag(:td, '', class: 'borderless width60') if multiple_pixis? 
+  end
+
+  def show_row_buttons f, str=[]
+    if multiple_pixis?
+      str << link_to(image_tag('rsz_plus-blue.png', class: 'social-img mbot'), '#', class: 'add-row-btn pixi-link', title: 'Add Item')
+      str << link_to_remove_fields("Remove Item", f)
+      content_tag(:td, str.join(" ").html_safe, class: 'borderless width60')
+    end
+  end
 end

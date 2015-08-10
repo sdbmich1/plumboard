@@ -1,16 +1,17 @@
 require 'will_paginate/array' 
 class ListingsController < ApplicationController
   include PointManager, LocationManager, NameParse, ResetDate
-  before_filter :authenticate_user!, except: [:local, :category, :show, :biz, :member, :career]
+  before_filter :authenticate_user!, except: [:local, :category, :show, :biz, :mbr, :career, :pub, :edu]
   before_filter :load_data, except: [:pixi_price, :repost, :update]
   before_filter :load_pixi, only: [:show, :pixi_price, :repost, :update]
-  before_filter :load_city, only: [:local, :category]
   before_filter :load_job, only: [:career]
-  before_filter :pxb_url, only: [:biz, :member] 
-  before_filter :load_url_data, only: [:biz, :member, :career]
+  before_filter :pxb_url, only: [:biz, :mbr, :pub, :edu] 
+  before_filter :load_site, only: [:pub, :edu]
+  before_filter :load_city, only: [:local, :category, :pub, :edu]
+  before_filter :load_url_data, only: [:biz, :mbr, :career]
   after_filter :set_session, only: [:show]
-  after_filter :set_location, only: [:biz, :member]
-  after_filter :add_points, only: [:show, :biz, :member]
+  after_filter :set_location, only: [:biz, :mbr]
+  after_filter :add_points, only: [:show, :biz, :mbr, :pub, :edu]
   respond_to :html, :json, :js, :mobile, :csv
   layout :page_layout
 
@@ -21,6 +22,7 @@ class ListingsController < ApplicationController
 
   def show
     @comments = @listing.comments.paginate(page: @page, per_page: PIXI_COMMENTS) rescue nil
+    respond_with(@listing)
   end
 
   def update
@@ -80,7 +82,13 @@ class ListingsController < ApplicationController
   def biz
   end
 
-  def member
+  def mbr
+  end
+
+  def pub
+  end
+
+  def edu
   end
 
   protected
@@ -92,9 +100,12 @@ class ListingsController < ApplicationController
     @loc, @loc_name = LocationManager::setup request.remote_ip, @loc || @region, @loc_name, @user.home_zip
   end
 
+  def render_board?
+    !%w(category local biz mbr career pub edu).detect {|x| action_name == x}.nil?
+  end
+
   def page_layout
-    %w(category local biz member career).detect {|x| action_name == x} ? 'listings' : mobile_device? ? 'form' : action_name == 'show' ? 'pixi' : 
-      'application'
+    render_board? ? 'listings' : mobile_device? ? 'form' : action_name == 'show' ? 'pixi' : 'application'
   end
 
   def add_points
@@ -106,10 +117,10 @@ class ListingsController < ApplicationController
   end
 
   def load_city
-    items = Listing.get_by_city(@cat, @loc).board_fields
-    @listings = items.set_page @page
+    items = Listing.load_board(@cat, @loc)
     @sellers = User.get_sellers items
     @category = Category.find @cat rescue nil if action_name == 'category'
+    @listings = items.set_page @page
   end
 
   def load_job
@@ -125,6 +136,11 @@ class ListingsController < ApplicationController
     @listings = Listing.get_by_url(@url, @page)
   end
 
+  def load_site
+    site = Site.get_by_url(@url)
+    @loc, @loc_name = site.id, site.name if site
+  end
+
   def set_location
     session[:back_to] = request.fullpath.split('?')[0] rescue nil
   end
@@ -138,6 +154,7 @@ class ListingsController < ApplicationController
   end
 
   def render_csv format
-    format.csv { send_data(render_to_string(csv: @unpaginated_listings, style: @status), disposition: "attachment; filename=#{Listing.filename @status}.csv") }
+    format.csv { send_data(render_to_string(csv: @unpaginated_listings, style: @status), disposition: 
+      "attachment; filename=#{Listing.filename @status}.csv") }
   end
 end

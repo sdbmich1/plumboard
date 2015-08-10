@@ -1,3 +1,1 @@
-<% if valid_next_page? @listings %>
-  <%= link_to 'Next', local_listings_path(page: @listings.next_page, loc: params[:loc] ), class: 'nxt-pg', remote: true %>
-<% end %>
+<%= check_next_page @listings, local_listings_path(page: @listings.next_page, loc: params[:loc]) %>

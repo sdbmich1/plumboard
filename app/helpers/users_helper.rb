@@ -75,7 +75,7 @@ module UsersHelper
   # toggle user display text
   def render_user_details usr, flg, colorFlg
     txt = flg ? "Pixis Posted: #{usr.pixi_count}" : "#{usr.description}"
-    render_txt txt, (colorFlg ? 'black-section-title' : 'pxp-tag-line')
+    render_txt txt, (colorFlg ? 'black-section-title' : 'white-tag-line')
   end
 
   def set_txt_color flg
@@ -93,20 +93,12 @@ module UsersHelper
   end
 
   def render_txt txt, cls
-    content_tag(:span, txt, class: cls)
+    content_tag(:div, content_tag(:span, txt, class: cls), class: 'clear-all')
   end
 
+  # toggle photo outline border color
   def set_profile_photo flg
     flg ? 'blk-profile-photo' : 'usr-profile-photo'
-  end
-
-  # render user list
-  def show_user_list model, utype
-    unless model.blank?
-      render partial: 'shared/user_list_details', locals: {model: model, utype: utype}
-    else
-      content_tag :div, 'No users found.', class: 'center-wrapper'
-    end
   end
 
   # toggle visibility based on privileges
@@ -125,5 +117,15 @@ module UsersHelper
 
   def show_user_buttons user
     render partial: 'shared/show_user_buttons', locals: {user: user} if @user.is_admin? 
+  end
+
+  # render user specific details
+  def render_user_specs model, pxFlg, colorFlg
+    render partial: 'shared/user_specs', locals: {user: model, pxFlg: pxFlg, colorFlg: colorFlg}
+  end
+
+  # render user rating details
+  def render_user_rating user, flg
+    content_tag(:div, render(partial: 'shared/user_rating', locals: {model: user, colorFlg: flg}), id: 'rating', class: 'sm-top') if user.is_a?(User)
   end
 end

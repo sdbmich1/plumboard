@@ -49,7 +49,9 @@
 }
 
 .tiny-black { @extend .helv-white; color: #000; font-size: 0.75em; }
-.tiny-white { @extend .helv-white; font-size: 0.75em; }
+.tiny-white { @extend .helv-white; font-size: 0.75em; 
+  text-shadow: 0 0 3px rgba(0,0,0,.8);
+}
 
 .mobile-tag {
   @extend .helv-white;
@@ -77,6 +79,11 @@
 .pxp-tag-line {
   @extend .helv-white;
   font-size: 18px;
+}
+
+.white-tag-line {
+  @extend .pxp-tag-line;
+  text-shadow: 0 0 3px rgba(0,0,0,.8);
 }
 
 .comm-tag-small {
@@ -112,10 +119,11 @@
 .seller-name {
   @extend .helv-white;
   font-size: 26px;
+  text-shadow: 0 0 3px rgba(0,0,0,.8);
 }
 
 .black-seller-name {
-  @extend .seller-name;
+  @extend .helv-white;
   color: black;
   font-size: 22px;
 }

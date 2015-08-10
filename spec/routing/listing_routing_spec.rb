@@ -52,11 +52,19 @@ describe ListingsController do
     end
 
     it "routes /mbr/:route to the listings controller" do
-      expect( :get => "/mbr/test" ).to route_to(:controller=>"listings", :action=>"member", :url =>"test")
+      expect( :get => "/mbr/test" ).to route_to(:controller=>"listings", :action=>"mbr", :url =>"test")
     end
 
     it "routes /careers the listings controller" do
       expect( :get => "/careers" ).to route_to(:controller=>"listings", :action=>"career")
+    end
+
+    it "routes /pub/:route to the listings controller" do
+      expect( :get => "/pub/test" ).to route_to(:controller=>"listings", :action=>"pub", :url =>"test")
+    end
+
+    it "routes /edu/:route to the listings controller" do
+      expect( :get => "/edu/test" ).to route_to(:controller=>"listings", :action=>"edu", :url =>"test")
     end
   end
 end

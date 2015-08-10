@@ -140,4 +140,8 @@ module TempListingsHelper
   def set_draft_partial aFlg
     aFlg ? 'shared/manage_pixis' : 'shared/mypixis_list'
   end
+
+  def set_new_listing_path loc
+    public_url? ? new_temp_listing_path(loc: loc) : new_temp_listing_path
+  end
 end

@@ -10,11 +10,6 @@
     <td class="border-right width120">
       <%= f.text_field :subtotal, id: 'inv_amt1', value: num_display(f.object, "subtotal"), readonly: true, class: 'price' %>
     </td>
-    <% if multiple_pixis? %>
-      <td class='borderless width60'>
-        <%= link_to image_tag('rsz_plus-blue.png', class: 'social-img mbot'), '#', class: 'add-row-btn pixi-link', title: 'Add Item' %>
-        <%= link_to_remove_fields "Remove Item", f %>
-      </td>
-    <% end %>
+    <%= show_row_buttons f %>
   </tr>
 </div>

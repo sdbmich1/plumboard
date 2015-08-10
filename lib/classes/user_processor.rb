@@ -7,36 +7,32 @@ class UserProcessor
 
   # validate picture exists
   def must_have_picture
-    if !@user.any_pix?
-      @user.errors.add(:base, 'Must have a picture')
-      false
-    else
-      true
-    end
+    check_for_errors @user.any_pix?, 'Must have a picture'
   end
 
   # validate zip exists
   def must_have_zip
     if @user.provider.blank?
-      if !@user.home_zip.blank? && (@user.home_zip.length == 5 && @user.home_zip.to_region) 
-        true
-      else
-        @user.errors.add(:base, 'Must have a valid zip')
-        false
-      end
+      result = !@user.home_zip.blank? && (@user.home_zip.length == 5 && @user.home_zip.to_region) 
+      check_for_errors result, 'Must have a valid zip'
     else
       true
     end
   end
 
+  # process any errors
+  def check_for_errors flg, str
+    flg ? true : add_error(str)
+  end
+
+  def add_error str
+    @user.errors.add(:base, str)
+    false
+  end
+
   # create unique url for user
   def generate_url value, cnt=0
-    begin
-      new_url = cnt == 0 ? value.gsub(/\s+/, "") : [value.gsub(/\s+/, ""), cnt.to_s].join('')
-      cnt += 1
-      new_url = NameParse::transliterate new_url, true, true
-    end while User.where(:url => new_url).exists?
-    new_url
+    ProcessMethod::generate_url 'User', value, cnt
   end
 
   # update points & send notice

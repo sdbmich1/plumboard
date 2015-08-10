@@ -247,6 +247,10 @@ class Listing < ListingParent
     select("#{ListingProcessor.new(self).get_board_flds}")
   end
 
+  def self.load_board cid, sid
+    get_by_city(cid, sid).board_fields
+  end
+
   # select date provided (field_name)
   def self.select_fields field_name
     ListingDataProcessor.new(self).select_fields(field_name)

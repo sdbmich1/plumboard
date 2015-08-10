@@ -1,0 +1,4 @@
+<%= render_user_rating user, colorFlg %>
+<%= render_user_details user, pxFlg, colorFlg %>
+<div class='sm-top clear-all'></div>
+<%= follow_or_unfollow_button @user.get_follow_status('seller', user.id), @user, user %>

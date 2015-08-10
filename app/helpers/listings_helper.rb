@@ -19,11 +19,7 @@ module ListingsHelper
   # build location array for map display
   def build_lnglat_ary pixis
     ary = []
-
-    # build array
     pixis.map { |x| ary << x.site.contacts[0].full_address if x.site && x.site.contacts[0] }
-
-    # flatten and return as json
     ary.flatten(1).to_json       
   end
 
@@ -40,44 +36,44 @@ module ListingsHelper
   # set next page path for ajax infinite scroll call based on action name
   def set_next_page_path
     case action_name
-      when 'index'
-        if controller_name == 'searches'
-	  "#{searches_path page: @listings.next_page, search: params[:search], loc: params[:loc], cid: params[:cid]}" 
-	else
-          "#{listings_path page: @listings.next_page}"
-	end
       when "category"
         "#{category_listings_path page: @listings.next_page, loc: params[:loc], cid: params[:cid]}"
       when "local"
         "#{local_listings_path page: @listings.next_page, loc: params[:loc]}"
       when "biz"
         "#{biz_path page: @listings.next_page, url: params[:url]}"
-      when "member"
+      when "pub"
+        "#{pub_path page: @listings.next_page, url: params[:url]}"
+      when "mbr"
         "#{member_path page: @listings.next_page, url: params[:url]}"
       when "career"
         "#{career_path page: @listings.next_page, url: params[:url]}"
+      when "edu"
+        "#{edu_path page: @listings.next_page, url: params[:url]}"
       else
-        "#{listings_path page: @listings.next_page}"
+        index_next_page_path
+    end
+  end
+
+  def index_next_page_path
+    if controller_name == 'searches'
+      "#{searches_path page: @listings.next_page, search: params[:search], loc: params[:loc], cid: params[:cid]}" 
+    else
+      "#{listings_path page: @listings.next_page}"
     end
   end
 
   # get path name
   def get_next_path_name
     case action_name
-      when 'index'
-        controller_name == 'searches' ? 'search_next_page' : 'listing_next_page'
       when 'category'
         'cat_list_next_page'
       when 'local'
         controller_name == 'categories' ? 'category_next_page' : 'loc_list_next_page'
-      when 'biz'
-        'biz_next_page'
-      when 'member'
-        'member_next_page'
-      when 'career'
-        'career_next_page'
+      when 'biz', 'pub', 'mbr', 'career', 'edu'
+        [action_name, 'next_page'].join('_')
       else
-        'listing_next_page'
+        controller_name == 'searches' ? 'search_next_page' : 'listing_next_page'
     end
   end
 
@@ -95,21 +91,18 @@ module ListingsHelper
   # set path name for infinite scroll
   def set_path_parse
     case action_name
-      when 'index'
-        controller_name == 'searches' ? "/searches?page=" : '/listings?page='
-      when 'category'
-        "/listings/category?page="
-      when 'local'
-        "/listings/local?page="
-      when 'biz'
-        "/biz?page="
-      when 'member'
-        "/member?page="
-      when 'career'
-        "/career?page="
+      when 'category', 'local'
+        "/listings/#{action_name}?page="
+      when 'biz', 'pub', 'mbr', 'career', 'edu'
+        "/#{action_name}?page="
       else
-        '/listings?page='
+        controller_name == 'searches' ? "/searches?page=" : '/listings?page='
     end
+  end
+
+  # check if next page exist for infinite scroll
+  def check_next_page listings, path
+    link_to 'Next', path, class: 'nxt-pg', remote: true if valid_next_page? listings
   end
 
   # returns rating for seller
@@ -345,20 +338,28 @@ module ListingsHelper
 
   # set top banner image
   def set_banner btype
-    btype == 'loc' ? set_loc_banner : set_biz_banner
+    case btype
+      when 'biz', 'mbr'; set_biz_banner 'User', 'user_band'
+      when 'pub', 'edu'; set_biz_banner 'Site', 'group_band'
+      else set_loc_banner
+    end
   end
   
-  def get_usr
-    User.find_by_url @url rescue nil
+  def get_usr klass='User'
+    klass.constantize.find_by_url @url rescue nil
   end
 
-  def get_seller_name
-    get_usr.name.html_safe rescue 'Pixis'
+  def get_seller_name btype
+    case btype
+      when 'biz', 'mbr'; klass = 'User'
+      when 'pub', 'edu'; klass = 'Site'
+    end
+    klass.blank? ? 'Pixis' : get_usr(klass).name.html_safe rescue 'Pixis'
   end
 
-  def set_biz_banner
-    usr = get_usr
-    content_tag(:div, render(partial: 'shared/user_band', locals: {user: usr, pxFlg: false, colorFlg: false}), class: ["mneg-top", "mbot"]) if usr
+  def set_biz_banner klass, band
+    model = get_usr klass
+    content_tag(:div, render(partial: "shared/#{band}", locals: {user: model, pxFlg: false, colorFlg: false}), class: ["mneg-top", "mbot"]) if model
   end
 
   def set_loc_banner
@@ -377,12 +378,12 @@ module ListingsHelper
   end
 
   def show_menu_fields ptype
-    render partial: 'shared/menu_fields', locals: { ptype: ptype } if @url.blank?
+    render partial: 'shared/menu_fields', locals: { ptype: ptype } unless private_url?
   end
 
   # check ownership
   def is_owner?(usr)
-    usr.id == @user.id rescue false
+    usr.is_a?(User) && usr.id == @user.id rescue false
   end
 
   def has_featured_pixis? model
@@ -398,7 +399,7 @@ module ListingsHelper
     case btype
       when 'biz'
         content_tag(:div, render(partial: 'shared/pixi_band'), class: ["mneg-top", "mbot"]) if has_featured_pixis?(model)
-      when 'loc'
+      when 'loc', 'pub', 'edu'
         content_tag(:div, render(partial: 'shared/seller_band'), class: ["mneg-top", "mbot"]) if has_featured_users?
     end
   end
@@ -455,12 +456,16 @@ module ListingsHelper
 
   # show edit cover icon for owner
   def show_edit_cover_icon usr
-    if is_owner?(usr)
+    if usr.is_a?(User) && is_owner?(usr)
       link_to image_tag('rsz_photo_camera.png', class: 'camera'), edit_user_path(@user), title: 'Change Cover Photo', class: 'img-btn' 
     else
       link_to image_tag('pxb_map_icon.png', class: 'camera'), '#mapDialog', title: 'View Map', 'data-toggle'=>"modal", id: 'map_icon', 
-        class: 'img-btn' if usr.is_business? && usr.has_address? && controller_name != 'users'
+        class: 'img-btn' if business_with_address?(usr) && controller_name != 'users'
     end
+  end
+
+  def business_with_address? model
+    model.is_a?(User) && model.is_business? && model.has_address?
   end
 
   # show map title
@@ -469,8 +474,8 @@ module ListingsHelper
   end
 
   # show map if business
-  def show_map_modal usr
-    render partial: 'shared/map_modal', locals: { model: usr } if usr.is_business? && usr.has_address?
+  def show_map_modal model
+    render partial: 'shared/map_modal', locals: { model: model } if business_with_address? model
   end
 
   # show repost btn
@@ -733,5 +738,22 @@ module ListingsHelper
 
   def toggle_image_partial flg
     !flg && !pages_home? ? 'shared/show_temp_pixi_image_lazy' : 'shared/show_temp_pixi_image'
+  end
+
+  def private_url?
+    !action_name.match(/mbr|biz/).nil?
+  end
+
+  def public_url?
+    !action_name.match(/pub|edu/).nil?
+  end
+
+  # render invoice data
+  def render_board model
+    unless model.blank? 
+      content_tag(:div, render(partial: 'shared/listing', collection: model, locals: {px_size: 'large', ftrFlg: true}), class: 'row') 
+    else 
+      content_tag(:div, NO_PIXI_FOUND_MSG, class:'center-wrapper')
+    end 
   end
 end

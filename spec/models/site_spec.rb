@@ -101,6 +101,21 @@ describe Site do
     end  
   end
 
+  describe 'get_by_name_and_type' do
+    it 'returns sites' do
+      create :site, name: 'San Francisco State', org_type: 'school'
+      expect(Site.get_by_name_and_type('San Francisco State', 'school')).not_to be_empty 
+    end  
+
+    it 'does not return sites w/o name' do
+      expect(Site.get_by_name_and_type(nil, 'school')).to be_empty 
+    end  
+
+    it 'does not return sites w/o type' do
+      expect(Site.get_by_name_and_type('San Francisco State', nil)).to be_empty 
+    end  
+  end
+
   describe 'cities' do
     it 'returns sites' do
       create :site, name: 'San Francisco', org_type: 'city'
@@ -142,6 +157,14 @@ describe Site do
     it 'is a region' do
       site = create :site, name: 'Detroit', org_type: 'region'
       expect(site.is_region?).to be_true
+      expect(site.is_school?).not_to be_true
+      expect(site.is_city?).not_to be_true
+    end
+
+    it 'is a pub' do
+      site = create :site, name: 'City Living', org_type: 'pub'
+      expect(site.is_pub?).to be_true
+      expect(site.is_region?).not_to be_true
       expect(site.is_school?).not_to be_true
       expect(site.is_city?).not_to be_true
     end
@@ -284,6 +307,45 @@ describe Site do
         end
       end
     end
+  end
+
+  describe "url" do
+    before :each, run: true do
+      @site.site_url = @site.name 
+      @site.org_type = 'pub'
+      @site.save!
+    end
+
+    it 'generates url' do
+      site2 = create :site, org_type: 'pub'
+      expect(site2.url).to eq site2.name.downcase.gsub!(/\s+/, "")
+    end
+
+    it 'generates unique url', run: true do
+      site2 = create :site, name: @site.name, org_type: 'pub'
+      expect(site2.url).not_to eq @site.url
+    end
+
+    it 'shows full url path', run: true do
+      expect(@site.site_url).to eq 'localhost:3000/pub/' + @site.url
+    end
+  end
+
+  describe 'set_flds' do
+    it 'does not sets url' do
+      site = build :site 
+      site.save!
+      expect( site.url ).to be_blank
+    end
+    it 'calls set_flds' do
+      site = build :site, org_type: 'pub' 
+      site.should_receive(:set_flds)
+      site.save
+    end
+  end
+
+  describe "get by url", url: true do
+    it_behaves_like 'a url', 'Site', :site, false
   end
 end
 

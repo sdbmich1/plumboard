@@ -1,0 +1,22 @@
+  <div class='clear-all'></div>
+  <table class="table table-hover table-condensed table-bordered">
+    <thead>
+      <tr>
+      <th></th>
+      <th>Title</th>
+      <th>Category</th>
+      <th>Description</th>
+      <th>Location</th>
+      <th><%= toggle_user_name_header(type) %></th>
+      <th><%= set_date_column(type) %></th>
+      <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= render partial: 'shared/listing_row', collection: model, as: :listing %>
+    </tbody>
+  </table>
+  <div id="entry-top" class="pg-entry">
+    <%= page_entries_info model, :model => 'pixis' %>
+  </div>
+  <%= paginate_list 'pixi-list', model %>

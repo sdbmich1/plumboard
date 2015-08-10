@@ -94,6 +94,18 @@ shared_examples "a status field" do |factory, fld|
   end
 end
 
+shared_examples "a url" do |klass, factory, flg|
+  describe 'attributes', base: true do
+    if flg
+      let(:model) { FactoryGirl.create factory }
+    else
+      let(:model) { FactoryGirl.create factory, org_type: 'pub' }
+    end
+    it { expect(klass.constantize.get_by_url(model.url)).not_to be_blank }
+    it { expect(klass.constantize.get_by_url('abcd')).to be_blank }
+  end
+end
+
 shared_examples "an user" do
   describe 'attributes', base: true do
     it { should respond_to(:first_name) }

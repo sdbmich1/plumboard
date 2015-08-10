@@ -173,7 +173,9 @@ Plumboard::Application.routes.draw do
 
   # personalized paths
   match '/biz/:url' => "listings#biz", via: :get, as: :biz
-  match '/mbr/:url' => "listings#member", via: :get, as: :member
+  match '/mbr/:url' => "listings#mbr", via: :get, as: :mbr
+  match '/pub/:url' => "listings#pub", via: :get, as: :pub
+  match '/edu/:url' => "listings#edu", via: :get, as: :edu
   match '/careers' => "listings#career", via: :get, as: :career
   # get '/careers', to: "listings#jobs"
 

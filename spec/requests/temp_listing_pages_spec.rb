@@ -39,18 +39,20 @@ feature "TempListings" do
     create :condition_type, code: 'U', description: 'Used'
   end
 
-  def add_data val='Foo Bar', prcFlg=true, imgFlg=false, descr="Guitar for Sale"
+  def add_data val='Foo Bar', prcFlg=true, imgFlg=false, descr="Guitar for Sale", sFlg=true
     fill_in 'Title', with: "Guitar for Sale"
     select_category val if val
-    fill_in 'site_name', with: "Stanford University\n"
-    set_site_id @site.id, imgFlg; sleep 1.5
+    if sFlg
+      fill_in 'site_name', with: "Stanford University\n"
+      set_site_id @site.id, imgFlg; sleep 1.5
+    end
     fill_in 'Price', with: "150.00" if prcFlg
     fill_in 'Description', with: descr
   end
 
-  def add_photo val, prcFlg=true, imgFlg=false, descr="Guitar for Sale"
+  def add_photo val, prcFlg=true, imgFlg=false, descr="Guitar for Sale", sFlg=true
     page.attach_file('photo', "#{Rails.root}/spec/fixtures/photo.jpg")
-    add_data val, prcFlg, imgFlg, descr
+    add_data val, prcFlg, imgFlg, descr, sFlg
   end
 
   def build_page_content val=0
@@ -114,12 +116,12 @@ feature "TempListings" do
     page.execute_script(script)
   end
 
-  def add_pixi
+  def add_pixi val='Foo Bar', prcFlg=true, imgFlg=false, descr="Guitar for Sale", sFlg=true
     expect{
-      add_photo 'Foo Bar'
+      add_photo val, prcFlg, imgFlg, descr, sFlg
       click_button submit; sleep 3
     }.to change(TempListing,:count).by(1)
-    page.should have_content "Guitar For Sale - $150.00"
+    page.should have_content "Guitar For Sale"
     page.should have_content 'Review Your Pixi'
   end
 
@@ -777,5 +779,22 @@ feature "TempListings" do
       page.should have_content 'Review Your Pixi'
       expect(@temp.reload.seller_id).to eq user.id
     end
+  end
+
+  describe "Create Default Site Posted Pixis" do
+    let(:temp_listing) { build(:temp_listing) }
+    let(:loc) {create :site, org_type: 'pub'}
+
+    before(:each) do
+      init_setup user
+      visit new_temp_listing_path(site_id: loc.id)
+    end
+
+    it "Adds a new listing w price" do
+      find(:xpath, "//input[@id='site_id']").set loc.id
+      select('Used', :from => 'cond-type-code')
+      add_pixi 'Foo Bar', true, false, "Guitar for Sale", false
+      expect(TempListing.last.site_id).to eq loc.id
+    end	      
   end
 end

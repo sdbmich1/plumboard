@@ -1,4 +1,5 @@
 module ProcessMethod
+  include NameParse
 
   # get model attributes
   def self.get_attr model, arr
@@ -23,8 +24,8 @@ module ProcessMethod
 
   # set fields for main board
   def self.get_board_flds
-    'listings.id, listings.title, listings.pixi_id, listings.seller_id, listings.price, listings.quantity, listings.site_id, listings.category_id,
-      listings.job_type_code, listings.event_type_code'
+    'listings.id, listings.title, listings.pixi_id, listings.seller_id, listings.price, listings.quantity, listings.site_id, 
+     listings.category_id, listings.job_type_code, listings.event_type_code'
   end
 
   # get host
@@ -37,5 +38,15 @@ module ProcessMethod
     else
       PIXI_WEB_SITE
     end
+  end
+
+  # create unique url for user
+  def self.generate_url klass, value, cnt=0
+    begin
+      new_url = cnt == 0 ? value.gsub(/\s+/, "") : [value.gsub(/\s+/, ""), cnt.to_s].join('')
+      cnt += 1
+      new_url = NameParse::transliterate new_url, true, true
+    end while klass.constantize.where(:url => new_url).exists?
+    new_url
   end
 end

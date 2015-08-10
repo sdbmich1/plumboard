@@ -18,15 +18,15 @@ class InvoicesController < ApplicationController
   end
    
   def index
-    respond_with(@invoices = Invoice.all.paginate(page: @page))
+    respond_with(@invoices = Invoice.all.paginate(page: @page, per_page: 15))
   end
    
   def sent
-    respond_with(@invoices = Invoice.get_invoices(@user).paginate(page: @page))
+    respond_with(@invoices = Invoice.get_invoices(@user).paginate(page: @page, per_page: 15))
   end
    
   def received
-    respond_with(@invoices = Invoice.get_buyer_invoices(@user).paginate(page: @page))
+    respond_with(@invoices = Invoice.get_buyer_invoices(@user).paginate(page: @page, per_page: 15))
   end
 
   def show
@@ -60,7 +60,7 @@ class InvoicesController < ApplicationController
 
   def destroy
     if @invoice.destroy
-      @invoices = Invoice.get_invoices(@user).paginate(page: @page)
+      @invoices = Invoice.get_invoices(@user).paginate(page: @page, per_page: 15)
     end  
     respond_with(@invoice)
   end

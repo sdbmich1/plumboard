@@ -521,8 +521,9 @@ describe Listing do
   end 
     
   describe "activate", detail: true do 
-    let(:listing) { FactoryGirl.build :listing, start_date: Time.now, status: 'pending' }
+    let(:listing) { FactoryGirl.build :listing, start_date: Time.now, status: 'pending', end_date: Date.today-3.months }
     it { listing.activate.status.should == 'active' } 
+    it { expect(listing.activate.end_date).to be > Date.today }
     it 'does not activate' do
       listing.status = 'sold'
       listing.activate.status.should_not == 'active'

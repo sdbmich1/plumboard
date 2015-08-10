@@ -19,7 +19,7 @@ class TempListingsController < ApplicationController
   end
 
   def new
-    respond_with(@listing = TempListing.new(pixan_id: params[:pixan_id]))
+    respond_with(@listing = TempListing.new(site_id: params[:loc], pixan_id: params[:pixan_id]))
   end
 
   def show
