@@ -11,6 +11,7 @@
     <%= f.collection_select :condition_type_code, ConditionType.unhidden, :code, :nice_descr, {:prompt => 'Select'}, {class: 'pixi-select', 
       id: 'cond-type-code', required: has_condition?(listing)} %>
   </div>
+
   <div class='span2' id='job-fld' style="<%= set_style(!listing.job?) %>"><%= f.label :job_type, 'Job Type' %>
     <%= f.collection_select :job_type_code, JobType.active, :code, :job_name, {:prompt => 'Select'}, {class: 'pixi-select'} %>
   </div>

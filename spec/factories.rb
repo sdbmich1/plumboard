@@ -474,4 +474,12 @@ FactoryGirl.define do
     code  "CA"
     state_name  "California"
   end
+
+  factory :currency_type do
+    code "USD"
+    description "United States Dollar"
+    hide "no"
+    status "active"
+  end
+  
 end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150713034816) do
+ActiveRecord::Schema.define(:version => 20150807021142) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -183,6 +183,17 @@ ActiveRecord::Schema.define(:version => 20150713034816) do
   add_index "conversations", ["recipient_status"], :name => "index_conversations_on_recipient_status"
   add_index "conversations", ["status"], :name => "index_conversations_on_status"
   add_index "conversations", ["user_id"], :name => "index_conversations_on_user_id"
+
+  create_table "currency_types", :force => true do |t|
+    t.string   "code"
+    t.string   "status"
+    t.string   "hide"
+    t.string   "description"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "currency_types", ["code"], :name => "index_currency_types_on_code"
 
   create_table "date_ranges", :force => true do |t|
     t.string   "name"
@@ -774,8 +785,6 @@ ActiveRecord::Schema.define(:version => 20150713034816) do
   end
 
   add_index "sites", ["institution_id"], :name => "index_organizations_on_institution_id"
-  add_index "sites", ["name"], :name => "index_sites_on_name"
-  add_index "sites", ["status", "org_type"], :name => "index_sites_on_status_and_org_type"
 
   create_table "sites_temp_listings", :id => false, :force => true do |t|
     t.integer "temp_listing_id"
@@ -949,7 +958,6 @@ ActiveRecord::Schema.define(:version => 20150713034816) do
     t.string   "status"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
-    t.string   "hide"
   end
 
   add_index "user_types", ["code"], :name => "index_user_types_on_code"

@@ -105,4 +105,11 @@ describe 'import_csv' do
       expect(Site.find_by_name("SF Bay Area").pictures.first.photo.to_s).to include "bay_bridge.jpg"
     end
   end
+
+  #Edit this shit 
+  describe 'load_currency_types' do
+    it_behaves_like("import_csv", "load_currency_types", nil, CurrencyType,
+    { code: %w(AED), description: ['United Arab Emirates Dirham'], status: %w(inactive), hide: %w(yes)})
+  end
+
 end
