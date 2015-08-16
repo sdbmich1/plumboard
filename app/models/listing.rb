@@ -72,7 +72,7 @@ class Listing < ListingParent
 
   # get all active pixis with an end_date less than today and update their statuses to expired
   def self.close_pixis
-    active.where("end_date < ?", Date.today).update_all(status: 'expired')
+    where("status = ? AND end_date < ?", 'active', Date.today).update_all(status: 'expired')
   end
 
   # get invoiced listings by status and, if provided, category and location

@@ -67,12 +67,12 @@ function resizeMobileWindow() {
       $("#homePgLink").addClass('mauto30').removeClass('mauto20');
     }
     else if(width > 1400) {
-      $("#homePgFtr").addClass('mauto20').removeClass('mauto35');
-      $("#homePgLink").addClass('mauto15').removeClass('mauto20');
+      $("#homePgFtr").addClass('mauto30').removeClass('mauto35');
+      $("#homePgLink").addClass('mauto22').removeClass('mauto20');
     }
     else {
-      $("#homePgFtr").addClass('mauto35').removeClass('mauto40').removeClass('mauto20');
-      $("#homePgLink").addClass('mauto20').removeClass('mauto30').removeClass('mauto15');
+      $("#homePgFtr").addClass('mauto35').removeClass('mauto40').removeClass('mauto30');
+      $("#homePgLink").addClass('mauto20').removeClass('mauto30').removeClass('mauto22');
     }
   }
 }
@@ -212,10 +212,7 @@ function set_item_size (origSize, wFlg) {
   var width = $(window).width();
   var col = !wFlg ? origSize : setViewPort();
 
-  if(width > 1400) {
-    col = !wFlg ? col : '80%';
-  }
-  else if(width < 1300 && width >= 1200) {
+  if(width < 1300 && width >= 1200) {
     col = !wFlg ? col : '90%';
   }
   else if(width < 1200 && width >= 980) {

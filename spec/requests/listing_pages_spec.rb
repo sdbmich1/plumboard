@@ -491,9 +491,9 @@ feature "Listings" do
 
       before(:each) do
         add_region
-        @site = create :site, name: 'Detroit', org_type: 'city'
+        @site = create :site, name: 'Detroit', site_type_code: 'city'
 	      @site.contacts.create attributes_for :contact, address: '1611 Tyler', city: 'Detroit', state: 'MI', zip: '48238'
-        @site3 = create :site, name: 'Pixi Tech', org_type: 'school'
+        @site3 = create :site, name: 'Pixi Tech', site_type_code: 'school'
 	      @site3.contacts.create attributes_for :contact, address: '14018 Prevost', city: 'Detroit', state: 'MI', zip: '48227'
 	      @category = create :category, name: 'Music'
 	      @category5 = create :category, name: 'Electronics'

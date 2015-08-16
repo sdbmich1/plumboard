@@ -1485,7 +1485,7 @@ describe Listing do
     before { @listing.save! }
     it { Listing.get_by_city(0, 1).should_not include @listing } 
     it "should be able to toggle get_active" do
-      @site = create :site, org_type: 'city', name: 'SF'
+      @site = create :site, site_type_code: 'city', name: 'SF'
       @site.contacts.create(FactoryGirl.attributes_for(:contact, address: '101 California', city: 'SF', state: 'CA', zip: '94111'))
       @listing.update_attribute(:site_id, @site.id)
       @listing.update_attribute(:status, 'removed')
@@ -1493,9 +1493,9 @@ describe Listing do
       Listing.get_by_city(@listing.category_id, @listing.site_id, false).should_not be_empty
     end
 
-    it "finds active pixis by org_type" do
-      ['city', 'region', 'state', 'country'].each { |org_type|
-        site = create(:site, name: 'Detroit', org_type: org_type)
+    it "finds active pixis by site_type_code" do
+      ['city', 'region', 'state', 'country'].each { |site_type_code|
+        site = create(:site, name: 'Detroit', site_type_code: site_type_code)
         lat, lng = Geocoder.coordinates('Detroit, MI')
         site.contacts.create(FactoryGirl.attributes_for(:contact, address: 'Metro', city: 'Detroit', state: 'MI',
           country: 'United States of America', lat: lat, lng: lng))

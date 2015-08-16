@@ -3,6 +3,7 @@ require 'spec_helper'
 describe "Users", :type => :feature do
   subject { page }
   let(:admin) { create(:admin, user_type_code: 'AD') }
+  let(:editor) { create(:editor, user_type_code: 'PX') }
   let(:bus_user) { create(:admin, user_type_code: 'BUS') }
   let(:user) { create(:pixi_user, user_type_code: 'MBR') }
 
@@ -349,5 +350,34 @@ describe "Users", :type => :feature do
       click_button 'Change Password'
       page.should have_content("Password doesn't match confirmation")
     end
+  end
+
+  describe 'show user page - admin', show: true do
+    before :each do
+      member = create(:pixi_user) 
+      @mbr, @descr, @url = member.name, member.type_descr, member.user_url
+      init_setup admin
+      visit user_path(member)  
+    end
+    it_should_behave_like 'user_show_pages', @mbr, @descr, @url, true, true
+  end
+
+  describe 'show user page - editor', show: true do
+    before :each do
+      member = create(:pixi_user) 
+      @mbr, @descr, @url = member.name, member.type_descr, member.user_url
+      init_setup editor
+      visit user_path(member)  
+    end
+    it_should_behave_like 'user_show_pages', @mbr, @descr, @url, true, false
+  end
+
+  describe 'show user page - user', show: true do
+    before :each do
+      @mbr, @descr, @url = user.name, user.type_descr, user.user_url
+      init_setup user
+      visit user_path(user)  
+    end
+    it_should_behave_like 'user_show_pages', @mbr, @descr, @url, true, false
   end
 end

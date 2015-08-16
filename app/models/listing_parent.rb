@@ -414,7 +414,7 @@ class ListingParent < ActiveRecord::Base
     self.respond_to?(:sold_list) ? Listing.new : TempListing.new
   end
 
-  # check site's org_type and call the corresponding active_by method, or get pixis by ids if this fails
+  # check site's site_type_code and call the corresponding active_by method, or get pixis by ids if this fails
   def self.get_by_city cid, sid, get_active=true
     ListingQueryProcessor.new(self).get_by_city cid, sid, get_active
   end

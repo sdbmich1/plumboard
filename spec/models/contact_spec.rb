@@ -63,9 +63,9 @@ describe Contact do
 
   describe 'get_sites' do
     it 'locates sites' do
-      @site = create :site, name: 'Detroit', org_type: 'city'
-      @site1 = create :site, name: 'Detroit City College', org_type: 'school'
-      @site2 = create :site, name: 'Greektown', org_type: 'area'
+      @site = create :site, name: 'Detroit', site_type_code: 'city'
+      @site1 = create :site, name: 'Detroit City College', site_type_code: 'school'
+      @site2 = create :site, name: 'Greektown', site_type_code: 'area'
       @site.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro', city: 'Detroit', state: 'MI'
       @site1.contacts.create FactoryGirl.attributes_for :contact, address: '1000 Michigan Ave', city: 'Detroit', state: 'MI'
       @site2.contacts.create FactoryGirl.attributes_for :contact, address: '100 State', city: 'Detroit', state: 'MI', zip: '48214'
@@ -79,9 +79,9 @@ describe Contact do
 
   describe 'proximity' do
     it 'locates sites' do
-      @site = create :site, name: 'Oakland', org_type: 'city'
-      @site1 = create :site, name: 'Oakland City College', org_type: 'school'
-      @site2 = create :site, name: 'Lake Merritt', org_type: 'area'
+      @site = create :site, name: 'Oakland', site_type_code: 'city'
+      @site1 = create :site, name: 'Oakland City College', site_type_code: 'school'
+      @site2 = create :site, name: 'Lake Merritt', site_type_code: 'area'
       @site.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro', city: 'Oakland', state: 'CA'
       @site1.contacts.create FactoryGirl.attributes_for :contact, address: '1000 Grant Ave', city: 'Oakland', state: 'CA'
       @site2.contacts.create FactoryGirl.attributes_for :contact, address: '100 Webster', city: 'Oakland', state: 'CA', zip: '94601'
