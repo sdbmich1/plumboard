@@ -18,7 +18,7 @@ describe SitesController do
   before(:each) do
     log_in_test_user
     @user = mock_user
-    @site = stub_model(Site, :id=>1, status: "active", name: "Berkeley", org_type: "school")
+    @site = stub_model(Site, :id=>1, status: "active", name: "Berkeley", site_type_code: "school")
   end
 
   describe 'GET index' do

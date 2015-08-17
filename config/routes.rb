@@ -1,5 +1,7 @@
 Plumboard::Application.routes.draw do
 
+  get "/shared/_photo"
+
   devise_for :users, :controllers => { registrations: "registrations", sessions: "sessions", omniauth_callbacks: "users/omniauth_callbacks",
       confirmations: "confirmations" } 
   

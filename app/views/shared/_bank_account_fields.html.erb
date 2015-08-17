@@ -13,11 +13,15 @@
   <div class='controls'><%= f.select :acct_type, options_for_select(['checking', 'savings'], selected: account.acct_type ), {},
       		{placeholder: 'Account Type'} %></div>
   <div class='med-top clear-all'></div>
+  
+
   <label class="control-label">Country</label>
   <div class='controls'><%= f.select :country_code, options_for_select(['us'], selected: account.country_code ), {},
       		{placeholder: 'Country', class: 'sm-top'} %></div>
   <div class='med-top clear-all'></div>
+
   <label class="control-label">Currency</label>
-  <div class='controls'><%= f.select :currency_type_code, options_for_select(['usd'], selected: account.currency_type_code ), {},
-      		{placeholder: 'Currency Type', class: 'sm-top'} %></div>
+  <div class='controls'><%= render partial: 'shared/currency_type', locals: {acc: account} %></div>
+
+
 </div>
