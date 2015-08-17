@@ -2,41 +2,43 @@ var map, selectedLocation, myLocation, directionsDisplay, directionsService, url
 
 // display map
 function displayMap(centerLoc, showMkr, multiMkr, tFlg) {
-  
-  if (multiMkr)
-    var zVar = 11;
-  else
-    var zVar = 16;
-    	
+  var zVar =  multiMkr ? 12 : 16;
   var myOptions = {
-	zoom: zVar,
-	center: centerLoc,
-	mapTypeId: google.maps.MapTypeId.ROADMAP,
-	zoomControl: true,
+    zoom: zVar,
+    center: centerLoc,
+    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    zoomcontrol: true,
     zoomControlOptions: {
-        position: google.maps.ControlPosition.LEFT_TOP
+      position: google.maps.ControlPosition.LEFT_TOP
     }
   } 
   
-  // display map  	
+  // render map  	
   if ( $('#map_canvas').length != 0 ) {
-	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-	
-	// show directions
-    if (!multiMkr) {	  
-	  directionsDisplay.setMap(map);
-    }	
-	
-	// show directions details
-	if ( $('#directionsPanel').length != 0 ) {
-		getDirections();
-	 }
-	
-	// show markers
-	showMarkers(map, centerLoc, showMkr, multiMkr, tFlg);	
+    map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+    showDirections(map, centerLoc, showMkr, multiMkr, tFlg);	
   }	
-  // resize
+
+  resizeMap();
+}
+
+function resizeMap() {
   google.maps.event.trigger(map, 'resize');
+  map.setZoom( map.getZoom() );
+}
+
+function showDirections(map, centerLoc, showMkr, multiMkr, tFlg) {
+  if (!multiMkr) {	  
+    directionsDisplay.setMap(map);
+  }	
+	
+  // show directions details
+  if ( $('#directionsPanel').length != 0 ) {
+    getDirections();
+   }
+	
+  // show markers
+  showMarkers(map, centerLoc, showMkr, multiMkr, tFlg);	
 }
 
 // show markers
@@ -96,9 +98,8 @@ function NewInitialize(lat,lng, showMkr) {
 }
 
 function loadLocations(addrs, tFlg) {
-
   if (tFlg)
-  	getLocCenter(addrs, tFlg);
+    getLocCenter(addrs, tFlg);
   else {
     processLocations(addrs, tFlg);
   }
@@ -147,28 +148,26 @@ function processLocations(addrs, tFlg) {
           	} 
         }         
       }); 
-	}                    	
+    }                    	
   }	
 }
 
 // get longitude & latitude
 function getLatLng(showMkr) {
   if ( $('.lnglat').length != 0 ) {
-  	var lnglat = $('.lnglat').attr("data-lnglat");
-	if ( lnglat !== undefined && lnglat != '' ) {
-  		var lat = parseFloat(lnglat.split(', ')[0].split('["')[1]);
-  		if ( !isNaN(lat) ) {
-  			var lng = parseFloat(lnglat.split(', "')[1].split('"]')[0]); 
-  		} 	
-  		else {
-  			lat = parseFloat(lnglat.split(', ')[0].split('[')[1]);
-  			var lng = parseFloat(lnglat.split(', ')[1].split(']')[0]);  	
-  		} 
-  		NewInitialize(lat,lng, showMkr); // get position
-	} else
-	{
-		alert('Address not found.');
-	}
+    var lnglat = $('.lnglat').attr("data-lnglat");
+    if ( lnglat !== undefined && lnglat != '' ) {
+      var lat = parseFloat(lnglat.split(', ')[0].split('["')[1]);
+      if ( !isNaN(lat) ) {
+  	var lng = parseFloat(lnglat.split(', "')[1].split('"]')[0]); 
+      } 	
+      else {
+  	lat = parseFloat(lnglat.split(', ')[0].split('[')[1]);
+  	var lng = parseFloat(lnglat.split(', ')[1].split(']')[0]);  	
+      } 
+      NewInitialize(lat,lng, showMkr); // get position
+    } else
+      { alert('Address not found.'); }
   } 
 }
 
@@ -260,7 +259,7 @@ function getLocation(nearby){
 // used to find city name
 function getCity(lat, lng) {
   //url = "https://maps-api-ssl.google.com/maps/api/geocode/json?latlng="+lat+","+lng+"&sensor=true";
-  url = "http://maps.googleapis.com/maps/api/geocode/json?latlng="+lat+","+lng+"&sensor=true";
+  url = "https://maps.googleapis.com/maps/api/geocode/json?latlng="+lat+","+lng+"&sensor=true";
 
   $.ajax(url).done(function(data) {
     for (var i = 0; i < data.results.length; i++) {
@@ -310,3 +309,8 @@ function getCityName(lat, lng) {
     }
   });
 }
+
+// open map
+$(document).on('shown', '#mapDialog', function(e) {
+  getLatLng(true);		
+});

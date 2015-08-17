@@ -7,6 +7,12 @@ module PixiPostsHelper
     end
   end
 
+  # add new details for pixi_post
+  def setup_pixi_post(pixi_post)
+    pixi_post.pixi_post_details.build if action_name == 'edit' && pixi_post.pixi_post_details.empty?
+    pixi_post
+  end
+
   # set path based on action
   def set_pixi_post_path
     if %w(edit show).detect {|x| action_name == x} 
@@ -87,5 +93,10 @@ module PixiPostsHelper
       end
     end
     total
+  end
+
+  # set image class
+  def set_class
+    action_name == "show" ? "usr-med-photo" : "myimage"
   end
 end

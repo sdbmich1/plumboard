@@ -16,7 +16,7 @@ class TransactionObserver < ActiveRecord::Observer
     end
 
     # send receipt upon approval
-    UserMailer.delay.send_transaction_receipt(txn) if txn.approved?
+    send_message txn
   end
 
   def after_update txn
@@ -24,6 +24,10 @@ class TransactionObserver < ActiveRecord::Observer
     update_contact_info txn
 
     # send receipt upon approval
+    send_message txn
+  end
+
+  def send_message txn
     UserMailer.delay.send_transaction_receipt(txn) if txn.approved?
   end
 

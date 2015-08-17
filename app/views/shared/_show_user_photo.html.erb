@@ -1,11 +1,14 @@
-<div class="span4 center-wrapper" id="usr_photo">
-  <div>
-    <output id='list'>
-      <%= image_tag get_image(model, file_name), class: 'usr-photo' %>
-    </output>
+<%= f.fields_for :pictures do |form| %>
+  <span class='mtop'><%= get_form_photo_header(cover_photo?(form.object_name)) %></span>
+  <div id="<%= get_idName(form.object_name) %>">
+    <div>
+      <output id="<%= get_list_id(get_idName(form.object_name)) %>">
+        <%= image_tag get_image(model, get_fileName(form.object_name), cover_photo?(form.object_name)), class: 'usr-photo' %>
+      </output>
+    </div>
+    <%= render partial: 'shared/photo_cabinet', locals: {form: form, s3Flg: use_remote_pix?, keyName: get_idName(form.object_name), mFlg: false} %>
   </div>
-  <%= render partial: 'shared/user_photo', locals: { f: f } %>
-  <div class='mtop left-form mleft30'>
-    <%= render partial: 'shared/progress_meter' if use_remote_pix? %>
-  </div>
-</div>
+  <%= show_user_tooltip(form.object_name) %>
+  <div class='lg-top clear-all'></div>
+<% end %>
+<%= show_progress_meter use_remote_pix? %>

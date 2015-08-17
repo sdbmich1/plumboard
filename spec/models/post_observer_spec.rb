@@ -46,6 +46,10 @@ describe PostObserver do
       process_msg post, 'repost'
     end
 
+    it 'invoice msg does not deliver 2nd notice' do
+      process_msg post, 'inv'
+    end
+
     it 'should add pixi points' do
       post.save!
       user.user_pixi_points.find_by_code('cs').code.should == 'cs'

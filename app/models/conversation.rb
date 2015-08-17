@@ -53,7 +53,7 @@ class Conversation < ActiveRecord::Base
 
   # checks whether user can bill
   def can_bill? usr
-    posts.detect { |post| post.can_bill? usr }
+    !posts.detect { |post| post.can_bill? usr }.nil?
   end
 
   # pixi title
@@ -114,13 +114,13 @@ class Conversation < ActiveRecord::Base
         end
       end
     end
-    # return convos.where(["id in (?)", conv_ids]).sort_by {|x| x.posts.first.created_at }.reverse 
-    return convos.where(["id in (?)", conv_ids]).sort_by {|x| x.updated_at }.reverse 
+    return convos.where(["id in (?)", conv_ids]).sort_by {|x| x.posts.last.created_at }.reverse 
+    # return convos.where(["id in (?)", conv_ids]).sort_by {|x| x.updated_at }.reverse 
   end
 
   # set list of included assns for eager loading
   def self.inc_list
-    includes(:posts, :recipient => :pictures, :user => :pictures, :listing => {:invoices => [:invoice_details, :buyer, :seller]})
+    includes(:posts, :recipient => :pictures, :user => :pictures, :listing => [:contacts, :user, {:invoices => [:invoice_details, :buyer, :seller]}])
   end
 
   # set list of included assns for eager loading
@@ -136,9 +136,9 @@ class Conversation < ActiveRecord::Base
   # sets convo status to 'removed'
   def self.remove_conv conv, user 
     if user.id == conv.user_id
-      update_status(conv, user, 'status')
+      return update_status(conv, user, 'status')
     elsif user.id == conv.recipient_id 
-      update_status(conv, user, 'recipient_status')
+      return update_status(conv, user, 'recipient_status')
     end
     false
   end
@@ -191,8 +191,10 @@ class Conversation < ActiveRecord::Base
 
   # process request
   def add_want_request
-    if posts.where('msg_type= ? AND status= ?', 'want', 'active').first
-      user.pixi_wants.create(pixi_id: self.pixi_id, quantity: self.quantity, status: 'active')
+    if status != 'removed' && recipient_status != 'removed'
+      if posts.where('msg_type= ? AND status= ?', 'want', 'active').first
+        user.pixi_wants.create(pixi_id: self.pixi_id, quantity: self.quantity, status: 'active')
+      end
     end
   end
 end

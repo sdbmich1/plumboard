@@ -2,13 +2,12 @@ class Category < ActiveRecord::Base
   resourcify
   attr_accessible :category_type_code, :name, :status, :pixi_type, :pictures_attributes
 
+  belongs_to :category_type, primary_key: 'code', foreign_key: 'category_type_code'
   has_many :subcategories
   has_many :listings
   has_many :temp_listings
   has_many :active_listings, class_name: 'Listing', :conditions => "status = 'active' AND end_date >= curdate()"
-
   has_many :pictures, :as => :imageable, :dependent => :destroy
-  belongs_to :category_type, primary_key: 'code', foreign_key: 'category_type_code'
   accepts_nested_attributes_for :pictures, :allow_destroy => true, :reject_if => :all_blank
 
   validates :name, :presence => true
@@ -77,6 +76,11 @@ class Category < ActiveRecord::Base
   # check for subcategories
   def subcats?
     !subcategories.empty?
+  end
+
+  # get by name
+  def self.get_by_name val
+    where(name: val).first.id rescue nil
   end
 
   # get category pixi count

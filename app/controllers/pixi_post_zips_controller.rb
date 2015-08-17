@@ -1,5 +1,5 @@
 class PixiPostZipsController < ApplicationController
-  before_filter :authenticate_user!
+  #before_filter :authenticate_user!
   autocomplete :pixi_post_zip, :zip, :full => true
   respond_to :html, :js, :json, :mobile
 
@@ -20,7 +20,6 @@ class PixiPostZipsController < ApplicationController
 
   # parse results for active items only
   def get_autocomplete_items(parameters)
-    items = super(parameters)
-    items = items.active rescue items
+    super(parameters).active rescue nil
   end
 end

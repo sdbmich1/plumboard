@@ -13,11 +13,12 @@ class User < ActiveRecord::Base
   # Setup accessible (or protected) attributes for your model
   attr_accessible :first_name, :last_name, :email, :password, :password_confirmation, :remember_me, :birth_date, :gender, :pictures_attributes,
     :fb_user, :provider, :uid, :contacts_attributes, :status, :acct_token, :preferences_attributes, :user_type_code, :business_name, :ref_id, :url,
-    :user_url
+    :user_url, :description, :active_listings_count, :cust_token
   attr_accessor :user_url
 
-  before_save :ensure_authentication_token unless Rails.env.test?
-  after_commit :async_send_notification, :on => :create
+  before_save :ensure_authentication_token, unless: :guest_or_test?
+  before_create :set_flds
+  after_commit :async_send_notification, :on => :create, unless: :guest?
 
   # define pixi relationships
   has_many :listings, foreign_key: :seller_id, dependent: :destroy
@@ -44,6 +45,12 @@ class User < ActiveRecord::Base
   has_many :interests, :through => :user_interests
   has_many :user_pixi_points, dependent: :destroy
 
+  # follow relationships
+  has_many :favorite_sellers, foreign_key: 'user_id', dependent: :destroy
+  has_many :sellers, through: :favorite_sellers
+  has_many :inverse_favorite_sellers, :class_name => "FavoriteSeller", :foreign_key => "seller_id"
+  has_many :followers, :through => :inverse_favorite_sellers, :source => :user
+
   # define message relationships
   has_many :posts, dependent: :destroy
   has_many :incoming_posts, :foreign_key => "recipient_id", :class_name => "Post", :dependent => :destroy
@@ -58,7 +65,9 @@ class User < ActiveRecord::Base
   has_many :unpaid_received_invoices, foreign_key: :buyer_id, :class_name => "Invoice", conditions: { :status => 'unpaid' }
 
   has_many :bank_accounts, dependent: :destroy
+  has_many :active_bank_accounts, :class_name => "BankAccount", conditions: { :status => 'active' }
   has_many :card_accounts, dependent: :destroy
+  has_many :active_card_accounts, :class_name => "CardAccount", conditions: { :status => 'active' }
   has_many :transactions, dependent: :destroy
   has_many :comments, dependent: :destroy
   has_many :inquiries, dependent: :destroy
@@ -82,47 +91,24 @@ class User < ActiveRecord::Base
   name_regex = 	/^[A-Z]'?['-., a-zA-Z]+$/i
 
   # validate added fields  				  
-  validates :first_name,  :presence => true,
-            :length   => { :maximum => 30 },
- 	    :format => { :with => name_regex }  
-
-  validates :last_name,  :presence => true,
-            :length   => { :maximum => 30 },
- 	    :format => { :with => name_regex }  
-
+  validates :first_name,  :presence => true, :length => { :maximum => 30 }, :format => { :with => name_regex }, unless: :guest?  
+  validates :last_name,  :presence => true, :length => { :maximum => 30 }, :format => { :with => name_regex }, unless: :guest?    
   validates_confirmation_of :password, if: :revalid
-  validates :business_name,  :presence => true,
-            :length   => { :maximum => 60 },
- 	    :format => { :with => name_regex }, if: :is_business? 
-
-  validates :birth_date,  :presence => true, unless: :is_business? 
-  validates :gender,  :presence => true, unless: :is_business? 
-  validates :url, uniqueness: true, length: { :minimum => 2 }
-  validate :must_have_picture
-  validate :must_have_zip
+  validates :business_name,  :presence => true, :length => { :maximum => 60 }, :format => { :with => name_regex }, if: :is_business? 
+  validates :birth_date,  :presence => true, unless: :guest_or_other?
+  validates :gender,  :presence => true, unless: :guest_or_other?
+  # validates :url, :presence => {:on => :create}, uniqueness: true, length: { :minimum => 2 }, unless: :guest?
+  validate :must_have_picture, unless: :guest?
+  validate :must_have_zip, unless: :guest?
 
   # validate picture exists
   def must_have_picture
-    if !any_pix?
-      errors.add(:base, 'Must have a picture')
-      false
-    else
-      true
-    end
+    UserProcessor.new(self).must_have_picture
   end
 
   # validate zip exists
   def must_have_zip
-    if provider.blank?
-      if !home_zip.blank? && (home_zip.length == 5 && home_zip.to_region) 
-        true
-      else
-        errors.add(:base, 'Must have a valid zip')
-        false
-      end
-    else
-      true
-    end
+    UserProcessor.new(self).must_have_zip
   end
 
   # get home zip
@@ -139,18 +125,31 @@ class User < ActiveRecord::Base
 
   # getter & setter for url
   def user_url
-    self[:url] 
+    UserProcessor.new(self).user_url
   end
 
   def user_url=value
     self[:url] = UserProcessor.new(self).generate_url value 
   end
 
+  # getter for local url
+  def local_user_path
+    UserProcessor.new(self).local_user_path
+  end
+
+  # getter for http url string
+  def url_str
+    UserProcessor.new(self).url_str
+  end
+
   # used to add pictures for new user
   def with_picture
-    self.pictures.build if self.pictures.blank?
-    self.preferences.build if self.preferences.blank?
-    self
+    UserProcessor.new(self).with_picture
+  end
+
+  # return active types
+  def self.active
+    includes(:pictures).where(:status => 'active')
   end
 
   # eager load associations
@@ -185,7 +184,12 @@ class User < ActiveRecord::Base
 
   # get pixi count
   def pixi_count
-    pixis.size rescue 0
+    active_listings_count rescue 0
+  end
+
+  # get ratings count
+  def rating_count
+    seller_ratings.size rescue 0
   end
 
   # return whether user has pixis
@@ -195,18 +199,18 @@ class User < ActiveRecord::Base
 
   # return whether user has any bank accounts
   def has_bank_account?
-    bank_accounts.size > 0 rescue nil
+    active_bank_accounts.size > 0 rescue nil
   end
 
   # return whether user has any card accounts
   def has_card_account?
-    card_accounts.size > 0 rescue nil
+    active_card_accounts.size > 0 rescue nil
   end
 
   # return any valid card 
   def get_valid_card
     mo, yr = Date.today.month, Date.today.year
-    card_accounts.detect { |x| x.expiration_year > yr || (x.expiration_year == yr && x.expiration_month >= mo) }
+    active_card_accounts.detect { |x| x.expiration_year > yr || (x.expiration_year == yr && x.expiration_month >= mo) }
   end
 
   # process facebook user
@@ -217,6 +221,11 @@ class User < ActiveRecord::Base
   # add photo from url
   def self.picture_from_url usr, access_token
     UserProcessor.new(self).add_url_image(usr, access_token)
+  end
+
+  # add guest account
+  def self.new_guest
+    create { |u| u.guest = true; u.provider = 'pxb'; u.status = 'inactive'; u.email = "guest#{DateTime.now.to_i}@pxbguest.com" }
   end
 
   # devise user handler
@@ -253,8 +262,8 @@ class User < ActiveRecord::Base
   end
 
   # display image for user
-  def photo
-    self.pictures[0].photo.url(:tiny) rescue nil
+  def photo num=0, sz='tiny'
+    self.pictures[num].photo.url(sz.to_sym) rescue nil
   end
 
   # check if address is populated
@@ -262,10 +271,19 @@ class User < ActiveRecord::Base
     UserProcessor.new(self).has_address?
   end
 
+  # gets primary address
+  def primary_address
+    contacts.first.full_address rescue nil
+  end
+
   # display image with name for autocomplete
   def pic_with_name
-    pic = self.photo rescue nil
-    pic ? "<img src='#{pic}' class='inv-pic' /> #{self.name}" : nil
+    UserProcessor.new(self).pic_with_name
+  end
+
+  # display image with name for autocomplete
+  def pic_with_business_name
+    UserProcessor.new(self).pic_with_business_name
   end
 
   # return any unpaid invoices count 
@@ -294,18 +312,22 @@ class User < ActiveRecord::Base
   end
 
   # convert date/time display
-  def nice_date(tm)
-    tm.utc.getlocal.strftime('%m/%d/%Y %l:%M %p') rescue nil
+  def nice_date(tm, tmFlg=true)
+    UserProcessor.new(self).nice_date tm, tmFlg
   end
 
   # define include list
   def self.include_list
-    includes(:pictures, :preferences)
+    includes(:pictures, :preferences, :user_type)
   end
 
   # return users by type
   def self.get_by_type val
-    val.blank? ? all : where(:user_type_code => val)
+    UserProcessor.new(self).get_by_type val
+  end
+
+  def self.get_by_url val
+    active.where(:url => val).first
   end
   
   # check user is pixter
@@ -318,6 +340,11 @@ class User < ActiveRecord::Base
     code_type == 'MBR' rescue false
   end
   
+  # check user is business
+  def is_business?
+    code_type == 'BUS' rescue false
+  end
+  
   # check user is support
   def is_support?
     code_type == 'SP' rescue false
@@ -326,6 +353,36 @@ class User < ActiveRecord::Base
   # check user is admin
   def is_admin?
     code_type == 'AD' rescue false
+  end
+
+  # check if user (a seller) is being followed by user_id
+  def is_followed?(user_id)
+    followers.where("favorite_sellers.status = 'active'").exists?(id: user_id)
+  end
+
+  # check if user is following seller_id
+  def is_following?(seller_id)
+    favorite_sellers.where(status: 'active').exists?(seller_id: seller_id)
+  end
+
+  # toggle between seller and user (follower)
+  def self.get_by_ftype(ftype, id, status)
+    ftype == 'seller' ? UserProcessor.new(nil).get_by_seller(id, status) : UserProcessor.new(nil).get_by_user(id, status)
+  end
+
+  def get_follow_status(ftype, id)
+    result = ftype == 'seller' ? is_following?(id) : is_followed?(id)
+    result ? 'active' : 'inactive'
+  end
+
+  # return the date the current user followed seller_id
+  def date_followed(seller_id)
+    UserProcessor.new(self).date_followed(seller_id)
+  end
+
+  # return the ID of the FavoriteSeller object for the current user and seller_id
+  def favorite_seller_id(seller_id)
+    UserProcessor.new(self).favorite_seller_id(seller_id)
   end
 
   # display user type
@@ -338,16 +395,26 @@ class User < ActiveRecord::Base
     user_type_code.upcase rescue 'MBR'
   end
 
+  # get site name
+  def site_name
+    UserProcessor.new(self).site_name
+  end
+
   # send notice & add points
   def async_send_notification
     UserProcessor.new(self).process_data
   end
 
+  def value
+    self.name
+  end
+
   # set json string
   def as_json(options={})
     super(only: [:id, :first_name, :last_name, :email, :birth_date, :gender, :current_sign_in_ip, :fb_user, :business_name], 
-          methods: [:name, :photo, :unpaid_invoice_count, :pixi_count, :unread_count, :birth_dt, :home_zip], 
-          include: {active_listings: {}, unpaid_received_invoices: {}, bank_accounts: {}, contacts: {}, card_accounts: {}})
+      methods: [:name, :photo, :unpaid_invoice_count, :pixi_count, :unread_count, :birth_dt, :home_zip, :value], 
+      include: {pictures: { only: [:photo_file_name], methods: [:photo] }, active_listings: {}, unpaid_received_invoices: {}, 
+	bank_accounts: {}, contacts: {}, card_accounts: {}})
   end
 
   # get user conversations
@@ -362,17 +429,44 @@ class User < ActiveRecord::Base
 
   # check user type is business
   def is_business?
-    user_type_code == 'BUS' rescue false
+    code_type == 'BUS' rescue false
+  end
+
+  # check if guest or non-person
+  def guest_or_other?
+    is_business? || guest?
+  end
+
+  # check if guest or test
+  def guest_or_test?
+    Rails.env.test? || guest?
+  end
+
+  # moves data from guest to actute user
+  def move_to usr
+    UserProcessor.new(self).move_to usr
+  end
+
+  # set key fields on save
+  def set_flds
+    UserProcessor.new(self).set_flds
+  end
+
+  # get active sellers
+  def self.get_sellers listings
+    UserProcessor.new(self).get_sellers listings
   end
 
   def as_csv(options={})
-    { "Name" => name, "Email" => email, "Home Zip" => home_zip, "Birth Date" => birth_dt, "Enrolled" => nice_date(created_at),
-      "Last Login" => nice_date(last_sign_in_at), "Gender" => gender, "Age" => age }
+    UserProcessor.new(self).csv_data
   end
 
   def self.filename utype
-    (utype.blank? ? "All" : UserType.where(code: utype).first.description) + "_" +
-      ResetDate::display_date_by_loc(Time.now, Geocoder.coordinates("San Francisco, CA"), false).strftime("%Y_%m_%d")
+    UserProcessor.new(self).filename utype
+  end
+
+  def self.board_fields
+    select('users.id, users.business_name, users.url, users.user_type_code')
   end
 
   # set sphinx scopes

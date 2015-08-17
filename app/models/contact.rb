@@ -14,7 +14,8 @@ class Contact < ActiveRecord::Base
   validates :work_phone, allow_blank: true, length: {in: 10..15}
   
   geocoded_by :full_address, :latitude  => :lat, :longitude => :lng
-  after_validation :geocode  
+  after_validation :geocode,
+    :if => lambda{ |obj| obj.address_changed? || obj.zip_changed? }
 
   # display full address
   def full_address
@@ -28,8 +29,7 @@ class Contact < ActiveRecord::Base
 
   # get sites associated with contact location
   def self.get_sites city, state
-    stmt = "city = ? and state = ?"
-    where(stmt, city, state).get_by_type('Site').map(&:contactable_id).uniq
+    uniq.where("city = ? and state = ?", city, state).get_by_type('Site').pluck(:contactable_id)
   end
 
   # get proximity

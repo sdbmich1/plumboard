@@ -7,16 +7,31 @@ class TransactionProcessor
 
   # load initial data
   def load_data usr, order
+    load_init_fees order
+    load_inv_info order
+    load_buyer_info usr
+    @txn
+  end
+
+  def load_init_fees order
     @txn.amt = CalcTotal::process_order order
     @txn.processing_fee = CalcTotal::get_processing_fee order[:inv_total]
     @txn.convenience_fee = CalcTotal::get_convenience_fee order[:inv_total]
     @txn.transaction_type = order[:transaction_type]
+  end
 
-    # load user info
+  # get invoice data
+  def load_inv_info order
+    if inv = Invoice.where(id: order[:invoice_id]).first
+      @txn.seller_token = inv.seller.acct_token
+      @txn.seller_inv_amt = inv.seller_amount
+    end
+  end
+
+  def load_buyer_info usr
     @txn.user_id = usr.id
     @txn.first_name, @txn.last_name, @txn.email = usr.first_name, usr.last_name, usr.email
     @txn = AddressManager::synch_address @txn, usr.contacts[0], false if usr.has_address?
-    @txn
   end
 
   # add each transaction item
@@ -57,14 +72,13 @@ class TransactionProcessor
     if CREDIT_CARD_API == 'balanced'
       @txn.payment_type, @txn.credit_card_no, @txn.debit_token = result.source.card_type, result.source.last_four, result.uri
     else
-      @txn.payment_type, @txn.credit_card_no = result.card[:type], result.card[:last4]
+      @txn.payment_type, @txn.credit_card_no, @txn.debit_token = result.source.brand, result.source.last4, result.source.id
     end
   end
   
   # process transaction
   def process_data
-    # charge the credit card
-    result = Payment::charge_card(@txn.token, @txn.amt, @txn.description, @txn) if @txn.amt > 0.0
+    result = Payment::charge_card(@txn) if @txn.amt > 0.0
     return false if @txn.errors.any?
 
     # check result - update confirmation # if nil (free transactions) use timestamp instead

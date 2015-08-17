@@ -13,19 +13,11 @@ module ResetDate
   # convert dates to rails format
   def self.reset_dates(val, cType='TempListing')
     if cType == 'TempListing'
-      val.parse_time_select! :event_start_time
-      val.parse_time_select! :event_end_time 
-      val[:event_start_date] = parse_date(val[:event_start_date]) if val[:event_start_date] 
-      val[:event_end_date] = parse_date(val[:event_end_date]) if val[:event_end_date]
+      convert_time_fld val, %w(event_start_time event_end_time)
+      convert_date_fld val, %w(event_start_date event_end_date avail_date)
     else
-      val.parse_time_select! :preferred_time
-      val.parse_time_select! :alt_time 
-      val.parse_time_select! :appt_time 
-      val.parse_time_select! :completed_time 
-      val[:preferred_date] = parse_date(val[:preferred_date]) if val[:preferred_date] 
-      val[:alt_date] = parse_date(val[:alt_date]) if val[:alt_date]
-      val[:appt_date] = parse_date(val[:appt_date]) if val[:appt_date]
-      val[:completed_date] = parse_date(val[:completed_date]) if val[:completed_date]
+      convert_time_fld val, %w(preferred_time alt_time appt_time completed_time)
+      convert_date_fld val, %w(preferred_date alt_date appt_date completed_date)
     end
     val
   end
@@ -41,11 +33,17 @@ module ResetDate
     end
   end
 
+  def self.get_offset
+    zone = ActiveSupport::TimeZone.new("Pacific Time (US & Canada)")
+    zone.formatted_offset.to_i
+  end
+
   # format display date by zip
-  def self.format_date tm, zip
+  def self.format_date tm, zip, tmFlg=true
+    return nil unless tm
     val = zip ? zip.to_gmt_offset.to_i : 0 rescue 0
     val == 0 ? tm : tm.advance(hours: val)
-    tm.strftime('%m/%d/%Y %l:%M %p') rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
+    tmFlg ? tm.strftime('%m/%d/%Y %l:%M %p') : tm.strftime('%m/%d/%Y') rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
   end
 
   # returns start_date and end_date based on passed date_range
@@ -74,5 +72,24 @@ module ResetDate
   def self.days_left
     val = ('2015-02-01'.to_date - Date.today).to_i
     val < 10 ? "0#{val}" : val
+  end
+
+  # convert time fields
+  def self.convert_time_fld val, arr
+    arr.each do |fld|
+      val.parse_time_select! fld.to_sym
+    end
+  end
+
+  # convert date fields
+  def self.convert_date_fld val, arr
+    arr.each do |fld|
+      val[fld.to_sym] = parse_date(val[fld.to_sym]) if val[fld.to_sym] 
+    end
+  end
+
+  # set file timestamp
+  def self.set_file_timestamp loc='San Francisco, CA'
+    display_date_by_loc(Time.now, Geocoder.coordinates(loc), false).strftime("%Y_%m_%d")
   end
 end

@@ -1,13 +1,10 @@
 module ApplicationHelper
+  include ControllerManager, LocationManager
 
   # Returns the full title on a per-page basis.
   def full_title page_title
     base_title = "Pixiboard"
-    if page_title.empty?
-      base_title
-    else
-      "#{base_title} | #{page_title}"
-    end
+    page_title.empty? ? base_title : "#{base_title} | #{page_title}"
   end
 
   # devise settings
@@ -74,15 +71,24 @@ module ApplicationHelper
     signed_in? ? set_home_path : root_path
   end
 
+  # route to my pixis page if possible
+  def get_return_path
+    @user.is_admin? ? listings_path(status: 'active') : @user.has_pixis? ? seller_listings_path(status: 'active') : get_home_path
+  end
+
   # set home path based on pixi count
   def set_home_path
-    Listing.has_enough_pixis?(@cat, @region) ? categories_path(loc: @region) : local_listings_path(loc: @region)
+    ControllerManager::set_root_path @cat, @region
   end
 
   # set image
-  def get_image model, file_name
+  def get_image model, file_name, nxtImageFlg=false
     if model
-      !model.any_pix? ? file_name : get_pixi_image(model.pictures[0])
+      if nxtImageFlg && model.any_pix?
+        model.pictures[1].photo_file_name.nil? ? file_name : get_pixi_image(model.pictures[1], 'cover')
+      else
+        !model.any_pix? ? file_name : get_pixi_image(model.pictures[0])
+      end
     else
       file_name
     end
@@ -108,12 +114,17 @@ module ApplicationHelper
     (val.is_a? String) ? val : val[item.to_sym]
   end
 
+  # toggle recent menu item
+  def show_recent?
+    controller_name != 'searches'
+  end
+
   # set appropriate submenu nav bar
   def set_submenu *args
     case parse_item(args[0], 'name')
       when 'Invoices'; render partial: 'shared/navbar_invoices', locals: { active: parse_item(args[0], 'action') || 'sent' }
       when 'Categories'; render 'shared/navbar_categories'
-      when 'Pixis'; render partial: 'shared/navbar_pixis', locals: { loc_name: @loc_name, rFlg: true, statusFlg: false }
+      when 'Pixis'; render partial: 'shared/navbar_pixis', locals: { loc_name: @loc_name, rFlg: show_recent?, statusFlg: false }
       when 'Pixi'; render 'shared/navbar_show_pixi'
       when 'My Pixis'; render 'shared/navbar_mypixis'
       when 'My Accounts'; render 'shared/navbar_accounts'
@@ -125,6 +136,7 @@ module ApplicationHelper
       when 'Inquiries'; render 'shared/navbar_inquiry'
       when 'Users'; render 'shared/navbar_users'
       when 'Manage Pixis'; render 'shared/navbar_manage_pixis'
+      when 'My Sellers', 'Manage Followers', 'My Followers'; render 'shared/navbar_sellers'
       else render 'shared/navbar_main'
     end
   end
@@ -166,10 +178,10 @@ module ApplicationHelper
   end
 
   # set path based on invoice count
-  def get_unpaid_path
+  def get_unpaid_path pid=nil, cid=nil
     if @user.unpaid_invoice_count > 0
-      @invoice = @user.unpaid_received_invoices.first
-      invoice_path(@invoice)
+      @invoice = pid.blank? ? @user.unpaid_received_invoices : Invoice.get_by_status_and_pixi('unpaid', @user.id, pid)
+      invoice_path(@invoice.first, cid: cid)
     end
   end
 
@@ -214,16 +226,27 @@ module ApplicationHelper
     listing.pending? && controller_name == 'pending_listings'
   end
 
-  # build dynamic cache key for pixi show page
+  # build dynamic path for cache
+  def set_cache_path listing
+    if controller_name == 'searches'
+      'searches'
+    else
+      is_pending?(listing) ? 'pending_listings' : %w(new edit).detect {|x| x == listing.status}.blank? ? 'listings' : 'temp_listings'
+    end
+  end
+
+  # build dynamic cache key for pixis
   def cache_key_for_pixi_item(listing, fldName='title')
-    path = is_pending?(listing) ? 'pending_listings' : %w(new edit).detect {|x| x == listing.status}.blank? ? 'listings' : 'temp_listings'
-    path + "/#{listing.pixi_id}-#{listing.title}-#{listing.updated_at.to_i}-user-#{@user.id}-#{fldName}"
+    set_cache_path(listing) + "/#{listing.pixi_id}-#{listing.title}-#{listing.updated_at.to_i}-user-#{@user.id}-#{fldName}" if listing
   end
 
   # build dynamic cache key for pixi show page
   def cache_key_for_pixi_page(listing, fldName='title')
-    path = is_pending?(listing) ? 'pending_listings' : %w(new edit).detect {|x| x == listing.status}.blank? ? 'listings' : 'temp_listings'
-    path + "/#{listing.pixi_id}-#{listing.title}-#{listing.amt_left}-#{listing.updated_at.to_i}-#{fldName}"
+    set_cache_path(listing) + "/#{listing.pixi_id}-#{listing.title}-#{listing.amt_left}-#{listing.updated_at.to_i}-#{fldName}" if listing
+  end
+
+  def cache_key_for_fragment(section)
+    "#{section}-#{controller_name}-#{action_name}"
   end
 
   # check for menu display of footer items
@@ -245,6 +268,12 @@ module ApplicationHelper
     else
       'rsz_pixi_top_logo.png'
     end
+  end
+
+  # check if image exists
+  def check_image model, psize, lazy_flg=false
+    img_class = lazy_flg ? 'lazy ' + zoom_image : zoom_image
+    image_tag(get_pixi_image(model.pictures[0], psize), class: img_class, lazy: lazy_flg) if picture_exists?(model)
   end
 
   # check for model errors
@@ -280,7 +309,7 @@ module ApplicationHelper
 
   # add new picture for model
   def setup_picture(model)
-    picture = model.pictures.build rescue nil
+    model.pictures.build if model.pictures.empty? rescue nil
     return model
   end
 
@@ -297,5 +326,131 @@ module ApplicationHelper
       model.deny_item_list.collect {|item| concat(content_tag(:li, link_to(item, deny_pending_listing_path(model, reason: item), method: :put)))}
     end
     return ''
+  end
+
+  # removes html tags
+  def sanitize txt
+    simple_format(txt, {}, sanitize: false) 
+  end
+
+  # toggle font color for rating
+  def get_rating_class wFlg=true
+    wFlg ? 'tiny-black' : 'tiny-white'
+  end
+
+  # toggle class for rating
+  def set_rating_class flg
+    flg ? 'bmed-pixis' : 'med-pixis'
+  end
+
+  # toggle class for rating
+  def set_rating_val flg, hFlg=false
+    hFlg ? 21 : 24
+  end
+
+  # set list tag id for photo uploader
+  def get_list_id tag
+    tag == 'usr_photo2' ? 'list2' : 'list'
+  end
+
+  # dynamically set background image
+  def load_bkgnd model, cnt=1, locFlg=false
+    img = locFlg ? "bokeh.jpg" : "gm_grey.jpg"
+    return img if model.blank?
+    model.pictures[cnt] ? get_pixi_image(model.pictures[cnt], 'cover') : img
+  end
+
+  # check usr access
+  def access? usr
+    can?(:manage_users, usr)
+  end
+
+  # set top menu navigation based on sign in status
+  def top_menu
+    if signed_in?
+      render 'layouts/display_menu'
+    else
+      content_tag(:ul, content_tag(:li, link_to("Sign in", new_user_session_path)), class: "nav pull-right")
+    end
+  end
+
+  # toggle menu access based on user privileges
+  def show_post_for_menu str=[]
+    if can? :manage_pixi_posts, @user
+      str << link_to("For Seller", new_temp_listing_path(pixan_id: @user), id: 'pixi-post') 
+      str << link_to("For Business", new_temp_listing_path(pixan_id: @user, ptype: 'bus'), id: 'bus-ppost')
+      content_tag(:li, str.join(" ").html_safe)
+    end
+  end
+
+  # toggle menu access based on user privileges
+  def show_manage_menu
+    render 'layouts/manage' if can? :manage_pixi_posts, @user
+  end
+
+  def show_bill_menu_btn
+    content_tag(:li, link_to("Bill", get_invoice_path, id: 'bill-pixi')) if @user.has_pixis?
+  end
+
+  def show_pay_menu_btn
+    content_tag(:li, link_to("Pay", get_unpaid_path, id: 'pay-pixi')) if @user.has_unpaid_invoices?
+  end
+
+  # toggle field display visible
+  def set_style flg
+    flg ? 'display:none' : ''
+  end
+
+  # set pagination
+  def paginate_list id, model
+    content_tag(:div, (will_paginate(model) if model.respond_to?(:total_pages)), id: id, class: 'nav pull-right')
+  end
+
+  # get address for map
+  def map_loc model
+    model.primary_address if model.has_address?  
+  end
+
+  # return map coords if address is found
+  def get_lnglat model
+    LocationManager::get_google_lng_lat(model.primary_address) if model.has_address?  
+  end
+
+  # show progress meter if needed
+  def show_progress_meter flg
+    content_tag(:div, render(partial: 'shared/progress_meter'), class: 'mtop left-form mleft30') if flg
+  end
+
+  # set file_field
+  def photo_cabinet form, s3Flg, keyName, mFlg
+    if s3Flg 
+      form.s3_file_field :photo, { id: keyName, multiple: mFlg, class: 'file js-s3_file_field' } 
+    else 
+      form.file_field :photo, { id: keyName, multiple: mFlg, class: 'file' } 
+    end 
+  end
+
+  # show link if member or business
+  def my_site_link
+    content_tag(:li, link_to("My Site", @user.local_user_path)) if @user.is_business? || @user.is_member?
+  end
+
+  def show_border_image model, display_cnt, file_name, psize
+    cls = display_cnt == 0 ? file_name : 'pic-frame'
+    content_tag(:div, image_tag(get_pixi_image(model.pictures[0]), :size => psize, class: 'img-zoom'), class: cls)
+  end
+
+  def process_show_photo_image model, display_cnt, file_name, psize
+    if display_cnt < 2
+      show_border_image model, display_cnt, file_name, psize
+    elsif display_cnt > 2
+      image_tag(get_pixi_image(model.pictures[0]), class: file_name)
+    else
+      render partial: 'shared/photos', locals: {model: model, psize: psize }
+    end
+  end
+
+  def show_photo model, display_cnt, file_name, psize
+    process_show_photo_image model, display_cnt, file_name, psize if picture_exists? model
   end
 end

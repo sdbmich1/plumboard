@@ -1,0 +1,14 @@
+<% provide(:title, 'My Followers') %>
+<%= content_for :subhead do %>
+  <%= render :partial => 'shared/navbar', locals: { menu_name: 'My Followers' } %>
+<% end %>
+
+<%= content_for :content do %>
+  <div id="pendingOrder">
+    <%= render :partial => 'shared/my_followers_list' %>
+  </div>
+
+  <div id="entry-top" class="pg-entry">
+    <%= page_entries_info @users, :model => 'followers' unless @users.blank? %>
+  </div>
+<% end %>

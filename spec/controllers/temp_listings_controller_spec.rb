@@ -79,7 +79,10 @@ describe TempListingsController do
 
   describe "POST create" do
     before do
-      controller.stub!(:set_params).and_return(:success)
+      TempListing.stub!(:add_listing).and_return( @listing )
+      @listing.stub_chain(:user, :guest?).and_return( session )
+      controller.stub!(:current_user).and_return(@user)
+      controller.stub!(:set_params, :set_uid).and_return(:success)
     end
     
     context 'failure' do
@@ -129,7 +132,7 @@ describe TempListingsController do
       end
 
       it "redirects to the created listing" do
-        TempListing.stub(:new).with({'title'=>'test', 'description'=>'test' }) { mock_listing(:save => true) }
+        TempListing.stub(:add_listing).with({'title'=>'test', 'description'=>'test'}, @user) { mock_listing(:save => true) }
         do_create
         response.should be_redirect
       end

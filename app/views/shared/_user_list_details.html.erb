@@ -1,0 +1,19 @@
+  <div id='usr_list'>
+    <div id="top-header" class='sm-top nav pull-right'>
+      <%= link_to 'Export as CSV file', users_path(utype: utype, format: "csv"), class: 'btn btn-small' %>
+    </div>
+    <div class='clear-all'></div>
+    <div class='sm-top'>
+      <table class="table table-hover table-condensed table-bordered">
+        <%= render partial: 'shared/user_list_top' %>
+        <tbody>
+          <%= render partial: 'shared/user_row', collection: model, as: :user %>
+        </tbody>
+      </table>
+    </div> 
+    <div id="sm-top">
+      <%= page_entries_info model, :model => 'users' %>
+    </div> 
+    <%= paginate_list 'user-list', model %>
+  </div> 
+

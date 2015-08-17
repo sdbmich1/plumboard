@@ -7,7 +7,7 @@ class UserType < ActiveRecord::Base
 
   has_many :users, foreign_key: 'user_type_code', primary_key: 'code'
 
-  default_scope :order => "description ASC"
+  # default_scope :order => "description ASC"
 
   # return active types
   def self.active

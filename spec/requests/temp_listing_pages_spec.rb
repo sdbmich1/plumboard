@@ -1,4 +1,5 @@
 require 'spec_helper'
+require "rack_session_access/capybara"
 
 feature "TempListings" do
   subject { page }
@@ -47,7 +48,7 @@ feature "TempListings" do
     fill_in 'Description', with: descr
   end
 
-  def add_data_w_photo val, prcFlg=true, imgFlg=false, descr="Guitar for Sale"
+  def add_photo val, prcFlg=true, imgFlg=false, descr="Guitar for Sale"
     page.attach_file('photo', "#{Rails.root}/spec/fixtures/photo.jpg")
     add_data val, prcFlg, imgFlg, descr
   end
@@ -115,16 +116,40 @@ feature "TempListings" do
 
   def add_pixi
     expect{
-      add_data_w_photo 'Foo Bar'
+      add_photo 'Foo Bar'
       click_button submit; sleep 3
     }.to change(TempListing,:count).by(1)
     page.should have_content "Guitar For Sale - $150.00"
     page.should have_content 'Review Your Pixi'
   end
 
+  describe "login sets session" do
+    before :each do
+      set_temp_attr ''
+      @temp = TempListing.add_listing(@attr, User.new)
+      @temp.save!
+      page.set_rack_session(back_to: "/temp_listings/#{@temp.pixi_id}")
+      page.set_rack_session(guest_user_id: @temp.user.id)
+      visit new_user_session_path
+    end
+    it 'assigns temp_listing to signed in user' do
+      user_login user
+      page.should have_content 'Review Your Pixi'
+      page.should have_content @temp.pixi_id
+      page.should have_content user.first_name
+      expect(@temp.reload.seller_id).to eq user.id
+    end
+
+    it "creates a listing and signs in w/ FB", js: true do
+      omniauth
+      click_on "fb-btn"
+      page.should have_content 'Review Your Pixi'
+      page.should have_content 'Bob'
+    end
+  end
+
   describe "Manage Temp Pixis" do
     let(:temp_listing) { build(:temp_listing) }
-
     before(:each) do
       init_setup user
       visit new_temp_listing_path
@@ -141,7 +166,7 @@ feature "TempListings" do
     end
 
     def event_data sdt, edt
-      add_data_w_photo 'Events', true, true
+      add_photo 'Events', true, true
       fill_in 'start-date', with: sdt
       fill_in 'end-date', with: edt
     end
@@ -167,19 +192,19 @@ feature "TempListings" do
 
       it "does not create a listing w/o category" do
         expect { 
-	  add_data_w_photo nil, true, true
+	  add_photo nil, true, true
 	  click_button submit }.not_to change(TempListing, :count)
       end
 
       it "does not create a listing w/o description" do
         expect { 
-	  add_data_w_photo 'Foo Bar', true, true, nil
+	  add_photo 'Foo Bar', true, true, nil
 	  click_button submit }.not_to change(TempListing, :count)
       end
 
       it "does not create a listing w/o start date" do
         expect { 
-	  add_data_w_photo 'Events', true, true
+	  add_photo 'Events', true, true
           page.should have_selector('#et_code', visible: true) 
           select('Performance', :from => 'et_code'); sleep 0.5
 	  click_button submit }.not_to change(TempListing, :count)
@@ -217,16 +242,16 @@ feature "TempListings" do
 
       it "should not create a listing w/o photo" do
         expect { 
-	  add_data_w_photo 'Foo Bar', true, true
+	  add_photo 'Foo Bar', true, true
 	  click_button submit }.not_to change(TempListing, :count)
 	  page.should have_content "Must have at least one picture"
       end
     end
 
-    describe "Create with valid information" do
+    describe "Create with valid information", base: true do
       it "Adds a new listing w/o price" do
         expect{
-	  add_data_w_photo 'Foo Bar', false
+	  add_photo 'Foo Bar', false
           select('Used', :from => 'cond-type-code')
 	  click_button submit; sleep 3
           page.should have_content 'Review Your Pixi'
@@ -241,11 +266,11 @@ feature "TempListings" do
 
       it "Adds a new listing w compensation", js:true do
         expect{
-	  add_data_w_photo 'Jobs', false, true; sleep 2
+	  add_photo 'Jobs', false, true; sleep 2
 	  check_page_selectors ['#temp_listing_job_type_code', '#salary'], true, false
  	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time', '#pixi_qty', '#et_code', '#cond-type-code', '#yr_built', 
-	    '#temp_listing_mileage', '#temp_listing_item_color', '#temp_listing_item_id', '#temp_listing_item_size', '#temp_listing_car_id', 
-	    '#temp_listing_car_color'], false, false
+	    '#temp_listing_mileage', '#temp_listing_item_color', '#temp_listing_item_id', '#temp_listing_product_size', '#temp_listing_car_id', 
+	    '#temp_listing_car_color', '#temp_listing_price'], false, false
           select('Full-Time', :from => 'temp_listing_job_type_code')
           fill_in 'salary', with: "Competitive"
 	}.to change(TempListing,:count).by(0)
@@ -253,11 +278,11 @@ feature "TempListings" do
 
       it "Adds a new vehicle listing", js:true  do
         expect{
-  	  add_data_w_photo 'Automotive', true, true; sleep 3
+  	  add_photo 'Automotive', true, true; sleep 3
           fill_in 'Title', with: "Buick Regal for sale"
 	  check_page_selectors ['#cond-type-code', '#yr_built', '#temp_listing_mileage', '#temp_listing_car_color', '#temp_listing_car_id'], true, false
  	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time', '#pixi_qty', '#et_code', '#temp_listing_job_type_code', '#salary',
-	    '#temp_listing_item_size', '#temp_listing_item_color', '#temp_listing_item_id'], false, false
+	    '#temp_listing_product_size', '#temp_listing_product_color', '#temp_listing_item_color', '#temp_listing_item_id'], false, false
           select('Used', :from => 'cond-type-code')
           select('2001', :from => 'yr_built')
           fill_in 'temp_listing_mileage', with: "100,000"
@@ -268,9 +293,9 @@ feature "TempListings" do
 
       it "Adds a new event listing", js:true do
         expect{
-	  add_data_w_photo 'Events', true, true
+	  add_photo 'Events', true, true
 	  check_page_selectors ['#temp_listing_job_type_code', '#salary', '#cond-type-code', '#yr_built', '#temp_listing_mileage', 
-	    '#temp_listing_mileage', '#temp_listing_item_color', '#temp_listing_item_id', '#temp_listing_item_size', '#temp_listing_car_id', 
+	    '#temp_listing_mileage', '#temp_listing_item_color', '#temp_listing_item_id', '#temp_listing_product_size', '#temp_listing_car_id', 
 	    '#temp_listing_car_color'], false, false
  	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time', '#pixi_qty', '#et_code'], true, false
           select('Performance', :from => 'et_code'); sleep 0.5
@@ -284,26 +309,26 @@ feature "TempListings" do
 
       it "Adds a new product listing", js:true  do
         expect{
-  	  add_data_w_photo 'Apparel', true, true; sleep 3
+  	  add_photo 'Apparel', true, true; sleep 3
           fill_in 'Title', with: "Cosby Sweater"
-	  check_page_selectors ['#cond-type-code','#pixi_qty', '#temp_listing_item_color', '#temp_listing_item_id', '#temp_listing_item_size'], true, 
+	  check_page_selectors ['#cond-type-code','#pixi_qty', '#temp_listing_item_color', '#temp_listing_item_id', '#temp_listing_product_size'], true, 
 	  false 
- 	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time', '#et_code', '#temp_listing_job_type_code', '#salary','#yr_built', 
+ 	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time','#et_code','#temp_listing_job_type_code', '#salary','#yr_built', 
 	  '#temp_listing_mileage', '#temp_listing_car_id', '#temp_listing_car_color'], false, false
           select('Used', :from => 'cond-type-code')
           select('4', :from => 'pixi_qty'); sleep 0.5
           fill_in 'temp_listing_item_color', with: "Baby Blue"
-          fill_in 'temp_listing_item_size', with: "Large"
+          fill_in 'temp_listing_product_size', with: "Large"
           fill_in 'temp_listing_item_id', with: "ABCDEF1234567890"
 	}.to change(TempListing,:count).by(0)
       end	      
 
       it "Adds a new sales listing", js:true  do
         expect{
-  	  add_data_w_photo 'Books', true, true; sleep 3
+  	  add_photo 'Books', true, true; sleep 3
           fill_in 'Title', with: "Harry Potter"
 	  check_page_selectors ['#cond-type-code','#pixi_qty'], true, false
- 	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time', '#et_code', '#temp_listing_job_type_code', '#salary','#yr_built', '#temp_listing_mileage', '#temp_listing_color', '#temp_listing_other_id', '#temp_listing_item_size'], false, false
+ 	  check_page_selectors ['#start-date', '#end-date', '#start-time', '#end-time', '#et_code', '#temp_listing_job_type_code', '#salary','#yr_built', '#temp_listing_mileage', '#temp_listing_car_color', '#temp_listing_car_id', '#temp_listing_product_size', '#temp_listing_item_color'], false, false
           select('Used', :from => 'cond-type-code')
           select('4', :from => 'pixi_qty'); sleep 0.5
 	}.to change(TempListing,:count).by(0)
@@ -311,11 +336,12 @@ feature "TempListings" do
 
       it "Adds a new service listing", js:true  do
         expect{
-  	  add_data_w_photo 'Deals', true, true; sleep 3
+  	  add_photo 'Deals', true, true; sleep 3
           fill_in 'Title', with: "Harry Potter"
-	  check_page_selectors ['#pixi_qty'], true, false
- 	  check_page_selectors ['#cond-type-code', '#start-date', '#end-date', '#start-time', '#end-time', '#et_code', '#temp_listing_job_type_code', '#salary','#yr_built', '#temp_listing_mileage', '#temp_listing_color', '#temp_listing_other_id', '#temp_listing_item_size'], false, false
-          select('4', :from => 'pixi_qty'); sleep 0.5
+	  check_page_selectors ['#temp_listing_price'], true, false
+ 	  check_page_selectors ['#cond-type-code', '#start-date', '#end-date', '#start-time', '#end-time', '#et_code', '#temp_listing_job_type_code',
+	  '#salary','#yr_built', '#temp_listing_mileage', '#temp_listing_item_color','#temp_listing_car_color', '#temp_listing_car_id', 
+	  '#temp_listing_product_size', '#pixi_qty'], false, false
 	}.to change(TempListing,:count).by(0)
       end	      
     end	      
@@ -392,7 +418,7 @@ feature "TempListings" do
   end
 
   describe "Edit Temp Pixi" do 
-    let(:temp_listing) { create(:temp_listing_with_pictures) }
+    let(:temp_listing) { create(:temp_listing_with_pictures, condition_type_code: 'U', quantity: 3) }
     before do
       init_setup user
       create_sites
@@ -471,6 +497,15 @@ feature "TempListings" do
       }.to change(TempListing,:count).by(0)
       page.should have_content 'Review Your Pixi'
     end
+
+    it "changes a pixi quantity" do
+      expect{
+          select('4', :from => 'pixi_qty'); sleep 0.5
+          click_button submit
+      }.to change(TempListing,:count).by(0)
+      page.should have_content 'Review Your Pixi'
+      page.should have_content 'Quantity: 4'
+    end
   end
 
   describe 'Reviews a Pixi' do
@@ -482,14 +517,15 @@ feature "TempListings" do
 
     def check_buttons model
       page.should_not have_link 'Follow', href: '#'
-      page.should have_link 'Edit', href: edit_temp_listing_path(model)
+      check_page_selectors ['#fb-link', '#tw-link', '#pin-link'], false, true
+      page.should have_link 'Edit', href: edit_temp_listing_path(model, ptype:'')
       page.should have_link 'Remove', href: temp_listing_path(model)
       page.should have_link 'Done!', href: submit_temp_listing_path(model)
       page.should_not have_button 'Next'
     end
 
     it 'shows content' do
-      check_page_expectations ["Step 2 of 2:", "Posted By: #{temp_listing.seller_name}", "ID: #{temp_listing.pixi_id}", "Posted:", "Updated:", 
+      check_page_expectations ["Step 2 of 2:", "#{temp_listing.seller_name}", "ID: #{temp_listing.pixi_id}", "Posted:", "Updated:", 
        "Condition: Used", 'Acoustic Guitar'], '', false
       check_page_selectors ['#contact_content', '#comment_content'], false, true
       check_page_expectations ["Start Date:", "End Date:", "Start Time:", "End Time:", "Event Type:", "Compensation:", "Job Type:", 
@@ -502,8 +538,8 @@ feature "TempListings" do
         event_start_date: Date.today+2.days, event_end_date: Date.today+3.days, event_start_time: Time.now+2.hours, event_end_time: Time.now+3.hours,
 	title: 'The Event')
       visit temp_listing_path(@temp_listing) 
-      check_page_expectations ["Step 2 of 2:", "Posted By: #{@temp_listing.seller_name}", "ID: #{@temp_listing.pixi_id}", "Posted:", "Updated:", 
-       "Start Date:", "End Date:", "Start Time:", "End Time:", "Event Type:", 'The Event'], '', false
+      check_page_expectations ["Step 2 of 2:", "#{@temp_listing.seller_name}", "ID: #{@temp_listing.pixi_id}", "Posted:", "Updated:", 
+       "Date(s):", "Time(s):", "Event Type:", 'The Event'], '', false
       check_page_selectors ['#contact_content', '#comment_content'], false, true
       check_page_expectations ["Condition:", "Compensation:", "Job Type:", "Year:", 'VIN #:', 'Product Code:', 'Color:', 'Size:'], '', true
       check_buttons @temp_listing
@@ -511,11 +547,11 @@ feature "TempListings" do
 
     it 'shows product content' do
       @temp_listing = create(:temp_listing, seller_id: user.id, status: 'new', condition_type_code: 'U', quantity: 1, category_id: @cat2.id,
-	title: 'The Product', other_id: '123456', item_size: 'Large', color: 'Blue')
+	title: 'The Product', other_id: '123456', product_size: 'Large', color: 'Blue')
       visit temp_listing_path(@temp_listing) 
       check_page_expectations ["Start Date:", "End Date:", "Start Time:", "End Time:", "Event Type:", "Compensation:", "Job Type:", "Year:", 'VIN #:'], '', true
       check_page_selectors ['#contact_content', '#comment_content'], false, true
-      check_page_expectations ["Step 2 of 2:", "Posted By: #{@temp_listing.seller_name}", "ID: #{@temp_listing.pixi_id}", "Posted:", "Updated:",
+      check_page_expectations ["Step 2 of 2:", "#{@temp_listing.seller_name}", "ID: #{@temp_listing.pixi_id}", "Posted:", "Updated:",
         'The Product', "Condition:", 'Product Code:', 'Color:', 'Size:'], '', false
       check_buttons @temp_listing
     end
@@ -526,7 +562,7 @@ feature "TempListings" do
       check_page_expectations ["Start Date:", "End Date:", "Start Time:", "End Time:", "Event Type:", "Compensation:", "Job Type:", "Year:", 'VIN #:',
         "Condition:", 'Product Code:', 'Color:', 'Size:', 'Quantity'], '', true
       check_page_selectors ['#contact_content', '#comment_content'], false, true
-      check_page_expectations ["Step 2 of 2:", "Posted By: #{@temp_listing.seller_name}", "ID: #{@temp_listing.pixi_id}", "Posted:", "Updated:",
+      check_page_expectations ["Step 2 of 2:", "#{@temp_listing.seller_name}", "ID: #{@temp_listing.pixi_id}", "Posted:", "Updated:",
         'The Service'], '', false
       check_buttons @temp_listing
     end
@@ -538,8 +574,8 @@ feature "TempListings" do
       check_page_expectations ["Start Date:", "End Date:", "Start Time:", "End Time:", "Event Type:", "Compensation:", "Job Type:",
         'Product Code:', 'Size:', 'Quantity:'], '', true
       check_page_selectors ['#contact_content', '#comment_content'], false, true
-      check_page_expectations ["Step 2 of 2:", "Posted By: #{@temp_listing.seller_name}", "ID: #{@temp_listing.pixi_id}", "Posted:", "Updated:",
-        "Condition:", 'The Vehicle', 'Color:', 'Blue', 'Mileage:', '50000', "Year:", '2001', 'VIN #:', '123456'], '', false
+      check_page_expectations ["Step 2 of 2:", "#{@temp_listing.seller_name}", "ID: #{@temp_listing.pixi_id}", "Posted:", "Updated:",
+        "Condition:", 'The Vehicle', 'Color:', 'Blue', 'Mileage:', '50,000', "Year:", '2001', 'VIN #:', '123456'], '', false
       check_buttons @temp_listing
     end
 
@@ -550,7 +586,7 @@ feature "TempListings" do
       check_page_expectations ["Start Date:", "End Date:", "Start Time:", "End Time:", "Event Type:", "Condition:", 
         'Product Code:', 'Size:', 'Color:', 'Mileage:', "Year:", 'VIN #:', 'Quantity'], '', true
       check_page_selectors ['#contact_content', '#comment_content'], false, true
-      check_page_expectations ["Step 2 of 2:", "Posted By: #{@temp_listing.seller_name}", "ID: #{@temp_listing.pixi_id}", "Posted:", "Updated:",
+      check_page_expectations ["Step 2 of 2:", "#{@temp_listing.seller_name}", "ID: #{@temp_listing.pixi_id}", "Posted:", "Updated:",
 	"Compensation:", "Job Type:", 'The Job'], '', false
       check_buttons @temp_listing
     end
@@ -706,5 +742,40 @@ feature "TempListings" do
       add_pixi
       expect(TempListing.last.pixan_id).to be_nil
     end	      
+  end
+
+  describe "Edit Business Posted Pixis" do
+    before :each do
+      attr = {"seller_id"=>"#{user.id}", "title"=>"Dilworth Leather Loveseat", "category_id"=>"31", "condition_type_code"=>"ULN", 
+      "job_type_code"=>"", "event_type_code"=>"", "site_id"=>"9904", "price"=>"300", "quantity"=>"1", "year_built"=>"", "compensation"=>"", 
+      "event_start_date"=>"", "event_end_date"=>"", "car_id"=>"", "car_color"=>"","mileage"=>"", "item_color"=>"", "product_size"=>"", "item_id"=>"", 
+      "description"=>"great condition", "start_date"=>"2015-04-13 19:58:11 -0700", "status"=>"new", "post_ip"=>"127.0.0.1", 
+      "pictures_attributes"=>{"0"=>{"direct_upload_url"=>"Dilworth-loveseat-Leather-22.jpg","photo_file_name"=>"Dilworth-loveseat-Leather-22.jpg", 
+      "photo_file_path"=>"/uploads/1428981009986-dla2y3o9mjejnhfr-3c45659dc6c50163f3b8048e5b81e979/Dilworth-loveseat-Leather-22.jpg", 
+      "photo_file_size"=>"1061500", "photo_content_type"=>"image/jpeg"}} }
+      @temp = TempListing.new attr
+      @temp.save
+      init_setup admin
+      visit edit_temp_listing_path(@temp, ptype: 'bus')
+    end
+
+    it "Changes a pixi title" do
+      expect{
+	      fill_in 'Title', with: "Leather Loveseat for Sale"
+              click_button submit
+      }.to change(TempListing,:count).by(0)
+      page.should have_content 'Leather Loveseat For Sale'
+      page.should have_content 'Review Your Pixi'
+      expect(@temp.reload.seller_id).to eq user.id
+    end
+
+    it "adds a pixi pic" do
+      expect{
+              attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
+              click_button submit
+      }.to change(@temp.pictures,:count).by(1)
+      page.should have_content 'Review Your Pixi'
+      expect(@temp.reload.seller_id).to eq user.id
+    end
   end
 end

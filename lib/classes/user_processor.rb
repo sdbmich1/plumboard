@@ -1,8 +1,32 @@
 class UserProcessor
-  include LocationManager, PointManager, ImageManager
+  include LocationManager, PointManager, ImageManager, NameParse, ProcessMethod
 
   def initialize usr
     @user = usr
+  end
+
+  # validate picture exists
+  def must_have_picture
+    if !@user.any_pix?
+      @user.errors.add(:base, 'Must have a picture')
+      false
+    else
+      true
+    end
+  end
+
+  # validate zip exists
+  def must_have_zip
+    if @user.provider.blank?
+      if !@user.home_zip.blank? && (@user.home_zip.length == 5 && @user.home_zip.to_region) 
+        true
+      else
+        @user.errors.add(:base, 'Must have a valid zip')
+        false
+      end
+    else
+      true
+    end
   end
 
   # create unique url for user
@@ -10,6 +34,7 @@ class UserProcessor
     begin
       new_url = cnt == 0 ? value.gsub(/\s+/, "") : [value.gsub(/\s+/, ""), cnt.to_s].join('')
       cnt += 1
+      new_url = NameParse::transliterate new_url, true, true
     end while User.where(:url => new_url).exists?
     new_url
   end
@@ -62,8 +87,6 @@ class UserProcessor
   # load facebook data
   def load_facebook_user access_token, signed_in_resource
     data = access_token.extra.raw_info
-
-    # find or create user
     unless user = User.where(:email => data.email).first
       user = User.new(:first_name => data.first_name, :last_name => data.last_name, 
 	      :birth_date => convert_date(data.birthday), :provider => access_token.provider, :uid => access_token.uid, :email => data.email) 
@@ -71,11 +94,129 @@ class UserProcessor
       user.fb_user = true
       user.gender = data.gender.capitalize rescue nil
       user.home_zip = LocationManager::get_home_zip(access_token.info.location) rescue nil
-
-      #add photo 
       add_url_image user, access_token
       user.email.blank? ? false : user.save(:validate => false)
     end
     user
+  end
+
+  # transfer data between user accounts
+  def move_to usr
+    if usr
+      @user.pixi_posts.update_all({user_id: usr.id, status: 'active'}, {})
+      @user.contacts.update_all(contactable_id: usr.id) unless usr.has_address? 
+      @user.temp_listings.update_all({seller_id: usr.id, status: 'new'}, {})
+    end
+  end
+
+  # display image with name for autocomplete
+  def pic_with_name
+    pic = @user.photo rescue nil
+    pic ? "<img src='#{pic}' class='inv-pic' /> #{@user.name}" : nil
+  end
+
+  # display image with name for autocomplete
+  def pic_with_business_name
+    pic = @user.photo rescue nil
+    pic ? "<img src='#{pic}' class='inv-pic' /> #{@user.business_name}" : nil
+  end
+
+  # set csv filename
+  def filename utype
+    (utype.blank? ? "All" : UserType.where(code: utype).first.description) + "_" + ResetDate::set_file_timestamp
+  end
+
+  def csv_data
+    { "Name" => @user.name, "Email" => @user.email, "Type" => @user.type_descr, "Zip" => @user.home_zip, "Birth Date" => @user.birth_dt, 
+      "Enrolled" => nice_date(@user.created_at), "Last Login" => nice_date(@user.last_sign_in_at) }
+  end
+
+  # initialize data
+  def set_flds
+    @user.description = nil unless @user.description.blank?
+    @user.user_type_code = 'MBR' if @user.user_type_code.blank?
+    @user.user_url, @user.status = @user.name, 'active' if @user.status.blank? && !@user.guest?
+  end
+
+  # convert date/time display
+  def nice_date(tm, tmFlg=true)
+    ll = LocationManager::get_lat_lng_by_zip @user.home_zip
+    ResetDate::display_date_by_loc tm, ll, tmFlg rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
+  end
+
+  # used to add pictures for new user
+  def with_picture
+    @user.pictures.build if @user.pictures.blank? || @user.pictures.size < 2
+    @user.preferences.build if @user.preferences.blank?
+    @user
+  end
+
+  def get_mbr_type
+    @user.is_business? ? 'biz' : 'mbr'
+  end
+
+  def url_str
+    [ProcessMethod::get_host, '/', get_mbr_type, '/'].join('')
+  end
+
+  # getter for url
+  def user_url 
+    [url_str, @user.url].join('') rescue nil
+  end
+
+  def local_user_path
+    ['/', get_mbr_type, '/', @user.url].join('') rescue nil
+  end
+
+  def get_ids listings
+    listings.map(&:seller_id).uniq
+  end
+
+  # get seller list based on current pixis
+  def get_sellers listings
+    User.includes(:pictures, :preferences).get_by_type('BUS').board_fields.where(id: get_ids(listings)).select {|usr| usr.reload.pixi_count >= min_count}
+  end
+
+  def min_count
+    Rails.env.production? ? MIN_FEATURED_PIXIS : 2
+  end
+
+  # get site name from zip
+  def site_name
+    LocationManager::get_loc_name nil, nil, @user.home_zip
+  end
+
+  def order_txt val
+    result = val.is_a?(Array) ? !val.detect{|x| x=='BUS'}.nil? : val.upcase == 'BUS' rescue false
+    txt = val && result ? 'business_name ASC' : 'first_name ASC'
+  end
+
+  # return users by type
+  def get_by_type val
+    val.blank? ? User.active : User.active.where(:user_type_code => val).order(order_txt(val))
+  end
+
+  # return users following seller_id
+  def get_by_seller(seller_id, status)
+    favorites = seller_id.blank? ? FavoriteSeller.where(status: status) : FavoriteSeller.where(seller_id: seller_id, status: status)
+    User.includes(:preferences, :pictures).where(id: favorites.pluck(:user_id)).order('last_name ASC')
+  end
+
+  # return sellers followed by user_id
+  def get_by_user(user_id, status)
+    favorites = user_id.blank? ? FavoriteSeller.where(status: status) : FavoriteSeller.where(user_id: user_id, status: status)
+    User.includes(:preferences, :pictures).where(id: favorites.pluck(:seller_id)).order('business_name ASC')
+  end
+
+  # return the date the current user followed seller_id
+  def date_followed(seller_id)
+    favorite_seller = @user.favorite_sellers.find_by_seller_id_and_status(seller_id, 'active')
+    favorite_seller ? favorite_seller.updated_at : nil
+  end
+
+  # return the ID of the FavoriteSeller object for the current user and seller_id
+  def favorite_seller_id(seller_id)
+    favorite_seller = @user.favorite_sellers.find_by_seller_id(seller_id)
+    favorite_seller ? favorite_seller.id : nil
   end
 end

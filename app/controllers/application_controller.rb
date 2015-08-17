@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
   # skip_before_filter :prepare_for_mobile
   after_filter :set_access_control_headers
   helper_method :mobile_device?
+  include ControllerManager
 
   # check if mobile device based on user_agent 
   def mobile_device?
@@ -28,7 +29,8 @@ class ApplicationController < ActionController::Base
   rescue_from CanCan::AccessDenied do |exception|
     if request.xhr?
       if signed_in?
-	render json: {status: :error, message: "You have no permission to #{exception.action} #{exception.subject.class.to_s.pluralize}"}, status: 403
+	render json: {status: :error, message: "You have no permission to #{exception.action} #{exception.subject.class.to_s.pluralize}"}, 
+	  status: 403
       else
         render json: {:status => :error, :message => "You must be logged in to do that!"}, :status => 401
       end
@@ -61,7 +63,7 @@ class ApplicationController < ActionController::Base
 
   def after_sign_in_path_for(resource)
     @user ||= resource
-    session[:back_to] || session[:return_to] || get_root_path # categories_path(newFlg: @user.new_user?)
+    session[:back_to] || session[:return_to] || get_root_path
   end
 
   # set user if signed in 
@@ -83,14 +85,14 @@ class ApplicationController < ActionController::Base
 
   # exception handling
   def rescue_with_handler(exception)
-    if Rails.env.production? || Rails.env.staging?
+    if Rails.env.production? || Rails.env.staging? || Rails.env.demo?
       ExceptionNotifier::Notifier.exception_notification(request.env, exception).deliver 
       redirect_to '/500.html'
     end
   end       
 
   def action_missing(id, *args)
-    if Rails.env.production? || Rails.env.staging?
+    if Rails.env.production? || Rails.env.staging? || Rails.env.demo?
       redirect_to '/404.html'
     end
   end
@@ -136,6 +138,10 @@ class ApplicationController < ActionController::Base
 
   # set root path based on pixi count
   def get_root_path
-    Listing.has_enough_pixis?(@cat, @region) ? categories_path(loc: @region) : local_listings_path(loc: @region)
+    ControllerManager::set_root_path @cat, @region
+  end
+
+  def set_session
+    session[:back_to] = request.path unless signed_in?
   end
 end

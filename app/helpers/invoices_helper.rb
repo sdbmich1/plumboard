@@ -7,8 +7,8 @@ module InvoicesHelper
   end
 
   # set default quantity
-  def set_quantity model
-    model.quantity || 1
+  def set_quantity model, method='quantity', flg=true
+    flg ? (model.send(method) || 1) : 0
   end
 
   # set default sales tax
@@ -17,9 +17,14 @@ module InvoicesHelper
   end
 
   # check if user has bank account to determine correct routing
-  def get_invoice_path uid=nil, pid=nil
+  def get_invoice_path uid=nil, pid=nil, cid=nil
     form = mobile_device? ? 'mobile/invoice_form' : 'shared/invoice_form'
-    @user.has_bank_account? ? new_invoice_path(buyer_id: uid, pixi_id: pid) : new_bank_account_path(target: form)
+    @user.has_bank_account? ? set_invoice_path(uid, pid, cid) : new_bank_account_path(target: form, cid: cid)
+  end
+
+  def set_invoice_path uid, pid, cid
+    @inv = Invoice.get_by_status_and_pixi 'unpaid', uid, pid
+    @inv.blank? ? new_invoice_path(buyer_id: uid, pixi_id: pid, cid: cid) : invoice_path(@inv.first, cid: cid) 
   end
 
   # set page title based on action
@@ -104,5 +109,10 @@ module InvoicesHelper
   def inv_title inv
     str = inv.pixi_count > 1 ? ' +' : ''
     inv.pixi_title + str
+  end
+
+  # get pixi amt
+  def get_amt_left amt, invoice, pid
+    amt || invoice.get_pixi_amt_left(pid)
   end
 end

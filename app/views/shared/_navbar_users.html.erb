@@ -1,5 +1,12 @@
 <ul class="nav">
-  <li class="active"><%= link_to "All", users_path, class: 'submenu', id: 'active-users', remote: remote? %></li>
-  <li><%= link_to "Pixans", users_path(utype: 'PX'), class: 'submenu', id: 'pixan-users', remote: remote? %></li>
-  <li><%= link_to "Pixters", users_path(utype: 'PT'), class: 'submenu', id: 'pixter-users', remote: remote? %></li>
+  <li id='li_home' class="<%= @utype.blank? ? 'active' : '' %>">
+    <%= link_to "All", users_path, class: 'submenu', id: 'active-users', remote: remote? %></li>
+  <li class="<%= @utype == 'BUS' ? 'active' : '' %>">
+    <%= link_to "Businesses", users_path(utype: 'BUS'), class: 'submenu', id: 'bus-users', remote: remote? %></li>
+  <li class="<%= @utype == 'MBR' ? 'active' : '' %>">
+    <%= link_to "Individuals", users_path(utype: 'MBR'), class: 'submenu', id: 'ind-users', remote: remote? %></li>
+  <li class="<%= @utype == 'PX' ? 'active' : '' %>">
+    <%= link_to "Pixans", users_path(utype: 'PX'), class: 'submenu', id: 'pixan-users', remote: remote? %></li>
+  <li class="<%= @utype == 'PT' ? 'active' : '' %>">
+    <%= link_to "Pixters", users_path(utype: 'PT'), class: 'submenu', id: 'pixter-users', remote: remote? %></li>
 </ul>

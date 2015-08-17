@@ -95,9 +95,14 @@ module CalcTotal
   def self.get_processing_fee *val
     # set amount if empty
     @amt = !val.blank? ? val[0].to_f : @amt || 0.0
-
-    @pfee = (@amt + calc_discount) * (PIXI_PERCENT.to_f / 100)
-    @pfee.round(2)
+    @pfee = (@amt + calc_discount) * (PIXI_PERCENT.to_f / 100) + EXTRA_PROCESSING_FEE.to_f
+    @pfee.round(2) 
+  end
+  
+  # Calc PXB adjusted fee from Stripe
+  def self.get_adjusted_conv_fee amt, inv_amt
+    total = amt - inv_amt - get_processing_fee(amt)
+    total.round(2)
   end
   
   # calculate txn convenience fee based on amount and min transaction threshold

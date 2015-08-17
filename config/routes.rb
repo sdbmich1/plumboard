@@ -105,7 +105,7 @@ Plumboard::Application.routes.draw do
 
   resources :temp_listings do
     collection do
-      get :autocomplete_site_name, :autocomplete_user_first_name, 'unposted', 'pending', 'invoiced'
+      get :autocomplete_site_name, :autocomplete_user_business_name, :autocomplete_user_first_name, 'unposted', 'pending', 'invoiced'
     end
     member do
       put 'resubmit', 'submit'
@@ -146,6 +146,7 @@ Plumboard::Application.routes.draw do
 
   resources :pixi_likes, only: [:create, :destroy]
   resources :saved_listings, only: [:create, :index, :destroy]
+  resources :favorite_sellers, only: [:create, :index, :update]
 
   # custom routes
   get "/about", to: "pages#about" 
@@ -167,7 +168,14 @@ Plumboard::Application.routes.draw do
 
   # custom user routes to edit member info
   get "/settings/contact", to: "settings#contact" 
+  get "/settings/details", to: "settings#details" 
   get "/settings/password", to: "settings#password" 
+
+  # personalized paths
+  match '/biz/:url' => "listings#biz", via: :get, as: :biz
+  match '/mbr/:url' => "listings#member", via: :get, as: :member
+  match '/careers' => "listings#career", via: :get, as: :career
+  # get '/careers', to: "listings#jobs"
 
   # specify root route based on user sign in status
   root to: 'listings#local', :constraints => lambda {|r| r.env["warden"].authenticate? }
@@ -175,9 +183,4 @@ Plumboard::Application.routes.draw do
 
   # exception handling
   # match '/*path', :to => 'application#rescue_with_handler'
-
-  # personalized paths
-  get '/biz/:search', to: "searches#biz"
-  get '/mbr/:search', to: "searches#biz"
-  get '/careers', to: "searches#jobs"
 end

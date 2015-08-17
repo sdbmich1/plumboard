@@ -1,0 +1,18 @@
+    <div class='row'>
+      <div class='span2'>
+        <%= f.label :quantity, '# of Items' %>
+        <%= f.select 'quantity', options_for_select(get_ary, :selected => set_quantity(post)), {}, {id: 'post_qty', 
+	  class: 'width120 pixi-select'} %></td>
+      </div>
+      <div class='span2'>
+        <%= f.label :value, 'Value*' %>
+	<%= f.text_field :value, in: 0..MAX_PIXI_AMT, step: 0.01, size: 10, value: num_display(f.object, "value"), class: 'width120',
+	  placeholder: 'Ex. 50.00' %>
+      </div>
+      <div class='span7'>
+        <%= f.label :description %><%= f.text_area :description, id: 'description', :placeholder => 'Describe Your Item' %>
+      </div>
+    </div>
+  </div>
+
+

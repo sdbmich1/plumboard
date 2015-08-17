@@ -123,7 +123,10 @@ describe PixiPostsController do
 
   describe "POST create" do
     before do
-      controller.stub!(:set_params).and_return(:success)
+      PixiPost.stub!(:add_post).and_return( @post )
+      @post.stub_chain(:user, :guest?).and_return( session )
+      controller.stub!(:current_user).and_return(@user)
+      controller.stub!(:set_params, :set_uid).and_return(:success)
     end
     
     context 'failure' do
@@ -163,7 +166,7 @@ describe PixiPostsController do
       end
 
       it "should load the requested post" do
-        PixiPost.stub(:new).with({'id'=>'test', 'description'=>'test' }) { mock_post(:save => true) }
+        PixiPost.stub(:add_post).with({'id'=>'test', 'description'=>'test' }, @user) { mock_post(:save => true) }
         do_create
       end
 
@@ -173,7 +176,7 @@ describe PixiPostsController do
       end
 
       it "redirects to the created post" do
-        PixiPost.stub(:new).with({'id'=>'test', 'description'=>'test' }) { mock_post(:save => true) }
+        PixiPost.stub(:add_post).with({'id'=>'test', 'description'=>'test'}, @user) { mock_post(:save => true) }
         do_create
         response.should be_redirect
       end

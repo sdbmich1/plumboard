@@ -1,6 +1,1 @@
-<% if listing.free? %>
-  <%= link_to "Done!", submit_temp_listing_path(listing), method: :put, class: "btn btn-large btn-primary submit-btn", id: 'px-done-btn' %>
-<% else %>  
-  <%= render partial: 'shared/item_purchase', locals: {listing: listing} if chargeable? listing %>
-<% end %>
-
+<%= show_temp_listing listing %>

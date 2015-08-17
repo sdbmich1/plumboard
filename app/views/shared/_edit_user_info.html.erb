@@ -1,0 +1,46 @@
+<div class="control-group">
+  <label class="control-label">First Name</label>
+  <div class='controls'><%= f.text_field :first_name, :placeholder=>'First Name', required: true %></div>
+  <label class="control-label">Last Name</label>
+  <div class='controls'><%= f.text_field :last_name, :placeholder=> 'Last Name', required: true %></div>
+  <label class="control-label">Last Name</label>
+  <div class='controls'><%= f.email_field :email, :placeholder=>'Email Address', id: 'email', required: true %></div>
+  <label class="control-label">User Type</label>
+  <div class='controls'>
+    <%= f.collection_select :user_type_code, check_access(user), :code, :description, {selected: user.code_type}, {class: 'mbot', id: 'ucode'} %>
+  </div>
+  <div id='mbr_code' style="<%= user.is_business? ? 'display:none' : '' %>">
+    <label class="control-label">Birth Date</label>
+    <div class='controls'><%= f.date_select :birth_date, {:as => :date, :start_year => Date.today.year - 13, :end_year => Date.today.year - 100, 
+	  :use_short_month => true, :order => [:month, :day, :year], :prompt => true}, {class: 'width120', required: !user.is_business? } %></div>
+  </div>
+  <div id='bus_code' style="<%= !user.is_business? ? 'display:none' : '' %>">
+    <label class="control-label">Company</label>
+    <div class='controls'><%= f.text_field :business_name, :placeholder=>'Business Name', required: user.is_business? %></div>
+    <label class="control-label">Web Address</label>
+    <div class="controls input-prepend">
+      <span class="add-on">https://pixiboard.com/</span>
+      <%= f.text_field :url, placeholder: 'URL', value: user.url, id: 'prependedInput', class: 'width240', required: user.is_business? %>
+    </div>
+  </div>
+  <div class='clear-all'></div>
+  <div id='gender_code' class='sm-top' style="<%= user.is_business? ? 'display:none' : '' %>">
+    <label class="control-label">Gender</label>
+     <div class="controls"> 
+       <%= f.select :gender, options_for_select(['Male', 'Female', 'Other'], selected: user.gender), {prompt: 'Gender'}, {class: '', 
+        required: !user.is_business?} %></div>
+  </div>
+    <div class='clear-all'></div>
+  <div class='sm-top'>
+  <%= f.fields_for :preferences do |form| %>
+    <label class="control-label">Home Zip</label>
+    <div class="controls"> 
+      <%= form.text_field :zip, placeholder: 'Home Zip', size: 5, id: 'home_zip', class: 'width120', required: true %></div>
+  <% end %>
+  </div>
+  <div id='about_acct' style="<%= !edit_account? ? 'display:none' : '' %>">
+    <label class="control-label">About</label>
+    <div class="controls"> 
+      <%= f.text_area :description, :placeholder => 'Describe yourself or your business', required: edit_account? %></div>
+  </div>
+</div>

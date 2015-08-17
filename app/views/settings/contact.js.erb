@@ -1,2 +1,1 @@
-$("#user_form").html("<%= escape_javascript( raw render(:partial => "shared/user_contact") ) %>");
-$("#spinner").hide('fast'); 
+<%= render partial: 'shared/settings', locals: { fname: "shared/user_contact", user: @usr } %>

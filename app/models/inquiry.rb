@@ -1,4 +1,6 @@
 class Inquiry < ActiveRecord::Base
+  include NameParse
+
   attr_accessible :comments, :email, :first_name, :code, :last_name, :user_id, :status
   before_create :set_flds
 
@@ -26,9 +28,7 @@ class Inquiry < ActiveRecord::Base
 
   # set fields upon creation
   def set_flds
-    # parse non-ascii chars
-    encoding_options = {:invalid => :replace, :undef => :replace, :replace => '', :UNIVERSAL_NEWLINE_DECORATOR => true}
-    self.comments.encode!(Encoding.find('ASCII'), encoding_options)
+    NameParse::encode_string self.comments # parse non-ascii chars
     self.status = 'active' if self.status.blank?
   end
   

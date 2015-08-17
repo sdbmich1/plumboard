@@ -33,13 +33,26 @@ describe ListingsController do
     @listing = stub_model(Listing, :id=>1, pixi_id: '1', site_id: 1, seller_id: 1, title: "Guitar for Sale", description: "Guitar for Sale")
   end
 
+  def set_status
+    allow_message_expectations_on_nil
+    controller.instance_variable_set(:@status, 'active')
+    @status.stub!(:to_sym).and_return(:active)
+  end
+
+  def set_index_data
+    set_status
+    @listings = stub_model(Listing)
+    Listing.stub_chain(:check_category_and_location).and_return(@listings)
+    @listings.stub_chain(:paginate).and_return( @listings )
+    Listing.any_instance.stub(:geocode) { [1,1] }
+    controller.stub!(:get_location).and_return(:success)
+    Listing.any_instance.stub(:created_date).and_return(DateTime.current)
+    do_get
+  end
+
   describe 'GET index' do
     before(:each) do
-      @listings = stub_model(Listing)
-      Listing.stub_chain(:check_category_and_location).and_return(@listings)
-      @listings.stub!(:paginate).and_return( @listings )
-      controller.stub_chain(:get_location).and_return(:success)
-      do_get
+      set_index_data
     end
 
     def do_get
@@ -71,11 +84,7 @@ describe ListingsController do
 
   describe 'xhr GET index' do
     before(:each) do
-      @listings = mock("listings")
-      Listing.stub_chain(:check_category_and_location).and_return(@listings)
-      @listings.stub!(:paginate).and_return( @listings )
-      controller.stub_chain(:load_data, :get_location).and_return(:success)
-      do_get
+      set_index_data
     end
 
     def do_get
@@ -93,13 +102,9 @@ describe ListingsController do
 
   describe 'GET category' do
     before(:each) do
-      @listings = stub_model(Listing)
       @category = stub_model Category
-      Listing.stub_chain(:get_by_city).and_return(@listings)
-      @listings.stub!(:set_page).and_return(@listings)
       Category.stub!(:find).and_return(@category)
-      controller.stub!(:load_data).and_return(:success)
-      do_get
+      get_board_data
     end
 
     def do_get
@@ -130,13 +135,19 @@ describe ListingsController do
     end
   end
 
+  def get_board_data
+    @listings = stub_model(Listing)
+    @sellers = stub_model(User)
+    Listing.stub_chain(:get_by_city, :board_fields).and_return(@listings)
+    @listings.stub!(:set_page).and_return(@listings)
+    User.stub!(:get_sellers).and_return(@sellers)
+    controller.stub!(:load_data).and_return(:success)
+    do_get
+  end
+
   describe 'GET local' do
     before(:each) do
-      @listings = stub_model(Listing)
-      Listing.stub!(:get_by_city).and_return(@listings)
-      @listings.stub!(:set_page).and_return(@listings)
-      controller.stub!(:load_data).and_return(:success)
-      do_get
+      get_board_data
     end
 
     def do_get
@@ -159,8 +170,9 @@ describe ListingsController do
 
   describe 'GET seller' do
     before :each do
+      set_status
       @listings = stub_model(Listing)
-      Listing.stub_chain(:get_by_seller, :get_by_status).and_return( @listings )
+      Listing.stub!(:get_by_status_and_seller).and_return( @listings )
       @listings.stub!(:paginate).and_return( @listings )
       do_get
     end
@@ -195,7 +207,7 @@ describe ListingsController do
     end
 
     before :each do
-      Listing.stub(:find_by_pixi_id).and_return(@listing)
+      Listing.stub(:find_pixi).and_return(@listing)
     end
 
     context "success" do
@@ -204,18 +216,18 @@ describe ListingsController do
       end
 
       it "should load the requested listing" do
-        Listing.stub(:find_by_pixi_id) { @listing }
+        Listing.stub(:find_pixi) { @listing }
         do_repost
       end
 
       it "should update the requested listing" do
-        Listing.stub(:find_by_pixi_id).with("1") { mock_listing }
+        Listing.stub(:find_pixi).with("1") { mock_listing }
         mock_listing.should_receive(:repost).and_return(:success)
         do_repost
       end
 
       it "should assign @listing" do
-        Listing.stub(:find_by_pixi_id) { mock_listing(:repost => true) }
+        Listing.stub(:find_pixi) { mock_listing(:repost => true) }
         do_repost
         assigns(:listing).should_not be_nil 
       end
@@ -232,7 +244,7 @@ describe ListingsController do
       end
 
       it "should assign listing" do
-        Listing.stub(:find_by_pixi_id) { mock_listing(:repost => false) }
+        Listing.stub(:find_pixi) { mock_listing(:repost => false) }
         do_repost
         assigns(:listing).should_not be_nil 
       end
@@ -344,13 +356,17 @@ describe ListingsController do
     end
   end
 
+  def load_comments
+    @comments = stub_model(Comment)
+    Listing.stub_chain(:find_pixi).with('1').and_return( @listing )
+    @listing.stub!(:comments).and_return( @comments )
+    @comments.stub!(:paginate).and_return(@comments)
+    controller.stub!(:add_points).and_return(:success)
+  end
+
   describe 'GET show/:id' do
     before :each do
-      @comments = mock('comments')
-      Listing.stub_chain(:find_by_pixi_id).with('1').and_return( @listing )
-      @listing.stub_chain(:comments, :build).and_return( @comments )
-      controller.stub!(:load_comments).and_return(@comments)
-      controller.stub!(:add_points).and_return(:success)
+      load_comments
     end
 
     def do_get
@@ -363,7 +379,7 @@ describe ListingsController do
     end
 
     it "should load the requested listing" do
-      Listing.stub(:find_by_pixi_id).with('1').and_return(@listing)
+      Listing.stub(:find_pixi).with('1').and_return(@listing)
       do_get
     end
 
@@ -385,11 +401,7 @@ describe ListingsController do
 
   describe 'xhr GET show/:id' do
     before :each do
-      @comments = stub_model(Comment)
-      Listing.stub!(:find_by_pixi_id).with('1').and_return( @listing )
-      @listing.stub_chain(:comments, :build).and_return( @comments )
-      controller.stub!(:load_comments).and_return(:success)
-      controller.stub!(:add_points).and_return(:success)
+      load_comments
     end
 
     def do_get
@@ -402,7 +414,7 @@ describe ListingsController do
     end
 
     it "should load the requested listing" do
-      Listing.stub(:find_by_pixi_id).with('1').and_return(@listing)
+      Listing.stub(:find_pixi).with('1').and_return(@listing)
       do_get
     end
 
@@ -420,7 +432,7 @@ describe ListingsController do
   describe 'xhr GET pixi_price' do
     before :each do
       @listing = mock_listing
-      Listing.stub_chain(:find_by_pixi_id).and_return( @listing )
+      Listing.stub_chain(:find_pixi).and_return( @listing )
       do_get
     end
 
@@ -449,7 +461,7 @@ describe ListingsController do
 
   describe "PUT /:id" do
     before (:each) do
-      Listing.stub!(:find_by_pixi_id).and_return( @listing )
+      Listing.stub!(:find_pixi).and_return( @listing )
     end
 
     def do_update
@@ -462,18 +474,18 @@ describe ListingsController do
       end
 
       it "should load the requested listing" do
-        Listing.stub(:find_by_pixi_id) { @listing }
+        Listing.stub(:find_pixi) { @listing }
         do_update
       end
 
       it "should update the requested listing" do
-        Listing.stub(:find_by_pixi_id).with("1") { mock_listing }
+        Listing.stub(:find_pixi).with("1") { mock_listing }
 	mock_listing.should_receive(:update_attributes).with({:explanation=>"test", :status=>"removed"})
         do_update
       end
 
       it "should assign @listing" do
-        Listing.stub(:find_by_pixi_id) { mock_listing(:update_attributes => true) }
+        Listing.stub(:find_pixi) { mock_listing(:update_attributes => true) }
         do_update
         assigns(:listing).should_not be_nil 
       end
@@ -491,18 +503,18 @@ describe ListingsController do
       end
 
       it "should load the requested listing" do
-        Listing.stub(:find_by_pixi_id) { @listing }
+        Listing.stub(:find_pixi) { @listing }
         do_update
       end
 
       it "should assign @listing" do
-        Listing.stub(:find_by_pixi_id) { mock_listing(:update_attributes => false) }
+        Listing.stub(:find_pixi) { mock_listing(:update_attributes => false) }
         do_update
         assigns(:listing).should_not be_nil 
       end
 
       it "renders the edit form" do 
-        Listing.stub(:find_by_pixi_id) { mock_listing(:update_attributes => false) }
+        Listing.stub(:find_pixi) { mock_listing(:update_attributes => false) }
         do_update
 	response.should render_template(:show)
       end
@@ -532,6 +544,79 @@ describe ListingsController do
     it "responds to JSON" do
       xhr :get, :invoiced, :format => 'json'
       expect(response).to be_success
+    end
+  end
+
+  def set_url_data
+    @listings = stub_model(Listing)
+    Listing.stub!(:get_by_url).and_return(@listings)
+    @listings.stub!(:paginate).and_return( @listings )
+    do_get
+  end
+
+  describe 'GET /biz' do
+    before :each do
+      set_url_data
+    end
+
+    def do_get
+      get :biz, use_route: "/biz/test", :params => {url: 'test'}
+    end
+
+    it "should load the requested listing" do
+      Listing.stub!(:get_by_url).with('test').and_return(@listings)
+    end
+
+    it "should assign @listings" do
+      assigns(:listings).should == @listings
+    end
+
+    it "action should render template" do
+      response.should render_template :biz
+    end
+  end
+
+  describe 'GET /mbr' do
+    before :each do
+      set_url_data
+    end
+
+    def do_get
+      get :member, use_route: "/mbr/test", :params => {url: 'test'}
+    end
+
+    it "should load the requested listing" do
+      Listing.stub!(:get_by_url).with('test').and_return(@listings)
+    end
+
+    it "should assign @listings" do
+      assigns(:listings).should == @listings
+    end
+
+    it "action should render template" do
+      response.should render_template :member
+    end
+  end
+
+  describe 'GET /career' do
+    before :each do
+      set_url_data
+    end
+
+    def do_get
+      get :career, use_route: "/career"
+    end
+
+    it "should load the requested listing" do
+      Listing.stub!(:get_by_url).with('pixiboard').and_return(@listings)
+    end
+
+    it "should assign @listings" do
+      assigns(:listings).should == @listings
+    end
+
+    it "action should render template" do
+      response.should render_template :career
     end
   end
 end

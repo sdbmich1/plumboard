@@ -3,12 +3,14 @@ class InvoicesController < ApplicationController
   load_and_authorize_resource
   before_filter :authenticate_user!
   skip_authorize_resource :only => [:autocomplete_user_first_name]
-  before_filter :load_data, only: [:index, :sent, :received]
+  before_filter :load_data, only: [:index, :sent, :received, :new, :show, :edit]
   before_filter :load_invoice, only: [:show, :edit, :update, :destroy, :remove, :decline]
+  before_filter :mark_message, only: [:new, :show, :edit]
   before_filter :set_params, only: [:create, :update]
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name
   respond_to :html, :js, :json, :mobile
   layout :page_layout
+  include ControllerManager
 
   def new
     @invoice = Invoice.load_new(@user, params[:buyer_id], params[:pixi_id])
@@ -79,7 +81,7 @@ class InvoicesController < ApplicationController
     end
   end
 
-  private
+  protected
 
   def page_layout
     mobile_device? ? 'form' : 'application'
@@ -93,7 +95,16 @@ class InvoicesController < ApplicationController
     @invoice = Invoice.inc_list.find params[:id]
   end
 
+  # parse results for active items only
+  def get_autocomplete_items(parameters)
+    super(parameters).active rescue nil
+  end
+
   def set_params
     params[:invoice] = JSON.parse(params[:invoice]) if request.xhr?
+  end
+
+  def mark_message
+    ControllerManager::mark_message params[:cid], @user if params[:cid]
   end
 end

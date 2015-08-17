@@ -1,4 +1,6 @@
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
+  include ControllerManager
+  after_filter :transfer_guest_acct, only: [:facebook]
   def facebook
     @user = User.find_for_facebook_oauth(request.env["omniauth.auth"], current_user)
     session[:omniauth] = request.env["omniauth.auth"]
@@ -20,5 +22,11 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     # request.env['omniauth.strategy'].options[:display] = mobile_device? ? "touch" : "page"
     request.env['omniauth.strategy'].options[:display] = "page"
     render :text => "Setup complete.", :status => 404    
+  end
+
+  private
+
+  def transfer_guest_acct
+    ControllerManager::transfer_guest_acct session, @user
   end
 end

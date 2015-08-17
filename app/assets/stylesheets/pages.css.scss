@@ -22,107 +22,34 @@ body {
     font-size: 36px;
   }
   .home-title-white {
-    font-family: "Helvetica";
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 36px;
   }
-}
-
-.helv-white {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: #ffffff;
+  .small-title-white {
+    position: absolute;
+    top: 2%;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 24px;
+  }
 }
 
 .home-page-title {
   text-shadow: 2px 2px #000;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    color: #fff;
-    font-size: 50px;
-    font-weight: bold;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #fff;
+  font-size: 50px;
+  font-weight: bold;
 }
 
-.mobile-tag {
-  @extend .helv-white;
-  font-size: 36px;
-  line-height: 36px;
-}
-
-.mobile-tag-line {
-  @extend .helv-white;
-  font-size: 20px;
-  line-height: 24px;
-}
-
-.pxp-tag {
-  @extend .mobile-tag;
-  font-size: 36px;
-  line-height: 36px;
-}
+.sup { vertical-align: top; font-size: 0.6em; }
 
 .pxp-items {
   top: 25%;
   @extend .overlay;
 }
 
-.pxp-tag-line {
-  @extend .helv-white;
-  font-size: 18px;
-}
-
-.comm-tag-small {
-  @extend .helv-white;
-  font-size: 16px;
-}
-
-.tag-line {
-  text-shadow: 2px 2px #000;
-  @extend .helv-white;
-  font-weight: normal;
-  font-size: 28px;
-}
-
-.trend-tag {
-    @extend .trend-tag-norm;
-    font-weight: bold;
-}
-
-.trend-tag-norm {
-    color: #505050;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 42px;
-}
-
-.community-title {
-  @extend .trend-tag;
-  font-size: 50px;
-  font-weight: bold;
-}
-
-.why-tag {
-  @extend .trend-tag;
-  font-size: 18px;
-}
-
-.why-tag-line {
-    @extend .trend-tag-norm;
-    font-size: 14px;
-}
-
-.trend-tag-line {
-    @extend .trend-tag-norm;
-    font-size: 20px;
-}
-
 .px-calendar {
   position: relative;
-}
-
-.cal-text {
-  position: absolute; 
-  top: 45%;
-  left: 17%;
-  font-size:36px;
-  font-weight:bold;
-  width: 100%; 
 }
 
 .left-margin {
@@ -156,9 +83,9 @@ body {
   background-image: linear-gradient(180deg,rgba(0,0,0,0.300) 0%,rgba(0,0,0,0.300) 100%);
 }
 
-body #signupDialog.modal {
-  width: 70%; /* desired relative width */
-  left: 15%; /* (100%-width)/2 */
+body #signupDialog.modal, #mapDialog.modal {
+  width: 60%; /* desired relative width */
+  left: 20%; /* (100%-width)/2 */
   margin-left:auto;
   margin-right:auto; 
  }
@@ -210,6 +137,13 @@ body #signupDialog.modal {
   @extend .bkgnd-elem;
   position: relative;
   height: 200px;
+}
+  
+.pixi-post-bkgnd {
+  background: url("pxb_pixipost_page.jpg") no-repeat; 
+  @extend .bkgnd-elem;
+  position: relative;
+  height: 680px;
 }
 
 .carousel .one {
@@ -275,7 +209,7 @@ header#home-navbar.navbar {
 }
 
 .pxb-container {
-  background: url("rsz_local_shop_bag.jpg") no-repeat;
+  background: url("pxb_card_pxb_2015_02_26.png") no-repeat;
   @extend .base-container
 }
 
@@ -292,13 +226,6 @@ header#home-navbar.navbar {
 .grp-container {
   background: url("pxb_card_group_2015_02_26.png") no-repeat;
   @extend .base-container
-}
-
-.comm-tag-line {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: #ffffff;
-  font-size: 20px;
-  font-weight: bold;
 }
 
 .comm-section {

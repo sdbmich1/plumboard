@@ -77,7 +77,7 @@ describe InvoiceObserver do
       listing.pictures.create attributes_for(:picture)
       listing.conversations.create attributes_for :conversation, user_id: user.id, recipient_id: buyer.id
       listing.conversations.first.posts.create attributes_for :post, user_id: user.id, recipient_id: buyer.id, pixi_id: listing.pixi_id
-      @invoice.save
+      @invoice.save; sleep 3
     end
 
     it 'should send a post' do
@@ -113,6 +113,12 @@ describe InvoiceObserver do
     it 'should add inv pixi points' do
       @model.save!
       user.user_pixi_points.find_by_code('inv').code.should == 'inv'
+    end
+
+    it 'should send decline email' do
+      UserMailer.stub(:delay).and_return(UserMailer)
+      UserMailer.should_receive(:send_invoice_notice).and_return(double("UserMailer", :deliver => true))
+      @model.save!
     end
   end
 end

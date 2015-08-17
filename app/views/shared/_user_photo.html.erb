@@ -1,5 +1,5 @@
 <div>
   <%= f.fields_for :pictures do |form| %>
-    <%= render partial: 'shared/photo_cabinet', locals: { form: form, s3Flg: use_remote_pix?, keyName: 'user_pic', mFlg: false } %>
+    <%= render partial: 'shared/photo_cabinet', locals: { form: form, s3Flg: use_remote_pix?, keyName: keyName, mFlg: false } %>
   <% end %>
 </div>

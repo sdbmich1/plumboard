@@ -1,11 +1,9 @@
 class BankAccount < ActiveRecord::Base
-  include Payment
-
-  before_save :set_flds, :must_have_token
+  before_create :set_flds, :must_have_token
 
   attr_accessor :acct_number, :routing_number
   attr_accessible :acct_name, :acct_no, :acct_type, :status, :token, :user_id, :description, :acct_number, :routing_number, :bank_name,
-    :default_flg
+    :default_flg, :currency_type_code, :country_code
 
   belongs_to :user
   has_many :invoices
@@ -16,12 +14,12 @@ class BankAccount < ActiveRecord::Base
 
   # verify token exists before creating record
   def must_have_token
-    if self.token.blank?
-      errors.add(:base, 'Must have a token')
-      false
-    else
-      true
-    end
+    BankProcessor.new(self).must_have_token
+  end
+
+  # set flds
+  def set_flds
+    BankProcessor.new(self).set_flds
   end
 
   # get active accounts
@@ -29,62 +27,24 @@ class BankAccount < ActiveRecord::Base
     where(:status=>'active')
   end
 
-  # set flds
-  def set_flds
-    self.status, self.default_flg = 'active', 'Y' unless self.user.has_bank_account?
-  end
-
   # get account
   def get_account
-    Payment::get_bank_account token, self
-
-    # check for errors
-    return false if self.errors.any?
+    BankProcessor.new(self).get_account
   end
 
   # add new account
-  def save_account
-    acct = Payment::add_bank_account self
-
-    # check for errors
-    if acct 
-      return false if self.errors.any?
-
-      # set fields
-      self.token, self.acct_no, self.bank_name = acct.uri, acct.account_number, acct.bank_name
-    else
-      errors.add :base, "Account number, routing number, or account name is invalid."
-      return false
-    end
-
-    # save new account
-    save
+  def save_account ip	
+    BankProcessor.new(self).save_account ip	
   end
 
   # issue account credit
   def credit_account amt
-    result = Payment::credit_account token, amt, self
-
-    # check for errors
-    if result 
-      self.errors.any? ? false : result 
-    else
-      errors.add :base, "Error: There was a problem with your bank account."
-      false
-    end
+    BankProcessor.new(self).credit_account amt
   end
 
   # delete account
   def delete_account
-    result = Payment::delete_account token, self if token
-
-    # remove account
-    if result 
-      self.errors.any? ? false : self.destroy 
-    else
-      errors.add :base, "Error: There was a problem with your bank account."
-      false
-    end
+    BankProcessor.new(self).delete_account
   end
 
   # account owner name
@@ -104,6 +64,10 @@ class BankAccount < ActiveRecord::Base
 
   # returns default account 
   def self.get_default_acct
-    where(default_flg: 'Y').first
+    active.where(default_flg: 'Y').first
+  end
+
+  def acct_token
+    user.acct_token rescue nil
   end
 end

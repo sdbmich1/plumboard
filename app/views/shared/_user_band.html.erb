@@ -1,0 +1,9 @@
+<div class="item-container" style="background: url(<%= asset_path(load_bkgnd(user)) %>) no-repeat;">
+  <div id='usr-panel'>
+    <%= show_map_modal user %>
+    <%= render partial: 'shared/user_details', locals: {user: user, topCls: 'xlg-top', cls: 'big-top sm-top', pxFlg: pxFlg, colorFlg: colorFlg} %>
+  </div>
+  <div class='img-right pad20 comm-section'>
+    <%= show_edit_cover_icon user %>
+  </div>
+</div>

@@ -1,0 +1,4 @@
+<div id='post_form'>
+  <%= render partial: 'shared/want_modal', locals: { listing: listing, mtype: 'want', msg: PIXI_POST, txt: msg } %>
+  <%= link_to "Want", "#wantDialog", class: "#{cls} mright10", 'data-toggle'=>"modal", title: msg %>
+</div>

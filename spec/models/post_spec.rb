@@ -540,13 +540,6 @@ describe Post do
     end
   end
 
-  def new_conv mtype
-    @pixi = create :listing, seller_id: @user.id, title: 'Big Guitar'
-    @conv = @pixi.conversations.build attributes_for :conversation, user_id: @user.id, recipient_id: @recipient.id, quantity: 2
-    @new_post = @conv.posts.build attributes_for :post, user_id: @user.id, recipient_id: @recipient.id, pixi_id: @pixi.pixi_id, msg_type: mtype
-    @conv.save!
-  end
-
   describe 'process_pixi_requests' do
     it 'processes want request' do
       new_conv 'want'

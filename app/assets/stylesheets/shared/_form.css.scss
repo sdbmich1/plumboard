@@ -29,7 +29,6 @@ $pixiBlue: #026FB7;
 .pixi-grp-bkgnd { background-color: #ff5722 }
 
 /* posts */
-
 .posts {
   list-style: none;
   font-size: 12px!important;
@@ -43,6 +42,10 @@ $pixiBlue: #026FB7;
   a {
     &:hover { background:none; text-decoration: underline; }
   }  
+}
+
+.line-hgt-32 {
+  line-height: 32px;
 }
 
 .sender {
@@ -108,12 +111,19 @@ form#new_post {margin-bottom: -0px!important;}
 .clear-left { clear:left }
 .price { text-align: right }
 .order-total { font-weight: bolder; font-size: medium }
-.v-align { vertical-align: middle }
+.v-align { 
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
 .v-top { vertical-align: top }
+.v-middle { vertical-align: middle }
 .left-form {float: left;}
 .right-form {float: right;}
-.mauto {width: 10%; margin: 0 auto}
+.mauto {width: 15%; margin: 0 auto}
 
+/* custom margins */
 .mleft5 {margin-left: 5px!important;}
 .mleft10 {margin-left: 10px!important;}
 .mleft15 {margin-left: 15px!important;}
@@ -121,15 +131,31 @@ form#new_post {margin-bottom: -0px!important;}
 .mleft30 {margin-left: 30px!important;}
 .mleft40 {margin-left: 37px!important;}
 .mleft-pct {margin-left: 10%!important;}
+
+/* custom padding */
+.pad10 {padding: 10px!important;}
+.pad15 {padding: 15px!important;}
+.pad20 {padding: 20px!important;}
+.pad5 {padding: 5px!important;}
+.pad-top10 {padding-top: 10px!important;}
+.pad-top20 {padding-top: 20px!important;}
+.pad-top30 {padding-top: 30px!important;}
+.pad-bot10 {padding-bottom: 10px!important;}
+.pad-bot5 {padding-bottom: 5px!important;}
+.pad-left20 {padding-left: 20px!important;}
+.pad-right20 {padding-right: 20px!important;}
   
 /* custom buttons */
-.signin-btn { color: white!important; font-weight: bold; background: $pixiOrange!important; border: $pixiOrange!important; 
+.custom-btn {color: white!important; background: $pixiOrange!important; border: 1px solid $pixiOrange!important;} 
+.signin-btn { @extend .custom-btn; font-weight: bold; 
   height: 29px!important; text-align: center; vertical-align: middle; padding-top: 6px; padding-left: 22px; padding-right: 22px;}
-.submit-btn { color: white!important; font-weight: bold; background: $pixiOrange!important; border: $pixiOrange!important; }
-.pixi-btn { color: white!important; background: $pixiBlue!important; border: $pixiBlue!important; }
-.pxb-btn { color: white!important; font-weight: normal; background: $pixiOrange!important; border: $pixiOrange!important;}
-.post-btn { color: white!important; font-weight: normal; background: $pixiOrange!important; border: $pixiOrange!important; height: 30px!important;}
-.basic-btn { color: white!important; font-weight: normal;
+
+.submit-btn { @extend .custom-btn; font-weight: bold; }
+.pixi-btn { color: white!important; background: $pixiBlue!important; border: 1px solid $pixiBlue!important; }
+.bold-btn { color: white!important; background: $pixiBlue!important; border: 1px solid $pixiBlue!important; font-weight: bold;}
+.pxb-btn { @extend .custom-btn; font-weight: normal; }
+.post-btn { @extend .custom-btn; font-weight: normal; height: 30px!important;}
+.basic-btn { @extend .custom-btn; font-weight: normal;
   &:hover { background: transparent; text-decoration: underline }
 }
 .stnd-btn { color: black!important; background:#CCCCCC!important; border:1px gray!important; font-weight: normal;}
@@ -143,13 +169,24 @@ form#new_post {margin-bottom: -0px!important;}
 .div-border-blue {  
   border: 1px solid $pixiBlue; }
 
+.mauto-none {margin: auto;}
+.mauto10 {width: 12%; margin: 0 auto}
+.mauto15 {width: 17%; margin: 0 auto}
+.mauto20 {width: 27%; margin: 0 auto}
+.mauto22 {width: 22%; margin: 0 auto}
+.mauto30 {width: 30%; margin: 0 auto}
+.mauto35 {width: 36%; margin: 0 auto}
+.mauto40 {width: 40%; margin: 0 auto}
 .mright { margin-right: 10px!important }
 .mright5 { margin-right: 5px!important }
 .mright20 { margin-right: 20px!important }
+
+.mtop {margin-top: 20px!important;}
 .sm-top { margin-top: 5px!important }  
+.tiny-top { margin-top: 2px!important }  
 .xneg-top { margin-top: -40px!important }  
 .big-neg-top { margin-top: -25px!important }  
-.px-neg-top { margin-top: -22px!important }  
+.px-neg-top { margin-top: -27px!important }  
 .mneg-top { margin-top: -20px!important }  
 .med-neg-top { margin-top: -15px!important }  
 .neg-top { margin-top: -10px!important }  
@@ -157,10 +194,19 @@ form#new_post {margin-bottom: -0px!important;}
 .med-top {margin-top: 10px!important;}
 .no-mtop {margin-top: 0!important}
 .big-top { margin-top: 50px!important }  
+.xlg-top { margin-top: 40px!important }  
 .lg-top { margin-top: 30px!important }  
 .huge-top { margin-top: 25%!important }  
 .jumbo-top { margin-top: 20%!important }  
+.xbig-top {margin-top: 10%;}
 
+.neg-left { margin-left: -20px!important; }
+.ng-left { margin-left: -5px!important; }
+.no-left {margin-left: 0!important;}
+
+.mbot {margin-bottom: 15px!important;}
+.mbot30 {margin-bottom: 30px!important;}
+.no-bot {margin-bottom: 0!important;}
 .sm-bot { margin-bottom: 5px!important }  
 .med-bot { margin-bottom: 10px!important }  
 .neg-bot { margin-bottom: -10px!important }  
@@ -255,6 +301,10 @@ hr {
 
 .gray hr{
   border-top: 1px solid $grayMediumLight;
+}
+
+.black hr{
+  border-top: 1px solid #000000;
 }
 
 a.clear-link {
@@ -388,4 +438,70 @@ table.noborder {
   -o-transition: background .2s ease-in-out, border .2s ease-in-out;
   transition: background .2s ease-in-out, border .2s ease-in-out;
   text-shadow: none!important;
+}
+
+.clear-blk-btn {
+  @extend .clear-btn;
+  color: #000;
+}
+
+
+.pixi-title {
+  color: #000;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 28px;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.pixi-price {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: bolder;
+  font-size: 22px;
+  color: $pixiOrange;
+}
+
+.tab-content {
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+.boxed {
+  border: 1px solid gray;
+  border-radius: 3px;
+}
+
+.box { 
+  float: left;
+  position: relative;
+  color: #FFF; 
+  text-align: center; 
+  height: 86px; 
+  width: 100px; 
+  margin-right: 10px;
+  background-color: $pixiOrange;
+  border-radius: 3px;
+  box-shadow: 0 4px 2px -2px gray;
+}
+
+.ask-box {
+  @extend .box;
+  background-color: #ef6c00;
+}
+
+.cool-box {
+  @extend .box;
+  background-color: #f57c00;
+}
+
+.save-box {
+  @extend .box;
+  background-color: #fb8c00;
+}
+
+.metric-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
 }

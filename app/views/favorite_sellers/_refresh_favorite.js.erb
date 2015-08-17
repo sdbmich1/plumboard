@@ -1,0 +1,13 @@
+toggleLoading();
+$("#flash_notice").html('');
+<% if @favorite.errors.any? %>
+  $("#form_errors").html("<%= escape_javascript( render(partial: 'shared/error_messages', locals: {target: @favorite})) %>");
+  postFlashMsg('#flash_notice', 'error', 'Error <%= "#{@favorite.errors.full_messages}" %>');
+<% else %>
+  postFlashMsg('#flash_notice', 'success', 'Succesfully <%= "#{atype}" %> seller');
+  $("#usr-panel").html("<%= escape_javascript( render(partial: 'shared/user_details', locals: {user: @favorite.seller, topCls: 'xlg-top', 
+     cls: 'big-top sm-top', pxFlg: false, colorFlg: false}) ) %>");
+  reload_ratings();
+<% end %>
+$('#spinner').hide(300);
+

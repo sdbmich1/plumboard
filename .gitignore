@@ -18,7 +18,7 @@
 *.iml
 *~
 .idea/*
-.DS_Store
+*/.DS_Store
 Thumbs.db
 db/Accreditation_2011_12.csv
 

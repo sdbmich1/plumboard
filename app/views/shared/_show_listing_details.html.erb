@@ -1,0 +1,12 @@
+<%= set_tab_headers listing %>
+<div class="tab-content">
+  <div class="tab-pane active" id="details">
+    <%= render partial: 'shared/listing_details_tab', locals: {listing: listing} %>
+  </div>
+  <div class="tab-pane" id="comments">
+    <div id='comment_form' class='no-left span6'><%= show_comments listing %></div>
+  </div>
+  <div class="tab-pane" id="map">
+    <%= render partial: 'shared/map_details', locals: {model: listing, showFlg: true} %>
+  </div>
+</div>

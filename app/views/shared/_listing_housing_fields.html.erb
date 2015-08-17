@@ -1,0 +1,26 @@
+<div class='row' id='housing-fields' style="<%= set_style(!listing.is_category_type?('housing')) %>">
+  <div class='span2'>
+    <%= f.label :bed_no, 'Beds' %>
+    <%= f.select 'bed_no', options_for_select(get_ary, :selected => set_quantity(listing, 'bed_no', false)), {}, {class: 'pixi-select', 
+      required: listing.is_category_type?('housing') } %>
+  </div>
+  <div class='span2'>
+    <%= f.label :bath_no, 'Baths' %>
+    <%= f.select 'bath_no', options_for_select(get_ary, :selected => set_quantity(listing, 'bath_no', false)), {}, {class: 'pixi-select', 
+      required: listing.is_category_type?('housing') } %>
+  </div>
+  <div class='span3'>
+    <%= f.label :location_size, 'Size(s)' %>
+    <%= f.text_field :location_size, value: listing.location_size, size: 30, maxlength: 30, placeholder: 'Ex. 1000 sq ft.' %>
+  </div>
+  <div class='span2'>
+    <%= f.label :term, 'Term' %>
+    <%= f.text_field :term, value: listing.term, placeholder: 'Ex. 1yr lease', size: 30, maxlength: 30, required: listing.is_category_type?('housing') %>
+  </div>
+  <div class='span2'>
+    <%= f.label :avail_date, 'Available' %>
+    <%= f.text_field :avail_date, value: get_local_date(listing.avail_date), size: 10, maxlength: 10, id: "avail-date", placeholder: 'Select Date', 
+      required: listing.is_category_type?('housing') %>
+  </div>
+</div>
+

@@ -20,6 +20,7 @@ describe User do
     it { should respond_to(:pictures) }
     it { should respond_to(:status) }
     it { should respond_to(:acct_token) }
+    it { should respond_to(:cust_token) }
     it { should respond_to(:user_type_code) }
     it { should respond_to(:business_name) }
     it { should respond_to(:ref_id) }
@@ -72,6 +73,8 @@ describe User do
     it { should have_many(:preferences).dependent(:destroy) }
     it { should accept_nested_attributes_for(:preferences).allow_destroy(true) }
     it { should belong_to(:user_type).with_foreign_key('user_type_code') }
+    it { should have_many(:active_bank_accounts).class_name('BankAccount').conditions(:status=>"active") }
+    it { should have_many(:active_card_accounts).class_name('CardAccount').conditions(:status=>"active") }
 
     it { should respond_to(:unpaid_invoice_count) } 
     it { should respond_to(:has_unpaid_invoices?) } 
@@ -82,25 +85,16 @@ describe User do
 
     it { should validate_presence_of(:gender) }
     it { should validate_presence_of(:birth_date) }
-    # it { should validate_presence_of(:url) }
+    it { should validate_presence_of(:url).on(:create) }
     it { should validate_uniqueness_of(:url) }
+    it { should validate_length_of(:url).is_at_least(2) }
     it { should allow_value('Tom').for(:url) }
     it { should_not allow_value("a").for(:url) }
-  end
 
-  describe "with a password that's too short" do
-    before { @user.password = @user.password_confirmation = "a" * 5 }
-    it { should be_invalid }
-  end
-
-  describe "when password is not present" do
-    before { @user.password = @user.password_confirmation = " " }
-    it { should_not be_valid }
-  end
-
-  describe "when password doesn't match confirmation" do
-    before { @user.password_confirmation = "mismatch" }
-    it { should_not be_valid }
+    it { should have_many(:favorite_sellers) }
+    it { should have_many(:sellers) }
+    it { should have_many(:inverse_favorite_sellers).class_name('FavoriteSeller').with_foreign_key('seller_id') }
+    it { should have_many(:followers) }
   end
 
   describe 'name' do
@@ -504,6 +498,15 @@ describe User do
     end
   end
 
+  describe 'is_business?' do
+    it { @user.is_business?.should_not be_true }
+
+    it 'is a business' do
+      @company = FactoryGirl.build(:pixi_user, user_type_code: 'BUS') 
+      expect(@company.is_business?).to be_true
+    end
+  end
+
   describe 'is_support?' do
     it { @user.is_support?.should be_false }
 
@@ -571,6 +574,11 @@ describe User do
       @user.user_type_code = 'PX'
       @user.save
       expect(User.get_by_type(['PX', 'PT'])).not_to be_empty
+    end
+
+    it "includes pixans" do
+      @user.update_attribute(:user_type_code, 'BUS')
+      expect(User.get_by_type('BUS')).not_to be_empty
     end
 
     it "includes all" do
@@ -663,9 +671,10 @@ describe User do
 
     it "exports data as CSV file" do
       csv_string = @user.as_csv
-      csv_string.keys.should =~ ["Name", "Email", "Home Zip", "Birth Date", "Enrolled", "Last Login", "Gender", "Age"] 
-      csv_string.values.should =~ [@user.name, @user.email, @user.home_zip, @user.birth_dt, @user.nice_date(@user.created_at), 
-        @user.nice_date(@user.last_sign_in_at), @user.gender, @user.age] 
+      csv_string.keys.should =~ ["Name", "Email", "Type", "Zip", "Birth Date", "Enrolled", "Last Login"]
+      csv_string.values.should =~ [@user.name, @user.email, @user.type_descr, @user.home_zip,
+                                   @user.birth_dt, @user.nice_date(@user.created_at),
+                                   @user.nice_date(@user.last_sign_in_at)] 
     end
 
     it "does not export any user data" do
@@ -745,6 +754,16 @@ describe User do
       user2 = create :pixi_user, first_name: @user.first_name, last_name: @user.last_name
       expect(user2.url).not_to eq @user.url
     end
+
+    it 'generates url for business' do
+      user = build :contact_user, user_type_code: 'BUS', business_name: 'Toy Shack'
+      user.save!
+      expect(user.url).to eq user.business_name.gsub!(/\s+/, "").downcase
+    end
+
+    it 'shows full url path' do
+      expect(@user.user_url).to eq 'localhost:3000/mbr/' + @user.url
+    end
   end
 
   describe 'code_type' do
@@ -757,5 +776,288 @@ describe User do
       usr = build :user
       expect(usr.code_type).not_to be_nil
     end
+  end
+
+  describe 'guest' do
+    before :each, run: true do
+      @test_user = build :pixi_user, guest: true
+    end
+
+    it { expect(@user.guest?).not_to be_true }
+    it 'returns true', run: true do
+      expect(@test_user.guest?).to be_true
+    end
+  end
+
+  describe 'new_guest' do
+    it { expect(User.new_guest.status).to eq 'inactive' }
+    it { expect(User.new_guest.guest?).to be_true }
+    it 'saves guest user' do
+      user = User.new_guest
+      expect(User.where(status: 'inactive').count).to eq 1
+    end
+  end
+
+  describe 'move_to' do
+    before :each, run: true do
+      @usr = create :pixi_user
+    end
+    it 'moves user pixipost content', run: true do
+      @pixi_post_zip = create(:pixi_post_zip)
+      attr = {"preferred_date"=>"04/05/2015", "preferred_time"=>"13:00:00", "alt_date"=>"", "alt_time"=>"12:00:00", 
+      "quantity"=>"2", "value"=>"200.0", "description"=>"xbox 360 box.", "address"=>"123 Elm", "address2"=>"", "city"=>"LA", "state"=>"CA", 
+      "zip"=>"90201", "home_phone"=>"4155551212", "mobile_phone"=>"", "user_id"=>""}
+      @post = PixiPost.add_post(attr, User.new)
+      @post.save!
+      @post.user.move_to(@usr)
+      expect(@usr.pixi_posts.size).to eq 1
+      expect(@usr.contacts.size).to eq 1
+      expect(@post.user.pixi_posts.size).to eq 0
+    end
+    it 'moves user temp listings', run: true do
+      @listing = TempListing.add_listing(set_temp_attr(''), TempListing.new)
+      @listing.save!
+      @listing.user.move_to(@usr)
+      expect(@usr.temp_listings.size).to eq 1
+      expect(@listing.user.temp_listings.size).to eq 0
+    end
+    it 'does not move user content' do
+      usr = create :pixi_user
+      usr.move_to(nil)
+      expect(usr.contacts.size).to eq 1
+    end
+  end
+
+  describe "user status" do
+    it { User.active.should_not be_nil }
+    it 'have no active users' do
+      @user.update_attribute(:status, 'inactive')
+      expect(User.active).to be_blank
+    end
+  end
+
+  describe 'set_flds' do
+    let(:user) { build :pixi_user }
+    it { expect{ user.save }.to change{ user.status } }
+    it { expect{ user.save }.to change{ user.user_type_code } }
+    it 'sets url' do
+      user.save!
+      expect( user.url ).not_to be_blank
+    end
+    it 'does not set user_type' do
+      user.user_type_code = 'AD'
+      expect{ user.save }.not_to change { user.user_type_code } 
+    end
+    it 'does not set status for guest' do
+      user.guest = true  
+      expect{ user.save }.not_to change{ user.status } 
+    end
+    it 'does not set status for inactive users' do
+      user.status = 'inactive'  
+      expect{ user.save }.not_to change{ user.status } 
+    end
+  end
+
+  describe 'primary_address', address: true do
+    it { expect(@user.primary_address).not_to be_blank }
+    it 'has no address' do
+      user = build :pixi_user
+      expect(user.primary_address).to be_blank
+    end
+  end
+
+  describe 'site_name' do
+    it { expect(@user.site_name).not_to be_nil }
+    it 'returns nil' do
+      @user.home_zip = '00000'
+      expect(@user.site_name).to be_nil
+    end
+  end
+
+  describe 'get_sellers' do
+    before :each, run: true do
+      @listing = create :listing, seller_id: @user.id
+      @site = create :site, org_type: 'city', name: 'SF'
+      @site.contacts.create(FactoryGirl.attributes_for(:contact, address: '101 California', city: 'SF', state: 'CA', zip: '94111'))
+      @listing.update_attribute(:site_id, @site.id)
+    end
+    it { expect(User.get_sellers(Listing.all)).to be_empty }
+    it 'has no business users', run: true do
+      expect(User.get_sellers(Listing.all)).to be_empty
+    end
+    it 'has a business user in different site', run: true do
+      @user.update_attribute(:user_type_code, 'BUS')
+      expect(User.get_sellers(Listing.all)).to be_empty
+    end
+    it 'has a business user in different category', run: true do
+      @user.update_attribute(:user_type_code, 'BUS')
+      expect(User.get_sellers(Listing.all)).to be_empty
+    end
+    it 'has a business user w insufficient pixis', run: true do
+      @user.update_attribute(:user_type_code, 'BUS')
+      expect(User.get_sellers(Listing.all)).to be_empty
+    end
+    it 'has a business user w sufficient pixis', run: true do
+      @user.update_attribute(:user_type_code, 'BUS')
+      listing = create :listing, seller_id: @user.id, title: 'Leather Coat', site_id: @site.id, category_id: @listing.category_id
+      listing = create :listing, seller_id: @user.id, title: 'Fur Coat', site_id: @site.id, category_id: @listing.category_id
+      @user.reload
+      expect(User.get_sellers(Listing.all)).not_to be_empty
+    end
+  end
+
+  describe "is_followed?" do
+    before :each do
+      @user2 = create :contact_user
+      @seller = create(:contact_user, user_type_code: 'BUS', business_name: 'Test')
+      @favorite_seller = create(:favorite_seller, user_id: @user.id, seller_id: @seller.id)
+    end
+
+    it "returns users that are following the seller" do
+      expect(@seller.is_followed?(@user)).to be_true
+    end
+
+    it "does not return users that aren't following the seller" do
+      expect(@seller.is_followed?(@user2)).to be_false
+    end
+  end
+
+  describe "is_following?" do
+    before :each do
+      @seller = create(:contact_user, user_type_code: 'BUS', business_name: 'Test')
+      @seller2 = create(:contact_user, user_type_code: 'BUS', business_name: 'Another Test')
+      @favorite_seller = create(:favorite_seller, user_id: @user.id, seller_id: @seller.id)
+    end
+
+    it "returns users that are following the seller" do
+      expect(@user.is_following?(@seller)).to be_true
+    end
+
+    it "does not return users that aren't following the seller" do
+      expect(@user.is_following?(@seller2)).to be_false
+    end
+  end
+
+  describe "get_by_ftype" do
+    it "calls get_by_seller if ftype='seller'" do
+      User.should_receive :get_by_seller
+      User.get_by_ftype('seller', nil, 'active')
+    end
+
+    it "calls get_by_user otherwise" do
+      User.should_receive :get_by_user
+      User.get_by_ftype('buyer', nil, 'active')
+    end
+  end
+
+  describe "get_by_seller" do
+    before :each do
+      @seller = create(:contact_user, user_type_code: 'BUS', business_name: 'Test')
+      @favorite_seller = create(:favorite_seller, user_id: @user.id, seller_id: @seller.id)
+    end
+
+    it "'active' status returns users following the seller_id provided" do
+      expect(UserProcessor.new(nil).get_by_seller(@favorite_seller.seller_id, 'active')).to include @user
+    end
+
+    it "'removed' status returns users that unfollowed the seller_id provided" do
+      @favorite_seller.update_attribute(:status, 'removed')
+      expect(UserProcessor.new(nil).get_by_seller(@favorite_seller.seller_id, 'removed')).to include @user
+    end
+
+    it "returns nil if there are no users following the seller_id provided" do
+      expect(UserProcessor.new(nil).get_by_seller(@favorite_seller.seller_id - 1, 'active')).to be_empty
+    end
+    
+    it "returns all followers if seller_id is blank" do
+      expect(UserProcessor.new(nil).get_by_seller(nil, 'active')).to include @user
+    end
+  end
+
+  describe "get_by_user" do
+    before :each do
+      @seller = create(:contact_user, user_type_code: 'BUS', business_name: 'Test')
+      @favorite_seller = create(:favorite_seller, user_id: @user.id, seller_id: @seller.id)
+    end
+
+    it "'active' status returns sellers followed by the user_id provided" do
+      expect(UserProcessor.new(nil).get_by_user(@favorite_seller.user_id, 'active')).to include @seller
+    end
+
+    it "'removed' status returns sellers that were unfollowed by the user_id provided" do
+      @favorite_seller.update_attribute(:status, 'removed')
+      expect(UserProcessor.new(nil).get_by_user(@favorite_seller.user_id, 'removed')).to include @seller
+    end
+
+    it "returns nil if there are no sellers followed by the seller_id provided" do
+      expect(UserProcessor.new(nil).get_by_user(@favorite_seller.user_id - 1, 'active')).to be_empty
+    end
+    
+    it "returns all sellers if seller_id is blank" do
+      expect(UserProcessor.new(nil).get_by_user(nil, 'active')).to include @seller
+    end
+  end
+
+  describe "date_followed" do
+    before :each do
+      @seller = create(:contact_user, user_type_code: 'BUS', business_name: 'Test')
+      @favorite_seller = create(:favorite_seller, user_id: @user.id, seller_id: @seller.id)
+    end
+
+    it "returns date followed if available" do
+      expect(@user.date_followed(@seller).to_s).to eq @favorite_seller.updated_at.to_s
+    end
+
+    it "returns nil otherwise" do
+      expect(@seller.date_followed(@user)).to be_nil
+    end
+  end
+
+  describe "favorite_seller_id" do
+    before :each do
+      @seller = create(:contact_user, user_type_code: 'BUS', business_name: 'Test')
+      @favorite_seller = create(:favorite_seller, user_id: @user.id, seller_id: @seller.id)
+    end
+
+    it "returns id of FavoriteSeller object if available" do
+      expect(@user.favorite_seller_id(@seller)).to eq @favorite_seller.id
+    end
+
+    it "returns nil otherwise" do
+      expect(@seller.favorite_seller_id(@user)).to be_nil
+    end
+  end
+
+  describe 'get_follow_status' do
+    before :each do
+      @seller = create(:contact_user, user_type_code: 'BUS', business_name: 'Test')
+      @favorite_seller = create(:favorite_seller, user_id: @user.id, seller_id: @seller.id)
+    end
+
+    it { expect(@user.get_follow_status('seller', @seller.id)).to eq 'active' }
+    it { expect(@seller.get_follow_status('follower', @user.id)).to eq 'active' }
+    context 'inactive' do
+      it 'returns inactive following' do
+        @favorite_seller.update_attribute(:status, 'inactive')
+        expect(@user.get_follow_status('seller', @seller.id)).to eq 'inactive' 
+      end
+      it 'returns inactive followed' do
+        @favorite_seller.update_attribute(:status, 'inactive')
+        expect(@seller.get_follow_status('follower', @user.id)).to eq 'inactive' 
+      end
+    end
+  end
+
+  describe "get by url" do
+    it { expect(User.get_by_url(@user.url)).not_to be_blank }
+    it { expect(User.get_by_url('abcd')).to be_blank }
+  end
+
+  describe 'board_fields' do
+    it "contains correct fields" do
+      usr = User.active.board_fields
+      expect(usr.first.id).to eq @user.id  
+    end
+    it { expect(User.active.board_fields).not_to include @user.created_at }
   end
 end

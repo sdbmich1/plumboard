@@ -1,0 +1,28 @@
+<div class="control-group">
+  <label class="control-label">Card #</label>
+  <div class='controls'><%= f.text_field :card_number, :size => 16, placeholder: 'Card Number', id: 'card_number', required: true %>
+    <%= image_tag('cc_logos.jpeg', :class=>'cc-logo neg-top mbot') %>
+  </div>
+  <label class="control-label">Card Code</label>
+  <div class='controls'><%= f.text_field :card_code, :size => 4, placeholder: 'Card Code', id: 'card_code', class: 'width140', required: true %><br />
+    <%= image_tag('cvv.png', :class=>'cvv-logo neg-top mbot') %>
+  </div>
+  <div class='neg-top'>
+    <label class="control-label">Exp Month</label>
+    <div class='controls'>
+      <%= select_month Date.today, {add_month_numbers_true: true}, {name: 'exp_month', id: "card_month", class: "sm-top span2"} %>
+    </div> 
+  </div>
+  <div class='clear-all'></div>
+  <div class='sm-top'>
+    <label class="control-label">Exp Year</label>
+    <div class='controls'>
+      <%= select_year nil, {start_year: Date.today.year+1, end_year: Date.today.year+15}, 
+           {name: 'exp_year', id: "card_year", class: "sm-top span2"} %></div>
+    </div>
+    <label class="control-label sm-top">Postal Code</label>
+    <div class='controls'><%= f.text_field :zip, size: 5, placeholder: 'Postal Code', id: 'card_zip', class: 'med-top width140', required: true %></div>
+    <%= f.hidden_field :expiration_month, id: 'exp_mo', value: Date.today.month %>
+    <%= f.hidden_field :expiration_year, id: 'exp_yr', value: Date.today.year+1 %>
+  </div>
+</div>

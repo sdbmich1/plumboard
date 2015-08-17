@@ -1,0 +1,8 @@
+<ul class="nav pull-right">
+  <li class="<%= @status == 'active' ? 'active' : '' %>">
+    <%= link_to "Followed", favorite_sellers_path(ftype: @ftype, id: @id, status: 'active'), class: 'submenu' %>
+  </li>
+  <li class="<%= @status == 'removed' ? 'active' : '' %>">
+    <%= link_to "Unfollowed", favorite_sellers_path(ftype: @ftype, id: @id, status: 'removed'), class: 'submenu' %>
+  </li>
+</ul>

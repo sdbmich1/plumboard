@@ -26,7 +26,7 @@ describe BankAccountsController do
     before :each do
       @accounts = mock("accounts")
       controller.stub!(:current_user).and_return(@user)
-      @user.stub!(:bank_accounts).and_return( @accounts )
+      @user.stub_chain(:bank_accounts, :active).and_return( @accounts )
       do_get
     end
 
@@ -97,17 +97,22 @@ describe BankAccountsController do
 
   describe 'GET show/:id' do
     before :each do
+      BankAccount.stub!(:find).and_return( @account )
       controller.stub!(:current_user).and_return(@user)
-      @user.stub_chain(:bank_accounts, :first).and_return( @account )
     end
 
     def do_get
-      get :show, :id => '1'
+      get :show, id: '1'
     end
 
-    it "should show the requested account" do
+    it "should show the requested transaction" do
       do_get
       response.should be_success
+    end
+
+    it "should load the requested transaction" do
+      BankAccount.stub!(:find).with('1').and_return(@account)
+      do_get
     end
 
     it "should assign @account" do
@@ -121,14 +126,12 @@ describe BankAccountsController do
     end
 
     it "responds to JSON" do
-      @expected = { :account  => @account }.to_json
       get  :show, :id => '1', format: :json
-      response.body.should == @expected
+      response.status.should eq(200)
     end
   end
 
   describe "POST create" do
-
     def do_create
       post :create, :bank_account => { 'user_id'=>'test', 'acct_type'=>'test' }
     end
@@ -297,7 +300,7 @@ describe BankAccountsController do
       it "redirects to the accounts list" do
         BankAccount.stub(:find) { mock_account }
         do_delete
-        response.should_not be_redirect
+        response.should be_redirect
       end
 
       it "decrements the BankAccount count" do

@@ -18,7 +18,7 @@ class ListingParent < ActiveRecord::Base
   	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id, :year_built, :pixan_id, 
 	:job_type_code, :event_type_code, :edited_by, :edited_dt, :post_ip, :lng, :lat, :event_start_date, :event_end_date, :compensation,
 	:event_start_time, :event_end_time, :explanation, :contacts_attributes, :repost_flg, :mileage, :other_id, :condition_type_code,
-	:color, :quantity, :item_type, :item_size
+	:color, :quantity, :item_type, :item_size, :bed_no, :bath_no, :term, :avail_date
 
   belongs_to :user, foreign_key: :seller_id
   belongs_to :site
@@ -32,7 +32,7 @@ class ListingParent < ActiveRecord::Base
   accepts_nested_attributes_for :pictures, :allow_destroy => true
 
   has_many :contacts, :as => :contactable, :dependent => :destroy
-  accepts_nested_attributes_for :contacts, :allow_destroy => true
+  accepts_nested_attributes_for :contacts, :allow_destroy => true, :reject_if => :all_blank
 
   validates :title, :presence => true, :length => { :maximum => 80 }
   validates_presence_of :seller_id, :site_id, :start_date, :category_id, :description
@@ -43,16 +43,13 @@ class ListingParent < ActiveRecord::Base
   validate :must_have_pictures
 
   # event date and time
-  validates_date :event_start_date, on_or_after: lambda { Date.current }, presence: true, if: :event?
+  validates_date :event_start_date, on_or_after: lambda { Date.today }, presence: true, if: :event?
   validates_date :event_end_date, on_or_after: :event_start_date, presence: true, if: :start_date?
   validates_datetime :event_start_time, presence: true, if: :start_date?
   validates_datetime :event_end_time, presence: true, after: :event_start_time, :if => :start_date?
 
   # geocode
-  geocoded_by :site_address, :latitude => :lat, :longitude => :lng
-  after_validation :geocode
-
-  default_scope :order => "updated_at DESC"
+  # geocoded_by :primary_address, :latitude => :lat, :longitude => :lng
 
   # used to handle pagination settings
   def self.set_page pg=1
@@ -116,13 +113,14 @@ class ListingParent < ActiveRecord::Base
     pictures.detect { |x| x && !x.photo_file_name.nil? }
   end
 
+  # check if pictures already exists
+  def any_locations?
+    contacts.detect { |x| x && !x.address.nil? }
+  end
+
   # define where clause based on rails env
   def self.where_stmt
-    if Rails.env.development? || Rails.env.test?
-      "listings.status = 'active'"
-    else
-      "listings.status = 'active' AND listings.end_date >= curdate()"
-    end
+    "listings.status = 'active'" + (Rails.env.development? || Rails.env.test? ? '' : " AND listings.end_date >= curdate()")
   end
 
   # select active listings
@@ -137,31 +135,37 @@ class ListingParent < ActiveRecord::Base
 
   # eager load assns
   def self.include_list
-    includes(:pictures, :site, :category, :job_type)
+    includes(:pictures, :category, :job_type, :user, :site => [:contacts])
   end
 
   # leaves out job_type to avoid unused eager loading
   def self.include_list_without_job_type
-    includes(:pictures, :site, :category)
+    includes(:pictures, :site, :category, :user)
   end
 
   # find listings by status
   def self.get_by_status val
-    if val == 'sold'
-      include_list_without_job_type.sold_list
-    else
-      include_list_without_job_type.where(:status => val)
-    end
+    ListingQueryProcessor.new(self).get_by_status val
+  end
+ 
+  # get active pixis by site id
+  def self.get_by_site sid, get_active=true
+    ListingDataProcessor.new(self).get_by_site sid, get_active
+  end
+  
+  # get active pixis by category
+  def self.get_by_category cid, get_active=true
+    ListingDataProcessor.new(self).get_by_category cid, get_active
   end
 
   # find all listings where a given user is the seller, or all listings if the user is an admin
-  def self.get_by_seller user, adminFlg=true
-    user.is_admin? && adminFlg ? where("seller_id IS NOT NULL") : where(:seller_id => user.id)
+  def self.get_by_seller user, val, adminFlg=true
+    ListingQueryProcessor.new(self).get_by_seller user, val, adminFlg
   end
 
   # get listings by status and, if provided, category and location
-  def self.check_category_and_location status, cid, loc
-    cid || loc ? get_by_status(status).get_by_city(cid, loc, false) : get_by_status(status)
+  def self.check_category_and_location status, cid, loc, activeFlg
+    cid || loc ? get_by_status(status).get_by_city(cid, loc, activeFlg) : get_by_status(status)
   end
 
   # verify if listing has been paid for
@@ -192,6 +196,11 @@ class ListingParent < ActiveRecord::Base
   # verify if listing is sold
   def sold?
     status == 'sold'
+  end
+
+  # verify if any sold
+  def any_sold?
+    self.is_a?(Listing) && invoices.exists?(status: 'paid')
   end
 
   # verify if listing is inactive
@@ -274,40 +283,43 @@ class ListingParent < ActiveRecord::Base
     user.email rescue nil
   end
 
+  # get seller url for a listing
+  def seller_url
+    ['http:', user.user_url].join('//') rescue nil
+  end
+
+  # check if sold by business
+  def sold_by_business? 
+    user.is_business? rescue false
+  end
+
+  # check if seller has address
+  def seller_address? 
+    sold_by_business? && user.has_address? rescue false
+  end
+
+  def has_address?
+    any_locations? || seller_address?
+  end
+
   # short description
   def brief_descr val=96
-    descr = description.length < val ? description : description[0..val] + '...' rescue nil
-    set_auto_link descr
+    ListingDataProcessor.new(self).set_str description, val
   end
 
   # add hyperlinks to description
   def summary
-    set_auto_link description
-  end
-
-  # calls rinku method to set html_safe & convert certain text to urls/emails
-  def set_auto_link descr
-    Rinku.auto_link(descr, :all, 'target="_blank"') rescue nil
+    ListingDataProcessor.new(self).set_auto_link description
   end
 
   # titleize title
   def nice_title prcFlg=true
-    unless title.blank?
-      str = (price.blank? || price == 0) && !prcFlg ? '' : ' - '
-      tt = prcFlg ? title.split('-').map(&:titleize).join('-').html_safe : title.titleize.html_safe rescue title 
-      if prcFlg
-        title.index('$') ? tt : tt + str 
-      else
-        title.index('$') ? tt.split('$')[0].strip! : tt
-      end
-    else
-      nil
-    end
+    ListingDataProcessor.new(self).nice_title prcFlg
   end
 
   # short title
   def short_title prcFlg=true, val=14
-    nice_title(prcFlg).length < val ? nice_title(prcFlg) : nice_title(prcFlg)[0..val] + '...' rescue nil
+    ListingDataProcessor.new(self).set_str nice_title(prcFlg), val
   end
 
   # med title
@@ -317,12 +329,12 @@ class ListingParent < ActiveRecord::Base
 
   # set end date to x days after start to denote when listing is no longer displayed on network
   def set_end_date
-    self.end_date = self.start_date + PIXI_DAYS.days rescue nil
+    self.end_date = event? ? event_end_date : self.start_date + PIXI_DAYS.days rescue nil
   end
 
   # get number of sites where pixi is posted
   def get_site_count
-    site_name ? 1 : site_listings.size
+    site_name ? 1 : 0
   end
 
   # set nice time
@@ -337,56 +349,12 @@ class ListingParent < ActiveRecord::Base
 
   # delete selected photo
   def delete_photo pid, val=1
-    # find selected photo
-    pic = self.pictures.where(id: pid).first
-
-    # remove photo if found and not only photo for listing
-    result = pic && self.pictures.size > val ? self.pictures.delete(pic) : false
-
-    # add error msg
-    errors.add :base, "Pixi must have at least one image." unless result
-    result
+    ListingDataProcessor.new(self).delete_photo pid, val
   end
 
   # duplicate pixi between models
   def dup_pixi tmpFlg, repost=false
-    
-    # check for temp or active pixi based on flag
-    listing = tmpFlg ? Listing.find_by_pixi_id(self.pixi_id) : TempListing.find_by_pixi_id(self.pixi_id)
-
-    unless listing
-      attr = get_attr(tmpFlg)  # copy attributes
-
-      # load attributes to new record
-      listing = tmpFlg ? Listing.where(attr).first_or_initialize : TempListing.where(attr).first_or_initialize
-      listing.status = 'edit' unless tmpFlg
-    end
-
-    # compare pictures to see if any need to be removed from active pixi
-    if tmpFlg
-      file_names = listing.pictures.map(&:photo_file_name) - self.pictures.map(&:photo_file_name)
-      file_ids = listing.pictures.where(photo_file_name: file_names).map(&:id)
-    end
-
-    # add photos
-    listing = add_photos tmpFlg, listing
-
-    # update fields
-    if tmpFlg && listing 
-      listing.assign_attributes(get_attr(tmpFlg), :without_protection => true) 
-      listing.status = 'active'
-    end
-
-    # remove any dup in case of cleanup failures
-    delete_temp_pixi listing.pixi_id if listing.is_a?(TempListing) && listing.new_record?
-
-    # add dup
-    if listing.save
-      listing.delete_photo(file_ids, 0) if tmpFlg rescue false
-      listing
-    else
-      tmpFlg ? false : listing
-    end
+    ListingDataProcessor.new(self).dup_pixi tmpFlg, repost
   end
 
   # seller pic
@@ -396,7 +364,7 @@ class ListingParent < ActiveRecord::Base
 
   # seller pic
   def seller_rating_count
-    user.seller_ratings.size rescue 0
+    user.rating_count rescue 0
   end
 
   # display first image
@@ -411,21 +379,17 @@ class ListingParent < ActiveRecord::Base
 
   # format date
   def format_date dt
-    zip = [lat, lng].to_zip rescue nil 
-    ResetDate::format_date dt, zip rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
+    ListingDataProcessor.new(self).format_date dt
   end
 
   # format date based on location
   def display_date dt, dFlg=true
-    ll = lat && lat > 0 ? [lat, lng] : LocationManager::get_lat_lng_by_loc(site_address)
-
-    # get display date/time
-    ResetDate::display_date_by_loc dt, ll, dFlg rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
+    ListingDataProcessor.new(self).display_date dt, dFlg
   end
 
   # get site address
-  def site_address
-    site.contacts.first.full_address rescue site_name
+  def primary_address
+    ListingDataProcessor.new(self).primary_address
   end
 
   # get job type name
@@ -442,117 +406,26 @@ class ListingParent < ActiveRecord::Base
 
   # get pixter name
   def pixter_name
-    if self.pixi_post?
-      User.find_by_id(self.pixan_id).first_name
-    else
-      nil
-    end
+    ListingDataProcessor.new(self).pixter_name
   end
 
-  # get active pixis by region
-  def self.active_by_region city, state, get_active=true, range=100
-    loc = [city, state].join(', ') if city && state
-    if get_active
-      active.where(site_id: Contact.proximity(nil, range, loc, true)) if loc rescue nil
-    else
-      where(site_id: Contact.proximity(nil, range, loc, true)) if loc rescue nil
-    end
-  end
-
-  # get active pixis by city
-  def self.active_by_city city, state, get_active=true
-    if get_active
-      active.where(site_id: Contact.get_sites(city, state))
-    else
-      where(site_id: Contact.get_sites(city, state))
-    end
-  end
-
-  # get active pixis by state
-  def self.active_by_state state, get_active=true
-    if get_active
-      active.where(site_id: Contact.where(state: state).map(&:contactable_id).uniq)
-    else
-      where(site_id: Contact.where(state: state).map(&:contactable_id).uniq)
-    end
-  end
-
-  # get active pixis by country
-  def self.active_by_country country, get_active=true
-    if get_active
-      active.where(site_id: Contact.where(country: country).map(&:contactable_id).uniq)
-    else
-      where(site_id: Contact.where(country: country).map(&:contactable_id).uniq)
-    end
+  # specifies which child is used
+  def self.get_class
+    self.respond_to?(:sold_list) ? Listing.new : TempListing.new
   end
 
   # check site's org_type and call the corresponding active_by method, or get pixis by ids if this fails
   def self.get_by_city cid, sid, get_active=true
-    if (loc = Site.check_site(sid, 'city')) && !loc.contacts.blank?
-      city, state = loc.contacts[0].city, loc.contacts[0].state
-      cid.blank? ? active_by_city(city, state, get_active) : where('category_id = ?', cid).active_by_city(city, state, get_active) 
-    elsif (loc = Site.check_site(sid, 'region')) && !loc.contacts.blank?
-      city, state = loc.contacts[0].city, loc.contacts[0].state
-      cid.blank? ? active_by_region(city, state, get_active) : where('category_id = ?', cid).active_by_region(city, state, get_active) 
-    elsif (loc = Site.check_site(sid, 'state')) && !loc.contacts.blank?
-      state = loc.contacts[0].state
-      cid.blank? ? active_by_state(state, get_active) : where('category_id = ?', cid).active_by_state(state, get_active) 
-    elsif (loc = Site.check_site(sid, 'country')) && !loc.contacts.blank?
-      country = loc.contacts[0].country
-      cid.blank? ? active_by_country(country, get_active) : where('category_id = ?', cid).active_by_country(country, get_active) 
-    else
-      cid.blank? ? get_by_site(sid, get_active) : get_category_by_site(cid, sid, get_active)
-    end
-  end
-
-  # get active pixis by site id
-  def self.get_by_site sid, get_active=true
-    if get_active
-      active.where(:site_id => sid)
-    else
-      where(:site_id => sid)
-    end
-  end
-
-  # get pixis by category & site ids
-  def self.get_category_by_site cid, sid, get_active=true
-    unless sid.blank?
-      if get_active
-        active.where('category_id = ? and site_id = ?', cid, sid)
-      else
-        where('category_id = ? and site_id = ?', cid, sid)
-      end
-    else
-      get_by_category cid, get_active
-    end
+    ListingQueryProcessor.new(self).get_by_city cid, sid, get_active
   end
 
   # set unique key
   def generate_token
-    begin
-      token = SecureRandom.urlsafe_base64
-    end while TempListing.where(:pixi_id => token).exists?
-    self.pixi_id = token
-  end
-
-  # get existing attributes
-  def get_attr tmpFlg
-    arr = tmpFlg ? %w(id created_at updated_at explanation parent_pixi_id buyer_id delta) : %w(id created_at updated_at delta)
-    ProcessMethod::get_attr self, arr
+    ListingDataProcessor.new(self).generate_token
   end
 
   def add_photos tmpFlg, listing
-    self.pictures.each do |pic|
-
-      # check if listing & photo already exists for pixi edit
-      if tmpFlg && !listing.new_record?
-        next if listing.pictures.where(:photo_file_name => pic.photo_file_name).first
-      end
-
-      # add photo
-      listing.pictures.build(:photo => pic.photo, :dup_flg => true)
-    end
-    listing
+    ListingDataProcessor.new(self).add_photos tmpFlg, listing
   end
 
   # titleize description
@@ -561,28 +434,38 @@ class ListingParent < ActiveRecord::Base
   end
 
   def as_csv(options={})
-    { "Title" => title, "Category" => category_name, "Description" => description, "Location" => site_name, "Last Updated" => display_date(updated_at) }
+    ListingDataProcessor.new(self).as_csv(options)
   end
 
   # get expiring pixis
   def self.soon_expiring_pixis number_of_days=7, status='active' 
-    dt = Date.today + number_of_days.days
-    get_by_status(status).where("cast(end_date As Date) = ?", dt)
+    get_by_status(status).where("cast(end_date As Date) = ?", Date.today + number_of_days.days)
   end
 
   # count number of sales
   def sold_count
-    invoices.where(status: 'paid').sum("invoice_details.quantity")
+    invoices.where(status: 'paid').sum("invoice_details.quantity") rescue 0
   end
 
   # determine amount left
   def amt_left
-    result = quantity - sold_count rescue 0
-    result <= 0 ? 0 : result
+    ListingDataProcessor.new(self).amt_left
   end
 
   # set csv filename
   def self.filename status
-    status.capitalize + '_' + ResetDate::display_date_by_loc(Time.now, Geocoder.coordinates("San Francisco, CA"), false).strftime("%Y_%m_%d")
+    ListingDataProcessor.new(self).filename status
+  end
+
+  def latlng
+    [lat, lng] rescue nil
+  end
+
+  def self.exec_query flg, params
+    ListingQueryProcessor.new(self).exec_query(flg, params)
+  end
+
+  def self.select_fields field_name
+    ListingQueryProcessor.new(self).select_fields(field_name)
   end
 end

@@ -1,2 +1,4 @@
-$("#section-container").html("<%= escape_javascript( raw render(partial: 'shared/signin_page')) %>");
+var txt = ($('#section-container').length != 0) ? '#section-container' : '#default-container';
+$(txt).html("<%= escape_javascript( raw render(partial: 'shared/signin_page')) %>");
+resetSpan("<%= session[:back_to] %>");
 $("#submenu").hide("fast");

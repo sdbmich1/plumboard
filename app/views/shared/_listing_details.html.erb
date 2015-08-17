@@ -1,35 +1,3 @@
 <% cache cache_key_for_pixi_page(listing, 'body') do %>
-  <div class="mtop row">
-      <div class='span12 mtop'>
-        <% if listing.event? %>
-          <div class='span3'>Start Date: <%= short_date listing.event_start_date %></div>
-          <div class='span3'>End Date: <%= short_date listing.event_end_date %></div>
-          <div class='span2'>Start Time: <%= short_time listing.event_start_time %></div>
-          <div class='offset1 span2 mbot'>End Time: <%= short_time listing.event_end_time %></div>
-          <div class='span4 mbot'>Event Type: <%= listing.event_type_descr %></div><br />
-        <% end %>
-      </div>
-  </div>
-  <div class="row">
-    <div class="span12 mbot">
-        <%= simple_format(listing.summary, {}, sanitize: false) %><br />
-        <%= "Condition: #{listing.condition}" if is_item?(listing) && listing.condition %><br />
-        <%= "Quantity: #{get_item_amt(listing)}" if item_available?(listing, true, 'quantity') %><br />
-        <%= "Year: #{listing.year_built}" if has_year?(listing) %><br />
-        <% if listing.job? %>
-          Job Type: <%= listing.job_type_name %><br />
-	  Compensation: <%= listing.compensation %><br />
-        <% end %>
-        <% if listing.is_category_type?('product') %>
-          <%= "Product Code: #{listing.other_id}" if listing.other_id %><br />
-          <%= "Color: #{listing.color}" if listing.color %><br />
-          <%= "Size: #{listing.item_size}" if listing.item_size %><br />
-        <% end %>
-        <% if listing.is_category_type?('vehicle') %>
-          <%= "VIN #: #{listing.other_id}" if listing.other_id %><br />
-          <%= "Mileage: #{number_with_delimiter(listing.mileage)}" if listing.mileage %><br />
-          <%= "Color: #{listing.color}" if listing.color %><br />
-        <% end %>
-    </div>
-  </div>
+  <%= render partial: 'shared/listing_product_details', locals: {listing: listing} %>
 <% end %>

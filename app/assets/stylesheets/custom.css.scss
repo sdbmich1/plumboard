@@ -18,6 +18,7 @@ body {
 @import "compass";
 @import "shared/form";
 @import "shared/image";
+@import "shared/font";
 
 /* responsive mobile fix */
 @media screen and (max-width: 320px) { 
@@ -152,7 +153,7 @@ p {
 
 /* Wrapper for page content to push down footer */
 #wrap {
-  //margin-top: 40px!important;
+  margin-top: 40px!important;
   //min-height: 150%;
   @extend .item-hgt;
 
@@ -160,17 +161,19 @@ p {
   //margin: 0 auto -60px;
 }
 
-#section-container, #px-container {
+#default-container {
   min-height: 100%;
   height: auto !important;
   height: 100%;
+}
+
+#section-container, #px-container {
+  @extend #default-container;
   padding-bottom: 60px;
 }
 
 #frame-container {
-  min-height: 100%;
-  height: auto !important;
-  height: 100%;
+  @extend #default-container;
   padding-bottom: 20px;
 }
 
@@ -274,7 +277,7 @@ textarea {
 
 input, select, .uneditable-input {
   height: auto !important;
-  }
+}
 
 #error_explanation {
   @extend .alert;
@@ -349,9 +352,13 @@ input, select, .uneditable-input {
 .width180 {width: 180px!important}
 .width240 {width: 240px!important}
 .width250 {width: 250px!important}
+.width275 {width: 275px!important}
 .width280 {width: 280px!important}
+.width300 {width: 300px!important}
 .width320 {width: 320px!important}
 .width360 {width: 360px!important}
+.width-all {width: 100%!important}
+
 .height240 {height: 240px!important}
 .height360 {height: 360px!important}
 .height480 {height: 480px!important}
@@ -368,6 +375,7 @@ input, select, .uneditable-input {
 .cb-label { display:inline; vertical-align:middle }
 .hdescr { font-size: 0.75em; color: #ccc; }
 .pg-text { font-size: 14px; }
+.field-hdr { font-weight: bolder; font-size: 1em; color: $pixiBlue; padding-bottom: 5px; }
 .section-hdr { font-weight: bolder; font-size: 1.5em; color: $pixiBlue; padding-bottom: 5px; }
 
 h3 { padding: 10px }
@@ -417,16 +425,6 @@ h3 { padding: 10px }
 }
 
 .bar-top { margin-top: 20px; }
-
-.img-icon {
-  height: 18px;
-  width: 18px;
-}
-
-.lrg-img-icon {
-  height: 40px;
-  width: 40px;
-}
 
 #submenu .navbar .nav, .navbar .nav > li {
   float:none;
@@ -554,6 +552,11 @@ a.btn-mask {
   height: 30px!important;
 }
 
+#comment-entry {
+  display: inline-block;
+  vertical-align: middle;
+}
+
 .recent {
   font-size: 14px;
   display: inline;
@@ -601,7 +604,7 @@ a.btn-mask {
 }
  
 #comment_content {
-  width: 365px!important;
+ // width: 365px!important;
   @extend .ta_content;
 }
 
@@ -625,16 +628,18 @@ a.btn-mask {
   }
 }
 
+.fld-height { height: 28px!important; }
+.lheight { line-height: 30px!important; }
+.fld-pad { padding: 6px!important; height: 18px!important; }
+
 .pixi-select {
   margin-bottom: 0px!important;
-  height: 28px!important;
   font-size: 14px!important;
+  height: 28px!important; 
 }
 
 .cat-select {
-  margin-bottom: 0px!important;
-  height: 28px!important;
-  font-size: 14px!important;
+  @extend .pixi-select;
   margin-top: -3px!important;
 }
 
@@ -655,11 +660,11 @@ a.btn-mask {
 
 #comment_form {
   float: left;
-  width: 365px!important;
+ // width: 365px!important;
   height: 325px!important;
 }
 
-#contact-btn, #comment-btn, #add-item-btn, .inv-fld {
+#contact-btn, #add-item-btn, .inv-fld {
   visibility: hidden;
 }
 
@@ -674,21 +679,6 @@ hr.vertical
   margin-right: 20px;
 }
 
-.home-img {
-  margin-top: 5px!important;
-  margin-right: 15px!important;
-  vertical-align: middle;
-  height: 28px!important;
-  width: 28px!important;
-}
-
-.ftr-img {
-  margin-left: 10px!important;
-  vertical-align: middle;
-  height: 32px!important;
-  width: 32px!important;
-}
-
 ul#social-links {
   margin-left: -10px!important;
   list-style: none;
@@ -697,16 +687,12 @@ ul#social-links {
   }
 }
 
-.social-img {
-  vertical-align: middle;
-  height: 32px!important;
-  width: 32px!important;
-}
-
-a#home-link, a.home-link {
+a#home-link, a.home-link, a.img-btn {
   &:hover {
     text-decoration: none;
     background: transparent!important;
+    outline: none;
+    border: 0;
   }
 }
 
@@ -770,14 +756,6 @@ a.white-browse-link {
     text-decoration: none;
   }
 }
- 
-.pad10 {padding: 10px!important;}
-.pad15 {padding: 15px!important;}
-.pad20 {padding: 20px!important;}
-.pad5 {padding: 5px!important;}
-.pad-top10 {padding-top: 10px!important;}
-.pad-bot10 {padding-bottom: 10px!important;}
-.pad-bot5 {padding-bottom: 5px!important;}
 
 .ui-autocomplete {
   z-index: 9999 !important;
@@ -827,3 +805,5 @@ form .clearfix:before, form .clearfix:after {
 .modal-header h3 {
   text-align: center; 
 }
+
+.token-width { width: 100%; }

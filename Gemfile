@@ -91,7 +91,7 @@ gem 's3_file_field', github: 'lastobelus/s3_file_field', ref: 'b7ebbbbae7c844350
 
 # add payment gateways
 gem 'activemerchant'
-gem 'stripe'
+gem 'stripe', '~> 1.21.0'
 gem 'balanced', "~> 0.8.1"
 
 # install oauth
@@ -175,6 +175,7 @@ group :development, :test do
   gem 'spork', '~> 1.0rc'
   gem 'faker'
   gem "vcr", "~> 2.5.0"
+  gem 'rack_session_access'
 end
 
 # test gems
@@ -188,7 +189,7 @@ group :test do
   gem 'launchy'
   gem "database_cleaner"
   gem 'connection_pool'
-  gem 'selenium-webdriver', '~> 2.45.0'
+  gem 'selenium-webdriver', '~> 2.46.2'
   gem 'shoulda-matchers'
   # gem "webmock", "~> 1.11.0"
   gem "fakeweb", "~> 1.3"

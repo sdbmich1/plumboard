@@ -4,7 +4,7 @@
     <div class="sm-top span12">
       <%= render partial: 'shared/invoice_item', locals: { f: f, invoice: invoice } %>
       <div class='clear-all'></div>
-      <div class='span4'>
+      <div class='no-left span4'>
 	<label class="sm-top control-label">Comments:</label>
         <%= f.text_area :comment, class: 'width360' %>
       </div>

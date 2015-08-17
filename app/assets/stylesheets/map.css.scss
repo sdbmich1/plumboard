@@ -1,0 +1,31 @@
+/* map details */
+#map_content {
+  padding: 0;
+  width: 99%;
+  margin-left: 3px;
+  height: 370px;
+  overflow: auto; overflow-x: hidden;
+}
+
+.map-btn {position: absolute; top: 31em; right: 0;}
+
+#trvlmode {
+  position: absolute; top:5em; right: 0;
+  padding: 0;
+  min-width: 210px;
+  width: 300px;
+  height: 60%;
+  overflow: auto; overflow-x: hidden;	
+}
+
+#mode { width: 300px; }
+
+#map_canvas, #directionsPanel {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  text-shadow: none;
+  z-index: 999;
+}
+
+#directionsPanel {font-size: 0.875em}

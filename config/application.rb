@@ -5,7 +5,7 @@ require 'rails/all'
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line
   # Bundler.require(*Rails.groups(:assets => %w(development test)))
-  Bundler.require(*Rails.groups(:assets => %w(development test), :profiling => %w[staging development]))
+  Bundler.require(*Rails.groups(:assets => %w(development test demo), :profiling => %w[staging development]))
   # If you want your assets lazily compiled in production, use this line
   # Bundler.require(:default, :assets, Rails.env)
 end
@@ -27,8 +27,8 @@ module Plumboard
     # Activate observers that should always be running.
     # config.active_record.observers = :cacher, :garbage_collector, :forum_observer
     config.active_record.observers = :transaction_observer, :user_observer, 
-      :invoice_observer, :post_observer, :comment_observer, :pixi_post_observer, :inquiry_observer, 
-      :pixi_want_observer, :pixi_ask_observer  # , :listing_observer, :saved_listing_observer
+      :invoice_observer, :post_observer, :comment_observer, :inquiry_observer, 
+      :pixi_want_observer, :pixi_ask_observer  # , :listing_observer, :pixi_post_observer, :saved_listing_observer
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.

@@ -17,8 +17,8 @@
  *= require custom
  *= require pages
  *= require scaffolds
- *= require listings
  *= require rateit
+ *= require map
  *= require jquery-smartvimeoembed
+ *= require jquery.tokenize
  */
-

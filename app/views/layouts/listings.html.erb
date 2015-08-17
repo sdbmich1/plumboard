@@ -4,25 +4,28 @@
   <link href="/assets/favicon.ico" rel="shortcut icon" />
   <title id='pg-title'><%= full_title(yield(:title)) %></title>
   <%= stylesheet_link_tag "application", :media => "all" %>
-  <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag "application", "https://maps.googleapis.com/maps/api/js?key=#{API_KEYS['google']['api_key']}" %>
   <%= csrf_meta_tags %>
   <%= render 'layouts/shim' %>
 </head>
 <body>
   <div id='wrap'>
     <%= render 'layouts/header' %>
-    <%= yield :subhead %>
-    <%= render 'layouts/flash_messages', flash: flash %>
-    <div class="container" id="px-container">
-      <div id="spinner" class="round" style="display:none"></div>
-      <%= yield :content %>
+    <div id='default-container'> 
+      <%= yield :subhead %>
+      <%= yield :top_banner %>
+      <%= yield :feature_banner %>
+      <%= render 'layouts/flash_messages', flash: flash %>
+      <div class="container" id="px-container">
+        <div id="spinner" class="round" style="display:none"></div>
+        <%= yield :content %>
+      </div>
     </div>
     <div id="push"></div>
   </div>
   <div id='footer'>
     <div class="container">
       <div id="push"></div>
-      <%= render 'layouts/footer' %>
     </div>
   </div>
 </body>

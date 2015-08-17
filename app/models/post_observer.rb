@@ -4,7 +4,7 @@ class PostObserver < ActiveRecord::Observer
 
   def after_create model
     # send notice to recipient
-    UserMailer.delay.send_notice(model) unless model.system_msg? || model.want_msg? || model.ask_msg?
+    UserMailer.delay.send_notice(model) unless model.system_msg? || model.want_msg? || model.ask_msg? || model.inv_msg?
 
     # update points
     PointManager::add_points model.user, 'cs' if model.user

@@ -38,6 +38,15 @@ $(document).on("focus", ".dt-pckr, .px-date", function(e){
   }).data('datepicker');
 });
 
+// manage available date
+$(document).on("focus", "#avail-date", function(e){
+  var adt = $(this).datepicker({
+    onRender: function(date) {
+      return date.valueOf() < nowDt.valueOf() ? 'disabled' : '';
+    }
+  })
+});
+
 // manage event date
 $(document).on("focus", "#start-date", function(e){
   var sdt = $(this).datepicker({

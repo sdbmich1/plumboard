@@ -1,0 +1,10 @@
+<div class='<%= "#{topCls}" %> span2'>
+  <%= render partial: 'shared/show_photo', locals: {model: user, file_name: set_profile_photo(colorFlg), psize: '80x80', display_cnt: 0 } %>
+</div>
+<div id='sellerName' class='<%= "#{cls}" %> neg-left span4 mbot'>
+  <%= render_seller_name user, colorFlg %>
+  <div id='rating' class='sm-top'><%= render partial: 'shared/user_rating', locals: {model: user, colorFlg: colorFlg} %></div>
+  <%= render_user_details user, pxFlg, colorFlg %>
+  <div class='sm-top clear-all'></div>
+  <%= follow_or_unfollow_button @user.get_follow_status('seller', user.id), @user, user %>
+</div>

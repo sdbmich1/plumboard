@@ -1,4 +1,2 @@
-<% if rFlg %>  
-  <li id='li_home' class="active"><%= link_to "Recent", '#', id: 'recent-link', class: 'submenu' %></li>
-<% end %>
-<li class='med-top mleft10'><span id='menu_site_name'><%= loc_name %></span></li>
+<%= show_recent_link rFlg %>  
+<li class='med-top mleft10'><span id='menu_site_name'><%= show_loc_name loc_name %></span></li>

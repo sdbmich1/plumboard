@@ -36,10 +36,13 @@ Plumboard::Application.configure do
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
 
+  # add session
+  config.middleware.use RackSessionAccess::Middleware
+
   # paperclip storage setting
   PAPERCLIP_STORAGE_OPTIONS = {
-	  url: "/system/:class/:attachment/:id/:style/:filename",
-	  path: ":rails_root/public/system/:class/:attachment/:id_partition/:style/:filename" 
+	  url: "/system/:class/:attachment/:style/:filename",
+	  path: ":rails_root/public/system/:class/:attachment/:style/:filename" 
   }
 
   # facebook ssl setting

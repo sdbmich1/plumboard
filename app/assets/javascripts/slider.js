@@ -1,7 +1,7 @@
+var feature_slider;
+
 // process slider
 function load_slider(cntl) {
-
-  // picture slider
   if( $('.bxslider').length > 0 ) {
 
     // check slider length to toggle slideshow
@@ -12,6 +12,7 @@ function load_slider(cntl) {
       minSlides: 2,
       auto: false,
       pager: cntl,
+      pagerCustom: '.bx-pager',
       autoControls: false,
       mode: 'fade',
       onSlideAfter: function() {
@@ -34,4 +35,39 @@ function load_slider(cntl) {
       effect: 'fadeIn'
     });
   }
+}
+
+// load featured band carousel
+function load_featured_slider() {
+  var val = set_banner_slides();
+  if($('.featured').length > 0) {
+    feature_slider = $('.featured').bxSlider({
+      minSlides: 3,
+      maxSlides: val,
+      slideWidth: 180,
+      slideMargin: 20,
+      auto: false,
+      pager: true,
+      pagerCustom: '.bx-pager',
+      autoControls: false,
+      mode: 'horizontal',
+      onSlideAfter: function() {
+        // trigger lazy to load new in-slided images
+        setTimeout(function() { $(window).trigger("scroll"); }, 100);
+      }
+    });
+    scrollEverySecond();
+
+    $('.lazy').lazyload({
+      effect: 'fadeIn'
+    });
+  }
+}
+
+// trigger lazy to load every image after the first one when slider is loaded
+function scrollEverySecond() {
+  setTimeout(function() {
+    $(window).trigger("scroll");
+    scrollEverySecond();
+  }, 1000);
 }

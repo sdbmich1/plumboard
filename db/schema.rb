@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150228194414) do
+ActiveRecord::Schema.define(:version => 20150713034816) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -49,11 +49,13 @@ ActiveRecord::Schema.define(:version => 20150228194414) do
     t.string   "acct_name"
     t.string   "acct_type"
     t.string   "status"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
     t.string   "description"
     t.string   "bank_name"
     t.string   "default_flg"
+    t.string   "currency_type_code"
+    t.string   "country_code"
   end
 
   add_index "bank_accounts", ["user_id"], :name => "index_bank_accounts_on_user_id"
@@ -79,6 +81,7 @@ ActiveRecord::Schema.define(:version => 20150228194414) do
     t.datetime "updated_at",       :null => false
     t.string   "zip"
     t.string   "default_flg"
+    t.string   "card_token"
   end
 
   add_index "card_accounts", ["card_no"], :name => "index_card_accounts_on_card_no"
@@ -92,6 +95,8 @@ ActiveRecord::Schema.define(:version => 20150228194414) do
     t.datetime "updated_at",         :null => false
     t.string   "pixi_type"
   end
+
+  add_index "categories", ["status"], :name => "index_categories_on_status"
 
   create_table "categories_listings", :id => false, :force => true do |t|
     t.integer "listing_id"
@@ -154,6 +159,7 @@ ActiveRecord::Schema.define(:version => 20150228194414) do
     t.float    "lng"
     t.float    "lat"
     t.string   "county"
+    t.string   "place"
   end
 
   add_index "contacts", ["city", "state"], :name => "index_contacts_on_city_and_state"
@@ -169,6 +175,7 @@ ActiveRecord::Schema.define(:version => 20150228194414) do
     t.datetime "updated_at",       :null => false
     t.string   "status"
     t.string   "recipient_status"
+    t.integer  "posts_count"
   end
 
   add_index "conversations", ["pixi_id"], :name => "index_conversations_on_pixi_id"
@@ -218,6 +225,29 @@ ActiveRecord::Schema.define(:version => 20150228194414) do
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
   end
+
+  create_table "favorite_sellers", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "seller_id"
+    t.string   "status"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "favorite_sellers", ["seller_id"], :name => "index_favorite_sellers_on_seller_id"
+  add_index "favorite_sellers", ["user_id"], :name => "index_favorite_sellers_on_user_id"
+
+  create_table "feeds", :force => true do |t|
+    t.integer  "site_id"
+    t.string   "site_name"
+    t.string   "url"
+    t.string   "status"
+    t.string   "description"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "feeds", ["site_id"], :name => "index_feeds_on_site_id"
 
   create_table "fulfillment_types", :force => true do |t|
     t.string   "code"
@@ -382,8 +412,14 @@ ActiveRecord::Schema.define(:version => 20150228194414) do
     t.string   "other_id"
     t.string   "item_type"
     t.string   "item_size"
+    t.integer  "bed_no"
+    t.integer  "bath_no"
+    t.string   "term"
+    t.datetime "avail_date"
+    t.boolean  "buy_now_flg"
   end
 
+  add_index "listings", ["avail_date"], :name => "index_listings_on_avail_date"
   add_index "listings", ["category_id"], :name => "index_listings_on_category_id"
   add_index "listings", ["condition_type_code"], :name => "index_listings_on_condition_type_code"
   add_index "listings", ["end_date", "start_date"], :name => "index_listings_on_end_date_and_start_date"
@@ -395,6 +431,7 @@ ActiveRecord::Schema.define(:version => 20150228194414) do
   add_index "listings", ["pixi_id"], :name => "index_listings_on_pixi_id", :unique => true
   add_index "listings", ["site_id", "seller_id", "start_date"], :name => "index_listings_on_org_id_and_seller_id_and_start_date"
   add_index "listings", ["status"], :name => "index_listings_on_status"
+  add_index "listings", ["term"], :name => "index_listings_on_term"
   add_index "listings", ["transaction_id"], :name => "index_listings_on_transaction_id"
 
   create_table "listings_sites", :id => false, :force => true do |t|
@@ -447,6 +484,11 @@ ActiveRecord::Schema.define(:version => 20150228194414) do
     t.string   "job_type_code"
     t.string   "explanation"
     t.string   "event_type_code"
+    t.integer  "bed_no"
+    t.integer  "bath_no"
+    t.string   "term"
+    t.datetime "avail_date"
+    t.boolean  "buy_now_flg"
   end
 
   add_index "old_listings", ["category_id"], :name => "index_old_listings_on_category_id"
@@ -455,6 +497,17 @@ ActiveRecord::Schema.define(:version => 20150228194414) do
   add_index "old_listings", ["pixi_id"], :name => "index_old_listings_on_pixi_id"
   add_index "old_listings", ["title"], :name => "index_old_listings_on_title"
   add_index "old_listings", ["user_id"], :name => "index_old_listings_on_user_id"
+
+  create_table "org_types", :force => true do |t|
+    t.string   "code"
+    t.string   "status"
+    t.string   "hide"
+    t.string   "description"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "org_types", ["code"], :name => "index_org_types_on_code"
 
   create_table "pictures", :force => true do |t|
     t.string   "delete_flg"
@@ -519,6 +572,16 @@ ActiveRecord::Schema.define(:version => 20150228194414) do
   end
 
   add_index "pixi_points", ["code"], :name => "index_pixi_points_on_code"
+
+  create_table "pixi_post_details", :force => true do |t|
+    t.integer  "pixi_post_id"
+    t.string   "pixi_id"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
+  add_index "pixi_post_details", ["pixi_id"], :name => "index_pixi_post_details_on_pixi_id"
+  add_index "pixi_post_details", ["pixi_post_id", "pixi_id"], :name => "index_pixi_post_details_on_pixi_post_id_and_pixi_id"
 
   create_table "pixi_post_zips", :force => true do |t|
     t.integer  "zip"
@@ -604,8 +667,12 @@ ActiveRecord::Schema.define(:version => 20150228194414) do
     t.string   "zip"
     t.string   "email_msg_flg"
     t.string   "mobile_msg_flg"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
+    t.datetime "created_at",            :null => false
+    t.datetime "updated_at",            :null => false
+    t.boolean  "buy_now_flg"
+    t.float    "sales_tax"
+    t.float    "ship_amt"
+    t.string   "fulfillment_type_code"
   end
 
   add_index "preferences", ["user_id", "zip"], :name => "index_preferences_on_user_id_and_zip"
@@ -707,6 +774,8 @@ ActiveRecord::Schema.define(:version => 20150228194414) do
   end
 
   add_index "sites", ["institution_id"], :name => "index_organizations_on_institution_id"
+  add_index "sites", ["name"], :name => "index_sites_on_name"
+  add_index "sites", ["status", "org_type"], :name => "index_sites_on_status_and_org_type"
 
   create_table "sites_temp_listings", :id => false, :force => true do |t|
     t.integer "temp_listing_id"
@@ -731,6 +800,8 @@ ActiveRecord::Schema.define(:version => 20150228194414) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  add_index "status_types", ["hide"], :name => "index_status_types_on_hide"
 
   create_table "subcategories", :force => true do |t|
     t.string   "name"
@@ -786,6 +857,11 @@ ActiveRecord::Schema.define(:version => 20150228194414) do
     t.string   "other_id"
     t.string   "item_type"
     t.string   "item_size"
+    t.integer  "bed_no"
+    t.integer  "bath_no"
+    t.string   "term"
+    t.datetime "avail_date"
+    t.boolean  "buy_now_flg"
   end
 
   add_index "temp_listings", ["condition_type_code"], :name => "index_temp_listings_on_condition_type_code"
@@ -838,6 +914,16 @@ ActiveRecord::Schema.define(:version => 20150228194414) do
   add_index "transactions", ["transaction_type"], :name => "index_transactions_on_transaction_type"
   add_index "transactions", ["updated_at"], :name => "index_transactions_on_updated_at"
   add_index "transactions", ["user_id"], :name => "index_transactions_on_user_id"
+
+  create_table "travel_modes", :force => true do |t|
+    t.string   "mode"
+    t.string   "travel_type"
+    t.string   "status"
+    t.string   "hide"
+    t.string   "description"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
 
   create_table "user_interests", :force => true do |t|
     t.integer  "user_id"
@@ -902,6 +988,10 @@ ActiveRecord::Schema.define(:version => 20150228194414) do
     t.string   "business_name"
     t.integer  "ref_id"
     t.string   "url"
+    t.boolean  "guest"
+    t.string   "description"
+    t.integer  "active_listings_count",  :default => 0
+    t.string   "cust_token"
   end
 
   add_index "users", ["acct_token"], :name => "index_users_on_acct_token"
@@ -911,6 +1001,7 @@ ActiveRecord::Schema.define(:version => 20150228194414) do
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["ref_id"], :name => "index_users_on_ref_id"
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
+  add_index "users", ["status"], :name => "index_users_on_status"
   add_index "users", ["unlock_token"], :name => "index_users_on_unlock_token", :unique => true
   add_index "users", ["url"], :name => "index_users_on_url", :unique => true
   add_index "users", ["user_type_code"], :name => "index_users_on_user_type"

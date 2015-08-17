@@ -5,12 +5,13 @@
 
   // check for mobile
   if($('#seller-comment').length > 0) {
-    console.log('comments are firing here');
     goToUrl(url, true);
   }
   else {
+    $("#pixi-tabs").html("<%= escape_javascript( render(partial: 'shared/show_listing_details', locals: {listing: @listing}) ) %>");
     $("#comment_form").html("<%= escape_javascript( render(partial: 'shared/comments', locals: {listing: @listing}) ) %>");
     $("#comment_content").val('');
+    $('#pixi-tabs li:eq(1) a').tab('show');
   }
 <% end %>
 

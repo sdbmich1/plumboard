@@ -1,0 +1,12 @@
+  <div class='row'>
+    <div class='offset3 addr-tbl' style="<%= set_style(!post.has_address?) %>">
+      <h5 class="grp-hdr">Address Information</h5>
+      <table>
+      <tr><td class='span3'>
+        <%= post.address %><br>
+        <%= "#{post.city}, #{post.state} #{post.zip}" %><br><%= post.home_phone %></td>
+        <td class='v-align price'><%= link_to 'Change', '#', id: 'edit-addr-btn', class: 'btn' %></td>
+      </tr>
+      </table>
+    </div>
+  </div>

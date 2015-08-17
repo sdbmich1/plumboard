@@ -39,6 +39,7 @@ FactoryGirl.define do
   end
 
   factory :pixter, :class => "User", :parent => :pixi_user do
+    after(:build) {|usr| usr.user_type_code = 'PT' }
     after(:create) {|usr| usr.add_role(:pixter)}
   end
 
@@ -51,15 +52,18 @@ FactoryGirl.define do
   end
 
   factory :contact_user, :class => "User", :parent => :pixi_user do
-    acct_token  "/v1/customers/CU3HH3hlEKbL04U2GOKgX8o2"
+    acct_token  "acct_16HJbsDEdnXv7t4y"
     before(:create) do |usr|
       usr.contacts.build FactoryGirl.attributes_for(:contact)
     end
   end
 
-  factory :state do
-    code  "CA"
-    state_name  "California"
+  factory :business_user, :class => "User", :parent => :contact_user do
+    after(:build) do |usr| 
+      usr.user_type_code = 'BUS' 
+      usr.business_name = 'The Community Store' 
+      usr.user_url = usr.business_name
+    end
   end
 
   factory :site do
@@ -139,19 +143,12 @@ FactoryGirl.define do
   end
 
   factory :listing, :class => "Listing", :parent => :listing_parent do
-    before(:create) do |listing|
+    after(:build) do |listing|
       listing.pictures.build FactoryGirl.attributes_for(:picture)
     end
 
     ignore do
       sites_count 3
-    end
-
-    factory :listing_with_sites do
-      after(:create) do |listing, x|
-        FactoryGirl.create_list(:site_listing, x.sites_count, :listing => listing)
-        x.reload
-      end
     end
 
     factory :listing_with_post do
@@ -171,7 +168,7 @@ FactoryGirl.define do
   end
 
   factory :temp_listing, :class => "TempListing", :parent => :listing_parent do
-    before(:create) do |listing|
+    after(:build) do |listing|
       listing.pictures.build FactoryGirl.attributes_for(:picture)
     end
   end
@@ -236,11 +233,6 @@ FactoryGirl.define do
     subtotal  370.00
   end
 
-  factory :site_listing do
-    site
-    listing
-  end
-
   factory :transaction do
     first_name "Joe"
     last_name "Blow"
@@ -291,9 +283,11 @@ FactoryGirl.define do
     acct_name "Joe's Checking"
     status  'active'
     acct_type 'checking'
-    acct_number '90009000'
-    acct_no '9000'
-    token "/v1/marketplaces/TEST-MP2Q4OaIanQuIDJIixHGmhQA/bank_accounts/BA7ehO1oDwPUBAR9cz71sd2g"
+    acct_number '123456789'
+    acct_no '6789'
+    currency_type_code 'usd'
+    country_code 'us'
+    token "ba_16HJc8DEdnXv7t4ytCIXAzAs"
   end
 
   factory :card_account do
@@ -431,6 +425,13 @@ FactoryGirl.define do
     status "active"
     description 'New'
   end
+        
+  factory :org_type do
+    code "N"
+    hide "no"
+    status "active"
+    description "school"
+  end                    
 
   factory :fulfillment_type do
     code "SHP"
@@ -442,5 +443,35 @@ FactoryGirl.define do
   factory :pixi_ask do
     user_id 1
     pixi_id "xxxx"
+  end
+
+  factory :feed do
+    site_name "SF Bay Area"
+    description "SF Examiner"
+    url "http://www.sfexaminer.com/sanfrancisco/Rss.xml?section=2124643"
+  end
+
+  factory :pixi_post_detail do
+    pixi_post_id 1
+    pixi_id "xxxx"
+  end
+
+  factory :favorite_seller do
+    user_id 1
+    seller_id 2
+    status "active"
+  end
+
+  factory :travel_mode do
+    mode  "DR"
+    travel_type "Car"
+    description "Driving"
+    status  "active"
+    hide "no"
+  end
+
+  factory :state do
+    code  "CA"
+    state_name  "California"
   end
 end

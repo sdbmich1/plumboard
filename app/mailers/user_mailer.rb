@@ -157,7 +157,7 @@ class UserMailer < ActionMailer::Base
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
 
     # set message details
-    mail(:to => "support@pixiboard.com", :subject => env_check + ' ' + "Pixi Submitted: #{@listing.nice_title}")
+    mail(:to => "support@pixiboard.com", :subject => env_check + ' ' + "Pixi Submitted: #{@listing.nice_title(false)}")
   end
 
   # set logo image
@@ -205,11 +205,9 @@ class UserMailer < ActionMailer::Base
   def send_expiring_pixi_notice number_of_days, expiring_pixi
     @number_of_days = number_of_days
     @user = expiring_pixi.user
-    @nice_title = expiring_pixi.nice_title
     @listing = expiring_pixi
     #set logo
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
-    puts expiring_pixi.user.email
     #set message details
     mail(:to => "#{expiring_pixi.user.email}", :subject => "Your Pixi is Expiring Soon!")
   end
@@ -246,5 +244,17 @@ class UserMailer < ActionMailer::Base
 
     # set message details
     mail(:to => "#{@invoice.seller_email}", :subject => env_check + ' ' + "Invoice Declined")
+  end
+
+  # send notice for invoice
+  def send_invoice_notice invoice
+    @invoice = invoice
+    @title = invoice.listings.count > 1 ? "multiple pixis" : invoice.pixi_title
+
+    # set logo
+    attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
+    # set message details
+    mail(:to => "#{@invoice.buyer_email}", :subject => env_check + ' ' + "PixiPay Invoice ##{@invoice.id} from #{@invoice.seller_name}")
   end
 end

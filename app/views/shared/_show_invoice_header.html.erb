@@ -1,13 +1,9 @@
 <div class="row">
   <div class="span8">
     <label class='control-label'><span class='no-left span1'>Date: </span><%= get_local_date(invoice.inv_date) %></label>
-    <label class='control-label'><span class='no-left span1'>From: </span>
-      <%= render partial: 'shared/show_photo', locals: {model: invoice.seller, file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
-      <span class='mleft10'><%= invoice.seller_name %></span></label>
+    <%= render partial: 'shared/show_invoice_person', locals: {model: invoice.seller, fld: 'seller_name', invoice: invoice, title: 'From:'} %>
     <div class="big-top">
-      <label class="control-label"><span class='no-left span1'>Bill To: </span>
-        <%= render partial: 'shared/show_photo', locals: {model: invoice.buyer, file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
-        <span class='mleft10'><%= invoice.buyer_name %></span></label>
+      <%= render partial: 'shared/show_invoice_person', locals: {model: invoice.buyer, fld: 'buyer_name', invoice: invoice, title: 'To:'} %>
     </div>
   </div>
   <div class="span4">

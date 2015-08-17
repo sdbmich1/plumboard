@@ -5,9 +5,7 @@
 
 <%= content_for :content do %>
   <div id="top-header" class='sm-top nav pull-right'>
-    <% unless @listings.blank? %>
-      <%= render :partial => 'shared/manage_pixis_header' %>
-    <% end %>
+    <%= render :partial => 'shared/manage_pixis_header' unless @listings.blank? %>
   </div>
   <div id="pendingOrder">
     <%= render :partial => 'shared/index_list' %>
@@ -16,5 +14,3 @@
     <%= page_entries_info @listings, :model => 'pixis' unless @listings.blank? %>
   </div>
 <% end %>
-
-

@@ -1,11 +1,13 @@
 <%= form_for([@usr, @usr.with_picture], url: user_path(@usr, target: 'shared/user_form'), html: {class: 'uform', id: 'prof-form'}, 
   data: {validate: 'parsley'}) do |f| %>
     <div id="form_errors"><%= render partial: 'shared/error_messages', locals: { target: f.object } %></div>
-    <%= render partial: 'shared/show_user_photo', locals: { f: f, model: @usr, file_name: 'person_icon.jpg' } %>
-    <div class="span5">
+    <div class="span3 center-wrapper">
+      <%= render partial: 'shared/show_user_photo', locals: {f: f, model: @usr, file_name: 'person_icon.jpg', idName: 'usr_photo', mFlg: false} %>
+    </div>
+    <div class="offset1 span5">
       <div id='signup'>
         <%= render partial: 'shared/user_info', locals: { f: f, user: @usr } %>
-        <div class='mtop'>
+        <div class="mtop">
           <%= f.submit "Save Changes", class: "btn btn-large btn-primary submit-btn", data: {disable_with: "Submitting..."} %>
         </div>
       </div>

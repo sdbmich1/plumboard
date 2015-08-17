@@ -1,9 +1,9 @@
 <table>
   <tr><td class='width240'>Confirmation #:</td><td></td><td><%= payment.id %></td></tr>
 
-  <tr><td class='width240'>Bank Name: </td><td></td><td><%= payment.bank_account.bank_name %></td></tr>
-  <tr><td class='width240'>Account #:</td><td></td><td>******<%= payment.bank_account.account_number %></td></tr>
-  <tr><td class='width240'>Amount:</td><td></td><td><%= number_to_currency(payment.amount.to_f/100) %></td></tr>
+  <tr><td class='width240'>Bank Name: </td><td></td><td><%= invoice.bank_name %></td></tr>
+  <tr><td class='width240'>Account #:</td><td></td><td>******<%= invoice.acct_no %></td></tr>
+  <tr><td class='width240'>Amount:</td><td></td><td><%= number_to_currency(invoice.seller_amount.to_f) %></td></tr>
 
   <tr><td class='width240'>Date & Time: </td><td></td><td><%= invoice.format_date(invoice.updated_at) %></td></tr>
   <tr><td class='width240'>From: </td><td></td><td><%= invoice.buyer_name %></td></tr>

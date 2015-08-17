@@ -1,17 +1,19 @@
 class PixiPost < ActiveRecord::Base
   resourcify
-  include AddressManager
 
   before_save :set_flds
+  after_commit :process_request, on: :create
+  after_commit :send_appt_notice, on: :update
 
-  attr_accessor :pixan_name
+  attr_accessor :pixan_name, :work_phone, :listing_tokens
   attr_accessible :address, :alt_date, :alt_time, :city, :description, :pixan_id, :preferred_date, :preferred_time, :quantity, :state, 
     :user_id, :value, :zip, :status, :appt_time, :appt_date, :completed_date, :completed_time, :home_phone, :mobile_phone, :address2, 
-    :comments, :editor_id, :pixan_name, :pixi_id, :country
+    :comments, :editor_id, :pixan_name, :pixi_id, :country, :listing_tokens, :work_phone
 
   belongs_to :user
-  belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id"
   belongs_to :pixan, foreign_key: "pixan_id", class_name: "User"
+  has_many :pixi_post_details, dependent: :destroy
+  has_many :listings, through: :pixi_post_details
 
   validates :user_id, presence: true
   validates :value, presence: true, numericality: { greater_than_or_equal_to: 50, less_than_or_equal_to: MAX_PIXI_AMT.to_f }
@@ -19,13 +21,13 @@ class PixiPost < ActiveRecord::Base
   validates :address, presence: true, length: {maximum: 50}
   validates :city, presence: true, length: {maximum: 30}
   validates :state, presence: true
-  validates :zip, presence: true, length: {is: 5}
+  validates :zip, presence: true, length: {in: 5..10}
   validates :description, presence: true
   validates :preferred_time, presence: true
   validates :pixan_id, presence: true, if: :has_appt? || :is_completed?
-  validates :pixi_id, presence: true, unless: "completed_date.nil?"
   validates :home_phone, presence: true, length: {in: 10..15}
   validates :mobile_phone, allow_blank: true, length: {in: 10..15}
+  validates :work_phone, allow_blank: true, length: {in: 10..15}
   validate :zip_service_area
   validates_date :preferred_date, presence: true, on_or_after: :min_start_date, unless: :is_admin?
   validates_date :alt_date, allow_blank: true, on_or_after: :min_start_date, unless: :is_admin?
@@ -33,14 +35,22 @@ class PixiPost < ActiveRecord::Base
   validates_date :completed_date, presence: true, if: :has_pixi?
   validates_datetime :alt_time, presence: true, unless: "alt_date.nil?"
   validates_datetime :appt_time, presence: true, unless: "appt_date.nil?"
+  validate :must_have_pixis, unless: "completed_date.nil?"
 
   default_scope :order => "preferred_date, preferred_time ASC"
 
   # check if zip is in current service area
   def zip_service_area
-    if PixiPostZip.find_by_zip(zip.to_i) == nil
-       errors.add(:base, "Zip not in current PixiPost service area.")
-    end
+    errors.add(:base, "Zip not in current PixiPost service area.") if PixiPostZip.find_by_zip(zip.to_i) == nil
+  end
+
+  # getter and setter for pixi_post_detail ids
+  def listing_tokens
+    pixi_post_details.pluck('pixi_id')
+  end
+
+  def listing_tokens=(pixi_ids)
+    PixiPostProcessor.new(self).set_tokens pixi_ids
   end
 
   # checks if post has appointment & is completed
@@ -51,6 +61,16 @@ class PixiPost < ActiveRecord::Base
   # checks if post has pixan & is inot completed
   def can_set_appt?
     has_pixan? && !is_completed?
+  end
+
+  # validate picture exists
+  def must_have_pixis
+    if !has_pixi?
+      errors.add(:base, 'Must have a pixi')
+      false
+    else
+      true
+    end
   end
 
   # set min start date
@@ -132,7 +152,7 @@ class PixiPost < ActiveRecord::Base
 
   # check if pixi is assigned
   def has_pixi?
-    !pixi_id.blank?
+    !pixi_post_details.detect { |x| x && !x.pixi_id.nil? }.nil? 
   end
 
   # check if comments is assigned
@@ -142,23 +162,12 @@ class PixiPost < ActiveRecord::Base
 
   # load new pixi post with pre-populated fields
   def self.load_new usr, zip
-    if usr
-      pp = usr.pixi_posts.build
-      if usr.has_address? && zip == usr.contacts[0].zip
-        pp = AddressManager::synch_address pp, usr.contacts[0], false
-      else
-        loc = PixiPostZip.active.find_by_zip(zip.to_i) rescue nil
-	pp.city, pp.state = loc.city, loc.state unless loc.blank?
-        pp.mobile_phone, pp.home_phone = usr.contacts[0].mobile_phone, usr.contacts[0].home_phone unless usr.contacts[0].blank?
-        pp.zip = zip
-      end
-    end
-    pp
+    usr ? PixiPostProcessor.new(usr.pixi_posts.build).load_new(usr, zip) : PixiPost.new
   end
 
   # display full address
   def full_address
-    addr = AddressManager::full_address self
+    PixiPostProcessor.new(self).full_address
   end
 
   # format date
@@ -171,26 +180,14 @@ class PixiPost < ActiveRecord::Base
     send(method).strftime("%l:%M %p") rescue nil
   end
 
+  # format date
+  def format_date dt
+    PixiPostProcessor.new(self).format_date(dt)
+  end
+
   # cancels existing post and create new post based on original post
   def self.reschedule pid
-    if old_post = PixiPost.where(id: pid).first
-      attr = old_post.attributes  # copy attributes
-
-      # remove protected attributes
-      %w(id pixan_id appt_date appt_time preferred_date preferred_time alt_date alt_time comments pixi_id created_at updated_at)
-      .map {|x| attr.delete x}
-
-      # load attributes to new record
-      new_post = PixiPost.new(attr)
-       
-      # remove old post
-      old_post.destroy
-
-      # return new post
-      new_post
-    else
-      PixiPost.new
-    end
+    PixiPostProcessor.new(PixiPost.new).reschedule(pid)
   end
 
   # set json string
@@ -202,40 +199,54 @@ class PixiPost < ActiveRecord::Base
 
   # returns item title
   def self.item_title pixi_post
-    return (Listing.find_by_pixi_id(pixi_post.pixi_id)).title rescue nil
+    pixi_post.pixi_post_details.first.pixi_title rescue nil
   end
 
   # returns item's sale value
   def self.sale_value pixi_post
-    return Invoice.find_by_pixi_id(pixi_post.pixi_id).price rescue nil
+    PixiPostProcessor.new(pixi_post).get_sale_value
   end
 
   # returns item's sale date
   def self.sale_date pixi_post
-    return Invoice.find_by_pixi_id(pixi_post.pixi_id).created_at rescue nil
+    PixiPostProcessor.new(pixi_post).get_sale_date
   end
 
   # returns item's listing value
   def self.listing_value pixi_post
-    return Listing.find_by_pixi_id(pixi_post.pixi_id).price rescue nil
+    PixiPostProcessor.new(pixi_post).get_post_value
   end
 
   # retrives the data for pixter_report
   def self.pixter_report start_date, end_date, pixter_id
-    pixi_posts = Array.new
-    pixi_posts = pixter_id.nil? ? PixiPost.includes(:user, :pixan).all : PixiPost.includes(:user, :pixan).where(pixan_id: pixter_id)
-    pixi_posts = pixi_posts.keep_if{|elem| ((elem.status == "completed") &&
-                  (elem.completed_date >= start_date) && (elem.completed_date <= end_date))}
+    PixiPostProcessor.new(PixiPost.new).pixter_report start_date, end_date, pixter_id
+  end
+
+  # post processing
+  def process_request
+    PixiPostProcessor.new(self).process_request
+  end
+
+  # post processing
+  def send_appt_notice
+    PixiPostProcessor.new(self).send_appt_notice
+  end
+
+  # migrate pixi id to details`
+  def self.load_details
+    PixiPostProcessor.new(self).load_details
   end
 
   def as_csv(options={})
-    { "Post Date" => completed_date.strftime("%F"), "Item Title" => PixiPost.item_title(self), "Customer" => seller_name, "Pixter" => pixter_name,
-      "Sale Date" => !(PixiPost.sale_date(self).nil?) ? PixiPost.sale_date(self) : 'Not sold yet', "List Value" => PixiPost.listing_value(self),
-      "Sale Value" => !(PixiPost.sale_value(self).nil?) ? PixiPost.sale_value(self) : 'Not sold yet', 
-      "Pixter Revenue" => !(PixiPost.sale_value(self).nil?) ? (PixiPost.sale_value(self) * PIXTER_PERCENT) / 100 : 'Not sold yet' }
+    PixiPostProcessor.new(self).csv_data
+  end
+
+  # adds new record
+  def self.add_post attr, usr
+    PixiPostProcessor.new(PixiPost.new(attr)).add_post(usr)
   end
 
   def self.filename
-    'Pixter_Report_' + ResetDate::display_date_by_loc(Time.now, Geocoder.coordinates("San Francisco, CA"), false).strftime("%Y_%m_%d")
+    PixiPostProcessor.new(self).filename
   end
 end

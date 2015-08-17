@@ -10,7 +10,7 @@
       <span class="<%= set_user_font(post) %>"><%= get_poster_name(post, sentFlg) %></span>
     </td>
     <td class="span5 no-left">
-      <span class='pixi-gray-color hdr-content'><%= post.summary(60, true) %></span>
+      <span class='pixi-gray-color hdr-content'><%= sanitize(post.summary(60, true)) %></span>
     </td>          
     <td class="span4">
       <div class='right-form'>
@@ -23,7 +23,7 @@
     </td>
   </table>
   <div class='span11'> 
-    <span class="mleft40 content-conv"> <%= post.full_content %></span>
+    <span class="mleft40 content-conv"> <%= sanitize post.full_content %></span>
   </div>
   <div class='clear-all'></div>
 </li>

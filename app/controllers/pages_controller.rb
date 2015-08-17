@@ -9,7 +9,7 @@ class PagesController < ApplicationController
   end
 
   def home
-    @listings = Listing.active.paginate(page: @page, per_page: @per_page) unless mobile_device?
+    @listings = Listing.active.board_fields.paginate(page: @page, per_page: @per_page) 
   end
 
   def about
@@ -39,6 +39,6 @@ class PagesController < ApplicationController
   end
 
   def load_data
-    @page, @per_page = params[:page] || 1, params[:per_page] || 8
+    @page, @per_page = params[:page] || 1, params[:per_page] || PIXI_DISPLAY_AMT
   end
 end

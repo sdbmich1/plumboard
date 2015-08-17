@@ -1,0 +1,10 @@
+<tr>
+  <td class='span1 center-wrapper'>
+    <%= render partial: 'shared/show_temp_pixi_image', locals: {model: user, pix_size: 'tiny', img_size: 'usr-sm-photo'} %>
+  </td>
+  <td class='span2'><%= user.business_name %></td>
+  <td class='span3'><%= get_user_loc(user) %></td>
+  <td class='span1'><div class='price'><%= user.active_listings_count %></div></td>
+  <td class='span2'><%= @user.nice_date(@user.date_followed(user.id)) %></td>
+  <td class='span1 center-wrapper'><%= link_to 'View', user.local_user_path, class: 'btn btn-small' %></td>
+</tr>

@@ -27,24 +27,30 @@ feature "ManagePixis" do
     end
 
     if val == 'pending' || val == 'denied'
-      visit pending_listings_path(status: val, loc: @site.id, cid: @category.id)
+      #visit pending_listings_path(status: val, loc: @site.id, cid: @category.id)
       visit pending_listing_path(listing)
       page.should have_button('Deny')
       ['Improper Content', 'Bad Pictures', 'Insufficient Information'].each do |item|
         page.should have_link item, href: deny_pending_listing_path(listing, reason: item)
       end
       page.should have_link 'Approve', href: approve_pending_listing_path(listing)
+      visit pending_listings_path(status: val, loc: @site.id, cid: @category.id)
     elsif val == 'draft'
       visit unposted_temp_listings_path(status: 'new/edit', loc: @site.id, cid: @category.id)
     elsif val == 'invoiced'
-      @invoice = @user.invoices.build attributes_for(:invoice, buyer_id: buyer.id, status: 'active')
+      @invoice = @user.invoices.build attributes_for(:invoice, buyer_id: buyer.id, status: 'unpaid')
       @details = @invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: listing.pixi_id 
       @invoice.save!
-      visit invoiced_listings_path(loc: @site.id, cid: @category.id)
+      visit invoiced_listings_path(status: 'invoiced', loc: @site.id, cid: @category.id)
     elsif val == 'wanted'
       buyer.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: listing.pixi_id
-      visit wanted_listings_path(loc: @site.id, cid: @category.id)
+      visit wanted_listings_path(status: 'wanted', loc: @site.id, cid: @category.id)
     else
+      if val == 'sold'
+        @invoice = @user.invoices.build attributes_for(:invoice, buyer_id: buyer.id, status: 'paid')
+        @details = @invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: listing.pixi_id 
+        @invoice.save!
+      end
       visit listings_path(status: val, loc: @site.id, cid: @category.id)
     end
     process_element val, flg if flg
@@ -54,6 +60,10 @@ feature "ManagePixis" do
     str_arr = %w(Sold Active Expired Purchased Removed Draft Denied Invoiced)
     str_arr.select! { |x| x != val.titleize }
     page.should have_content "#{val.titleize} Listing" 
+    date_header = val == "draft" ? "Last Updated" : "#{val.titleize} Date"
+    page.should have_content date_header
+    name_header = %w(sold invoiced wanted).include?(val) ? 'Buyer Name' :  'Seller Name'
+    page.should have_content name_header
     str_arr.each do |str|
       page.should_not have_content "#{str} Listing"
     end
@@ -78,9 +88,10 @@ feature "ManagePixis" do
     before do
       @category = create :category, name: 'Music'
       @site = create :site, name: 'Berkeley'
+      @site.contacts.create FactoryGirl.attributes_for(:contact)
       16.times do
         @listing = create :listing, seller_id: pixi_user.id, status: 'active', title: 'Guitar', description: 'Lessons', category_id: @category.id, 
-	  site_id: @site.id
+          site_id: @site.id
       end
 
       init_setup admin_user

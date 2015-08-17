@@ -30,7 +30,7 @@ describe "Pages" do
       page.should have_link 'Privacy', href: privacy_path
       page.should have_link 'Terms', href: terms_path
       page.should have_link 'Contact', href: contact_path
-      page.should have_link 'Careers', href: careers_path
+      page.should have_link 'Careers', href: career_path
       page.should have_link 'PixiChat', href: '/howitworks#pxboard'
       page.should have_link 'PixiPay', href: '/howitworks#pxpay'
       page.should have_link 'PixiPost', href: '/howitworks#pxpost'

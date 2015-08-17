@@ -1,0 +1,6 @@
+<div class="featured-container">
+  <div class='center-wrapper'><br /><div class='bold-tag-line mbot'>Featured Pixis</div></div>
+  <div class='featured mleft20'>  
+    <%= render(partial: 'shared/listing', collection: featured_pixis(@listings), as: :listing, locals: {px_size: 'medium', ftrFlg: false}) %>
+  </div>
+</div>

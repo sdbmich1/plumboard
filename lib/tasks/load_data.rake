@@ -65,6 +65,26 @@ namespace :db do
   task :load_user_urls => :environment do
     set_user_url
   end
+
+  task :load_user_status => :environment do
+    set_user_status
+  end
+
+  task :reset_acct_token => :environment do
+    reset_user_acct_token
+  end
+
+  task :reload_pixi_posts => :environment do
+    load_pixi_post_details
+  end
+
+  task :load_active_listings_counter => :environment do
+    set_active_listings_count
+  end
+
+  task :reload_user_types => :environment do
+    reset_user_types
+  end
 end
 
 def set_keys
@@ -93,8 +113,11 @@ def updateCategoryType
   Category.where(name: ['GIGS', 'JOBS', 'EMPLOYMENT']).update_all(category_type_code: 'employment')
   Category.where(name: ['EVENT', 'EVENTS', 'HAPPENINGS', 'TICKETS FOR SALE']).update_all(category_type_code: 'event')
   Category.where(name: ['ANTIQUES', 'COLLECTIBLES', 'REAL ESTATE']).update_all(category_type_code: 'asset')
+  Category.where(name: ['FURNITURE', 'APPAREL', 'SPORTS EQUIPMENT']).update_all(category_type_code: 'product')
   Category.where(name: ['AUTOMOTIVE', 'BOATS', 'MOTORCYCLE']).update_all(category_type_code: 'vehicle')
-  Category.where(name: ['BEAUTY', 'SERVICES', 'TRAVEL', 'PETS', 'CLASSES & LESSONS', 'LOST & FOUND', 'DEALS']).update_all(category_type_code: 'service')
+  Category.where(name: ['BEAUTY', 'SERVICES', 'TRAVEL', 'CLASSES & LESSONS', 'LOST & FOUND' ]).update_all(category_type_code: 'service')
+  Category.where(name: ['PETS']).update_all(category_type_code: 'item')
+  Category.where(name: ['HOUSING: FOR RENT', 'HOUSING: FOR SALE']).update_all(category_type_code: 'housing')
   Category.where('category_type_code is null').update_all(category_type_code: 'sales')
 end
 
@@ -183,8 +206,14 @@ def update_txn_detail_price
   end
 end
 
+# migrate pixi_id to new child table
 def load_invoice_details
   Invoice.load_details
+end
+
+# migrate pixi_id to new child table
+def load_pixi_post_details
+  PixiPost.load_details
 end
 
 # load country field for all Contacts
@@ -218,5 +247,25 @@ def set_want_status
 end
 
 def set_user_url
-  User.where(first_name: 'Sean').find_each {|u| u.update_attribute(:user_url, u.name)}
+  User.where("(url IS NULL or url = '') and status = ?", 'active').find_each {|u| u.update_attribute(:user_url, u.name)}
+end
+
+def set_user_status
+  User.where("status IS NULL").update_all(status: 'active')
+end
+
+def set_active_listings_count
+  Listing.active.find_each { |listing| User.reset_counters(listing.seller_id, :active_listings) }
+end
+
+def reset_user_types
+  User.where(status: 'active').find_each do |usr|
+    usr.update_attribute :user_type_code, usr.user_type_code.upcase
+  end 
+end
+
+def reset_user_acct_token
+  CardAccount.destroy_all
+  BankAccount.destroy_all
+  User.where("acct_token IS NOT NULL").update_all(acct_token: nil)
 end

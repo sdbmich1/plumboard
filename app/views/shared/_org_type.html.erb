@@ -1,0 +1,1 @@
+<%= collection_select :org_type_code, :code, OrgType.active, :code, :description, {selected: @org.org_type_code}, {class: 'span2 cat-select'} %>

@@ -38,16 +38,4 @@ describe UserObserver do
       expect(user.roles.find_by_name(role.to_s.camelize).blank?).to eq(true)
     end
   end
-
-  describe 'after_create' do
-    let(:user) { FactoryGirl.create :contact_user }
-
-    it 'set default user_type' do
-      user.user_type_code.should == 'mbr'
-    end
-
-    it 'set url' do
-      expect(user.url).not_to be_nil
-    end
-  end
 end

@@ -6,7 +6,7 @@ class PendingListingsController < ApplicationController
   respond_to :html, :json, :js, :csv
 
   def index
-    @unpaginated_listings = TempListing.check_category_and_location(@status, @cat, @loc)
+    @unpaginated_listings = TempListing.check_category_and_location(@status, @cat, @loc, false)
     respond_with(@listings = @unpaginated_listings.paginate(page: @page, per_page: 15)) { |format| render_csv format }
   end
 
@@ -52,6 +52,6 @@ class PendingListingsController < ApplicationController
   end
 
   def render_csv format
-    format.csv { send_data(render_to_string(csv: @unpaginated_listings), disposition: "attachment; filename=#{TempListing.filename(@status)}.csv") }
+    format.csv { send_data(render_to_string(csv: @unpaginated_listings, style: @status), disposition: "attachment; filename=#{Listing.filename @status}.csv") }
   end
 end

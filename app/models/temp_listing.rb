@@ -2,38 +2,36 @@ class TempListing < ListingParent
   self.table_name = "temp_listings"
   resourcify
 
-  include CalcTotal, SystemMessenger
+  belongs_to :user, foreign_key: :seller_id
+
   before_create :set_flds
   after_commit :async_send_notification, :on => :update
 
   attr_accessor :slr_name
-  attr_accessible :slr_name, :item_color, :item_id, :car_color, :car_id
+  attr_accessible :slr_name, :item_color, :item_id, :car_color, :car_id, :location_size, :product_size, :product_color, :item_size2
+
+  default_scope :order => "temp_listings.updated_at DESC"
 
   # set fields upon creation
   def set_flds
-    # parse non-ascii chars
-    encoding_options = {:invalid => :replace, :undef => :replace, :replace => '', :UNIVERSAL_NEWLINE_DECORATOR => true}
-    self.title.encode!(Encoding.find('ASCII'), encoding_options)
-    self.description.encode!(Encoding.find('ASCII'), encoding_options)
-
-    # set as new if empty
-    self.status = 'new' if status.blank?
-
-    # generate unique pixi key
-    generate_token if pixi_id.blank?
-
-    self.alias_name = rand(36**ALIAS_LENGTH).to_s(36) if alias?
-    set_end_date
-    self
+    TempListingProcessor.new(self).set_flds
   end
 
   # getter & setter for shared color & other_id fields
   def item_color
-    self[:color] unless is_category_type?('vehicle')
+    self[:color] if is_category_type?('item')
   end
 
   def item_color=value
-    self[:color] = value unless is_category_type?('vehicle')
+    self[:color] = value if is_category_type?('item')
+  end
+
+  def product_color
+    self[:color] if is_category_type?('product')
+  end
+
+  def product_color=value
+    self[:color] = value if is_category_type?('product')
   end
 
   def item_id
@@ -60,9 +58,33 @@ class TempListing < ListingParent
     self[:other_id] = value if is_category_type?('vehicle')
   end
 
+  def location_size
+    self[:item_size] if is_category_type?('housing')
+  end
+
+  def location_size=value
+    self[:item_size] = value if is_category_type?('housing')
+  end
+
+  def product_size
+    self[:item_size] if is_category_type?('product')
+  end
+
+  def product_size=value
+    self[:item_size] = value if is_category_type?('product')
+  end
+
+  def item_size2
+    self[:item_size] if is_category_type?('item')
+  end
+
+  def item_size2=value
+    self[:item_size] = value if is_category_type?('item')
+  end
+
   # sets values from assessor fields to table fields
   def set_item_flds
-    self.color, self.other_id = item_color || car_color, item_id || car_id
+    self.color, self.other_id, self.item_size = item_color || car_color || product_color, item_id || car_id, location_size || product_size || item_size2
   end
 
   # finds specific pixi
@@ -82,28 +104,17 @@ class TempListing < ListingParent
 
   # edit order fields to process order
   def edit_flds usr, val, reason=''
-    self.status, self.edited_by, self.edited_dt, self.explanation = val, usr.name, Time.now, reason
-    save!
+    TempListingProcessor.new(self).edit_flds usr, val, reason
   end
-  # handle_asynchronously :edit_flds, :queue => 'pixi_processing'
 
   # check if pixi is free
   def free?
-    CalcTotal::get_price(self.premium?) == 0.00 rescue true
+    TempListingProcessor.new(self).free?
   end
 
   # submit order request for review
   def submit_order val
-
-    # set transaction id
-    if !val.blank? || free?
-      self.transaction_id = val if val
-      self.status = 'pending' 
-      save!
-    else
-      errors.add :base, "Pixi must have transaction to submit an order."
-      false
-    end
+    TempListingProcessor.new(self).submit_order val
   end
 
   # used to resubmit changes to previously approved orders for new approval
@@ -111,38 +122,24 @@ class TempListing < ListingParent
     submit_order transaction_id
   end
 
-  # add listing to board if approved
-  def post_to_board
-    if self.status == 'approved'
-      dup_pixi true
-    else
-      errors.add :base, "Pixi must be approved prior to posting to board."
-      false
-    end
-  end
-
   # find pixis in draft status
   def self.draft
-    include_list.where("status NOT IN ('approved', 'pending')").reorder('temp_listings.updated_at DESC')
+    result = select_fields("temp_listings.updated_at").include_list
+    result.where("temp_listings.status NOT IN ('approved', 'pending')").reorder('temp_listings.updated_at DESC')
   end
 
   # add listing to board and process transaction
   def async_send_notification 
-    case status
-      when 'pending'
-        UserMailer.delay.send_submit_notice(self)
-      when 'approved'
-        post_to_board
-        transaction.process_transaction unless transaction.approved? rescue nil
-      when 'denied'
-        # pxb notice & email messages to user
-        UserMailer.delay.send_denial(self)
-        SystemMessenger::send_message user, self, 'deny'
-    end
+    TempListingProcessor.new(self).async_send_notification
   end
 
   # set deny item list based on pixi type
   def deny_item_list
     ['Bad Pictures', 'Improper Content', 'Insufficient Information']
+  end
+
+  # adds new record
+  def self.add_listing attr, usr
+    TempListingProcessor.new(TempListing.new(attr)).add_listing(usr)
   end
 end

@@ -7,8 +7,9 @@ $.ajaxSetup({
 	xhr.setRequestHeader("X-CSRF-Token", token);
   	toggleLoading();
     },
-  'success': function(){ toggleLoading(); },
-  'complete': function(){ toggleLoading(); }
+  success: function(){ toggleLoading(); },
+  complete: function(){ toggleLoading(); }, 
+  cache: false 
 }); 
 
 // when the #category id field changes
@@ -80,6 +81,10 @@ $(document).on("ajax:complete", '#mark-posts, #post-frm, #comment-doc, .pixi-cat
   toggleLoading();
 });	
 
+$(document).on("ajax:complete", '#acct-setting', function () {
+  reload_ratings();
+});	
+
 // handle 401 ajax error
 $(document).ajaxError( function(e, xhr, options){
   if(xhr.status == 401) {
@@ -103,13 +108,16 @@ $(document).ready(function(){
   });
 
   // enable carousel
-  $('.carousel').carousel({interval: 7000});
+  if( $('.carousel').length > 0 ) 
+    $('.carousel').carousel({interval: 7000});
+
+  // enable tokenize
+  if( $('#listing_tokens').length > 0 ) 
+    $('#listing_tokens').tokenize();
 
   // select last accordion panel on window load
   window.onload = function () {
     open_panel();
-    if($('#accordion').length > 0)
-      $("#accordion").accordion('option', "active", -1 );
   }
 
   // enable tooltip
@@ -129,17 +137,6 @@ $(document).ready(function(){
   // enable video clip
   if( $('.vimeo-thumb').length > 0 ) {
     $('.vimeo-thumb').smartVimeoEmbed();
-  }
-
-  // enable placeholder text for input fields
-  if( $('#px-container').length == 0 ) {
-    $('input, textarea').placeholder();
-  }
-  else {
-    // load board on doc ready
-    if( $('.pixiPg').length == 0) {
-      load_masonry('#px-nav', '#px-nav a', '#pxboard .item', 220); 
-    }
   }
 
   // used to scroll up page
@@ -165,18 +162,37 @@ $(document).ready(function(){
   });
 
   // repaint file fields
-  if( $('.cabinet').length > 0 ) {
-    SI.Files.stylizeAll();
-  }
+  stylize();
 
   // set rating elements
-  if ($('#rateit5').length > 0) {  
-    $('#rating-done-btn').attr('disabled', true);
-    $("#rateit5").bind("rated", function (event, value)  { $('#value5').val(value); $('#rating-done-btn').removeAttr('disabled'); });
-    $("#rateit5").bind('reset', function () { $('#value5').val(0); $('#rating-done-btn').attr('disabled', true); });
-  }
+  load_ratings();
 
   // set inquiry form elements
+  set_inquiry_form();
+
+  // hide footer on main board
+  if ($('.item-cat').length > 0) {  
+    $('#footer').hide('fast');
+  }
+
+  // enable placeholder text for input fields
+  if( $('#px-container').length == 0 ) {
+    $('input, textarea').placeholder();
+  }
+  else {
+    open_board();
+  }
+
+});
+
+$(window).load(function() { load_featured_slider(); });
+
+// load board on doc ready
+function open_board() {
+  load_masonry('#px-nav', '#px-nav a', '#pxboard .item', get_item_size()); 
+}
+
+function set_inquiry_form() {
   if ($('#inquiry_frm').length > 0) {  
     if($('#inq_status').is(':visible')) {
       $('#inq-done-btn').removeAttr('disabled');
@@ -184,12 +200,7 @@ $(document).ready(function(){
       $('#inq-done-btn').attr('disabled', true);
     }
   }
-
-  // hide footer on main board
-  if ($('.item-cat').length > 0) {  
-    $('#footer').hide('fast');
-  }
-});
+}
 
 // masks phone number fields
 var mask_flds = '#pixi_post_home_phone, #pixi_post_mobile_phone, #home_phone, #mobile_phone, #work_phone, #transaction_home_phone';
@@ -254,9 +265,10 @@ $(document).on("click", "#build-pixi-btn", function(showElem){
 // check for valid price
 $(document).on("change", "#temp_listing_price", function(showElem){
   var price = $(this).val(); 
+  var max_price = parseInt($(this).attr('max'));
 
   // reset field
-  if(!checkPrice(price))
+  if(!checkPrice(price, max_price))
     $(this).val('');
 
   // validate fields prior to submitting form
@@ -327,7 +339,6 @@ function initScroll(cntr, nav, nxt, item) {
       loadingBoard = false;
     });
   }
-
   $("#spinner").hide('fast');
 }
 
@@ -343,6 +354,7 @@ function load_masonry(nav, nxt, item, sz){
 	gutter : 10,
 	isFitWidth: true,
         columnWidth : sz,
+	transitionDuration: '0.2s',
 	layoutPriorities : {
 	   upperPosition: 1,
 	   shelfOrder: 1
@@ -400,50 +412,9 @@ function processUrl(url, ptype) {
   });
 }
 
-// set autocomplete selection value
-$(document).on("railsAutocomplete.select", "#site_name", function(event, data){
-  if ($('#recent-link').length > 0) {
-   resetBoard(); // reset board display
-  }
-  else {
-    var loc = $('#site_id').val(); // grab the selected location 
-
-    if ($('#cat-wrap').length > 0) { 
-      var url = '/categories/location?' + 'loc=' + loc;
-      processUrl(url);
-    } 
-    else if ($('#status_type').length > 0) {
-      get_pixi_url();
-    }
-    else {
-      checkLocID(loc);
-    }
-  }
-});
-
-// set autocomplete selection value
-$(document).on("railsAutocomplete.select", "#buyer_name, #slr_name, #pixan_name, #search_user", function(event, data){
-  var bname = data.item.first_name + ' ' + data.item.last_name;
-  $('#pixan_name, #search_user, #slr_name, #buyer_name').val(bname);
-  if ($('#search_user').length > 0) {
-    $('#submit-btn').click();
-  }
-});
-
-// set autocomplete selection value
-$(document).on("railsAutocomplete.select", "#search", function(event, data){
-  $('#submit-btn').click();
-});
-
 // toggle profile state
 $(document).on('click', '#edit-txn-addr, #edit-addr-btn', function(e) {
   $('.user-tbl, .addr-tbl').toggle();
-});
-
-// toggle credit card edit view
-$(document).on('click', '#edit-card-btn', function(e) {
-  $('#pay_token').val('');
-  $('.card-tbl, .card-dpl').toggle();
 });
 
 // toggle contact form for show pixi
@@ -485,12 +456,6 @@ var keyPress = false;
 // submit contact form on enter key
 $(document).on("keypress", "#contact_content", function(e){ 
   keyEnter(e, $(this), '#contact-btn');
-});
-
-// submit comment form on enter key
-$(document).on("keypress", "#comment_content", function(e){
-  var a = $(this).attr('id');
-  keyEnter(e, $(this), '#comment-btn');
 });
 
 // submit search form on enter key
@@ -582,11 +547,7 @@ $(document).on("change", "#site_id, #category_id", function() {
 
 // check for recent link click
 $(document).on("click", "#recent-link", function() {
-
-  // reset board
   resetBoard();
-  
-  //prevent the default behavior of the click event
   return false;
 });
 
@@ -632,16 +593,10 @@ $(function() {
 });
 
 // toggle menu post menu item
-$(document).on('click', '#send-want-btn, #want-modal-btn', function(e) {
+$(document).on('click', '#send-want-btn, #want-modal-btn, #send-ask-btn, #ask-modal-btn', function(e) {
   var target = $(e.target), action;
-  action = target.is('#want-modal-btn') ? 'hide' : 'show';
-  $('#wantDialog').modal(action);
-});
-
-$(document).on('click', '#send-ask-btn, #ask-modal-btn', function(e) {
-  var target = $(e.target), action;
-  action = target.is('#ask-modal-btn') ? 'hide' : 'show';
-  $('#askDialog').modal(action);
+  action = target.is('#want-modal-btn, #ask-modal-btn') ? 'hide' : 'show';
+  $('#wantDialog, #askDialog').modal(action);
 });
 
 // toggle menu post menu item
@@ -652,7 +607,6 @@ $(document).on('click', '.post-menu', function(e) {
 // toggle seller comments
 $(document).on('click', '#seller-cmt-btn', function(e) {
   $('#cmt-fld').toggle();
-
   $(this).text(function(i, text){
     return text === "Add Comment" ? "Hide Comment" : "Add Comment";
   });
@@ -716,11 +670,7 @@ function resetScroll(url) {
 
 // return masonry item size
 function get_item_size() {
-  if($('.board-top').length > 0) {
-    var sz = 1; }
-  else {
-    var sz = 180; }
-
+  var sz = 220;
   return sz;
 }
 
@@ -759,7 +709,6 @@ function keySelectEnter(e, $this) {
 var processFlg = false;
 
 $(window).scroll(function(e) {
-
   if ($('#px-container').length > 0) {
     var url = $('a.nxt-pg').attr('href');
 
@@ -832,9 +781,9 @@ function checkLocID(loc) {
 }
 
 // check if price is valid
-function checkPrice(price) {
-  if(price.length > 0 && parseInt(price) > 15000 && $('#pixi-form').length > 0) {
-    postFlashMsg('#form_errors','error', 'Price must be less than or equal to $15,000');
+function checkPrice(price, max_price) {
+  if(price.length > 0 && parseInt(price) > max_price && $('#pixi-form').length > 0) {
+    postFlashMsg('#form_errors','error', 'Price must be less than or equal to $' + max_price);
     return false;
   }
   return true;
@@ -890,4 +839,50 @@ function updateUrl(url, destUrl, pType, method) {
       processUrl(destUrl);  // refresh page
     }
   });
+}
+
+// prevent page change on backspace for forms
+$(document).on("keydown", function (e) {
+  if (e.which === 8 && !$(e.target).is("input, textarea")) {
+    e.preventDefault();
+  }
+});
+
+// used to styleize file input buttons
+function stylize() {
+  if( $('.cabinet').length > 0 ) {
+    SI.Files.stylizeAll();
+  }
+}
+
+// used to initialize ratings
+function load_ratings() {
+  if ($('#rateit5').length > 0) {  
+    $('#rating-done-btn').attr('disabled', true);
+    $("#rateit5").bind("rated", function (event, value)  { $('#value5').val(value); $('#rating-done-btn').removeAttr('disabled'); });
+    $("#rateit5").bind('reset', function () { $('#value5').val(0); $('#rating-done-btn').attr('disabled', true); });
+  }
+}
+
+function reload_ratings() {
+  if ($('#rating').length > 0) {  
+    $(".rateit").rateit();
+  }
+}
+
+// tabs 
+$(document).on("click", '#map-tab, #detail-tab, #comment-tab', function(e){
+  e.preventDefault();
+  var clicked = $(this).attr('id');
+  $(this).tab('show');
+  if(clicked == 'map-tab') {
+    getLatLng(true);		
+  }
+});
+
+// toggle field display based on category value
+function resetSpan(ctype) {
+  if(ctype.match(new RegExp('biz', 'i'))) {
+    $('#signInForm').removeClass('offset4').addClass('offset5');
+  }
 }

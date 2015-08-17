@@ -5,7 +5,7 @@
     <%= render partial: 'shared/purchase_summary', locals: { txn: txn, order: order } %>
     <%= render partial: 'shared/buyer_info', locals: { f: f, txn: txn } %>
     <%= render partial: 'shared/credit_card_info', locals: { f: f } if txn.amt > 0.0 %>
-    <%= f.hidden_field :token, id: 'pay_token', value: get_card_data('token') %>
+    <%= f.hidden_field :token, id: 'pay_token', value: get_token('token') %>
     <%= f.hidden_field :payment_type, id: 'pay_type' %>
     <%= f.hidden_field :exp_month, id: 'exp_month' %>
     <%= f.hidden_field :exp_year, id: 'exp_year' %>
@@ -13,12 +13,13 @@
     <%= f.hidden_field :user_id, :value=>txn.user_id %>
     <%= f.hidden_field :transaction_type, :value=>txn.transaction_type %>
     <%= f.hidden_field :amt, :value => txn.amt, :id=>'amt' %>
+    <%= f.hidden_field :seller_token, :value => txn.seller_token, :id=>'seller_token' %>
+    <%= f.hidden_field :seller_inv_amt, :value => txn.seller_inv_amt, :id=>'seller_inv_amt' %>
     <%= f.hidden_field :processing_fee, :value => txn.processing_fee, :id=>'processing_fee' %>
     <%= f.hidden_field :convenience_fee, :value => txn.convenience_fee, :id=>'convenience_fee' %>
     <%= f.hidden_field :description, :value => order[:title] %>
-    <%= link_to 'Prev', get_cancel_path(txn, order), class: 'btn btn-large back-btn' %>
     <div class="nav pull-right">
-      <%= link_to 'Cancel', get_cancel_path(txn, order), method: :delete, confirm: cancel_msg, class: 'btn btn-large' %>
+      <%= link_to 'Cancel', get_cancel_path(txn, order), confirm: cancel_msg, class: 'btn btn-large' %>
       <%= f.submit "Done!", :confirm => confirm_msg, :id => 'payForm', class: "btn btn-large btn-primary submit-btn" %>
     </div>
   <% end %>

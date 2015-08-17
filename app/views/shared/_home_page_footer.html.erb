@@ -1,28 +1,15 @@
+<%= render partial: 'home_page_pixi_post' %>
 <div class='lg-top pixi-blk-bkgnd'>
-  <div class='row offset4'>
-    <div class='span2 mtop no-left'>
-      <%= link_to "About", about_path, class: 'white-browse-link' %><br />
-      <%= link_to "Contact", contact_path, class: 'white-browse-link' %><br />
-      <%= link_to "Help", help_path, class: 'white-browse-link' %>
-    </div>
-    <div class='span2 mtop'>
-      <%= link_to "PixiChat", '/howitworks#pxboard', class: 'white-browse-link' %><br />
-      <%= link_to "PixiPay", '/howitworks#pxpay', class: 'white-browse-link' %><br />
-      <%= link_to "PixiPost", '/howitworks#pxpost', class: 'white-browse-link' %>
-    </div>
-    <div class='span2 mtop'>
-      <%= link_to "Privacy", privacy_path, class: 'white-browse-link' %><br />
-      <%= link_to "Careers", careers_path, class: 'white-browse-link' %><br />
-      <%= link_to "Terms", terms_path, class: 'white-browse-link' %>
-    </div>
+  <div id='homePgFtr' class='row mauto35'>
+    <%= render partial: 'shared/home_page_footer_links' %>
   </div>
   <div class='row mtop center-wrapper'>
     <small class='helv-white font-bold'>Follow Us On</small>
   </div>
-  <div class='row mtop offset5'>
-      <div class="span4 no-left center-wrapper">
-        <ul class='sm-top no-list'><%= render 'layouts/footer_image_links' %></ul>
-      </div>
+  <div id='homePgLink' class='row mtop mauto20'>
+    <div class="span4 center-wrapper">
+      <ul class='sm-top no-list'><%= render 'layouts/footer_image_links' %></ul>
+    </div>
   </div>
   <div class='row mtop center-wrapper'>
     <small class='helv-white'>&copy; <%= "#{Date.today.year} #{full_title('')}, Inc." %></small>

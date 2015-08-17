@@ -3,6 +3,7 @@ var style = 'usr-photo';
 
 // preview image on file upload
 $(document).on("change", "input[type=file]", function(evt){
+  var listID = $(this).attr('id') == 'usr_photo2' ? 'list2' : 'list';
 
   // check if correct style for image
   checkStyle();
@@ -10,6 +11,9 @@ $(document).on("change", "input[type=file]", function(evt){
   //  check if s3 upload
   if($('.js-s3_file_field').length == 0) {
     handleFileSelect(evt, style);  
+  }
+  else {
+    load_image_uploader();
   }
   return false;
 }); 
@@ -35,7 +39,7 @@ function handleFileSelect(evt, style) {
 	  var link = '', ctr = '', etype = 'span';
 
           // Render thumbnail.
-	  renderThumb(style, link, ctr, etype, e.target.result, theFile.name);
+	  renderThumb(style, link, ctr, etype, e.target.result, theFile.name, 'list');
         };
       })(f);
 
@@ -91,23 +95,21 @@ function check_file_list() {
   }
 }
 
-function renderThumb(style, link, ctr, etype, src, fileName) {
-  //console.log('rendering thumbnail...');
+function renderThumb(style, link, ctr, etype, src, fileName, idName) {
   var item = document.createElement(etype);
 
   // build html for DOM
-  item.innerHTML = ['<img class="', style, '" src="', src,
-    '" title="', escape(fileName), '"/>', link].join('');
-            $(item).addClass(ctr);
+  item.innerHTML = ['<img class="', style, '" src="', src, '" title="', escape(fileName), '"/>', link].join('');
+  $(item).addClass(ctr);
 
   // add item		  
-  document.getElementById('list').insertBefore(item, null);
+  document.getElementById(idName).insertBefore(item, null);
 }
 
 function checkStyle() {
-  if($('#usr_photo').length == 0) {
-      style = 'sm-thumb'; 
-      if($('#pixi-camera-icon').length != 0) 
-	px_img = $('#list').html();  
+  if($('#usr_photo').length == 0 && $('#usr_photo2').length == 0) {
+    style = 'sm-thumb'; 
+    if($('#pixi-camera-icon').length != 0) 
+      px_img = $('#list').html();  
     }
 }

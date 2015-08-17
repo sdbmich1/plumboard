@@ -1,49 +1,13 @@
 <%= render partial: 'shared/edit_photo_form', locals: {model: listing, psize: 'sm-thumb', form: f, remove_photo: true } %>
 <%= render partial: 'shared/display_photo_form', locals: { s3Flg: s3Flg } %>
-<%= render partial: 'shared/listing_seller_fields', locals: { f: f, listing: listing } if new_pixi_post?(listing) %>
-<div class='row'>
-  <div class='span7'>
-    <%= f.label :title %><%= f.text_field :title, :placeholder => 'Enter Pixi Title', required: true %>
-  </div>
-  <div id='cat-fld' class='span2'>
-    <%= f.label :category_id, 'Category' %>
-    <%= f.collection_select :category_id, Category.active, :id, :name_title, {:prompt => 'Select'}, {class: 'pixi-select', required: true} %>
-  </div>
-  <div id='cond-type-fld' class='span2'> 
-    <%= f.label :condition_type_code, 'Condition' %>
-    <%= f.collection_select :condition_type_code, ConditionType.unhidden, :code, :nice_descr, {:prompt => 'Select'}, {class: 'pixi-select', 
-      id: 'cond-type-code', required: is_item?(listing)} %>
-  </div>
-  <div class='span2' id='job-fld' style="<%= !listing.job? ? 'display:none' : '' %>"><%= f.label :job_type, 'Job Type' %>
-    <%= f.collection_select :job_type_code, JobType.active, :code, :job_name, {:prompt => 'Select'}, {class: 'pixi-select'} %>
-  </div>
-  <div class='span2' id='event-type-fld' style="<%= !listing.event? ? 'display:none' : '' %>">
-    <%= f.label :event_type, 'Event Type' %>
-    <%= f.collection_select :event_type_code, EventType.active, :code, :nice_descr, {prompt: 'Select'}, {class: 'pixi-select', id: 'et_code'} %>
-  </div>
-</div>
-<div class='row' id='input-form'>
-  <div class='span7'>
-    <%= f.label :site_id, 'Location' %>
-    <%= autocomplete_field_tag 'site_name', listing.site_name, autocomplete_site_name_temp_listings_path,
-	        :update_elements => { :id => '#site_id' }, :placeholder => 'Enter School, City or Neighborhood', required: true %> 
-    <%= f.hidden_field :site_id, id: 'site_id', required: true %>
-  </div>
-  <div class='span2' id='price-fld' style="<%= listing.job? ? 'display:none' : '' %>"><%= f.label :price, 'Price $' %>
-    <%= f.text_field :price, step: 0.01, size: 10, value: num_display(f.object, "price"), class: 'width120', placeholder: 'Ex. 50.00', max: '15000' %>
-  </div>
-  <div class='span2' id='qty-fld' style="<%= has_qty?(listing) ? 'display:none' : '' %>"><%= f.label :quantity, 'Qty' %>
-    <%= f.select 'quantity', options_for_select(get_ary, :selected => set_quantity(listing)), {}, {id: 'pixi_qty', class: 'pixi-select'} %>
-  </div>
-  <div class='span2' id='yr-fld' style="<%= !listing.has_year? ? 'display:none' : '' %>"><%= f.label 'Year' %>
-    <%= f.select 'year_built', options_for_select(get_year_ary, :selected => listing.year_built), {:prompt => 'Select'}, 
-          {id: 'yr_built', class: 'pixi-select'} %></div>
-  <div class='span4' id='comp-fld' style="<%= !listing.job? ? 'display:none' : '' %>"><%= f.label :compensation %>
-    <%= f.text_field :compensation, id: 'salary' %></div>
-</div>
+<%= show_seller_fields f, listing %>
+<%= render partial: 'shared/listing_fields_top', locals: { f: f, listing: listing } %>
+<%= render partial: 'shared/listing_fields_main', locals: { f: f, listing: listing } %>
 <%= render partial: 'shared/listing_event_fields', locals: { f: f, listing: listing } %>
+<%= render partial: 'shared/listing_housing_fields', locals: { f: f, listing: listing } %>
 <%= render partial: 'shared/listing_vehicle_fields', locals: { f: f, listing: listing } %>
 <%= render partial: 'shared/listing_product_fields', locals: { f: f, listing: listing } %>
+<%= render partial: 'shared/listing_item_fields', locals: { f: f, listing: listing } %>
 <div class='row'>
   <div class='span11'>
     <%= f.label :description, class: 'med-top' %><%= f.text_area :description, :placeholder => 'Describe Your Pixi', required: true %>

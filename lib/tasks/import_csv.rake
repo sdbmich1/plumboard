@@ -136,6 +136,7 @@ end
 
 # load zip codes for pixi post service areas
 task :load_zip_codes => :environment do
+  PixiPostZip.delete_all
   CSV.foreach(Rails.root.join('db', 'ZipCodes_2014_03_11.csv'), :headers => true) do |row|
     attrs = {
 	      	:zip               => row[0],
@@ -161,7 +162,7 @@ end
 # loads neighborhoods of top 50 cities in US
 task :load_neighborhoods => :environment do
 
-   CSV.foreach(Rails.root.join('db', 'DMA_50_neighborhoods_transposed.csv'), :headers => false) do |row|
+    CSV.foreach(Rails.root.join('db', 'DMA_50_neighborhoods_transposed.csv'), :headers => false) do |row|
    
       # converting the row to an array by splitting ','
       row_array = row.split(',');
@@ -173,12 +174,11 @@ task :load_neighborhoods => :environment do
       county = row[2]
       
       # iterating through the elements of the neighborhoods and setting them to area 
-      for element in row[3..row.length]    
+      for area in row[3..row.length]    
           # Testing code
           #puts "Inside the for loop"
           
-          area = element
-      
+        unless area.blank?
           # setting site attributes
           attrs = {
             :name        => [city, area].join(' - '),
@@ -195,21 +195,22 @@ task :load_neighborhoods => :environment do
           }
           
           # add site
-          unless site = Site.where(:name => row[0]).first
+          unless site = Site.where(:name => attrs[:name]).first
             new_site = Site.new(attrs)
       
-          # add contact info for site
-          new_site.contacts.build(loc_attrs)
+            # add contact info for site
+            new_site.contacts.build(loc_attrs)
       
-          # save site
-          if new_site.save 
-            puts "Saved site #{attrs.inspect}"
-          else
-            puts new_site.errors
+            # save site
+            if new_site.save 
+              puts "Saved site #{attrs.inspect}"
+            else
+              puts new_site.errors
+            end
           end
+        end
       end
     end
-  end
 end
   
 # method used by tasks to load cities
@@ -243,7 +244,7 @@ def load_cities(row)
       if new_site.save
         puts "Saved site #{attrs.inspect}"
       else
-        puts new_site.errors
+        puts "Error: #{new_site.errors.full_messages.first}\nCity: #{city}"
       end
   end
 end
@@ -251,10 +252,7 @@ end
 # loads top 50 cities in US
 task :load_top_50_cities => :environment do
   CSV.foreach(Rails.root.join('db', 'DMA_50_neighborhoods_transposed.csv'), :headers => false) do |row|
-
-    # converting the row to an array by splitting ','
-    row_array = row.split(',');
-    load_cities(row_array)
+    load_cities(row)
   end
 end
 
@@ -334,11 +332,8 @@ task :update_categories => :environment do
   end
 end
 
-
 task :update_category_pictures => :environment do
-
   CSV.foreach(Rails.root.join('db', 'category_data_042214.csv'), :headers => true) do |row|
-
     attrs = {:name             => row[1].titleize}
 
     #find category
@@ -585,7 +580,7 @@ task :load_status_types => :environment do
     # add status_type
     new_status_type = StatusType.new(attrs)
 
-    # save user_type
+    # save status_type
     if new_status_type.save 
       puts "Saved status_type #{attrs.inspect}"
     else
@@ -674,6 +669,97 @@ task :import_other_sites, [:file_name, :org_type] => [:environment] do |t, args|
   end
 end
 
+task :import_travel_modes => :environment do
+  TravelMode.delete_all
+  CSV.foreach(Rails.root.join('db', 'travel_mode_052415.csv'), :headers => true) do |row|
+
+    attrs = {
+      :mode	       => row[0],
+      :travel_type     => row[1],
+      :description     => row[2],
+      :status	       => row[3],
+      :hide            => row[4]
+    }
+
+    # add travel_mode
+    new_travel_mode = TravelMode.new(attrs)
+
+    # save travel_mode
+    if new_travel_mode.save 
+      puts "Saved travel_mode #{attrs.inspect}"
+    else
+      puts new_travel_mode.errors
+    end
+  end
+end
+
+task :load_feeds => :environment do
+
+  CSV.foreach(Rails.root.join('db', 'site_feed_021515.csv'), :headers => true) do |row|
+
+    attrs = {
+      :site_name   => row[0],
+      :description => row[1],
+      :url         => row[2],
+      :site_id     => Site.find_by_name(row[0]).id
+    }
+
+    # add feed
+    new_feed = Feed.new(attrs)
+
+    # save feed
+    if new_feed.save 
+      puts "Saved feed #{attrs.inspect}"
+    else
+      puts feed.errors      
+    end
+  end
+end
+
+task :load_org_types => :environment do
+  OrgType.delete_all
+  CSV.foreach(Rails.root.join('db', 'org_type_060215.csv'), :headers => true) do |row|
+
+    hide_val = row[3]
+    if hide_val.nil? or hide_val.empty?
+      hide_val = "no"
+    end
+    attrs = {
+      :code   => row[0],
+      :description => row[1],
+      :status   => row[2],
+      :hide => hide_val
+    }
+
+    #add org_type
+    new_org_type = OrgType.new(attrs)
+
+    #save org_type
+    if new_org_type.save
+      puts "Saved org_type #{attrs.inspect}"
+    else
+      puts new_org_type.errors
+      # puts new_org_type.errors.full_messages
+    end
+  end
+end
+
+task :update_site_images, [:file_name] => [:environment] do |t, args|
+  CSV.foreach(Rails.root.join('db', args[:file_name]), :headers => true) do |row|
+
+    site = Site.find_by_name(row[0])
+    site.pictures.destroy_all
+    pic = site.pictures.build
+    pic.photo = File.new(Rails.root.join('db', 'images', row[3]))
+
+    if site.save
+      puts "Saved image for #{site.name}"
+    else
+      puts "Error: #{site.errors.full_messages.first}"
+    end
+  end
+end
+
 #to run all tasks at once
 task :run_all_tasks => :environment do
 
@@ -697,6 +783,11 @@ task :run_all_tasks => :environment do
   Rake::Task[:load_event_types].execute
   Rake::Task[:load_status_types].execute
   Rake::Task[:load_condition_types].execute
+  Rake::Task[:load_org_types].execute
+  Rake::Task[:import_travel_modes].execute
+  Rake::Task[:load_feeds].execute
   Rake::Task[:import_other_sites].execute :file_name => "state_site_data_012815.csv", :org_type => "state"
   Rake::Task[:import_other_sites].execute :file_name => "country_site_data_012815.csv", :org_type => "country"
+  Rake::Task[:update_site_images].execute :file_name => "region_image_data_051415.csv"
+  Rake::Task[:update_site_images].execute :file_name => "city_image_data_060915.csv"
 end

@@ -1,7 +1,7 @@
-  <div class='width120 center-wrapper mbot'>
-    <%= render partial: 'shared/photo_form', locals: { s3Flg: s3Flg } %>
-    <div class='px-neg-top right-form'>
-      <%= render partial: 'shared/tooltip', locals: { msg: 'Hold Shift or CTRL key to select multiple images.' } %>
-    </div>
+<div class='width120 center-wrapper mbot'>
+  <%= render partial: 'shared/photo_form', locals: { s3Flg: s3Flg } %>
+  <div class='px-neg-top right-form'>
+    <%= render partial: 'shared/tooltip', locals: { msg: 'Hold Shift or CTRL key to select multiple images.' } %>
   </div>
-  <%= render partial: 'shared/progress_meter' if s3Flg %>
+</div>
+<%= show_progress_meter s3Flg %>

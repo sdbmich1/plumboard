@@ -95,6 +95,15 @@ module TransactionsHelper
     @card ||= @user.get_valid_card
   end
 
+  # get token
+  def get_token method
+    CREDIT_CARD_API == 'balanced' ? get_card_data(method) : set_token rescue nil
+  end
+
+  def set_token
+    @user.has_card_account? ? @user.cust_token : nil
+  end
+
   # show help
   def show_help? txn
     !txn.get_fee.blank? rescue nil

@@ -12,7 +12,7 @@ set :assets_role, [:app, :worker]
 load "deploy/assets"
 
 # set stages
-set :stages, %w(production staging)
+set :stages, %w(production staging demo)
 set :default_stage, "production"
 
 set :rails_env, Rubber.env
@@ -68,11 +68,13 @@ set :push_instance_config, true
 set :bundle_without, [:development, :test, :staging] if Rubber.env == 'production'
 
 # set whenever command
+set :whenever_environment, defer { Rubber.env }
 set :whenever_command, "bundle exec whenever"
 set :whenever_roles, :app 
 
-# set delayed job role
+# set delayed job settings
 # set :delayed_job_server_role, :worker
+set :delayed_job_args, "-n 2"
 
 # Allow us to do N hosts at a time for all tasks - useful when trying
 # to figure out which host in a large set is down:
@@ -173,6 +175,7 @@ namespace :files do
     upload("#{rails_root}/config/aws.yml", "#{release_path}/config/aws.yml", :via => :scp)
     upload("#{rails_root}/config/api_keys.yml", "#{release_path}/config/api_keys.yml")
     upload("#{rails_root}/config/pixi_keys.yml", "#{release_path}/config/pixi_keys.yml")
+    upload("#{rails_root}/config/pxb_home_page.yml", "#{release_path}/config/pxb_home_page.yml")
     upload("#{rails_root}/config/gateway.yml", "#{release_path}/config/gateway.yml")
     upload("#{rails_root}/config/sendmail.yml", "#{release_path}/config/sendmail.yml")
     upload("#{rails_root}/config/thinking_sphinx.yml", "#{release_path}/config/thinking_sphinx.yml")
@@ -185,7 +188,6 @@ namespace :files do
     upload("#{rails_root}/config/certs/gd_bundle.crt", "#{release_path}/config/gd_bundle.crt")
     run "touch #{current_path}/public/httpchk.txt"
   end
-
 end
 
 namespace :memcached do
@@ -246,4 +248,4 @@ end
 # Delayed Job  
 after "deploy:stop",    "delayed_job:stop"  
 after "deploy:start",   "delayed_job:start"  
-after "deploy:restart", "sphinx:symlink_indexes", "sphinx:configure", "sphinx:rebuild", "whenever:update_crontab"
+after "deploy:restart", "sphinx:symlink_indexes", "delayed_job:start", "sphinx:configure", "sphinx:rebuild", "whenever:update_crontab"

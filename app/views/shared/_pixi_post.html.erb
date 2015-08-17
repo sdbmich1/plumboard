@@ -3,14 +3,10 @@
 <% end %>
 <%= content_for :content do %>
   <div id='inv_form'>
-    <%= form_for post do |f| %>
+    <%= form_for setup_pixi_post(post) do |f| %>
     <div class="div-border">
-      <div id="form_errors">
-        <%= render partial: 'shared/error_messages', :locals => { :target => post } %>
-      </div>
-      <div class='pull-right'>
-        <%= image_tag 'rsz_ppost_words_20140314.png', class: 'ppay-logo' %>
-      </div>
+      <div id="form_errors"><%= render partial: 'shared/error_messages', :locals => { :target => post } %></div>
+      <div class='pull-right'><%= image_tag 'rsz_ppost_words_20140314.png', class: 'ppay-logo' %></div>
       <div style="<%= post.owner?(@user) ? 'display:none' : '' %>">
         <%= render partial: 'shared/pixi_post_details', locals: {post: post, showAddrFlg: false} %>
       </div>
@@ -24,7 +20,7 @@
     </div>
     <div id='pxp_btn' class="nav pull-right">
       <%= link_to 'Cancel', set_pixi_post_path, confirm: msg, class: "btn btn-large" %>
-      <%= f.submit "Save", class: "btn btn-large btn-primary submit-btn" %>
+      <%= f.submit "Done", class: "btn btn-large btn-primary submit-btn", data: { disable_with: "Submitting..." } %>
     </div>
     <%= f.hidden_field :user_id, value: post.user_id %>
     <% end %>

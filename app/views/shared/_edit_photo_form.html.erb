@@ -1,6 +1,6 @@
 <div class='row'>
-<% if model && !model.new_record? %>
-  <div class='span1 sm-bot'>Saved photo(s)</div>
+<% if model && !model.new_record? && model.any_pix? %>
+  <div id='sv-txt' class='span1 sm-bot'>Saved photo(s)</div>
   <% for pic in model.pictures %>
       <% unless pic.id.blank? %>
         <div class='span1 center-wrapper'>
