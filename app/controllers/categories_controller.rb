@@ -8,7 +8,7 @@ class CategoriesController < ApplicationController
   before_filter :load_page, only: [:index, :location, :manage]
   before_filter :load_category, only: [:edit, :show, :category_type, :update]
   before_filter :get_page, only: [:index, :inactive, :manage, :create, :update, :location]
-  autocomplete :site, :name, :extra_data => [:org_type, :url], :full => true, :limit => 20
+  autocomplete :site, :name, :extra_data => [:site_type_code, :url], :full => true, :limit => 20
   include LocationManager
   respond_to :html, :json, :js, :mobile
   layout :page_layout

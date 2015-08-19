@@ -85,18 +85,106 @@ module PixiPostsHelper
   end
 
   # test helper
-  def pixter_report_total
-    total = 0
-    for elem in @pixi_posts
-      if (!PixiPost.sale_value(elem).nil?)
-        total += PixiPost.sale_value(elem)
-      end
+  def pixter_report_total model
+    @total = 0
+    for elem in model
+      @total += elem.sale_value if elem.any_sold?
     end
-    total
+    @total
+  end
+
+  def grand_total model
+    @total ||= pixter_report_total(model) 
+    @total * PXB_TXN_PERCENT * PIXTER_PERCENT
   end
 
   # set image class
   def set_class
     action_name == "show" ? "usr-med-photo" : "myimage"
+  end
+
+  def load_dates 
+    unless @xhr_flag 
+      render :partial => 'shared/date_range_list'
+    end
+  end
+
+  def load_admin_list
+    render :partial => 'shared/get_pixter_list' if access_pxp_admin_menu? 
+  end
+
+  def pxp_title pid
+    'Pixter Report for ' + (pid.blank? ? 'All Pixters' : User.find_by_id(pid).name)
+  end
+
+  def report_title title
+    str = "#{@start_date.strftime('%m/%d/%Y')} to #{@end_date.strftime('%m/%d/%Y')}"
+    content_tag(:div, content_tag(:h2, [title, str].join("<br>").html_safe), class: 'mtop center-wrapper mbot')
+  end
+
+  def get_post_val fld, post
+    val = post.get_val(fld) 
+    if val != 'Not sold yet' 
+      fld == 'sale_date' ? post.get_date(fld) : ntc(val)
+    end
+  end
+
+  def render_pxp_photo post
+    action_name == 'seller' && @status != 'active' ? show_photo(post.pixan, 0, 'myimage', '80x80') : show_photo(post.user, 0, 'myimage', '80x80')
+  end
+
+  def render_name post
+    name = action_name == 'seller' && @status != 'active' ? post.pixter_name : post.seller_name
+    content_tag(:span, name, class:'mleft10')
+  end
+
+  def li_cls val
+    @status == val ? 'active' : '' 
+  end
+
+  def menu_item title, id, cls, path, flg
+    val = title == 'Pixter Report' ? false : remote?
+    str = link_to(title, path, class: 'submenu', id: id, remote: val)
+    content_tag(:li, str.html_safe, id: (flg ? 'li_home' : ''), class: li_cls(cls))
+  end
+
+  def show_pxp_menu_items str=[]
+    str << menu_item('Completed', 'comp-posts', 'completed', pixi_posts_path(status: 'completed'), false)
+    str << menu_item('Pixter Report', 'pixter-report', 'pixter_report', pixter_report_pixi_posts_path(status: 'pixter_report'), true)
+    str
+  end
+
+  # load pixter report menu
+  def pxp_menu
+    content_tag(:ul, build_pxp_menu.join(" ").html_safe, class: 'nav') if signed_in?
+  end
+
+  # used to toggle pxp menu based on user
+  def build_pxp_menu
+    access_pxp_admin_menu? ? admin_pxp_menu : pixter_menu? ? pixter_pxp_menu : seller_pxp_menu
+  end
+
+  def pixter_menu?
+    (@user.is_pixter? && can?(:manage_pixi_posts, @user))
+  end
+
+  def pixter_pxp_menu str=[]
+    str << menu_item('Scheduled', 'schd-posts', 'scheduled', pixi_posts_path(status: 'scheduled'), true)
+    show_pxp_menu_items str
+    str
+  end
+
+  def admin_pxp_menu str=[]
+    str << menu_item('Submitted', 'active-posts', 'active', pixi_posts_path(status: 'active'), true)
+    str << menu_item('Scheduled', 'schd-posts', 'scheduled', pixi_posts_path(status: 'scheduled'), false)
+    show_pxp_menu_items str
+    str
+  end
+
+  def seller_pxp_menu str=[]
+    str << menu_item('Submitted', 'active-posts', 'active', seller_pixi_posts_path(status: 'active'), true)
+    str << menu_item('Scheduled', 'schd-posts', 'scheduled', seller_pixi_posts_path(status: 'scheduled'), false)
+    str << menu_item('Completed', 'comp-posts', 'completed', seller_pixi_posts_path(status: 'completed'), false)
+    str
   end
 end

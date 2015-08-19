@@ -1,20 +1,12 @@
 <% cache post do %>
 <tr>
   <td><div class='price'><%= link_to post.id, post %></div></td>
-  <td>
-    <% if action_name == 'seller' && @status != 'active' %>
-      <%= render partial: 'shared/show_photo', locals: {model: post.pixan, file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
-      <span class='mleft10'><%= post.pixter_name %></span>
-    <% else %>
-      <%= render partial: 'shared/show_photo', locals: {model: post.user, file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
-      <span class='mleft10'><%= post.seller_name %></span>
-    <% end %>
-  </td>
+  <td><%= render_pxp_photo post %><%= render_name post %></td>
   <td class='center-wrapper'><%= get_col_date(@status, post) %></td>
   <td class='center-wrapper'><%= get_col_time(@status, post) %></td>
   <td><div class='price'><%= post.quantity %></div></td>
   <td><div class='price'><%= ntc(post.value) %></div></td>
-  <td><%= post.description %></td>
+  <td><%= sanitize(post.description) %></td>
   <td class='center-wrapper'><%= link_to 'Details', post, class: 'btn btn-small' %></td>
 </tr>
 <% end %>

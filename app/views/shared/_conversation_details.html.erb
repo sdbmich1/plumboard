@@ -1,0 +1,24 @@
+<li id="<%= conversation.id %>">
+  <div class='row'>
+    <div class='span1'><%= show_photo conversation.other_user(@user), 0, "tip-image", '80x80' %></div>
+    <div class='span2 no-left'>
+      <span class="<%= set_font_weight(conversation) %>"><%= show_msgr_name(conversation) %></span>
+    </div>
+    <div class='span3 no-left'><%= link_to show_msg_title(conversation), conversation.listing, class: 'terms-link' %></div>
+    <div class='span3'>
+      <span class="dblock"><span class="<%= set_font_weight(conversation) %>"><%= conversation.content_msg %></span></span>
+    </div>
+    <div class='span1'><span class="timestamp"><%= show_timestamp(conversation.create_dt) %></span></div>
+    <div class='span2'>
+      <table class='right-form'>
+        <td> 
+          <%= link_to image_tag('show-icon.png'), conversation_path(conversation, status: @status), class: 'btn btn-small', id: 'conv-show-btn', 
+	    title: 'Open' %>
+        </td>
+	<%= render partial: 'shared/conversation_icons', locals: { conversation: conversation } %>
+      </table>
+    </div>
+  </div>
+  <div class='clear-all'></div>
+</li>
+

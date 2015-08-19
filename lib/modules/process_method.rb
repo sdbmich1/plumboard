@@ -31,12 +31,9 @@ module ProcessMethod
   # get host
   def self.get_host
     case Rails.env
-    when 'test', 'development'
-      "localhost:3000"
-    when 'demo', 'staging'
-      [Rails.env, PIXI_WEB_SITE].join('.')
-    else
-      PIXI_WEB_SITE
+    when 'test', 'development'; "localhost:3000"
+    when 'demo', 'staging'; [Rails.env, PIXI_WEB_SITE].join('.')
+    else PIXI_WEB_SITE
     end
   end
 
@@ -45,7 +42,7 @@ module ProcessMethod
     begin
       new_url = cnt == 0 ? value.gsub(/\s+/, "") : [value.gsub(/\s+/, ""), cnt.to_s].join('')
       cnt += 1
-      new_url = NameParse::transliterate new_url, true, true
+      new_url = NameParse::transliterate new_url, false, true
     end while klass.constantize.where(:url => new_url).exists?
     new_url
   end

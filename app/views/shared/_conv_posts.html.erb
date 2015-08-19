@@ -3,8 +3,8 @@
   <%= form.hidden_field 'recipient_id', value: listing.seller_id %>
   <%= form.hidden_field 'user_id', value: @user.id %>
   <%= form.hidden_field 'msg_type', value: mtype %>
-  <div class="reply_form" style="<%= is_want?(mtype) ? 'display:none' : '' %>">
-  	<center>
+  <div class="reply_form" style="<%= set_style(is_want?(mtype)) %>">
+    <center>
     <%= form.text_area 'content', id: 'ask_content', value: msg, placeholder: 'Send message to seller.', class: 'span4', 
       required: true if form.object.id.nil? %>  
     </center>

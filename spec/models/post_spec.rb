@@ -240,23 +240,23 @@ describe Post do
       @post.due_invoice?(@user).should_not be_true
     end
     
-    it "should return true" do
-      @invoice = @buyer.invoices.build attributes_for(:invoice, buyer_id: @recipient.id)
-      @details = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
-      @invoice.save! 
-      @post.due_invoice?(@recipient).should be_true
-    end
+    context 'with invoice' do
+      before :each do
+        add_invoice
+      end
+
+      it { expect(@post.due_invoice?(@recipient)).to be_true }
     
-    it "should not return true when paid" do
-      @post.due_invoice?(@recipient).should_not be_true
-    end
+      it "should not return true when paid" do
+        @invoice.update_attribute(:status, 'paid')
+        expect(@post.reload.due_invoice?(@recipient)).not_to be_true
+      end
     
-    it "should not return true when removed" do
-      add_invoice
-      @listing.status = 'removed'
-      @listing.save; sleep 3
-      expect(@invoice.reload.status).not_to eq 'unpaid'
-      @post.due_invoice?(@recipient).should_not be_true
+      it "should not return true when removed" do
+        @listing.status = 'removed'
+        @listing.save; sleep 3
+        expect(@post.reload.due_invoice?(@recipient)).not_to be_true
+      end
     end
   end
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150802054738) do
+ActiveRecord::Schema.define(:version => 20150814235505) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -165,6 +165,7 @@ ActiveRecord::Schema.define(:version => 20150802054738) do
   add_index "contacts", ["city", "state"], :name => "index_contacts_on_city_and_state"
   add_index "contacts", ["contactable_id"], :name => "index_contacts_on_contactable_id"
   add_index "contacts", ["contactable_type"], :name => "index_contacts_on_contactable_type"
+  add_index "contacts", ["lat"], :name => "index_contacts_on_lat"
   add_index "contacts", ["lng", "lat"], :name => "index_contacts_on_long_and_lat"
 
   create_table "conversations", :force => true do |t|
@@ -235,6 +236,7 @@ ActiveRecord::Schema.define(:version => 20150802054738) do
   end
 
   add_index "favorite_sellers", ["seller_id"], :name => "index_favorite_sellers_on_seller_id"
+  add_index "favorite_sellers", ["status"], :name => "index_favorite_sellers_on_status"
   add_index "favorite_sellers", ["user_id"], :name => "index_favorite_sellers_on_user_id"
 
   create_table "feeds", :force => true do |t|
@@ -778,6 +780,7 @@ ActiveRecord::Schema.define(:version => 20150802054738) do
   add_index "sites", ["institution_id"], :name => "index_organizations_on_institution_id"
   add_index "sites", ["name"], :name => "index_sites_on_name"
   add_index "sites", ["status", "site_type_code"], :name => "index_sites_on_status_and_org_type"
+  add_index "sites", ["status"], :name => "index_sites_on_status"
   add_index "sites", ["url"], :name => "index_sites_on_url"
 
   create_table "sites_temp_listings", :id => false, :force => true do |t|

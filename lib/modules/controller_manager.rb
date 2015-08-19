@@ -26,4 +26,17 @@ module ControllerManager
     conversation = Conversation.find(cid) if cid
     conversation.mark_all_posts(user) if conversation
   end
+
+  # extracts url from request object
+  def self.parse_url request
+    request.original_url.to_s.split('/')[4].split('?')[0] rescue nil
+  end
+
+  def self.public_url? action_name
+    !action_name.match(/pub|edu/).nil?
+  end
+
+  def self.private_url? action_name
+    !action_name.match(/mbr|biz/).nil?
+  end
 end

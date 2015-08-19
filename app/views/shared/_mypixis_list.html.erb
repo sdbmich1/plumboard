@@ -5,7 +5,7 @@
 
 <%= content_for :content do %>
   <div id="pendingOrder">
-    <%= render :partial => 'shared/index_list' %>
+    <%= render partial: 'shared/index_list', locals: {model: model, status: status} %>
   </div>
 <% end %>
 

@@ -6,11 +6,9 @@
 <%= content_for :content do %>
   <div id="top-header">
     <%= render :partial => 'shared/date_range_list' %>
+    <%= render partial: 'shared/report_header', locals: {path: transactions_path(date_range: @date_range, format: "csv")} %>
   </div>
   <div id="txn-list">
-    <%= render :partial => 'shared/transaction_list', locals: { txn: txn } %>
-  </div>
-  <div id="entry-top" class="pg-entry">
-    <%= page_entries_info txn, :model => 'transactions' unless txn.blank? %>
+    <%= render partial: 'shared/transaction_data', locals: {txn: txn} %>
   </div>
 <% end %>

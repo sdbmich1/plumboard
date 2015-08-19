@@ -1,4 +1,3 @@
-<% unless @users.blank? %>
   <div class='clear-all'></div>
   <table class="table table-hover table-condensed table-bordered">
     <thead>
@@ -10,13 +9,11 @@
       </tr>
     </thead>
     <tbody>
-      <%= render partial: 'shared/my_followers_row', collection: @users, as: :user %>
+      <%= render partial: 'shared/my_followers_row', collection: model, as: :user %>
     </tbody>
   </table>
+  <%= paginate_list 'pixi-list', model %>
 
-  <div id='pixi-list' class="nav pull-right">
-    <%= will_paginate @users if @users.respond_to?(:total_pages) %>
+  <div id="entry-top" class="pg-entry">
+    <%= page_entries_info model, :model => 'followers' %>
   </div>
-<% else %>
-  <div class='center-wrapper'>No followers found.</div>
-<% end %>

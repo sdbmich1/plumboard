@@ -1,7 +1,7 @@
-<% if @listings.blank? %>
+<% if model.blank? %>
   $(".pg-entry").html("");
 <% else %>
-  $(".pg-entry").html("<%= escape_javascript( raw page_entries_info @listings, :model => 'pixis') %>");
+  $(".pg-entry").html("<%= escape_javascript( raw page_entries_info model, :model => 'pixis') %>");
 <% end %>
-$("#pendingOrder").html("<%= escape_javascript( raw render(:partial => 'shared/index_list') ) %>");
+$("#pendingOrder").html("<%= escape_javascript( raw render(partial: 'shared/index_list', locals: {model: model, status: status}) ) %>");
 $("#spinner").hide('fast');

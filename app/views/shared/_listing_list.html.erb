@@ -16,7 +16,5 @@
       <%= render partial: 'shared/listing_row', collection: model, as: :listing %>
     </tbody>
   </table>
-  <div id="entry-top" class="pg-entry">
-    <%= page_entries_info model, :model => 'pixis' %>
-  </div>
+  <%= show_entries model, 'pixis' %>
   <%= paginate_list 'pixi-list', model %>

@@ -116,19 +116,9 @@ describe ListingsController do
 
   describe 'GET by url', url: true do
     context 'url' do
-      ['biz', 'mbr', 'career'].each do |loop| 
+      ['biz', 'mbr', 'pub', 'edu', 'career'].each do |loop| 
         it_behaves_like "a load data request", 'Listing', 'get_by_url', loop, 'paginate', false
       end
     end
-  end
-
-  describe 'GET site by url', url: true do
-    before :each do
-      @site = stub_model Site
-      Site.stub!(:get_by_url).and_return(@site)
-      get_board_data
-    end
-    it_behaves_like "a load data request", 'Listing', 'get_by_url', 'pub', 'set_page', false
-    it_behaves_like "a load data request", 'Listing', 'get_by_url', 'edu', 'set_page', false
   end
 end

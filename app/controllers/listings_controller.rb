@@ -1,16 +1,15 @@
 require 'will_paginate/array' 
 class ListingsController < ApplicationController
-  include PointManager, LocationManager, NameParse, ResetDate
+  include PointManager, NameParse, ResetDate, LocationManager, ControllerManager
   before_filter :authenticate_user!, except: [:local, :category, :show, :biz, :mbr, :career, :pub, :edu]
-  before_filter :load_data, except: [:pixi_price, :repost, :update]
+  before_filter :load_data, except: [:pixi_price, :repost, :update, :biz, :mbr, :pub, :edu]
   before_filter :load_pixi, only: [:show, :pixi_price, :repost, :update]
   before_filter :load_job, only: [:career]
   before_filter :pxb_url, only: [:biz, :mbr, :pub, :edu] 
-  before_filter :load_site, only: [:pub, :edu]
-  before_filter :load_city, only: [:local, :category, :pub, :edu]
-  before_filter :load_url_data, only: [:biz, :mbr, :career]
+  before_filter :load_city, only: [:local, :category]
+  before_filter :load_url_data, only: [:biz, :mbr, :career, :pub, :edu]
   after_filter :set_session, only: [:show]
-  after_filter :set_location, only: [:biz, :mbr]
+  after_filter :set_location, only: [:biz, :mbr, :pub, :edu]
   after_filter :add_points, only: [:show, :biz, :mbr, :pub, :edu]
   respond_to :html, :json, :js, :mobile, :csv
   layout :page_layout
@@ -129,16 +128,11 @@ class ListingsController < ApplicationController
   end
 
   def pxb_url
-    @url = request.original_url.to_s.split('/')[4].split('?')[0] rescue nil
+    @url = ControllerManager::parse_url request
   end
 
   def load_url_data
-    @listings = Listing.get_by_url(@url, @page)
-  end
-
-  def load_site
-    site = Site.get_by_url(@url)
-    @loc, @loc_name = site.id, site.name if site
+    @listings = Listing.get_by_url(@url, action_name, @page)
   end
 
   def set_location

@@ -1,3 +1,3 @@
-<%= collection_select :date_range, :name, DateRange.all, :name, :name, {prompt: 'Select Dates'},
-                      {class: 'dt-range pixi-select width120 pull-right'} %>
+<%= collection_select :date_range, :name, DateRange.all, :name, :name, {selected: @date_range, prompt: 'Last 30 Days'},
+                      {class: 'dt-range pixi-select mleft10 width120 pull-right'} %>
 

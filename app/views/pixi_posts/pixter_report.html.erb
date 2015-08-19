@@ -1,11 +1,7 @@
 <% provide(:title, 'PixiPosts') %>
 <%= content_for :subhead do %>
-    <%= render :partial => 'shared/navbar', locals: { menu_name: 'PixiPosts' } %>
+    <%= render partial: 'shared/navbar', locals: { menu_name: 'PixiPosts' } %>
 <% end %>
 <%= content_for :content do %>
-    <%= render :partial => 'shared/pixi_post_pixter_report', locals: { pg_title: 'PixiPosts' } %>
+    <%= render partial: 'shared/pixi_post_pixter_report', locals: {pg_title: 'PixiPosts', model: @posts, pid: @pixter_id} %>
 <% end %>
-
-
-
-

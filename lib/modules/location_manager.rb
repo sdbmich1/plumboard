@@ -2,7 +2,7 @@ require 'open-uri'
 require 'json'
 module LocationManager
   # used to manage geolocation
-  include Area
+  include Area, ControllerManager
 
   # get location name
   def self.get_loc_name ip, loc, zip=''
@@ -62,15 +62,19 @@ module LocationManager
   def self.get_site_list loc, range=100
     site = Site.check_site(loc, ['city', 'region'])
     if site
-      @contact = site.contacts.first
-      if site.is_city?
-        @slist = Contact.get_sites(@contact.city, @contact.state)
-      else
-        loc = [@contact.city, @contact.state].join(', ') if @contact.city && @contact.state
-        @slist = Contact.proximity(nil, range, loc, true) if loc 
-      end
+      contact = site.contacts.first
+      loc = [contact.city, contact.state].join(', ') if contact.city && contact.state
+      @slist = build_list site, contact, loc, range
     end
     @slist || loc
+  end
+
+  def self.build_list site, contact, loc, range
+    if site.is_city?
+      Contact.get_sites(contact.city, contact.state) rescue nil
+    else
+      Contact.proximity(nil, range, loc, true) if loc 
+    end
   end
 
   # get region
@@ -87,11 +91,31 @@ module LocationManager
 
   def self.get_google_lng_lat loc
     url = ['http://maps.googleapis.com/maps/api/geocode/json?address=', loc.gsub!(/\s+/, "+"),'&sensor=false'].join('')
-    str = JSON.parse(open(url).read)
+    str = parse_lat_lng JSON.parse(open(url).read)
+  end
+
+  def self.parse_lat_lng str
     if str
       [str["results"][0]["geometry"]["location"]["lat"], str["results"][0]["geometry"]["location"]["lng"]]  
     else
       nil
     end
+  end
+
+  def self.get_loc_by_url url
+    Site.get_by_url(url).id 
+  end
+
+  # get loc id based on region name or url
+  def self.retrieve_loc action_name, request
+    if ControllerManager::public_url?(action_name) 
+      get_loc_by_url(ControllerManager::parse_url request) rescue get_loc_id(PIXI_LOCALE)
+    else
+      get_loc_id(PIXI_LOCALE)
+    end
+  end
+
+  def self.is_pub? sid
+    Site.find(sid).is_pub? rescue nil
   end
 end

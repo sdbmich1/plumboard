@@ -1,11 +1,10 @@
 <tr>
   <td class='center-wrapper'><%= short_date(post.completed_date) %></td>
-  <td class='center-wrapper'><%= PixiPost.item_title(post) %></td>
   <td class='center-wrapper'><%= post.seller_name %></td>
   <td class='center-wrapper'><%= post.pixter_name %></td>
-  <td class='center-wrapper'><%= !(PixiPost.sale_date(post).nil?) ? PixiPost.sale_date(post) : 'Not sold yet' %></td>
-  <td class='center-wrapper price'><%= ntc(PixiPost.listing_value(post)) %></div></td>
-  <td class='center-wrapper price'><%= !(PixiPost.sale_value(post).nil?) ? ntc(PixiPost.sale_value(post)) : 'Not sold yet' %></div></td>
-  <td class='center-wrapper price'><%= !(PixiPost.sale_value(post).nil?) ? ntc((PixiPost.sale_value(post) * PIXTER_PERCENT) / 100) : 'Not sold yet' %></td>
+  <td class='center-wrapper'><%= get_post_val('sale_date', post) %></td>
+  <td class='center-wrapper price'><%= ntc(post.listing_value) %></div></td>
+  <td class='center-wrapper price'><%= get_post_val('sale_value', post) %></td>
+  <td class='center-wrapper price'><%= get_post_val('revenue', post) %></td>
 </tr>
 

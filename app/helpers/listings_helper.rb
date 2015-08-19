@@ -1,5 +1,5 @@
 module ListingsHelper
-  include RatingManager, ProcessMethod
+  include RatingManager, ProcessMethod, ControllerManager
 
   # format time
   def get_local_time(tm)
@@ -31,36 +31,6 @@ module ListingsHelper
   # get board item width for masonry
   def get_item_width
     mobile_device? ? '120x120' : '150x150'
-  end
-
-  # set next page path for ajax infinite scroll call based on action name
-  def set_next_page_path
-    case action_name
-      when "category"
-        "#{category_listings_path page: @listings.next_page, loc: params[:loc], cid: params[:cid]}"
-      when "local"
-        "#{local_listings_path page: @listings.next_page, loc: params[:loc]}"
-      when "biz"
-        "#{biz_path page: @listings.next_page, url: params[:url]}"
-      when "pub"
-        "#{pub_path page: @listings.next_page, url: params[:url]}"
-      when "mbr"
-        "#{member_path page: @listings.next_page, url: params[:url]}"
-      when "career"
-        "#{career_path page: @listings.next_page, url: params[:url]}"
-      when "edu"
-        "#{edu_path page: @listings.next_page, url: params[:url]}"
-      else
-        index_next_page_path
-    end
-  end
-
-  def index_next_page_path
-    if controller_name == 'searches'
-      "#{searches_path page: @listings.next_page, search: params[:search], loc: params[:loc], cid: params[:cid]}" 
-    else
-      "#{listings_path page: @listings.next_page}"
-    end
   end
 
   # get path name
@@ -357,14 +327,18 @@ module ListingsHelper
     klass.blank? ? 'Pixis' : get_usr(klass).name.html_safe rescue 'Pixis'
   end
 
-  def set_biz_banner klass, band
-    model = get_usr klass
+  def set_biz_banner klass, band, model=nil
+    model ||= get_usr klass
     content_tag(:div, render(partial: "shared/#{band}", locals: {user: model, pxFlg: false, colorFlg: false}), class: ["mneg-top", "mbot"]) if model
   end
 
   def set_loc_banner
     site = Site.find @loc rescue nil
-    content_tag(:div, render(partial: 'shared/location_band', locals: {site: site}), class: ["mneg-top", "mbot"]) if site
+    if site && site.is_pub?
+      set_biz_banner 'Site', 'group_band', site
+    else
+      content_tag(:div, render(partial: 'shared/location_band', locals: {site: site}), class: ["mneg-top", "mbot"]) if site
+    end
   end
 
   # show menu if location page
@@ -430,7 +404,7 @@ module ListingsHelper
   # display correct image based on model type
   def show_view_image model, pix_size, img_size, lazy_flg=false
     if !action_name.match(/index|seller|pixter/).nil?
-      render partial: 'shared/show_photo', locals: {model: model, psize: '180x180', file_name: img_size, display_cnt: 0}
+      show_photo model, 0, img_size, '180x180'
     else
       view_pixi_image model, pix_size, (model.is_a?(User) ? model.local_user_path : listing_path(model)), lazy_flg
     end
@@ -733,7 +707,7 @@ module ListingsHelper
 
   # toggles menu for private url page
   def set_index_menu btype, menu_name, loc_name
-    render partial: 'shared/navbar', locals: { menu_name: menu_name, loc_name: @loc_name } if btype == 'loc'
+    render partial: 'shared/navbar', locals: { menu_name: menu_name, loc_name: loc_name } unless private_url?
   end
 
   def toggle_image_partial flg
@@ -741,11 +715,11 @@ module ListingsHelper
   end
 
   def private_url?
-    !action_name.match(/mbr|biz/).nil?
+    ControllerManager::private_url? action_name
   end
 
   def public_url?
-    !action_name.match(/pub|edu/).nil?
+    ControllerManager::public_url? action_name
   end
 
   # render invoice data
@@ -754,6 +728,12 @@ module ListingsHelper
       content_tag(:div, render(partial: 'shared/listing', collection: model, locals: {px_size: 'large', ftrFlg: true}), class: 'row') 
     else 
       content_tag(:div, NO_PIXI_FOUND_MSG, class:'center-wrapper')
+    end 
+  end
+
+  def render_header model, pname, type, cls
+    unless model.blank?
+      content_tag(:div, render(partial: pname, locals: {type: type}), id:"top-header", class: cls) 
     end 
   end
 end

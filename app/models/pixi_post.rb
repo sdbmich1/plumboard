@@ -100,6 +100,14 @@ class PixiPost < ActiveRecord::Base
     where(:pixan_id => usr)
   end
 
+  def self.inc_list
+    includes(:user, :pixan, :pixi_post_details => [:listing])
+  end
+
+  def self.completed_posts start_date, end_date
+    inc_list.where("status = ? AND (completed_date between ? AND ?)", 'completed', start_date, end_date)
+  end
+
   # return posts by status
   def self.get_by_status val
     includes(:user => [:pictures], :pixan => [:pictures]).where(:status => val)
@@ -160,6 +168,14 @@ class PixiPost < ActiveRecord::Base
     !comments.blank?
   end
 
+  def any_sold?
+    !sale_date.blank?
+  end
+
+  def get_val fld
+    PixiPostProcessor.new(self).get_val(fld)
+  end
+
   # load new pixi post with pre-populated fields
   def self.load_new usr, zip
     usr ? PixiPostProcessor.new(usr.pixi_posts.build).load_new(usr, zip) : PixiPost.new
@@ -198,23 +214,28 @@ class PixiPost < ActiveRecord::Base
   end
 
   # returns item title
-  def self.item_title pixi_post
-    pixi_post.pixi_post_details.first.pixi_title rescue nil
+  def item_title
+    PixiPostProcessor.new(self).get_item_title
   end
 
   # returns item's sale value
-  def self.sale_value pixi_post
-    PixiPostProcessor.new(pixi_post).get_sale_value
+  def sale_value
+    PixiPostProcessor.new(self).get_sale_value
   end
 
   # returns item's sale date
-  def self.sale_date pixi_post
-    PixiPostProcessor.new(pixi_post).get_sale_date
+  def sale_date
+    PixiPostProcessor.new(self).get_sale_date
   end
 
   # returns item's listing value
-  def self.listing_value pixi_post
-    PixiPostProcessor.new(pixi_post).get_post_value
+  def listing_value 
+    PixiPostProcessor.new(self).get_post_value
+  end
+
+  # returns pixter revenue per item sold
+  def revenue
+    PixiPostProcessor.new(self).get_revenue
   end
 
   # retrives the data for pixter_report

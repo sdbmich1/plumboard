@@ -1,0 +1,22 @@
+<li id="<%= post.id %>"> 
+<table>
+  <tr class='row'>
+    <td class="span1"><%= show_photo set_poster(post, sentFlg), 0, "tip-image", '80x80' %></td>
+    <td class="span3 no-left"> <span class="<%= set_user_font(post) %>"><%= get_poster_name(post, sentFlg) %></span></td>
+    <td class="span5 no-left"><span class='pixi-gray-color hdr-content'><%= sanitize(post.summary(60, true)) %></span></td>
+    <td class="span4">
+      <div class='right-form'>
+        <span class="timestamp"><%= "#{show_timestamp(post.create_dt)} (#{time_ago_in_words(post.create_dt)} ago)" %></span>
+      </div>
+    </td>
+    <td class='span1' align='right'>
+      <%= link_to image_tag('trash-icon.png'), '#', confirm: 'Delete this message?', class: 'btn btn-small msg-trash-btn', 
+        'data-pid'=> post.id, 'data-status'=> @status, title: 'Delete' %>
+    </td>
+  </table>
+  <div class='span11'> 
+    <span class="mleft40 content-conv"> <%= sanitize post.full_content %></span>
+  </div>
+  <div class='clear-all'></div>
+</li>
+

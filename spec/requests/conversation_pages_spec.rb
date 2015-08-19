@@ -264,7 +264,7 @@ feature "Conversations" do
       expect(Post.count).to eq 1
       page.should have_selector('.msg-trash-btn') 
       page.find(".msg-trash-btn", :visible => true).click
-      click_remove_ok
+      accept_btn
       sleep 5
       expect(Post.where(recipient_status: 'removed').count).to eq 1
       page.should have_content 'No conversations found' 
@@ -275,7 +275,7 @@ feature "Conversations" do
       expect(Post.all.count).to eq 2
       page.should have_selector('.msg-trash-btn') 
       page.find(".msg-trash-btn", :visible => true).click
-      click_remove_ok
+      accept_btn
       sleep 3
       page.should_not have_content 'No conversations found' 
       page.should have_selector('.msg-trash-btn') 
@@ -332,7 +332,7 @@ feature "Conversations" do
       @listing.status = 'removed'; @listing.save
       sleep 2;
       page.find("#conv-bill-btn", :visible => true).click
-      page.should have_content NO_INV_PIXI_MSG
+      page.should_not have_selector('#pay-btn') 
     end
 
     it 'handles sold pixi' do
@@ -364,7 +364,7 @@ feature "Conversations" do
 
     it 'removes conversation' do
       page.find("#conv-trash-btn", :visible => true).click
-      click_remove_ok
+      accept_btn
       sleep 3
       page.should have_content 'No conversations found' 
       expect(Conversation.where(status: 'removed').count).to eq 1
@@ -397,7 +397,7 @@ feature "Conversations" do
 
     it 'removes conversation' do
       page.find("#conv-trash-btn", :visible => true).click
-      click_remove_ok
+      accept_btn
       sleep 5
       expect(Conversation.where(recipient_status: 'removed').count).to eq 1
       page.should have_content 'No conversations found' 

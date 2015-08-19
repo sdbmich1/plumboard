@@ -37,10 +37,8 @@ class InvoiceProcessor
 
       # set pixi id if possible
       load_inv_details inv, pixi, buyer_id, pixi_id
-    else
-      inv = Invoice.new buyer_id: buyer_id
+      inv
     end
-    inv
   end
 
   def load_inv_details inv, pixi, buyer_id, pixi_id
@@ -77,6 +75,7 @@ class InvoiceProcessor
         @invoice.invoice_details.each do |x|
           fee += CalcTotal::get_convenience_fee(x.subtotal, x.listing.pixan_id) unless x.listing.pixan_id.blank?
         end
+        fee += CalcTotal::get_convenience_fee(@invoice.amount, nil, true) if fee == 0.0 && @invoice.seller.is_business?
       end
       fee += CalcTotal::get_convenience_fee(@invoice.amount) if fee == 0.0
       fee += CalcTotal::get_processing_fee(@invoice.amount) unless sellerFlg
@@ -88,12 +87,12 @@ class InvoiceProcessor
 
   # get txn processing fee
   def get_processing_fee
-    fee = @invoice.amount ? CalcTotal::get_processing_fee(@invoice.amount).round(2) : 0.0
+    @invoice.amount ? CalcTotal::get_processing_fee(@invoice.amount).round(2) : 0.0
   end
 
   # get txn convenience fee
   def get_convenience_fee
-    fee = @invoice.amount ? CalcTotal::get_convenience_fee(@invoice.amount).round(2) : 0.0
+    @invoice.amount ? CalcTotal::get_convenience_fee(@invoice.amount).round(2) : 0.0
   end
 
   # load assn details
@@ -126,8 +125,9 @@ class InvoiceProcessor
 
   # get seller amount minus fees
   def seller_amount
-    amt = @invoice.amount - CalcTotal::get_convenience_fee(@invoice.amount, pixan_id) rescue @invoice.amount
-    amt.round(2)
+    val = @invoice.seller.is_business? ? true : nil
+    amt = @invoice.amount - CalcTotal::get_convenience_fee(@invoice.amount, pixan_id, val) rescue @invoice.amount
+    amt.round(2) rescue 0.0
   end
 
   # get pixan id

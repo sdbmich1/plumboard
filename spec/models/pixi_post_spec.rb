@@ -545,15 +545,15 @@ describe PixiPost do
 
   describe "item title and value" do
     let(:pixan) { create :pixi_user }
-    it "should have item title and value" do
-      add_post
-      expect(PixiPost.item_title(@pixi_post)).not_to be_nil
-      expect(PixiPost.listing_value(@pixi_post)).not_to be_nil
+    context 'has title and value' do
+      before { add_post }
+      it { expect(@pixi_post.item_title).not_to be_nil }
+      it { expect(@pixi_post.listing_value).not_to be_nil }
     end
 
-    it "should not have item title or value" do
-      expect(PixiPost.item_title(@pixi_post)).to be_nil
-      expect(PixiPost.listing_value(@pixi_post)).to eq 0.0
+    context "does not have item title or value" do
+      it { expect(@pixi_post.item_title).to be_nil }
+      it { expect(@pixi_post.listing_value).to eq 0.0 }
     end
   end
 
@@ -565,20 +565,28 @@ describe PixiPost do
        add_invoice @listing
     end
 
-    it "should have sale value and date" do
-      @pixi_post.pixan_id = pixan.id
-      @pixi_post.completed_date = Time.now+3.days
-      @pixi_post.appt_date = @pixi_post.appt_time = Time.now-3.days
-      @pixi_post.pixi_post_details.build attributes_for :pixi_post_detail, pixi_id: @listing.pixi_id 
-      @pixi_post.save!
-      @invoice.update_attribute(:status, 'paid')
-      expect(PixiPost.sale_value(@pixi_post)).to eq @details.subtotal
-      expect(PixiPost.sale_date(@pixi_post).to_date).to eq @invoice.created_at.to_date
+    context 'sold' do
+      before :each do
+        @pixi_post.pixan_id = pixan.id
+        @pixi_post.completed_date = Time.now+3.days
+        @pixi_post.appt_date = @pixi_post.appt_time = Time.now-3.days
+        @pixi_post.pixi_post_details.build attributes_for :pixi_post_detail, pixi_id: @listing.pixi_id 
+        @pixi_post.save!
+        @invoice.update_attribute(:status, 'paid')
+      end
+      it { expect(@pixi_post.sale_value).to eq @details.subtotal }
+      it { expect(@pixi_post.sale_date.to_date).to eq @invoice.created_at.to_date }
+      it { expect(@pixi_post.any_sold?).to be_true }
+      it { expect(@pixi_post.revenue).to eq (@details.subtotal * PXB_TXN_PERCENT * PIXTER_PERCENT) }
+      it { expect(@pixi_post.get_val('sale_value')).to eq @details.subtotal }
     end
 
-    it "should not have sale value or date" do
-      expect(PixiPost.sale_value(@pixi_post)).not_to eq @listing.price
-      expect(PixiPost.sale_date(@pixi_post)).not_to eq @invoice.created_at
+    context 'not sold' do
+      it { expect(@pixi_post.sale_value).not_to eq @listing.price }
+      it { expect(@pixi_post.sale_date).not_to eq @invoice.created_at }
+      it { expect(@pixi_post.any_sold?).not_to be_true }
+      it { expect(@pixi_post.revenue).to eq 0.0 }
+      it { expect(@pixi_post.get_val('revenue')).to eq 'Not sold yet' }
     end
   end
 
@@ -616,7 +624,7 @@ describe PixiPost do
 
     it 'does not return user pixter report data' do
       start_dt, end_dt = ResetDate::get_date_range 'This Year'
-      expect(PixiPost.pixter_report(start_dt, end_dt, user)).to be_blank
+      expect(PixiPost.pixter_report(start_dt, end_dt, user.id)).to be_blank
     end
   end
   
@@ -691,6 +699,22 @@ describe PixiPost do
     it 'gets tokens' do
       add_post
       expect(@pixi_post.listing_tokens).to include @listing.pixi_id
+    end
+  end
+
+  describe "exporting as CSV" do
+    it "exports data as CSV file" do
+      csv_string = @pixi_post.as_csv
+      csv_string.keys.should =~ ["Post Date", "Item Title", "Customer", "Pixter", "Sale Date", "List Value", "Sale Amount", "Pixter Revenue"]
+      csv_string.values.should =~ [@pixi_post.completed_date, @pixi_post.item_title, @pixi_post.seller_name, @pixi_post.pixter_name,
+                                   @pixi_post.get_val('sale_date'), @pixi_post.listing_value, @pixi_post.get_val('sale_value'), 
+                                   @pixi_post.get_val('revenue')]
+    end
+
+    it "does not export any pixi_post data" do
+      post = build :pixi_post
+      csv = post.as_csv
+      csv.values.should include(nil)
     end
   end
 end

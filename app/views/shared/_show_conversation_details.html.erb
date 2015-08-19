@@ -1,0 +1,5 @@
+<%= render partial: 'shared/show_conversation_header', locals: { conversation: conversation } %>
+<div id='accordion'>
+  <%= render partial: 'shared/post', collection: get_posts(conversation), locals: { sentFlg: sentFlg } %>
+</div>
+<%= show_reply conversation, sentFlg %>

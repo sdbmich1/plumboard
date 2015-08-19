@@ -37,13 +37,9 @@ module ApplicationHelper
   # used do determine if search form is displayed
   def display_search
     case controller_name
-      when 'categories'; render 'shared/search' if action_name != 'show'
-      when 'searches'; render 'shared/search' if action_name != 'show'
-      when 'listings'; render 'shared/search' if action_name != 'show'
-      when 'posts'; render 'shared/search_posts'
-      when 'conversations'; render 'shared/search_posts'
-      when 'users'; render 'shared/search_users'
-      when 'pending_listings'; render 'shared/search' if action_name != 'show'
+      when 'categories', 'searches', 'listings', 'pending_listings'; render 'shared/search' if action_name != 'show'
+      when 'posts', 'conversations'; render 'shared/search_posts'
+      when 'users'; render 'shared/search_users' unless action_name == 'show'
     end
   end
 
@@ -404,6 +400,10 @@ module ApplicationHelper
   # set pagination
   def paginate_list id, model
     content_tag(:div, (will_paginate(model) if model.respond_to?(:total_pages)), id: id, class: 'nav pull-right')
+  end
+
+  def show_entries model, tag
+    content_tag(:div, (page_entries_info model, :model => tag), class: 'pg-entry left-form', id: 'entry-top')
   end
 
   # get address for map

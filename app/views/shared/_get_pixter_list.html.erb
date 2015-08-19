@@ -1,3 +1,3 @@
-<%= collection_select :user, :id, User.get_by_type('PT').all, :id, :first_name, {:include_blank =>  "Select Pixter"},
+<%= collection_select :user, :id, User.get_by_type(['PT', 'PX', 'AD']), :id, :name, {selected: @pixter_id, include_blank: "Select Pixter"},
                       {class: 'px-list pixi-select width120 pull-right'} %>
 

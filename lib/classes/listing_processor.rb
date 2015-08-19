@@ -149,8 +149,9 @@ class ListingProcessor < ListingDataProcessor
     User.reset_counters(@listing.seller_id, :active_listings)
   end
 
-  def get_by_url url, page=1
-    Listing.active.get_by_seller(User.get_by_url(url), 'active').board_fields.set_page page rescue nil
+  def get_by_url url, action_name, page=1
+    data = !action_name.match(/mbr|biz/).nil? ? Listing.get_by_seller(User.get_by_url(url), 'active') : Listing.get_by_city('', Site.get_by_url(url))
+    data.board_fields.set_page page rescue nil
   end
 
   def get_board_flds

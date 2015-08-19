@@ -1607,8 +1607,20 @@ describe Listing do
     before :each do
       @listing.save!
     end
-    it { expect(Listing.get_by_url(@user.url)).to include @listing }
-    it { expect(Listing.get_by_url('abcd')).to be_nil }
+    context 'by user' do
+      it { expect(Listing.get_by_url(@user.url, 'mbr')).to include @listing }
+      it { expect(Listing.get_by_url('abcd', 'mbr')).to be_nil }
+    end
+    context 'by site' do
+      before :each do
+        @loc = create :site, site_type_code: 'pub'
+      end
+      it 'loads site url' do
+        listing = create :listing, site_id: @loc.id, seller_id: @user.id, quantity: 1 
+        expect(Listing.get_by_url(@loc.url, 'pub')).to include listing
+      end
+      it { expect(Listing.get_by_url('abcd', 'pub')).to be_blank }
+    end
   end
 
   describe 'latlng', process: true do

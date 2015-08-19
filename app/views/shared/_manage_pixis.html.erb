@@ -4,10 +4,8 @@
 <% end %>
 
 <%= content_for :content do %>
-  <div id="top-header" class='sm-top nav pull-right'>
-    <%= render :partial => 'shared/manage_pixis_header' unless @listings.blank? %>
-  </div>
+  <%= render_header model, 'shared/manage_pixis_header', nil, 'sm-top nav pull-right' %>
   <div id="pendingOrder">
-    <%= render :partial => 'shared/index_list' %>
+    <%= render :partial => 'shared/index_list', locals: {model: model, status: status} %>
   </div>
 <% end %>

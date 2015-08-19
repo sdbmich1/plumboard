@@ -1,19 +1,5 @@
-<%= render partial: 'shared/transaction_header' %>
-<% unless txn.blank? %>
-    <div class = "clear-all"></div>
-    <div class='mtop center-wrapper mbot'>
-        <h2>Transactions</h2>
-        <h2>Period: <%= @start_date.strftime("%m/%d/%Y") %> to <%= @end_date.strftime("%m/%d/%Y") %></h2>
-    </div>
-    <table class="border-collapse: collapse table table-hover table-condensed table-bordered ">
-      <%= render partial: 'shared/transaction_top' %>
-        <tbody>
-            <%= render partial: 'shared/transaction_row', collection: txn, as: :transaction %>
-        </tbody>
-    </table>
-    <div id='txn-list' class="nav pull-right">
-        <%= will_paginate txn if txn.respond_to?(:total_pages) %>
-    </div>
-<% else %>
-    <div class='center-wrapper'>No transactions found.</div>
-<% end %>
+<table class="border-collapse: collapse table table-hover table-condensed table-bordered ">
+  <%= render partial: 'shared/transaction_top' %>
+  <tbody><%= render partial: 'shared/transaction_row', collection: model, as: :transaction %></tbody>
+</table>
+<%= paginate_list 'txn-list', model %>

@@ -5,35 +5,11 @@ class ApplicationController < ActionController::Base
   # skip_before_filter :prepare_for_mobile
   after_filter :set_access_control_headers
   helper_method :mobile_device?
-  include ControllerManager
-
-  # check if mobile device based on user_agent 
-  def mobile_device?
-    if isDev?
-      if session[:mobile_param]  
-        session[:mobile_param] == "1"  
-      else  
-        request.user_agent =~ /iPhone;|Android|BlackBerry|Symbian|Windows Phone/  
-      end  
-    else
-      false
-    end  
-  end
-
-  # attempt to render mobile version of page first
-  def check_for_mobile
-    prepend_view_path "app/views/mobile" if mobile_device?
-  end
 
   # Handle authorization exceptions
   rescue_from CanCan::AccessDenied do |exception|
     if request.xhr?
-      if signed_in?
-	render json: {status: :error, message: "You have no permission to #{exception.action} #{exception.subject.class.to_s.pluralize}"}, 
-	  status: 403
-      else
-        render json: {:status => :error, :message => "You must be logged in to do that!"}, :status => 401
-      end
+      render_json_error exception
     else
       redirect_to root_url, alert: exception.message
     end
@@ -49,8 +25,24 @@ class ApplicationController < ActionController::Base
     super
   end
 
+  def render_json_error exception
+    if signed_in?
+      render json: {status: :error, message: "You have no permission to #{exception.action} #{exception.subject.class.to_s.pluralize}"}, status: 403
+    else
+      render json: {:status => :error, :message => "You must be logged in to do that!"}, :status => 401
+    end
+  end
+
   def isDev?
     false # Rails.env.development?
+  end
+
+  def check_mobile_session
+    if session[:mobile_param]  
+      session[:mobile_param] == "1"  
+    else  
+      request.user_agent =~ /iPhone;|Android|BlackBerry|Symbian|Windows Phone/  
+    end  
   end
 
   def set_access_control_headers
@@ -69,7 +61,8 @@ class ApplicationController < ActionController::Base
   # set user if signed in 
   def load_settings
     @user = signed_in? ? current_user : User.new
-    @region ||= LocationManager::get_loc_id(PIXI_LOCALE)
+    @region = session[:home_id] || LocationManager::retrieve_loc(action_name, request)
+    session[:home_id] ||= @region
   end
 
   # set store path
@@ -139,6 +132,16 @@ class ApplicationController < ActionController::Base
   # set root path based on pixi count
   def get_root_path
     ControllerManager::set_root_path @cat, @region
+  end
+
+  # check if mobile device based on user_agent 
+  def mobile_device?
+    isDev? ? check_mobile_session : false
+  end
+
+  # attempt to render mobile version of page first
+  def check_for_mobile
+    prepend_view_path "app/views/mobile" if mobile_device?
   end
 
   def set_session
