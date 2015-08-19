@@ -32,39 +32,10 @@ describe 'import_csv' do
 
   describe 'load_site_type_codes' do
    it_behaves_like("import_csv", "load_site_type_codes", nil, SiteType, {code: %w(region school city area country newspaper magazine state), description: ["Major Metro Area", "College or University", "City", "Neighborhood or District", "Nation", "Newspaper Publication", "Magazine Publication", "State or Province"], status: 'active', hide: %w(no)})
-=begin
-    before do 
-      # Need regions in order to assign site id
-      load File.expand_path("../../../lib/tasks/import_csv.rake", __FILE__)
-      Rake::Task.define_task(:environment)
-      Rake::Task["load_site_type_codes"].invoke
-    end
-    it "" do 
-          
-      expect(SiteType.exists?(code: "region")).to eq(true)
-      expect(SiteType.exists?(code: "school")).to eq(true)
-      expect(SiteType.exists?(code: "city")).to eq(true)
-      expect(SiteType.exists?(code: "area")).to eq(true)
-      expect(SiteType.exists?(code: "country")).to eq(true)
-      expect(SiteType.exists?(code: "newspaper")).to eq(true)       
-      expect(SiteType.exists?(code: "magazine")).to eq(true)
-      expect(SiteType.exists?(code: "state")).to eq(true)       
+  end
 
-
-      expect(SiteType.exists?(description: "Major Metro Area")).to eq(true)
-      expect(SiteType.exists?(description: "College or University")).to eq(true)
-      expect(SiteType.exists?(description: "City")).to eq(true)
-      expect(SiteType.exists?(description: "Neighborhood or District")).to eq(true)
-      expect(SiteType.exists?(description: "Nation")).to eq(true)
-      expect(SiteType.exists?(description: "Newspaper Publication")).to eq(true)
-      expect(SiteType.exists?(description: "Magazine Publication")).to eq(true)
-      expect(SiteType.exists?(description: "State or Province")).to eq(true)
-
-      expect(SiteType.exists?(:status != "active")).to eq(false)
-
-      expect(SiteType.exists?(:hide != "no")).to eq(false)
-    end
-=end
+  describe 'load_org_types' do
+   it_behaves_like("import_csv", "load_org_types", nil, OrgType, {code: %w(region school city area country newspaper magazine state), description: ["Major Metro Area", "College or University", "City", "Neighborhood or District", "Nation", "Newspaper Publication", "Magazine Publication", "State or Province"], status: 'active', hide: %w(no)})
   end           
 
   describe "load_event_types" do
@@ -111,4 +82,14 @@ describe 'import_csv' do
     { code: %w(AED), description: ['United Arab Emirates Dirham'], status: %w(inactive), hide: %w(yes)})
   end
 
+  describe 'load_stock_images' do
+    before do
+      # Need categories in order to assign category_type_code
+      load File.expand_path("../../../lib/tasks/import_csv.rake", __FILE__)
+      Rake::Task.define_task(:environment)
+      Rake::Task["load_categories"].invoke
+    end
+    it_behaves_like('import_csv', 'load_stock_images', nil, StockImage,
+      { title: 'Programmer / Analyst / Developer', category_type_code: 'Employment', file_name: 'Computer.jpg' })
+  end
 end

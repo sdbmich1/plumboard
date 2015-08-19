@@ -632,6 +632,7 @@ feature "TempListings" do
       stub_const("MIN_PIXI_COUNT", 0)
       expect(MIN_PIXI_COUNT).to eq(0)
       page.should have_selector('#pixi-complete-btn', href: categories_path(loc: @loc))
+      page.should have_selector('.img-btn', href: temp_listing_path(temp_listing))
     end
 
     it "submits a pixi w/ local listings home" do
@@ -645,6 +646,7 @@ feature "TempListings" do
       page.should have_selector('.big_logo')
       page.should have_content temp_listing.title
       page.should have_selector('#pixi-complete-btn', href: local_listings_path(loc: @loc))
+      page.should have_selector('.img-btn', href: temp_listing_path(temp_listing))
     end
 
     it "goes back to build a pixi" do

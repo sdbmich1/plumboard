@@ -406,7 +406,18 @@ module ListingsHelper
     if !action_name.match(/index|seller|pixter/).nil?
       show_photo model, 0, img_size, '180x180'
     else
-      view_pixi_image model, pix_size, (model.is_a?(User) ? model.local_user_path : listing_path(model)), lazy_flg
+      view_pixi_image model, pix_size, get_path(model), lazy_flg
+    end
+  end
+
+  # toggle path based on model
+  def get_path model
+    if model.is_a?(User)
+      model.local_user_path
+    elsif model.is_a?(Listing)
+      listing_path(model)
+    else
+      temp_listing_path(model)
     end
   end
 

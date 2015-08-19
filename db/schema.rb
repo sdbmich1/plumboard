@@ -430,6 +430,8 @@ ActiveRecord::Schema.define(:version => 20150814235505) do
     t.string   "term"
     t.datetime "avail_date"
     t.boolean  "buy_now_flg"
+    t.string   "external_url"
+    t.integer  "ref_id"
   end
 
   add_index "listings", ["avail_date"], :name => "index_listings_on_avail_date"
@@ -442,6 +444,7 @@ ActiveRecord::Schema.define(:version => 20150814235505) do
   add_index "listings", ["lng", "lat"], :name => "index_listings_on_lng_and_lat"
   add_index "listings", ["pixan_id"], :name => "index_listings_on_pixan_id"
   add_index "listings", ["pixi_id"], :name => "index_listings_on_pixi_id", :unique => true
+  add_index "listings", ["ref_id"], :name => "index_listings_on_ref_id"
   add_index "listings", ["site_id", "seller_id", "start_date"], :name => "index_listings_on_org_id_and_seller_id_and_start_date"
   add_index "listings", ["status"], :name => "index_listings_on_status"
   add_index "listings", ["term"], :name => "index_listings_on_term"
@@ -502,6 +505,8 @@ ActiveRecord::Schema.define(:version => 20150814235505) do
     t.string   "term"
     t.datetime "avail_date"
     t.boolean  "buy_now_flg"
+    t.string   "external_url"
+    t.integer  "ref_id"
   end
 
   add_index "old_listings", ["category_id"], :name => "index_old_listings_on_category_id"
@@ -820,6 +825,14 @@ ActiveRecord::Schema.define(:version => 20150814235505) do
 
   add_index "status_types", ["hide"], :name => "index_status_types_on_hide"
 
+  create_table "stock_images", :force => true do |t|
+    t.string   "title"
+    t.string   "category_type_code"
+    t.string   "file_name"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
+  end
+
   create_table "subcategories", :force => true do |t|
     t.string   "name"
     t.integer  "category_id"
@@ -879,6 +892,8 @@ ActiveRecord::Schema.define(:version => 20150814235505) do
     t.string   "term"
     t.datetime "avail_date"
     t.boolean  "buy_now_flg"
+    t.string   "external_url"
+    t.integer  "ref_id"
   end
 
   add_index "temp_listings", ["condition_type_code"], :name => "index_temp_listings_on_condition_type_code"

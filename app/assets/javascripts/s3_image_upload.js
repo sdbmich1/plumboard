@@ -24,6 +24,8 @@ function load_image_uploader() {
 // process s3 fields
 function processField($this, $progress, goUpload, str, listID) {
   $this.S3FileField({
+    imageOrientation: true,
+    previewOrientation: true,
     start: function(e, data) {
       goUpload = true;
     },

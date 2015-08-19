@@ -46,3 +46,17 @@ Delayed::Worker.class_eval do
   end 
   alias_method_chain :handle_failed_job, :notification 
 end
+
+# To fix 'wrong number of arguments' issue. See https://github.com/rails/arel/issues/149.
+module Arel
+  module Nodes
+    class SqlLiteral < String
+      def encode_with(coder)
+        coder['string'] = to_s
+      end
+      def init_with(coder)
+        clear << coder['string']
+      end
+    end
+  end
+end

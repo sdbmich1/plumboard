@@ -5,6 +5,7 @@ class Sac365Feed < LoadNewsFeed
   # Specify the feed using feed_url
   def initialize(feed_url)
     @feed = Feed.find_by_url(feed_url)
+    @category = Category.find_by_name("Events")
     if feed_url == "http://www.sacramento365.com/feeds/event/rss/"
       @user_image = "sac365_logo.png"
       @user_email = "sac365feed@pixiboard.com"

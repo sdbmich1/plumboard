@@ -78,8 +78,8 @@ module LocationManager
   end
 
   # get region
-  def self.get_region loc, range=60
-    Site.get_nearest_region loc, range
+  def self.get_region loc
+    Site.get_nearest_region loc
   end
 
   # location setup

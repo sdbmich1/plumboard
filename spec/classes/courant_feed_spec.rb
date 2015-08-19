@@ -25,7 +25,7 @@ describe CourantFeed do
   describe "add_image" do
     it "should load from media:content element" do
       pic = Picture.new
-      @lnf_obj.add_image(pic, @lnf_obj.get_img_loc_text(0))
+      @lnf_obj.add_image(pic, 'http://www.trbimg.com/img-55cb7f03/turbine/hc-sound-check-0813-20150812/600')
       expect(pic.photo).not_to be_nil
     end
   end

@@ -103,7 +103,7 @@ feature "Listings" do
           if qty > 1
             select("#{qty}", :from => "px-qty")
           end
-          click_button 'Send'
+          click_link 'Send'
           sleep 5
           page.should_not have_link 'Want'
           page.should have_content 'Want'
@@ -231,6 +231,30 @@ feature "Listings" do
       init_setup pixi_user
       visit listing_path(post_listing) 
       want_request false, 2
+    end
+  end
+
+  describe "Contact Owner with external url", contact: true do 
+    before do
+      pixi_user = create(:pixi_user)
+      init_setup pixi_user
+      post_listing.update_attribute(:external_url, 'http://www.google.com')
+      visit listing_path(post_listing) 
+    end
+    it "submits want request", js: true do
+      expect {
+        page.should have_link 'Want'
+        page.should have_link 'Ask'
+        page.should have_link 'Cool'
+        click_link 'Want'
+        sleep 2
+        click_link 'Send'
+        sleep 5
+        page.driver.browser.switch_to.window(page.driver.browser.window_handles.first)   # exit popup window
+        page.should_not have_link 'Want'
+        page.should have_content 'Want'
+      }.to change(PixiWant, :count).by(1)
+      expect(PixiWant.first.quantity).to eql(1)
     end
   end
 

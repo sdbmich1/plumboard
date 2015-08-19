@@ -13,7 +13,13 @@
     <% end %>
   </p>
   <div class="modal-footer">
-    <p><%= f.submit "Send", class: 'btn btn-small btn-primary btn-mask', data: {disable_with: "Sending..."} %>
-    <a href="#" class="btn btn-small" data-dismiss="modal">Close</a></p>
+    <p>
+      <% if listing.external_url.blank? %>
+        <%= f.submit "Send", class: 'btn btn-small btn-primary btn-mask', data: {disable_with: "Sending..."} %>
+      <% else %>
+        <%= link_to 'Send', pixi_wants_path(url: listing.external_url, id: listing.pixi_id), method: :post, class: 'btn btn-small btn-primary btn-mask', remote: true %>
+      <% end %>
+      <a href="#" class="btn btn-small" data-dismiss="modal">Close</a>
+    </p>
   </div>
 <% end %>

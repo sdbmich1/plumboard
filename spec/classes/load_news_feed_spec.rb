@@ -11,7 +11,8 @@ describe LoadNewsFeed do
     Rake::Task.define_task(:environment)
     Rake::Task["load_regions"].invoke
     Rake::Task["load_feeds"].invoke
-    create :category, name: "Events", category_type_code: "Event", status: "active", pixi_type: "basic"
+    events = create :category, name: "Events", category_type_code: "Event", status: "active", pixi_type: "basic"
+    jobs = create :category, name: "Jobs", category_type_code: "Jobs", status: "active", pixi_type: "basic"
     @lnf_obj = LoadNewsFeed.new
   end
 
@@ -24,33 +25,61 @@ describe LoadNewsFeed do
   end
 
   describe "load!" do
-    it "assigns values" do
-      expect(@lnf_obj.doc).not_to be_nil
+    it "loads document" do
       expect(@lnf_obj.item_xpath).not_to be_nil
       expect(@lnf_obj.description_xpath).not_to be_nil
       expect(@lnf_obj.link_xpath).not_to be_nil
       expect(@lnf_obj.title_xpath).not_to be_nil
-      expect(@lnf_obj.category_id).not_to be_nil
+      expect(@lnf_obj.category).to be_nil
       expect(@lnf_obj.site).not_to be_nil
-      expect(@lnf_obj.additional_datetimes).to be_nil
-      expect(@lnf_obj.event_type_words).not_to be_nil
     end
 
-    it "should get feed's account" do
+    it "loads user" do
       expect(@lnf_obj.user.email).to eq @lnf_obj.user_email
       expect(@lnf_obj.user.first_name).to eq @lnf_obj.feed.description
       expect(@lnf_obj.user.last_name).to eq "Feed"
       expect(@lnf_obj.user.business_name).to eq @lnf_obj.feed.description
     end
-  end
 
-  describe "load_xpath" do
-    it "returns element xpath if not found" do
-      expect(SDReaderFeed.new.load_xpath("//item//description")).not_to be_nil
+    it "loads category-specific attributes for events" do
+      event_feed = SDReaderFeed.new
+      expect(event_feed.additional_datetimes).to be_nil
+      expect(event_feed.event_type_words).not_to be_nil
     end
 
-    it "returns nil if element is not found" do
-      expect(SDReaderFeed.new.load_xpath("//item//media:content")).to be_nil
+    it "loads category-specific attributes for jobs" do
+      a = AfterCollegeFeed.new
+      expect(a.additional_datetimes).to be_nil
+      expect(a.job_type_codes).not_to be_nil
+      expect(a.stock_images).not_to be_nil
+      expect(a.company_xpath).not_to be_nil
+      expect(a.jobtype_xpath).not_to be_nil
+      expect(a.compensation_xpath).not_to be_nil
+      expect(a.date_xpath).not_to be_nil
+      expect(a.city_xpath).not_to be_nil
+      expect(a.state_xpath).not_to be_nil
+      expect(a.zip_xpath).not_to be_nil
+      expect(a.country_xpath).not_to be_nil
+      expect(a.ref_id_xpath).not_to be_nil
+      expect(a.experience_xpath).not_to be_nil
+      expect(a.education_xpath).not_to be_nil
+    end
+  end
+
+  describe "download_feed" do
+    it "downloads and unzips file to folder provided if feed is reachable" do
+      @lnf_obj.feed = Feed.find_by_url("https://www.aftercollege.com/exports/pixiboard.zip")
+      @lnf_obj.download_feed('db')
+      expect(File.exists?(Rails.root.join('db', 'pixiboard.zip'))).to be_false
+      expect(File.exists?(Rails.root.join('db', 'pixiboard.xml'))).to be_true
+      File.delete(Rails.root.join('db', 'pixiboard.xml'))
+    end
+
+    it "returns nil and doesn't save anything to folder provided if feed is unreachable" do
+      @lnf_obj.feed = Feed.new(url: "https://www.aftercollege.com/exports/nil.zip")
+      doc = @lnf_obj.download_feed('db')
+      expect(File.exists?(Rails.root.join('db', 'pixiboard.zip'))).to be_false
+      expect(File.exists?(Rails.root.join('db', 'pixiboard.xml'))).to be_false
     end
   end
 
@@ -66,8 +95,10 @@ describe LoadNewsFeed do
       expect(attrs[:feed]).to eq @lnf_obj.feed
       expect(attrs[:user_image]).to eq @lnf_obj.user_image
       expect(attrs[:user_email]).to eq @lnf_obj.user_email
-      expect(attrs[:category_id]).to eq @lnf_obj.category_id
+      expect(attrs[:category]).to eq @lnf_obj.category
       expect(attrs[:site]).to eq @lnf_obj.site
+      expect(attrs[:user]).to eq @lnf_obj.user
+      expect(attrs[:stock_images]).to eq @lnf_obj.stock_images
     end
 
     it "does not get Nokogiri::XML objects" do
@@ -77,24 +108,24 @@ describe LoadNewsFeed do
   end
 
   describe "read_feeds" do
-    it "calls load_events on each LoadNewsFeed object" do
+    it "calls add_listings on each LoadNewsFeed object" do
       feeds = [CourantFeed, StrangerFeed, SFExaminerFeed, SDReaderFeed, Sac365Feed]
-      feeds.each { |feed| feed.should_receive :load_events }
+      feeds.each { |feed| feed.should_receive :add_listings }
       Delayed::Worker.delay_jobs = false
-      LoadNewsFeed.stub!(:load_events)
+      LoadNewsFeed.stub!(:add_listings)
       LoadNewsFeed.read_feeds
     end
   end
 
-  describe "load_events" do
-    it "calls add_event" do
-      @lnf_obj.should_receive(:add_event).exactly(@lnf_obj.item_xpath.count).times
-      @lnf_obj.load_events
+  describe "add_listings" do
+    it "calls add_listing for each entry in feed" do
+      @lnf_obj.should_receive(:add_listing).exactly(@lnf_obj.item_xpath.count).times
+      @lnf_obj.add_listings
     end
 
     it "does not attempt to load events if feed is unreachable" do
       @lnf_obj.doc = nil
-      lambda { @lnf_obj.load_events }.should_not raise_error
+      lambda { @lnf_obj.add_listings }.should_not raise_error
     end
   end
 
@@ -117,7 +148,7 @@ describe LoadNewsFeed do
       url = "http://feeds.feedburner.com/courant-music"
       doc = Nokogiri::XML(open(url))
       @lnf_obj.description_xpath = doc.xpath("//item//description")
-      expect(@lnf_obj.description_xpath[0].text).to eq @lnf_obj.get_description(0)
+      expect(@lnf_obj.get_description(0)).to eq @lnf_obj.get_description(0)
     end
   end
 
@@ -241,7 +272,7 @@ describe LoadNewsFeed do
   describe "split_username" do
     it "splits into first and last name" do
       first_name, last_name = @lnf_obj.split_username("Sacramento Italian Cultural Society")
-      expect(first_name).to eq "Sacramento Italian Cultural "
+      expect(first_name).to eq "Sacramento italian cultural "
       expect(last_name).to eq "Society"
     end
 
@@ -287,6 +318,7 @@ describe LoadNewsFeed do
       load File.expand_path("../../../lib/tasks/import_csv.rake", __FILE__)
       Rake::Task.define_task(:environment)
       Rake::Task["load_event_types"].invoke
+      @lnf_obj = SDReaderFeed.new    # need an events feed
     end
 
     it "gets event type code from description" do
@@ -303,6 +335,7 @@ describe LoadNewsFeed do
       load File.expand_path("../../../lib/tasks/import_csv.rake", __FILE__)
       Rake::Task.define_task(:environment)
       Rake::Task["load_event_types"].invoke
+      @lnf_obj = SDReaderFeed.new    # need an events feed
     end
 
     it "returns event type code" do
@@ -497,6 +530,26 @@ describe LoadNewsFeed do
 
     it "returns false for invalid input" do
       expect(@lnf_obj.has_end_time_without_date?("a")).to be_false
+    end
+  end
+
+  describe "fix_leading_time" do
+    it "moves the time if it comes before the date" do
+      expect(@lnf_obj.fix_leading_time('9 a.m. April 9')).to include 'April 9 9 a.m.'
+      expect(@lnf_obj.fix_leading_time('9 am April 9')).to include 'April 9 9 am'
+      expect(@lnf_obj.fix_leading_time('9 p.m. April 9')).to include 'April 9 9 p.m.'
+      expect(@lnf_obj.fix_leading_time('9 pm April 9')).to include 'April 9 9 pm'
+    end
+
+    it "does not move the time if it comes after the date" do
+      expect(@lnf_obj.fix_leading_time('April 9 9 a.m.')).to include 'April 9 9 a.m.'
+      expect(@lnf_obj.fix_leading_time('April 9 9 am')).to include 'April 9 9 am'
+      expect(@lnf_obj.fix_leading_time('April 9 9 p.m.')).to include 'April 9 9 p.m.'
+      expect(@lnf_obj.fix_leading_time('April 9 9 pm')).to include 'April 9 9 pm'
+    end
+
+    it "returns date if no time is specified" do
+      expect(@lnf_obj.fix_leading_time('April 9')).to include 'April 9'
     end
   end
 

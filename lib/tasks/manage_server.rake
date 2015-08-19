@@ -160,6 +160,10 @@ namespace :manage_server do
     end
   end
 
+  task :import_job_feed => :environment do
+    LoadNewsFeed.import_job_feed
+  end
+
   task :run_upgrade_tasks => :environment do
     Rake::Task[:import_travel_modes].execute
     Rake::Task[:import_user_type].execute
@@ -184,5 +188,6 @@ namespace :manage_server do
     Rake::Task["manage_server:reprocess_user_images"].invoke
     Rake::Task["manage_server:reprocess_listing_images"].invoke
     Rake::Task["manage_server:reprocess_category_images"].invoke
+    Rake::Task["manage_server:import_job_feed"].invoke
   end
 end
