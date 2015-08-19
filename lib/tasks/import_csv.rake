@@ -37,7 +37,7 @@ task :import_sites => :environment do
       # set location/contact attributes
       loc_attrs = { 
         :address         => row[2],
-	:city            => row[3],
+	      :city            => row[3],
         :state           => row[4],
         :zip             => row[5],
         :work_phone	 => row[6],
@@ -433,9 +433,9 @@ task :import_user_type => :environment do
   CSV.foreach(Rails.root.join('db', 'user_type_040114.csv'), :headers => true) do |row|
 
     attrs = {
-      :code	       => row[0],
+      :code	         => row[0],
       :description   => row[1],
-      :hide   => row[2],
+      :hide          => row[2],
       :status	       => 'active'
     }
 
@@ -760,6 +760,26 @@ task :update_site_images, [:file_name] => [:environment] do |t, args|
   end
 end
 
+task :load_currency_types => :environment do
+  CurrencyType.delete_all
+  CSV.foreach(Rails.root.join('db', 'currency_type_062815.csv'), :headers => true) do |row|
+    attrs = {
+      :code => row[0],
+      :description => row[1],
+      :status => row[2],
+      :hide => row[3],
+    }
+
+    new_currency_type = CurrencyType.new(attrs)
+
+    if new_currency_type.save
+      puts "Saved currency_type #{attrs.inspect}"
+    else
+      puts new_currency_type.errors
+    end
+  end
+end
+
 #to run all tasks at once
 task :run_all_tasks => :environment do
 
@@ -786,6 +806,9 @@ task :run_all_tasks => :environment do
   Rake::Task[:load_site_type_codes].execute
   Rake::Task[:import_travel_modes].execute
   Rake::Task[:load_feeds].execute
+  Rake::Task[:load_currency_types].execute 
+  Rake::Task[:import_other_sites].execute :file_name => "state_site_data_012815.csv", :org_type => "state"
+  Rake::Task[:import_other_sites].execute :file_name => "country_site_data_012815.csv", :org_type => "country"
   Rake::Task[:import_other_sites].execute :file_name => "state_site_data_012815.csv", :site_type_code => "state"
   Rake::Task[:import_other_sites].execute :file_name => "country_site_data_012815.csv", :site_type_code => "country"
   Rake::Task[:update_site_images].execute :file_name => "region_image_data_051415.csv"

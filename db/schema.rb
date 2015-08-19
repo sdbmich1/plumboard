@@ -185,6 +185,17 @@ ActiveRecord::Schema.define(:version => 20150814235505) do
   add_index "conversations", ["status"], :name => "index_conversations_on_status"
   add_index "conversations", ["user_id"], :name => "index_conversations_on_user_id"
 
+  create_table "currency_types", :force => true do |t|
+    t.string   "code"
+    t.string   "status"
+    t.string   "hide"
+    t.string   "description"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "currency_types", ["code"], :name => "index_currency_types_on_code"
+
   create_table "date_ranges", :force => true do |t|
     t.string   "name"
     t.string   "status"

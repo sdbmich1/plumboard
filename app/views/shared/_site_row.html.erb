@@ -1,0 +1,11 @@
+<% cache site do %>
+	<tr>
+    	<td class='span1 center-wrapper'>
+    		<%= render partial: 'shared/show_photo', locals: {model: site, pix_size: 'tiny', img_size: 'usr-sm-photo'} %>
+  		</td>
+  		<td class='span9'><%= site.name %></td>
+  		<td class='span2'><%= site.org_type %></td>
+  		<td class='span2'><%= site.status %></td>
+  		<td class='span2 center-wrapper'><%= link_to 'Details', '#', class: 'btn btn-small' %></td>
+	</tr>
+<% end %>

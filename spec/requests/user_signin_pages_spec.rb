@@ -163,8 +163,13 @@ feature "UserSignins" do
         page.should_not have_link('PixiPosts', href: pixi_posts_path)
         page.should_not have_link('Users', href: users_path)
         page.should_not have_link('Inquiries', href: inquiries_path(ctype: 'inquiry'))
+<<<<<<< HEAD
+        page.should_not have_link('Sites', href: sites_path)
+	user_menu_items
+=======
         page.should_not have_link('Followers', href: favorite_sellers_path(ftype: 'buyer', status: 'active'))
         user_menu_items
+>>>>>>> 59b889884c7bbf0a245ac2d030abcc5d21af62dc
         # page.should have_content "Welcome to Pixiboard, #{@user.first_name}!"
         # page.should_not have_content "To get a better user experience"
 
@@ -194,8 +199,13 @@ feature "UserSignins" do
         page.should have_link('Transactions', href: transactions_path)
         page.should have_link('Users', href: users_path)
         page.should have_link('Pixis', href: listings_path(status: 'active'))
+<<<<<<< HEAD
+        page.should have_link('Sites', href: sites_path)
+	user_menu_items true
+=======
         page.should have_link('Followers', href: favorite_sellers_path(ftype: 'buyer', status: 'active'))
         user_menu_items true, false, true
+>>>>>>> 59b889884c7bbf0a245ac2d030abcc5d21af62dc
       end
 
       it "displays sign in link after signout" do
