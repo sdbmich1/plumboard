@@ -11,30 +11,6 @@ feature "UserSignins" do
     click_button submit
   end
 
-  def user_menu_items showFlg=false, sellerFlg=false, adminFlg=false
-    page.should have_button('Post')
-    page.should have_link('By You', href: new_temp_listing_path)
-    page.should have_link('By Us (PixiPost)', href: check_pixi_post_zips_path)
-    if showFlg
-      page.should have_link('For Seller', href: new_temp_listing_path(pixan_id: @user))
-      page.should have_link('For Business', href: new_temp_listing_path(pixan_id: @user, ptype: 'bus'))
-    end
-    page.should have_link('My Pixis', href: seller_listings_path(status: 'active'))
-    page.should have_link('My Messages', href: conversations_path(status: 'received'))
-    page.should have_link('My Site', href: @user.local_user_path) unless adminFlg
-    page.should have_link('My Invoices', href: sent_invoices_path)
-    page.should have_link('My Accounts', href: new_bank_account_path)
-    page.should have_link('My Settings', href: user_path(@user))
-    if sellerFlg
-      page.should have_link('My Followers', href: favorite_sellers_path(ftype: 'seller', id: @user.id, status: 'active'))
-    else
-      page.should have_link('My Sellers', href: favorite_sellers_path(ftype: 'buyer', id: @user.id, status: 'active'))
-    end
-    page.should have_link('My PixiPosts', href: seller_pixi_posts_path(status: 'active'))
-    page.should have_link('Sign out', href: destroy_user_session_path)
-    page.should_not have_link('Sign in', href: new_user_session_path)
-  end
-
   def about_menu
     page.should have_link('About', href: about_path)
     page.should have_link('Contact', href: contact_path)
@@ -105,31 +81,13 @@ feature "UserSignins" do
       page.should have_link 'Sign up for free!', href: new_user_registration_path
     end
 
-    describe 'facebook' do 
+    describe 'facebook', fb: true do 
       before :each do
         create :state
         add_region
       end
-
-      scenario 'signs-in from sign-in page' do
-        omniauth
-        set_const 0
-        click_on "fb-btn"
-        page.should have_link('Sign out', href: destroy_user_session_path)
-        page.should have_content "Home"
-        # page.should have_content "Welcome to Pixiboard, Bob!"
-        # page.should have_content "To get a better user experience"
-      end
-
-      scenario 'signs-in from sign-in page' do
-        omniauth
-        set_const 500
-        click_on "fb-btn"
-        page.should have_link('Sign out', href: destroy_user_session_path)
-        page.should have_content "Pixis"
-        # page.should have_content "Welcome to Pixiboard, Bob!"
-        # page.should have_content "To get a better user experience"
-      end
+      it_should_behave_like 'an omniauth login', 0, 'Home'
+      it_should_behave_like 'an omniauth login', 500, 'Pixis'
     end
 
     describe 'registered unconfirmed users' do 
@@ -149,124 +107,27 @@ feature "UserSignins" do
     end
 
     describe 'registered confirmed users', base: true do
-      before(:each) do
-        @user = FactoryGirl.create :pixi_user, confirmed_at: Time.now 
-        user_login @user
-      end
-
-      it 'shows content' do
-        page.should have_content(@user.first_name)
-        page.should_not have_content('Manage')
-        page.should have_link('Sign out', href: destroy_user_session_path)
-        page.should_not have_link('Pixis', href: listings_path)
-        page.should_not have_link('Transactions', href: transactions_path)
-        page.should_not have_link('PixiPosts', href: pixi_posts_path)
-        page.should_not have_link('Users', href: users_path)
-        page.should_not have_link('Inquiries', href: inquiries_path(ctype: 'inquiry'))
-<<<<<<< HEAD
-        page.should_not have_link('Sites', href: sites_path)
-	user_menu_items
-=======
-        page.should_not have_link('Followers', href: favorite_sellers_path(ftype: 'buyer', status: 'active'))
-        user_menu_items
->>>>>>> 59b889884c7bbf0a245ac2d030abcc5d21af62dc
-        # page.should have_content "Welcome to Pixiboard, #{@user.first_name}!"
-        # page.should_not have_content "To get a better user experience"
-
-	visit new_temp_listing_path
-        page.should_not have_content "Home"
-        page.should have_content "Build Your Pixi"
-      end
-
-      it "displays sign in link after signout" do
-        click_link "Sign out"
-        page.should have_content 'How It Works'
-      end
+      it_should_behave_like 'manage_signin_links', 'pixi_user', false, false, false, false
     end
 
     describe 'registered admin users', base: true  do
-      before(:each) do
-        @user = FactoryGirl.create :admin, confirmed_at: Time.now 
-        user_login @user
-      end
-
-      it 'shows content' do
-        page.should have_content(@user.first_name)
-        page.should have_content('Manage')
-        page.should have_link('PixiPosts', href: pixi_posts_path(status: 'active'))
-        page.should have_link('Inquiries', href: inquiries_path(ctype: 'inquiry'))
-        page.should have_link('Categories', href: manage_categories_path)
-        page.should have_link('Transactions', href: transactions_path)
-        page.should have_link('Users', href: users_path)
-        page.should have_link('Pixis', href: listings_path(status: 'active'))
-<<<<<<< HEAD
-        page.should have_link('Sites', href: sites_path)
-	user_menu_items true
-=======
-        page.should have_link('Followers', href: favorite_sellers_path(ftype: 'buyer', status: 'active'))
-        user_menu_items true, false, true
->>>>>>> 59b889884c7bbf0a245ac2d030abcc5d21af62dc
-      end
-
-      it "displays sign in link after signout" do
-        click_link "Sign out"
-        page.should have_content 'How It Works'
-      end
+      it_should_behave_like 'manage_signin_links', 'admin', true, true, false, true
     end
 
     describe 'registered editor users', base: true  do
-      before(:each) do
-        @user = FactoryGirl.create :editor, confirmed_at: Time.now 
-        user_login @user
-      end
-
-      it 'shows content' do
-        page.should have_content(@user.first_name)
-        page.should have_content('Manage')
-        page.should have_link('PixiPosts', href: pixi_posts_path(status: 'active'))
-        page.should have_link('Inquiries', href: inquiries_path(ctype: 'inquiry'))
-        page.should_not have_link('Categories', href: manage_categories_path)
-        page.should_not have_link('Transactions', href: transactions_path)
-        page.should_not have_link('Users', href: users_path)
-        page.should have_link('For Seller', href: new_temp_listing_path(pixan_id: @user))
-        page.should have_link('For Business', href: new_temp_listing_path(pixan_id: @user, ptype: 'bus'))
-        page.should have_link('Pixis', href: listings_path(status: 'active'))
-        page.should have_link('Followers', href: favorite_sellers_path(ftype: 'buyer', status: 'active'))
-        user_menu_items true, false, true
-      end
-
-      it "displays sign in link after signout" do
-        click_link "Sign out"
-        page.should have_content 'How It Works'
-      end
+      it_should_behave_like 'manage_signin_links', 'editor', true, true, false, true
     end
 
     describe 'registered pixter users', base: true  do
-      before(:each) do
-        @user = FactoryGirl.create :pixter, confirmed_at: Time.now 
-        user_login @user
-      end
+      it_should_behave_like 'manage_signin_links', 'pixter', false, true, false, true
+    end
 
-      it 'shows content' do
-        page.should have_content(@user.first_name)
-        page.should have_content('Manage')
-        page.should_not have_link('PixiPosts', href: pixi_posts_path(status: 'active'))
-        page.should have_link('PixiPosts', href: pixter_pixi_posts_path(status: 'scheduled'))
-        page.should_not have_link('Inquiries', href: inquiries_path(ctype: 'inquiry'))
-        page.should_not have_link('Categories', href: manage_categories_path)
-        page.should_not have_link('Transactions', href: transactions_path)
-        page.should_not have_link('Users', href: users_path)
-        page.should have_link('For Seller', href: new_temp_listing_path(pixan_id: @user))
-        page.should have_link('For Business', href: new_temp_listing_path(pixan_id: @user, ptype: 'bus'))
-        page.should_not have_link('Pixis', href: listings_path)
-        page.should_not have_link('Followers', href: favorite_sellers_path(ftype: 'buyer', status: 'active'))
-        user_menu_items true, false, true
-      end
+    describe 'registered subscriber users', base: true  do
+      it_should_behave_like 'manage_signin_links', 'subscriber', false, false, false, false
+    end
 
-      it "displays sign in link after signout" do
-        click_link "Sign out"
-        page.should have_content 'How It Works'
-      end
+    describe 'registered business users', base: true  do
+      it_should_behave_like 'manage_signin_links', 'contact_user', false, false, true, false
     end
 
     describe "displays my accounts link", base: true  do
@@ -281,56 +142,6 @@ feature "UserSignins" do
       it 'shows content' do
         page.should have_content('My Accounts')
         page.should have_link('My Accounts', href: bank_account_path(@account))
-      end
-    end
-
-    describe 'registered subscriber users', base: true  do
-      before(:each) do
-        @user = FactoryGirl.create :subscriber, confirmed_at: Time.now 
-        user_login @user
-      end
-
-      it 'shows content' do
-        page.should have_content(@user.first_name)
-        page.should_not have_content('Manage')
-        page.should_not have_link('PixiPosts', href: pixi_posts_path)
-        page.should_not have_link('Inquiries', href: inquiries_path(ctype: 'inquiry'))
-        page.should_not have_link('Categories', href: manage_categories_path)
-        page.should_not have_link('Transactions', href: transactions_path)
-        page.should_not have_link('Users', href: users_path)
-        page.should_not have_link('Pixis', href: listings_path(status: 'active'))
-        page.should_not have_link('Followers', href: favorite_sellers_path(ftype: 'buyer', status: 'active'))
-        user_menu_items
-      end
-
-      it "displays sign in link after signout" do
-        click_link "Sign out"
-        page.should have_content 'How It Works'
-      end
-    end
-
-    describe 'registered business users', base: true  do
-      before(:each) do
-        @user = create :contact_user, user_type_code: 'BUS', business_name: 'Rhythm Music'
-        user_login @user
-      end
-
-      it 'shows content' do
-        page.should have_content(@user.first_name)
-        page.should_not have_content('Manage')
-        page.should_not have_link('PixiPosts', href: pixi_posts_path)
-        page.should_not have_link('Inquiries', href: inquiries_path(ctype: 'inquiry'))
-        page.should_not have_link('Categories', href: manage_categories_path)
-        page.should_not have_link('Transactions', href: transactions_path)
-        page.should_not have_link('Users', href: users_path)
-        page.should_not have_link('Pixis', href: listings_path(status: 'active'))
-        page.should_not have_link('Followers', href: favorite_sellers_path(ftype: 'buyer', status: 'active'))
-        user_menu_items(false, true)
-      end
-
-      it "displays sign in link after signout" do
-        click_link "Sign out"
-        page.should have_content 'How It Works'
       end
     end
   end

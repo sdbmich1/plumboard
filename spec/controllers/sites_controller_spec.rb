@@ -21,23 +21,11 @@ describe SitesController do
     @site = stub_model(Site, :id=>1, status: "active", name: "Berkeley", site_type_code: "school")
   end
 
-  describe 'GET index' do
-    before(:each) do
-      @sites = mock("sites")
-      Site.stub!(:all).and_return(@sites)
-      do_get
-    end
-
-    def do_get
-      get :index
-    end
-
-    it "renders the :index view" do
-      response.should render_template :index
-    end
-
-    it "should assign @sites" do
-      assigns(:sites).should == @sites
+  describe 'GET index', index: true do
+    context 'load sites' do
+      [true, false].each do |xhr|
+        it_behaves_like "a load data request", 'Site', 'get_by_type', 'index', 'paginate', xhr
+      end
     end
   end
 

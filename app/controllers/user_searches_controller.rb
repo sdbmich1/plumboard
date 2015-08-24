@@ -1,26 +1,26 @@
 require 'will_paginate/array' 
 class UserSearchesController < ApplicationController
   before_filter :authenticate_user!
-  autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name
+  before_filter :load_data, only: [:index]
   respond_to :html, :js, :mobile, :json
 
   def index
-    @users = User.search query, include: [:pictures, :preferences], star: true, page: page unless query.blank?
+    @users = User.search query, search_options
   end
 
   protected
 
   # wrap query text for special characters
   def query
-    @query = Riddle::Query.escape params[:search_user]
+    @query = Riddle::Query.escape params[:search_txt]
   end  
-
-  def page
-    @page = params[:page] || 1
+ 
+  def load_data
+    @utype, @page = params[:utype], params[:page] || 1
   end
 
-  def get_autocomplete_items(parameters)
-    items = super(parameters)
-    items = items.active rescue items
+  # dynamically define search options based on selections
+  def search_options
+    ModelSearchBuilder.new([:pictures, :user_type, :preferences], @page).search_options('user_type_code', @utype)
   end
 end

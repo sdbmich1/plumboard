@@ -23,4 +23,16 @@ module CategoriesHelper
   def get_cat_type cat
     cat.category_type_code rescue nil
   end
+
+  # load categories menu
+  def category_menu usr
+    content_tag(:ul, build_cat_menu.join(" ").html_safe, class: 'nav pull-right') if can? :manage, usr 
+  end
+
+  def build_cat_menu str=[]
+    str << menu_item('Active', 'active-cat', 'active', manage_categories_path(status: 'active'), true)
+    str << menu_item('Inactive', 'inactive-cat', 'inactive', inactive_categories_path(status: 'inactive'), false)
+    str << menu_item('New', 'new-cat', 'new', new_category_path(status: 'new'), false)
+    str
+  end
 end

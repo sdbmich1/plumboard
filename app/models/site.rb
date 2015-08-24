@@ -47,9 +47,13 @@ class Site < ActiveRecord::Base
     SiteProcessor.new(self).active_with_pixis
   end
 
+  def self.inc_list
+    includes(:pictures)
+  end
+
   # select by type
   def self.get_by_type val
-    where("status = 'active' AND site_type_code = ?", val)
+    inc_list.where("status = 'active' AND site_type_code = ?", val)
   end
 
   def self.get_by_status val

@@ -36,10 +36,14 @@ module ListingsHelper
   # get path name
   def get_next_path_name
     case action_name
+      when 'manage'
+        'category_next_page'
+      when 'inactive'
+        'inactive_category_next_page'
       when 'category'
         'cat_list_next_page'
       when 'local'
-        controller_name == 'categories' ? 'category_next_page' : 'loc_list_next_page'
+        'loc_list_next_page'
       when 'biz', 'pub', 'mbr', 'career', 'edu'
         [action_name, 'next_page'].join('_')
       else

@@ -13,7 +13,7 @@ var pathName = "<%= set_path_parse %>"
 <% if next_page?(model) %>
   $("#px-nav").html("<%= escape_javascript(render(partial: "#{set_init_next_page_path}")) %>");
 <% else %>
-  $("#px-nav").remove();
+  $("#px-nav").html('');
 <% end %>
 
 // set next page infinite scroll path

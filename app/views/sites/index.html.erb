@@ -4,6 +4,6 @@
 <% end %>
 <%= content_for :content do %>
   <div id='post-frm'>
-    <%= render partial: 'shared/site'%>
+    <%= render partial: 'shared/site', locals: {model: @sites, stype: @stype} %>
   </div>
 <% end %>

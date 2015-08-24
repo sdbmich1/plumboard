@@ -18,7 +18,6 @@ class UsersController < ApplicationController
   end
 
   def update
-    changing_email = params[:user][:email] != @usr.email
     check_profile if @usr.update_attributes(params[:user])
     respond_with(@usr)
   end
@@ -38,6 +37,7 @@ class UsersController < ApplicationController
   end
   
   def check_profile
+    changing_email = params[:user][:email] != @usr.email
     if is_profile?  
       flash[:notice] = 'Saved changes successfully'
     else 

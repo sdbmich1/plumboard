@@ -20,10 +20,6 @@ feature "site" do
       page.should have_content 'Status'
     end
 
-    it "has export CSV button" do
-      page.should have_link 'Export as CSV file' # , href: wanted_listings_path(loc: @site.id, cid: @category.id, format: 'csv')
-    end
-
     it "has details button" do
       page.should have_link 'Details'
     end

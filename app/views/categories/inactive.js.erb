@@ -1,2 +1,3 @@
-$("#pxboard").html("<%= escape_javascript(render(partial: 'shared/categories')) %>");
+<%= render partial: 'shared/reload_board', locals: {model: @categories} %>
+$('#pg-title').html('Pixiboard | Categories');
 $('#spinner').hide(300);

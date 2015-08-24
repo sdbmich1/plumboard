@@ -885,3 +885,12 @@ function resetSpan(ctype) {
     $('#signInForm').removeClass('offset4').addClass('offset5');
   }
 }
+
+// set card year for credit card
+function set_search_fld(val) {
+  $('#search_type').val(val);
+  var action = $("#search_btn").attr("action").split('?');
+  var str = action[0] + '?utype=' + val;
+  $("#search_btn").attr("action", str);
+  $('#search_txt').html('');
+}

@@ -131,6 +131,7 @@ module ApplicationHelper
       when 'My PixiPosts'; render 'shared/navbar_pixi_post'
       when 'Inquiries'; render 'shared/navbar_inquiry'
       when 'Users'; render 'shared/navbar_users'
+      when 'Sites'; render 'shared/navbar_sites'
       when 'Manage Pixis'; render 'shared/navbar_manage_pixis'
       when 'My Sellers', 'Manage Followers', 'My Followers'; render 'shared/navbar_sellers'
       else render 'shared/navbar_main'
