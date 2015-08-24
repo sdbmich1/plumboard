@@ -101,8 +101,8 @@ class Site < ActiveRecord::Base
   end
 
   # get nearest region
-  def self.get_nearest_region loc, range=60
-    SiteProcessor.new(self).get_nearest_region loc, range
+  def self.get_nearest_region loc
+    SiteProcessor.new(self).get_nearest_region loc
   end
 
   # select by name

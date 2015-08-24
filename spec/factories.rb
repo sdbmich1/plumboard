@@ -482,4 +482,9 @@ FactoryGirl.define do
     status "active"
   end
   
+  factory :stock_image do
+    title "Programmer"
+    file_name "Computer.jpg"
+    category_type_code "employment"
+  end
 end

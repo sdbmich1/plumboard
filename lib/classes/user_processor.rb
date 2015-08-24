@@ -123,8 +123,11 @@ class UserProcessor
   end
 
   def csv_data
-    { "Name" => @user.name, "Email" => @user.email, "Type" => @user.type_descr, "Zip" => @user.home_zip, "Birth Date" => @user.birth_dt, 
-      "Enrolled" => nice_date(@user.created_at), "Last Login" => nice_date(@user.last_sign_in_at) }
+    output = { "Name" => @user.name, "Email" => @user.email, "Type" => @user.type_descr,
+               "Zip" => @user.home_zip, "Birth Date" => @user.birth_dt,
+               "Enrolled" => nice_date(@user.created_at) }
+    output['Last Login'] = nice_date(@user.current_sign_in_at) if @user.current_sign_in_at
+    output
   end
 
   # initialize data

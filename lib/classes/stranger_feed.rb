@@ -1,6 +1,7 @@
 class StrangerFeed < LoadNewsFeed
   def initialize
     @feed = Feed.find_by_url("http://www.thestranger.com/seattle/Rss.xml?category=13930221")
+    @category = Category.find_by_name("Events")
     @user_image = "the_stranger_logo.png"
     @user_email = "strangerfeed@pixiboard.com"
     load!

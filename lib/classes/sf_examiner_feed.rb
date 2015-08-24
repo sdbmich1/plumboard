@@ -1,6 +1,7 @@
 class SFExaminerFeed < LoadNewsFeed
   def initialize
     @feed = Feed.find_by_url("http://www.sfexaminer.com/sanfrancisco/Rss.xml?section=2124643")
+    @category = Category.find_by_name("Events")
     @user_image = "sf_examiner_logo.png"
     @user_email = "sfexaminerfeed@pixiboard.com"
     load!

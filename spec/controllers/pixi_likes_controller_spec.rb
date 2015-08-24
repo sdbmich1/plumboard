@@ -22,7 +22,7 @@ describe PixiLikesController do
 
   describe "POST create" do
     before :each do
-      @like = mock_model PixiLike
+      @like = stub_model PixiLike
       controller.stub!(:current_user).and_return(@user)
       @user.stub_chain(:pixi_likes, :build).and_return(@like)
       controller.stub!(:reload_data).and_return(true)

@@ -668,13 +668,15 @@ describe User do
   end
 
   describe "exporting as CSV" do
-
     it "exports data as CSV file" do
       csv_string = @user.as_csv
-      csv_string.keys.should =~ ["Name", "Email", "Type", "Zip", "Birth Date", "Enrolled", "Last Login"]
+      csv_string.keys.should =~ ["Name", "Email", "Type", "Zip", "Birth Date", "Enrolled"]
       csv_string.values.should =~ [@user.name, @user.email, @user.type_descr, @user.home_zip,
-                                   @user.birth_dt, @user.nice_date(@user.created_at),
-                                   @user.nice_date(@user.last_sign_in_at)] 
+                                   @user.birth_dt, @user.nice_date(@user.created_at)]
+      @user.current_sign_in_at = Time.now
+      csv_string = @user.as_csv
+      csv_string.keys.should include "Last Login"
+      csv_string.values.should include @user.nice_date(@user.current_sign_in_at)
     end
 
     it "does not export any user data" do

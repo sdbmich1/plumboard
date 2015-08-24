@@ -190,18 +190,23 @@ describe Site do
 
   describe 'get_nearest_region' do
     before(:each, :run => true) do
-      @site1 = create :site, name: 'Detroit', site_type_code: 'city'
-      @site1.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro', city: 'Detroit', state: 'MI', zip: '48238'
-      @site2 = create :site, name: 'Metro Detroit', site_type_code: 'region'
+      @site1 = create :site, name: 'Ann Arbor', org_type: 'city'
+      @site1.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro',
+        city: 'Ann Arbor', state: 'MI', zip: '48103', lat: 42.22, lng: -83.75
+      @site2 = create :site, name: 'Metro Detroit', org_type: 'region'
+      @site2.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro',
+        city: 'Detroit', state: 'MI', zip: '48238', lat: 42.23, lng: -83.33
     end
 
     it "finds nearest region", :run => true do
-      expect(Site.get_nearest_region('Detroit')).to include('Detroit')
+      expect(Site.get_nearest_region([@site1.contacts.first.lat, @site1.contacts.first.lng])).to include 'Metro Detroit'
     end
 
     it "doesn't find nearest region" do
-      @site2 = create :site, name: 'SF Bay Area', site_type_code: 'region'
-      expect(Site.get_nearest_region('Detroit')).to include('SF Bay Area')
+      @site3 = create :site, name: 'SF Bay Area', org_type: 'region'
+      @site3.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro',
+        city: 'San Francisco', state: 'CA', zip: '94101', lat: 37.77, lng: -122.43
+      expect(Site.get_nearest_region([nil, nil])).to include('SF Bay Area')
       expect(Site.get_nearest_region('')).to include('SF Bay Area')
     end
   end

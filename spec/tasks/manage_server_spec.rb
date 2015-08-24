@@ -11,6 +11,10 @@ describe 'manage_server' do
     it_behaves_like("manage_server", "manage_server:close_expired_pixis", nil, Listing, :close_pixis)
   end
 
+  describe "import_job_feed" do
+    it_behaves_like("manage_server", "manage_server:import_job_feed", nil, LoadNewsFeed, :import_job_feed)
+  end
+
   describe "load_news_feeds" do
     it_behaves_like("manage_server", "manage_server:load_news_feeds", nil, LoadNewsFeed, :read_feeds)
   end
