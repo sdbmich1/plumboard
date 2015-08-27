@@ -751,6 +751,13 @@ task :update_site_images, [:file_name] => [:environment] do |t, args|
     site.pictures.destroy_all
     pic = site.pictures.build
     pic.photo = File.new(Rails.root.join('db', 'images', row[3]))
+    
+    if args[:file_name] == "college_image_data" #
+      site.url = row[2]
+    end
+
+    # url_index = row.headers.index('URL')
+    # site.url = row[url_index] if url_index
 
     if site.save
       puts "Saved image for #{site.name}"
@@ -813,4 +820,5 @@ task :run_all_tasks => :environment do
   Rake::Task[:import_other_sites].execute :file_name => "country_site_data_012815.csv", :site_type_code => "country"
   Rake::Task[:update_site_images].execute :file_name => "region_image_data_051415.csv"
   Rake::Task[:update_site_images].execute :file_name => "city_image_data_060915.csv"
+  Rake::Task[:update_site_images].execute :file_name => "college_image_data_071915.csv"
 end

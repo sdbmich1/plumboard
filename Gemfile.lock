@@ -625,8 +625,4 @@ DEPENDENCIES
   win32console (~> 1.3.2)
 
 BUNDLED WITH
-<<<<<<< HEAD
    1.10.6
-=======
-   1.10.3
->>>>>>> c110453a8d5c91c003813d338311d63cea1512db
