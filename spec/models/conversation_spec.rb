@@ -192,34 +192,29 @@ describe Conversation do
       context 'getting specific conversations' do
         it "gets sent conversations" do
           Conversation.get_specific_conversations(@user, "sent").should include(@conversation)
-          Conversation.usr_msg?(@conversation, @user).should be_true
           expect(Conversation.get_specific_conversations(@user, "sent").count).to eql(1)
         end
 
         it "only gets active sent conversations" do
           @conversation.status = 'removed'
           @conversation.save
-          Conversation.usr_msg?(@conversation, @user).should_not be_true
           Conversation.get_specific_conversations(@user, "sent").should_not include(@conversation)
         end
 
         it "gets received conversations" do
           Conversation.get_specific_conversations(@user, "received").should include(@conversation2)
-          Conversation.usr_msg?(@conversation2, @user).should be_true
           expect(Conversation.get_specific_conversations(@user, "received").count).to eql(1)
         end
 
         it "only gets active received conversations" do
           @conversation2.recipient_status = 'removed'
           @conversation2.save
-          Conversation.usr_msg?(@conversation2, @user).should_not be_true
           Conversation.get_specific_conversations(@user, "received").should_not include(@conversation2)
         end
       end
     end
 
     describe 'replied_conv' do
-
       context 'with only one message' do
         it 'does not return true when user has not replied' do
           expect(@conversation.replied_conv?(@recipient)).to be false
@@ -356,14 +351,14 @@ describe Conversation do
     end
 
     it "show current created date" do
-      expect(@conversation.create_dt).not_to eq @conversation.created_at
+      expect(@conversation.create_dt).to eq @conversation.created_at
     end
 
     it "shows local created date" do
       @listing.lat, @listing.lng = 35.1498, -90.0492
       @listing.save
       # expect(@conversation.create_dt.to_i).to eq Time.now.to_i
-      expect(@conversation.create_dt).not_to eq @conversation.created_at
+      expect(@conversation.create_dt).to eq @conversation.created_at
     end
   end
 

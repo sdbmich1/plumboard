@@ -19,17 +19,7 @@ class Post < ActiveRecord::Base
 
   # set active status
   def activate
-    if self.status != 'removed'
-      self.status = 'active'
-    end
-    if self.recipient_status != 'removed'
-      self.recipient_status = 'active'
-    end
-
-    # check for invalid ascii chars
-    encoding_options = {:invalid => :replace, :undef => :replace, :replace => '', :UNIVERSAL_NEWLINE_DECORATOR => true}
-    self.content.encode!(Encoding.find('ASCII'), encoding_options)
-    self
+    PostProcessor.new(self).activate
   end
 
   # select active posts
@@ -54,14 +44,12 @@ class Post < ActiveRecord::Base
 
   # short content
   def summary num=MAX_SIZE, showTailFlg=false
-    descr = long_content?(num) ? content.html_safe[0..num-1] : content.html_safe rescue nil
-    descr = showTailFlg ? descr + '...' : descr rescue nil
-    Rinku.auto_link(descr) if descr
+    PostProcessor.new(self).summary num, showTailFlg
   end
 
   # add hyperlinks to content
   def full_content
-    Rinku.auto_link(content.html_safe) rescue nil
+    PostProcessor.new(self).full_content
   end
 
   # check if content length > MAX_SIZE
@@ -126,48 +114,17 @@ class Post < ActiveRecord::Base
 
   # add post for invoice creation or payment
   def self.add_post inv, listing, sender, recipient, msg, msgType=''
-    if sender && recipient
-
-      # find the corresponding conversation
-      conv = Conversation.get_conv listing.pixi_id, recipient.id, sender.id
-
-      # create new conversation if one doesn't already exist
-      if conv.blank?
-        conv = Conversation.get_conv listing.pixi_id, sender.id, recipient.id
-        conv = listing.conversations.create user_id: sender.id, recipient_id: recipient.id if conv.blank?
-      end
-
-      # new post
-      conv.posts.create recipient_id: recipient.id, user_id: sender.id, msg_type: msgType, pixi_id: conv.pixi_id, content: msg
-    else
-      false
-    end
+    PostProcessor.new(self).add_post inv, listing, sender, recipient, msg, msgType
   end
 
   # send invoice post
   def self.send_invoice inv, listing
-    if !inv.blank? && !listing.blank?
-      msg = "You received Invoice ##{inv.id} from #{inv.seller_name} for $" + ("%0.2f" % inv.amount)
-      add_post inv, listing, inv.seller, inv.buyer, msg, 'inv'
-    else
-      false
-    end
+    PostProcessor.new(self).send_invoice inv, listing
   end
 
   # pay invoice post
   def self.pay_invoice model
-
-    # get invoice and pixi
-    inv = model.invoices[0] rescue nil
-    listing = inv.listings.first if inv
-
-    # send post
-    if inv && listing
-      msg = "You received a payment for Invoice ##{inv.id} from #{inv.buyer_name} for $" + ("%0.2f" % inv.amount)
-      add_post inv, listing, inv.buyer, inv.seller, msg, 'paidinv'
-    else
-      false
-    end
+    PostProcessor.new(self).pay_invoice model
   end
 
   # check if invoice is due
@@ -182,22 +139,7 @@ class Post < ActiveRecord::Base
 
   # check invoice status for buyer or seller
   def check_invoice usr, flg, fld
-    if listing.active?
-      str = flg ? "buyer_id = #{recipient_id}" : "buyer_id = #{recipient_id} AND invoices.status = 'unpaid'"
-      list = listing.invoices.where(str)
-      list.find_each do |invoice|
-        result = flg ? invoice.owner?(usr) : !invoice.owner?(usr) 
-        if result && invoice.unpaid? && invoice.send(fld) == usr.name
-          invoice.invoice_details.find_each do |item|
-            return true if item.pixi_id == pixi_id 
-          end
-	else
-	  return false if invoice.paid?
-        end
-      end
-      return flg ? (listing.seller_id == usr.id && !list.any?) : false
-    end
-    false
+    PostProcessor.new(self).check_invoice usr, flg, fld
   end
 
   # check if invoice msg 
@@ -223,48 +165,17 @@ class Post < ActiveRecord::Base
   # set json string
   def as_json(options={})
     super(except: [:updated_at], methods: [:pixi_title, :recipient_name, :sender_name], 
-      include: {recipient: { only: [:first_name], methods: [:photo] }, 
-                user: { only: [:first_name], methods: [:photo] }})
+      include: {recipient: { only: [:first_name], methods: [:photo] }, user: { only: [:first_name], methods: [:photo] }})
   end
 
   # map messages to conversations if needed
   def self.map_posts_to_conversations
-    Post.order.reverse_order.each do |post|
-      post.status = post.recipient_status = 'active'
-      if post.conversation_id.nil?
-    
-        # finds if there is already an existing conversation for the post
-        conv = Conversation.get_conv post.pixi_id, post.recipient_id, post.user_id
-
-        # finds if there is existing conversation with swapped recipient/user
-        if conv.blank?
-          conv = Conversation.get_conv post.pixi_id, post.user_id, post.recipient_id
-        end
-
-        # create new conversation if one doesn't already exist
-        if conv.blank?
-          if listing = Listing.where(:pixi_id => post.pixi_id).first
-            conv = listing.conversations.create pixi_id: post.pixi_id, user_id: post.user_id, recipient_id: post.recipient_id
-	  end
-        elsif conv.status != 'active' || conv.recipient_status != 'active'
-          conv.status = conv.recipient_status = 'active'
-          conv.save
-        end
-
-        # updates post with conversation id
-        post.conversation_id = conv.id if conv
-      end
-      post.save
-    end
+    PostProcessor.new(self).map_posts_to_conversations
   end
 
   # removes given posts for a specific user
   def remove_post user 
-    if user.id == self.user_id
-      self.update_attributes(status: 'removed')
-    elsif user.id == self.recipient_id 
-      self.update_attributes(recipient_status: 'removed')
-    end
+    PostProcessor.new(self).remove_post user
   end
 
   # return create date

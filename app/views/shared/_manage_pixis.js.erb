@@ -1,11 +1,11 @@
-<% if @listings.blank? %>
+<% if model.blank? %>
   $(".pg-entry, #top-header").html("");
 <% else %>
   $("#top-header").html("<%= escape_javascript( raw render(:partial => 'shared/manage_pixis_header') ) %>");
-  $(".pg-entry").html("<%= escape_javascript( raw page_entries_info @listings, :model => 'pixis') %>");
+  $(".pg-entry").html("<%= escape_javascript( raw page_entries_info model, :model => 'pixis') %>");
 <% end %>
 $("#nav-site-menu").html("<%= escape_javascript( raw render(partial: 'shared/site_menu', locals: { loc_name: @loc_name, rFlg: false }) ) %>");
 $("#search").html("<%= escape_javascript( raw render(partial: 'shared/search') ) %>");
-$("#pendingOrder").html("<%= escape_javascript( raw render(:partial => 'shared/index_list') ) %>");
+$("#pendingOrder").html("<%= escape_javascript( raw render(partial: 'shared/index_list', locals: {model: model, status: status} ) ) %>");
 $("#site_name").val('');
 $("#spinner").hide('fast');

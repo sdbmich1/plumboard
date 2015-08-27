@@ -1,6 +1,7 @@
 class SDReaderFeed < LoadNewsFeed
   def initialize
     @feed = Feed.find_by_url("http://www.sandiegoreader.com/rss/events/")
+    @category = Category.find_by_name("Events")
     @user_image = "san_diego_reader_logo.png"
     @user_email = "sdreaderfeed@pixiboard.com"
     load!

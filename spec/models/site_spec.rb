@@ -36,12 +36,10 @@ describe Site do
   end
 
   describe "should not include sites with invalid site_type_code" do
-
-   ['region', 'state', 'country'].each { |name|
+    ['region', 'state', 'country'].each { |name|
       site = FactoryGirl.create(:site, name: 'Item', status: 'inactive', site_type_code: name)
       it { Site.active(false).should_not include (site) }
     }
-
   end
 
   describe "when name is empty" do
@@ -108,6 +106,21 @@ describe Site do
     end  
   end
 
+  describe 'get_by_name_and_type' do
+    it 'returns sites' do
+      create :site, name: 'San Francisco State', site_type_code: 'school'
+      expect(Site.get_by_name_and_type('San Francisco State', 'school')).not_to be_empty 
+    end  
+
+    it 'does not return sites w/o name' do
+      expect(Site.get_by_name_and_type(nil, 'school')).to be_empty 
+    end  
+
+    it 'does not return sites w/o type' do
+      expect(Site.get_by_name_and_type('San Francisco State', nil)).to be_empty 
+    end  
+  end
+
   describe 'get_by_status' do
     it 'returns sites' do
       create :site, name: 'San Francisco State', site_type_code: 'school'
@@ -165,22 +178,35 @@ describe Site do
       expect(site.is_school?).not_to be_true
       expect(site.is_city?).not_to be_true
     end
+
+    it 'is a pub' do
+      site = create :site, name: 'City Living', site_type_code: 'pub'
+      expect(site.is_pub?).to be_true
+      expect(site.is_region?).not_to be_true
+      expect(site.is_school?).not_to be_true
+      expect(site.is_city?).not_to be_true
+    end
   end
 
   describe 'get_nearest_region' do
     before(:each, :run => true) do
-      @site1 = create :site, name: 'Detroit', site_type_code: 'city'
-      @site1.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro', city: 'Detroit', state: 'MI', zip: '48238'
-      @site2 = create :site, name: 'Metro Detroit', site_type_code: 'region'
+      @site1 = create :site, name: 'Ann Arbor', org_type: 'city'
+      @site1.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro',
+        city: 'Ann Arbor', state: 'MI', zip: '48103', lat: 42.22, lng: -83.75
+      @site2 = create :site, name: 'Metro Detroit', org_type: 'region'
+      @site2.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro',
+        city: 'Detroit', state: 'MI', zip: '48238', lat: 42.23, lng: -83.33
     end
 
     it "finds nearest region", :run => true do
-      expect(Site.get_nearest_region('Detroit')).to include('Detroit')
+      expect(Site.get_nearest_region([@site1.contacts.first.lat, @site1.contacts.first.lng])).to include 'Metro Detroit'
     end
 
     it "doesn't find nearest region" do
-      @site2 = create :site, name: 'SF Bay Area', site_type_code: 'region'
-      expect(Site.get_nearest_region('Detroit')).to include('SF Bay Area')
+      @site3 = create :site, name: 'SF Bay Area', org_type: 'region'
+      @site3.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro',
+        city: 'San Francisco', state: 'CA', zip: '94101', lat: 37.77, lng: -122.43
+      expect(Site.get_nearest_region([nil, nil])).to include('SF Bay Area')
       expect(Site.get_nearest_region('')).to include('SF Bay Area')
     end
   end
@@ -306,4 +332,43 @@ describe Site do
       end
     end
   end
-end      
+
+  describe "url" do
+    before :each, run: true do
+      @site.site_url = @site.name 
+      @site.site_type_code = 'pub'
+      @site.save!
+    end
+
+    it 'generates url' do
+      site2 = create :site, site_type_code: 'pub'
+      expect(site2.url).to eq site2.name.downcase.gsub!(/\s+/, "")
+    end
+
+    it 'generates unique url', run: true do
+      site2 = create :site, name: @site.name, site_type_code: 'pub'
+      expect(site2.url).not_to eq @site.url
+    end
+
+    it 'shows full url path', run: true do
+      expect(@site.site_url).to eq 'localhost:3000/pub/' + @site.url
+    end
+  end
+
+  describe 'set_flds' do
+    it 'does not sets url' do
+      site = build :site 
+      site.save!
+      expect( site.url ).to be_blank
+    end
+    it 'calls set_flds' do
+      site = build :site, site_type_code: 'pub' 
+      site.should_receive(:set_flds)
+      site.save
+    end
+  end
+
+  describe "get by url", url: true do
+    it_behaves_like 'a url', 'Site', :site, false
+  end
+end

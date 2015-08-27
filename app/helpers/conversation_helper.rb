@@ -56,4 +56,28 @@ module ConversationHelper
         align: 'right')
     end
   end
+
+  def show_conversation conversation, sentFlg
+    if conv_exists? conversation
+      render partial: 'shared/show_conversation_details', locals: { conversation: conversation, sentFlg: sentFlg }
+    else
+      content_tag(:div, content_tag(:div, "No messages found.", class:'center-wrapper'), class: 'span12 sm-top')
+    end
+  end
+
+  def show_reply conv, sentFlg
+    content_tag(:div, render(partial: 'shared/reply', locals: { sentFlg: sentFlg, conversation: conv }), class: 'sm-top') unless conv.system_msg?
+  end
+
+  def check_due_icon conv
+    show_due_icon conv unless conv.system_msg? 
+  end
+
+  def check_bill_icon conv
+    show_bill_icon conv unless conv.system_msg?  
+  end
+
+  def render_conversation conversation
+    render partial: 'shared/conversation_details', locals: { conversation: conversation } if conv_exists? conversation
+  end
 end

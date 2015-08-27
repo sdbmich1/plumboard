@@ -5,10 +5,6 @@
 
 <%= content_for :content do %>
   <div id="pendingOrder">
-    <%= render :partial => 'shared/my_followers_list' %>
-  </div>
-
-  <div id="entry-top" class="pg-entry">
-    <%= page_entries_info @users, :model => 'followers' unless @users.blank? %>
+    <%= render_list model, 'shared/my_followers_list', 'No followers found.' %>
   </div>
 <% end %>

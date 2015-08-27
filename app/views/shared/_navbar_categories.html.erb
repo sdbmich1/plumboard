@@ -1,9 +1,1 @@
-<ul class="nav pull-right">
-  <% if can? :manage, @user %>
-    <li class="<%= action_name == 'manage' ? 'active' : '' %>">
-      <%= link_to "Active", manage_categories_path, class: 'submenu' %></li>
-    <li><%= link_to "Inactive", inactive_categories_path, class: 'submenu', remote: true %></li>
-    <li class="<%= action_name == 'new' ? 'active' : '' %>">
-      <%= link_to "New", new_category_path, class: 'submenu' %></li>
-  <% end %>
-</ul>
+<%= category_menu @user %>

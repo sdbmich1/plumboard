@@ -7,10 +7,7 @@
   <div id="pxboard">
     <%= render partial: 'shared/category', collection: @categories %>
   </div> 
-
-  <nav id="px-nav">
-    <%= render 'shared/category_next_page' %>
-  </nav>
+  <nav id="px-nav"><%= render set_init_next_page_path %></nav>
 
   <div class='span1 sm-bot'>
     <%= link_to 'Scroll', '#', class: 'scrollup clear-link' %>

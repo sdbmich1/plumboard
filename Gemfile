@@ -152,7 +152,6 @@ gem 'open_uri_redirections'
 
 # development gems
 group :development do
-  gem 'psych'
   gem 'better_errors', '~> 1.1.0'
   gem 'binding_of_caller'
 

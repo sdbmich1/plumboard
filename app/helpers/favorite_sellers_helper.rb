@@ -19,13 +19,13 @@ module FavoriteSellersHelper
 
   def follow_or_unfollow_button(status, user, seller, sz='')
     bcls = [(sz.blank? ? 'span2' : "btn-{sz} span1"), 'no-left'].join(' ')
-    if seller.is_business? && follow_action? && user.id != seller.id 
+    if seller.is_a?(User) && seller.is_business? && follow_action? && user.id != seller.id 
       toggle_follow_button status, user, seller, bcls
     end
   end
 
   def follow_action?
-    !controller_name.match(/listings|favorite_sellers/).nil? && !%w(biz member create update).detect {|x| action_name == x}.nil? 
+    !controller_name.match(/listings|favorite_sellers/).nil? && !%w(biz mbr create update).detect {|x| action_name == x}.nil? 
   end
 
   def toggle_follow_button status, user, seller, bcls  

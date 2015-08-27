@@ -6,7 +6,7 @@ class PixiPostsController < ApplicationController
   before_filter :set_zip, only: [:new]
   before_filter :load_data, only: [:index, :seller, :pixter, :pixter_report]
   before_filter :load_post, only: [:show, :edit, :update, :destroy]
-  before_filter :init_vars, :ajax?, only: [:pixter_report]
+  before_filter :init_vars, only: [:pixter_report]
   after_filter :set_session, only: [:show]
   after_filter :set_uid, only: [:create]
   autocomplete :site, :name, full: true, scopes: [:cities]
@@ -79,8 +79,8 @@ class PixiPostsController < ApplicationController
   end
 
   def pixter_report
-    @unpaginated_pixi_posts = PixiPost.pixter_report(@start_date, @end_date, @pixter_id)
-    respond_with(@pixi_posts = @unpaginated_pixi_posts.paginate(page: @page, per_page: 15)) { |format| render_csv format }
+    @unpaginated_posts = PixiPost.pixter_report(@start_date, @end_date, @pixter_id)
+    respond_with(@posts = @unpaginated_posts.paginate(page: @page, per_page: 15)) { |format| render_csv format }
   end
   
   private
@@ -111,16 +111,11 @@ class PixiPostsController < ApplicationController
 
   # parse results for active items only
   def get_autocomplete_items(parameters)
-    items = super(parameters)
-    items = items.active rescue items
+    super(parameters).active rescue nil
   end
 
   def check_permissions
     authorize! :manage, PixiPost
-  end
-
-  def ajax?
-    @xhr_flag = request.xhr?
   end
 
   def init_vars
@@ -133,7 +128,7 @@ class PixiPostsController < ApplicationController
   end
 
   def render_csv format
-    format.csv { send_data(render_to_string(csv: @unpaginated_pixi_posts), disposition: "attachment; filename=#{PixiPost.filename}.csv") }
+    format.csv { send_data(render_to_string(csv: @unpaginated_posts), disposition: "attachment; filename=#{PixiPost.filename}.csv") }
   end
 
   def set_uid

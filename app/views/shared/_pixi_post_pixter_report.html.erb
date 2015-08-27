@@ -1,17 +1,7 @@
 <div id="inv_form">
-    <% if !@xhr_flag %>
-        <% if access_pxp_admin_menu? %>
-            <%= render :partial => 'shared/get_pixter_list' %>
-        <% end %>
-        <%= render :partial => 'shared/date_range_list' %>
-    <% end %>
-
-
-    <div id="px-rpt">
-        <%= render :partial => 'shared/pixi_post_pixter_report_list' %>
-    </div>
+  <%= render :partial => 'shared/date_range_list' %>
+  <%= load_admin_list %>
+  <div id="px-rpt">
+    <%= render partial: 'shared/pixi_post_pixter_report_list', locals: {model: model, pid: pid} %>
+  </div>
 </div>
-
-
-
-

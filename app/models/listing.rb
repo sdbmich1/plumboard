@@ -239,12 +239,16 @@ class Listing < ListingParent
     ListingProcessor.new(self).update_counter_cache
   end
 
-  def self.get_by_url url, page=1
-    ListingProcessor.new(self).get_by_url url, page
+  def self.get_by_url url, action, page=1
+    ListingProcessor.new(self).get_by_url url, action, page
   end
 
   def self.board_fields
     select("#{ListingProcessor.new(self).get_board_flds}")
+  end
+
+  def self.load_board cid, sid
+    get_by_city(cid, sid).board_fields
   end
 
   # select date provided (field_name)

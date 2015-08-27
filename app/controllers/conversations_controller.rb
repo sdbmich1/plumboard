@@ -63,7 +63,7 @@ class ConversationsController < ApplicationController
   end
 
   def show
-    respond_with(@conversation = Conversation.inc_show_list.find(params[:id]))
+    @conversation = Conversation.inc_show_list.find(params[:id])
   end
 
   private

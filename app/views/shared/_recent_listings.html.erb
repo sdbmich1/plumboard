@@ -1,7 +1,0 @@
-<% unless @listings.blank? %>
-  <ol class="posts">
-    <%= render partial: 'shared/recent_listing', collection: @listings, as: :listing %>
-  </ol>
-<% else %>
-  <div class='center-wrapper'>No pixis found.</div>
-<% end %>

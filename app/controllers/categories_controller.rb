@@ -3,12 +3,13 @@ class CategoriesController < ApplicationController
   load_and_authorize_resource
   skip_authorize_resource :only => [:index, :category_type, :autocomplete_site_name, :location]
   before_filter :authenticate_user!, except: [:index, :autocomplete_site_name, :location, :category_type]
+  before_filter :get_page, only: [:index, :inactive, :manage, :create, :update, :location]
+  before_filter :set_status, only: [:manage, :inactive, :new]
   before_filter :load_data, only: [:index, :location]
   before_filter :check_signin_status, only: [:index]
   before_filter :load_page, only: [:index, :location, :manage]
   before_filter :load_category, only: [:edit, :show, :category_type, :update]
-  before_filter :get_page, only: [:index, :inactive, :manage, :create, :update, :location]
-  autocomplete :site, :name, :full => true, :limit => 20
+  autocomplete :site, :name, :extra_data => [:site_type_code, :url], :full => true, :limit => 20
   include LocationManager
   respond_to :html, :json, :js, :mobile
   layout :page_layout
@@ -38,8 +39,11 @@ class CategoriesController < ApplicationController
     end
   end
 
+  def manage
+  end
+
   def inactive
-    @categories = Category.inactive.paginate page: @page
+    @categories = Category.inactive.paginate page: @page, per_page: 20
   end
 
   def category_type
@@ -54,6 +58,10 @@ class CategoriesController < ApplicationController
 
   def get_page
     @page = params[:page] || 1
+  end
+
+  def set_status
+    @status = params[:status]
   end
 
   # set location var
@@ -74,7 +82,7 @@ class CategoriesController < ApplicationController
 
   # load categories
   def load_page
-    respond_with(@categories = Category.active(true).paginate(page: @page, per_page: 60))
+    @categories = Category.active(true).paginate(page: @page, per_page: 20)
   end
 
   # load category

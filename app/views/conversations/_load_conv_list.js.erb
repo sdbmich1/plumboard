@@ -1,0 +1,3 @@
+$("#post-frm").html("<%= escape_javascript( raw render(partial: 'shared/conversations', locals: { model: model, sentFlg: sentFlg }) ) %>");
+$("#msg-link").html("<%= escape_javascript( raw render(partial: 'shared/msg_indicator') ) %>");
+$("#spinner").hide('fast'); 

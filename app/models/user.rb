@@ -326,6 +326,7 @@ class User < ActiveRecord::Base
     UserProcessor.new(self).get_by_type val
   end
 
+  # return user by url
   def self.get_by_url val
     active.where(:url => val).first
   end

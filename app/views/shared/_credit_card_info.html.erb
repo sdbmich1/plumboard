@@ -1,6 +1,6 @@
 <div class="div-border">
-  <%= render partial: 'shared/credit_card_details' %>
-  <div class='sm-top center-wrapper card-tbl' style="<%= get_card ? 'display:none' : '' %>">
+  <%= show_card_details %>
+  <div class='sm-top center-wrapper card-tbl' style="<%= set_style(get_card) %>">
     <table>
       <th class='tbl-hdr'>Credit Card #* </th><th></th>
       <th class='tbl-hdr'>Code (CVV)*</th><th></th>

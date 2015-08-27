@@ -85,11 +85,11 @@ describe User do
 
     it { should validate_presence_of(:gender) }
     it { should validate_presence_of(:birth_date) }
-    it { should validate_presence_of(:url).on(:create) }
-    it { should validate_uniqueness_of(:url) }
-    it { should validate_length_of(:url).is_at_least(2) }
-    it { should allow_value('Tom').for(:url) }
-    it { should_not allow_value("a").for(:url) }
+#    it { should validate_presence_of(:url).on(:create) }
+#    it { should validate_uniqueness_of(:url) }
+#    it { should validate_length_of(:url).is_at_least(2) }
+#    it { should allow_value('Tom').for(:url) }
+#    it { should_not allow_value("a").for(:url) }
 
     it { should have_many(:favorite_sellers) }
     it { should have_many(:sellers) }
@@ -668,13 +668,15 @@ describe User do
   end
 
   describe "exporting as CSV" do
-
     it "exports data as CSV file" do
       csv_string = @user.as_csv
-      csv_string.keys.should =~ ["Name", "Email", "Type", "Zip", "Birth Date", "Enrolled", "Last Login"]
+      csv_string.keys.should =~ ["Name", "Email", "Type", "Zip", "Birth Date", "Enrolled"]
       csv_string.values.should =~ [@user.name, @user.email, @user.type_descr, @user.home_zip,
-                                   @user.birth_dt, @user.nice_date(@user.created_at),
-                                   @user.nice_date(@user.last_sign_in_at)] 
+                                   @user.birth_dt, @user.nice_date(@user.created_at)]
+      @user.current_sign_in_at = Time.now
+      csv_string = @user.as_csv
+      csv_string.keys.should include "Last Login"
+      csv_string.values.should include @user.nice_date(@user.current_sign_in_at)
     end
 
     it "does not export any user data" do
@@ -745,7 +747,7 @@ describe User do
   describe "url" do
     it 'generates url' do
       @user.user_url = @user.name
-      expect(@user.url).to eq @user.name.gsub!(/\s+/, "") + '1'
+      expect(@user.url).to eq @user.name.downcase.gsub!(/\s+/, "") + '1'
     end
 
     it 'generates unique url' do
@@ -1048,9 +1050,8 @@ describe User do
     end
   end
 
-  describe "get by url" do
-    it { expect(User.get_by_url(@user.url)).not_to be_blank }
-    it { expect(User.get_by_url('abcd')).to be_blank }
+  describe "get by url", url: true do
+    it_behaves_like 'a url', 'User', :contact_user, true
   end
 
   describe 'board_fields' do

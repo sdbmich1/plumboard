@@ -4,6 +4,7 @@ PXB_HOME_PAGE_KEYS = YAML::load_file("#{Rails.root}/config/pxb_home_page.yml")[R
 PIXI_FEE = PIXI_KEYS['pixi']['fee']
 PIXI_PERCENT = PIXI_KEYS['pixi']['percent']
 PIXI_TXN_PERCENT = PIXI_KEYS['pixi']['txn_percent']
+BIZ_TXN_PERCENT = PIXI_KEYS['pixi']['biz_txn_percent']
 PXB_TXN_PERCENT = PIXI_KEYS['pixi']['pxb_txn_percent']
 PIXTER_PERCENT = PIXI_KEYS['pixi']['pixter_percent']
 PIXI_BASE_PRICE = PIXI_KEYS['pixi']['base_price']

@@ -14,27 +14,16 @@ shared_examples 'owner_listings' do |val, factory|
   end
 
   def get_method factory
-    if factory == 'pixi_user'
-      page.should_not have_selector('#comment_content')
-      page.should_not have_selector('#cool-btn')
-      page.should_not have_selector('#save-btn')
-      page.should_not have_selector('#want-btn')
-      page.should_not have_selector('#ask-btn')
-      page.should have_content "#{listing.wanted_count}Wants"
-      page.should have_content "#{listing.asked_count}Asks"
-      page.should have_content "#{listing.liked_count}Cools"
-      page.should have_content "#{listing.saved_count}Saves"
-    else
-      page.should have_selector('#comment_content')
-      page.should have_selector('#cool-btn')
-      page.should have_selector('#save-btn')
-      page.should have_selector('#want-btn')
-      page.should have_selector('#ask-btn')
-      page.should_not have_content "#{listing.wanted_count}Wants"
-      page.should_not have_content "#{listing.asked_count}Asks"
-      page.should_not have_content "#{listing.liked_count}Cools"
-      page.should_not have_content "#{listing.saved_count}Saves"
-    end
+    selector, content = factory == 'pixi_user' ? ['should_not', 'should'] : ['should', 'should_not']
+      page.send(selector, have_selector('#comment_content'))
+      page.send(selector, have_selector('#cool-btn'))
+      page.send(selector, have_selector('#save-btn'))
+      page.send(selector, have_selector('#want-btn'))
+      page.send(selector, have_selector('#ask-btn'))
+      page.send(content, have_content("#{listing.wanted_count}Wants"))
+      page.send(content, have_content("#{listing.asked_count}Asks"))
+      page.send(content, have_content("#{listing.liked_count}Cools"))
+      page.send(content, have_content("#{listing.saved_count}Saves"))
   end
 
   describe 'Review Pixi', owned: true do

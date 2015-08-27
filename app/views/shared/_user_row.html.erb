@@ -9,7 +9,7 @@
   <td class=''><%= user.home_zip %></td>
   <td class=''><%= user.birth_dt %></td>
   <td class=''><%= user.nice_date(user.created_at) %></td>
-  <td class=''><%= user.nice_date(user.current_sign_in_at) %></td>
+  <td class=''><%= user.nice_date(user.current_sign_in_at) if user.current_sign_in_at %></td>
   <td class='center-wrapper'><%= link_to 'Details', user, class: 'btn btn-small' %></td>
 </tr>
 <% end %>

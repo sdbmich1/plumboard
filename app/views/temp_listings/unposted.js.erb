@@ -1,1 +1,1 @@
-<%= render(:partial => "#{set_draft_partial(@adminFlg)}") %>
+<%= render(:partial => "#{set_draft_partial(@adminFlg)}", locals: {model: @listings, status: @status}) %>

@@ -1,0 +1,4 @@
+$('#spinner').hide(300);
+$('#wantDialog').modal('hide');
+$('#px-panel').html("<%= escape_javascript( render(partial: 'shared/listing_panel', locals: {listing: @listing}) ) %>");
+window.open("<%= @url %>");

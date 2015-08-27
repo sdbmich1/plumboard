@@ -1,11 +1,16 @@
 require "open-uri"
 require "nokogiri"
 require "active_support/inflector"
+require "zip"
 
 class LoadNewsFeed
   attr_accessor :feed, :user_image, :user_email, :doc, :item_xpath,
-                :description_xpath, :link_xpath, :title_xpath, :category_id,
-                :site, :additional_datetimes, :user, :event_type_words
+                :description_xpath, :link_xpath, :title_xpath, :site,
+                :category, :additional_datetimes, :user, :event_type_words,
+                :company_xpath, :jobtype_xpath, :compensation_xpath, :date_xpath,
+                :city_xpath, :state_xpath, :zip_xpath, :country_xpath,
+                :ref_id_xpath, :experience_xpath, :education_xpath,
+                :job_type_codes, :stock_images
 
   # This method contains default values for @feed, @user_image, and @user_email.
   # Override them when making a subclass and the call load!.
@@ -21,19 +26,36 @@ class LoadNewsFeed
 
   # Load feed's URL as a Nokogiri::XML object and save some useful values
   def load!
-    @doc = Nokogiri::XML(open(URI.parse(@feed.url))) rescue nil
+    load_doc
+    load_user
+    load_category_specific_vars
+  end
+
+  # Load document and save values that are used frequently and are expensive to compute for large feeds
+  def load_doc
+    if @feed.url[-3..-1] == 'zip'
+      download_feed('db')
+      @doc = Nokogiri::XML(open(Rails.root.join('db', 'pixiboard.xml')))
+    else
+      @doc = Nokogiri::XML(open(URI.parse(@feed.url))) rescue nil
+    end
     # Save these values because they are used frequently and are expensive to compute for large feeds
     if @doc
       @item_xpath = load_xpath("//item")
       @description_xpath = load_xpath("//item//description")
+      @description_xpath = load_xpath("//description") if @description_xpath.blank?
       @link_xpath = load_xpath("//item//link")
+      @link_xpath = load_xpath("//url") if @link_xpath.blank?
       @title_xpath = load_xpath("//item//title")
-      @title_xpath ||= load_xpath("//xmlns:title")
+      @title_xpath = load_xpath("//title") if @title_xpath.blank?
+      @title_xpath = load_xpath("//xmlns:title") if @title_xpath.blank?
     end
-    # Save the "Events" category ID and the feed's Site so we don't have to query for them every time
-    @category_id = Category.find_by_name("Events").id
+    # Save the feed's Site and category name so we don't have to query for them every time.
     @site = Site.find_by_id(@feed.site_id)
-    # Save account associated with @user_email
+  end
+
+  # Find or create account associated with @user_email
+  def load_user
     @user = User.find_by_email(@user_email)
     if (@user.nil?)
       @user = User.new
@@ -42,14 +64,91 @@ class LoadNewsFeed
       add_user_image(@user.pictures.build)
       save_user(@user)
     end
-    # Save words in the description of event type code
-    @event_type_words = Hash.new
-    EventType.find_each do |event_type|
-      @event_type_words[event_type.code] = event_type.description.gsub(",", "").gsub("/", " ").split(" ")
+    @user.update_attribute(:status, 'inactive')
+  end
+
+  # Load variables that are only needed for a certain category
+  def load_category_specific_vars
+    name = @category ? @category.name : ''
+    case name
+    when 'Events'
+      # Save words in the description of event type code
+      @event_type_words = Hash.new
+      EventType.find_each do |event_type|
+        @event_type_words[event_type.code] = event_type.description.gsub(",", "").gsub("/", " ").split(" ")
+      end
+    when 'Jobs'
+      load_job_vars
     end
     # If an event occurs at more than one time, use the first one for the event start and end times.
     # Store the rest in this variable as a string, and those times will be included in the description.
+    # If the category isn't "Events", this variable should always be nil.
     @additional_datetimes = nil
+  end
+
+  # Load variables that are only needed for jobs
+  def load_job_vars
+    load_job_xpaths
+    # Save job type codes and stock images to avoid querying for them every time
+    @job_type_codes = Hash.new
+    JobType.find_each do |job_type|
+      # Store the job name in downcase because AfterCollege uses different
+      # cases than us (e.g., Full-Time instead of Full-time)
+      @job_type_codes[job_type.job_name.downcase] = job_type.code
+    end
+    @stock_images = Hash.new
+    StockImage.find_each do |stock_image|
+      @stock_images[stock_image.title] = stock_image.file_name
+      # Store each individual word as a key for easier lookup
+      words = stock_image.title.split(' / ')
+      words.each { |word| @stock_images[word] = stock_image.file_name }
+    end
+  end
+
+  # Load all AfterCollege xpaths
+  def load_job_xpaths
+    @company_xpath = @doc.xpath("//company")
+    @jobtype_xpath = @doc.xpath("//jobtype")
+    @compensation_xpath = @doc.xpath("//salary")
+    @date_xpath = @doc.xpath("//date")
+    @city_xpath = @doc.xpath("//city")
+    @state_xpath = @doc.xpath("//state")
+    @zip_xpath = @doc.xpath("//postalcode")
+    @country_xpath = @doc.xpath("//country")
+    @ref_id_xpath = @doc.xpath("//referencenumber")
+    @experience_xpath = @doc.xpath("//experience")
+    @education_xpath = @doc.xpath("//education")
+  end
+
+  # Download and extract a zip file containing the latest XML feed to the path provided.
+  def download_feed(path)
+    zip_file_path = Rails.root.join(path, @feed.url.split('/')[-1])
+    download_zip(path, zip_file_path)
+    extract_files(path, zip_file_path)
+  end
+
+  # Download the zip containing the latest XML feed to the path provided.
+  def download_zip(path, zip_file_path)
+    File.open(zip_file_path, 'wb') do |saved_file|
+      open(@feed.url, 'rb') do |read_file|
+        saved_file.write(read_file.read)
+      end
+    end
+  end
+
+  # Extract the files from the .zip in the path and delete the zip file.
+  def extract_files(path, zip_file_path)
+    # Line below throws Zip::Error if there was error downloading the file
+    zip_file = Zip::File.open(zip_file_path) rescue nil
+    if zip_file
+      zip_file.entries.each do |entry|
+        file_path = Rails.root.join(path, entry.to_s).to_s
+        File.delete(file_path) if File.exists?(file_path)
+        zip_file.extract(entry, file_path) { true }
+      end
+      zip_file.close
+    end
+    File.delete(zip_file_path)
   end
 
   # Return the xpath if it exists in the document, and nil if it does not
@@ -75,9 +174,9 @@ class LoadNewsFeed
     @feed = attrs[:feed]
     @user_image = attrs[:user_image]
     @user_email = attrs[:user_email]
-    @category_id = attrs[:category_id]
+    @category = attrs[:category]
     @site = attrs[:site]
-    @user = attrs[:user]
+    @user = User.find(attrs[:user_id])
   end
 
   # Get all attributes except Nokogiri objects, which can't be copied into the delayed job queue
@@ -86,9 +185,10 @@ class LoadNewsFeed
       feed: @feed,
       user_image: @user_image,
       user_email: @user_email,
-      category_id: @category_id,
+      category: @category,
       site: @site,
-      user: @user
+      user_id: @user.id,
+      stock_images: @stock_images
     }
   end
 
@@ -97,78 +197,83 @@ class LoadNewsFeed
     feeds = [CourantFeed.new, StrangerFeed.new, SFExaminerFeed.new, SDReaderFeed.new,
              Sac365Feed.new("http://www.sacramento365.com/feeds/event/rss/"),
              Sac365Feed.new("http://www.nowplayingnashville.com/feeds/event/")]
-    feeds.map(&:load_events)
+    feeds.map(&:add_listings)
   end
 
-  # Load each event in the feed if the URL was reached
-  def load_events
-    if @doc
-      for i in 0..@item_xpath.count-1
-        add_event(i)
-      end
+  # Load jobs from After College feed
+  def self.import_job_feed
+    feed = AfterCollegeFeed.new
+    feed.delete_expired_jobs
+    feed.add_listings
+  end
+
+  # Load each item in the feed as a Listing if the URL was reached
+  def add_listings
+    num_listings = @title_xpath.count
+    for i in 0...num_listings
+      add_listing(i)
     end
   end
 
-  # The workflow of adding an event is broken down into two parts: this method,
-  # and add_event_job, which is run in the delayed job queue.
+  # The workflow of adding a listing is broken down into two parts: this method,
+  # and add_listing_job, which is run in the delayed job queue.
   # This is done to speed up the task, so all computationally intensive values are
-  # assigned in add_event_job.
+  # assigned in add_listing_job.
   # Use this method when:
   # 1. Using Nokogiri, since the delayed job queue doesn't accept Nokogiri objects
   # 2. The attributes may invalidate the Listing
   #    and can be found relatively quickly.
   #    For example, events that have already happened will fail validation,
   #    so don't bother adding them to the delayed job queue.
-  # Use add_event_job for:
+  # Use add_listing_job for:
   # 1. Doing database queries
   # 2. Uploading an image
-  # since both take a long time when run on thousands of events.
-  # If you need Nokogiri-related values in add_event_jobs, pass them as parameters.
-  def add_event(n)
+  # since both take a long time when run on thousands of listings.
+  # If you need Nokogiri-related values in add_listing_jobs, pass them as parameters.
+  def add_listing(n, checked_existence=false)
     if (title = get_title(n))
       title = title[0..79]    # max length is 80 chars
-      unless Listing.exists?({title: title})
-        start_date, end_date = get_start_and_end_dates(n)
-        if start_date && end_date && start_date.to_date >= Date.today
-          price = get_price(n)
+      if checked_existence || !Listing.exists?(title: title)
+        category_specific_attrs = get_category_specific_attrs(n)
+        if category_specific_attrs[:start_date]
           if (description = process_description(get_description(n), n))
-            attrs = get_event_attrs(title, description, price, start_date, end_date, n)
-            LoadNewsFeed.delay(queue: "feeds").add_event_job(self.class, get_attrs, attrs, @item_xpath[n].text,
-              @description_xpath[n].text, get_img_loc_text(n))
+            attrs = get_listing_attrs(title, description, category_specific_attrs, n)
+            item_text = @item_xpath.blank? ? '' : @item_xpath[n].text
+            LoadNewsFeed.delay(queue: 'feed').add_listing_job(self.class,
+              get_attrs, attrs, item_text, get_img_loc_text(n), @stock_images)
           end
         end
       end
     end
   end
 
-  # See add_event.
+  # See add_listing.
   # An additional note: some UTF-8 characters (for example: ′) cause an
   # "Illegal mix of collations" error, since certain parts of our database
   # collations are using Latin1 instead of UTF-8.
   # A long-term fix would be something like this:
   # http://airbladesoftware.com/notes/fixing-mysql-illegal-mix-of-collations/
-  # However, since a very small number of events have invalid characters,
+  # However, since a very small number of XML entries have invalid characters,
   # they won't be added to the database for now, so this method rescues
   # database execution errors.
-  def self.add_event_job(lnf_class, lnf_obj_attrs, attrs, item_text,
-    description_text, img_loc_text)
+  def self.add_listing_job(lnf_class, lnf_obj_attrs, attrs, item_text, img_loc_text, stock_images)
     lnf_obj = lnf_class.new_with_attrs(lnf_obj_attrs)    # reconstruct original LoadNewsFeed object
-    new_event = TempListing.new(attrs)
-    user_email = lnf_obj.get_email_from_description(new_event.description, item_text)
+    new_listing = TempListing.new(attrs)
+    user_email = lnf_obj.get_email_from_description(new_listing.description, item_text)
     user = lnf_obj.add_user(item_text, img_loc_text, user_email)
     if user
-      new_event.seller_id = user.id
-      new_event.status = "approved"
-      lnf_obj.add_image(new_event.pictures.build, img_loc_text)
-      if new_event.pictures.first.save && new_event.pictures.first.photo? 
+      new_listing.seller_id = user.id
+      new_listing.status = "approved"
+      lnf_obj.add_image(new_listing.pictures.build, img_loc_text, stock_images)
+      if new_listing.pictures.first.save && new_listing.pictures.first.photo? 
         begin
-          saved_event = new_event.save
+          saved = new_listing.save
         rescue ActiveRecord::StatementInvalid    # see collation error note above
-          saved_event = false
+          saved = false
         end
-        if saved_event
+        if saved
           begin
-            TempListingProcessor.new(new_event).post_to_board
+            TempListingProcessor.new(new_listing).post_to_board
           rescue ActiveRecord::StatementInvalid
           end
         end
@@ -176,23 +281,25 @@ class LoadNewsFeed
     end
   end
 
-  # Returns a Hash containing the attributes that will be used when making the event's TempListing
-  def get_event_attrs(title, description, price, start_date, end_date, n)
+  # Returns a Hash containing the attributes that will be used when making the TempListing
+  def get_listing_attrs(title, description, category_specific_attrs, n)
     {
-      :title => title,
-      :description => description,
-      :price => price,
-      :quantity => 1,
-      :start_date => start_date,
-      :end_date => end_date,
-      :event_start_date => start_date,
-      :event_end_date => end_date,
-      :event_start_time => start_date,
-      :event_end_time => end_date,
-      :site_id => @feed.site_id,
-      :category_id => @category_id,
-      :event_type_code => get_event_type_code(@description_xpath[n].text, @title_xpath[n].text)
-    }
+      title: title,
+      description: description,
+      price: get_price(n),
+      quantity: 1,
+      site_id: get_site_id(n) || @feed.site_id,
+      category_id: @category.id,
+      external_url: @link_xpath[n].text
+    }.merge(category_specific_attrs)
+  end
+
+  # Get attributes of the item stored in the LoadNewsFeed object
+  def get_item_attrs(n)
+    attrs = { description_text: @description_xpath[n].text, image_loc_text: get_img_loc_text(n) }
+    attrs[:item_text] = @item_xpath[n].text unless @item_xpath.blank?
+    attrs[:stock_images] = @stock_images if @stock_images
+    attrs
   end
 
   # Searches document for nth title element and returns its text
@@ -204,6 +311,7 @@ class LoadNewsFeed
   # This method removes images from the nth event's description.
   # You will probably need to override this method when making a subclass.
   def get_description(n)
+    return nil unless @description_xpath[n]
     fragment = Nokogiri::HTML.fragment(@description_xpath[n].text)
     fragment.search("//img").remove
     fragment.text
@@ -256,6 +364,7 @@ class LoadNewsFeed
     end
   end
 
+  # Save user to database
   def save_user(user)
     if user.last_name == "Feed"
       user.business_name = user.first_name
@@ -288,6 +397,7 @@ class LoadNewsFeed
     # Substitute invalid characters with valid equivalents
     username.gsub!("&", "and")
     username.gsub!(":", " -")
+    username.gsub!("365", "Three Sixty Five")    # "Sacramento 365" fails validation
     # Remove everything inbetween parentheses
     while username.gsub!(/\([^()]*?\)/, ''); end
     # Remove other invalid characters
@@ -325,10 +435,10 @@ class LoadNewsFeed
 
   # Scan description for <img src=IMAGE URL>
   # Override this if the image is located elsewhere
-  def add_image(pic, img_loc_text)
+  def add_image(pic, img_loc_text, stock_images=nil)
     description = Nokogiri::HTML(img_loc_text)
     image = description.xpath("//img")[0]
-    check_image(pic, URI.escape(image[:src])) if image
+    ImageManager.parse_url_image(pic, URI.escape(image[:src])) rescue nil
   end
 
   # Assigns pic.photo to @user_image
@@ -466,11 +576,24 @@ class LoadNewsFeed
     string.gsub!("midnight", "12 a.m.")
     string.gsub!("noon", "12 p.m.")
     # Handle invalid dates by returning nil
+    string = fix_leading_time(string)
     begin
       datetime = DateTime.parse(string)
     rescue ArgumentError
       nil
     end
+  end
+
+  # Currently, DateTime.parse returns the wrong date and time if the time comes
+  # before the date (for example, DateTime.parse("9 p.m. April 9")). This was
+  # not the case when this class was originally written, so this is a patch
+  # that moves the time to the end of the string.
+  def fix_leading_time(string)
+    ampm = nil
+    %w(am a.m. pm p.m.).each { |t| ampm = t if string.include?(t) }
+    return string unless ampm
+    split_str = string.split(ampm)
+    split_str.count == 1 ? (split_str[0] << ampm) : (split_str.reverse.join(' ') << ampm)
   end
 
   # Return true if string can successfully be converted into a time, but not a date
@@ -512,5 +635,48 @@ class LoadNewsFeed
   # Sets end time to default value of 11:59 p.m.
   def set_default_end_time(end_time)
     end_time = end_time.change({hour: 23, min: 59}) if end_time
+  end
+
+  # Returns a Hash containing all attributes that are specific to the Category
+  def get_category_specific_attrs(n)
+    case @category.name
+    when 'Events';
+      start_date, end_date = get_start_and_end_dates(n)
+      start_date, end_date = nil, nil if start_date && start_date.to_date < Date.today
+      result = { start_date: start_date, end_date: end_date,
+        event_start_date: start_date, event_end_date: end_date,
+        event_start_time: start_date, event_end_time: end_date }
+      if @description_xpath[n] && @title_xpath[n]
+        result[:event_type_code] = get_event_type_code(@description_xpath[n].text, @title_xpath[n].text)
+      end
+      result
+    when 'Jobs';
+      { start_date: convert_to_datetime(@date_xpath[n].text), job_type_code: get_job_type_code(n),
+        compensation: get_compensation(n), ref_id: get_ref_id(n) }
+    end
+  end
+
+  # Return the site ID of the n'th entry.
+  # By default, this method returns nil, and @feed.site_id is used when the TempListing/Listing objects are created.
+  # Override this method if you want to read the Site from the XML entries instead.
+  def get_site_id(n)
+    nil
+  end
+
+  # Return the job type code of the n'th job.
+  def get_job_type_code(n)
+    job_type = @jobtype_xpath[n].text.downcase
+    job_type.gsub!('internship', 'intern')
+    @job_type_codes[job_type]
+  end
+
+  # Return the compensation of the n'th job.
+  def get_compensation(n)
+    @compensation_xpath[n].text
+  end
+
+  # Return the ref_id of the n'th job
+  def get_ref_id(n)
+    @ref_id_xpath[n].text
   end
 end

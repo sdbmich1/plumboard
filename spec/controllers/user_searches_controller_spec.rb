@@ -22,7 +22,7 @@ describe UserSearchesController do
     end
 
     def do_get
-      xhr :get, :index, search_user: 'test'
+      xhr :get, :index, search: 'test'
     end
 
     it "should load the requested user" do

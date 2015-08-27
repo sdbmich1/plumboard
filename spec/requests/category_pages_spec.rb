@@ -27,7 +27,7 @@ feature "Categories" do
     before do
       user = FactoryGirl.create :admin
       page_setup user
-      visit manage_categories_path 
+      visit manage_categories_path(status: 'active') 
     end
 
     it 'shows content' do
@@ -66,9 +66,9 @@ feature "Categories" do
 
     it 'shows content' do
       page.should have_content('Categories')
-      page.should have_link('Active', href: manage_categories_path)
-      page.should have_link('Inactive', href: inactive_categories_path)
-      page.should have_link('New', href: new_category_path)
+      page.should have_link('Active', href: manage_categories_path(status: 'active'))
+      page.should have_link('Inactive', href: inactive_categories_path(status: 'inactive'))
+      page.should have_link('New', href: new_category_path(status: 'new'))
       page.should have_content(@category.name_title)
       page.should have_content('Computer')
       page.should have_link(@category.name_title, href: edit_category_path(@category))

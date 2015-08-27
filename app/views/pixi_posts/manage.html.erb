@@ -1,2 +1,2 @@
 <% provide(:title, 'Manage PixiPost') %>
-<%= render 'shared/pixi_post' %>
+<%= render partial: 'shared/pixi_post', locals: { post: @post } %>

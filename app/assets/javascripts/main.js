@@ -555,34 +555,33 @@ $(document).on("click", "#recent-link", function() {
 function resetBoard() {
   var loc = $('#site_id').val(); // grab the selected location 
   var cid = $('#category_id').val(); // grab the selected category 
+  var stype = $('#site_type').val(); // grab the selected type 
+  var site_url = $('#site_url').val(); // grab the selected type 
 
   // set search form fields
   $('#cid').val(cid);
   $('#loc').val(loc);
 
   // check location
-  if (loc > 0) {
-    if (cid > 0) {
-      var url = '/listings/category?' + 'loc=' + loc + '&cid=' + cid; 
-    }
-    else {
-      var url = '/listings/local?' + 'loc=' + loc;
-    }
-  }
-  else {
-    if (cid > 0) {
-      var url = '/listings/category?' + 'cid=' + cid; 
-    }
-    else {
-      var url = '/listings.js';
-    }
-  }
+  if (stype.length > 0 && stype == 'pub') 
+    var url = '/pub/' + site_url;
+  else
+    var url = get_board_url(loc, cid);
 
   // refresh the page
   resetScroll(url);
 
   // toggle menu
   reset_menu_state($("#li_home"), true);
+}
+
+// check location and get url
+function get_board_url(loc, cid) {
+  if (loc > 0) 
+    var url = (cid > 0) ? '/listings/category?' + 'loc=' + loc + '&cid=' + cid : '/listings/local?' + 'loc=' + loc; 
+  else 
+    var url = (cid > 0) ? '/listings/category?' + 'cid=' + cid : '/listings.js';
+  return url;
 }
 
 // Fix input element click problem
@@ -885,4 +884,13 @@ function resetSpan(ctype) {
   if(ctype.match(new RegExp('biz', 'i'))) {
     $('#signInForm').removeClass('offset4').addClass('offset5');
   }
+}
+
+// set card year for credit card
+function set_search_fld(val) {
+  $('#search_type').val(val);
+  var action = $("#search_btn").attr("action").split('?');
+  var str = action[0] + '?utype=' + val;
+  $("#search_btn").attr("action", str);
+  $('#search_txt').html('');
 }

@@ -1,6 +1,7 @@
 Plumboard::Application.routes.draw do
 
   get "/shared/_photo"
+  get "pixi_wants/create"
 
   devise_for :users, :controllers => { registrations: "registrations", sessions: "sessions", omniauth_callbacks: "users/omniauth_callbacks",
       confirmations: "confirmations" } 
@@ -149,6 +150,7 @@ Plumboard::Application.routes.draw do
   resources :pixi_likes, only: [:create, :destroy]
   resources :saved_listings, only: [:create, :index, :destroy]
   resources :favorite_sellers, only: [:create, :index, :update]
+  resources :pixi_wants, only: [:create]
 
   # custom routes
   get "/about", to: "pages#about" 
@@ -175,7 +177,9 @@ Plumboard::Application.routes.draw do
 
   # personalized paths
   match '/biz/:url' => "listings#biz", via: :get, as: :biz
-  match '/mbr/:url' => "listings#member", via: :get, as: :member
+  match '/mbr/:url' => "listings#mbr", via: :get, as: :mbr
+  match '/pub/:url' => "listings#pub", via: :get, as: :pub
+  match '/edu/:url' => "listings#edu", via: :get, as: :edu
   match '/careers' => "listings#career", via: :get, as: :career
   # get '/careers', to: "listings#jobs"
 

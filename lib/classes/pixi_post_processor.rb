@@ -23,12 +23,13 @@ class PixiPostProcessor
     addr = AddressManager::full_address @post
   end
 
+  def any_pid? pid
+    !pid.blank? && !(pid == 0)
+  end
+
   # retrives the data for pixter_report
-  def pixter_report start_date, end_date, pixter_id
-    pixi_posts = Array.new
-    pixi_posts = pixter_id.nil? ? PixiPost.includes(:user, :pixan).all : PixiPost.includes(:user, :pixan).where(pixan_id: pixter_id)
-    pixi_posts = pixi_posts.keep_if{|elem| ((elem.status == "completed") &&
-                  (elem.completed_date >= start_date) && (elem.completed_date <= end_date))}
+  def pixter_report start_date, end_date, pid
+    !any_pid?(pid) ? PixiPost.completed_posts(start_date, end_date) : PixiPost.completed_posts(start_date, end_date).where(pixan_id: pid)
   end
 
   # cancels existing post and create new post based on original post
@@ -51,10 +52,24 @@ class PixiPostProcessor
 
   # load csv hash
   def csv_data
-    { "Post Date" => completed_date.strftime("%F"), "Item Title" => PixiPost.item_title(@post), "Customer" => seller_name, "Pixter" => pixter_name,
-      "Sale Date" => !(PixiPost.sale_date(@post).nil?) ? PixiPost.sale_date(@post) : 'Not sold yet', "List Value" => PixiPost.listing_value(@post),
-      "Sale Value" => !(PixiPost.sale_value(@post).nil?) ? PixiPost.sale_value(@post) : 'Not sold yet', 
-      "Pixter Revenue" => !(PixiPost.sale_value(@post).nil?) ? (PixiPost.sale_value(@post) * PIXTER_PERCENT) / 100 : 'Not sold yet' }
+    { "Post Date" => @post.completed_date, "Item Title" => @post.item_title, "Customer" => @post.seller_name, "Pixter" => @post.pixter_name,
+      "Sale Date" => get_val('sale_date'), "List Value" => @post.listing_value,
+      "Sale Amount" => get_val('sale_value'), "Pixter Revenue" => get_val('revenue') }
+  end
+
+  def get_val fld
+    @post.any_sold? ? @post.send(fld) : 'Not sold yet'
+  end
+
+  def get_revenue
+    @post.sale_value * PXB_TXN_PERCENT * PIXTER_PERCENT rescue 0.0
+  end
+
+  def get_item_title val=nil
+    @post.pixi_post_details.find_each do |det|
+      val = det.listing.title; break
+    end
+    val
   end
 
   # returns item's listing value
@@ -78,7 +93,7 @@ class PixiPostProcessor
   # get sale date
   def get_sale_date
     @post.pixi_post_details.find_each do |det|
-      return det.listing.invoices.where(status: 'paid').first.created_at 
+      return det.listing.invoices.where(status: 'paid').first.created_at rescue nil
     end
   end
 

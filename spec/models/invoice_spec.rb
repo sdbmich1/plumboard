@@ -180,6 +180,11 @@ describe Invoice do
       expect(@invoice.get_fee(true)).to eq(CalcTotal::get_convenience_fee(@invoice.amount, @invoice.pixan_id).round(2))
     end
 
+    it "gets business seller fee" do 
+      @user.update_attribute(:user_type_code, 'BUS')
+      expect(@invoice.reload.get_fee(true)).to eq(CalcTotal::get_convenience_fee(@invoice.amount, nil, true).round(2))
+    end
+
     it "gets seller pixi post fee" do 
       @pixan = create(:pixi_user)
       @listing.pixan_id = @pixan.id
@@ -194,6 +199,26 @@ describe Invoice do
     it "return zero" do 
       @invoice.amount = nil
       expect(@invoice.get_fee).to eq(0.0)
+    end
+  end
+
+  describe 'seller_amount' do
+    before :each do
+      @invoice.save!
+    end
+
+    it "gets seller amount" do 
+      expect(@invoice.seller_amount).to eq(@invoice.amount - CalcTotal::get_convenience_fee(@invoice.amount).round(2))
+    end
+
+    it "gets business seller amount" do 
+      @user.update_attribute(:user_type_code, 'BUS')
+      expect(@invoice.reload.seller_amount).to eq(@invoice.amount - CalcTotal::get_convenience_fee(@invoice.amount, nil, true).round(2))
+    end
+
+    it "return zero" do 
+      @invoice.amount = nil
+      expect(@invoice.seller_amount).to eq(0.0)
     end
   end
 
@@ -393,7 +418,7 @@ describe Invoice do
     end
 
     it "does not load new invoice" do
-      expect(Invoice.load_new(nil, nil, nil)).not_to be_nil
+      expect(Invoice.load_new(nil, nil, nil)).to be_nil
     end
   end
 

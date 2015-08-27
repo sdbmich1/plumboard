@@ -1,4 +1,1 @@
-$("#post-frm").html("<%= escape_javascript( raw render(:partial => 'shared/conversations', locals: { sentFlg: false }) ) %>");
-$("#msg-link").html("<%= escape_javascript( raw render(partial: 'shared/msg_indicator') ) %>");
-$("#spinner").hide('fast'); 
-
+<%= render partial: 'load_conv_list', locals: {model: @conversations, sentFlg: false} %>

@@ -1,1 +1,1 @@
-<%= render partial: 'shared/index', locals: { menu_name: 'Pixis', page_title: 'Pixis', atype: 'index', btype: 'loc' } %>
+<%= render(:partial => 'shared/manage_pixis', locals: {model: @listings, status: @status} ) %>

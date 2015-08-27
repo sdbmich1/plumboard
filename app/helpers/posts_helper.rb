@@ -75,4 +75,16 @@ module PostsHelper
        val == 3 ? 'b' : 'd'
     end
   end
+  
+  def render_messages model, pname, sentFlg, msg
+    unless model.blank? 
+      content_tag(:ol, render(partial: pname, collection: model, locals: { sentFlg: sentFlg }), class: 'posts')
+    else 
+      content_tag(:div, content_tag(:div, msg, class:'center-wrapper'), class:'span12 sm-top')
+    end 
+  end
+
+  def render_post post, sentFlg
+    render partial: 'shared/post_details', locals: { post: post, sentFlg: sentFlg } if post && !post.content.blank?
+  end
 end

@@ -7,17 +7,19 @@ class ListingDataProcessor < ListingQueryProcessor
     if prcFlg
       @listing.title.index('$') ? tt : tt + str 
     else
-      @listing.title.index('$') ? tt.split('$')[0].strip! : tt
+      @listing.title.index('$') ? tt.split('$')[0].strip : tt
     end
   end
 
   # titleize title
   def nice_title prcFlg=true
-    unless @listing.title.blank?
+    if @listing.title.blank?
+      nil
+    elsif @listing.job?
+      @listing.title
+    else
       str = (@listing.price.blank? || @listing.price == 0) && !prcFlg ? '' : ' - '
       set_title_str str, prcFlg
-    else
-      nil
     end
   end
 
@@ -92,7 +94,7 @@ class ListingDataProcessor < ListingQueryProcessor
 
   # format date based on location
   def display_date dt, dFlg=true
-    lat, lng = @listing.lat, @listing.lng
+    lat, lng = @listing.latlng
     loc = @listing.site.contacts.first rescue nil
     ll = lat && lat > 0 ? [lat, lng] : ([loc.lat, loc.lng] rescue nil)
     ResetDate::display_date_by_loc dt, ll, dFlg rescue Time.now.strftime('%m/%d/%Y %l:%M %p')
@@ -154,6 +156,16 @@ class ListingDataProcessor < ListingQueryProcessor
       result.where("pixi_wants.user_id is not null AND pixi_wants.status = ?", 'active').get_by_city(cid, loc, true)
     else
       result.where("pixi_wants.user_id = ? AND pixi_wants.status = ?", usr.id, 'active')
+    end
+  end
+
+  def latlng
+    if @listing.lat && @listing.lng
+      [@listing.lat, @listing.lng]
+    elsif (contact = @listing.site.contacts.first)
+      [contact.lat, contact.lng]
+    else
+      [nil, nil]
     end
   end
 

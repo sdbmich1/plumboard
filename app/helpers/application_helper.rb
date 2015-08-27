@@ -37,13 +37,9 @@ module ApplicationHelper
   # used do determine if search form is displayed
   def display_search
     case controller_name
-      when 'categories'; render 'shared/search' if action_name != 'show'
-      when 'searches'; render 'shared/search' if action_name != 'show'
-      when 'listings'; render 'shared/search' if action_name != 'show'
-      when 'posts'; render 'shared/search_posts'
-      when 'conversations'; render 'shared/search_posts'
-      when 'users'; render 'shared/search_users'
-      when 'pending_listings'; render 'shared/search' if action_name != 'show'
+      when 'categories', 'searches', 'listings', 'pending_listings'; render 'shared/search' if action_name != 'show'
+      when 'posts', 'conversations'; render 'shared/search_posts'
+      when 'users'; render 'shared/search_users' unless action_name == 'show'
     end
   end
 
@@ -135,6 +131,7 @@ module ApplicationHelper
       when 'My PixiPosts'; render 'shared/navbar_pixi_post'
       when 'Inquiries'; render 'shared/navbar_inquiry'
       when 'Users'; render 'shared/navbar_users'
+      when 'Sites'; render 'shared/navbar_sites'
       when 'Manage Pixis'; render 'shared/navbar_manage_pixis'
       when 'My Sellers', 'Manage Followers', 'My Followers'; render 'shared/navbar_sellers'
       else render 'shared/navbar_main'
@@ -260,13 +257,22 @@ module ApplicationHelper
   end
 
   # check if image exists if not render uploaded image
-  def get_pixi_image pic, size='original'
+  def get_pixi_image pic, size='default'
+    size = get_default_size(pic.imageable_type) if size == 'default'
     if pic.photo.exists?
       pic.photo.url(size.to_sym)
     elsif use_remote_pix?
       pic.direct_upload_url
     else
       'rsz_pixi_top_logo.png'
+    end
+  end
+
+  # get default size of an image
+  def get_default_size(imageable_type)
+    case imageable_type
+    when 'Listing', 'TempListing' then 'large'
+    else 'thumb'
     end
   end
 
@@ -406,6 +412,10 @@ module ApplicationHelper
     content_tag(:div, (will_paginate(model) if model.respond_to?(:total_pages)), id: id, class: 'nav pull-right')
   end
 
+  def show_entries model, tag
+    content_tag(:div, (page_entries_info model, :model => tag), class: 'pg-entry left-form', id: 'entry-top')
+  end
+
   # get address for map
   def map_loc model
     model.primary_address if model.has_address?  
@@ -435,22 +445,36 @@ module ApplicationHelper
     content_tag(:li, link_to("My Site", @user.local_user_path)) if @user.is_business? || @user.is_member?
   end
 
-  def show_border_image model, display_cnt, file_name, psize
+  def show_border_image model, display_cnt, file_name, psize, flg
     cls = display_cnt == 0 ? file_name : 'pic-frame'
-    content_tag(:div, image_tag(get_pixi_image(model.pictures[0]), :size => psize, class: 'img-zoom'), class: cls)
+    content_tag(:div, image_tag(get_pixi_image(model.pictures[pic_no(flg)]), :size => psize, class: 'img-zoom'), class: cls)
   end
 
-  def process_show_photo_image model, display_cnt, file_name, psize
+  # toggle picture selector
+  def pic_no flg
+    flg ? 0 : 1
+  end
+
+  def process_show_photo_image model, display_cnt, file_name, psize, flg
     if display_cnt < 2
-      show_border_image model, display_cnt, file_name, psize
+      show_border_image model, display_cnt, file_name, psize, flg
     elsif display_cnt > 2
-      image_tag(get_pixi_image(model.pictures[0]), class: file_name)
+      image_tag(get_pixi_image(model.pictures[pic_no(flg)]), class: file_name)
     else
       render partial: 'shared/photos', locals: {model: model, psize: psize }
     end
   end
 
-  def show_photo model, display_cnt, file_name, psize
-    process_show_photo_image model, display_cnt, file_name, psize if picture_exists? model
+  def show_photo model, display_cnt, file_name, psize, flg=true
+    process_show_photo_image model, display_cnt, file_name, psize, flg if picture_exists? model
+  end
+
+  # render list partial if data exists
+  def render_list model, pname, msg, type=nil
+    unless model.blank?
+      render partial: pname, locals: { model: model, type: type }
+    else
+      content_tag(:div, msg, class: 'center-wrapper')
+    end
   end
 end

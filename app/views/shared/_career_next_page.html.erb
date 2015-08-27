@@ -1,3 +1,1 @@
-<% if valid_next_page? @listings %>
-  <%= link_to 'Next', career_path(page: @listings.next_page), class: 'nxt-pg', remote: true %>
-<% end %>
+<%= check_next_page @listings, career_path(page: @listings.next_page) %>

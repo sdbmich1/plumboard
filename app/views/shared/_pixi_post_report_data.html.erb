@@ -1,0 +1,23 @@
+    <table class="border-collapse: collapse table table-hover table-condensed table-bordered ">
+        <thead>
+            <tr>
+                <th class='center-wrapper'>Post Date</th>
+                <th class='center-wrapper'>Customer</th>
+                <th class='center-wrapper'>Pixter</th>
+                <th class='center-wrapper'>Sale Date</th>
+                <th class='center-wrapper'>List Value</th>
+                <th class='center-wrapper'>Sale Amount</th>
+                <th class='center-wrapper'>Pixter Revenue</th>
+            </tr>
+        </thead>
+        <tbody>
+            <%= render partial: 'shared/pixi_post_pixter_report_row', collection: model, as: :post %>
+            <tr>
+                <td></td><td></td><td></td><td></td>
+                <td class = 'center-wrapper'> Total </td>
+                <td class = 'center-wrapper price'> <%= ntc(pixter_report_total model) %></td>
+                <td class = 'center-wrapper price'><%= ntc(grand_total(model)) %></td>
+            </tr>
+        </tbody>
+    </table>
+    <%= paginate_list 'pxp-list', model %>

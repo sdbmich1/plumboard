@@ -24,6 +24,10 @@ class PostsController < ApplicationController
    
   private
 
+  def set_redirect_path status
+    @post.reload.conversation.active_post_count(@user) > 0 ? @post.conversation : conversations_path(status: status)
+  end
+
   def page_layout
     mobile_device? && %w(index sent).detect{|x| action_name == x} ? 'form' : 'application'
   end

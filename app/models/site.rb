@@ -1,6 +1,8 @@
 class Site < ActiveRecord::Base
-  attr_accessible :email, :name,  :status, :institution_id, :pictures_attributes, :contacts_attributes, :site_type_code
+  attr_accessible :email, :name, :site_type_code, :status, :institution_id, :pictures_attributes, :contacts_attributes, :url, :site_url
+  attr_accessor :site_url
 
+  before_create :set_flds
   has_many :site_users
   has_many :users, :through => :site_users
 
@@ -36,14 +38,22 @@ class Site < ActiveRecord::Base
     where(where_stmt).sort_by { |e| e[:name] }.inject([]) { |m,e| m.last.nil? ? [e] : m.last[:name] == e[:name] ? m : m << e }
   end
 
+  def set_flds
+    SiteProcessor.new(self).set_flds
+  end
+
   # select active sites w/ pixis
   def self.active_with_pixis
-    where(:id => Listing.active.map(&:site_id).uniq)
+    SiteProcessor.new(self).active_with_pixis
+  end
+
+  def self.inc_list
+    includes(:pictures)
   end
 
   # select by type
   def self.get_by_type val
-    where("status = 'active' AND site_type_code = ?", val)
+    inc_list.where("status = 'active' AND site_type_code = ?", val)
   end
 
   def self.get_by_status val
@@ -70,6 +80,11 @@ class Site < ActiveRecord::Base
     site_type_code == 'region'
   end
 
+  # check if site is pub
+  def is_pub?
+    site_type_code == 'pub'
+  end
+
   # check site type by id
   def self.check_site sid, val
     where(id: sid).check_site_type_code(val).first
@@ -86,11 +101,37 @@ class Site < ActiveRecord::Base
   end
 
   # get nearest region
-  def self.get_nearest_region loc, range=60
-    unless site = Site.where(id: Contact.proximity(nil, range, loc, true)).get_by_type('region').first
-      site = Site.where(name: PIXI_LOCALE).first
-    end
-    [site.id, site.name] rescue [0, loc]
+  def self.get_nearest_region loc
+    SiteProcessor.new(self).get_nearest_region loc
+  end
+
+  # select by name
+  def self.get_by_name_and_type val, val1
+    where("name = ?", val).get_by_type(val1)
+  end
+
+  # getter & setter for url
+  def site_url
+    SiteProcessor.new(self).site_url
+  end
+
+  def site_url=value
+    self[:url] = SiteProcessor.new(self).generate_url value
+  end
+
+  # getter for local url
+  def local_site_path
+    SiteProcessor.new(self).local_site_path
+  end
+
+  # getter for http url string
+  def url_str
+    SiteProcessor.new(self).url_str
+  end
+
+  # return site by url
+  def self.get_by_url val
+    where("status = ? AND url = ?", 'active', val).first
   end
 
   # set json string

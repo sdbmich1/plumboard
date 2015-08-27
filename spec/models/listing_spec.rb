@@ -521,8 +521,9 @@ describe Listing do
   end 
     
   describe "activate", detail: true do 
-    let(:listing) { FactoryGirl.build :listing, start_date: Time.now, status: 'pending' }
+    let(:listing) { FactoryGirl.build :listing, start_date: Time.now, status: 'pending', end_date: Date.today-3.months }
     it { listing.activate.status.should == 'active' } 
+    it { expect(listing.activate.end_date).to be > Date.today }
     it 'does not activate' do
       listing.status = 'sold'
       listing.activate.status.should_not == 'active'
@@ -1606,16 +1607,32 @@ describe Listing do
     before :each do
       @listing.save!
     end
-    it { expect(Listing.get_by_url(@user.url)).to include @listing }
-    it { expect(Listing.get_by_url('abcd')).to be_nil }
+    context 'by user' do
+      it { expect(Listing.get_by_url(@user.url, 'mbr')).to include @listing }
+      it { expect(Listing.get_by_url('abcd', 'mbr')).to be_nil }
+    end
+    context 'by site' do
+      before :each do
+        @loc = create :site, site_type_code: 'pub'
+      end
+      it 'loads site url' do
+        listing = create :listing, site_id: @loc.id, seller_id: @user.id, quantity: 1 
+        expect(Listing.get_by_url(@loc.url, 'pub')).to include listing
+      end
+      it { expect(Listing.get_by_url('abcd', 'pub')).to be_blank }
+    end
   end
 
   describe 'latlng', process: true do
-    before :each, run: true do
-      @listing.lat, @listing.lng = [42.4348, -83.125]
-    end
-
     it 'has coordinates', run: true do
+      @listing.lat, @listing.lng = [42.4348, -83.125]
+      expect(@listing.latlng).not_to be_nil
+    end
+    it 'gets coordinates from contact', run: true do
+      @site = create :site, org_type: 'city', name: 'San Francisco'
+      @site.contacts.create(FactoryGirl.attributes_for(:contact, address: '101 California',
+        city: 'SF', state: 'CA', zip: '94111', lat: 37.799367, lng: 122.398407))
+      @listing.update_attribute(:site_id, @site.id)
       expect(@listing.latlng).not_to be_nil
     end
     it { expect(@listing.latlng[0]).to be_nil }

@@ -1,0 +1,13 @@
+<% cache site do %>
+<tr>
+  <td class='span1 center-wrapper'>
+    <%= show_photo site, 0, 'myimage', '80x80'%>
+  </td>
+  <td class='span5'><%= site.name %></td>
+  <td class='span3'><%= site.url %></td>
+  <td class='span2'><%= site.site_type_code %></td>
+  <td class='span2'><%= site.status %></td>
+  <td class='span2'><%= short_date(site.updated_at) %></td>
+  <td class='span2 center-wrapper'><%= link_to 'Details', '#', class: 'btn btn-small' %></td>
+</tr>
+<% end %>

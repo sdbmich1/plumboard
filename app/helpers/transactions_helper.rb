@@ -133,4 +133,8 @@ module TransactionsHelper
   def txn_amt txn
     txn.get_invoice.amount - txn.get_invoice.get_fee(true) rescue 0
   end
+
+  def show_card_details
+    render partial: 'shared/credit_card_details' if get_card
+  end
 end

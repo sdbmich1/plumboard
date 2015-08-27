@@ -694,7 +694,7 @@ task :import_travel_modes => :environment do
 end
 
 task :load_feeds => :environment do
-
+  Feed.delete_all
   CSV.foreach(Rails.root.join('db', 'site_feed_021515.csv'), :headers => true) do |row|
 
     attrs = {
@@ -787,6 +787,26 @@ task :load_currency_types => :environment do
   end
 end
 
+task :load_stock_images, [:file_name] => [:environment] do |t, args|
+  args.with_defaults(:file_name => 'stock_image_data_071915.csv')
+
+  CSV.foreach(Rails.root.join('db', args[:file_name]), :headers => true) do |row|
+    unless StockImage.find_by_title(row[0])
+      attrs = {
+        :title => row[0],
+        :category_type_code => Category.find_by_name(row[1]).category_type_code,
+        :file_name => row[3]
+      }
+      stock_image = StockImage.new(attrs)
+      if stock_image.save
+        puts "Saved stock image #{attrs.inspect}"
+      else
+        puts stock_image.errors
+      end
+    end
+  end
+end
+
 #to run all tasks at once
 task :run_all_tasks => :environment do
 
@@ -814,6 +834,7 @@ task :run_all_tasks => :environment do
   Rake::Task[:import_travel_modes].execute
   Rake::Task[:load_feeds].execute
   Rake::Task[:load_currency_types].execute 
+  Rake::Task[:load_stock_images].execute
   Rake::Task[:import_other_sites].execute :file_name => "state_site_data_012815.csv", :org_type => "state"
   Rake::Task[:import_other_sites].execute :file_name => "country_site_data_012815.csv", :org_type => "country"
   Rake::Task[:import_other_sites].execute :file_name => "state_site_data_012815.csv", :site_type_code => "state"

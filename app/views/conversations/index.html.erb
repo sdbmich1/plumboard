@@ -4,7 +4,6 @@
 <% end %>
 <%= content_for :content do %>
   <div id='post-frm'>
-    <%= render partial: 'shared/conversations', locals: { sentFlg: false } %>
+    <%= render partial: 'shared/conversations', locals: { model: @conversations, sentFlg: false } %>
   </div>
 <% end %>
-

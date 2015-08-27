@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature "Searches" do
+feature "Urls" do
   subject { page }
 
   let(:user) { create(:contact_user) }
@@ -13,10 +13,10 @@ feature "Searches" do
   let(:listing) { create(:listing, title: "Blue Guitar", description: "Lessons", seller_id: seller.id, 
     site_id: site.id, quantity: 1, condition_type_code: condition_type.code, status: 'active') }
 
-  def add_pixis model
-    create(:listing, title: "Acoustic Guitar", seller_id: model.id, site_id: site.id, category_id: category.id, quantity: 1, 
+  def add_pixis model, loc=site
+    create(:listing, title: "Acoustic Guitar", seller_id: model.id, site_id: loc.id, category_id: category.id, quantity: 1, 
       condition_type_code: condition_type.code)  
-    create(:listing, title: "Bass Guitar", seller_id: model.id, site_id: site.id, category_id: category.id, quantity: 1, 
+    create(:listing, title: "Bass Guitar", seller_id: model.id, site_id: loc.id, category_id: category.id, quantity: 1, 
       condition_type_code: condition_type.code)  
   end
 
@@ -45,7 +45,6 @@ feature "Searches" do
       add_pixis bus_user
       init_setup user
     end
-    
     it_should_behave_like 'seller_url_pages', true, true
   end
 
@@ -54,8 +53,12 @@ feature "Searches" do
       add_pixis user2
       init_setup user
     end
-    
     it_should_behave_like 'seller_url_pages', false, false
+  end
+
+  describe "site url pages", site: true do
+    it_should_behave_like 'site_url_pages', 'Seattle College', 'edu', 'school'
+    it_should_behave_like 'site_url_pages', 'Seattle Times - Press', 'pub', 'pub'
   end
 
   describe "Non-signed in user" do
