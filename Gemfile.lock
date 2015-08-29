@@ -225,6 +225,9 @@ GEM
       childprocess (>= 0.2.3)
       guard (>= 1.1)
       spork (>= 0.8.4)
+    handle_invalid_percent_encoding_requests (1.0.2)
+      rack-utf8_sanitizer
+      rails (>= 3.1)
     hashie (1.2.0)
     highline (1.6.15)
     hike (1.2.3)
@@ -356,6 +359,8 @@ GEM
       rack
     rack-test (0.6.2)
       rack (>= 1.0)
+    rack-utf8_sanitizer (1.3.1)
+      rack (~> 1.0)
     rack_session_access (0.1.1)
       builder (>= 2.0.0)
       rack (>= 1.0.0)
@@ -570,6 +575,7 @@ DEPENDENCIES
   graylog2_exceptions!
   guard-rspec (= 3.0.2)
   guard-spork (= 1.5.1)
+  handle_invalid_percent_encoding_requests
   jquery-rails (~> 3.1.0)
   jquery-ui-rails
   jquery-ui-themes
@@ -621,6 +627,3 @@ DEPENDENCIES
   whenever
   will_paginate (~> 3.0)
   win32console (~> 1.3.2)
-
-BUNDLED WITH
-   1.10.3

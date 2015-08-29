@@ -239,8 +239,8 @@ class Listing < ListingParent
     ListingProcessor.new(self).update_counter_cache
   end
 
-  def self.get_by_url url, action, page=1
-    ListingProcessor.new(self).get_by_url url, action, page
+  def self.get_by_url url, action
+    ListingProcessor.new(self).get_by_url url, action
   end
 
   def self.board_fields

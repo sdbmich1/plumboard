@@ -57,15 +57,18 @@ describe ListingsController do
     end
   end
 
-  describe 'GET local', local: true do
+  describe 'GET board data', local: true do
     before(:each) do
-      @category = stub_model Category
-      Category.stub!(:find).and_return(@category)
       get_board_data
     end
     context 'load board' do
       ['local', 'category'].each do |rte|
         it_behaves_like "a load data request", 'Listing', 'load_board', rte, 'set_page', false
+      end
+    end
+    context 'load by url' do
+      ['biz', 'mbr', 'pub', 'edu', 'career', 'loc'].each do |loop| 
+        it_behaves_like "a load data request", 'Listing', 'get_by_url', loop, 'set_page', false
       end
     end
   end
@@ -110,14 +113,6 @@ describe ListingsController do
     context 'load list' do
       [['wanted_list', 'wanted'], ['wanted_list','seller_wanted'], ['invoiced', 'invoiced'], ['purchased', 'purchased']].each do |rte|
         it_behaves_like "a load data request", 'Listing', rte[0], rte[1], 'paginate', true
-      end
-    end
-  end
-
-  describe 'GET by url', url: true do
-    context 'url' do
-      ['biz', 'mbr', 'pub', 'edu', 'career'].each do |loop| 
-        it_behaves_like "a load data request", 'Listing', 'get_by_url', loop, 'paginate', false
       end
     end
   end

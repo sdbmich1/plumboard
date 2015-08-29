@@ -1,16 +1,16 @@
 require 'will_paginate/array' 
 class ListingsController < ApplicationController
   include PointManager, NameParse, ResetDate, LocationManager, ControllerManager
-  before_filter :authenticate_user!, except: [:local, :category, :show, :biz, :mbr, :career, :pub, :edu]
-  before_filter :load_data, except: [:pixi_price, :repost, :update, :biz, :mbr, :pub, :edu]
+  before_filter :authenticate_user!, except: [:local, :category, :show, :biz, :mbr, :career, :pub, :edu, :loc]
+  before_filter :load_data, except: [:pixi_price, :repost, :update, :biz, :mbr, :pub, :edu, :loc]
   before_filter :load_pixi, only: [:show, :pixi_price, :repost, :update]
   before_filter :load_job, only: [:career]
-  before_filter :pxb_url, only: [:biz, :mbr, :pub, :edu] 
+  before_filter :pxb_url, only: [:biz, :mbr, :pub, :edu, :loc] 
   before_filter :load_city, only: [:local, :category]
-  before_filter :load_url_data, only: [:biz, :mbr, :career, :pub, :edu]
+  before_filter :load_url_data, only: [:biz, :mbr, :career, :pub, :edu, :loc]
   after_filter :set_session, only: [:show]
-  after_filter :set_location, only: [:biz, :mbr, :pub, :edu]
-  after_filter :add_points, only: [:show, :biz, :mbr, :pub, :edu]
+  after_filter :set_location, only: [:biz, :mbr, :pub, :edu, :loc]
+  after_filter :add_points, only: [:show, :biz, :mbr, :pub, :edu, :loc]
   respond_to :html, :json, :js, :mobile, :csv
   layout :page_layout
 
@@ -90,6 +90,9 @@ class ListingsController < ApplicationController
   def edu
   end
 
+  def loc
+  end
+
   protected
 
   def load_data
@@ -100,7 +103,7 @@ class ListingsController < ApplicationController
   end
 
   def render_board?
-    !%w(category local biz mbr career pub edu).detect {|x| action_name == x}.nil?
+    !%w(category local biz mbr career pub edu loc).detect {|x| action_name == x}.nil?
   end
 
   def page_layout
@@ -117,9 +120,7 @@ class ListingsController < ApplicationController
 
   def load_city
     items = Listing.load_board(@cat, @loc)
-    @sellers = User.get_sellers items
-    @category = Category.find @cat rescue nil if action_name == 'category'
-    @listings = items.set_page @page
+    load_sellers items
   end
 
   def load_job
@@ -132,7 +133,13 @@ class ListingsController < ApplicationController
   end
 
   def load_url_data
-    @listings = Listing.get_by_url(@url, action_name, @page)
+    items = Listing.get_by_url(@url, action_name)
+    load_sellers items
+  end
+
+  def load_sellers items
+    @sellers = User.get_sellers(items) unless ControllerManager.private_url?(action_name)
+    @listings = items.set_page @page
   end
 
   def set_location

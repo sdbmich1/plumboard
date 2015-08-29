@@ -100,10 +100,10 @@ class PictureProcessor
     when 'Category'
       { styles: { :medium => "180x180>", :thumb => "125x125>", :small => "60x60>", :tiny => "30x30>" } }
     when 'Listing', 'TempListing'
-      { styles: { :large => "640x480>", :preview => "200x200>", :medium => "180x180>",
+      { styles: { :large => "640x480>", :preview => "200x200>", :medium => "180x135>",
                   :thumb => "125x125>", :small => "60x60>", :tiny => "30x30>" } }
     else
-      { styles: { :large => "640x480>", :medium => "180x180>", :thumb => "125x125>",
+      { styles: { :large => "640x480>", :medium => "180x135>", :thumb => "125x125>",
                   :small => "60x60>", :tiny => "30x30>" } }
     end
   end

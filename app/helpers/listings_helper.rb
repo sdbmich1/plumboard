@@ -44,7 +44,7 @@ module ListingsHelper
         'cat_list_next_page'
       when 'local'
         'loc_list_next_page'
-      when 'biz', 'pub', 'mbr', 'career', 'edu'
+      when 'biz', 'pub', 'mbr', 'career', 'edu', 'loc'
         [action_name, 'next_page'].join('_')
       else
         controller_name == 'searches' ? 'search_next_page' : 'listing_next_page'
@@ -67,7 +67,7 @@ module ListingsHelper
     case action_name
       when 'category', 'local'
         "/listings/#{action_name}?page="
-      when 'biz', 'pub', 'mbr', 'career', 'edu'
+      when 'biz', 'pub', 'mbr', 'career', 'edu', 'loc'
         "/#{action_name}?page="
       else
         controller_name == 'searches' ? "/searches?page=" : '/listings?page='
@@ -319,7 +319,7 @@ module ListingsHelper
     end
   end
   
-  def get_usr klass='User'
+  def get_by_url klass='User'
     klass.constantize.find_by_url @url rescue nil
   end
 
@@ -328,16 +328,16 @@ module ListingsHelper
       when 'biz', 'mbr'; klass = 'User'
       when 'pub', 'edu'; klass = 'Site'
     end
-    klass.blank? ? 'Pixis' : get_usr(klass).name.html_safe rescue 'Pixis'
+    klass.blank? ? 'Pixis' : get_by_url(klass).name.html_safe rescue 'Pixis'
   end
 
   def set_biz_banner klass, band, model=nil
-    model ||= get_usr klass
+    model ||= get_by_url klass
     content_tag(:div, render(partial: "shared/#{band}", locals: {user: model, pxFlg: false, colorFlg: false}), class: ["mneg-top", "mbot"]) if model
   end
 
   def set_loc_banner
-    site = Site.find @loc rescue nil
+    site = @url.blank? ? Site.find(@loc) : get_by_url('Site') rescue nil
     if site && site.is_pub?
       set_biz_banner 'Site', 'group_band', site
     else
@@ -364,22 +364,24 @@ module ListingsHelper
     usr.is_a?(User) && usr.id == @user.id rescue false
   end
 
-  def has_featured_pixis? model
-    model.size >= MIN_FEATURED_PIXIS rescue false
-  end
-
-  def has_featured_users?
-    @sellers.size >= MIN_FEATURED_USERS rescue false
+  def has_featured_items? model
+    amt = model.is_a?(User) ? MIN_FEATURED_USERS : MIN_FEATURED_PIXIS 
+    model.size >= amt rescue false
   end
 
   # display featured items/sellers based on band type
   def set_featured_banner model, btype
     case btype
       when 'biz'
-        content_tag(:div, render(partial: 'shared/pixi_band'), class: ["mneg-top", "mbot"]) if has_featured_pixis?(model)
+	render_featured_banner('Featured Pixis', featured_pixis(model), 'listing', 'shared/listing', 'original') if has_featured_items?(model)
       when 'loc', 'pub', 'edu'
-        content_tag(:div, render(partial: 'shared/seller_band'), class: ["mneg-top", "mbot"]) if has_featured_users?
+	render_featured_banner('Featured Sellers', featured_sellers(@sellers), 'user', 'shared/seller', 'medium') if has_featured_items?(@sellers)
     end
+  end
+
+  def render_featured_banner title, model, item, pname, sz
+    cls = ["mneg-top", "mbot"]
+    content_tag(:div, render(partial: 'shared/featured_band', locals: {title: title, model: model, item: item, pname: pname, sz: sz}), class: cls)
   end
 
   # check if manage pixis
@@ -729,6 +731,10 @@ module ListingsHelper
     !flg && !pages_home? ? 'shared/show_temp_pixi_image_lazy' : 'shared/show_temp_pixi_image'
   end
 
+  def px_class flg
+    !flg ? 'fpx-image' : 'pixi-image'
+  end
+
   def private_url?
     ControllerManager::private_url? action_name
   end
@@ -750,5 +756,23 @@ module ListingsHelper
     unless model.blank?
       content_tag(:div, render(partial: pname, locals: {type: type}), id:"top-header", class: cls) 
     end 
+  end
+
+  def show_contact_footer f, listing, cls
+    if listing.external_url.blank?
+      f.submit "Send", class: cls, data: {disable_with: "Sending..."}
+    else
+      link_to 'Send', pixi_wants_path(url: listing.external_url, id: listing.pixi_id), method: :post, class: cls, remote: true
+    end
+  end
+
+  def show_quantity_fld f, listing, str=[]
+    if listing.amt_left == 1
+      f.hidden_field 'quantity', value: listing.amt_left, id: 'px-qty'
+    else 
+      str << "Quantity: " 
+      str << f.select(:quantity, options_for_select(get_ary(listing.amt_left), 1), {}, {id: 'px-qty', class: 'pixi-select width60'})
+      content_tag(:span, str.join("").html_safe)
+    end
   end
 end

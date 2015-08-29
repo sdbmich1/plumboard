@@ -99,7 +99,7 @@ shared_examples "a url" do |klass, factory, flg|
     if flg
       let(:model) { FactoryGirl.create factory }
     else
-      let(:model) { FactoryGirl.create factory, org_type: 'pub' }
+      let(:model) { FactoryGirl.create factory, site_type_code: 'pub' }
     end
     it { expect(klass.constantize.get_by_url(model.url)).not_to be_blank }
     it { expect(klass.constantize.get_by_url('abcd')).to be_blank }

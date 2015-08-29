@@ -1,5 +1,5 @@
 class ListingProcessor < ListingDataProcessor
-  include CalcTotal, SystemMessenger, NameParse, ProcessMethod
+  include CalcTotal, SystemMessenger, NameParse, ProcessMethod, ControllerManager
 
   # set active status
   def activate
@@ -149,9 +149,12 @@ class ListingProcessor < ListingDataProcessor
     User.reset_counters(@listing.seller_id, :active_listings)
   end
 
-  def get_by_url url, action_name, page=1
-    data = !action_name.match(/mbr|biz/).nil? ? Listing.get_by_seller(User.get_by_url(url), 'active') : Listing.get_by_city('', Site.get_by_url(url))
-    data.board_fields.set_page page rescue nil
+  def get_by_url url, action_name
+    flg = ControllerManager.private_url?(action_name) 
+    klass = flg ? 'User' : 'Site'
+    result = klass.constantize.get_by_url url
+    data = flg ? Listing.get_by_seller(result, 'active') : Listing.get_by_city('', result)
+    data.board_fields rescue nil
   end
 
   def get_board_flds

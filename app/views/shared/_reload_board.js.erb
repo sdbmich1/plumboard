@@ -1,12 +1,18 @@
 // set vars
-var parms = "&loc=" + "<%= params[:loc] %>" + "&search=" + "<%= params[:search] %>" + "&cid=" + "<%= params[:cid] %>"
-var pathName = "<%= set_path_parse %>"
+var pathName = "<%= set_path_parse %>";
+var str = '<%= escape_javascript(render(partial: "#{set_partial_name}")) %>';
+
+<% if params[:loc].to_i > 0 %>
+  var parms = "&loc=" + "<%= params[:loc] %>" + "&search=" + "<%= params[:search] %>" + "&cid=" + "<%= params[:cid] %>";
+<% else %>
+  var parms = "&url=" + "<%= params[:url] %>";
+<% end %>
 
 <% if params[:page].to_i > 1 %>
-  $("#pxboard").append('<%= escape_javascript(render(partial: "#{set_partial_name}")) %>');
+  $("#pxboard").append(str);
 <% else %>  
   $(".item").remove();
-  $("#pxboard").html('<%= escape_javascript(render(partial: "#{set_partial_name}")) %>');
+  $("#pxboard").html(str);
 <% end %>  
 
 // update next page link

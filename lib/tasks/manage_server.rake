@@ -113,7 +113,7 @@ namespace :manage_server do
   task :reprocess_listing_images => :environment do
     Listing.active.find_each do |pixi|
       pixi.pictures.each do |pic|
-        %w(preview medium large tiny).each do |style|
+        %w(medium large).each do |style|
           pic.photo.reprocess! style.to_sym
 	end
       end
@@ -165,29 +165,10 @@ namespace :manage_server do
   end
 
   task :run_upgrade_tasks => :environment do
-    Rake::Task[:import_travel_modes].execute
-    Rake::Task[:import_user_type].execute
-    Rake::Task[:load_site_type_codes].execute
-    Rake::Task[:load_event_types].execute
-    Rake::Task[:load_fulfillment_types].execute
-    Rake::Task[:load_feeds].execute
-    Rake::Task[:load_neighborhoods].execute
-    Rake::Task[:load_region_suburbs].execute
-    Rake::Task[:update_site_images].execute :file_name => "region_image_data_051415.csv"
-    Rake::Task[:update_site_images].execute :file_name => "city_image_data_060915.csv"
-    Rake::Task[:import_other_sites].execute :file_name => "country_site_data_012815.csv", :site_type_code => "country"
-    Rake::Task["db:load_countries"].invoke
-    Rake::Task["db:update_cat_types"].invoke
-    Rake::Task["db:load_user_status"].invoke
-    Rake::Task["db:reload_pixi_posts"].invoke
-    Rake::Task["db:load_active_listings_counter"].invoke
-    Rake::Task["db:reload_user_types"].invoke
-    Rake::Task["manage_server:setup_bus_accts"].invoke
-    Rake::Task["db:load_user_urls"].invoke
-    Rake::Task["db:reset_acct_token"].invoke
+    Rake::Task[:load_currency_types].execute 
+    Rake::Task[:load_stock_images].execute
     Rake::Task["manage_server:reprocess_user_images"].invoke
     Rake::Task["manage_server:reprocess_listing_images"].invoke
-    Rake::Task["manage_server:reprocess_category_images"].invoke
     Rake::Task["manage_server:import_job_feed"].invoke
   end
 end

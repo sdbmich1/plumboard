@@ -1,8 +1,5 @@
 Plumboard::Application.routes.draw do
 
-  get "/shared/_photo"
-  get "pixi_wants/create"
-
   devise_for :users, :controllers => { registrations: "registrations", sessions: "sessions", omniauth_callbacks: "users/omniauth_callbacks",
       confirmations: "confirmations" } 
   
@@ -180,6 +177,7 @@ Plumboard::Application.routes.draw do
   match '/mbr/:url' => "listings#mbr", via: :get, as: :mbr
   match '/pub/:url' => "listings#pub", via: :get, as: :pub
   match '/edu/:url' => "listings#edu", via: :get, as: :edu
+  match '/loc/:url' => "listings#loc", via: :get, as: :loc
   match '/careers' => "listings#career", via: :get, as: :career
   # get '/careers', to: "listings#jobs"
 

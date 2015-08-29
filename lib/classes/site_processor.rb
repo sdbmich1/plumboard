@@ -11,7 +11,7 @@ class SiteProcessor
 
   # initialize data
   def set_flds
-    @site.site_url = @site.name if @site.is_pub? || @site.is_school?
+    @site.site_url = @site.name 
   end
 
   # create unique url for user

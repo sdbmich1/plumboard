@@ -219,6 +219,7 @@ gem 'excon', '~> 0.21.0'
 gem 'rubber'
 gem 'recursive-open-struct'
 gem 'lazyload-rails'
+gem "handle_invalid_percent_encoding_requests"
 
 # standardize all modals
 gem 'data-confirm-modal', github: 'ifad/data-confirm-modal', branch: 'bootstrap2'

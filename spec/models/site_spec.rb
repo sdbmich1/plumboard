@@ -333,7 +333,7 @@ describe Site do
     end
   end
 
-  describe "url" do
+  describe "url", url: true do
     before :each, run: true do
       @site.site_url = @site.name 
       @site.site_type_code = 'pub'
@@ -341,8 +341,8 @@ describe Site do
     end
 
     it 'generates url' do
-      site2 = create :site, site_type_code: 'pub'
-      expect(site2.url).to eq site2.name.downcase.gsub!(/\s+/, "")
+      site2 = create :site, name: 'Seattle Times', site_type_code: 'pub'; sleep 1
+      expect(site2.url).to eq site2.name.gsub!(/\s+/, "")
     end
 
     it 'generates unique url', run: true do
@@ -359,7 +359,7 @@ describe Site do
     it 'does not sets url' do
       site = build :site 
       site.save!
-      expect( site.url ).to be_blank
+      expect( site.url ).not_to be_blank
     end
     it 'calls set_flds' do
       site = build :site, site_type_code: 'pub' 

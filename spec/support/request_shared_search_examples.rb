@@ -16,7 +16,7 @@ end
 shared_examples 'site_url_pages' do |name, rte, type|
   describe "site url" do
     before(:each) do
-      @loc = create :site, name: name, org_type: type
+      @loc = create :site, name: name, site_type_code: type
       add_pixis seller, @loc
     end
      

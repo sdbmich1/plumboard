@@ -19,7 +19,7 @@ feature "Categories" do
   end
 
   def add_data_w_photo
-    attach_file('user_pic', Rails.root.join("spec", "fixtures", "photo.jpg"))
+    attach_file('usr_photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
     sleep 2
   end
 
@@ -76,12 +76,12 @@ feature "Categories" do
 
     describe 'create - valid category' do
       before do
-        click_on 'New'
+	visit new_category_path(status: 'new')
       end
         
       it { should have_button('Save Changes') }
 
-      it 'accepts valid data', js: true do
+      it 'accepts valid data' do
         expect { 
 	    add_data_w_photo
 	    fill_in 'category_name', with: 'Boat'

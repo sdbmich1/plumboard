@@ -33,7 +33,7 @@ module ControllerManager
   end
 
   def self.public_url? action_name
-    !action_name.match(/pub|edu/).nil?
+    !action_name.match(/pub|edu|loc/).nil?
   end
 
   def self.private_url? action_name

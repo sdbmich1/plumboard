@@ -40,9 +40,9 @@ module ProcessMethod
   # create unique url for user
   def self.generate_url klass, value, cnt=0
     begin
+      value = NameParse::transliterate value, false, true
       new_url = cnt == 0 ? value.gsub(/\s+/, "") : [value.gsub(/\s+/, ""), cnt.to_s].join('')
       cnt += 1
-      new_url = NameParse::transliterate new_url, false, true
     end while klass.constantize.where(:url => new_url).exists?
     new_url
   end

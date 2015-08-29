@@ -57,6 +57,7 @@ feature "Urls" do
   end
 
   describe "site url pages", site: true do
+    it_should_behave_like 'site_url_pages', 'Seattle', 'loc', 'city'
     it_should_behave_like 'site_url_pages', 'Seattle College', 'edu', 'school'
     it_should_behave_like 'site_url_pages', 'Seattle Times - Press', 'pub', 'pub'
   end

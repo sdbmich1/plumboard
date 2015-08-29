@@ -76,6 +76,11 @@ img.img-board {
   margin: 0 5px 10px 0;
 }
 
+img.fpx-image, img.lazy.fpx-image {
+  width: auto!important;
+  height: 180px!important;
+}
+
 .pixi-image img {
   //max-height: 150px!important;
   width: 100%;
@@ -209,8 +214,8 @@ img.tiny {
 }
 
 .lrg_pic_frame {
-  width: 550px!important;
-  height: 450px!important;
+  width: auto!important;
+  height: 480px!important;
 }
 
 .big_logo {
