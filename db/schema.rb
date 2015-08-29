@@ -11,6 +11,8 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+
+ActiveRecord::Schema.define(:version => 20150819195156) do
 ActiveRecord::Schema.define(:version => 20150814235505) do
 
   create_table "admins", :force => true do |t|
@@ -790,7 +792,10 @@ ActiveRecord::Schema.define(:version => 20150814235505) do
     t.datetime "updated_at",     :null => false
     t.integer  "institution_id"
     t.string   "url"
+<<<<<<< HEAD
+=======
     t.string   "description"
+>>>>>>> ad6457b61e6931ca3aae97a60b57fd3827ed9282
   end
 
   add_index "sites", ["institution_id"], :name => "index_organizations_on_institution_id"

@@ -64,16 +64,20 @@ describe 'import_csv' do
   end
 
   describe "update_site_images" do
-    before do
+
+    it "loads images" do
       # Need regions in order to assign their pictures
       load File.expand_path("../../../lib/tasks/import_csv.rake", __FILE__)
       Rake::Task.define_task(:environment)
       Rake::Task["load_regions"].invoke
+      Rake::Task[:update_site_images].execute :file_name => "region_image_data_051415.csv"
+      expect(Site.find_by_name("SF Bay Area").pictures.first.photo.to_s).to include "San_Francisco.jpg"
     end
 
     it "loads images" do
-      Rake::Task[:update_site_images].execute :file_name => "region_image_data_051415.csv"
-      expect(Site.find_by_name("SF Bay Area").pictures.first.photo.to_s).to include "bay_bridge.jpg"
+      site = create :site, name: "University of California - Berkeley", site_type_code: "school"
+      Rake::Task[:update_site_images].execute :file_name => "college_image_data_071915.csv"
+      expect(Site.find_by_name("University of California - Berkeley").pictures.first.photo.to_s).to include "UCBerkeley.png"
     end
   end
 
