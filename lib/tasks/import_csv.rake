@@ -748,21 +748,17 @@ task :update_site_images, [:file_name] => [:environment] do |t, args|
   CSV.foreach(Rails.root.join('db', args[:file_name]), :headers => true) do |row|
 
     site = Site.find_by_name(row[0])
-    site.pictures.destroy_all
-    pic = site.pictures.build
-    pic.photo = File.new(Rails.root.join('db', 'images', row[3]))
-    
-    if args[:file_name] == "college_image_data" #
-      site.url = row[2]
-    end
+    if site
+      site.pictures.destroy_all
+      pic = site.pictures.build
+      pic.photo = File.new(Rails.root.join('db', 'images', row[3]))
+      site.url = row[2] unless args[:file_name].match(/college/).nil?
 
-    # url_index = row.headers.index('URL')
-    # site.url = row[url_index] if url_index
-
-    if site.save
-      puts "Saved image for #{site.name}"
-    else
-      puts "Error: #{site.errors.full_messages.first}"
+      if site.save
+        puts "Saved image for #{site.name}"
+      else
+        puts "Error: #{site.errors.full_messages.first}"
+      end
     end
   end
 end

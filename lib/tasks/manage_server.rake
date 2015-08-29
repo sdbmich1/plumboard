@@ -165,6 +165,7 @@ namespace :manage_server do
   end
 
   task :run_upgrade_tasks => :environment do
+    Rake::Task[:update_site_images].execute :file_name => "college_image_data_071915.csv"
     Rake::Task[:load_currency_types].execute 
     Rake::Task[:load_stock_images].execute
     Rake::Task["manage_server:reprocess_user_images"].invoke
