@@ -1,1 +1,59 @@
-School,Name,URL,FileUniversity of California - Berkeley,Mahesh,ucberkeley,UCBerkeley.pngTexas A & M University,Maya,texasam,texasA&M.jpgStanford University,Mahesh,stanford,Stanford.jpgUniversity of California - Los Angeles,Mahesh,ucla,UCLosAngeles.jpgUniversity of California - Irvine,Mahesh,ucirvine,UCIrvine.jpgUniversity of Southern California,Mahesh,usc,USC.jpgUniversity of Arizona,Mahesh,arizona,UA.jpgArizona State University,Mahesh,asu,ASU.JPGUniversity of Washington-Seattle Campus,Mahesh,washington,UWashington.jpgWashington State University,Mahesh,wsu,WSU.jpgUniversity of California - San Diego,Mahesh,ucsd,UCSD.jpgUniversity of Michigan - Ann Arbor,Mahesh,michigan,UMichigan.jpegMichigan State University,Mahesh,michiganstate,michigan_state_university.jpgWayne State University,Mahesh,waynestate,WayneStateUniversity.jpgGeorgia Institute of Technology - Main Campus,Mahesh,georgiatech,GeorgiaTech.jpgUniversity of Georgia ,Mahesh,georgia,UGeorgia.jpegUniversity of California - Davis,Maya,ucdavis,ucdavis.jpgNew York University,Maya,nyu,nyu.jpgSan Jose State University,Maya,sjsu,sanjoseStateUniversity.JPGUniversity of Colorado at Boulder,Maya,colorado,university-of-colorado.jpgColorado State University,Maya,coloradostate,coloradoStateUniversity.jpgUniversity of Utah,Maya,utah,universityofutah.jpgUniversity of Texas at Austin,Maya,texas,universityOfTexas.jpgUniversity of Florida,Maya,florida,universityofFlorida.jpgFlorida State University,Maya,fsu,floridaStateUniversity.jpgOhio State University,Maya,ohiostate,OhioStateUniversity.jpgNorthwestern University,Maya,northwestern,NorthwesternUniversity.pngUniversity of Illinois at Chicago,Maya,illinois,UniversityOfIllinois.jpgUniversity of Pennsylvania,Maya,penn,universityOfPennsylvania.jpgUniversity of North Carolina at Chapel Hill,Maya,unc,universityOfNorthCarolina.jpgDuke University,Maya,duke,dukeUniversity.jpgUniversity of San Francisco,Barisa,usf,USF2.jpgUniversity of Virginia,Barisa,virginia,UniversityofVirginia.jpgBoston College,Barisa,bc,BostonCollege.jpgUniversity of Massachusetts-Amherst,Barisa,umass,Umass.jpgUniversity of Connecticut,Barisa,uconn,UniversityofConnecticut.jpgYale University,Barisa,yale,YaleUniversity.jpgIndiana University East,Barisa,indiana,IndianaUniversity.jpgPurdue University,Barisa,purdue,Purdue.jpgUniversity of Notre Dame,Barisa,notredame,UniversityofNotreDame.jpgUniversity of Missouri - Columbia,Barisa,missouri,UniversityofMissouri.jpgUniversity of Oklahoma,Barisa,oklahoma,UniversityofOklahoma.jpgOklahoma State University,Barisa,okstate,OklahomaStateUniversity.jpgThe University of Alabama,Bill,alabama,University_of_Alabama.jpgSan Francisco State University,Bill,sfsu,sanfranciscoState.JPGUniversity of Houston,Bill,houston,university-of-houston.jpgUniversity of Nebraska - Lincoln,Bill,nebraska,University_of_Nebraska.JPGUniversity of Wisconsin - Green Bay,Bill,wisconsin,University_of_Wisconsin.jpgUniversity of Pittsburgh - Main Campus,Bill,pitt,universityOfPittsburg.jpgGeorgetown University,Bill,georgetown,Georgetown_University.jpgUniversity of Maryland - Baltimore,Bill,maryland,UniversityOfMaryland.jpgUniversity of Kentucky,Bill,kentucky,UniversityOfKentucky.jpgUniversity of Tennessee,Bill,tennessee,UniversityOfTennessee.JPGUniversity of Cincinnati - Main Campus,Bill,cincinnati,UniversityOfCincinnati.jpgUniversity of Oregon,Bill,oregon,UniversityOfOregon.jpgPennsylvania State University - Penn State Great Valley,Maya,pennstate,PennStateUniversity.jpgHarvard University,p,harvard,HarvardUniversity.jpg
+School,Name,URL,File
+University of California - Berkeley,Mahesh,ucberkeley,UCBerkeley.png
+Texas A & M University,Maya,texasam,texasA&M.jpg
+Stanford University,Mahesh,stanford,Stanford.jpg
+University of California - Los Angeles,Mahesh,ucla,UCLosAngeles.jpg
+University of California - Irvine,Mahesh,ucirvine,UCIrvine.jpg
+University of Southern California,Mahesh,usc,USC.jpg
+University of Arizona,Mahesh,arizona,UA.jpg
+Arizona State University,Mahesh,asu,ASU.JPG
+University of Washington-Seattle Campus,Mahesh,washington,UWashington.jpg
+Washington State University,Mahesh,wsu,WSU.jpg
+University of California - San Diego,Mahesh,ucsd,UCSD.jpg
+University of Michigan - Ann Arbor,Mahesh,michigan,UMichigan.jpeg
+Michigan State University,Mahesh,michiganstate,michigan_state_university.jpg
+Wayne State University,Mahesh,waynestate,WayneStateUniversity.jpg
+Georgia Institute of Technology - Main Campus,Mahesh,georgiatech,GeorgiaTech.jpg
+University of Georgia ,Mahesh,georgia,UGeorgia.jpeg
+University of California - Davis,Maya,ucdavis,ucdavis.jpg
+New York University,Maya,nyu,nyu.jpg
+San Jose State University,Maya,sjsu,sanjoseStateUniversity.JPG
+University of Colorado at Boulder,Maya,colorado,university-of-colorado.jpg
+Colorado State University,Maya,coloradostate,coloradoStateUniversity.jpg
+University of Utah,Maya,utah,universityofutah.jpg
+University of Texas at Austin,Maya,texas,universityOfTexas.jpg
+University of Florida,Maya,florida,universityofFlorida.jpg
+Florida State University,Maya,fsu,floridaStateUniversity.jpg
+Ohio State University,Maya,ohiostate,OhioStateUniversity.jpg
+Northwestern University,Maya,northwestern,NorthwesternUniversity.png
+University of Illinois at Chicago,Maya,illinois,UniversityOfIllinois.jpg
+University of Pennsylvania,Maya,penn,universityOfPennsylvania.jpg
+University of North Carolina at Chapel Hill,Maya,unc,universityOfNorthCarolina.jpg
+Duke University,Maya,duke,dukeUniversity.jpg
+University of San Francisco,Barisa,usf,USF2.jpg
+University of Virginia,Barisa,virginia,UniversityofVirginia.jpg
+Boston College,Barisa,bc,BostonCollege.jpg
+University of Massachusetts-Amherst,Barisa,umass,Umass.jpg
+University of Connecticut,Barisa,uconn,UniversityofConnecticut.jpg
+Yale University,Barisa,yale,YaleUniversity.jpg
+Indiana University East,Barisa,indiana,IndianaUniversity.jpg
+Purdue University,Barisa,purdue,Purdue.jpg
+University of Notre Dame,Barisa,notredame,UniversityofNotreDame.jpg
+University of Missouri - Columbia,Barisa,missouri,UniversityofMissouri.jpg
+University of Oklahoma,Barisa,oklahoma,UniversityofOklahoma.jpg
+Oklahoma State University,Barisa,okstate,OklahomaStateUniversity.jpg
+The University of Alabama,Bill,alabama,University_of_Alabama.jpg
+San Francisco State University,Bill,sfsu,sanfranciscoState.JPG
+University of Houston,Bill,houston,university-of-houston.jpg
+University of Nebraska - Lincoln,Bill,nebraska,University_of_Nebraska.JPG
+University of Wisconsin - Green Bay,Bill,wisconsin,University_of_Wisconsin.jpg
+University of Pittsburgh - Main Campus,Bill,pitt,universityOfPittsburg.jpg
+Georgetown University,Bill,georgetown,Georgetown_University.jpg
+University of Maryland - Baltimore,Bill,maryland,UniversityOfMaryland.jpg
+University of Kentucky,Bill,kentucky,UniversityOfKentucky.jpg
+University of Tennessee,Bill,tennessee,UniversityOfTennessee.JPG
+University of Cincinnati - Main Campus,Bill,cincinnati,UniversityOfCincinnati.jpg
+University of Oregon,Bill,oregon,UniversityOfOregon.jpg
+Pennsylvania State University - Penn State Great Valley,Maya,pennstate,PennStateUniversity.jpg
+Harvard University,Bill,harvard,HarvardUniversity.jpg
+University of Iowa,Bill,iowa,UniversityofIowa.jpg
