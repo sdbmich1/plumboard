@@ -16,11 +16,11 @@ class ListingsController < ApplicationController
 
   def index
     @unpaginated_listings = Listing.check_category_and_location(@status, @cat, @loc, is_active?)
-    respond_with(@listings = @unpaginated_listings.paginate(page: @page, per_page: 15), style: status) { |format| render_csv format }
+    respond_with(@listings = @unpaginated_listings.paginate(page: params[:page], per_page: 15), style: status) { |format| render_csv format }
   end
 
   def show
-    @comments = @listing.comments.paginate(page: @page, per_page: PIXI_COMMENTS) rescue nil
+    @comments = @listing.comments.paginate(page: params[:page], per_page: PIXI_COMMENTS) rescue nil
     respond_with(@listing)
   end
 
@@ -33,20 +33,20 @@ class ListingsController < ApplicationController
   end
 
   def seller
-    respond_with(@listings = Listing.get_by_status_and_seller(@status, @user, @adminFlg).paginate(page: @page, per_page: 15))
+    respond_with(@listings = Listing.get_by_status_and_seller(@status, @user, @adminFlg).paginate(page: params[:page], per_page: 15))
   end
 
   def seller_wanted
-    respond_with(@listings = Listing.wanted_list(@user, nil, nil, false).paginate(page: @page, per_page: 15))
+    respond_with(@listings = Listing.wanted_list(@user, nil, nil, false).paginate(page: params[:page], per_page: 15))
   end
 
   def wanted
     @unpaginated_listings = Listing.wanted_list(@user, @cat, @loc)
-    respond_with(@listings = @unpaginated_listings.paginate(page: @page, per_page: 15)) { |format| render_csv format }
+    respond_with(@listings = @unpaginated_listings.paginate(page: params[:page], per_page: 15)) { |format| render_csv format }
   end
 
   def purchased
-    respond_with(@listings = Listing.purchased(@user).paginate(page: @page, per_page: 15))
+    respond_with(@listings = Listing.purchased(@user).paginate(page: params[:page], per_page: 15))
   end
 
   def category
@@ -63,7 +63,7 @@ class ListingsController < ApplicationController
 
   def invoiced
     @unpaginated_listings = Listing.check_invoiced_category_and_location(@cat, @loc)
-    respond_with(@listings = @unpaginated_listings.paginate(page: @page, per_page: 15)) { |format| render_csv format }
+    respond_with(@listings = @unpaginated_listings.paginate(page: params[:page], per_page: 15)) { |format| render_csv format }
   end
 
   def repost
@@ -96,18 +96,14 @@ class ListingsController < ApplicationController
   protected
 
   def load_data
-    @page, @cat, @loc, @loc_name = params[:page] || 1, params[:cid], params[:loc], params[:loc_name]
+    @cat, @loc, @loc_name = params[:cid], params[:loc], params[:loc_name]
     @adminFlg = params[:adminFlg].to_bool rescue false
     @status = NameParse::transliterate params[:status] if params[:status]
     @loc, @loc_name = LocationManager::setup request.remote_ip, @loc || @region, @loc_name, @user.home_zip
   end
 
-  def render_board?
-    !%w(category local biz mbr career pub edu loc).detect {|x| action_name == x}.nil?
-  end
-
   def page_layout
-    render_board? ? 'listings' : mobile_device? ? 'form' : action_name == 'show' ? 'pixi' : 'application'
+    ControllerManager.render_board?(action_name) ? 'listings' : mobile_device? ? 'form' : action_name == 'show' ? 'pixi' : 'application'
   end
 
   def add_points
@@ -139,7 +135,7 @@ class ListingsController < ApplicationController
 
   def load_sellers items
     @sellers = User.get_sellers(items) unless ControllerManager.private_url?(action_name)
-    @listings = items.set_page @page
+    @listings = items.set_page params[:page]
   end
 
   def set_location

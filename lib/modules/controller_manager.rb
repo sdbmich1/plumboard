@@ -39,4 +39,9 @@ module ControllerManager
   def self.private_url? action_name
     !action_name.match(/mbr|biz/).nil?
   end
+
+  # if main board is being rendered
+  def self.render_board? action_name
+    !%w(category local biz mbr career pub edu loc).detect {|x| action_name == x}.nil?
+  end
 end

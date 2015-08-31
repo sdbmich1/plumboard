@@ -278,7 +278,7 @@ module ApplicationHelper
 
   # check if image exists
   def check_image model, psize, lazy_flg=false
-    img_class = lazy_flg ? 'lazy ' + zoom_image : ''
+    img_class = lazy_flg ? 'lazy ' + zoom_image : zoom_image
     image_tag(get_pixi_image(model.pictures[0], psize), class: img_class, lazy: lazy_flg) if picture_exists?(model)
   end
 
@@ -304,7 +304,7 @@ module ApplicationHelper
 
   # set class name if not on the main board
   def zoom_image
-    %w(category local).detect {|x| action_name == x} ? '' : action_name == 'home' ? 'img-board' : 'fpx-image'
+    ControllerManager.render_board?(action_name) ? '' : action_name == 'home' ? 'img-board' : 'fpx-image'
   end
 
   # used to dynamically remove field from a given form
@@ -442,7 +442,7 @@ module ApplicationHelper
 
   # show link if member or business
   def my_site_link
-    content_tag(:li, link_to("My Site", @user.local_user_path)) if @user.is_business? || @user.is_member?
+    content_tag(:li, link_to("My Store", @user.local_user_path)) if @user.is_business? || @user.is_member?
   end
 
   def show_border_image model, display_cnt, file_name, psize, flg

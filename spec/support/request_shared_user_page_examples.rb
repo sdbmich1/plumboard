@@ -11,7 +11,7 @@ require 'spec_helper'
     end
     page.should have_link('My Pixis', href: seller_listings_path(status: 'active'))
     page.should have_link('My Messages', href: conversations_path(status: 'received'))
-    page.should have_link('My Site', href: @user.local_user_path) unless adminFlg
+    page.should have_link('My Store', href: @user.local_user_path) unless adminFlg
     page.should have_link('My Invoices', href: sent_invoices_path)
     page.should have_link('My Accounts', href: new_bank_account_path)
     page.should have_link('My Settings', href: user_path(@user))
