@@ -1,0 +1,9 @@
+<% provide(:title, @site.name) %>
+<%= content_for :subhead do %>
+  <%= render partial: 'shared/navbar', locals: { menu_name: 'Sites' } %>
+<% end %>
+<%= content_for :content do %>
+  <div class='row', id='site_form'>
+    <%= render partial: 'shared/show_site', locals: { site: @site } %>
+  </div>
+<% end %>

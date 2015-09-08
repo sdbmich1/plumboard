@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-def set_data klass, method, rte, tname, xhr=false
+def set_update_data klass, method, rte, tname, xhr=false
   @listing = stub_model(klass.constantize)
   klass.constantize.stub(method.to_sym).and_return(@listing)
   @listing.stub!(tname.to_sym).and_return(xhr)
@@ -10,10 +10,16 @@ def do_put_url rte
   put rte.to_sym, :id => "1"
 end
 
-shared_context "a model update assignment" do |klass, method, rte, tname, status|
+def mock_klass(klass, stubs={})
+  (@mock_klass ||= mock_model(klass, stubs).as_null_object).tap do |obj|
+    obj.stub(stubs) unless stubs.empty?
+  end
+end
+
+shared_context "a model update assignment" do |klass, method, rte, tname, status, var|
   describe 'update methods' do
     before :each do
-      set_data klass, method, rte, tname, status
+      set_update_data klass, method, rte, tname, status
     end
 
     it "should load the requested listing" do
@@ -22,15 +28,15 @@ shared_context "a model update assignment" do |klass, method, rte, tname, status
     end
 
     it "should update the requested listing" do
-      klass.constantize.stub(method.to_sym).with("1") { mock_listing }
-      mock_listing.should_receive(tname.to_sym).and_return(:success)
+      klass.constantize.stub(method.to_sym).with("1") { mock_klass(klass) }
+      mock_klass(klass).should_receive(tname.to_sym).and_return(:success)
       do_put_url(rte)
     end
 
-    it "should assign @listing" do
-      klass.constantize.stub(method.to_sym) { mock_listing(tname.to_sym => status) }
+    it "should assign var" do
+      klass.constantize.stub(method.to_sym) { mock_klass(klass, tname.to_sym => status) }
       do_put_url(rte)
-      assigns(:listing).should_not be_nil
+      assigns(var.to_sym).should_not be_nil
     end
   end
 end

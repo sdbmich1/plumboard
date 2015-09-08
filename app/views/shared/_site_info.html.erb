@@ -1,0 +1,6 @@
+<div><%= f.text_field :name, :placeholder=>'Site Name', required: true  %></div>
+<div><%= f.text_field :description, :placeholder=>'Site Description'  %></div>
+<div><%= f.text_field :url, :placeholder=>'Site URL'  %></div>
+<div><%= f.select :status, options_for_select([['Active', 'active'], ["Inactive", "inactive"]], @site.status), prompt: 'Select Status', id: 'status_dropdown' %></div>
+<div><%= f.collection_select :site_type_code, SiteType.active, :code, :description, { include_blank: 'Select Site Type' }, {} %></div>
+<%= render partial: 'shared/contact_info', locals: { f: f } %>

@@ -1,0 +1,2 @@
+$("#site_form").html("<%= escape_javascript( raw render(partial: 'shared/site', locals: {model: @sites, stype: @stype} ) ) %>");
+$("#spinner").hide('fast');

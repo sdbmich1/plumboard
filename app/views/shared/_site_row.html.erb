@@ -8,6 +8,6 @@
   <td class='span2'><%= site.site_type_code %></td>
   <td class='span2'><%= site.status %></td>
   <td class='span2'><%= short_date(site.updated_at) %></td>
-  <td class='span2 center-wrapper'><%= link_to 'Details', '#', class: 'btn btn-small' %></td>
+  <td class='span2 center-wrapper'><%= link_to 'Details', site_path(site), class: 'btn btn-small' %></td>
 </tr>
 <% end %>

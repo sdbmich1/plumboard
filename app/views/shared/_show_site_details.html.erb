@@ -1,0 +1,14 @@
+<div class='row offset2'>
+  <div class="span8">
+    <table class="table table-hover table-condensed table-bordered">
+      <tr><td class='span3 field-hdr'>Name</td><td><%= site.name %></td></tr>
+      <tr><td class='span3 field-hdr'>Description</td><td><%= site.description %></td></tr>
+      <tr><td class='span3 field-hdr'>URL</td><td><%= site.url %></td></tr>
+      <tr><td class='span3 field-hdr'>Status</td><td><%= site.status %></td></tr>
+      <tr><td class='span3 field-hdr'>Address</td><td><%= site.contacts.first.full_address %></td></tr>
+      <tr><td class='span3 field-hdr'>Latitude, Longitude</td><td>
+        <%= [site.contacts.first.lat, site.contacts.first.lng].join(', ') %></td></tr>
+      <tr><td class='span3 field-hdr'>Last Updated</td><td><%= short_date(site.updated_at) %></td></tr>
+    </table>
+  </div>
+</div>
