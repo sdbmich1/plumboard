@@ -1,9 +1,9 @@
-<% provide(:title, 'Sites') %>
+<% provide(:title, 'Manage Sites') %>
 <%= content_for :subhead do %>
-  <%= render partial: 'shared/navbar', locals: { menu_name: 'Sites' } %>
+  <%= render partial: 'shared/navbar', locals: { menu_name: 'Sites' }, id: 'site-nav' %>
 <% end %>
 <%= content_for :content do %>
-  <div id='post-frm'>
-    <%= render partial: 'shared/site', locals: {model: @sites, stype: @stype} %>
+  <div id='site_form'>
+    <%= render partial: 'shared/site', locals: {model: @sites, stype: @stype } %>
   </div>
 <% end %>

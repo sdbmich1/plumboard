@@ -13,7 +13,7 @@ def do_get_url rte, status
   end
 end
 
-shared_context "a show method" do |klass, method, rte, status, renderFlg|
+shared_context "a show method" do |klass, method, rte, status, renderFlg, var|
   describe 'update methods' do
     before :each do
       set_show_data klass, method
@@ -28,9 +28,9 @@ shared_context "a show method" do |klass, method, rte, status, renderFlg|
       do_get_url(rte, status)
     end
 
-    it "assigns @listing" do
+    it "assigns var" do
       do_get_url(rte, status)
-      assigns(:listing).should_not be_nil
+      assigns(var.to_sym).should_not be_nil
     end
 
     it "renders template" do

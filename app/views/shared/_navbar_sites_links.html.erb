@@ -1,0 +1,8 @@
+<ul id='nav-site-links' class="nav pull-right">
+  <li class="<%= @status == 'active' ? 'active' : '' %>">
+    <%= link_to "Active", sites_path(stype: @stype, status: 'active'), class: 'submenu', remote: toggle_remote %></li>
+  <li class="<%= @status == 'inactive' ? 'active' : '' %>">
+    <%= link_to "Inactive", sites_path(stype: @stype, status: 'inactive'), class: 'submenu', remote: toggle_remote %></li>
+  <li class="<%= controller.action_name == 'new' ? 'active' : '' %>">
+    <%= link_to "Create", new_site_path, class: 'submenu', remote: toggle_remote %></li>
+</ul>

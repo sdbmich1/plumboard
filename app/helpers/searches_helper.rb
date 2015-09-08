@@ -5,6 +5,7 @@ module SearchesHelper
     case controller_name
       when 'posts', 'conversations'; post_searches_url
       when 'users'; user_searches_url
+      when 'sites'; site_searches_url
       else searches_url
     end
   end
@@ -14,6 +15,7 @@ module SearchesHelper
     case controller_name
       when 'posts', 'conversations'; autocomplete_post_content_post_searches_path
       when 'users'; autocomplete_user_first_name_user_searches_path
+      when 'sites'; autocomplete_site_name_site_searches_path
       else autocomplete_listing_title_searches_path(loc: loc)
     end
   end
@@ -24,6 +26,7 @@ module SearchesHelper
       when 'posts', 'conversations'; 'Search Messages'
       when 'inquiries'; 'Search Inquiries'
       when 'users'; 'Search Users'
+      when 'sites'; 'Search Sites'
       else 'Search Pixis'
     end
   end

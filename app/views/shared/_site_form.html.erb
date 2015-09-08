@@ -1,0 +1,14 @@
+<%= form_for [@site, @site.with_picture], url: create_or_update_path(@site), html: {class: 'uform', id: 'prof-form'} do |f| %>
+    <div id="form_errors"><%= render partial: 'shared/error_messages', locals: { target: f.object } %></div>
+    <div class="span3 center-wrapper">
+      <%= render partial: 'shared/show_user_photo', locals: {f: f, model: @site, file_name: 'person_icon.jpg', idName: 'usr_photo', mFlg: false} %>
+    </div>
+    <div class="offset1 span5">
+      <div id='signup'>
+        <%= render partial: 'shared/site_info', locals: { f: f }  %>
+        <div class="mtop">
+          <%= f.submit "Save Changes", class: "btn btn-large btn-primary submit-btn", data: {disable_with: "Submitting..."} %>
+        </div>
+      </div>
+    </div>
+<% end %>

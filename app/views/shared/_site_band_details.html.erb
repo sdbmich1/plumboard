@@ -1,0 +1,6 @@
+<%= toggle_profile_photo(site) %>
+<div id='siteName' class='big-top span4'>
+  <span class='seller-name'>
+    <%= site.url ? link_to(site.name, site.site_url, class: 'white-browse-link') : site.name %>
+  </span>
+</div>

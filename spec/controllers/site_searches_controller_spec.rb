@@ -1,6 +1,6 @@
 require 'login_user_spec'
 
-describe UserSearchesController do
+describe SiteSearchesController do
   include LoginTestUser
 
   before(:each) do
@@ -8,8 +8,8 @@ describe UserSearchesController do
   end
 
   describe 'GET /index' do
-    context 'load users' do
-      it_behaves_like 'searches controller index', 'User', 'users'
+    context 'load sites' do
+      it_behaves_like 'searches controller index', 'Site', 'sites'
     end
   end
 end

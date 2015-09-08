@@ -13,6 +13,7 @@ class Ability
       can :manage, Transaction
       can :manage, Invoice
       can :manage, User
+      can :manage, Site
       can :access, '/pending_listings'
       can :manage_items, User
       can :manage_pixi_posts, User
@@ -54,6 +55,7 @@ class Ability
         can [:read, :update], TempListing, status: 'pending'
         can :access, '/pending_listings'
         can :manage, PixiPost
+        can :manage, Site
         can :manage_items, User
         can :manage_pixi_posts, User
         can :manage_orders, User

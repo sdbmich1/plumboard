@@ -1,0 +1,10 @@
+<%= form_tag site_searches_url(stype: @stype), :method => :get, :remote=>true, id: 'search_btn', class: 'navbar-search' do %> 	
+   <%= hidden_field_tag 'search_type', @stype %>
+   <div class="controls">
+     <div class="input-append">
+       <%= text_field_tag 'search_txt', nil, placeholder: set_placeholder, class: 'span3 search-text' %>
+       <button type='submit' id='submit-btn' class="btn btn-search" type="button">
+	   <i class="icon-search icon-white"></i></button>
+     </div>
+   </div>
+<% end %>

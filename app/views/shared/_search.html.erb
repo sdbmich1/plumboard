@@ -4,7 +4,7 @@
     <%= hidden_field_tag 'url', @url %>
     <div class="controls">
       <div class="input-append">
-        <%= text_field_tag 'search', nil, placeholder: set_placeholder, class: 'span3 search-text' %>
+        <%= text_field_tag 'search', nil, placeholder: set_placeholder, class: 'span3 search-text', id: 'search_text' %>
         <button type='submit' id='submit-btn' class="btn btn-search" type="button">
 	  <i class="icon-search icon-white"></i>
         </button>
