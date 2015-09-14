@@ -5,14 +5,6 @@
       <%= render partial: 'shared/invoice_details', locals: {invoice: invoice} %>
       <label class="sm-top control-label">Comments: <%= sanitize invoice.comment %></label>
     </div>
-    <div class="pull-right">
-      <% if my_unpaid_invoice?(invoice) %>
-        <%= link_to 'Remove', remove_invoice_path(invoice), confirm: 'Delete this invoice?', method: :put, class: 'btn btn-large' %>
-        <%= link_to 'Edit', edit_invoice_path(invoice), class: 'btn btn-large' %>
-      <% else %>
-        <%= render partial: 'shared/button_menu', locals: { model: invoice, atype: 'Decline' } if invoice.unpaid? %>
-        <%= render partial: 'shared/pay_invoice', locals: { invoice: invoice } if invoice.unpaid? %>
-      <% end %>
-    </div>
+    <%= build_inv_buttons invoice %>
   </div>
 </div>

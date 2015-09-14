@@ -144,8 +144,8 @@ class UserProcessor
   end
 
   # used to add pictures for new user
-  def with_picture
-    @user.pictures.build if @user.pictures.blank? || @user.pictures.size < 2
+  def with_picture addFlg=true
+    @user.pictures.build if addFlg && (@user.pictures.blank? || @user.pictures.size < 2)
     @user.preferences.build if @user.preferences.blank?
     @user
   end

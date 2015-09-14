@@ -1,0 +1,11 @@
+<div id="<%= fid %>" style='<%= set_style(true) %>'>
+  <div class="span3 center-wrapper">
+    <%= render partial: 'shared/show_user_photo', locals: {f: f, model: model, file_name: 'person_icon.jpg', idName: 'usr_photo', mFlg: false} %>
+  </div>
+  <div id='signup' class="<%= signup_class(src) %>">
+    <%= render partial: 'shared/user_info', locals: { f: f, user: @user } %>
+    <%= show_password f, @user %>
+    <%= show_signup_partial f, src, fid, '==' %>
+  </div>
+  <%= show_signup_partial f, src, fid, '!=' %>
+</div>

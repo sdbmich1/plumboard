@@ -127,4 +127,18 @@ module InvoicesHelper
       content_tag(:td, str.join(" ").html_safe, class: 'borderless width60')
     end
   end
+
+  def build_inv_buttons inv
+    if my_unpaid_invoice?(inv)
+      show_edit_buttons inv
+    else
+      content_tag(:div, render(partial: 'shared/show_invoice_buttons', locals: {invoice: inv, atype: 'Decline'}), class: 'pull-right') if inv.unpaid?
+    end
+  end
+
+  def show_edit_buttons invoice, str=[]
+    str << link_to('Remove', remove_invoice_path(invoice), confirm: 'Delete this invoice?', method: :put, class: 'btn btn-large')
+    str << link_to('Edit', edit_invoice_path(invoice), class: 'btn btn-large')
+    content_tag(:div, str.join(" ").html_safe, class: 'pull-right')
+  end
 end

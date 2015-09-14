@@ -147,6 +147,12 @@ class User < ActiveRecord::Base
     UserProcessor.new(self).with_picture
   end
 
+  # used to add pictures for new user
+  def biz_with_picture
+    self.user_type_code = 'BUS'
+    UserProcessor.new(self).with_picture(false)
+  end
+
   # return active types
   def self.active
     includes(:pictures).where(:status => 'active')

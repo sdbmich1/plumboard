@@ -7,8 +7,8 @@
       <th class='tbl-hdr'>Exp Month*</th><th></th>
       <th class='tbl-hdr'>Exp Year*</th>
       <tr>
-        <td class="width240"><%= f.text_field :card_number, id: 'card_number', :size => 16 %></td><td class="width30"></td>
-        <td class="width120"><%= f.text_field :cvv, id: 'card_code', :maxlength => 4, :size => 4 %></td> <td class="width30"></td>
+        <td class="width240"><%= f.text_field :card_number, id: 'card_number', maxlength: 16, size: 16 %></td><td class="width30"></td>
+        <td class="width120"><%= f.text_field :cvv, id: 'card_code', maxlength: 4, size: 4 %></td> <td class="width30"></td>
         <td class="width180">
           <%= select_month Date.today, {add_month_numbers_true: true}, {name: 'card_month', id: "card_month", class: "neg-top pixi-select" } %>
         </td><td class="width30"></td>
@@ -18,7 +18,7 @@
         </td>
       </tr>
       <tr>
-        <td><%= image_tag('cc_logos.jpeg', :class=>'cc-logo') %></td><td></td>
+        <td><%= show_card_image('cc-logo') %></td><td></td>
         <td><%= image_tag('cvv.png', :class=>'cvv-logo') %></td>
       </tr>
     </table>

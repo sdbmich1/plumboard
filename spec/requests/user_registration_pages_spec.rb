@@ -10,6 +10,7 @@ feature "UserRegistrations" do
       before :each do  
         create_user_types
         visit new_user_registration_path 
+	page.find('#signup-email-btn').click
       end
 
       it 'shows content' do
@@ -145,6 +146,7 @@ feature "UserRegistrations" do
       before :each do
         create_user_types
         visit new_user_registration_path 
+	page.find('#signup-email-btn').click
       end 
 
       it "should create a user - local pix" do
@@ -161,6 +163,7 @@ feature "UserRegistrations" do
         create_user_types
         visit root_path
         click_link 'Signup'; sleep 2
+	page.find('#signup-email-btn').click
       end
 
       it "should create a user - local pix" do

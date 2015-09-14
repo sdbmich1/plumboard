@@ -1,0 +1,9 @@
+<div class='<%= get_section_class(section) %>'>
+  <span class='sls-section-header'><%= SLS_KEYS[section]['header'] %></span>
+  <ul class='mtop'>
+    <% (1..cnt).each do |i| %>
+       <li class='mleft20 sls-item-text'><%= SLS_KEYS[section]["item#{i}"] %></li>
+    <% end %>
+  </ul>
+  <%= show_signup_btn btnFlg, tag, section %>
+</div>

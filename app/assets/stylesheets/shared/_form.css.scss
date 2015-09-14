@@ -201,6 +201,7 @@ form#new_post {margin-bottom: -0px!important;}
 .xbig-top {margin-top: 10%;}
 
 .neg-left { margin-left: -20px!important; }
+.neg-left10 { margin-left: -10px!important; }
 .ng-left { margin-left: -5px!important; }
 .no-left {margin-left: 0!important;}
 
@@ -305,6 +306,10 @@ hr {
 
 .black hr{
   border-top: 1px solid #000000;
+}
+
+.white hr{
+  border-top: 1px solid #ffffff;
 }
 
 a.clear-link {
@@ -438,6 +443,11 @@ table.noborder {
   -o-transition: background .2s ease-in-out, border .2s ease-in-out;
   transition: background .2s ease-in-out, border .2s ease-in-out;
   text-shadow: none!important;
+}
+
+a.clear-btn{
+   &:hover { background: $pixiBlue; text-decoration: none; }
+   &:visited { color: #ffffff!important; background: transparent; text-decoration: none!important; }
 }
 
 .clear-blk-btn {

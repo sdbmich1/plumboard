@@ -390,7 +390,7 @@ h3 { padding: 10px }
   z-index: 9999!important }
 
 .cc-logo {
-  width: 178px!important; height: 32px!important; vertical-align: middle;
+  width: auto!important; height: 32px!important; vertical-align: middle;
 }
 
 .cvv-logo {
@@ -698,42 +698,6 @@ a#home-link, a.home-link, a.img-btn {
 
 .remove-btn {
   margin-left: 5px!important;
-}
-
-#add-pixi-photo .cabinet {
-  margin-left: 2px!important;
-  padding: 0!important;
-}
-
-#nearby-map {
-  width:100%; 
-  height:300px!important;
-  border: 1px solid #e8e8e8;
-}
-
-.px-logo {
-  width: 260px!important;
-  height: auto;
-}
-
-.site-logo {
-  float: left;
-  height: auto;
-  margin-left: -5px!important;
-  &:hover {
-	    text-decoration: none;
-	    background: transparent;
-	   }
-}
-
-.pixi-logo {
-  width: 200px!important;
-  @extend .site-logo;
-}
-
-.ppay-logo {
-  width: 155px!important;
-  @extend .site-logo;
 }
 
 .div-gray-border {  

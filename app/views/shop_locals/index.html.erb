@@ -1,0 +1,10 @@
+<%= content_for :topcontent do %>
+  <% cache fragment: 'sls_page_top' do %>
+    <%= render partial: 'local_page_header' %>
+    <%= render partial: 'local_page_subtitle' %>
+    <%= render partial: 'shared/login_modal' %>
+    <%= render partial: 'shared/signup_modal', locals: {method: 'with_picture'} %>
+    <%= render partial: 'shared/biz_signup_modal', locals: {method: 'biz_with_picture'} %>
+  <% end %>
+<% end %>
+<%= render partial: 'shop_local_content' %>

@@ -16,6 +16,7 @@
  *= require si.files
  *= require custom
  *= require pages
+ *= require shop_locals
  *= require scaffolds
  *= require rateit
  *= require map

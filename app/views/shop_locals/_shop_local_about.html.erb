@@ -1,0 +1,12 @@
+<% cache fragment: 'shop_local_about' do %>
+  <div class='bkgd-elem pg-bkgnd-white'>
+    <div class='container'>
+      <%= render partial: 'sls_section_title', locals: {section: 'about', subFlg: false} %>
+      <div class='row big-top'>
+        <%= render partial: 'sls_section_content', locals: {section: 'about', cnt: 4, btnFlg: false, tag: ''} %>
+        <%= show_sls_image 'pxb_sls_about_stamp.png', 'xneg-top' %>
+      </div>
+    </div>
+    <div class='span1 sm-bot pull-right'><%= link_to 'Scroll', '#', class: 'scrollup clear-link' %></div>
+  </div>
+<% end %>

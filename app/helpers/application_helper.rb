@@ -477,4 +477,21 @@ module ApplicationHelper
       content_tag(:div, msg, class: 'center-wrapper')
     end
   end
+
+  # render logo
+  def set_logo_header linkFlg
+    if linkFlg 
+      link_to image_tag('px_word_logo.png', class: 'px-logo'), get_home_path, class: 'site-logo' 
+    else 
+      image_tag 'pixilogo_word_white.png', class: 'px-logo' 
+    end 
+  end
+
+  def set_notice notice
+    content_tag(:p, notice, class: 'notice') unless notice.nil?
+  end
+
+  def set_alert alert
+    content_tag(:p, alert, class: 'alert') unless alert.nil?
+  end
 end

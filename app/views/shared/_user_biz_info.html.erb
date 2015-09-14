@@ -1,0 +1,10 @@
+<div id='bus_code' style="<%= set_style(!user.is_business?) %>">
+  <%= f.text_field :business_name, :placeholder=>'Business Name', required: user.is_business? %>
+</div>
+<div id='bus_url' style="<%= set_style(!show_url?(user)) %>">
+    <div class="input-prepend">
+      <span class="fld-pad add-on"><%= user.url_str %></span>
+      <%= f.text_field :url, placeholder: 'URL', value: user.url, id: 'prependedInput', class: 'width275', required: show_url?(user) %>
+    </div>
+</div>
+

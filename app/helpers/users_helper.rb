@@ -86,6 +86,10 @@ module UsersHelper
     edit_account? && usr.is_business?
   end
 
+  def is_biz? code, usr
+    usr.is_business? || code == 'BUS'
+  end
+
   # toggle user display name text
   def render_seller_name usr, flg
     txt = flg || controller_name == 'users' ? link_to(usr.name, usr.local_user_path, class: set_txt_color(flg)) : usr.name

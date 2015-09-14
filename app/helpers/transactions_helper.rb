@@ -137,4 +137,8 @@ module TransactionsHelper
   def show_card_details
     render partial: 'shared/credit_card_details' if get_card
   end
+
+  def show_card_image cls
+    image_tag('accepted-credit-cards.png', class: cls)
+  end
 end

@@ -31,11 +31,7 @@ class InvoiceProcessor
   def load_new usr, buyer_id, pixi_id
     if usr && usr.has_pixis?
       pixi = usr.active_listings.first if usr.active_listings.size == 1
-
-      # load invoice with pixi data
       inv = usr.invoices.build buyer_id: buyer_id
-
-      # set pixi id if possible
       load_inv_details inv, pixi, buyer_id, pixi_id
       inv
     end

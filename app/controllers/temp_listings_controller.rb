@@ -122,10 +122,6 @@ class TempListingsController < ApplicationController
     !params[:pixan_id].blank?
   end
 
-  def for_business?
-    @ptype.upcase == 'BUS'
-  end
-
   def load_pixi
     @listing = TempListing.find_by_pixi_id(params[:id])
   end

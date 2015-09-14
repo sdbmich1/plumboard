@@ -6,6 +6,7 @@ describe ListingsController do
       it_should_behave_like 'a get route', true, rte, 'listings'
     end
     it_should_behave_like 'an index route', true, 'index', 'listings'
+    it_should_behave_like 'a get item route', false, 'new', 'listings'
     it_should_behave_like 'a get item route', true, 'show', 'listings'
     it_should_behave_like 'a get item route', false, 'edit', 'listings'
     it_should_behave_like 'a put route', true, 'update', 'listings'

@@ -1,0 +1,12 @@
+<% cache fragment: 'shop_local_ind' do %>
+  <div class='bkgd-elem pg-bkgnd-white'>
+    <div class='container'>
+      <%= render partial: 'sls_section_title', locals: {section: 'ind', subFlg: true} %>
+      <div class='row xlg-top'>
+        <%= render partial: 'sls_section_content', locals: {section: 'ind', cnt: 4, btnFlg: true, tag: 'Join Today'} %>
+        <%= show_sls_image 'pxb_sls_girl.png', 'xneg-top' %>
+      </div>
+    </div>
+  </div>
+<% end %>
+

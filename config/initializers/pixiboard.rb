@@ -1,6 +1,7 @@
 # config file for pixi-specific api keys
 PIXI_KEYS = YAML::load_file("#{Rails.root}/config/pixi_keys.yml")[Rails.env]
 PXB_HOME_PAGE_KEYS = YAML::load_file("#{Rails.root}/config/pxb_home_page.yml")[Rails.env]
+SLS_KEYS = YAML::load_file("#{Rails.root}/config/sls.yml")[Rails.env]
 PIXI_FEE = PIXI_KEYS['pixi']['fee']
 PIXI_PERCENT = PIXI_KEYS['pixi']['percent']
 PIXI_TXN_PERCENT = PIXI_KEYS['pixi']['txn_percent']

@@ -1,0 +1,12 @@
+<% cache fragment: 'shop_local_biz' do %>
+  <div class='gray-bkgd'>
+    <div class='container'>
+      <%= render partial: 'sls_section_title', locals: {section: 'biz', subFlg: true} %>
+      <div class='row xlg-top'>
+        <%= show_sls_image 'pxb_sls_screens.png', 'xneg-top' %>
+        <%= render partial: 'sls_section_content', locals: {section: 'biz', cnt: 4, btnFlg: true, tag: 'Get Started'} %>
+      </div>
+    </div>
+  </div>
+<% end %>
+

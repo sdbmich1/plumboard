@@ -1,0 +1,12 @@
+<% cache fragment: 'shop_local_join' do %>
+  <div class='gray-bkgd'>
+    <div class='container'>
+      <%= render partial: 'sls_section_title', locals: {section: 'join', subFlg: true} %>
+      <div class='row xlg-top'>
+        <%= render partial: 'sls_section_content', locals: {section: 'join', cnt: 3, btnFlg: true, tag: 'Get Started'} %>
+        <%= render partial: 'sls_section_content', locals: {section: 'biz_join', cnt: 3, btnFlg: true, tag: 'Get Started'} %>
+      </div>
+    </div>
+  </div>
+<% end %>
+

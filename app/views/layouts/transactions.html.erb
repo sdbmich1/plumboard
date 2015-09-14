@@ -1,14 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link href="/assets/favicon.ico" rel="shortcut icon" />
-  <title><%= full_title(yield(:title)) %></title>
-  <%= stylesheet_link_tag    "application", :media => "all" %>
+  <%= render 'layouts/settings' %>
   <%= javascript_include_tag "application", "https://js.stripe.com/v2/" %>
   <%= tag :meta, :name => "stripe-key", :content => STRIPE_PUBLIC_KEY %>
   <%= tag :meta, :name => "credit-card-api", :content => CREDIT_CARD_API %>
-  <%= csrf_meta_tags %>
-  <%= render 'layouts/shim' %>
 </head>
 <body>
   <div id='wrap'>

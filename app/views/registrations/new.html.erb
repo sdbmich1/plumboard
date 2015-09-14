@@ -3,7 +3,7 @@
   <div class="center">
     <h3>Create Your Account</h3>
   </div>
-  <div class='mtop'>
-    <%= render partial: 'shared/signup_form', locals: {src: 'new'} %>
+  <div id='newReg' class='mtop'>
+    <%= render partial: 'shared/signup_form', locals: {id: 'signup-pg-btns', fid: 'signup-flds', src: 'new', method: 'with_picture'} %>
   </div>
 <% end %>

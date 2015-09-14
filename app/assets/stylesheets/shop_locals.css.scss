@@ -1,0 +1,167 @@
+// Place all the styles related to the ShopLocals controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+body {
+  padding-top: 0px!important;
+}
+
+header#sls-navbar.navbar {
+  margin-bottom: -80px!important; /* Negative margin to pull up carousel. 90px is roughly margins and height of navbar. */
+}
+
+$slsOrange: #ff8100;
+$slsBlue: #0070bb;
+  
+.bkgd-elem {
+  height: 550px;
+  width:100%!important; 
+  background-size: cover!important;
+  -moz-background-size: cover!important;
+}
+
+.sls-container {
+  width:100%!important; 
+}
+  
+.sls-bkgd {
+  background: url("pxb_sls_landing_header.jpg") no-repeat; 
+  @extend .bkgd-elem;
+  position: relative;
+  height: 600px;
+}
+
+.gray-bkgd {
+  background: url("gray_bkgd.png") repeat; 
+  @extend .bkgd-elem;
+}
+
+.sls-txt {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #ffffff;
+  text-shadow: 0 0 3px rgba(0,0,0,.8);
+}
+
+.sls-tag-line {
+  @extend .sls-txt;
+  font-size: 32px;
+}
+
+.sls-sup {
+  font-size: 70%;
+  position: relative;
+  bottom: 0.3em;
+}
+
+.sls-subtitle {
+  @extend .sls-txt;
+  font-size: 36px;
+}
+
+.sls-page-title {
+  @extend .sls-txt;
+  font-weight: bold;
+  font-size: 45pt;
+}
+
+.sls-border-width {
+  width: 658px;
+}
+
+.sls-dash-width {
+  width: 185px!important;
+}
+
+.mauto47 {
+  width: 49%;
+}
+
+.mauto50 {
+  width: 50%;
+}
+
+.sls-small-logo {
+  height: 50px;
+  width: auto;
+}
+
+.sls-logo {
+  height: 400px;
+  width: auto;
+}
+
+a.sls-browse-link {
+  color: $slsBlue;
+   &:hover { color: $slsBlue; background: transparent; text-decoration: underline }
+   &:visited { color: $slsBlue; background: transparent; text-decoration: none!important; }
+}
+
+.line-cover {
+  display: block;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap; 
+}
+
+.line-cover > span {
+  position: relative;
+  display: inline-block;
+}
+
+.line-cover > span:before,
+.line-cover > span:after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 650px;
+  height: 2px;
+  background: white;
+}
+
+.line-cover > span:before {
+  right: 100%;
+  margin-right: 15px;
+}
+
+.line-cover > span:after {
+  left: 100%;
+  margin-left: 15px;
+}
+
+a.sls-about-title {
+  color: $slsOrange;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 42px;
+  font-weight: bold;
+  &:visited { color: $slsOrange; background: transparent; text-decoration: none; }
+  &:hover { color: $slsOrange; background: transparent; text-decoration: none; }
+}
+
+.sls-section-header {
+  color: $slsBlue;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.sls-item-text {
+  color: $slsBlue;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.sls-btn {color: white!important; background: $slsOrange!important; 
+  border: 1px solid $slsOrange!important;
+  text-decoration:none;
+}
+      
+.sls-vline {
+  border-right: 1px solid $slsBlue;
+  margin-right: 20px;
+}
+
+#sls-navbar.navbar.transparent.navbar-inverse .navbar-inner {
+  background: rgba(255, 255, 255, 0.5);
+  background-image:  linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.5) 100%);
+}

@@ -886,7 +886,7 @@ function resetSpan(ctype) {
   }
 }
 
-// set card year for credit card
+// update search field
 function set_search_fld(val) {
   $('#search_type').val(val);
   var action = $("#search_btn").attr("action").split('?');
@@ -894,3 +894,12 @@ function set_search_fld(val) {
   $("#search_btn").attr("action", str);
   $('#search_txt').html('');
 }
+
+// toggle signup form / buttons
+$(document).on('click', '#signup-email-btn, #signup-close-btn', function(e) {
+  $('#signup-pg-btns, #signup-flds').toggle();
+});
+
+$(document).on('click', '#biz-signup-email-btn, #biz-signup-close-btn', function(e) {
+  $('#biz-signup-btns, #biz-signup-flds').toggle();
+});
