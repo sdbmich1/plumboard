@@ -1,2 +1,6 @@
-$("#post-frm").html("<%= escape_javascript( raw render(partial: 'shared/site', locals: {model: @sites, stype: @stype}) ) %>");
+$("#search").html("<%= escape_javascript( raw render(partial: 'shared/search_sites') ) %>");
+$("#site_form").html("<%= escape_javascript( raw render(partial: 'shared/site', locals: {model: @sites, stype: @stype} ) ) %>");
+$("#nav-site-links").html("<%= escape_javascript( raw render(partial: 'shared/navbar_sites_links', locals: { menu_name: 'Sites' } ) ) %>");
+set_search_fld("<%= @stype %>");
+$("#site-type-dropdown").html("<%= escape_javascript( raw render(partial: 'shared/site_type' ) ) %>");
 $("#spinner").hide('fast');

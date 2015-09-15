@@ -46,11 +46,6 @@ module UsersHelper
     edit_account? ? 'shared/edit_user_info' : 'shared/user_info'
   end
 
-  # toggle form photo title
-  def get_form_photo_header mFlg
-    mFlg ? 'Cover Photo' : 'Profile Photo'
-  end
-
   # set idName
   def get_idName val
     cover_photo?(val) ? 'usr_photo2' : 'usr_photo'

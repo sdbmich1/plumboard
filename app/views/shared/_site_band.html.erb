@@ -1,0 +1,8 @@
+<div class="item-container" style="background: url(<%= asset_path(load_bkgnd(site, 0)) %>) no-repeat;">
+  <div id='site-panel'>
+    <%= render partial: 'shared/site_band_details', locals: { site: site } %>
+  </div>
+  <div class='img-right pad20 comm-section'>
+    <%= link_to image_tag('rsz_photo_camera.png', class: 'camera'), edit_site_path(site), title: 'Change Cover Photo', class: 'img-btn'  %>
+  </div>
+</div>

@@ -34,3 +34,31 @@ shared_examples 'site_url_pages' do |name, rte, type|
     end
   end
 end	
+
+shared_examples 'searches controller index' do |klass, var|
+  before :each do
+    @mock_klass = mock(klass.downcase.pluralize)
+    klass.constantize.stub!(:search).and_return(@mock_klass)
+    controller.stub!(:current_user).and_return(@mock_klass)
+    controller.stub_chain(:query, :page).and_return(:success)
+  end
+
+  def do_get
+    xhr :get, :index, search: 'test'
+  end
+
+  it "should load the requested user" do
+    klass.constantize.stub(:search).with('test').and_return(@mock_klass)
+    do_get
+  end
+
+  it "should assign @mock_klass" do
+    do_get
+    assigns(var.to_sym).should == @mock_klass
+  end
+
+  it "index action should render nothing" do
+    do_get
+    controller.stub!(:render)
+  end
+end

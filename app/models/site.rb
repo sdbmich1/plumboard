@@ -1,5 +1,8 @@
 class Site < ActiveRecord::Base
-  attr_accessible :email, :name, :site_type_code, :status, :institution_id, :pictures_attributes, :contacts_attributes, :url, :site_url
+  include ThinkingSphinx::Scopes
+  
+  attr_accessible :email, :name, :site_type_code, :status, :institution_id,
+    :pictures_attributes, :contacts_attributes, :url, :site_url, :description
   attr_accessor :site_url
 
   before_create :set_flds
@@ -52,8 +55,8 @@ class Site < ActiveRecord::Base
   end
 
   # select by type
-  def self.get_by_type val
-    inc_list.where("status = 'active' AND site_type_code = ?", val)
+  def self.get_by_type val, status='active'
+    get_by_status(status).where("site_type_code = ?", val)
   end
 
   def self.get_by_status val
@@ -134,8 +137,28 @@ class Site < ActiveRecord::Base
     where("status = ? AND url = ?", 'active', val).first
   end
 
+  # check for a picture
+  def any_pix?
+    pictures.detect { |x| x && !x.photo_file_name.nil? }
+  end
+
+  # assign URL and save
+  def save_site
+    SiteProcessor.new(self).save_site
+  end
+
+  # add an optional second picture
+  def with_picture
+    pictures.build if pictures.blank? || pictures.size < 2
+    self
+  end
+
   # set json string
   def as_json(options={})
     super(only: [:id, :name])
   end
+
+  sphinx_scope(:by_name) { |name|
+    { conditions: { name: name } }
+  }
 end

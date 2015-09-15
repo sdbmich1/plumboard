@@ -40,6 +40,7 @@ module ApplicationHelper
       when 'categories', 'searches', 'listings', 'pending_listings'; render 'shared/search' if action_name != 'show'
       when 'posts', 'conversations'; render 'shared/search_posts'
       when 'users'; render 'shared/search_users' unless action_name == 'show'
+      when 'sites'; render 'shared/search_sites' if action_name == 'index'
     end
   end
 
@@ -134,6 +135,7 @@ module ApplicationHelper
       when 'Sites'; render 'shared/navbar_sites'
       when 'Manage Pixis'; render 'shared/navbar_manage_pixis'
       when 'My Sellers', 'Manage Followers', 'My Followers'; render 'shared/navbar_sellers'
+      when 'Manage Sites'; render 'shared/navbar_sites'
       else render 'shared/navbar_main'
     end
   end
@@ -493,5 +495,12 @@ module ApplicationHelper
 
   def set_alert alert
     content_tag(:p, alert, class: 'alert') unless alert.nil?
+  end
+
+  # toggle form photo title
+  # unlike other models, the first image for a Site is the cover and the second is the profile
+  def get_form_photo_header mFlg
+    mFlg = !mFlg if controller_name == 'sites'
+    mFlg ? 'Cover Photo' : 'Profile Photo'
   end
 end

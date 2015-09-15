@@ -6,7 +6,11 @@ class SiteProcessor
   end
 
   def get_site_type
-    @site.is_pub? ? 'pub' : 'edu'
+    case @site.site_type_code
+    when 'pub' then pub
+    when 'school' then edu
+    else 'loc'
+    end
   end
 
   # initialize data
@@ -46,5 +50,13 @@ class SiteProcessor
   # select active sites w/ pixis
   def active_with_pixis
     Site.where(id: Listing.active.pluck(:site_id).uniq)
+  end
+
+  # assign lat and lng, then save
+  def save_site
+    c = @site.contacts.first
+    loc = [c.address, c.city, c.state].join(', ') << ' ' << c.zip
+    c.lat, c.lng = LocationManager.get_lat_lng_by_loc(loc)
+    @site.save
   end
 end

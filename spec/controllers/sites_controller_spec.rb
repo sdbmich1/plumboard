@@ -3,29 +3,15 @@ require 'login_user_spec'
 describe SitesController do
   include LoginTestUser
 
-  def mock_site(stubs={})
-    (@mock_site ||= mock_model(Site, stubs).as_null_object).tap do |site|
-      site.stub(stubs) unless stubs.empty?
-    end
-  end
-
-  def mock_user(stubs={})
-    (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
-    end
-  end
-
   before(:each) do
     log_in_test_user
-    @user = mock_user
+    @user = mock_klass('User')
     @site = stub_model(Site, :id=>1, status: "active", name: "Berkeley", site_type_code: "school")
   end
 
   describe 'GET index', index: true do
     context 'load sites' do
-      [true, false].each do |xhr|
-        it_behaves_like "a load data request", 'Site', 'get_by_type', 'index', 'paginate', xhr
-      end
+      it_behaves_like "a load data request", 'Site', 'get_by_type', 'index', 'paginate', true, 'sites'
     end
   end
 
@@ -61,4 +47,15 @@ describe SitesController do
     end
   end
 
+  describe 'GET /:id', show: true do
+    [true, false].each do |status|
+      it_behaves_like 'a show method', 'Site', 'find', 'show', status, true, 'site'
+    end
+  end
+
+  describe "PUT /:id", update: true do
+    [true, false].each do |status|
+      it_behaves_like 'a model update assignment', 'Site', 'find', 'update', 'update_attributes', status, 'site'
+    end
+  end
 end

@@ -40,6 +40,7 @@
 //= require s3_file_field
 //= require s3_image_upload
 //= require manage_pixis
+//= require manage_sites
 //= require slider
 //= require lazyload
 //= require data-confirm-modal

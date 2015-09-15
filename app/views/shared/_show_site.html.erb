@@ -1,0 +1,5 @@
+<div class="row offset2">
+  <div class="span8"><%= render partial: 'shared/site_band', locals: { site: site } %></div>
+</div>
+<%= render partial: 'shared/show_site_details', locals: { site: site, showFlg: true } %>
+<%= render partial: 'shared/show_site_buttons', locals: { site: site } if @user.is_admin? %>

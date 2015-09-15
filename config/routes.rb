@@ -53,7 +53,7 @@ Plumboard::Application.routes.draw do
   resources :settings, except: [:new, :show, :create, :edit, :destroy, :update]
   resources :users, except: [:new]
   resources :bank_accounts, :card_accounts, except: [:edit, :update]
-  resources :sites, only: [:index]
+  resources :sites, except: [:destroy]
 
   resources :pixi_posts do
     collection do
@@ -91,6 +91,12 @@ Plumboard::Application.routes.draw do
   resources :advanced_searches, except: [:new, :edit, :update, :create, :destroy, :show] do
     collection do
       get :autocomplete_listing_title, :autocomplete_site_name
+    end
+  end
+
+  resources :site_searches, except: [:new, :edit, :update, :create, :destroy, :show] do
+    collection do
+      get :autocomplete_site_name
     end
   end
 

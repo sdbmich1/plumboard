@@ -831,8 +831,6 @@ task :run_all_tasks => :environment do
   Rake::Task[:load_feeds].execute
   Rake::Task[:load_currency_types].execute 
   Rake::Task[:load_stock_images].execute
-  Rake::Task[:import_other_sites].execute :file_name => "state_site_data_012815.csv", :org_type => "state"
-  Rake::Task[:import_other_sites].execute :file_name => "country_site_data_012815.csv", :org_type => "country"
   Rake::Task[:import_other_sites].execute :file_name => "state_site_data_012815.csv", :site_type_code => "state"
   Rake::Task[:import_other_sites].execute :file_name => "country_site_data_012815.csv", :site_type_code => "country"
   Rake::Task[:update_site_images].execute :file_name => "region_image_data_051415.csv"
