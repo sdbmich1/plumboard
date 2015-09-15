@@ -1,3 +1,4 @@
+<% provide(:title, SLS_KEYS['home']['title']) %>
 <%= content_for :topcontent do %>
   <% cache fragment: 'sls_page_top' do %>
     <%= render partial: 'local_page_header' %>

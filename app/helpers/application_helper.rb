@@ -4,7 +4,7 @@ module ApplicationHelper
   # Returns the full title on a per-page basis.
   def full_title page_title
     base_title = "Pixiboard"
-    page_title.empty? ? base_title : "#{base_title} | #{page_title}"
+    page_title.empty? ? base_title : controller_name == 'shop_locals' ? "#{page_title} | #{base_title}" : "#{base_title} | #{page_title}"
   end
 
   # devise settings

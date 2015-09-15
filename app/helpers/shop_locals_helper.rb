@@ -40,4 +40,15 @@ module ShopLocalsHelper
   def set_close_btn_id id
     id.match(/biz/).nil? ? 'signup-close-btn' : 'biz-signup-close-btn'
   end
+
+  def set_sls_subtitle str=[]
+    title = SLS_KEYS['home']['subtitle'] 
+    str << title[0..title.length-3]
+    str << content_tag(:span, title[title.length-2..title.length], class: 'sls-sup')
+    content_tag(:div, str.join('').html_safe, class: 'sls-subtitle')
+  end
+
+  def set_sls_logo fname, cls, path, title
+    content_tag(:div, link_to(image_tag(fname, class: 'sls-small-logo'), path, class: 'img-link'), class: cls)
+  end
 end
