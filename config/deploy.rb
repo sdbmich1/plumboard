@@ -180,6 +180,7 @@ namespace :files do
     upload("#{rails_root}/config/sendmail.yml", "#{release_path}/config/sendmail.yml")
     upload("#{rails_root}/config/thinking_sphinx.yml", "#{release_path}/config/thinking_sphinx.yml")
     upload("#{rails_root}/config/database.yml", "#{release_path}/config/database.yml")
+    upload("#{rails_root}/config/sls.yml", "#{release_path}/config/sls.yml")
   end
 
   task :upload_certs do
