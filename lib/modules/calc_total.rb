@@ -95,7 +95,7 @@ module CalcTotal
   def self.get_convenience_fee *val
     @amt = !val.blank? ? val[0].to_f : @amt || 0.0
     fee = !val.blank? && !val[1].blank? ? (@amt * PXB_TXN_PERCENT) : set_txn_fee(val[2].blank?)
-    return check_min_fee @amt, fee
+    val[2].blank? ? check_min_fee(@amt, fee) : fee
   end
 
   def self.set_txn_fee flg

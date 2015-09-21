@@ -14,6 +14,12 @@
       <%= render 'layouts/flash_messages', flash: flash %>
       <%= yield :content %>
     </div>
+    <div class="blue-bkgd">
+      <%= yield :medcontent %>
+    </div>
+    <div class="container">
+      <%= yield :botcontent %>
+    </div>
     <div class="footer-container">
       <%= render 'layouts/footer' %>
     </div>

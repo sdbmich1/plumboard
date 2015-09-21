@@ -1,5 +1,5 @@
 <div class="div-border">
-  <div class='offset3 addr-tbl' style="<%= !txn.has_address? ? 'display:none' : '' %>">
+  <div class='offset3 addr-tbl' style="<%= set_style(!txn.has_address?) %>">
     <h5 class="grp-hdr">Buyer Information</h5>
     <table>
       <tr><td class='span3'><%= txn.buyer_name %><br>
@@ -9,7 +9,7 @@
       </tr>
     </table>
   </div>
-  <div class='sm-top center-wrapper user-tbl' style="<%= txn.has_address? ? 'display:none' : '' %>">
+  <div class='sm-top center-wrapper user-tbl' style="<%= set_style(txn.has_address?) %>">
     <table>
       <tr>
 	<td class="width360"><label class='tbl-hdr'>First Name*</label><%= f.text_field :first_name, id: "first_name" %></td>

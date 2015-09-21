@@ -233,3 +233,9 @@ header#home-navbar.navbar {
   bottom: 0;
 }
 
+.blue-bkgd {
+  background: url("blue_bkgd.png") repeat; 
+  @extend .home-container;
+  height: 700px;
+}
+

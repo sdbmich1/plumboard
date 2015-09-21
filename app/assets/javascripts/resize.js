@@ -16,6 +16,8 @@ function resizeFrame() {
     $("#trend-pixi").removeClass('offset1').removeClass('span10');
     $('#wrap').css({'margin-top': 0 });
     $(".navbar-fixed-top").css({'margin-bottom': 0 });
+    $("#sls-top-line").removeClass('mauto50').addClass('mauto67');
+    $("#sls-content").removeClass('mauto47').addClass('mauto66');
 
     resizeSmallWindow();
     resizeSafari();
@@ -42,6 +44,8 @@ function restoreWindow() {
   $("#trend-pixi").addClass('offset1').addClass('span10');
   $('#wrap').css({'margin-top': '40px' });
   $(".navbar-fixed-top").css({'margin-bottom': '20px' });
+  $("#sls-top-line").addClass('mauto50').removeClass('mauto67');
+  $("#sls-content").addClass('mauto47').removeClass('mauto66');
 
   if($('.carousel-overlay').length > 0) {
     $(".carousel-overlay").css({'top': '35%'});

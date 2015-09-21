@@ -1,7 +1,11 @@
 <%= content_for :content do %>
   <%= render partial: 'home_page_trending' %>
   <%= render partial: 'home_page_why_pxb' %>
+<% end %>
+<%= content_for :medcontent do %>
   <%= render partial: 'home_page_mobile' %>
+<% end %>
+<%= content_for :botcontent do %>
   <%= render partial: 'home_page_community' %>
 <% end %>
 

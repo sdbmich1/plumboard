@@ -125,6 +125,18 @@ module UsersHelper
 
   # render user rating details
   def render_user_rating user, flg
-    content_tag(:div, render(partial: 'shared/user_rating', locals: {model: user, colorFlg: flg}), id: 'rating', class: 'sm-top') if user.is_a?(User)
+    if user.is_a?(User)
+      content_tag(:div, render(partial: 'shared/user_rating', locals: {model: user, colorFlg: flg}), id: 'rating', class: 'sm-top') 
+    end
+  end
+
+  def set_contact_fld form, tag, fld, sz, str=[]
+    str << label_tag(tag, nil, class: 'tbl-hdr')
+    str << form.text_field(fld.to_sym, size: sz, maxlength: sz)
+  end
+
+  def toggle_contact_fld form, flg 
+    str = flg ? set_contact_fld(form, 'Email* ', 'email', 80) : set_contact_fld(form, 'Mobile Phone* ', 'mobile_phone', 10)
+    content_tag(:td, str.join(' ').html_safe)
   end
 end

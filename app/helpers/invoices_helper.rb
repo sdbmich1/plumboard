@@ -132,7 +132,7 @@ module InvoicesHelper
     if my_unpaid_invoice?(inv)
       show_edit_buttons inv
     else
-      content_tag(:div, render(partial: 'shared/show_invoice_buttons', locals: {invoice: inv, atype: 'Decline'}), class: 'pull-right') if inv.unpaid?
+      content_tag(:div, render(partial: 'shared/show_invoice_buttons', locals:{invoice: inv, atype: 'Decline'}), class: 'pull-right') if inv.unpaid?
     end
   end
 
@@ -140,5 +140,24 @@ module InvoicesHelper
     str << link_to('Remove', remove_invoice_path(invoice), confirm: 'Delete this invoice?', method: :put, class: 'btn btn-large')
     str << link_to('Edit', edit_invoice_path(invoice), class: 'btn btn-large')
     content_tag(:div, str.join(" ").html_safe, class: 'pull-right')
+  end
+
+  def display_conv_fee invoice
+    render partial: 'shared/show_conv_fee', locals: {showColFlg: true, invoice: invoice} unless invoice.owner?(@user)
+  end
+
+  def display_seller_fee invoice
+    render partial: 'shared/seller_invoice_details', locals: {invoice: invoice} if invoice.owner?(@user)
+  end
+
+  def toggle_conv_fee showColFlg, invoice
+    str = showColFlg ? 'show_conv_fee_top' : 'show_conv_fee_alt'
+    render partial: "shared/#{str}", locals: {invoice: invoice}
+  end
+
+  def display_conv_fee invoice
+    if action_name == 'new'
+      content_tag(:div, render(partial: 'shared/tooltip', locals: {msg: get_conv_fee_msg(invoice)}), class: 'price')
+    end
   end
 end

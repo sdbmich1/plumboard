@@ -18,10 +18,8 @@ module ShopLocalsHelper
 
   def show_signup_btn flg, tag, section
     rte = section.match(/biz/).nil? ? '#signupDialog' : '#bizDialog'
-    if flg
-      content_tag(:div, link_to(tag, rte, "data-toggle" => "modal", class: 'btn btn-large btn-primary sls-btn'), class: 
-        'big-top center-wrapper') 
-    end
+    cls = 'btn btn-large btn-primary sls-btn'
+    content_tag(:div, link_to(tag, rte, "data-toggle" => "modal", class: cls), class: 'big-top center-wrapper') if flg
   end
 
   def get_section_class section

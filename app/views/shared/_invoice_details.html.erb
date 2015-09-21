@@ -13,12 +13,12 @@
     <td></td>
     <td class="width120"><div class='price'><%= ntc(invoice.ship_amt) %></div></td>
   </tr>
-  <%= render partial: 'shared/show_conv_fee', locals: {showColFlg: true, invoice: invoice} unless invoice.owner?(@user) %>
+  <%= display_conv_fee invoice %>
   <tr>
     <td></td>
     <td></td>
     <td><div class='order-total price'>Amount Due</div></td>
     <td class="width120"><div class='order-total price'><%= ntc get_invoice_total(invoice) %></div></td>
   </tr>
-  <%= render partial: 'shared/seller_invoice_details', locals: {invoice: invoice} if invoice.owner?(@user) %>
+  <%= display_seller_fee invoice %>
 </table>

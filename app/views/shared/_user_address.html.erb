@@ -1,11 +1,5 @@
 <tr>
-  <td>
-    <% if toggle %>
-      <label class='tbl-hdr'>Email* </label><%= form.text_field :email %>
-    <% else %>
-      <label class='tbl-hdr'>Mobile Phone* </label><%= form.text_field :mobile_phone, size: 10 %>
-    <% end %>
-  </td>
+  <%= toggle_contact_fld form, toggle %>
   <td></td>
   <td><label class='tbl-hdr'>Home Phone* </label><%= form.text_field :home_phone, size: 10 %></td>
 </tr>
@@ -23,5 +17,6 @@
 <tr>
   <td><label class='tbl-hdr'>Zip* </label><%= form.text_field :zip, id: 'postal_code', size: 5 %></td>
   <td></td>
-  <td><label class='neg-top tbl-hdr'>Country </label><%= country_select "transaction", "country", ["United States"], {}, {class: 'country pixi-select'} %></td>	  
+  <td><label class='neg-top tbl-hdr'>Country </label>
+    <%= country_select "transaction", "country", ["United States"], {}, {class: 'country pixi-select'} %></td>	  
 </tr>

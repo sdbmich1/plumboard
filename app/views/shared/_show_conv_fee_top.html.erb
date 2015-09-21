@@ -1,0 +1,7 @@
+<td></td>
+<td><div class='price'><%= get_conv_title invoice %></div></td>
+<td class="width120">
+  <div class='pull-right'>
+    <%= render partial: 'shared/tooltip', locals: { msg: get_conv_fee_msg(invoice) } %>
+  </div>
+</td>
