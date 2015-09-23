@@ -187,4 +187,38 @@ module PixiPostsHelper
     str << menu_item('Completed', 'comp-posts', 'completed', seller_pixi_posts_path(status: 'completed'), false)
     str
   end
+
+  def load_tr title, fld, str=[]
+    str << content_tag(:td, title, class: 'span3')
+    str << content_tag(:td, fld)
+    str
+  end
+
+  def load_pp_details title, fld, post, str=[]
+    content_tag(:tr, load_tr(title, fld).join('').html_safe) unless post.alt_date.blank?
+  end
+
+  def load_pp_response post, showAddrFlg
+    render partial: 'shared/pixi_post_response', locals: {post: post, showAddrFlg: showAddrFlg} unless action_name == 'edit'
+  end
+
+  def show_ppd_header showAddrFlg
+    content_tag(:h5, 'Request Information', class: 'grp-hdr') unless showAddrFlg 
+  end
+
+  def show_manage_pixi_post f, post
+    render partial: 'shared/manage_pixi_post', locals: {post: post, f: f } if can?(:manage_items, @user) && action_name != 'new'
+  end
+
+  def show_pp_buttons post, str=[]
+    str << link_to('Edit', edit_pixi_post_path(post), class: 'btn btn-large') if can_edit? post
+    if (post.owner?(@user) || @user.is_admin?) && !post.is_completed?
+      str << link_to('Remove', post, method: :delete, confirm: 'Delete this PixiPost?', class: 'mleft10 btn btn-large', id: 'rm-btn')
+    end
+    if post.owner?(@user) && !post.is_completed? && post.has_appt?
+      str << link_to('Reschedule', reschedule_pixi_post_path(post), confirm: 'Cancel this appointment?', class: 'mleft10 btn btn-large') 
+    end
+    str << link_to('Done', set_pixi_post_path, class: 'mleft10 btn btn-large btn-primary submit-btn')
+    content_tag(:div, str.join('').html_safe, class: 'mtop pull-right')
+  end
 end

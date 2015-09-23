@@ -18,7 +18,4 @@
 <% else %>
   <div class='center-wrapper'>No inquiries found.</div>
 <% end %>
-
-<div id='inq-list' class="nav pull-right">
-  <%= will_paginate @inquiries if @inquiries.respond_to?(:total_pages) %>
-</div> 
+<%= paginate_list 'inq-list', @inquiries %>

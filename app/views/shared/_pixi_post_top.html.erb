@@ -1,0 +1,10 @@
+<div class="div-border">
+  <div id="form_errors"><%= render partial: 'shared/error_messages', :locals => { :target => post } %></div>
+  <div class='pull-right'><%= image_tag 'rsz_ppost_words_20140314.png', class: 'ppay-logo' %></div>
+  <div style="<%= set_style(post.owner?(@user)) %>">
+    <%= render partial: 'shared/pixi_post_details', locals: {post: post, showAddrFlg: false, hdrCls: 'med-top'} %>
+  </div>
+  <div style="<%= set_style(!post.owner?(@user)) %>">
+    <%= render partial: 'shared/pixi_post_item', locals: {post: post, f: f } %>
+  </div>
+</div>

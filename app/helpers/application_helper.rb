@@ -503,4 +503,12 @@ module ApplicationHelper
     mFlg = !mFlg if controller_name == 'sites'
     mFlg ? 'Cover Photo' : 'Profile Photo'
   end
+
+  def show_flash_msg message, type
+    render partial: 'layouts/message', locals: {type: type, message: message} unless message.to_s == 'true' || message.blank?
+  end
+
+  def show_help_footer_link
+    content_tag(:li, link_to("Help", help_path, class: 'pixi-link')) unless action_name == 'home'
+  end
 end

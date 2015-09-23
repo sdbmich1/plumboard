@@ -80,8 +80,12 @@ module InvoicesHelper
   # get conv fee message based on user
   def get_conv_fee_msg inv
     if inv
-      inv.owner?(@user) ? inv.pixi_post? ? PXPOST_FEE_MSG : SELLER_FEE_MSG : CONV_FEE_MSG rescue CONV_FEE_MSG
+      inv.owner?(@user) ? inv.pixi_post? ? PXPOST_FEE_MSG : set_fee_msg : CONV_FEE_MSG rescue CONV_FEE_MSG
     end
+  end
+
+  def set_fee_msg 
+    @user.is_business? ? BIZ_FEE_MSG : SELLER_FEE_MSG
   end
 
   # get conv fee title
@@ -155,5 +159,13 @@ module InvoicesHelper
     if action_name == 'new'
       content_tag(:div, render(partial: 'shared/tooltip', locals: {msg: get_conv_fee_msg(invoice)}), class: 'price')
     end
+  end
+
+  def render_conv_fee invoice, flg, showFlg=true 
+    render partial: 'shared/show_conv_fee', locals: {showColFlg: showFlg, invoice: invoice} if flg
+  end
+
+  def show_purchase_inv_total invoice
+    render partial: 'shared/purchase_inv_total', locals: {invoice: invoice} if invoice
   end
 end

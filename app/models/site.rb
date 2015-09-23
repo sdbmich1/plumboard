@@ -26,8 +26,6 @@ class Site < ActiveRecord::Base
   has_many :contacts, :as => :contactable, :dependent => :destroy
   accepts_nested_attributes_for :contacts, :allow_destroy => true
 
-
-
   belongs_to :site_type, primary_key: 'code', foreign_key: 'site_type_code'
 
   validates :name, :presence => true

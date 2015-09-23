@@ -1,9 +1,6 @@
-  <table class='mtop'>
-    <tbody>
-        <%= render partial: 'shared/faq_row', collection: @faqs, as: :faq %>
-    </tbody>
-  </table>
-
-<div id='faq-list' class="nav pull-right">
-  <%= will_paginate @faqs if @faqs.respond_to?(:total_pages) %>
-</div> 
+<table class='mtop'>
+  <tbody>
+    <%= render partial: 'shared/faq_row', collection: @faqs, as: :faq %>
+  </tbody>
+</table>
+<%= paginate_list 'faq-list', @faqs %>

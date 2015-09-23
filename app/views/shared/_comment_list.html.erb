@@ -1,12 +1,4 @@
-<% unless @comments.blank? %>
-  <ol class="posts">
-    <%= render partial: 'shared/comment', collection: @comments %>
-  </ol>
-<% else %>
-  <div class='mtop center-wrapper'>No comments found.</div>
-<% end %>
-
-<div id='comment-list' class="nav pull-right">
-  <%= will_paginate @comments, page_links: false if @comments.respond_to?(:total_pages) %>
-</div> 
-
+<ol class="posts">
+  <%= render partial: 'shared/comment', collection: model %>
+</ol>
+<%= paginate_list 'comment-list', model %>

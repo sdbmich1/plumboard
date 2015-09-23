@@ -4,25 +4,16 @@
 <%= content_for :content do %>
   <div id='inv_form'>
     <%= form_for setup_pixi_post(post) do |f| %>
-    <div class="div-border">
-      <div id="form_errors"><%= render partial: 'shared/error_messages', :locals => { :target => post } %></div>
-      <div class='pull-right'><%= image_tag 'rsz_ppost_words_20140314.png', class: 'ppay-logo' %></div>
-      <div style="<%= post.owner?(@user) ? 'display:none' : '' %>">
-        <%= render partial: 'shared/pixi_post_details', locals: {post: post, showAddrFlg: false} %>
+      <%= render partial: 'shared/pixi_post_top', locals: {f: f, post: post} %>
+      <div id='pxp_items'>
+        <%= render partial: 'shared/pixi_post_address', locals: {post: post, f: f } %>
+        <%= show_manage_pixi_post f, post %>
       </div>
-      <div style="<%= !post.owner?(@user) ? 'display:none' : '' %>">
-        <%= render partial: 'shared/pixi_post_item', locals: {post: post, f: f } %>
+      <div id='pxp_btn' class="nav pull-right">
+        <%= link_to 'Cancel', set_pixi_post_path, confirm: msg, class: "btn btn-large" %>
+        <%= f.submit "Done", class: "btn btn-large btn-primary submit-btn", data: { disable_with: "Submitting..." } %>
       </div>
-    </div>
-    <div id='pxp_items'>
-      <%= render partial: 'shared/pixi_post_address', locals: {post: post, f: f } %>
-      <%= render partial: 'shared/manage_pixi_post', locals: {post: post, f: f } if can?(:manage_items, @user) && action_name != 'new' %>
-    </div>
-    <div id='pxp_btn' class="nav pull-right">
-      <%= link_to 'Cancel', set_pixi_post_path, confirm: msg, class: "btn btn-large" %>
-      <%= f.submit "Done", class: "btn btn-large btn-primary submit-btn", data: { disable_with: "Submitting..." } %>
-    </div>
-    <%= f.hidden_field :user_id, value: post.user_id %>
+      <%= f.hidden_field :user_id, value: post.user_id %>
     <% end %>
   </div>
 <% end %>

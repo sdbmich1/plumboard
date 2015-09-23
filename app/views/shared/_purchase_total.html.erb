@@ -1,18 +1,3 @@
 <%= render :partial => 'shared/show_discount' %> 
-
-<% if invoice %>
-    <tr><td>Sales Tax</td><td></td>
-  	<td class="price"><%= ntc(invoice.tax_total) %></td>
-    </tr>
-    <tr class='row-top'><td>Shipping</td><td></td>
-  	<td class="price"><%= ntc(invoice.ship_amt) %></td>
-    </tr>
-<% end %>
-<% if txn %>
-  <%= render partial: 'shared/show_conv_fee', locals: {showColFlg: false, invoice: invoice} if show_help?(txn) %>
-  <tr class='title-str'>
-  	<td class='order-total'><%= show_title(paid) %></td>
-  	<td></td>
-  	<td class='order-total price'><%= ntc(txn.amt) %></td>
-  </tr>
-<% end %>
+<%= show_purchase_inv_total invoice %>
+<%= show_purchase_txn_total txn, paid %>

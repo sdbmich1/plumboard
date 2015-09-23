@@ -1,5 +1,1 @@
-<%= link_to 'Browse', set_home_path, id: 'white-browse-home', class: "white-browse-link" if home_page? %>
-<%= link_to 'How It Works', howitworks_path, class: 'mleft20 white-browse-link' unless action_name == 'howitworks' %>
-<%= link_to 'Help', help_path, class: 'mleft20 white-browse-link' %>
-<%= link_to 'Login', "#loginDialog", "data-toggle" => "modal", class: 'mleft20 white-browse-link' if !signed_in? %>
-<%= link_to "Signup", "#signupDialog", "data-toggle" => "modal", :class => 'mleft20 ng-top btn btn-primary pixi-btn width80' if !signed_in? %>
+<%= set_home_menu %>

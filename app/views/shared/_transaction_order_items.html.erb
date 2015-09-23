@@ -5,13 +5,7 @@
     <th>Total</th>
   </tr>
   <% txn.transaction_details.each do |item| %>
-    <% unless item.price.blank? %>
-      <tr>
-  	<td><%= item.item_name %></td>
-  	<td style='text-align: right'><%= item.quantity %></td>
-  	<td style='text-align: right'><div class='price'><%= ntc(item.price.to_f * item.quantity.to_i) %></div></td>
-      </tr>
-    <% end %>
+    <%= show_txn_item item %>
   <% end %>
   <%= render partial: 'shared/order_total', :locals=>{paid: paid, txn: txn, model: invoice} %>
 </table>

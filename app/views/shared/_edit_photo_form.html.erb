@@ -1,20 +1,6 @@
 <div class='row'>
-<% if model && !model.new_record? && model.any_pix? %>
   <div id='sv-txt' class='span1 sm-bot'>Saved photo(s)</div>
   <% for pic in model.pictures %>
-      <% unless pic.id.blank? %>
-        <div class='span1 center-wrapper'>
-	<div id="<%= pic.id %>" class='inv-pic'><%= image_tag get_pixi_image(pic, 'small') %></div>
-	<% if remove_photo %>
-	  <div class='remove-btn'>
-	  <%= link_to picture_path(pic, pixi_id: model.pixi_id), method: :delete, confirm: photo_msg, remote: true, class: 
-	    'btn btn-mini btn-primary sm-top mbot' do %>
-	   Remove 
-	  <% end %>
-	  </div>
-        <% end %>
-	</div>
-      <% end %>
+    <%= load_edit_image remove_photo, pic, model, photo_msg %>
   <% end %>
-<% end %>
 </div>

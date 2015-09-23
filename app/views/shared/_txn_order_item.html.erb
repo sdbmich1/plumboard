@@ -1,0 +1,6 @@
+<tr>
+  <td><%= item.item_name %></td>
+  <td style='text-align: right'><%= item.quantity %></td>
+  <td style='text-align: right'><div class='price'><%= ntc(item.price.to_f * item.quantity.to_i) %></div></td>
+</tr>
+

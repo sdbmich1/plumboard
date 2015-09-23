@@ -1,7 +1,7 @@
-  <div id='comment-entry'>
-    <%= add_comments listing %>
-  </div> 
-  <div class='clear-all'></div>
-  <div id='comment-item' class="black-txt <%= set_comment_list_top(listing) %>">
-    <%= render 'shared/comment_list' %>
-  </div> 
+<div id='comment-entry'>
+  <%= add_comments listing %>
+</div> 
+<div class='clear-all'></div>
+<div id='comment-item' class="black-txt <%= set_comment_list_top(listing) %>">
+  <%= render_list @comments, 'shared/comment_list', 'No comments found.' %>
+</div> 

@@ -141,4 +141,12 @@ module TransactionsHelper
   def show_card_image cls
     image_tag('accepted-credit-cards.png', class: cls)
   end
+
+  def show_txn_item item
+    render partial: 'shared/txn_order_item', locals: {item: item} unless item.price.blank? 
+  end
+
+  def show_purchase_txn_total txn, paid
+    render partial: 'shared/purchase_txn_total', locals: {txn: txn, paid: paid} if txn
+  end
 end

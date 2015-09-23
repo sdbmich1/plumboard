@@ -12,7 +12,7 @@
   <% end %>
 <% end %>
 <% if txn %>
-  <%= render partial: 'shared/show_conv_fee', locals: {showColFlg: false, invoice: get_invoice(model)} if show_help?(txn) %>
+  <%= render_conv_fee get_invoice(model), show_help?(txn), false %>
   <tr class='title-str'>
   	<td class='order-total'><%= show_title(paid) %></td>
   	<td> </td>

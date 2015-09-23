@@ -7,9 +7,9 @@ class SiteProcessor
 
   def get_site_type
     case @site.site_type_code
-    when 'pub' then pub
-    when 'school' then edu
-    else 'loc'
+      when 'pub' then pub
+      when 'school' then edu
+      else 'loc'
     end
   end
 

@@ -1,5 +1,6 @@
 <% if post.has_appt? %>
-  <%= render partial: 'shared/pixi_post_person', locals: { title: 'Pixter Name:', model: post.pixan, cls: set_class, name: post.pixter_name } %>
+  <%= render partial: 'shared/pixi_post_person', locals: { title: 'Pixter Name:', model: post.pixan, cls: set_class, name: post.pixter_name,
+    hdrCls: 'xlg-top'} %>
   <tr><td class='span3'>Appointment Date:</td><td><%= get_local_date(post.appt_date) %></td></tr>
   <tr><td class='span3'>Appointment Time: </td><td><%= post.get_time('appt_time') %></td></tr>
 <% end %>

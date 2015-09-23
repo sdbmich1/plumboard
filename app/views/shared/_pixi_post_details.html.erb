@@ -1,22 +1,19 @@
 <% cache ['details', post] do %>
 <div class='row'>
   <div class='offset3'>
-  <% unless showAddrFlg %>
-    <h5 class="grp-hdr">Request Information</h5>
-  <% end %>
+  <%= show_ppd_header showAddrFlg %>
   <table>
-    <%= render partial: 'shared/pixi_post_person', locals: { title: 'Requested By:', model: post.user, cls: set_class, name: post.seller_name } %>
+    <%= render partial: 'shared/pixi_post_person', locals: { title: 'Requested By:', model: post.user, cls: set_class, name: post.seller_name,
+      hdrCls: hdrCls} %>
     <tr><td class='span3'>Preferred Date:</td><td><%= get_local_date(post.preferred_date) %></td></tr>
     <tr><td class='span3'>Preferred Time: </td><td><%= post.get_time('preferred_time') %></td></tr>
-    <% unless post.alt_date.blank? %>
-      <tr><td class='span3'>Alternate Date:</td><td><%= get_local_date(post.alt_date) %></td></tr>
-      <tr><td class='span3'>Alternate Time: </td><td><%= post.get_time('alt_time') %></td></tr>
-    <% end %>
+    <%= load_pp_details 'Alternate Date:', get_local_date(post.alt_date), post %>
+    <%= load_pp_details 'Alternate Time:', post.get_time('alt_time'), post %>
     <tr><td class='span3'># of Items:</td><td><%= post.quantity %></td></tr>
     <tr><td class='span3'>Estimated Value:</td><td><%= ntc(post.value) %></td></tr>
     <tr><td class='span3'>Description: </td><td><%= post.description %><br /></td></tr>
     <tr class='spaceUnder'><td class='span3'>Submitted: </td><td><%= post.format_date(post.created_at) %></td></tr>
-    <%= render partial: 'shared/pixi_post_response', locals: {post: post, showAddrFlg: showAddrFlg} unless action_name == 'edit' %>
+    <%= load_pp_response post, showAddrFlg %>
   </table>
   </div>
 </div>

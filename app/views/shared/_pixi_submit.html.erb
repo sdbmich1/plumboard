@@ -1,8 +1,6 @@
 <div class='med-top center hdr mbot'><%= image_tag 'itsmagic.png', class: 'big_logo' %></div>
 <div class='row'>
-  <div class="mauto">
-    <%= render partial: 'shared/listing', locals: {listing: model, px_size: 'large', ftrFlg: true} unless model.blank? %>
-  </div>
+  <%= show_pixi_preview model %>
   <div class='v-align span12 center-wrapper'>
     <div class="mtop hdr">Your pixi <span class='grp-hdr'><%= model.title %></span> has been submitted to be posted on the board. </div> 
   </div>

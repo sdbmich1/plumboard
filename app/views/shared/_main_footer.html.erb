@@ -7,9 +7,7 @@
       <li><%= link_to "About", about_path, class: 'pixi-link' %></li>
       <li><%= link_to "Privacy", privacy_path, class: 'pixi-link' %></li>
       <li><%= link_to "Terms", terms_path, class: 'pixi-link' %></li>
-      <% unless action_name == 'home' %>
-        <li><%= link_to "Help", help_path, class: 'pixi-link' %></li>
-      <% end %>
+      <%= show_help_footer_link %>
       <li><%= link_to "Contact", contact_path, class: 'pixi-link' %></li>
       <%= render 'layouts/footer_image_links' %>
     </ul>

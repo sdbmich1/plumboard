@@ -1,12 +1,5 @@
 <div id='flash_notice'>
-<% flash.each do |type, message| %>
-  <% unless message.to_s == 'true' || message.blank? %>
-    <div class="mbot alert <-%= bootstrap_class_for(type) %> fade in">
-      <button class="close" data-dismiss="alert">
-	<i class="icon-remove-sign"></i>
-      </button>
-      <%= message %>
-    </div>
+  <% flash.each do |type, message| %>
+    <%= show_flash_msg message, type %>
   <% end %>
-<% end %>
 </div>

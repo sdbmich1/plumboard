@@ -144,4 +144,30 @@ module TempListingsHelper
   def set_new_listing_path 
     LocationManager::is_pub?(session[:home_id]) ? new_temp_listing_path(loc: session[:home_id]) : new_temp_listing_path
   end
+
+  def remove_image rmFlg, pic, model, photo_msg
+    cls = 'btn btn-mini btn-primary sm-top mbot'
+    str = link_to('Remove', picture_path(pic, pixi_id: model.pixi_id), method: :delete, confirm: photo_msg, remote: true, class: cls)
+    content_tag(:div, str, class: 'remove-btn') if rmFlg
+  end
+
+  def load_edit_image rmFlg, pic, model, photo_msg, str=[]
+    unless pic.id.blank?
+      str << content_tag(:div, image_tag(get_pixi_image(pic, 'small')), id: "#{pic.id}", class: 'inv-pic')
+      str << remove_image(rmFlg, pic, model, photo_msg)
+      content_tag(:div, str.join('').html_safe, class: 'span1 center-wrapper')
+    end
+  end
+
+  def show_edit_photo f, model
+    if model && !model.new_record? && model.any_pix?
+      render partial: 'shared/edit_photo_form', locals: {model: model, psize: 'sm-thumb', form: f, remove_photo: true }
+    end
+  end
+
+  def show_pixi_preview model
+    unless model.blank?
+      content_tag(:div, render(partial: 'shared/listing', locals: {listing: model, px_size: 'large', ftrFlg: true}), class: "mauto")
+    end
+  end
 end

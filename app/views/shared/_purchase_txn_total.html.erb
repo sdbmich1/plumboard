@@ -1,0 +1,7 @@
+  <%= render_conv_fee invoice, show_help?(txn), false %>
+  <tr class='title-str'>
+  	<td class='order-total'><%= show_title(paid) %></td>
+  	<td></td>
+  	<td class='order-total price'><%= ntc(txn.amt) %></td>
+  </tr>
+

@@ -1,4 +1,4 @@
-<%= render partial: 'shared/edit_photo_form', locals: {model: listing, psize: 'sm-thumb', form: f, remove_photo: true } %>
+<%= show_edit_photo f, listing %>
 <%= render partial: 'shared/display_photo_form', locals: { s3Flg: s3Flg } %>
 <%= show_seller_fields f, listing %>
 <%= render partial: 'shared/listing_fields_top', locals: { f: f, listing: listing } %>

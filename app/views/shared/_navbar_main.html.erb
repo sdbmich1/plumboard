@@ -2,7 +2,5 @@
   <li class="active"><%= link_to "Account", @usr, class: 'submenu', remote: true, id: 'acct-setting' %></li>
   <li><%= link_to "Profile", settings_path, class: 'submenu', remote: true, id: 'prof-setting' %></li>
   <li><%= link_to "Contact", settings_contact_path, class: 'submenu', remote: true, id: 'addr-setting' %></li>
-  <% unless @user.fb_user? %>
-    <li><%= link_to "Password", settings_password_path, class: 'submenu', remote: true, id: 'pwd-setting' %></li>
-  <% end %>
+  <%= show_pwd_link %>
 </ul>

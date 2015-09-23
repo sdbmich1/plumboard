@@ -58,4 +58,13 @@ module PagesHelper
     str << link_to("Signup", "#signupDialog", "data-toggle" => "modal", :class => 'mleft20 ng-top btn btn-primary pixi-btn width80') if !signed_in? 
     str
   end
+
+  def set_page_menu str=[]
+    str << link_to('Browse', set_home_path, id: 'browse-home', class: "btn btn-primary submit-btn width80") if home_page?
+    str << link_to('Sign Up', new_user_registration_path, class: 'width120 browse-link') if !home_page? && !signed_in?
+    str << link_to('Sign In', new_user_session_path, class: 'mleft20 browse-link') if !home_page? && !signed_in?
+    str << link_to('How It Works', howitworks_path, class: 'mleft20 browse-link') unless action_name == 'howitworks'
+    str << link_to('Help', help_path, class: 'mleft20 browse-link')
+    content_tag(:div, str.join(" ").html_safe)
+  end
 end
