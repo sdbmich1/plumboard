@@ -1,0 +1,11 @@
+  <div class='offset3 addr-tbl' style="<%= set_style(flg) %>">
+    <h5 class="grp-hdr"><%= "#{title} Information" %></h5>
+    <table>
+      <tr><td class='span3'><%= model.send(fld[0]) %><br>
+        <%= model.send(fld[1]) %><br>
+        <%= "#{model.send(fld[2])}, #{model.send(fld[3])} #{model.send(fld[4])}" %><br>
+        <%= model.send(fld[5]) %></td>
+        <td class='v-middle price'><%= link_to 'Change', '#', id: id, class: 'offset2 btn' %></td>
+      </tr>
+    </table>
+  </div>

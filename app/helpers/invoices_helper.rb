@@ -142,10 +142,6 @@ module InvoicesHelper
     content_tag(:div, str.join(" ").html_safe, class: 'pull-right')
   end
 
-  def display_conv_fee invoice
-    render partial: 'shared/show_conv_fee', locals: {showColFlg: true, invoice: invoice} unless invoice.owner?(@user)
-  end
-
   def display_seller_fee invoice
     render partial: 'shared/seller_invoice_details', locals: {invoice: invoice} if invoice.owner?(@user)
   end

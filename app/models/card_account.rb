@@ -31,7 +31,8 @@ class CardAccount < ActiveRecord::Base
 
   # set flds
   def set_flds
-    self.status, self.default_flg = 'active', 'Y' unless self.user.has_card_account?
+    self.status = 'active'
+    self.default_flg = 'Y' unless self.user.has_card_account?
   end
 
   # add new card

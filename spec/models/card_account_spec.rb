@@ -127,7 +127,7 @@ describe CardAccount do
       @user.card_accounts.create FactoryGirl.attributes_for :card_account
       account = @user.card_accounts.build FactoryGirl.attributes_for :card_account, status: 'inactive'
       account.save
-      account.status.should_not == 'active'
+      account.status.should == 'active'
       account.default_flg.should_not == 'Y'
     end
   end

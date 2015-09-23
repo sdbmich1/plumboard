@@ -1,0 +1,11 @@
+  <div class='sm-top center-wrapper user-tbl' style="<%= set_style(flg) %>">
+    <table>
+      <tr>
+	<td class="width360"><label class='tbl-hdr'>First Name*</label><%= f.text_field fld[0].to_sym, id: fld[0] %></td>
+	<td class="width80"></td>
+	<td><label class='tbl-hdr'>Last Name*</label><%= f.text_field fld[1].to_sym, id: fld[1] %></td>
+      </tr>
+      <%= render partial: pname, locals: { form: f, toggle: true } %>
+    </table>
+  </div>
+

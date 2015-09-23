@@ -1,6 +1,6 @@
 <tr>
-  <td class='span1 center-wrapper'>
-    <%= render partial: 'shared/show_picture', locals: {psize: 'tiny', model: invoice.listings.first} %>
+  <td class='span1'>
+    <div class='pull-right'><%= show_photo invoice.listings.first, 0, "tip-image", '80x80' %></div>
   </td>
   <td class='span1'><div class='price'><%= link_to invoice.id, invoice, remote: true %></div></td>
   <td class='span2'><%= display_name(invoice) %></td>

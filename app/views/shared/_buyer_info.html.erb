@@ -1,22 +1,5 @@
 <div class="div-border">
-  <div class='offset3 addr-tbl' style="<%= set_style(!txn.has_address?) %>">
-    <h5 class="grp-hdr">Buyer Information</h5>
-    <table>
-      <tr><td class='span3'><%= txn.buyer_name %><br>
-        <%= txn.address %><br>
-        <%= "#{txn.city}, #{txn.state} #{txn.zip}" %></td>
-        <td class='v-middle price'><%= link_to 'Change', '#', id: 'edit-txn-addr', class: 'offset2 btn' %></td>
-      </tr>
-    </table>
-  </div>
-  <div class='sm-top center-wrapper user-tbl' style="<%= set_style(txn.has_address?) %>">
-    <table>
-      <tr>
-	<td class="width360"><label class='tbl-hdr'>First Name*</label><%= f.text_field :first_name, id: "first_name" %></td>
-	<td class="width80"></td>
-	<td><label class='tbl-hdr'>Last Name*</label><%= f.text_field :last_name, id: "last_name" %></td>
-      </tr>
-      <%= render :partial => 'shared/user_address', :locals => { :form => f, :toggle => true } %>
-    </table>
-  </div>
+  <%= render partial: 'shared/txn_info', locals: {flg: !txn.has_address?, title: 'Buyer', id: 'edit-txn-addr', model: txn,
+    fld: ['buyer_name', 'address', 'city', 'state', 'zip', 'country']} %>
+  <%= render partial: 'shared/txn_fld_info', locals: {f: f, flg: txn.has_address?, pname: 'shared/user_address', fld: ['first_name', 'last_name']} %>
 </div>
