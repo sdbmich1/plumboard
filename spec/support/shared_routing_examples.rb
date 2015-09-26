@@ -57,3 +57,10 @@ shared_examples 'a custom route' do |notFlg, rte, method, cntr|
     it { expect(:get => "/#{rte}").send(action, route_to(:controller=>cntr, :action=>method))}
   end
 end
+
+shared_examples 'a subdomain route' do |notFlg, rte, method, cntr|
+  describe 'route tests' do
+    action = notFlg ? 'to' : 'not_to'
+    it { expect(:get => "#{rte}").send(action, route_to(:controller=>cntr, :action=>method))}
+  end
+end

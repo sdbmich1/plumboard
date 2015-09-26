@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::Base
+  include UrlHelper
   protect_from_forgery
   before_filter :load_settings
   before_filter :prepare_for_mobile, if: :isDev?, except: [:destroy]

@@ -65,7 +65,7 @@ module ApplicationHelper
 
   # set home path
   def get_home_path
-    signed_in? ? set_home_path : root_path
+    signed_in? ? set_home_path : root_url(:subdomain => false) 
   end
 
   # route to my pixis page if possible
@@ -306,7 +306,11 @@ module ApplicationHelper
 
   # set class name if not on the main board
   def zoom_image
-    ControllerManager.render_board?(action_name) ? '' : action_name == 'home' ? 'img-board' : 'fpx-image'
+    pixi_cls? ? '' : action_name == 'home' ? 'img-board' : 'fpx-image'
+  end
+
+  def pixi_cls?
+    ControllerManager.render_board?(action_name) || !action_name.match(/wanted|invoiced|unposted|pending|purchased/).nil?
   end
 
   # used to dynamically remove field from a given form
@@ -510,5 +514,27 @@ module ApplicationHelper
 
   def show_help_footer_link
     content_tag(:li, link_to("Help", help_path, class: 'pixi-link')) unless action_name == 'home'
+  end
+
+  def manage_menu_items str=[]
+    if can? :manage_items, @user
+      str << content_tag(:li, link_to("Pixis", listings_path(status: 'active')))
+      str << content_tag(:li, link_to("PixiPosts", pixi_posts_path(status: 'active')))
+      str << content_tag(:li, link_to("Followers", favorite_sellers_path(ftype: 'buyer', status: 'active')))
+      str << content_tag(:li, link_to("Inquiries", inquiries_path(ctype: 'inquiry')))
+    elsif can? :manage_pixi_posts, @user
+      str << content_tag(:li, link_to("PixiPosts", pixter_pixi_posts_path(status: 'scheduled')))
+    end
+    content_tag(:ul, build_admin_menu(str).join('').html_safe, class: 'dropdown-menu')
+  end
+
+  def build_admin_menu str
+    if can? :manage_users, @user
+      str << content_tag(:li, link_to("Categories", manage_categories_path(status: 'active')))
+      str << content_tag(:li, link_to("Sites", sites_path(stype: 'region', status: 'active')))
+      str << content_tag(:li, link_to("Transactions", transactions_path))
+      str << content_tag(:li, link_to("Users", users_path))
+    end
+    str
   end
 end

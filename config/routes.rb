@@ -186,7 +186,11 @@ Plumboard::Application.routes.draw do
   match '/edu/:url' => "listings#edu", via: :get, as: :edu
   match '/loc/:url' => "listings#loc", via: :get, as: :loc
   match '/careers' => "listings#career", via: :get, as: :career
-  # get '/careers', to: "listings#jobs"
+
+  # subdomain
+  constraints(Subdomain) do
+    match '/' => 'shop_locals#index'
+  end
 
   # specify root route based on user sign in status
   root to: 'listings#local', :constraints => lambda {|r| r.env["warden"].authenticate? }
