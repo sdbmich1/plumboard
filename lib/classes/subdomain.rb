@@ -1,6 +1,6 @@
 class Subdomain
   def self.matches?(request)
-    request.subdomain.present? && request.subdomain == 'shoplocal' && match_env?
+    request.subdomain.present? && !request.subdomain.match(/shoplocal|sls/).nil? 
   end
 
   def self.match_env?

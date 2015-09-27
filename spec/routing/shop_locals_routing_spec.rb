@@ -10,6 +10,6 @@ describe ShopLocalsController do
     it_should_behave_like 'a post route', false, 'create', 'shop_locals'
     it_should_behave_like 'a delete route', false, 'destroy', 'shop_locals'
     it_should_behave_like 'a subdomain route', true, 'http://shoplocal.pixiboard.com', 'index', 'shop_locals'
-    it_should_behave_like 'a subdomain route', false, 'http://game.pixiboard.com', 'index', 'shop_locals'
+    it_should_behave_like 'a subdomain route', true, 'http://sls.pixiboard.com', 'index', 'shop_locals'
   end
 end

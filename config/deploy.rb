@@ -207,6 +207,23 @@ namespace :whenever do
   end    
 end
 
+namespace :apache do    
+  desc "Resets the passenger server."
+  task :restart do
+    run "touch #{current_path}/tmp/restart.txt"
+  end
+
+  desc 'Sets project server in dev mode - so the 503 page is served'
+  task :lock do
+    run "touch #{current_path}/tmp/maintenance.txt"
+  end
+
+  desc 'Sets project to a standard mode'
+  task :unlock do
+    run "rm -f #{current_path}/tmp/maintenance.txt"
+  end
+end
+
 # load in the deploy scripts installed by vulcanize for each rubber module
 Dir["#{File.dirname(__FILE__)}/rubber/deploy-*.rb"].each do |deploy_file|
   load deploy_file
@@ -217,12 +234,13 @@ end
 #before 'deploy:setup', 'rvm:install_ruby' # install Ruby and create gemset
 before 'deploy:setup', 'sphinx:create_sphinx_dir'
 before 'rubber:config', 'deploy:enable_rubber', 'deploy:enable_rubber_current'
+before 'deploy:update', 'apache:lock'
 after 'bundle:install', 'deploy:enable_rubber'
 after 'deploy:update_code', 'deploy:enable_rubber'
 after 'deploy:update_code', 'deploy:symlink_shared', 'sphinx:stop'
 #after "deploy:migrations", "cleanup"
 after "deploy", "cleanup", "memcached:flush"
-after "deploy:update", "deploy:migrations"
+after "deploy:update", "deploy:migrations", "apache:restart", "apache:unlock"
 
 task :cleanup, :except => { :no_release => true } do
   count = fetch(:keep_releases, 5).to_i
