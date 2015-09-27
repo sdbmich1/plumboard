@@ -234,13 +234,12 @@ end
 #before 'deploy:setup', 'rvm:install_ruby' # install Ruby and create gemset
 before 'deploy:setup', 'sphinx:create_sphinx_dir'
 before 'rubber:config', 'deploy:enable_rubber', 'deploy:enable_rubber_current'
-before 'deploy:update', 'apache:lock'
 after 'bundle:install', 'deploy:enable_rubber'
 after 'deploy:update_code', 'deploy:enable_rubber'
 after 'deploy:update_code', 'deploy:symlink_shared', 'sphinx:stop'
 #after "deploy:migrations", "cleanup"
 after "deploy", "cleanup", "memcached:flush"
-after "deploy:update", "deploy:migrations", "apache:restart", "apache:unlock"
+after "deploy:update", "deploy:migrations"
 
 task :cleanup, :except => { :no_release => true } do
   count = fetch(:keep_releases, 5).to_i
