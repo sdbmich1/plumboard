@@ -3,7 +3,11 @@ module UrlHelper
   def with_subdomain(subdomain)
     subdomain = (subdomain || "")
     subdomain += "." unless subdomain.empty?
-    [subdomain, request.domain].join
+    if subdomain.empty? && !Rails.env.match(/demo|staging/).nil?
+      [Rails.env, '.', request.domain].join
+    else
+      [subdomain, request.domain].join
+    end
   end
 
   def url_for(options = nil)

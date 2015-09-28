@@ -1,4 +1,4 @@
-require "spec_helper"
+require "login_user_spec"
 
 describe ShopLocalsController do
   describe 'shop_locals routes', base: true do
