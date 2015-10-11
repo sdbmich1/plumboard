@@ -135,6 +135,7 @@ class UserProcessor
     @user.description = nil unless @user.description.blank?
     @user.user_type_code = 'MBR' if @user.user_type_code.blank?
     @user.user_url, @user.status = @user.name, 'active' if @user.status.blank? && !@user.guest?
+    NameParse::encode_string @user.business_name unless @user.business_name.blank?
   end
 
   # convert date/time display
