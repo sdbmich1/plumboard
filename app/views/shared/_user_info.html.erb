@@ -10,7 +10,7 @@
 <%= f.fields_for :preferences do |form| %>
   <%= form.text_field :zip, placeholder: 'Home Zip', size: 5, id: 'home_zip', class: 'width120', required: true %>
 <% end %>
-<div id='about_acct' style="<%= set_style(!edit_account?) %>">
+<div id='about_acct' style="<%= set_style(edit_account?) %>">
   <%= f.text_field :description, size: 30, maxlength: 30, placeholder: 'Describe yourself or your business', required: edit_business?(user) %>
 </div>
 <%= f.hidden_field :id, value: user.id, id: 'uid', readonly: true %>
