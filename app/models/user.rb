@@ -94,7 +94,7 @@ class User < ActiveRecord::Base
   validates :first_name,  :presence => true, :length => { :maximum => 30 }, :format => { :with => name_regex }, unless: :guest?  
   validates :last_name,  :presence => true, :length => { :maximum => 30 }, :format => { :with => name_regex }, unless: :guest?    
   validates_confirmation_of :password, if: :revalid
-  validates :business_name,  :presence => true, :length => { :maximum => 60 }, :format => { :with => name_regex }, if: :is_business? 
+  validates :business_name,  :presence => true, :length => { :maximum => 60 }, if: :is_business?
   validates :birth_date,  :presence => true, unless: :guest_or_other?
   validates :gender,  :presence => true, unless: :guest_or_other?
   # validates :url, :presence => {:on => :create}, uniqueness: true, length: { :minimum => 2 }, unless: :guest?

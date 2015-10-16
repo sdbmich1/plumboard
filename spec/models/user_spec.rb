@@ -116,8 +116,8 @@ describe User do
     end
 
     it "returns a business name when a business" do
-      @usr = build :pixi_user, first_name: 'John', last_name: 'Smith', birth_date: nil, gender: nil, user_type_code: 'BUS', business_name: 'Company A'
-      @usr.name.should == "Company A"
+      @usr = build :pixi_user, first_name: 'John', last_name: 'Smith', birth_date: nil, gender: nil, user_type_code: 'BUS', business_name: 'Home + Gifts'
+      @usr.name.should == "Home + Gifts"
     end
 
     it "returns a user's abbr name as a string", run: true do
@@ -758,9 +758,9 @@ describe User do
     end
 
     it 'generates url for business' do
-      user = build :contact_user, user_type_code: 'BUS', business_name: 'Toy Shack'
+      user = build :contact_user, user_type_code: 'BUS', business_name: 'Toy Shack + Gifts'
       user.save!
-      expect(user.url).to eq user.business_name.gsub!(/\s+/, "").downcase
+      expect(user.url).to eq NameParse.transliterate(user.business_name, false).gsub!(/\s+/, "")
     end
 
     it 'shows full url path' do
