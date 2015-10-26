@@ -183,7 +183,7 @@ class Invoice < ActiveRecord::Base
 
   # get short pixi title
   def short_title
-    listings.first.short_title rescue nil
+    listings.first.short_title(false, 20) rescue nil
   end
 
   # check if pixi post
@@ -237,11 +237,12 @@ class Invoice < ActiveRecord::Base
 
   # set json string
   def as_json(options={})
-    super(except: [:updated_at], 
-      methods: [:pixi_title, :buyer_name, :seller_name, :short_title, :nice_status, :inv_dt, :get_fee, :get_processing_fee, :get_convenience_fee,
-        :seller_amount], 
-      include: {seller: { only: [:first_name], methods: [:photo] }, 
-                buyer: { only: [:first_name], methods: [:photo] }})
+    super(except: [:pixi_id, :price, :quantity, :subtotal, :updated_at], 
+      methods: [:pixi_title, :short_title, :nice_status, :inv_dt, :get_fee, :get_processing_fee, :get_convenience_fee, :seller_amount], 
+      include: {seller: { only: [:first_name], methods: [:name, :photo] }, 
+                buyer: { only: [:first_name], methods: [:name, :photo] },
+		invoice_details: { only: [:price, :quantity, :subtotal], methods: [:pixi_title] },
+		listings: { only: [:pixi_id], methods: [:photo_url] }})
   end
 
   # get amount

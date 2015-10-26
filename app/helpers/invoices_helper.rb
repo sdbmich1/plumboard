@@ -168,4 +168,8 @@ module InvoicesHelper
   def show_purchase_inv_total invoice
     render partial: 'shared/purchase_inv_total', locals: {invoice: invoice} if invoice
   end
+
+  def add_col_header colFlg
+    content_tag(:th, '') if colFlg
+  end
 end

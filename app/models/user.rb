@@ -268,7 +268,7 @@ class User < ActiveRecord::Base
   end
 
   # display image for user
-  def photo num=0, sz='tiny'
+  def photo num=0, sz='original'
     self.pictures[num].photo.url(sz.to_sym) rescue nil
   end
 
