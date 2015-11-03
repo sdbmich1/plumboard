@@ -18,7 +18,8 @@ class ListingParent < ActiveRecord::Base
   	:site_id, :start_date, :end_date, :transaction_id, :pictures_attributes, :pixi_id, :parent_pixi_id, :year_built, :pixan_id, 
 	:job_type_code, :event_type_code, :edited_by, :edited_dt, :post_ip, :lng, :lat, :event_start_date, :event_end_date, :compensation,
 	:event_start_time, :event_end_time, :explanation, :contacts_attributes, :repost_flg, :mileage, :other_id, :condition_type_code,
-	:color, :quantity, :item_type, :item_size, :bed_no, :bath_no, :term, :avail_date, :external_url, :ref_id
+	:color, :quantity, :item_type, :item_size, :bed_no, :bath_no, :term, :avail_date, :external_url, :ref_id,
+  :buy_now_flg, :est_ship_cost, :sales_tax, :fulfillment_type_code
 
   belongs_to :user, foreign_key: :seller_id
   belongs_to :site
@@ -27,6 +28,7 @@ class ListingParent < ActiveRecord::Base
   belongs_to :job_type, primary_key: 'code', foreign_key: 'job_type_code'
   belongs_to :event_type, primary_key: 'code', foreign_key: 'event_type_code'
   belongs_to :condition_type, primary_key: 'code', foreign_key: 'condition_type_code'
+  belongs_to :fulfillment_type, primary_key: 'code', foreign_key: 'fulfillment_type_code'
 
   has_many :pictures, :as => :imageable, :dependent => :destroy
   accepts_nested_attributes_for :pictures, :allow_destroy => true

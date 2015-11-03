@@ -531,6 +531,29 @@ feature "Invoices" do
       page.should have_content @listing.title
       page.should have_content @buyer.name
     end
+
+    it 'invoice w/ shipping', js: true do
+      @invoice.update_attribute(:ship_amt, 1.0)
+      @txn = @invoice.create_transaction(FactoryGirl.attributes_for :transaction)
+      @txn.user_id = @buyer.id
+      @txn.recipient_first_name = @buyer.first_name
+      @txn.recipient_last_name = @buyer.last_name
+      @txn.recipient_email = @buyer.email
+      @txn.ship_address = '251 Connecticut St'
+      @txn.ship_city = 'San Francisco'
+      @txn.ship_state = 'CA'
+      @txn.ship_zip = '94103'
+      @txn.save
+      @invoice.save
+      visit invoice_path(@invoice)
+      page.should have_content 'Shipping Information'
+      page.should have_content @txn.recipient_first_name
+      page.should have_content @txn.recipient_last_name
+      page.should have_content @txn.ship_address
+      page.should have_content @txn.ship_city
+      page.should have_content @txn.ship_state
+      page.should have_content @txn.ship_zip
+    end
   end
 
 end

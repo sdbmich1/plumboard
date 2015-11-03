@@ -22,11 +22,12 @@ feature "Transactions" do
     @listing = create :temp_listing, seller_id: @user.id, quantity: 1
   end
 
-  def add_invoice mFlg=false
+  def add_invoice mFlg=false, ship_amt=0.0
     @seller = create(:pixi_user, acct_token: "acct_16HJbsDEdnXv7t4y")
     @listing2 = create(:listing, seller_id: @seller.id, title: 'Leather Coat', quantity: 2)
     @account = @seller.bank_accounts.create attributes_for :bank_account, status: 'active'
-    @invoice = @seller.invoices.build attributes_for(:invoice, buyer_id: @user.id, bank_account_id: @account.id)
+    @invoice = @seller.invoices.build attributes_for(:invoice,
+      buyer_id: @user.id, bank_account_id: @account.id, ship_amt: ship_amt)
     @details = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
     @details2 = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing2.pixi_id if mFlg
     @invoice.save!
@@ -43,7 +44,7 @@ feature "Transactions" do
   end
 
   def visit_inv_txn_path ship=0.0
-    add_invoice 
+    add_invoice(false, ship)
     visit new_transaction_path id1: @listing.pixi_id, promo_code: '', title: "Invoice # #{@invoice.id} from #{@invoice.seller_name}", seller: @seller.name,
         "item1" => @listing.title, "quantity1" => 2, "cnt"=> 1, "qtyCnt"=> 2, "price1" => 185.00, transaction_type: 'invoice',
 	"tax_total"=> @invoice.tax_total, "invoice_id"=> @invoice.id, "ship_amt"=> ship, "inv_total"=>@invoice.amount+ship
@@ -107,7 +108,7 @@ feature "Transactions" do
     click_valid_save
   end
 
-  def display_inv_content
+  def display_inv_content ship_flg=false
       page.should have_selector('title', text: 'PixiPay')
       page.should have_content "Invoice # #{@invoice.id} from #{@seller.name}"
       page.should have_content @invoice.pixi_title
@@ -117,6 +118,13 @@ feature "Transactions" do
       page.should have_content @user.contacts[0].city
       page.should have_content @user.contacts[0].state
       page.should have_content @user.contacts[0].zip
+      if ship_flg
+        page.should have_content "Shipping Information"
+        page.should have_content @txn.ship_address
+        page.should have_content @txn.ship_city
+        page.should have_content @txn.ship_state
+        page.should have_content @txn.ship_zip
+      end
       page.should have_selector('#edit-txn-addr', visible: false)
       page.should have_content "Payment Information"
       page.should have_selector('#edit-card-btn', visible: true)
@@ -183,6 +191,10 @@ feature "Transactions" do
       page.should have_content "Total Due"
       page.should have_content "Shipping"
       page.should have_content @invoice.ship_amt
+      fill_in 'transaction_ship_address', with: '251 Connecticut St'
+      fill_in 'transaction_ship_city', with: 'San Francisco'
+      select 'California', :from => 'transaction_ship_state'
+      fill_in 'transaction_ship_zip', with: '94103'
     end
 
     it "creates shipping transaction with valid visa card", :js=>true do

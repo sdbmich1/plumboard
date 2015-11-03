@@ -1,0 +1,22 @@
+<tr>
+  <td><label class='tbl-hdr'>Email* </label><%= form.text_field :recipient_email, size: 80, maxlength: 80 %>
+  <td></td>
+  <td><label class='tbl-hdr'>Home Phone* </label><%= form.text_field :recipient_phone, size: 10, required: shipping?(@order) %></td>
+</tr>
+<tr>
+  <td><label class='tbl-hdr'>Address 1* </label><%= form.text_field :ship_address, required: shipping?(@order) %></td>  
+  <td></td>
+  <td><label class='tbl-hdr'>Address 2 </label><%= form.text_field :ship_address2, required: shipping?(@order) %></td>
+</tr>
+<tr>
+  <td><label class='tbl-hdr'>City* </label><%= form.text_field :ship_city, required: shipping?(@order) %></td>
+  <td></td>
+  <td><label class='neg-top tbl-hdr'>State/Province*</label>
+  <%= form.collection_select :ship_state, State.all, :code, :state_name, {prompt: 'Select State'}, {class: 'pixi-select'} %></td>
+</tr>
+<tr>
+  <td><label class='tbl-hdr'>Zip* </label><%= form.text_field :ship_zip, size: 5, required: shipping?(@order) %></td>
+  <td></td>
+  <td><label class='neg-top tbl-hdr'>Country </label>
+    <%= country_select "transaction", "ship_country", ["United States"], {}, {class: 'country pixi-select'} %></td>    
+</tr>

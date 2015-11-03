@@ -31,6 +31,16 @@ describe Transaction do
     it { should respond_to(:card_number) }
     it { should respond_to(:exp_month) }
     it { should respond_to(:exp_year) }
+    it { should respond_to(:recipient_first_name) }
+    it { should respond_to(:recipient_last_name) }
+    it { should respond_to(:recipient_email) }
+    it { should respond_to(:ship_address) }
+    it { should respond_to(:ship_address2) }
+    it { should respond_to(:ship_city) }
+    it { should respond_to(:ship_state) }
+    it { should respond_to(:ship_zip) }
+    it { should respond_to(:ship_country) }
+    it { should respond_to(:recipient_phone) }
     it { should validate_presence_of(:home_phone) }
     it { should belong_to(:user) }
     it { should have_many(:transaction_details) }
@@ -316,6 +326,60 @@ describe Transaction do
     it { expect(@transaction.cust_token).to be_nil }
     it 'has cust_token', run: true do
       expect(@transaction.cust_token).to eq @user.cust_token
+    end
+  end
+
+  describe "has_ship_address?" do
+    it "returns true if address, city, state, and zip are defined" do
+      @transaction.ship_address = "101 California"
+      @transaction.ship_city = "San Francisco"
+      @transaction.ship_state = "CA"
+      @transaction.ship_zip = "94111"
+      expect(@transaction.has_ship_address?).to be_true
+    end
+
+    it "returns false otherwise" do
+      expect(@transaction.has_ship_address?).to be_false
+    end
+  end
+
+  describe "sync_ship_address" do
+    def set_ship_addr_flds
+      @transaction.recipient_first_name = @user.first_name
+      @transaction.recipient_last_name = @user.last_name
+      @transaction.recipient_email = @user.email
+      contact = Contact.create FactoryGirl.attributes_for(:contact)
+      @transaction.ship_address = contact.address
+      @transaction.ship_city = contact.city
+      @transaction.ship_state = contact.state
+      @transaction.ship_zip = contact.zip
+    end
+
+    it "creates ShipAddress if it does not already exist" do
+      set_ship_addr_flds
+      expect { @transaction.sync_ship_address }.to change { ShipAddress.count }.by 1
+      expect { @transaction.sync_ship_address }.not_to change { ShipAddress.count }
+    end
+
+    it "creates Contact if it does not already exist" do
+      set_ship_addr_flds
+      expect { @transaction.sync_ship_address }.to change { Contact.count }.by 1
+      expect { @transaction.sync_ship_address }.not_to change { Contact.count }
+    end
+
+    it "can assign multiple Contacts for a given ShipAddress" do
+      set_ship_addr_flds
+      expect { @transaction.sync_ship_address }.to change { Contact.count }.by 1
+      @transaction.ship_address = "1 California"
+      @transaction.ship_city = "San Francisco"
+      @transaction.ship_state = "CA"
+      @transaction.ship_zip = "94111"
+      expect { @transaction.sync_ship_address }.to change { Contact.count }.by 1
+    end
+
+    it "does not create nil records" do
+      expect { @transaction.sync_ship_address }.not_to change { ShipAddress.count }
+      expect { @transaction.sync_ship_address }.not_to change { Contact.count }
     end
   end
 end

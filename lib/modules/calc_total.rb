@@ -29,7 +29,7 @@ module CalcTotal
     set_discount model.promo_code
     @amt += model.tax_total.to_f if model.send(fld)
     @amt += model.ship_amt.to_f if model.ship_amt
-    grand_total
+    grand_total Invoice.find(model.invoice_id)
   end
 
   # check for default fees & price
@@ -112,8 +112,8 @@ module CalcTotal
   end
   
   # calculate txn total
-  def self.grand_total
-    @amt += get_processing_fee + get_convenience_fee + calc_discount
+  def self.grand_total inv
+    @amt += inv.get_fee(inv.buyer_id == inv.seller_id) + calc_discount
     @amt.round(2)
   end
 end

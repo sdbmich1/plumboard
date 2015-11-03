@@ -168,4 +168,13 @@ module InvoicesHelper
   def show_purchase_inv_total invoice
     render partial: 'shared/purchase_inv_total', locals: {invoice: invoice} if invoice
   end
+
+  def show_inv_ship_address invoice
+    if shipping?(invoice) && invoice.transaction
+      render partial: 'shared/txn_info', locals: { flg: false,
+        title: 'Shipping', id: 'edit-ship-btn', cls: 'ship-addr-tbl',
+        model: invoice.transaction, fld: ['recipient_name', 'ship_address',
+        'ship_city', 'ship_state', 'ship_zip', 'ship_country'] }
+    end
+  end
 end

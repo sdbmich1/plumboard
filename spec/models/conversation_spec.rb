@@ -21,6 +21,7 @@ describe Conversation do
     it { should respond_to(:listing) }
     it { should respond_to(:recipient) }
     it { should respond_to(:posts) }
+    it { should respond_to(:fulfillment_type_code) }
     it { should validate_presence_of(:user_id) }
     it { should validate_presence_of(:pixi_id) }
     it { should validate_presence_of(:recipient_id) }

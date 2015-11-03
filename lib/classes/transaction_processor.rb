@@ -10,6 +10,7 @@ class TransactionProcessor
     load_init_fees order
     load_inv_info order
     load_buyer_info usr
+    load_ship_info usr
     @txn
   end
 
@@ -32,6 +33,20 @@ class TransactionProcessor
     @txn.user_id = usr.id
     @txn.first_name, @txn.last_name, @txn.email = usr.first_name, usr.last_name, usr.email
     @txn = AddressManager::synch_address @txn, usr.contacts[0], false if usr.has_address?
+  end
+
+  def load_ship_info usr
+    contact = usr.has_ship_address? ? usr.ship_address.contacts.last : usr.contacts.last
+    @txn.recipient_first_name = usr.first_name
+    @txn.recipient_last_name = usr.last_name
+    @txn.recipient_email = usr.email
+    @txn.ship_address = contact.address
+    @txn.ship_address2 = contact.address2
+    @txn.ship_city = contact.city
+    @txn.ship_state = contact.state
+    @txn.ship_zip = contact.zip
+    @txn.ship_country = contact.country
+    @txn.recipient_phone = contact.home_phone || contact.mobile_phone || contact.work_phone
   end
 
   # add each transaction item
@@ -127,6 +142,28 @@ class TransactionProcessor
       end
     else
       false
+    end
+  end
+
+  def sync_ship_address
+    if @txn.recipient_first_name && @txn.recipient_last_name && @txn.recipient_email
+      ship_attrs = {
+        recipient_first_name: @txn.recipient_first_name,
+        recipient_last_name: @txn.recipient_last_name,
+        recipient_email: @txn.recipient_email
+      }
+      ship_address = ShipAddress.first_or_create(ship_attrs)
+      contact_attrs = {
+        address: @txn.ship_address,
+        address2: @txn.ship_address2,
+        city: @txn.ship_city,
+        state: @txn.ship_state,
+        zip: @txn.ship_zip,
+        country: @txn.ship_country
+      }
+      unless ship_address.contacts.exists?(contact_attrs)
+        ship_address.contacts.create(contact_attrs)
+      end
     end
   end
 end

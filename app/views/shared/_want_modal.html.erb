@@ -1,7 +1,7 @@
 <div class="modal hide fade" id="wantDialog">
   <div class="modal-header">
     <a class="close" data-dismiss="modal">x</a>
-    <h3 class='center-wrapper'>Contact Seller</h3>
+    <h3 class='center-wrapper'><%= toggle_want_modal_header(listing) %></h3>
   </div>
   <div class="modal-body">
     <%= render partial: 'shared/contact', locals: {listing: listing, mtype: mtype, msg: msg, txt: txt} %>

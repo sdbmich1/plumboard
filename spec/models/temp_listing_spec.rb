@@ -57,6 +57,11 @@ describe TempListing do
     it { should respond_to(:event_type) }
     it { should respond_to(:set_flds) }
     it { should respond_to(:generate_token) }
+    it { should respond_to(:buy_now_flg) }
+    it { should respond_to(:est_ship_cost) }
+    it { should respond_to(:sales_tax) }
+    it { should respond_to(:fulfillment_type_code) }
+    it { should belong_to(:fulfillment_type).with_foreign_key('fulfillment_type_code') }
     it { should allow_value(50.00).for(:price) }
     it { should allow_value(5000).for(:price) }
     it { should allow_value('').for(:price) }
@@ -1191,10 +1196,10 @@ describe TempListing do
       temp_listing = TempListing.check_category_and_location('pending', nil, nil, true).first
       csv_string = temp_listing.as_csv(style: 'pending')
       csv_string.keys.should =~ ['Title', 'Category', 'Description', 'Location',
-                                 ListingProcessor.new(temp_listing).toggle_user_name_header(temp_listing.status),
+                                 ListingProcessor.new(temp_listing).toggle_user_name_header(temp_listing.status, 'index'),
                                  temp_listing.status.titleize + ' Date'] 
       csv_string.values.should =~ [temp_listing.title, temp_listing.category_name, temp_listing.description, temp_listing.site_name,
-                                   ListingProcessor.new(temp_listing).toggle_user_name_row(temp_listing.status, temp_listing),
+                                   ListingProcessor.new(temp_listing).toggle_user_name_row(temp_listing.status, temp_listing, 'index'),
                                    temp_listing.display_date(temp_listing.created_date)]
     end
   end

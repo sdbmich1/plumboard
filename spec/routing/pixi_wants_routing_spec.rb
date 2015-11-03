@@ -6,7 +6,11 @@ describe PixiWantsController do
       post('/pixi_wants').should route_to('pixi_wants#create')
     end
 
-    it 'routes to #index' do
+    it 'routes to #buy_now' do
+      post('/pixi_wants/buy_now').should route_to('pixi_wants#buy_now')
+    end
+
+    it 'does not route to #index' do
       get('/pixi_wants').should_not route_to('pixi_wants#index')
     end
   end

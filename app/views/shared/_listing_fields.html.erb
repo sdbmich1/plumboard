@@ -3,6 +3,7 @@
 <%= show_seller_fields f, listing %>
 <%= render partial: 'shared/listing_fields_top', locals: { f: f, listing: listing } %>
 <%= render partial: 'shared/listing_fields_main', locals: { f: f, listing: listing } %>
+<%= render partial: 'shared/listing_biz_fields', locals: { f: f } %>
 <%= render partial: 'shared/listing_event_fields', locals: { f: f, listing: listing } %>
 <%= render partial: 'shared/listing_housing_fields', locals: { f: f, listing: listing } %>
 <%= render partial: 'shared/listing_vehicle_fields', locals: { f: f, listing: listing } %>

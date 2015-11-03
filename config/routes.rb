@@ -153,8 +153,10 @@ Plumboard::Application.routes.draw do
   resources :pixi_likes, only: [:create, :destroy]
   resources :saved_listings, only: [:create, :index, :destroy]
   resources :favorite_sellers, only: [:create, :index, :update]
-  resources :pixi_wants, only: [:create]
   resources :shop_locals, only: [:index]
+  resources :pixi_wants, only: [:create] do
+    post 'buy_now', :on => :collection
+  end
 
   # custom routes
   get "/about", to: "pages#about" 

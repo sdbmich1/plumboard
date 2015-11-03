@@ -1,5 +1,7 @@
 <div class="div-border">
-  <%= render partial: 'shared/txn_info', locals: {flg: !txn.has_address?, title: 'Buyer', id: 'edit-txn-addr', model: txn,
-    fld: ['buyer_name', 'address', 'city', 'state', 'zip', 'country']} %>
-  <%= render partial: 'shared/txn_fld_info', locals: {f: f, flg: txn.has_address?, pname: 'shared/user_address', fld: ['first_name', 'last_name']} %>
+  <%= render partial: 'shared/txn_info', locals: {flg: !txn.has_address?, title: 'Buyer',
+    id: 'edit-txn-addr', model: txn, fld: ['buyer_name', 'address', 'city', 'state', 'zip', 'country'],
+    cls: 'offset3 addr-tbl' } %>
+  <%= render partial: 'shared/txn_fld_info', locals: {f: f, flg: txn.has_address?,
+    pname: 'shared/user_address', fld: ['first_name', 'last_name'], cls: 'sm-top center-wrapper usr-tbl'} %>
 </div>

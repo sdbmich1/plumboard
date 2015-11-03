@@ -3,7 +3,7 @@
   <%= hidden_field_tag 'item1', listing.title %>
   <%= hidden_field_tag 'title', 'New Pixi Post' %>
   <%= hidden_field_tag 'seller', listing.seller_name %>
-  <%= hidden_field_tag 'promo_code', set_promo_code(listing.site_id) %>
+  <%= hidden_field_tag 'promo_code', listing.set_promo_code %>
   <%= hidden_field_tag 'cnt', 1 %>
   <%= hidden_field_tag 'qtyCnt', 1 %>
   <%= hidden_field_tag 'quantity1', listing.get_site_count %>

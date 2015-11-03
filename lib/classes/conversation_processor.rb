@@ -96,7 +96,8 @@ class ConversationProcessor
   def add_want_request
     if @conv.status != 'removed' && @conv.recipient_status != 'removed'
       if @conv.posts.where('msg_type= ? AND status= ?', 'want', 'active').first
-        @conv.user.pixi_wants.create(pixi_id: @conv.pixi_id, quantity: @conv.quantity, status: 'active')
+        @conv.user.pixi_wants.create(pixi_id: @conv.pixi_id, quantity: @conv.quantity,
+          status: 'active', fulfillment_type_code: @conv.fulfillment_type_code)
       end
     end
   end

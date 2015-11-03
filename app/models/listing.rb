@@ -256,6 +256,11 @@ class Listing < ListingParent
     ListingDataProcessor.new(self).select_fields(field_name)
   end
 
+  # set promo code for free order if appropriate
+  def set_promo_code
+    PIXI_KEYS['pixi']['launch_promo_cd'] if self.class.free_order?(site_id)
+  end
+
   # sphinx scopes
   sphinx_scope(:latest_first) {
     {:order => 'updated_at DESC, created_at DESC'}

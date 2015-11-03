@@ -96,6 +96,11 @@ describe Listing do
     it { should belong_to(:buyer).with_foreign_key('buyer_id') }
     it { should have_many(:active_pixi_wants).class_name('PixiWant').with_foreign_key('pixi_id').conditions(:status=>"active") }
     it { should accept_nested_attributes_for(:contacts).allow_destroy(true) }
+    it { should respond_to(:buy_now_flg) }
+    it { should respond_to(:est_ship_cost) }
+    it { should respond_to(:sales_tax) }
+    it { should respond_to(:fulfillment_type_code) }
+    it { should belong_to(:fulfillment_type).with_foreign_key('fulfillment_type_code') }
     context 'IDs' do
       %w(site_id seller_id category_id transaction_id).each do |fld|
         it_behaves_like 'an ID', fld
@@ -1668,10 +1673,10 @@ describe Listing do
       listing = Listing.check_category_and_location('active', nil, nil, true).first
       csv_string = listing.as_csv(style: 'active')
       csv_string.keys.should =~ ['Title', 'Category', 'Description', 'Location',
-                                 ListingProcessor.new(listing).toggle_user_name_header(listing.status),
+                                 ListingProcessor.new(listing).toggle_user_name_header(listing.status, 'index'),
                                  listing.status.titleize + ' Date'] 
       csv_string.values.should =~ [listing.title, listing.category_name, listing.description, listing.site_name,
-                                   ListingProcessor.new(listing).toggle_user_name_row(listing.status, listing),
+                                   ListingProcessor.new(listing).toggle_user_name_row(listing.status, listing, 'index'),
                                    listing.display_date(listing.created_date)]
     end
   end

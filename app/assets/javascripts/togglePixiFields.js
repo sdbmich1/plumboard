@@ -131,3 +131,19 @@ function toggleYear(ctype) {
     $('#yr-fld').hide('fast');
   }
 }
+
+// only show shipping amount if fulfillment type is 'Ship' or 'All'
+$(document).on('change', '#fulfill_type', function() {
+  if ($('#fulfill_type').val() == 'SHP' || $('#fulfill_type').val() == 'A') {
+    $('#ship_cost').show('fast');
+    $('#ship_cost').attr('required', 'required');
+  } else {
+    $('#ship_cost').hide('fast');
+    $('#ship_cost').removeAttr('required');
+  }
+});
+
+// initially hide shipping amount
+$(document).ready(function() {
+  $('#ship_cost').hide('fast');
+});

@@ -162,20 +162,28 @@ class ListingProcessor < ListingDataProcessor
   end
 
   # display 'Buyer Name' if sold
-  def toggle_user_name_header status
+  def toggle_user_name_header status, action_name
     case status
-    when 'sold', 'invoiced', 'wanted' then 'Buyer Name'
-    else 'Seller Name'
+    when 'sold', 'invoiced';
+      'Buyer Name'
+    when 'wanted';
+      action_name == 'seller_wanted' ? 'Seller Name' : 'Buyer Name'
+    else
+      'Seller Name'
     end
   end
 
   # display name of buyer if sold
-  def toggle_user_name_row status, listing
+  def toggle_user_name_row status, listing, action_name
     case status
-    when 'sold' then listing.invoices.where(status: 'paid').first.buyer_name
-    when 'invoiced' then listing.invoices.first.buyer_name
-    when 'wanted' then listing.pixi_wants.first.user.name
-    else listing.seller_name
+    when 'sold';
+      listing.invoices.where(status: 'paid').first.buyer_name
+    when 'invoiced';
+      listing.invoices.first.buyer_name
+    when 'wanted';
+      action_name == 'seller_wanted' ? listing.seller_name : listing.pixi_wants.first.user.name
+    else
+      listing.seller_name
     end
   end
 end

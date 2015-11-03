@@ -111,7 +111,8 @@ module TransactionsHelper
 
   # get cancel path
   def get_cancel_path txn, order
-    txn.pixi? ? temp_listing_path(id: order['id1']) : invoice_path(id: order[:invoice_id])
+    inv_id = order[:invoice_id] || order['invoice_id']
+    txn.pixi? ? temp_listing_path(id: order['id1']) : invoice_path(id: inv_id)
   end
 
   # get related invoice
@@ -148,5 +149,17 @@ module TransactionsHelper
 
   def show_purchase_txn_total txn, paid
     render partial: 'shared/purchase_txn_total', locals: {txn: txn, paid: paid} if txn
+  end
+
+  def shipping? model
+    model.respond_to?(:ship_amt) && !model.ship_amt.nil? && model.ship_amt.to_f > 0
+  end
+
+  def show_ship_address f, order, txn
+    render partial: 'shared/buyer_ship_info', locals: {f: f, txn: txn} if shipping?(OpenStruct.new(order))
+  end
+
+  def change_btn id
+    link_to 'Change', '#', id: id, class: 'offset2 btn' if controller_name == 'transactions'
   end
 end

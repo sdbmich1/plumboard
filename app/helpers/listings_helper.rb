@@ -373,7 +373,7 @@ module ListingsHelper
   def set_featured_banner model, btype
     case btype
       when 'biz'
-	render_featured_banner('Featured Pixis', featured_pixis(model), 'listing', 'shared/listing', 'original') if has_featured_items?(model)
+	render_featured_banner('Featured Pixis', featured_pixis(model), 'listing', 'shared/listing', 'medium') if has_featured_items?(model)
       when 'loc', 'pub', 'edu'
 	render_featured_banner('Featured Sellers', featured_sellers(@sellers), 'user', 'shared/seller', 'medium') if has_featured_items?(@sellers)
     end
@@ -701,12 +701,12 @@ module ListingsHelper
 
   # display 'Buyer Name' if sold
   def toggle_user_name_header status
-    ListingProcessor.new(Listing.new).toggle_user_name_header(status)
+    ListingProcessor.new(Listing.new).toggle_user_name_header(status, action_name)
   end
 
   # display name of buyer if sold
   def toggle_user_name_row status, listing
-    ListingProcessor.new(listing).toggle_user_name_row(status, listing)
+    ListingProcessor.new(listing).toggle_user_name_row(status, listing, action_name)
   end
 
   def show_recent_link rFlg
@@ -759,10 +759,15 @@ module ListingsHelper
   end
 
   def show_contact_footer f, listing, cls
-    if listing.external_url.blank?
+    if listing.buy_now_flg
+      link_to 'Buy Now', buy_now_pixi_wants_path(id: listing.pixi_id, qty: 1,
+        fulfillment_type_code: FulfillmentType.buyer_options(listing).first.code),
+        method: :post, class: cls + ' submit-btn', id: 'buy-now-link'
+    elsif listing.external_url.blank?
       f.submit "Send", class: cls, data: {disable_with: "Sending..."}
     else
-      link_to 'Send', pixi_wants_path(url: listing.external_url, id: listing.pixi_id), method: :post, class: cls, remote: true
+      link_to 'Send', pixi_wants_path(url: listing.external_url, id: listing.pixi_id),
+        method: :post, class: cls, remote: true
     end
   end
 
@@ -774,5 +779,28 @@ module ListingsHelper
       str << f.select(:quantity, options_for_select(get_ary(listing.amt_left), 1), {}, {id: 'px-qty', class: 'pixi-select width60'})
       content_tag(:span, str.join("").html_safe)
     end
+  end
+
+  def show_biz_fields listing, str=[]
+    if listing.user.is_business? && listing.fulfillment_type
+      str << "Delivery Type: #{listing.fulfillment_type.description}"
+      content_tag(:div, process_content(str, ''), class: 'clear-all')
+    end    
+  end
+
+  def toggle_want_modal_header listing
+    listing.buy_now_flg ? "Purchase Item" : "Contact Seller"
+  end
+
+  def show_fulfillment_type f, listing
+    str = ['Delivery Type: ']
+    options = FulfillmentType.buyer_options(listing)
+    if options.size > 1
+      str << collection_select(:fulfillment_type, :description, options, :code,
+        :description, {}, {id: 'px-fulfillment-type', class: 'span2 cat-select'})
+    else
+      str << options.first.description
+    end
+    content_tag(:div, str.join('').html_safe, class: 'offset1')
   end
 end

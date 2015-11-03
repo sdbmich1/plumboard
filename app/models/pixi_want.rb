@@ -1,5 +1,5 @@
 class PixiWant < ActiveRecord::Base
-  attr_accessible :pixi_id, :user_id, :quantity, :status
+  attr_accessible :pixi_id, :user_id, :quantity, :status, :fulfillment_type_code
 
   belongs_to :user
   belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id", touch: true

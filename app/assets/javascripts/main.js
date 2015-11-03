@@ -414,7 +414,11 @@ function processUrl(url, ptype) {
 
 // toggle profile state
 $(document).on('click', '#edit-txn-addr, #edit-addr-btn', function(e) {
-  $('.user-tbl, .addr-tbl').toggle();
+  $('.usr-tbl, .addr-tbl').toggle()
+});
+
+$(document).on('click', '#edit-ship-addr', function(e) {
+  $('.ship-usr-tbl, .ship-addr-tbl').toggle()
 });
 
 // toggle contact form for show pixi
@@ -902,4 +906,21 @@ $(document).on('click', '#signup-email-btn, #signup-close-btn', function(e) {
 
 $(document).on('click', '#biz-signup-email-btn, #biz-signup-close-btn', function(e) {
   $('#biz-signup-btns, #biz-signup-flds').toggle();
+});
+
+// if there is a 'Buy Now' link, update the quantity on change
+$(document).on('change', '#px-qty', function() {
+  if ($('#buy-now-link').length > 0) {
+    var href = $('#buy-now-link').attr('href').split('qty=');
+    $('#buy-now-link').attr('href', href[0] + 'qty=' + $('#px-qty').val());
+  }
+});
+
+// if there is a 'Buy Now' link, update the fulfillment type code on change
+$(document).on('change', '#px-fulfillment-type', function() {
+  if ($('#buy-now-link').length > 0) {
+    var href_start = $('#buy-now-link').attr('href').split('fulfillment_type_code=')[0];
+    var href_end = "&id=" + $('#buy-now-link').attr('href').split('&id=')[1];
+    $('#buy-now-link').attr('href', href_start + 'fulfillment_type_code=' + $('#px-fulfillment-type').val() + href_end);
+  }
 });

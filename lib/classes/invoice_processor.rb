@@ -44,6 +44,14 @@ class InvoiceProcessor
     det.price = det.listing.price || 0 if det.listing
     det.amt_left = det.listing.amt_left rescue 1
     det.subtotal = inv.amount = det.listing.price * det.quantity if det.listing rescue 0
+    inv.ship_amt = det.listing.est_ship_cost if det.listing && !det.listing.est_ship_cost.blank?
+    inv.sales_tax = det.listing.sales_tax if det.listing && !det.listing.sales_tax.blank?
+    load_buy_now_fields(inv, det) if det.listing && det.listing.buy_now_flg
+  end
+
+  def load_buy_now_fields inv, det
+    inv.tax_total = inv.sales_tax ? (inv.amount * inv.sales_tax) / 100.0 : 0.0
+    inv.amount = (det.price * det.quantity + inv.tax_total + inv.ship_amt).round(2)
   end
 
   # submit payment request for review
@@ -134,5 +142,19 @@ class InvoiceProcessor
   def pixan_id
     x = @invoice.listings.detect {|x| !x.pixan_id.blank? } rescue nil
     x.pixan_id if x
+  end
+
+  def process_invoice listing, buyer_id, fulfillment_type_code
+    result = load_new(listing.user, buyer_id, listing.pixi_id)
+    result.save!
+    order = { "id1" => listing.pixi_id, "item1" => listing.title,
+              "title" => listing.title, "seller" => listing.seller_name,
+              "promo_code" => listing.set_promo_code, "cnt" => 1,
+              "qtyCnt" => 1, "quantity1" => result.invoice_details.first.quantity,
+              "price1" => listing.price, "transaction_type" => "invoice",
+              "invoice_id" => result.id, "tax_total" => result.tax_total,
+              "inv_total" => result.amount }
+    order["ship_amt"] = result.ship_amt if %w(SHP SD).include?(fulfillment_type_code)
+    order
   end
 end

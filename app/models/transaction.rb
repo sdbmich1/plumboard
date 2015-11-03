@@ -3,9 +3,10 @@ class Transaction < ActiveRecord::Base
 
   attr_accessor :cvv, :card_number, :exp_month, :exp_year, :mobile_phone, :seller_token, :seller_inv_amt
   attr_accessible :address, :address2, :amt, :city, :code, :country, :credit_card_no, :description, :email, :first_name, 
-  	:home_phone, :last_name, :payment_type, :promo_code, :state, :work_phone, :zip, :user_id, :confirmation_no, :token, :status,
-	:convenience_fee, :processing_fee, :transaction_type, :debit_token, :cvv, :card_number, :exp_month, :exp_year, :mobile_phone, :updated_at,
-	:seller_token, :seller_inv_amt
+    :home_phone, :last_name, :payment_type, :promo_code, :state, :work_phone, :zip, :user_id, :confirmation_no, :token, :status,
+    :convenience_fee, :processing_fee, :transaction_type, :debit_token, :cvv, :card_number, :exp_month, :exp_year, :mobile_phone, :updated_at,
+    :seller_token, :seller_inv_amt, :recipient_first_name, :recipient_last_name, :recipient_email,
+    :ship_address, :ship_address2, :ship_city, :ship_state, :ship_zip, :ship_country, :recipient_phone
 
   belongs_to :user
   has_many :invoices
@@ -13,6 +14,8 @@ class Transaction < ActiveRecord::Base
   has_many :temp_listings
   has_many :transaction_details, dependent: :destroy
   has_many :pixi_payments, dependent: :destroy
+
+  after_commit :sync_ship_address, on: :create, if: :has_ship_address?
 
   name_regex =  /^[A-Z]'?['-., a-zA-Z]+$/i
   text_regex = /^[-\w\,. _\/&@]+$/i
@@ -174,5 +177,17 @@ class Transaction < ActiveRecord::Base
 
   def self.filename
     'Transactions_' + ResetDate::display_date_by_loc(Time.now, Geocoder.coordinates("San Francisco, CA"), false).strftime("%Y_%m_%d")
+  end
+
+  def has_ship_address?
+    !(ship_address && ship_city && ship_state && ship_zip).blank?
+  end
+
+  def sync_ship_address
+    TransactionProcessor.new(self).sync_ship_address
+  end
+
+  def recipient_name
+    [recipient_first_name, recipient_last_name].join(' ')
   end
 end

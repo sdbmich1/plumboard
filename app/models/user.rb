@@ -34,6 +34,7 @@ class User < ActiveRecord::Base
   has_many :pixi_likes, dependent: :destroy
   has_many :pixi_wants, dependent: :destroy
   has_many :pixi_asks, dependent: :destroy
+  has_many :ship_addresses
 
   # define site relationships
   # has_many :site_users, :dependent => :destroy
@@ -474,6 +475,10 @@ class User < ActiveRecord::Base
 
   def self.board_fields
     select('users.id, users.business_name, users.url, users.user_type_code')
+  end
+
+  def has_ship_address?
+    ship_addresses.size > 0
   end
 
   # set sphinx scopes

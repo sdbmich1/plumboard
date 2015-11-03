@@ -170,4 +170,12 @@ module TempListingsHelper
       content_tag(:div, render(partial: 'shared/listing', locals: {listing: model, px_size: 'large', ftrFlg: true}), class: "mauto")
     end
   end
+
+  def bus_pixi?
+    !(@user.is_business? || @ptype == 'BUS')
+  end
+
+  def show_buy_now?
+    !(@user.is_business? && @user.has_bank_account?)
+  end
 end

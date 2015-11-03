@@ -4,6 +4,7 @@
     <%= render partial: 'shared/error_messages', locals: { :target => txn } %>
     <%= render partial: 'shared/purchase_summary', locals: { txn: txn, order: order } %>
     <%= render partial: 'shared/buyer_info', locals: { f: f, txn: txn } %>
+    <%= show_ship_address(f, order, txn) %>
     <%= render partial: 'shared/credit_card_info', locals: { f: f } if txn.amt > 0.0 %>
     <%= f.hidden_field :token, id: 'pay_token', value: get_token('token') %>
     <%= f.hidden_field :payment_type, id: 'pay_type' %>

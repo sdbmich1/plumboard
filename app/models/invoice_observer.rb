@@ -7,7 +7,7 @@ class InvoiceObserver < ActiveRecord::Observer
     PointManager::add_points model.seller, 'inv' if model.seller
 
     # send post
-    send_post model
+    send_post model unless model.listings.pluck(:buy_now_flg).include?(true)
   end
 
   def after_update model

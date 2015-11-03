@@ -291,4 +291,8 @@ class Invoice < ActiveRecord::Base
     str = buyerFlg ? "get_by_buyer" : 'get_by_seller'
     get_by_status(val).send(str, uid).get_by_pixi(pid) rescue nil
   end
+
+  def self.process_invoice listing, buyer_id, fulfillment_type_code
+    InvoiceProcessor.new(nil).process_invoice listing, buyer_id, fulfillment_type_code
+  end
 end

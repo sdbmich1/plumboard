@@ -1,0 +1,26 @@
+<div id='biz_fields' class='row' style='<%= set_style(bus_pixi?) %>'>
+  <div class='span3'>
+    <%= f.label :fulfillment_type_code, 'Delivery Type' %>
+    <%= f.collection_select :fulfillment_type_code, FulfillmentType.unhidden,
+        :code, :description, {selected: 'P'}, {id: 'fulfill_type',
+        class: 'pixi-select', required: true} %>
+  </div>
+  <div class='span2'>
+    <div class='pull-left'><%= f.label :sales_tax, 'Sales Tax (%)' %></div>
+    <div class='right-form ng-top'>
+      <%= render partial: 'shared/tooltip', locals: { msg: SALES_TAX_MSG } %>
+    </div>
+    <%= f.text_field :sales_tax, in: 0..MAX_SALES_TAX, step: 0.01,
+        id: 'inv_tax', class: 'price' %>
+  </div>
+  <div id='ship_cost' class='span2'>
+    <%= f.label :est_ship_cost, 'Est Ship Amt' %>
+    <%= f.text_field :est_ship_cost, in: 0..MAX_SHIP_AMT, step: 0.01,
+        value: num_display(f.object, 'est_ship_cost'), id: 'ship_cost_box',
+        class: 'price' %>
+  </div>
+  <div class='span1'>
+    <%= f.label :buy_now_flg, 'Buy Now' %>
+    <%= f.check_box :buy_now_flg, { checked: !bus_pixi? } %>
+  </div>
+</div>

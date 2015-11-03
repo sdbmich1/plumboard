@@ -7,7 +7,6 @@ function getManageSitesUrl() {
 }
 
 $(document).on("change", "#site_type", function() {
-  console.log("changed site type");
   if ($("#site_type").length > 0) {
     getManageSitesUrl();
   }

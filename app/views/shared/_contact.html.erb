@@ -5,8 +5,9 @@
   <%= f.hidden_field 'recipient_id', value: listing.seller_id %>
   <%= f.hidden_field 'user_id', value: @user.id %>
   <%= render partial: 'shared/conv_posts', locals: {f: f, listing: listing, mtype: mtype, msg: msg} %>
-  <p class='center-wrapper'><%= "#{txt}" %><br /><br />
+  <p class='offset1'><%= "#{txt}" %><br /><br />
     <%= show_quantity_fld f, listing %>
+    <%= show_fulfillment_type f, listing %>
   </p>
   <div class="modal-footer">
     <p>

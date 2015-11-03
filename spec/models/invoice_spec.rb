@@ -586,4 +586,31 @@ describe Invoice do
       end
     end
   end
+
+  describe 'process_invoice' do
+    before :all do
+      @listing.user.active_listings_count = 1
+      @buyer.pixi_wants.create attributes_for :pixi_want, pixi_id: @listing.pixi_id
+    end
+
+    it 'assigns attributes' do
+      order = Invoice.process_invoice(@listing, @buyer.id, 'P')
+      keys = %w(id1 item1 title seller promo_code cnt qtyCnt quantity1 price1
+                transaction_type invoice_id tax_total inv_total)
+      expect(keys).to eq order.keys
+    end
+
+    it 'assigns ship_amt if SHP or SD is passed as fulfillment type code' do
+      order = Invoice.process_invoice(@listing, @buyer.id, 'SHP')
+      expect(order.keys).to include 'ship_amt'
+    end
+
+    it 'does not send email' do
+      expect {
+        Invoice.process_invoice(@listing, @buyer.id, 'P')
+      }.not_to change {
+        Delayed::Job.count
+      }
+    end
+  end
 end

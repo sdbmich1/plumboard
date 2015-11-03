@@ -1,5 +1,6 @@
 code,description,status,hide
 SHP,Ship,active,no
 D,Delivery,active,yes
-M,Meetup,active,no
+A,All,active,no
 P,Pickup,active,no
+SD,Same-Day,active,no

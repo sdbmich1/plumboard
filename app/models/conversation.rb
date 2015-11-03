@@ -1,6 +1,7 @@
 class Conversation < ActiveRecord::Base
-  attr_accessible :pixi_id, :recipient_id, :user_id, :status, :recipient_status, :posts_attributes, :quantity
-  attr_accessor :quantity
+  attr_accessible :pixi_id, :recipient_id, :user_id, :status, :recipient_status,
+    :posts_attributes, :quantity, :fulfillment_type_code
+  attr_accessor :quantity, :fulfillment_type_code
 
   before_create :activate
   after_commit :process_want_requests, :on => :create

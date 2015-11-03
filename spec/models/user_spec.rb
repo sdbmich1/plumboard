@@ -70,6 +70,7 @@ describe User do
     it { should respond_to(:pixi_asks) }
     it { should have_many(:pixi_asks) }
     it { should respond_to(:preferences) }
+    it { should have_many(:ship_addresses) }
     it { should have_many(:preferences).dependent(:destroy) }
     it { should accept_nested_attributes_for(:preferences).allow_destroy(true) }
     it { should belong_to(:user_type).with_foreign_key('user_type_code') }
@@ -1060,5 +1061,17 @@ describe User do
       expect(usr.first.id).to eq @user.id  
     end
     it { expect(User.active.board_fields).not_to include @user.created_at }
+  end
+
+  describe "has_ship_address?" do
+    it "returns true if ShipAddress record exists" do
+      @user.ship_addresses.create
+      expect(@user.has_ship_address?).to be_true
+    end
+
+    it "returns false otherwise" do
+      @user.ship_addresses.delete_all
+      expect(@user.has_ship_address?).to be_false
+    end
   end
 end
