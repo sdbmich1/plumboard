@@ -373,9 +373,9 @@ module ListingsHelper
   def set_featured_banner model, btype
     case btype
       when 'biz'
-	render_featured_banner('Featured Pixis', featured_pixis(model), 'listing', 'shared/listing', 'medium') if has_featured_items?(model)
+        render_featured_banner('Featured Pixis', featured_pixis(model), 'listing', 'shared/listing', 'medium') if has_featured_items?(model)
       when 'loc', 'pub', 'edu'
-	render_featured_banner('Featured Sellers', featured_sellers(@sellers), 'user', 'shared/seller', 'medium') if has_featured_items?(@sellers)
+        render_featured_banner('Featured Sellers', featured_sellers(@sellers), 'user', 'shared/seller', 'medium') if has_featured_items?(@sellers)
     end
   end
 

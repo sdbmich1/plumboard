@@ -65,7 +65,7 @@ module ApplicationHelper
 
   # set home path
   def get_home_path
-    signed_in? ? set_home_path : root_url(:subdomain => false) 
+    signed_in? ? set_home_path : root_path(:subdomain => false) 
   end
 
   # route to my pixis page if possible
