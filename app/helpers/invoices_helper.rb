@@ -177,4 +177,8 @@ module InvoicesHelper
         'ship_city', 'ship_state', 'ship_zip', 'ship_country'] }
     end
   end
+
+  def add_col_header colFlg
+    content_tag(:th, '') if colFlg
+  end
 end

@@ -135,6 +135,7 @@ feature "site" do
       find("input[placeholder='City']").set 'San Francisco'
       find("option[value='CA']").select_option
       find("input[placeholder='Zip']").set '94111'
+      find("option[value='United States']").select_option
       expect{ click_button 'Save Changes'; sleep 15 }.to change{ Site.count }.by(1)
     end
 

@@ -21,7 +21,9 @@ class ListingsController < ApplicationController
 
   def show
     @comments = @listing.comments.paginate(page: params[:page], per_page: PIXI_COMMENTS) rescue nil
-    respond_with(@listing)
+    respond_with(@listing) do |format|
+      format.json { render json: {listing: @listing, comments: @comments} }
+    end
   end
 
   def update

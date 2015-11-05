@@ -2,6 +2,7 @@
     <%= form.text_field :address, placeholder: "Address"  %>
     <%= form.text_field :city, placeholder: "City"  %>
     <%= form.collection_select :state, State.all, :code, :state_name, {:prompt => 'Select State'} %>
-    <%= form.text_field :zip, placeholder: "Zip", size: 5  %>
+    <%= form.text_field :zip, placeholder: "Zip", size: 5, class: 'width120' %>
+    <%= form.country_select :country, ["United States"] %>
 <% end %>
 

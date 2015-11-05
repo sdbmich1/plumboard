@@ -11,9 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-
-ActiveRecord::Schema.define(:version => 20150819195156) do
-ActiveRecord::Schema.define(:version => 20150814235505) do
+ActiveRecord::Schema.define(:version => 20151008184234) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -395,8 +393,8 @@ ActiveRecord::Schema.define(:version => 20150814235505) do
     t.float    "price"
     t.string   "show_alias_flg"
     t.string   "show_phone_flg"
-    t.datetime "created_at",          :null => false
-    t.datetime "updated_at",          :null => false
+    t.datetime "created_at",            :null => false
+    t.datetime "updated_at",            :null => false
     t.string   "alias_name"
     t.datetime "start_date"
     t.integer  "site_id"
@@ -434,6 +432,9 @@ ActiveRecord::Schema.define(:version => 20150814235505) do
     t.boolean  "buy_now_flg"
     t.string   "external_url"
     t.integer  "ref_id"
+    t.float    "est_ship_cost"
+    t.float    "sales_tax"
+    t.string   "fulfillment_type_code"
   end
 
   add_index "listings", ["avail_date"], :name => "index_listings_on_avail_date"
@@ -442,6 +443,7 @@ ActiveRecord::Schema.define(:version => 20150814235505) do
   add_index "listings", ["end_date", "start_date"], :name => "index_listings_on_end_date_and_start_date"
   add_index "listings", ["event_start_date", "event_end_date"], :name => "index_listings_on_event_start_date_and_event_end_date"
   add_index "listings", ["event_type_code"], :name => "index_listings_on_event_type_code"
+  add_index "listings", ["fulfillment_type_code"], :name => "index_listings_on_fulfillment_type_code"
   add_index "listings", ["job_type_code"], :name => "index_listings_on_job_type"
   add_index "listings", ["lng", "lat"], :name => "index_listings_on_lng_and_lat"
   add_index "listings", ["pixan_id"], :name => "index_listings_on_pixan_id"
@@ -496,8 +498,8 @@ ActiveRecord::Schema.define(:version => 20150814235505) do
     t.datetime "event_start_time"
     t.datetime "event_end_time"
     t.integer  "year_built"
-    t.datetime "created_at",       :null => false
-    t.datetime "updated_at",       :null => false
+    t.datetime "created_at",            :null => false
+    t.datetime "updated_at",            :null => false
     t.integer  "pixan_id"
     t.string   "job_type_code"
     t.string   "explanation"
@@ -509,10 +511,14 @@ ActiveRecord::Schema.define(:version => 20150814235505) do
     t.boolean  "buy_now_flg"
     t.string   "external_url"
     t.integer  "ref_id"
+    t.float    "est_ship_cost"
+    t.float    "sales_tax"
+    t.string   "fulfillment_type_code"
   end
 
   add_index "old_listings", ["category_id"], :name => "index_old_listings_on_category_id"
   add_index "old_listings", ["event_type_code"], :name => "index_old_listings_on_event_type_code"
+  add_index "old_listings", ["fulfillment_type_code"], :name => "index_old_listings_on_fulfillment_type_code"
   add_index "old_listings", ["pixan_id"], :name => "index_old_listings_on_pixan_id"
   add_index "old_listings", ["pixi_id"], :name => "index_old_listings_on_pixi_id"
   add_index "old_listings", ["title"], :name => "index_old_listings_on_title"
@@ -642,12 +648,14 @@ ActiveRecord::Schema.define(:version => 20150814235505) do
   create_table "pixi_wants", :force => true do |t|
     t.integer  "user_id"
     t.string   "pixi_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",            :null => false
+    t.datetime "updated_at",            :null => false
     t.integer  "quantity"
     t.string   "status"
+    t.string   "fulfillment_type_code"
   end
 
+  add_index "pixi_wants", ["fulfillment_type_code"], :name => "index_pixi_wants_on_fulfillment_type_code"
   add_index "pixi_wants", ["status"], :name => "index_pixi_wants_on_status"
   add_index "pixi_wants", ["user_id", "pixi_id"], :name => "index_pixi_wants_on_user_id_and_pixi_id"
 
@@ -772,6 +780,17 @@ ActiveRecord::Schema.define(:version => 20150814235505) do
   add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
   add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
 
+  create_table "ship_addresses", :force => true do |t|
+    t.integer  "user_id"
+    t.string   "recipient_first_name"
+    t.string   "recipient_last_name"
+    t.string   "recipient_email"
+    t.datetime "created_at",           :null => false
+    t.datetime "updated_at",           :null => false
+  end
+
+  add_index "ship_addresses", ["user_id"], :name => "index_ship_addresses_on_user_id"
+
   create_table "site_types", :force => true do |t|
     t.string   "code"
     t.string   "status"
@@ -792,10 +811,7 @@ ActiveRecord::Schema.define(:version => 20150814235505) do
     t.datetime "updated_at",     :null => false
     t.integer  "institution_id"
     t.string   "url"
-<<<<<<< HEAD
-=======
     t.string   "description"
->>>>>>> ad6457b61e6931ca3aae97a60b57fd3827ed9282
   end
 
   add_index "sites", ["institution_id"], :name => "index_organizations_on_institution_id"
@@ -864,8 +880,8 @@ ActiveRecord::Schema.define(:version => 20150814235505) do
     t.float    "price"
     t.string   "show_alias_flg"
     t.string   "show_phone_flg"
-    t.datetime "created_at",          :null => false
-    t.datetime "updated_at",          :null => false
+    t.datetime "created_at",            :null => false
+    t.datetime "updated_at",            :null => false
     t.string   "pixi_id"
     t.string   "parent_pixi_id"
     t.string   "edited_by"
@@ -899,9 +915,13 @@ ActiveRecord::Schema.define(:version => 20150814235505) do
     t.boolean  "buy_now_flg"
     t.string   "external_url"
     t.integer  "ref_id"
+    t.float    "est_ship_cost"
+    t.float    "sales_tax"
+    t.string   "fulfillment_type_code"
   end
 
   add_index "temp_listings", ["condition_type_code"], :name => "index_temp_listings_on_condition_type_code"
+  add_index "temp_listings", ["fulfillment_type_code"], :name => "index_temp_listings_on_fulfillment_type_code"
   add_index "temp_listings", ["pixi_id"], :name => "index_temp_listings_on_pixi_id", :unique => true
   add_index "temp_listings", ["status"], :name => "index_temp_listings_on_status"
 
@@ -934,8 +954,8 @@ ActiveRecord::Schema.define(:version => 20150814235505) do
     t.string   "code"
     t.string   "description"
     t.float    "amt"
-    t.datetime "created_at",       :null => false
-    t.datetime "updated_at",       :null => false
+    t.datetime "created_at",           :null => false
+    t.datetime "updated_at",           :null => false
     t.integer  "user_id"
     t.string   "token"
     t.string   "confirmation_no"
@@ -944,6 +964,16 @@ ActiveRecord::Schema.define(:version => 20150814235505) do
     t.float    "processing_fee"
     t.string   "transaction_type"
     t.string   "debit_token"
+    t.string   "recipient_first_name"
+    t.string   "recipient_last_name"
+    t.string   "recipient_email"
+    t.string   "ship_address"
+    t.string   "ship_address2"
+    t.string   "ship_city"
+    t.string   "ship_state"
+    t.string   "ship_zip"
+    t.string   "ship_country"
+    t.string   "recipient_phone"
   end
 
   add_index "transactions", ["code"], :name => "index_transactions_on_code"

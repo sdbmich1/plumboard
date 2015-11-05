@@ -18,7 +18,7 @@ class ListingDataProcessor < ListingQueryProcessor
     elsif @listing.job?
       @listing.title
     else
-      str = (@listing.price.blank? || @listing.price == 0) && !prcFlg ? '' : ' - '
+      str = (@listing.price.blank? || @listing.price == 0) && !prcFlg ? '' : ' - ' rescue ''
       set_title_str str, prcFlg
     end
   end

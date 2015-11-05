@@ -1,4 +1,2 @@
 $("#pxboard").html("<%= escape_javascript( raw render(:partial => "shared/category_form", locals: {category: @category}) ) %>");
-stylize();
-load_image_uploader();
-$("#spinner").hide('fast'); 
+<%= render 'shared/restyle' %>
