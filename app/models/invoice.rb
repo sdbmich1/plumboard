@@ -63,17 +63,17 @@ class Invoice < ActiveRecord::Base
 
   # define eager load assns
   def self.inc_list
-    includes(:buyer => :pictures, :seller => :pictures, :invoice_details => {:listing => :pictures})
+    includes(:listings => :category, :buyer => :pictures, :seller => :pictures, :invoice_details => {:listing => :pictures})  
   end
 
   # get invoices for given user
   def self.get_invoices usr
-    includes(:buyer).where("invoices.seller_id = ? AND invoices.status != ?", usr.id, 'removed')
+    inc_list.where("invoices.seller_id = ? AND invoices.status != ?", usr.id, 'removed')
   end
 
   # get invoices for given buyer
   def self.get_buyer_invoices usr
-    includes(:seller).where("invoices.buyer_id = ? AND invoices.status != ?", usr.id, 'removed')
+    inc_list.where("invoices.buyer_id = ? AND invoices.status != ?", usr.id, 'removed')
   end
 
   # check if invoice owner

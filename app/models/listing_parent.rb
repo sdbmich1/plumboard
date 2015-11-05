@@ -283,6 +283,11 @@ class ListingParent < ActiveRecord::Base
     user.email rescue nil
   end
 
+  # get seller pixi_count for a listing
+  def seller_pixi_count
+    user.pixi_count rescue nil
+  end
+
   # get seller url for a listing
   def seller_url
     ['http:', user.user_url].join('//') rescue nil
@@ -399,7 +404,8 @@ class ListingParent < ActiveRecord::Base
 
   # set json string
   def as_json(options={})
-    super(methods: [:seller_name, :seller_photo, :summary, :short_title, :nice_title,
+    super(except: [:parent_pixi_id, :buyer_id],
+      methods: [:seller_name, :seller_photo, :summary, :short_title, :nice_title, :active?, :condition, :seller_pixi_count,
         :category_name, :site_name, :start_dt, :seller_first_name, :med_title, :amt_left], 
       include: {pictures: { only: [:photo_file_name], methods: [:photo_url] }})
   end

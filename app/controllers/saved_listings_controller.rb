@@ -5,10 +5,7 @@ class SavedListingsController < ApplicationController
   respond_to :html, :js, :mobile, :json
 
   def index
-    @listings = Listing.saved_list(@user, @page).paginate(page: @page, per_page: 15)
-    respond_with(@listings) do |format|
-      format.json { render json: {listings: @listings} }
-    end
+    respond_with(@listings = Listing.saved_list(@user, @page).paginate(page: @page, per_page: 15))
   end
 
   def create

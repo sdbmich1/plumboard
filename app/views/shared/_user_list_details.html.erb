@@ -1,8 +1,7 @@
-  <div id='usr_list'>
-    <div id="top-header" class='sm-top nav pull-right'>
-      <%= link_to 'Export as CSV file', users_path(utype: type, format: "csv"), class: 'btn btn-small' %>
-    </div>
-    <div class='clear-all'></div>
-    <%= render partial: 'shared/list', locals: {hname: 'shared/user_list_top', pname: 'shared/user_row', model: model, item: 'user', tag: 'users'} %>
-  </div> 
-
+<div id='usr_list'>
+  <div id="top-header" class='sm-top nav pull-right'>
+    <%= link_to 'Export as CSV file', users_path(utype: type, format: "csv"), class: 'btn btn-small' %>
+  </div>
+  <div class='clear-all'></div>
+  <%= render partial: 'shared/list', locals: {hname: 'shared/user_list_top', pname: 'shared/user_row', model: model, item: 'user', tag: 'users'} %>
+</div> 

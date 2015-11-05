@@ -131,7 +131,7 @@ class ListingQueryProcessor
     attrs = ["#{table_name}.id", "#{table_name}.pixi_id", "#{table_name}.title",
              "#{table_name}.description", "#{table_name}.seller_id",
              "#{table_name}.site_id", "#{table_name}.category_id",
-             "#{table_name}.lat", "#{table_name}.lng", "#{table_name}.status",
+             "#{table_name}.lat", "#{table_name}.lng", "#{table_name}.status", "#{table_name}.updated_at",
              "#{table_name}.show_alias_flg", "#{table_name}.alias_name", "#{field_name} AS created_date"]
     model = is_temp? ? TempListing : Listing
     model.select(attrs).reorder('created_date DESC')
