@@ -24,10 +24,14 @@ class FulfillmentType < ActiveRecord::Base
   end
 
   def self.buyer_options listing
-    if listing.fulfillment_type_code == 'A'
+    if listing.fulfillment_type_code.nil?
+      where(code: 'P')
+    elsif listing.fulfillment_type_code == 'A'
       unhidden.where("code != 'A'")
+    elsif listing.fulfillment_type_code == 'PS'
+      where(code: ['P', 'SHP'])
     else
-      where(code: listing.fulfillment_type_code)
+      unhidden.where(code: listing.fulfillment_type_code)
     end
   end
 end

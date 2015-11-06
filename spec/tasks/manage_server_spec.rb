@@ -34,4 +34,16 @@ describe 'manage_server' do
   describe 'send_unpaid_old_invoice_notices' do
     it_behaves_like("manage_server", "manage_server:send_unpaid_old_invoice_notices", nil, Invoice, :unpaid_old_invoices)
   end
+
+  describe 'update_buy_now' do
+    [Listing, TempListing].each do |model|
+      it_behaves_like("manage_server", "manage_server:update_buy_now", nil, model, :update_buy_now)
+    end
+  end
+
+  describe 'update_fulfillment_types' do
+    [Listing, TempListing].each do |model|
+      it_behaves_like("manage_server", "manage_server:update_fulfillment_types", nil, model, :update_fulfillment_types)
+    end
+  end
 end

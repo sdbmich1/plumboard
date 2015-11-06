@@ -4,3 +4,4 @@ D,Delivery,active,yes
 A,All,active,no
 P,Pickup,active,no
 SD,Same-Day,active,no
+PS,Pickup & Ship,active,no

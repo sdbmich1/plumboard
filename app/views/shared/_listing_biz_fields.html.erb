@@ -4,6 +4,7 @@
     <%= f.collection_select :fulfillment_type_code, FulfillmentType.unhidden,
         :code, :description, {selected: 'P'}, {id: 'fulfill_type',
         class: 'pixi-select', required: true} %>
+    <%= toggle_hidden_ftc_field(f) %>
   </div>
   <div class='span2'>
     <div class='pull-left'><%= f.label :sales_tax, 'Sales Tax (%)' %></div>
