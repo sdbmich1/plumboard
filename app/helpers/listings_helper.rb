@@ -803,4 +803,8 @@ module ListingsHelper
     end
     content_tag(:div, str.join('').html_safe, class: 'offset1')
   end
+
+  def toggle_hidden_ftc_field f
+    f.hidden_field :fulfillment_type_code, value: 'P' if bus_pixi?
+  end
 end

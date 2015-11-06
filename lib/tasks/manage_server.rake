@@ -164,12 +164,19 @@ namespace :manage_server do
     LoadNewsFeed.import_job_feed
   end
 
+  task :update_buy_now => :environment do
+    Listing.update_buy_now
+    TempListing.update_buy_now
+  end
+
+  task :update_fulfillment_types => :environment do
+    Listing.update_fulfillment_types
+    TempListing.update_fulfillment_types
+  end
+
   task :run_upgrade_tasks => :environment do
     Rake::Task[:update_site_images].execute :file_name => "college_image_data_071915.csv"
-    Rake::Task[:load_currency_types].execute 
-    Rake::Task[:load_stock_images].execute
-    Rake::Task["manage_server:reprocess_user_images"].invoke
-    Rake::Task["manage_server:reprocess_listing_images"].invoke
-    Rake::Task["manage_server:import_job_feed"].invoke
+    Rake::Task[:update_buy_now].execute
+    Rake::Task[:update_fulfillment_types].execute
   end
 end

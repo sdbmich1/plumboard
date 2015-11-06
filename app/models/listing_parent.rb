@@ -476,4 +476,12 @@ class ListingParent < ActiveRecord::Base
   def self.select_fields field_name
     ListingQueryProcessor.new(self).select_fields(field_name)
   end
+
+  def self.update_buy_now
+    ListingProcessor.new(self).update_buy_now
+  end
+
+  def self.update_fulfillment_types
+    ListingProcessor.new(self).update_fulfillment_types
+  end
 end

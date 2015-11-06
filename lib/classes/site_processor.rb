@@ -53,7 +53,10 @@ class SiteProcessor
   end
 
   # assign lat and lng, then save
-  def save_site
+  def save_site params
+    params[:user][:pictures_attributes].each do |_, v|
+      @site.pictures.build(v)
+    end
     c = @site.contacts.first
     loc = [c.address, c.city, c.state].join(', ') << ' ' << c.zip
     c.lat, c.lng = LocationManager.get_lat_lng_by_loc(loc)

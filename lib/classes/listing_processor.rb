@@ -186,5 +186,15 @@ class ListingProcessor < ListingDataProcessor
       listing.seller_name
     end
   end
-end
 
+  def update_buy_now
+    business_ids = User.where(user_type_code: 'BUS').pluck(:id)
+    @listing.where(seller_id: business_ids).update_all(buy_now_flg: true)
+  end
+
+  def update_fulfillment_types
+    attrs = { seller_id: User.where(user_type_code: 'BUS').pluck(:id), fulfillment_type_code: nil }
+    @listing.where(attrs).update_all(fulfillment_type_code: 'A')
+    @listing.where(fulfillment_type_code: nil).update_all(fulfillment_type_code: 'P')
+  end
+end

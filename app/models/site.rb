@@ -141,8 +141,8 @@ class Site < ActiveRecord::Base
   end
 
   # assign URL and save
-  def save_site
-    SiteProcessor.new(self).save_site
+  def save_site params
+    SiteProcessor.new(self).save_site(params)
   end
 
   # add an optional second picture

@@ -24,7 +24,7 @@ class SitesController < ApplicationController
   def create
     @site = Site.new(params[:site])
     respond_with(@site) do |format|
-      if @site.save_site
+      if @site.save_site(params)
         format.json { render json: { site: @site } }
       else
         format.json { render json: { errors: @site.errors.full_messages }, status: 422 }

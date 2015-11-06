@@ -1680,4 +1680,50 @@ describe Listing do
                                    listing.display_date(listing.created_date)]
     end
   end
+
+  describe 'update_buy_now' do
+    it 'sets buy_now_flg for business sellers' do
+      seller = create :business_user
+      { listing: Listing, temp_listing: TempListing }.each do |record, model|
+        listing = create record, seller_id: seller.id
+        expect(listing.buy_now_flg).to be_nil
+        model.update_buy_now
+        listing.reload
+        expect(listing.buy_now_flg).to be_true
+      end
+    end
+
+    it 'does not set buy_now_flg for non-business sellers' do
+      temp_listing = create(:temp_listing, seller_id: @user.id)
+      { @listing => Listing, temp_listing => TempListing }.each do |object, model|
+        object.save
+        model.update_buy_now
+        object.reload
+        expect(object.buy_now_flg).to be_nil
+      end
+    end
+  end
+
+  describe 'update_fulfillment_types' do
+    it 'sets fulfillment_type_code to A for business sellers' do
+      seller = create :business_user
+      { listing: Listing, temp_listing: TempListing }.each do |record, model|
+        listing = create record, seller_id: seller.id
+        expect(listing.fulfillment_type_code).to be_nil
+        model.update_fulfillment_types
+        listing.reload
+        expect(listing.fulfillment_type_code).to eq 'A'
+      end
+    end
+
+    it 'sets fulfillment_type_code to P for non-business sellers' do
+      temp_listing = create(:temp_listing, seller_id: @user.id)
+      { @listing => Listing, temp_listing => TempListing }.each do |object, model|
+        object.save
+        model.update_fulfillment_types
+        object.reload
+        expect(object.fulfillment_type_code).to eq 'P'
+      end
+    end
+  end
 end
