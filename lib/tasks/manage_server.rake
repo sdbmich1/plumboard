@@ -176,7 +176,7 @@ namespace :manage_server do
 
   task :run_upgrade_tasks => :environment do
     Rake::Task[:update_site_images].execute :file_name => "college_image_data_071915.csv"
-    Rake::Task[:update_buy_now].execute
-    Rake::Task[:update_fulfillment_types].execute
+    Rake::Task['manage_server:update_buy_now'].invoke
+    Rake::Task['manage_server:update_fulfillment_types'].invoke
   end
 end

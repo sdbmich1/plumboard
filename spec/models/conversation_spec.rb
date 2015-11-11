@@ -430,4 +430,22 @@ describe Conversation do
     end
   end
 
+  describe "sender name", process: true do 
+    it { @conversation.sender_name.should == (@user.first_name + " " + @user.last_name) }
+
+    it "does not return sender name" do 
+      @conversation.user_id = 100 
+      @conversation.sender_name.should be_nil 
+    end
+  end
+
+  describe "recipient name", process: true do 
+    it { @conversation.recipient_name.should == "Tom Davis" } 
+
+    it "does not return recipient name" do 
+      @conversation.recipient_id = 100 
+      @conversation.recipient_name.should be_nil 
+    end
+  end
+
 end

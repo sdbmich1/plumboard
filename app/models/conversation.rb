@@ -132,4 +132,20 @@ class Conversation < ActiveRecord::Base
   def process_want_requests
     ConversationProcessor.new(self).add_want_request
   end
+
+  # get sender name
+  def sender_name
+    user.name if user
+  end
+
+  # get recipient name
+  def recipient_name
+    recipient.name if recipient
+  end
+
+  # set json string
+  def as_json(options={})
+    super(except: [:updated_at], methods: [:pixi_title, :recipient_name, :sender_name], 
+      include: {posts: {}, recipient: { only: [:first_name], methods: [:photo] }, user: { only: [:first_name], methods: [:photo] }})
+  end
 end

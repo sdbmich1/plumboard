@@ -137,12 +137,12 @@ class ListingParent < ActiveRecord::Base
 
   # eager load assns
   def self.include_list
-    includes(:pictures, :category, :job_type, :user, :site => [:contacts])
+    includes(:pictures, :category, :job_type, :condition_type, :user => [:pictures], :site => [:contacts])
   end
 
   # leaves out job_type to avoid unused eager loading
   def self.include_list_without_job_type
-    includes(:pictures, :site, :category, :user)
+    includes(:pictures, :site, :category, :condition_type, :user)
   end
 
   # find listings by status
@@ -407,7 +407,7 @@ class ListingParent < ActiveRecord::Base
   # set json string
   def as_json(options={})
     super(except: [:parent_pixi_id, :buyer_id],
-      methods: [:seller_name, :seller_photo, :summary, :short_title, :nice_title, :active?, :condition, :seller_pixi_count,
+      methods: [:seller_name, :seller_photo, :summary, :short_title, :nice_title, :condition, :seller_pixi_count, :event_type_descr,
         :category_name, :site_name, :start_dt, :seller_first_name, :med_title, :amt_left], 
       include: {pictures: { only: [:photo_file_name], methods: [:photo_url] }})
   end

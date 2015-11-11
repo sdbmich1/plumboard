@@ -1,7 +1,7 @@
 code,description,status,hide
 SHP,Ship,active,no
-D,Delivery,active,yes
+D,Delivery,inactive,yes
 A,All,active,no
 P,Pickup,active,no
-SD,Same-Day,active,no
-PS,Pickup & Ship,active,no
+SD,Same-Day,inactive,no
+PS,Pickup & Ship,active,yes

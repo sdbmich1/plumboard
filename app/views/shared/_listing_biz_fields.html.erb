@@ -1,7 +1,7 @@
 <div id='biz_fields' class='row' style='<%= set_style(bus_pixi?) %>'>
   <div class='span3'>
     <%= f.label :fulfillment_type_code, 'Delivery Type' %>
-    <%= f.collection_select :fulfillment_type_code, FulfillmentType.unhidden,
+    <%= f.collection_select :fulfillment_type_code, FulfillmentType.active,
         :code, :description, {selected: 'P'}, {id: 'fulfill_type',
         class: 'pixi-select', required: true} %>
     <%= toggle_hidden_ftc_field(f) %>

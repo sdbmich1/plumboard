@@ -762,7 +762,7 @@ module ListingsHelper
     if listing.buy_now_flg
       link_to 'Buy Now', buy_now_pixi_wants_path(id: listing.pixi_id, qty: 1,
         fulfillment_type_code: FulfillmentType.buyer_options(listing).first.code),
-        method: :post, class: cls + ' submit-btn', id: 'buy-now-link'
+        method: :post, class: cls + ' submit-btn', id: 'buy-now-link', data: {disable_with: "Processing..."}
     elsif listing.external_url.blank?
       f.submit "Send", class: cls, data: {disable_with: "Sending..."}
     else

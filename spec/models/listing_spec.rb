@@ -1726,4 +1726,19 @@ describe Listing do
       end
     end
   end
+
+  describe 'condition' do
+    before do
+      @ctype = FactoryGirl.create(:condition_type)
+      @listing1 = FactoryGirl.create(:listing, seller_id: @user.id, condition_type_code: @ctype.code)
+    end
+
+    it "shows condition description" do
+      expect(@listing1.condition).to eq @ctype.description.titleize
+    end
+
+    it "does not show condition description" do
+      expect(@listing.condition).to be_nil
+    end
+  end
 end
