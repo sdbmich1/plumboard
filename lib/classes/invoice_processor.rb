@@ -43,9 +43,9 @@ class InvoiceProcessor
     det.quantity = det.listing.active_pixi_wants.where(user_id: buyer_id).first.quantity rescue 1
     det.price = det.listing.price || 0 if det.listing
     det.amt_left = det.listing.amt_left rescue 1
-    det.subtotal = inv.amount = det.listing.price * det.quantity if det.listing rescue 0
-    inv.ship_amt = det.listing.est_ship_cost if det.listing && !det.listing.est_ship_cost.blank?
-    inv.sales_tax = det.listing.sales_tax if det.listing && !det.listing.sales_tax.blank?
+    det.subtotal = inv.amount = (det.listing.price * det.quantity).round(2) if det.listing rescue 0
+    inv.ship_amt = det.listing && !det.listing.est_ship_cost.blank? ? det.listing.est_ship_cost : 0.0
+    inv.sales_tax = det.listing && !det.listing.sales_tax.blank? ? det.listing.sales_tax : 0.0
     load_buy_now_fields(inv, det) if det.listing && det.listing.buy_now_flg
   end
 
