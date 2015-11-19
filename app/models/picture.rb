@@ -66,7 +66,7 @@ class Picture < ActiveRecord::Base
 
   # get url for json
   def photo_url
-    photo.url rescue nil
+    photo.url(:large) rescue nil
   end 
 
   def as_json(options={})

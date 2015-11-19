@@ -24,7 +24,7 @@ describe "Pages" do
       page.should have_link 'Forgot password?'
       page.should have_link 'We Post', href: check_pixi_post_zips_path
       page.should have_link 'You Post', href: new_temp_listing_path
-      page.should have_link 'View More >', href: local_listings_path(loc: @loc)
+      page.should have_link 'View More >' #, href: local_listings_path(loc: @loc)
       page.should have_link 'Learn More', href: '/howitworks#pxpay'
       page.should have_link 'About', href: about_path
       page.should have_link 'Privacy', href: privacy_path

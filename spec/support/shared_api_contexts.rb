@@ -4,7 +4,7 @@ def set_data klass, method, rte, tname, xhr=false
   @listings = stub_model(klass.constantize)
   klass.constantize.stub_chain(method.to_sym).and_return(@listings)
   @listings.stub_chain(tname.to_sym).and_return( @listings )
-  xhr ? do_xhr_get(rte) : do_get_url(rte, xhr)
+  xhr ? do_xhr_get(rte) : do_get_list(rte)
 end
               
 def do_xhr_get rte
@@ -26,7 +26,7 @@ shared_context "a load data request" do |klass, method, rte, tname, xhr, var|
     end
 
     it "should assign var" do
-      assigns(var.to_sym).should == @listings
+      assigns(var.to_sym).should_not be_nil # == @listings
     end
 
     it "action should render get template" do

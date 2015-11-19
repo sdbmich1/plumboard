@@ -151,9 +151,17 @@ class Site < ActiveRecord::Base
     self
   end
 
+  # display first image
+  def photo_url
+    pictures[0].photo.url(:cover) rescue nil
+  end
+
   # set json string
   def as_json(options={})
-    super(only: [:id, :name])
+    super(only: [:id, :name],
+      methods: [:photo_url],
+      include: {pictures: { only: [:photo_file_name], methods: [:photo] }, 
+        contacts: { except: [:contactable_id, :contactable_type, :created_at, :updated_at, :website, :home_phone, :mobile_phone] }})
   end
 
   sphinx_scope(:by_name) { |name|

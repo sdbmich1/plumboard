@@ -145,7 +145,7 @@ class Conversation < ActiveRecord::Base
 
   # set json string
   def as_json(options={})
-    super(except: [:updated_at], methods: [:pixi_title, :recipient_name, :sender_name], 
-      include: {posts: {}, recipient: { only: [:first_name], methods: [:photo] }, user: { only: [:first_name], methods: [:photo] }})
+    super(except: [:updated_at], methods: [:pixi_title, :recipient_name, :sender_name, :create_dt], 
+      include: {recipient: { only: [:first_name], methods: [:photo] }, user: { only: [:first_name], methods: [:photo] }})
   end
 end

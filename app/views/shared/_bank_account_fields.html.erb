@@ -1,4 +1,4 @@
-C<div class="control-group">
+<div class="control-group">
   <label class="control-label">Routing #</label>
   <div class='controls'>
     <%= f.text_field :routing_number, :size => 16, placeholder: 'Routing Number', id: 'routing_number', required: true %></div>
@@ -13,15 +13,10 @@ C<div class="control-group">
   <div class='controls'><%= f.select :acct_type, options_for_select(['checking', 'savings'], selected: account.acct_type ), {},
       		{placeholder: 'Account Type'} %></div>
   <div class='med-top clear-all'></div>
-  
-
   <label class="control-label">Country</label>
   <div class='controls'><%= f.select :country_code, options_for_select(['us'], selected: account.country_code ), {},
       		{placeholder: 'Country', class: 'sm-top'} %></div>
   <div class='med-top clear-all'></div>
-
   <label class="control-label">Currency</label>
   <div class='controls'><%= render partial: 'shared/currency_type', locals: {acc: account} %></div>
-
-
 </div>

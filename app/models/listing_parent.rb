@@ -316,7 +316,7 @@ class ListingParent < ActiveRecord::Base
 
   # add hyperlinks to description
   def summary
-    ListingDataProcessor.new(self).set_auto_link description
+    ListingDataProcessor.new(self).set_auto_link self.description
   end
 
   # titleize title
@@ -366,7 +366,7 @@ class ListingParent < ActiveRecord::Base
 
   # seller pic
   def seller_photo
-    user.photo rescue nil
+    user.photo 0, 'small' rescue nil
   end
 
   # seller pic
@@ -376,7 +376,7 @@ class ListingParent < ActiveRecord::Base
 
   # display first image
   def photo_url
-    pictures[0].photo.url rescue nil
+    pictures[0].photo.url(:large) rescue nil
   end
 
   # format start date

@@ -5,6 +5,7 @@ describe PagesController do
 
   before(:each) do
     @listing = stub_model(Listing, :id=>1, pixi_id: '1', site_id: 1, seller_id: 1, title: "Guitar for Sale", description: "Guitar for Sale")
+    @site = stub_model(Site, :id=>1, status: "active", name: "SF Bay Area", site_type_code: "region")
   end
 
   describe 'GET home' do
@@ -107,8 +108,8 @@ describe PagesController do
 
   describe 'xhr GET location_name' do
     before :each do
-      @region, @loc_name = 1234, 'SF Bay Area'
-      LocationManager.stub!(:get_region).and_return( [@region, @loc_name] )
+      LocationManager.stub!(:get_region).and_return(@site)
+      @region, @loc_name = [@site.id, @site.name]
       do_get
     end
 

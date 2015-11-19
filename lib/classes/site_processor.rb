@@ -44,7 +44,6 @@ class SiteProcessor
       nearest, nearest_distance = region, distance if distance && distance < nearest_distance
     end
     nearest ||= Site.find_by_name(PIXI_LOCALE)
-    [nearest.id, nearest.name]
   end
 
   # select active sites w/ pixis

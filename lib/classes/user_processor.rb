@@ -169,7 +169,7 @@ class UserProcessor
   end
 
   def get_ids listings
-    listings.map(&:seller_id).uniq
+    listings.map(&:seller_id).uniq rescue nil
   end
 
   # get seller list based on current pixis

@@ -370,7 +370,7 @@ describe ConversationsController do
       it "renders nothing" do 
         Conversation.stub(:find) { mock_conversation(:update_attributes => false) }
         do_remove
-        response.body.should == " "
+        response.body.should == ""
       end
     end
   end

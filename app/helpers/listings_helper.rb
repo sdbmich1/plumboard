@@ -212,7 +212,8 @@ module ListingsHelper
   # get region for show pixi display menu
   def get_current_region listing
     if listing
-      loc, loc_name = LocationManager::get_region listing.latlng rescue [@loc, @loc_name]
+      site = LocationManager::get_region listing.latlng 
+      loc, loc_name = !site.blank? ? [site.id, site.name] : [@loc, @loc_name]
       link_to loc_name, category_listings_path(cid: listing.category_id, loc: loc)
     end
   end

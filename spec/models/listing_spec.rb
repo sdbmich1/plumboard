@@ -892,15 +892,25 @@ describe Listing do
       @usr = create :pixi_user
       @buyer = create :pixi_user
       @listing.save!
-      @pixi_want = @user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id, status: 'sold'
+      @pixi_want = @usr.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id, status: 'sold'
       @pixi_want = @buyer.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
     end
 
+    it { Listing.wanted_list(@user, nil, nil, false).should_not include @listing } 
     it { Listing.wanted_list(@usr, nil, nil, false).should_not include @listing } 
     it { Listing.wanted_list(@buyer, nil, nil, false).should_not be_empty }
     it { expect(@listing.wanted_count).to eq(1) }
     it { expect(@listing.is_wanted?).to eq(true) }
     it { expect(Listing.wanted_list(@buyer, nil, nil, false).first.created_date.to_s).to eq(@pixi_want.updated_at.to_s) }
+
+    context 'seller wanted' do
+      before :each do
+        @seller = create :pixi_user
+	@listing2 = create(:listing, seller_id: @seller.id, title: 'Hair brush')
+	@want = @user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing2.pixi_id
+      end
+      it { Listing.wanted_list(@user, nil, nil, false).should_not be_empty } 
+    end
 
     it "only returns necessary attributes" do
       expect(Listing.wanted_list(@buyer, nil, nil, false).first.title).to eq(@listing.title)
@@ -913,7 +923,7 @@ describe Listing do
       expect(listing.is_wanted?).to eq(false)
     end
 
-    it { expect(Listing.wanted_users(@listing.pixi_id).first.name).to eq(@buyer.name) }
+    it { expect(Listing.wanted_users(@listing.pixi_id).last.name).to eq(@buyer.name) }
     it { expect(Listing.wanted_users(@listing.pixi_id)).not_to include(@usr) }
     it { expect(@listing.user_wanted?(@buyer)).not_to be_nil }
     it { expect(@listing.user_wanted?(@usr)).not_to eq(true) }
@@ -1684,12 +1694,24 @@ describe Listing do
   describe 'update_buy_now' do
     it 'sets buy_now_flg for business sellers' do
       seller = create :business_user
+      seller.bank_accounts.create FactoryGirl.attributes_for :bank_account
       { listing: Listing, temp_listing: TempListing }.each do |record, model|
         listing = create record, seller_id: seller.id
         expect(listing.buy_now_flg).to be_nil
         model.update_buy_now
         listing.reload
         expect(listing.buy_now_flg).to be_true
+      end
+    end
+
+    it 'does not set buy_now_flg for business sellers w/o bank acct' do
+      seller = create :business_user
+      { listing: Listing, temp_listing: TempListing }.each do |record, model|
+        listing = create record, seller_id: seller.id
+        expect(listing.buy_now_flg).to be_nil
+        model.update_buy_now
+        listing.reload
+        expect(listing.buy_now_flg).not_to be_true
       end
     end
 
@@ -1707,12 +1729,24 @@ describe Listing do
   describe 'update_fulfillment_types' do
     it 'sets fulfillment_type_code to A for business sellers' do
       seller = create :business_user
+      seller.bank_accounts.create FactoryGirl.attributes_for :bank_account
       { listing: Listing, temp_listing: TempListing }.each do |record, model|
         listing = create record, seller_id: seller.id
         expect(listing.fulfillment_type_code).to be_nil
         model.update_fulfillment_types
         listing.reload
         expect(listing.fulfillment_type_code).to eq 'A'
+      end
+    end
+
+    it 'does not set fulfillment_type_code to A for business sellers' do
+      seller = create :business_user
+      { listing: Listing, temp_listing: TempListing }.each do |record, model|
+        listing = create record, seller_id: seller.id
+        expect(listing.fulfillment_type_code).to be_nil
+        model.update_fulfillment_types
+        listing.reload
+        expect(listing.fulfillment_type_code).not_to eq 'A'
       end
     end
 
