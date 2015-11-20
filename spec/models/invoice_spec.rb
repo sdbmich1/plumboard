@@ -390,6 +390,7 @@ describe Invoice do
       expect(inv.buyer_id).to eq @buyer.id
       expect(inv.amount).to eq @listing.price unless flg
       expect(inv.invoice_details.first.quantity).to eq @pixi_want.quantity if flg
+      expect(inv.invoice_details.first.fulfillment_type_code).to eq @listing.fulfillment_type_code
       expect(inv.ship_amt).not_to be_nil
       expect(/^\d+??(?:\.\d{0,2})?$/.match(inv.invoice_details.first.subtotal.to_s)).not_to be_nil
     end

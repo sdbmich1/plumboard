@@ -44,6 +44,7 @@ class InvoiceProcessor
     det.price = det.listing.price || 0 if det.listing
     det.amt_left = det.listing.amt_left rescue 1
     det.subtotal = inv.amount = (det.listing.price * det.quantity).round(2) if det.listing rescue 0
+    det.fulfillment_type_code = det.listing.fulfillment_type_code if det.listing
     inv.ship_amt = det.listing && !det.listing.est_ship_cost.blank? ? det.listing.est_ship_cost : 0.0
     inv.sales_tax = det.listing && !det.listing.sales_tax.blank? ? det.listing.sales_tax : 0.0
     load_buy_now_fields(inv, det) if det.listing && det.listing.buy_now_flg

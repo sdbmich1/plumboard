@@ -7,6 +7,7 @@ feature "TempListings" do
   let(:seller) { create(:contact_user) }
   let(:admin) { create :admin, user_type_code: 'AD', confirmed_at: Time.now }
   let(:pixter) { create :pixter, user_type_code: 'PT', confirmed_at: Time.now }
+  let(:business_user) { create :business_user }
   let(:submit) { "Next" }
 
   before(:each) do
@@ -726,7 +727,7 @@ feature "TempListings" do
     end	      
   end
 
-  describe "Create Business Posted Pixis" do
+  describe "Create Pixter Posted Pixis" do
     let(:temp_listing) { build(:temp_listing) }
 
     before(:each) do
@@ -748,12 +749,24 @@ feature "TempListings" do
     end	      
   end
 
+  describe "Create Business Posted Pixis" do
+    it "shows business fields" do
+      init_setup business_user
+      business_user.bank_accounts.create(FactoryGirl.attributes_for :bank_account)
+      visit new_temp_listing_path(ptype: 'bus')
+      page.should have_content('Delivery Type')
+      page.should have_content('Sales Tax')
+      page.should have_content('Est Ship Amt')
+      page.should have_content('Buy Now')
+    end
+  end
+
   describe "Edit Business Posted Pixis" do
     before :each do
       attr = {"seller_id"=>"#{user.id}", "title"=>"Dilworth Leather Loveseat", "category_id"=>"31", "condition_type_code"=>"ULN", 
       "job_type_code"=>"", "event_type_code"=>"", "site_id"=>"9904", "price"=>"300", "quantity"=>"1", "year_built"=>"", "compensation"=>"", 
       "event_start_date"=>"", "event_end_date"=>"", "car_id"=>"", "car_color"=>"","mileage"=>"", "item_color"=>"", "product_size"=>"", "item_id"=>"", 
-      "description"=>"great condition", "start_date"=>"2015-04-13 19:58:11 -0700", "status"=>"new", "post_ip"=>"127.0.0.1", 
+      "description"=>"great condition", "start_date"=>"2015-04-13 19:58:11 -0700", "status"=>"new", "post_ip"=>"127.0.0.1",
       "pictures_attributes"=>{"0"=>{"direct_upload_url"=>"Dilworth-loveseat-Leather-22.jpg","photo_file_name"=>"Dilworth-loveseat-Leather-22.jpg", 
       "photo_file_path"=>"/uploads/1428981009986-dla2y3o9mjejnhfr-3c45659dc6c50163f3b8048e5b81e979/Dilworth-loveseat-Leather-22.jpg", 
       "photo_file_size"=>"1061500", "photo_content_type"=>"image/jpeg"}} }
@@ -780,6 +793,27 @@ feature "TempListings" do
       }.to change(@temp.pictures,:count).by(1)
       page.should have_content 'Review Your Pixi'
       expect(@temp.reload.seller_id).to eq user.id
+    end
+
+    it "assigns default values from preferences" do
+      business_user = create :business_user
+      business_user.bank_accounts.create(FactoryGirl.attributes_for :bank_account)
+      create :fulfillment_type, code: 'SHP'
+      pref = business_user.preferences.first
+      pref.ship_amt = 5.0
+      pref.sales_tax = 10.0
+      pref.fulfillment_type_code = 'SHP'
+      pref.save
+      init_setup business_user
+      visit edit_temp_listing_path(@temp, ptype: 'bus')
+      page.should have_content('Delivery Type')
+      page.should have_xpath("//option[@value='#{pref.fulfillment_type_code}' and @selected='selected']")
+      page.should have_content('Est Ship Amt')
+      page.should have_xpath("//input[@value='#{pref.ship_amt.to_s << '0'}']")
+      page.should have_content('Sales Tax')
+      page.should have_xpath("//input[@value='#{pref.sales_tax}']")
+      page.should have_content("Buy Now")
+      page.should have_xpath("//input[@id='temp_listing_buy_now_flg' and @checked='checked']")
     end
   end
 

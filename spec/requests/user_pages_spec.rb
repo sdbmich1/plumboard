@@ -380,4 +380,30 @@ describe "Users", :type => :feature do
     end
     it_should_behave_like 'user_show_pages', @mbr, @descr, @url, true, false
   end
+
+  describe 'Edit Delivery Preferences' do
+    before do
+      create :fulfillment_type, code: 'A', description: 'All', status: 'active', hide: 'no'
+      create :fulfillment_type, code: 'SHP', description: 'Ship', status: 'active', hide: 'no'
+      @user = create :business_user
+      init_setup @user
+      visit user_path(@user) 
+      click_link 'Delivery'
+    end
+
+    it "assigns values", js: true do
+      page.should have_content 'Delivery Type'
+      page.should have_content 'Sales Tax (%)'
+      page.should have_content 'Ship Amt'
+      select 'All', from: 'user_preferences_attributes_0_fulfillment_type_code'
+      fill_in 'inv_tax', with: 9.0
+      fill_in 'ship_cost_box', with: 5.0
+      click_on 'Save'
+      sleep 5
+      @user.preferences.first.reload
+      expect(@user.preferences.first.fulfillment_type_code).to eq 'A'
+      expect(@user.preferences.first.sales_tax).to eq 9.0
+      expect(@user.preferences.first.ship_amt).to eq 5.0
+    end
+  end
 end

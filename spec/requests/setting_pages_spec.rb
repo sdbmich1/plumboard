@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "Settings", :type => :feature do
   subject { page }
-  let(:user) { FactoryGirl.create(:pixi_user) }
+  let(:user) { FactoryGirl.create(:business_user) }
 
   describe "GET /settings" do
     before :each do
@@ -37,9 +37,16 @@ describe "Settings", :type => :feature do
       page.should have_content("Home Phone")
     end
 
-    it 'should show contact page', js: true do
+    it 'should show password page', js: true do
       click_link 'Password'
       page.should have_content("Password")
+    end
+
+    it 'should show delivery page', js: true do
+      click_link 'Delivery'
+      page.should have_content("Delivery Type")
+      page.should have_content("Sales Tax")
+      page.should have_content("Ship Amt")
     end
   end
 end

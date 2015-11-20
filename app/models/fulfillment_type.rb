@@ -3,6 +3,8 @@ class FulfillmentType < ActiveRecord::Base
 
   has_many :listings, primary_key: 'code', foreign_key: 'fulfillment_type_code'
   has_many :temp_listings, primary_key: 'code', foreign_key: 'fulfillment_type_code'
+  has_many :invoice_details, primary_key: 'code', foreign_key: 'fulfillment_type_code'
+  has_many :preferences, primary_key: 'code', foreign_key: 'fulfillment_type_code'
   
   validates_presence_of :description, :code, :status, :hide
 

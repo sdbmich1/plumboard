@@ -46,4 +46,36 @@ describe 'manage_server' do
       it_behaves_like("manage_server", "manage_server:update_fulfillment_types", nil, model, :update_fulfillment_types)
     end
   end
+
+  describe 'set_delivery_preferences' do
+    it 'assigns default values for business users' do
+      business_user = create :business_user
+      Rake::Task['manage_server:set_delivery_preferences'].execute
+      business_user.preferences.first.reload
+      expect(business_user.preferences.first.ship_amt).to eq 10.0
+      expect(business_user.preferences.first.sales_tax).to eq 8.25
+      expect(business_user.preferences.first.fulfillment_type_code).to eq 'P'
+    end
+
+    it 'does not override preferences that are already assigned' do
+      business_user = create :business_user
+      pref = business_user.preferences.first
+      pref.ship_amt = 0.0
+      pref.sales_tax = 9.0
+      pref.fulfillment_type_code = 'SHP'
+      pref.save
+      expect {
+        Rake::Task['manage_server:set_delivery_preferences'].execute
+      }.not_to change { business_user.preferences }
+    end
+
+    it 'does not assign values for non-business users' do
+      user = create :pixi_user
+      attrs = { ship_amt: nil, sales_tax: nil, fulfillment_type_code: nil }
+      user.preferences.create(attrs)
+      expect {
+        Rake::Task['manage_server:set_delivery_preferences'].execute
+      }.not_to change { user.preferences }
+    end
+  end
 end

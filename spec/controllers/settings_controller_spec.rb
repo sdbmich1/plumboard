@@ -99,4 +99,25 @@ describe SettingsController do
       controller.stub!(:render)
     end
   end
+
+
+  describe "GET 'delivery'" do
+
+    before :each do
+      controller.stub!(:current_user).and_return(@user)
+      do_get
+    end
+
+    def do_get
+      xhr :get, :delivery, id: '1'
+    end
+
+    it "should assign @user" do
+      assigns(:user).should_not be_nil 
+    end
+
+    it "should load nothing" do
+      controller.stub!(:render)
+    end
+  end
 end

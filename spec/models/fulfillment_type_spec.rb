@@ -17,6 +17,8 @@ describe FulfillmentType do
   it { should validate_presence_of(:status) }
   it { should have_many(:listings).with_foreign_key('fulfillment_type_code') }
   it { should have_many(:temp_listings).with_foreign_key('fulfillment_type_code') }
+  it { should have_many(:invoice_details).with_foreign_key('fulfillment_type_code') }
+  it { should have_many(:preferences).with_foreign_key('fulfillment_type_code') }
 
   describe "active fulfillment_types" do
     before { create(:fulfillment_type, status: 'active') }

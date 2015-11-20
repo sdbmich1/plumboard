@@ -174,9 +174,19 @@ namespace :manage_server do
     TempListing.update_fulfillment_types
   end
 
+  task :set_delivery_preferences => :environment do
+    business_user_ids = User.where(user_type_code: 'BUS').pluck(:id)
+    preferences = Preference.where(user_id: business_user_ids)
+    defaults = { ship_amt: 10.0, sales_tax: 8.25, fulfillment_type_code: "'P'" }
+    defaults.each do |field, value|
+      preferences.where(field => nil).update_all("#{field} = #{value}")
+    end
+  end
+
   task :run_upgrade_tasks => :environment do
     Rake::Task[:update_site_images].execute :file_name => "college_image_data_071915.csv"
     Rake::Task['manage_server:update_buy_now'].invoke
     Rake::Task['manage_server:update_fulfillment_types'].invoke
+    Rake::Task['manage_server:set_delivery_preferences'].invoke
   end
 end

@@ -3,4 +3,5 @@
   <li><%= link_to "Profile", settings_path, class: 'submenu', remote: true, id: 'prof-setting' %></li>
   <li><%= link_to "Contact", settings_contact_path, class: 'submenu', remote: true, id: 'addr-setting' %></li>
   <%= show_pwd_link %>
+  <%= show_delivery(@usr) %>
 </ul>
