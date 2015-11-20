@@ -1,9 +1,10 @@
 class InvoiceDetail < ActiveRecord::Base
   attr_accessor :amt_left
-  attr_accessible :invoice_id, :pixi_id, :price, :quantity, :subtotal, :amt_left
+  attr_accessible :invoice_id, :pixi_id, :price, :quantity, :subtotal, :amt_left, :fulfillment_type_code
 
   belongs_to :invoice, counter_cache: true
   belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id"
+  belongs_to :fulfillment_type, primary_key: 'code', foreign_key: 'fulfillment_type_code'
 
   validates_presence_of :pixi_id
   validates :price, presence: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 

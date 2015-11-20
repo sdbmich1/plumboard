@@ -151,6 +151,41 @@ feature "Listings" do
       end
     end
 
+
+    context "Clicks Buy Now", js: true do
+      before :all do
+        load File.expand_path("../../../lib/tasks/import_csv.rake", __FILE__)
+        Rake::Task.define_task(:environment)
+        Rake::Task["load_fulfillment_types"].execute
+        site = create :site
+        business_user = create :business_user
+        @business_listing = create(:listing, title: "Guitar", description: "Test",
+          seller_id: business_user.id, quantity: 2, site_id: site.id, fulfillment_type_code: "SHP",
+          sales_tax: 8.25, est_ship_cost: 10.0, buy_now_flg: true)
+      end
+
+      def buy_now_test(model)
+        init_setup user
+        visit listing_path(@business_listing)
+        expect {
+            click_link 'Want'; sleep 2
+            click_link 'Buy Now'
+            sleep 5
+            page.should_not have_link 'Want'
+            page.should have_content 'Buyer Information'
+            page.should have_content 'Shipping Information'
+        }.to change(model, :count).by(1)
+      end
+
+      it 'creates want' do
+        buy_now_test(PixiWant)
+      end
+
+      it 'creates invoice' do
+        buy_now_test(Invoice)
+      end
+    end
+
     it "Asks a seller", js: true do
       expect{
           page.should have_link 'Ask'

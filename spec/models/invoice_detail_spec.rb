@@ -18,8 +18,10 @@ describe InvoiceDetail do
   it { should respond_to(:price) }
   it { should respond_to(:quantity) }
   it { should respond_to(:subtotal) }
+  it { should respond_to(:fulfillment_type_code) }
   it { should belong_to(:invoice) }
   it { should belong_to(:listing).with_foreign_key('pixi_id') }
+  it { should belong_to(:fulfillment_type).with_foreign_key('fulfillment_type_code') }
   it { should validate_presence_of(:pixi_id) }
   it { should validate_presence_of(:price) }
   it { should validate_presence_of(:quantity) }

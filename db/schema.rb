@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20151008184234) do
+ActiveRecord::Schema.define(:version => 20151112192544) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -314,8 +314,9 @@ ActiveRecord::Schema.define(:version => 20151008184234) do
     t.integer  "quantity"
     t.float    "price"
     t.float    "subtotal"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",            :null => false
+    t.datetime "updated_at",            :null => false
+    t.string   "fulfillment_type_code"
   end
 
   add_index "invoice_details", ["invoice_id", "pixi_id"], :name => "index_invoice_details_on_invoice_id_and_pixi_id"

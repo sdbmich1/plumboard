@@ -18,6 +18,10 @@ class SettingsController < ApplicationController
   def details
     respond_with(@usr = current_user)
   end
+
+  def delivery
+    respond_with(@usr = current_user)
+  end
    
   private
 

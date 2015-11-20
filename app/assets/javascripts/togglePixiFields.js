@@ -132,18 +132,22 @@ function toggleYear(ctype) {
   }
 }
 
-// only show shipping amount if fulfillment type is 'Ship' or 'All'
-$(document).on('change', '#fulfill_type', function() {
-  if ($('#fulfill_type').val() == 'SHP' || $('#fulfill_type').val() == 'A') {
+function toggleShipCost() {
+  if (['SHP', 'A', 'PS' , 'SD'].indexOf($('#fulfill_type').val()) >= 0) {
     $('#ship_cost').show('fast');
     $('#ship_cost').attr('required', 'required');
   } else {
     $('#ship_cost').hide('fast');
     $('#ship_cost').removeAttr('required');
   }
+}
+
+// only show shipping amount if fulfillment type is 'Ship' or 'All'
+$(document).on('change', '#fulfill_type', function() {
+  toggleShipCost();
 });
 
 // initially hide shipping amount
 $(document).ready(function() {
-  $('#ship_cost').hide('fast');
+  toggleShipCost();
 });

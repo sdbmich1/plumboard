@@ -18,4 +18,10 @@ module SettingsHelper
   def show_pwd_link
     content_tag(:li, link_to("Password", settings_password_path, class: 'submenu', remote: true, id: 'pwd-setting')) unless @user.fb_user?
   end
+
+  def show_delivery(user)
+    if user.is_business?
+      content_tag(:li, link_to("Delivery", settings_delivery_path, class: 'submenu', remote: true, id: 'delivery-setting'))
+    end
+  end
 end

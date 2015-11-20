@@ -809,4 +809,20 @@ module ListingsHelper
   def toggle_hidden_ftc_field f
     f.hidden_field :fulfillment_type_code, value: 'P' if bus_pixi?
   end
+
+  def set_ship_amt seller
+    if %w(SHP PS A SD).include?(seller.preferences.first.fulfillment_type_code) && !bus_pixi?
+      num_display(seller.preferences.first, 'ship_amt')
+    else
+      nil
+    end
+  end
+
+  def toggle_buy_now f, seller, str=[]
+    if seller.bank_accounts.where(status: 'active').count > 0
+      str << f.label(:buy_now_flg, 'Buy Now')
+      str << f.check_box(:buy_now_flg, { checked: !bus_pixi? })
+    end
+    content_tag(:div, str.join('').html_safe)
+  end
 end

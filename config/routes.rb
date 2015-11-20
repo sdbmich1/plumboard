@@ -180,6 +180,7 @@ Plumboard::Application.routes.draw do
   get "/settings/contact", to: "settings#contact" 
   get "/settings/details", to: "settings#details" 
   get "/settings/password", to: "settings#password" 
+  get "/settings/delivery", to: "settings#delivery" 
 
   # personalized paths
   match '/biz/:url' => "listings#biz", via: :get, as: :biz

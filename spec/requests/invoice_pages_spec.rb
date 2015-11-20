@@ -510,6 +510,22 @@ feature "Invoices" do
 	  }.to change(Invoice, :count).by(1)
 	  page.should have_content @free.title
 	end
+
+        it 'assigns default values from preferences', run: true do
+          create :fulfillment_type, code: 'SHP'
+          @user = create :business_user
+          pref = @user.preferences.first
+          pref.ship_amt = 5.0
+          pref.sales_tax = 10.0
+          pref.fulfillment_type_code = 'SHP'
+          pref.save
+          @user.preferences.first.reload
+          init_data
+          init_setup @user
+          visit new_invoice_path
+          page.should have_xpath("//input[@value='#{pref.ship_amt.to_s << '0'}']")
+          page.should have_xpath("//input[@value='#{pref.sales_tax}']")
+        end
       end
     end
   end

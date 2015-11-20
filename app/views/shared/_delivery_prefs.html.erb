@@ -1,0 +1,19 @@
+<%= form_for(@user, url: user_path(@user, target: 'shared/delivery_prefs'), :html => { method: :put, class: 'uform' }, remote: true) do |f| %>
+  <%= f.fields_for :preferences do |form| %>
+    <div id="form_errors"><%= render partial: 'shared/error_messages', :locals => { :target => @user } %></div>
+    <div class="span2 offset4">
+      <%= form.label :fulfillment_type_code, 'Delivery Type' %>
+      <%= form.collection_select :fulfillment_type_code, FulfillmentType.unhidden,
+        :code, :description %>
+      <div class='pull-left'><%= form.label :sales_tax, 'Sales Tax (%)' %></div>
+      <div class='right-form ng-top'>
+        <%= render partial: 'shared/tooltip', locals: { msg: SALES_TAX_MSG } %>
+      </div>
+      <%= form.text_field :sales_tax, in: 0..MAX_SALES_TAX, step: 0.01, id: 'inv_tax', class: 'delivery-input-box width120 price' %>
+      <%= form.label :ship_amt, 'Ship Amt' %>
+      <%= form.text_field :ship_amt, in: 0..MAX_SHIP_AMT, step: 0.01, id: 'ship_cost_box',
+          class: 'delivery-input-box width120 price' %><br/>
+      <%= f.submit "Save", class: "btn btn-large btn-primary submit-btn" %>
+    </div>
+  <% end %>
+<% end %>
