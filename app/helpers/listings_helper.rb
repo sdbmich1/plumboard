@@ -473,7 +473,8 @@ module ListingsHelper
   # show repost btn
   def show_repost_button listing
     if repost? listing
-      link_to "Repost!", repost_listing_path(listing), method: :put, class: "btn btn-large btn-primary submit-btn", id: 'px-repost-btn' 
+      link_to "Repost!", repost_listing_path(listing, adminFlg: @user.is_admin?), method: :put, class: "btn btn-large btn-primary submit-btn", 
+        id: 'px-repost-btn' 
     end
   end
 

@@ -126,7 +126,7 @@ feature "Listings" do
 
     context "Contacts a seller", js: true do
       it 'asks a question' do
-      expect{
+        expect{
           page.should have_link 'Ask'
           page.should have_link 'Cool'
           click_link 'Ask'
@@ -135,20 +135,20 @@ feature "Listings" do
           click_button 'Send'
           sleep 5
           page.should have_content 'Successfully sent message to seller'
-      }.to change(Post,:count).by(1)
+        }.to change(Post,:count).by(1)
 
-      it_should_behave_like 'want_request'
+        it_should_behave_like 'want_request'
 
-      expect{
+        expect{
           page.find('#comment-tab').click
       	  fill_in 'comment_content', with: "Great pixi. I highly recommend it.\n" 
 	        sleep 3
-      }.to change(Comment,:count).by(1)
-      page.should have_content "Comments (#{pixi_post_listing.comments.size})"
-      page.should have_content "Great pixi. I highly recommend it." 
-      page.should have_content @user.name 
-      expect(page).not_to have_field('#comment_content', with: 'Great pixi')      
-    end
+        }.to change(Comment,:count).by(1)
+        page.should have_content "Comments (#{pixi_post_listing.comments.size})"
+        page.should have_content "Great pixi. I highly recommend it." 
+        page.should have_content @user.name 
+        expect(page).not_to have_field('#comment_content', with: 'Great pixi')      
+      end
     end
 
     it "Asks a seller", js: true do

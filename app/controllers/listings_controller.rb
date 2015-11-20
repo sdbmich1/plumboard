@@ -70,7 +70,7 @@ class ListingsController < ApplicationController
 
   def repost
     if @listing && @listing.repost
-      redirect_to get_root_path
+      redirect_to seller_listings_path(status: 'expired', adminFlg: params[:adminFlg])
     else
       render :show, notice: "Repost was not successful."
     end
