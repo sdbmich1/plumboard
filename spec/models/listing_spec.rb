@@ -1775,4 +1775,19 @@ describe Listing do
       expect(@listing.condition).to be_nil
     end
   end
+
+  describe 'delivery_type' do
+    before do
+      @ftype = FactoryGirl.create(:fulfillment_type)
+      @listing1 = FactoryGirl.create(:listing, seller_id: @user.id, fulfillment_type_code: @ftype.code)
+    end
+
+    it "shows delivery_type description" do
+      expect(@listing1.delivery_type).to eq @ftype.description.titleize
+    end
+
+    it "does not show delivery_type description" do
+      expect(@listing.delivery_type).to be_nil
+    end
+  end
 end

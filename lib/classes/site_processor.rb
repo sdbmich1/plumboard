@@ -38,12 +38,12 @@ class SiteProcessor
 
   # get nearest region
   def get_nearest_region loc
-    regions, nearest, nearest_distance = Site.get_by_type('region'), nil, Float::INFINITY
+    regions, nearest, nearest_distance = Site.inc_list.get_by_type('region'), nil, Float::INFINITY
     regions.each do |region|
       distance = region.contacts.first.distance_to(loc)
       nearest, nearest_distance = region, distance if distance && distance < nearest_distance
     end
-    nearest ||= Site.find_by_name(PIXI_LOCALE)
+    nearest ||= Site.inc_list.find_by_name(PIXI_LOCALE)
   end
 
   # select active sites w/ pixis
