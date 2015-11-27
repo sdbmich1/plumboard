@@ -52,11 +52,15 @@ class ListingsController < ApplicationController
   end
 
   def category
-    respond_with(@listings)
+    respond_with(@listings) do |format|
+      format.json { render json: {listings: @listings, sellers: @sellers} }
+    end
   end
 
   def local
-    respond_with(@listings)
+    respond_with(@listings) do |format|
+      format.json { render json: {listings: @listings, sellers: @sellers} }
+    end
   end
 
   def pixi_price
