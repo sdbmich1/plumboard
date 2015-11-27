@@ -28,6 +28,11 @@ feature "Urls" do
     
     it_should_behave_like 'seller_url_pages', true, false
 
+    it 'does not find a valid seller' do
+      visit '/biz/testuser'
+      page.should have_content 'No pixis found'
+    end
+
     it "can follow and unfollow a business" do
       visit '/biz/rhythmmusic'
       page.should have_selector('#follow-btn', visible: true)
@@ -60,6 +65,11 @@ feature "Urls" do
     it_should_behave_like 'site_url_pages', 'Seattle', 'loc', 'city'
     it_should_behave_like 'site_url_pages', 'Seattle College', 'edu', 'school'
     it_should_behave_like 'site_url_pages', 'Seattle Times - Press', 'pub', 'pub'
+
+    it 'does not find a valid site' do
+      visit '/loc/anytown'
+      page.should have_content 'No pixis found'
+    end
   end
 
   describe "Non-signed in user" do
