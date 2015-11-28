@@ -10,12 +10,12 @@ $(document).on("change", "#ucode", function(e){
 
   if(utype.match(/^bus/) != null) {
     //var txt = uid.length > 0 ? '#bus_url,' : ''; 
-    toggleBusFlds('#mbr_code, #gender_code, '+fldList, '#user_description, '+bus_flds, fldList, true);
+    toggleBusFlds('#mbr_code, #gender_code, '+fldList, bus_flds, fldList, true);
     if($('#signupDialog').length == 0 && $('#newReg').length == 0 && $('#bizDialog').length == 0) 
       $("[name='user[url]']").attr('required', 'required');
   }  
   else {
-    toggleBusFlds(bus_flds, '#mbr_code, #gender_code, '+fldList, '#user_description, '+bus_flds, false);
+    toggleBusFlds(bus_flds, '#mbr_code, #gender_code, '+fldList, bus_flds, false);
     $("[name='user[url]']").removeAttr('required');
   }
 });

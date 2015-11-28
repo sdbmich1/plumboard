@@ -1,1 +1,1 @@
-<%= check_next_page @categories, manage_categories_path(status: params[:status], page: @categories.next_page) %>
+<%= check_next_page @categories, manage_categories_path(status: params[:status], page: nextPage(@categories)) %>

@@ -79,6 +79,10 @@ module ListingsHelper
     link_to 'Next', path, class: 'nxt-pg', remote: true if valid_next_page? listings
   end
 
+  def nextPage model
+    model.next_page rescue 1
+  end
+
   # returns rating for seller
   def get_rating usr
     RatingManager::avg_rating usr
@@ -374,7 +378,7 @@ module ListingsHelper
   def set_featured_banner model, btype
     case btype
       when 'biz'
-        render_featured_banner('Featured Pixis', featured_pixis(model), 'listing', 'shared/listing', 'medium') if has_featured_items?(model)
+        render_featured_banner('Featured Pixis', featured_pixis(model), 'listing', 'shared/listing', 'large') if has_featured_items?(model)
       when 'loc', 'pub', 'edu'
         render_featured_banner('Featured Sellers', featured_sellers(@sellers), 'user', 'shared/seller', 'medium') if has_featured_items?(@sellers)
     end
@@ -697,7 +701,7 @@ module ListingsHelper
     unless model.blank?
       render partial: 'shared/listing', collection: model, as: :listing, locals: {px_size: 'large', ftrFlg: true}
     else
-      content_tag(:div, NO_PIXI_FOUND_MSG, class:'width240 center-wrapper')
+      content_tag(:div, NO_PIXI_FOUND_MSG, class:'mtop center-wrapper')
     end
   end
 
@@ -750,7 +754,7 @@ module ListingsHelper
     unless model.blank? 
       content_tag(:div, render(partial: 'shared/listing', collection: model, locals: {px_size: 'large', ftrFlg: true}), class: 'row') 
     else 
-      content_tag(:div, NO_PIXI_FOUND_MSG, class:'center-wrapper')
+      content_tag(:div, NO_PIXI_FOUND_MSG, class:'mtop center-wrapper')
     end 
   end
 
@@ -768,8 +772,7 @@ module ListingsHelper
     elsif listing.external_url.blank?
       f.submit "Send", class: cls, data: {disable_with: "Sending..."}
     else
-      link_to 'Send', pixi_wants_path(url: listing.external_url, id: listing.pixi_id),
-        method: :post, class: cls, remote: true
+      link_to 'Send', pixi_wants_path(url: listing.external_url, id: listing.pixi_id), method: :post, class: cls, remote: true
     end
   end
 

@@ -2,7 +2,7 @@ require 'rinku'
 require 'digest/md5'
 class ListingParent < ActiveRecord::Base
   resourcify
-  include Area, ResetDate, LocationManager, NameParse, ProcessMethod
+  # include Area, ResetDate, LocationManager, NameParse, ProcessMethod
   self.abstract_class = true
   self.per_page = 20
 
@@ -19,7 +19,7 @@ class ListingParent < ActiveRecord::Base
 	:job_type_code, :event_type_code, :edited_by, :edited_dt, :post_ip, :lng, :lat, :event_start_date, :event_end_date, :compensation,
 	:event_start_time, :event_end_time, :explanation, :contacts_attributes, :repost_flg, :mileage, :other_id, :condition_type_code,
 	:color, :quantity, :item_type, :item_size, :bed_no, :bath_no, :term, :avail_date, :external_url, :ref_id,
-  :buy_now_flg, :est_ship_cost, :sales_tax, :fulfillment_type_code
+  	:buy_now_flg, :est_ship_cost, :sales_tax, :fulfillment_type_code
 
   belongs_to :user, foreign_key: :seller_id
   belongs_to :site
@@ -49,9 +49,6 @@ class ListingParent < ActiveRecord::Base
   validates_date :event_end_date, on_or_after: :event_start_date, presence: true, if: :start_date?
   validates_datetime :event_start_time, presence: true, if: :start_date?
   validates_datetime :event_end_time, presence: true, after: :event_start_time, :if => :start_date?
-
-  # geocode
-  # geocoded_by :primary_address, :latitude => :lat, :longitude => :lng
 
   # used to handle pagination settings
   def self.set_page pg=1
@@ -137,12 +134,12 @@ class ListingParent < ActiveRecord::Base
 
   # eager load assns
   def self.include_list
-    includes(:pictures, :category, :job_type, :condition_type, :user => [:pictures], :site => [:contacts])
+    includes(:pictures, :category, :job_type, :user => [:pictures], :site => [:contacts])
   end
 
   # leaves out job_type to avoid unused eager loading
   def self.include_list_without_job_type
-    includes(:pictures, :site, :category, :condition_type, :user)
+    includes(:pictures, :site, :category, :user)
   end
 
   # find listings by status
@@ -268,6 +265,11 @@ class ListingParent < ActiveRecord::Base
   # get condition
   def condition
     condition_type.description rescue nil
+  end
+
+  # get delivery_type
+  def delivery_type
+    fulfillment_type.description rescue nil
   end
 
   # get seller name for a listing
@@ -406,9 +408,9 @@ class ListingParent < ActiveRecord::Base
 
   # set json string
   def as_json(options={})
-    super(except: [:parent_pixi_id, :buyer_id],
+    super(except: [:parent_pixi_id, :buyer_id, :transaction_id, :show_alias_flg, :show_phone_flg, :alias_name, :post_ip],
       methods: [:seller_name, :seller_photo, :summary, :short_title, :nice_title, :condition, :seller_pixi_count, :event_type_descr,
-        :category_name, :site_name, :start_dt, :seller_first_name, :med_title, :amt_left], 
+        :category_name, :site_name, :start_dt, :seller_first_name, :med_title, :amt_left, :delivery_type], 
       include: {pictures: { only: [:photo_file_name], methods: [:photo_url] }})
   end
 

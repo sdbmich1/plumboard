@@ -49,7 +49,7 @@ class Site < ActiveRecord::Base
   end
 
   def self.inc_list
-    includes(:pictures)
+    includes(:pictures, :contacts)
   end
 
   # select by type
