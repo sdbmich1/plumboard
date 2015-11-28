@@ -37,4 +37,9 @@ class Contact < ActiveRecord::Base
     val = geoFlg && pos ? pos : ip
     near(val, range).get_by_type('Site').map(&:contactable_id).uniq rescue nil
   end
+
+  # set json string
+  def as_json(options={})
+    super(except: [:contactable_id, :contactable_type, :created_at, :updated_at, :website, :home_phone, :mobile_phone] )
+  end
 end

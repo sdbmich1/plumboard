@@ -277,6 +277,10 @@ class User < ActiveRecord::Base
     photo 0, 'medium'
   end
 
+  def cover_photo
+    photo 1, 'cover'
+  end
+
   # check if address is populated
   def has_address?
     UserProcessor.new(self).has_address?
@@ -423,8 +427,9 @@ class User < ActiveRecord::Base
 
   # set json string
   def as_json(options={})
-    super(only: [:id, :first_name, :last_name, :email, :birth_date, :gender, :current_sign_in_ip, :fb_user, :business_name], 
-      methods: [:name, :photo, :photo_url, :unpaid_invoice_count, :pixi_count, :unread_count, :birth_dt, :home_zip, :value], 
+    super(only: [:id, :first_name, :last_name, :email, :birth_date, :gender, :current_sign_in_ip, :fb_user, :business_name, :url], 
+      methods: [:name, :photo, :photo_url, :unpaid_invoice_count, :pixi_count, :unread_count, :birth_dt, :home_zip, :value, :site_name,
+        :cover_photo], 
       include: {pictures: { only: [:photo_file_name], methods: [:photo] }, unpaid_received_invoices: {}, 
 	bank_accounts: {}, contacts: {}, card_accounts: {}})
   end
