@@ -269,8 +269,12 @@ class User < ActiveRecord::Base
   end
 
   # display image for user
-  def photo num=0, sz='medium'
+  def photo num=0, sz='tiny'
     self.pictures[num].photo.url(sz.to_sym) rescue nil
+  end
+
+  def photo_url
+    photo 0, 'medium'
   end
 
   # check if address is populated
@@ -420,8 +424,8 @@ class User < ActiveRecord::Base
   # set json string
   def as_json(options={})
     super(only: [:id, :first_name, :last_name, :email, :birth_date, :gender, :current_sign_in_ip, :fb_user, :business_name], 
-      methods: [:name, :photo, :unpaid_invoice_count, :pixi_count, :unread_count, :birth_dt, :home_zip, :value], 
-      include: {pictures: { only: [:photo_file_name], methods: [:photo] }, active_listings: {}, unpaid_received_invoices: {}, 
+      methods: [:name, :photo, :photo_url, :unpaid_invoice_count, :pixi_count, :unread_count, :birth_dt, :home_zip, :value], 
+      include: {pictures: { only: [:photo_file_name], methods: [:photo] }, unpaid_received_invoices: {}, 
 	bank_accounts: {}, contacts: {}, card_accounts: {}})
   end
 
