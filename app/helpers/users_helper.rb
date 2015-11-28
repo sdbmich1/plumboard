@@ -115,7 +115,7 @@ module UsersHelper
   end
 
   def show_user_buttons user
-    render partial: 'shared/show_user_buttons', locals: {user: user} if @user.is_admin? 
+    render partial: 'shared/show_user_buttons', locals: {user: user} if @user.is_admin? || is_owner?(user)
   end
 
   # render user specific details
