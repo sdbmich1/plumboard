@@ -30,6 +30,10 @@ class Listing < ListingParent
       :comments=> {:user=>[:pictures]}).where(pixi_id: pid).first
   end
 
+  def self.inc_types
+    includes(:condition_type, :event_type, :fulfillment_type, :job_type)
+  end
+
   # set active status
   def activate
     ListingProcessor.new(self).activate
@@ -248,7 +252,7 @@ class Listing < ListingParent
   end
 
   def self.load_board cid, sid
-    get_by_city(cid, sid).board_fields
+    inc_types.get_by_city(cid, sid).board_fields
   end
 
   # select date provided (field_name)

@@ -29,7 +29,8 @@ module ControllerManager
 
   # extracts url from request object
   def self.parse_url request
-    request.original_url.to_s.split('/')[4].split('?')[0] rescue nil
+    url = request.original_url.to_s.split('/')[4].split('?')[0].split('.')[0] rescue nil
+    # url = !url.blank? ? request.to_s.split('/')[4].split('?')[0].split('.')[0] : url rescue url
   end
 
   def self.public_url? action_name

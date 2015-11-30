@@ -85,18 +85,33 @@ class ListingsController < ApplicationController
   end
 
   def biz
+    respond_with(@listings) do |format|
+      format.json { render json: {listings: @listings, sellers: @sellers} }
+    end
   end
 
   def mbr
+    respond_with(@listings) do |format|
+      format.json { render json: {listings: @listings, sellers: @sellers} }
+    end
   end
 
   def pub
+    respond_with(@listings) do |format|
+      format.json { render json: {listings: @listings, sellers: @sellers} }
+    end
   end
 
   def edu
+    respond_with(@listings) do |format|
+      format.json { render json: {listings: @listings, sellers: @sellers} }
+    end
   end
 
   def loc
+    respond_with(@listings) do |format|
+      format.json { render json: {listings: @listings, sellers: @sellers} }
+    end
   end
 
   protected
@@ -140,7 +155,7 @@ class ListingsController < ApplicationController
   end
 
   def load_sellers items
-    @sellers = User.get_sellers(items) unless ControllerManager.private_url?(action_name)
+    @sellers = User.get_sellers(items) # unless ControllerManager.private_url?(action_name)
     @listings = items.set_page params[:page] rescue nil
   end
 

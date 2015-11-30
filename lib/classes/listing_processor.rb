@@ -153,7 +153,7 @@ class ListingProcessor < ListingDataProcessor
     flg = ControllerManager.private_url?(action_name) 
     klass = flg ? 'User' : 'Site'
     result = klass.constantize.get_by_url url
-    data = flg ? Listing.get_by_seller(result, 'active') : Listing.get_by_city('', result)
+    data = flg ? Listing.inc_types.get_by_seller(result, 'active') : Listing.inc_types.get_by_city('', result)
     data.board_fields rescue nil
   end
 
