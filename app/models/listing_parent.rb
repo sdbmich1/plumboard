@@ -274,7 +274,7 @@ class ListingParent < ActiveRecord::Base
 
   # get seller name for a listing
   def seller_name
-    alias? ? alias_name : user.name rescue nil
+    user.name rescue nil
   end
 
   # get seller first name for a listing
