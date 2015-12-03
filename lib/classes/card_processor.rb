@@ -61,19 +61,18 @@ class CardProcessor
 
   # delete card from svc provider
   def delete_card
-    result = Payment::delete_card @acct.token, @acct if @acct.token
+    result = reset_card # Payment::delete_card @acct.token, @acct if @acct.token
 
     # remove card
-    if result 
-      @acct.errors.any? ? false : reset_card
-    else
+    unless result 
       @acct.errors.add :base, "Error: There was a problem with your account."
       false
     end
   end
 
   def reset_card
-    @acct.update_attributes(status: 'removed', default_flg: nil) 
+    result = @acct.update_attributes(status: 'removed', default_flg: nil) 
     CardAccount.active.first.update_attribute(:default_flg, 'Y') rescue nil
+    return result
   end
 end
