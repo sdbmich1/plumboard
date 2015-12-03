@@ -98,6 +98,7 @@ class ListingProcessor < ListingDataProcessor
     listing = add_photos false, listing
     listing.generate_token
     listing.status, listing.repost_flg = 'active', true
+    listing.set_end_date
     listing.save!
   end
 
@@ -105,6 +106,7 @@ class ListingProcessor < ListingDataProcessor
   def repost
     if @listing.expired? || @listing.removed?
       @listing.status, @listing.repost_flg, @listing.explanation  = 'active', true, nil
+      @listing.set_end_date
       @listing.save!
       async_send_notification # send notification
     elsif @listing.sold?
