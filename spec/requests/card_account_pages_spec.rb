@@ -67,7 +67,7 @@ feature "CardAccounts" do
       page.should have_link('Remove', href: card_account_path(@account)) 
       click_remove_ok
       page.should_not have_link("#{@account.id}", href: card_account_path(@account)) 
-      page.should_not have_content 'Card #'
+      page.should have_content 'Setup'
     end
   end
 
