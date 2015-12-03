@@ -1383,7 +1383,8 @@ describe Listing do
     before { @listing.save! }
     it 'sets status to active if listing is expired' do
       @listing.update_attribute(:status, 'expired')
-      @listing.repost
+      @listing.update_attribute(:end_date, 1.days.ago)
+      expect { @listing.repost }.to change { @listing.end_date }
       @listing.active?.should be_true
       expect(@listing.reload.repost_flg).to be_true
       expect(ActionMailer::Base.deliveries.last.subject).to include("Pixi Reposted: #{@listing.title} ") 
@@ -1392,8 +1393,9 @@ describe Listing do
     it 'sets status to active if listing is removed' do
       @listing.status = 'removed'
       @listing.explanation = 'Changed Mind'
-      @listing.save
-      @listing.repost
+      @listing.end_date = 5.days.ago
+      @listing.save!
+      expect { @listing.repost }.to change { @listing.end_date }
       @listing.active?.should be_true
       expect(@listing.reload.repost_flg).to be_true
       expect(@listing.explanation).to be_nil
@@ -1404,12 +1406,15 @@ describe Listing do
       @listing.status = 'sold'
       picture = @listing.pictures.build
       picture.photo = File.new Rails.root.join("spec", "fixtures", "photo0.jpg")
-      @listing.save
-      expect(@listing.repost).to be_true
+      @listing.end_date = 5.days.ago
+      @listing.save!
+      result = @listing.repost
+      expect { result }.to be_true
       expect(Listing.all.count).to eq 2
       expect(Listing.last.active?).to be_true
       expect(Listing.last.pictures.size).to eq @listing.pictures.size
       expect(Listing.last.repost_flg).to be_true
+      expect(Listing.last.end_date).not_to eq @listing.end_date
     end
 
     it 'returns false if listing is not expired/sold' do
