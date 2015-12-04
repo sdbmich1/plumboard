@@ -384,7 +384,8 @@ describe Invoice do
   end
   
   describe "load invoice" do
-    def check_inv flg=false, fulfillment_type_code='SHP'
+    def check_inv flg=false, fulfillment_type_code=nil
+      fulfillment_type_code ||= @listing.fulfillment_type_code
       inv = Invoice.load_new(@user.reload, @buyer.id, @listing.pixi_id, fulfillment_type_code)
       inv.should_not be_nil
       expect(inv.buyer_id).to eq @buyer.id
@@ -415,6 +416,7 @@ describe Invoice do
     end
 
     it "does not load ship_amt for non-shipping fulfillment_type_code" do
+      @listing.update_attribute(:fulfillment_type_code, 'P')
       check_inv false, 'P'
     end
 
