@@ -36,4 +36,8 @@ class FulfillmentType < ActiveRecord::Base
       unhidden.where(code: listing.fulfillment_type_code)
     end
   end
+
+  def self.ship_codes
+    %w(SHP PS SD)
+  end
 end

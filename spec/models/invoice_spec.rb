@@ -384,14 +384,18 @@ describe Invoice do
   end
   
   describe "load invoice" do
-    def check_inv flg=false
-      inv = Invoice.load_new(@user.reload, @buyer.id, @listing.pixi_id)
+    def check_inv flg=false, fulfillment_type_code='SHP'
+      inv = Invoice.load_new(@user.reload, @buyer.id, @listing.pixi_id, fulfillment_type_code)
       inv.should_not be_nil
       expect(inv.buyer_id).to eq @buyer.id
       expect(inv.amount).to eq @listing.price unless flg
       expect(inv.invoice_details.first.quantity).to eq @pixi_want.quantity if flg
       expect(inv.invoice_details.first.fulfillment_type_code).to eq @listing.fulfillment_type_code
-      expect(inv.ship_amt).not_to be_nil
+      if FulfillmentType.ship_codes.include?(fulfillment_type_code)
+        expect(inv.ship_amt).not_to be_nil
+      else
+        expect(inv.ship_amt).to eq 0.0
+      end
       expect(/^\d+??(?:\.\d{0,2})?$/.match(inv.invoice_details.first.subtotal.to_s)).not_to be_nil
     end
 
@@ -410,6 +414,10 @@ describe Invoice do
       check_inv true
     end
 
+    it "does not load ship_amt for non-shipping fulfillment_type_code" do
+      check_inv false, 'P'
+    end
+
     it 'loads free pixi' do
       @listing.update_attribute(:price, nil)
       check_inv 
@@ -418,7 +426,7 @@ describe Invoice do
     it "loads new invoice w/o pixi_id & buyer_id" do
       inv = Invoice.load_new(@user, nil, nil)
       expect(inv).not_to be_nil
-    end
+    end    
 
     it "does not load new invoice" do
       expect(Invoice.load_new(nil, nil, nil)).to be_nil
