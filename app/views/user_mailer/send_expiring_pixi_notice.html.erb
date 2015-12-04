@@ -5,12 +5,12 @@
 </head>
   <body> 	
     	<%= render :partial=>'shared/mail_header' %><br /><br />
-	Hi <%= @user.first_name %>,<br />
+	Hi <%= @user.first_name %>,<br /><br />
 
     	<span style="height:20px;">
-  	  Your Pixi, <%= @listing.nice_title(false) %>, is expiring and will be listed on the site for only <%= @number_of_days %>
-      more days. Log into Pixiboard and review this item <%= get_url(@listing) %> to update
-      or to re-post your listing.  </span><br /><br />
+  	  You have pixis expiring in <%= @number_of_days %> days.<br /><br />
+
+      Please log into Pixiboard to <%= link_to('review your pixis', seller_listings_url(status: 'active')) %> and update or re-post.  </span><br /><br />
 
     <span style="margin-top:10px;">Keep on Pixing!</span><br /><br />
 	<span>Pixiboard</span><br /><br /> 	

@@ -202,14 +202,13 @@ class UserMailer < ActionMailer::Base
   end
 
   #send notice that pixi is expiring soon
-  def send_expiring_pixi_notice number_of_days, expiring_pixi
+  def send_expiring_pixi_notice number_of_days, user
     @number_of_days = number_of_days
-    @user = expiring_pixi.user
-    @listing = expiring_pixi
+    @user = user
     #set logo
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
     #set message details
-    mail(:to => "#{expiring_pixi.user.email}", :subject => "Your Pixi is Expiring Soon!")
+    mail(:to => "#{user.email}", :subject => "Your Pixis are Expiring Soon!")
   end
 
   # send notice for each pixi that has a want at least number_of_days old

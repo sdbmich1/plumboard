@@ -43,8 +43,9 @@ namespace :manage_server do
     a = args[:arg1].to_i
     pixis = Listing.soon_expiring_pixis(a)
     if !pixis.nil?
-      pixis.each do |pixi|
-        UserMailer.delay.send_expiring_pixi_notice(args.arg1, pixi)
+      users = User.where(id: pixis.all.map(&:seller_id))
+      users.each do |user|
+        UserMailer.delay.send_expiring_pixi_notice(args.arg1, user)
       end
     end
   end
