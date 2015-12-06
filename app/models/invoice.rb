@@ -57,8 +57,8 @@ class Invoice < ActiveRecord::Base
   end
 
   # load new invoice with most recent pixi data
-  def self.load_new usr, buyer_id, pixi_id
-    InvoiceProcessor.new(self).load_new usr, buyer_id, pixi_id
+  def self.load_new usr, buyer_id, pixi_id, fulfillment_type_code=nil
+    InvoiceProcessor.new(self).load_new usr, buyer_id, pixi_id, fulfillment_type_code
   end
 
   # define eager load assns

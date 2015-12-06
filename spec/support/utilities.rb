@@ -247,11 +247,11 @@
       if flg
         select('Male', :from => 'user_gender')
         select('Individual', :from => 'ucode')
-        reg_user_birth_date
       else
         select('Business', :from => 'ucode')
         fill_in 'user_business_name', :with => 'Company A'
       end
+      reg_user_birth_date
       fill_in 'home_zip', :with => '90201'
       reg_user_pwd
     end

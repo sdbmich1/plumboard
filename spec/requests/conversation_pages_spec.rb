@@ -276,7 +276,7 @@ feature "Conversations" do
       page.should have_selector('.msg-trash-btn') 
       page.find(".msg-trash-btn", :visible => true).click
       accept_btn
-      sleep 3
+      sleep 5
       page.should_not have_content 'No conversations found' 
       page.should have_selector('.msg-trash-btn') 
       expect(Post.where(recipient_status: 'active').count).to eq 1

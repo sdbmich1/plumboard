@@ -69,7 +69,7 @@ describe PostsController do
     end
   end
 
-  describe 'GET remove post' do
+  describe 'PUT` remove post' do
      before (:each) do
       @user = mock_model(User, :id => 3)
       @post = mock_model(Post, :id => 1, :pixi_id => 1, :user_id => 3, conversation_id: 1)
@@ -77,7 +77,7 @@ describe PostsController do
     end
 
     def do_remove
-      xhr :get, :remove, id: '1'
+      xhr :put, :remove, id: '1'
     end
 
     context "with valid params" do
@@ -101,11 +101,6 @@ describe PostsController do
         Post.stub(:find) { mock_post }
         do_remove
         assigns(:post).should_not be_nil 
-      end
-
-      it "redirects to the updated message or conversations" do
-        do_remove
-        response.should be_redirect
       end
     end
 
