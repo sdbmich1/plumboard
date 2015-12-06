@@ -20,6 +20,7 @@ shared_examples 'repost_pixi_pages' do |val, flg|
       @active_listing = create(:listing, seller_id: @user.id, title: 'Bookshelf', site_id: site.id, condition_type_code: condition_type.code)
       @listing = create(:listing, seller_id: @user.id, title: 'Leather Briefcase', site_id: site.id, condition_type_code: condition_type.code) 
       @listing.update_attribute(:status, val)
+      @listing.update_attribute(:end_date, '01/01/2015'.to_date) if val == 'expired'
     end
 
     it "should appear for " + val + " pixi" do
