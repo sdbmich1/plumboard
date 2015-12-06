@@ -28,23 +28,32 @@ class InvoiceProcessor
   end
 
   # load new invoice with most recent pixi data
-  def load_new usr, buyer_id, pixi_id
+  def load_new usr, buyer_id, pixi_id, fulfillment_type_code=nil
     if usr && usr.has_pixis?
       pixi = usr.active_listings.first if usr.active_listings.size == 1
       inv = usr.invoices.build buyer_id: buyer_id
-      load_inv_details inv, pixi, buyer_id, pixi_id
+      load_inv_details inv, pixi, buyer_id, pixi_id, fulfillment_type_code
       inv
     end
   end
 
-  def load_inv_details inv, pixi, buyer_id, pixi_id
+  def load_inv_details inv, pixi, buyer_id, pixi_id, fulfillment_type_code=nil
     det = inv.invoice_details.build
     det.pixi_id = !pixi_id.blank? ? pixi_id : !pixi.blank? ? pixi.id : nil rescue nil
     det.quantity = det.listing.active_pixi_wants.where(user_id: buyer_id).first.quantity rescue 1
     det.price = det.listing.price || 0 if det.listing
     det.amt_left = det.listing.amt_left rescue 1
     det.subtotal = inv.amount = (det.listing.price * det.quantity).round(2) if det.listing rescue 0
-    inv.ship_amt = det.listing && !det.listing.est_ship_cost.blank? ? det.listing.est_ship_cost : 0.0
+    if fulfillment_type_code
+      det.fulfillment_type_code = fulfillment_type_code
+    else
+      det.fulfillment_type_code = det.listing.fulfillment_type_code if det.listing
+    end
+    if FulfillmentType.ship_codes.include?(fulfillment_type_code) && det.listing && !det.listing.est_ship_cost.blank?
+      inv.ship_amt = det.listing.est_ship_cost
+    else
+      inv.ship_amt = 0.0
+    end
     inv.sales_tax = det.listing && !det.listing.sales_tax.blank? ? det.listing.sales_tax : 0.0
     load_buy_now_fields(inv, det) if det.listing && det.listing.buy_now_flg
   end
@@ -145,7 +154,7 @@ class InvoiceProcessor
   end
 
   def process_invoice listing, buyer_id, fulfillment_type_code
-    result = load_new(listing.user, buyer_id, listing.pixi_id)
+    result = load_new(listing.user, buyer_id, listing.pixi_id, fulfillment_type_code)
     result.save!
     order = { "id1" => listing.pixi_id, "item1" => listing.title,
               "title" => listing.title, "seller" => listing.seller_name,
@@ -154,7 +163,7 @@ class InvoiceProcessor
               "price1" => listing.price, "transaction_type" => "invoice",
               "invoice_id" => result.id, "tax_total" => result.tax_total,
               "inv_total" => result.amount }
-    order["ship_amt"] = result.ship_amt if %w(SHP SD).include?(fulfillment_type_code)
+    order["ship_amt"] = result.ship_amt if FulfillmentType.ship_codes.include?(fulfillment_type_code)
     order
   end
 end
