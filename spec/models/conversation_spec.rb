@@ -25,6 +25,7 @@ describe Conversation do
     it { should validate_presence_of(:user_id) }
     it { should validate_presence_of(:pixi_id) }
     it { should validate_presence_of(:recipient_id) }
+    it { should have_many(:active_posts).class_name('Post').conditions(:status=>"active") }
 
     describe "when accessing posts" do
       it "has first post" do

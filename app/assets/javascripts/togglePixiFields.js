@@ -1,6 +1,6 @@
 // when the user type field changes
 $(document).on("change", "#ucode", function(e){
-  var fldList = '#user_gender, #user_birth_date_1i, #user_birth_date_2i, #user_birth_date_3i';
+  var fldList = '#user_gender';
   var bus_flds = '#bus_code, #user_business_name';
   var utype = $(this).val().toLowerCase();
   var uid = $('#uid').val();

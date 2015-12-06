@@ -134,6 +134,7 @@ feature "UserRegistrations" do
       it "should not create a business user with name" do
         expect{ 
       		reg_user_data false
+		reg_user_birth_date
       		add_data_w_photo
         	fill_in "user_business_name", with: ''
 		click_button submit 

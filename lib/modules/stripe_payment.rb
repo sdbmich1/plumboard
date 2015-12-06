@@ -90,7 +90,7 @@ module StripePayment
       account.legal_entity.first_name, account.legal_entity.last_name = model.first_name, model.last_name
       account.legal_entity.business_name = model.business_name if model.is_business?
       account.legal_entity.dob.day, account.legal_entity.dob.month, account.legal_entity.dob.year = model.birth_date.day, model.birth_date.month, 
-        model.birth_date.year  unless model.is_business?
+        model.birth_date.year # unless model.is_business?
       account.save
     end
 

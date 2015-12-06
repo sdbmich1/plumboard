@@ -43,11 +43,17 @@ class ConversationsController < ApplicationController
   end
 
   def remove 
-    if Conversation.remove_conv(@conversation, @user)
-      redirect_to conversations_path(status: @status)
-    else
-      flash[:error] = "Conversation was not removed. Please try again."
-      render :action => :index
+    respond_with(@conversation) do |format|
+      if Conversation.remove_conv(@conversation, @user)
+        format.js { redirect_to conversations_path(status: @status) }
+        format.html { redirect_to conversations_path(status: @status)}
+        format.json { render json: {conversation: @conversation} }
+      else
+        flash[:error] = "Conversation was not removed. Please try again."
+        render :action => :index
+	format.js {}
+        format.json { render json: { errors: @conversation.errors.full_messages }, status: 422 }
+      end
     end
   end
 
@@ -73,7 +79,7 @@ class ConversationsController < ApplicationController
   end
 
   def load_data
-    @page, @per_page, @status = params[:page] || 1, params[:per_page] || 10, params[:status]
+    @page, @per_page, @status = params[:page] || 1, params[:per_page] || 10, params[:status] || 'received'
   end
 
   def load_convo

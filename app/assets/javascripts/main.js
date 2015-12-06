@@ -827,7 +827,7 @@ $(document).on("click", '.msg-trash-btn', function(){
   var pid = $(this).attr('data-pid');
   var status = $(this).attr('data-status');
   var url = '/posts/' + pid + '/remove.js?status=' + status;
-  processUrl(url);
+  processUrl(url, 'PUT');
 });
 
 // used to process put & post methods
