@@ -222,17 +222,15 @@ describe UserMailer do
   end
 
   describe "send_expiring_pixi_notice" do
-    subject { UserMailer.send_expiring_pixi_notice(7, listing) }
+    subject { UserMailer.send_expiring_pixi_notice(7, user) }
     let(:user) { create :pixi_user }
-    let(:buyer) { create :pixi_user }
-    let(:listing) { create :listing, seller_id: user.id }
 
     it { expect{subject.deliver}.not_to change{ActionMailer::Base.deliveries.length}.by(0) }
-    its(:to) { should == [listing.user.email] }
-    its(:subject) { should include "Your Pixi is Expiring Soon!" }
+    its(:to) { should == [user.email] }
+    its(:subject) { should include "Your Pixis are Expiring Soon!" }
 
     it 'assigns user first_name' do
-      expect(subject.body.encoded).to match(listing.user.first_name)
+      expect(subject.body.encoded).to match(user.first_name)
     end
   end
 

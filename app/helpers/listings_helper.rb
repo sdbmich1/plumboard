@@ -814,7 +814,7 @@ module ListingsHelper
   end
 
   def set_ship_amt seller
-    if %w(SHP PS A SD).include?(seller.preferences.first.fulfillment_type_code) && !bus_pixi?
+    if (FulfillmentType.ship_codes + ['A']).include?(seller.preferences.first.fulfillment_type_code) && !bus_pixi?
       num_display(seller.preferences.first, 'ship_amt')
     else
       nil

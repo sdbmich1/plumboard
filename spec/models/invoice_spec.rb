@@ -418,7 +418,7 @@ describe Invoice do
     end
 
     it "does not load ship_amt for non-shipping fulfillment_type_code" do
-      @listing.update_attribute(:fulfillment_type_code, 'P') 
+      @listing.update_attribute(:fulfillment_type_code, 'P')
       check_inv false, 'P'
     end
 
@@ -430,7 +430,7 @@ describe Invoice do
     it "loads new invoice w/o pixi_id & buyer_id" do
       inv = Invoice.load_new(@user, nil, nil)
       expect(inv).not_to be_nil
-    end
+    end    
 
     it "does not load new invoice" do
       expect(Invoice.load_new(nil, nil, nil)).to be_nil
