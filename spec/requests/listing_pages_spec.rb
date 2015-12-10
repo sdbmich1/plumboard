@@ -184,6 +184,12 @@ feature "Listings" do
       it 'creates invoice' do
         buy_now_test(Invoice)
       end
+
+      it 'multiple times' do
+        buy_now_test(PixiWant)
+        visit listing_path(@business_listing)
+        page.should have_link 'Want'
+      end
     end
 
     it "Asks a seller", js: true do

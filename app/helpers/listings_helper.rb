@@ -683,7 +683,7 @@ module ListingsHelper
 
   # render wanted listing content
   def wanted_listing listing, want_msg, cls
-    listing.user_wanted?(@user) ? wanted_content : toggle_action_btn(listing, want_msg, cls, 'want')
+    listing.user_wanted?(@user) && !listing.buy_now_flg ? wanted_content : toggle_action_btn(listing, want_msg, cls, 'want')
   end
 
   # display want button
