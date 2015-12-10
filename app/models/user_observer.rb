@@ -1,6 +1,6 @@
 class UserObserver < ActiveRecord::Observer
   observe User
-  include NameParse
+  include NameParse, Payment
 
   def before_update usr
     if usr.description_changed?
@@ -12,6 +12,11 @@ class UserObserver < ActiveRecord::Observer
   def after_update usr
     ptype = usr.changes[:last_sign_in_at] ? 'lb' : 'act'
     PointManager::add_points usr, ptype
+
+    # set role if user type changes
+    if usr.birth_date_changed? && usr.has_bank_account?
+      StripePayment.update_account usr, usr.acct_token, usr.current_sign_in_ip
+    end
 
     # set role if user type changes
     if usr.user_type_code_changed?

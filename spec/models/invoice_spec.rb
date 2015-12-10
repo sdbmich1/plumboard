@@ -385,13 +385,15 @@ describe Invoice do
   
   describe "load invoice" do
     def check_inv flg=false, fulfillment_type_code=nil
-      fulfillment_type_code ||= @listing.fulfillment_type_code
-      inv = Invoice.load_new(@user.reload, @buyer.id, @listing.pixi_id, fulfillment_type_code)
+      fulfillment_type_code ||= @listing.fulfillment_type_code 
+      inv = Invoice.load_new(@user.reload, @buyer.id, @listing.pixi_id, fulfillment_type_code) 
       inv.should_not be_nil
       expect(inv.buyer_id).to eq @buyer.id
       expect(inv.amount).to eq @listing.price unless flg
       expect(inv.invoice_details.first.quantity).to eq @pixi_want.quantity if flg
       expect(inv.invoice_details.first.fulfillment_type_code).to eq @listing.fulfillment_type_code
+      expect(inv.ship_amt).not_to be_nil
+      expect(inv.invoice_details.first.fulfillment_type_code).to eq @listing.fulfillment_type_code 
       if FulfillmentType.ship_codes.include?(fulfillment_type_code)
         expect(inv.ship_amt).not_to be_nil
       else
