@@ -78,6 +78,7 @@ class ListingProcessor < ListingDataProcessor
 
       # remove temp pixi
       delete_temp_pixi @listing.pixi_id unless @listing.repost_flg
+      return true
     end
   end
 
@@ -109,6 +110,7 @@ class ListingProcessor < ListingDataProcessor
       @listing.set_end_date
       @listing.save!
       async_send_notification # send notification
+      return true
     elsif @listing.sold?
       repost_pixi
     else

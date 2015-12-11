@@ -1,5 +1,5 @@
 <ul class="nav">
-  <li id='li_home' class="<%= action_name == 'seller' ? 'active' : '' %>">
+  <li id='li_home' class="<%= pxs_cls 'active' %>">
     <%= link_to "Active", seller_listings_path(status: 'active', adminFlg: false), class: 'submenu', id: 'active-pixis', remote: true %></li>
   <li class="<%= action_name == 'unposted' ? 'active' : '' %>">
     <%= link_to "Draft", unposted_temp_listings_path(status: 'draft', adminFlg: false), class: 'submenu', id: 'draft-pixis',remote: true %></li>
@@ -8,5 +8,6 @@
   <li><%= link_to "Sold", seller_listings_path(status: 'sold', adminFlg: false), class: 'submenu', id: 'sold-pixis', remote: true %></li>
   <li><%= link_to "Saved", saved_listings_path(status: 'saved'), class: 'submenu', id: 'saved-pixis', remote: true %></li>
   <li><%= link_to "Wanted", seller_wanted_listings_path(status: 'wanted'), class: 'submenu', id: 'wanted-pixis', remote: true %></li>
-  <li><%= link_to "Expired", seller_listings_path(status: 'expired', adminFlg: false), class: 'submenu', id: 'expired-pixis', remote: true %></li>
+  <li class="<%= pxs_cls 'expired' %>">
+    <%= link_to "Expired", seller_listings_path(status: 'expired', adminFlg: false), class: 'submenu', id: 'expired-pixis', remote: true %></li>
 </ul>

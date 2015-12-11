@@ -168,12 +168,14 @@ FactoryGirl.define do
   end
 
   factory :temp_listing, :class => "TempListing", :parent => :listing_parent do
+    status  "new"
     after(:build) do |listing|
       listing.pictures.build FactoryGirl.attributes_for(:picture)
     end
   end
 
   factory :temp_listing_with_pictures, :class => "TempListing", :parent => :listing_parent do
+    status  "new"
     before(:create) do |listing|
       2.times { listing.pictures.build FactoryGirl.attributes_for(:picture) }
     end
@@ -188,6 +190,7 @@ FactoryGirl.define do
   end
 
   factory :invalid_temp_listing, :class => "TempListing", :parent => :listing_parent do
+    status  "new"
   end
 
   factory :old_listing, :class => "OldListing", :parent => :listing_parent do
