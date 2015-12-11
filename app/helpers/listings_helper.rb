@@ -476,10 +476,8 @@ module ListingsHelper
 
   # show repost btn
   def show_repost_button listing
-    if repost? listing
-      link_to "Repost!", repost_listing_path(listing, adminFlg: @user.is_admin?), method: :put, class: "btn btn-large btn-primary submit-btn", 
-        id: 'px-repost-btn' 
-    end
+    cls = "btn btn-large btn-primary submit-btn" 
+    link_to "Repost!", repost_listing_path(listing, adminFlg: @user.is_admin?), method: :put, class: cls, id: 'px-repost-btn' if repost?(listing)
   end
 
   # check pixi is owned or inactive
@@ -827,5 +825,13 @@ module ListingsHelper
       str << f.check_box(:buy_now_flg, { checked: !bus_pixi? })
     end
     content_tag(:div, str.join('').html_safe)
+  end
+
+  def pxs_cls val
+    action_name == 'seller' && @status == val ? 'active' : ''
+  end
+
+  def toggle_pixi_list
+    @adminFlg ? 'shared/manage_pixis' : 'shared/mypixis_list'
   end
 end
