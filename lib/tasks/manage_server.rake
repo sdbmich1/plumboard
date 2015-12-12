@@ -23,6 +23,7 @@ namespace :manage_server do
   # remove old pixis
   task :close_expired_pixis => :environment do
     Listing.close_pixis
+    User.find_each { |usr| User.reset_counters(usr.id, :active_listings) }
   end
 
   # pick fb sweepstakes winner
