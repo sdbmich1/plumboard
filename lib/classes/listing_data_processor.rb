@@ -169,6 +169,12 @@ class ListingDataProcessor < ListingQueryProcessor
     end
   end
 
+  # set end date to x days after start to denote when listing is no longer displayed on network
+  def set_end_date val
+    start = @listing.active? ? Date.today : @listing.start_date
+    @listing.end_date = @listing.event? ? @listing.event_end_date : start + val.days rescue nil
+  end
+
   def as_csv(options={})
     row = { "Title" => @listing.title, "Category" => @listing.category_name,
       "Description" => @listing.description, "Location" => @listing.site_name }

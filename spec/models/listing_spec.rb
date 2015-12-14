@@ -1383,9 +1383,10 @@ describe Listing do
     before { @listing.save! }
     it 'sets status to active if listing is expired' do
       @listing.update_attribute(:status, 'expired')
-      @listing.update_attribute(:end_date, 1.days.ago)
+      @listing.update_attribute(:end_date, 100.days.ago)
       expect { @listing.repost }.to change { @listing.end_date }
       @listing.active?.should be_true
+      expect(@listing.end_date).to be > Date.today
       expect(@listing.reload.repost_flg).to be_true
       expect(ActionMailer::Base.deliveries.last.subject).to include("Pixi Reposted: #{@listing.title} ") 
     end

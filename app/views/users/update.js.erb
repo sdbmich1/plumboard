@@ -10,8 +10,7 @@
     uiLoading(false);
   }
   else {
-    $("#notice").html("<%= escape_javascript( raw render('layouts/messages', flash: flash)) %>");
-    $("#notice").show(300);
+    postFlashMsg('#flash_notice','success', 'Successfully saved changes.');
     $("#user_form").html("<%= escape_javascript( raw render(partial: @target)) %>");
 
     <% if @user == @usr %>
