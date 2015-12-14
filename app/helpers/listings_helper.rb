@@ -814,11 +814,19 @@ module ListingsHelper
   end
 
   def set_ship_amt seller
-    if (FulfillmentType.ship_codes + ['A']).include?(seller.preferences.first.fulfillment_type_code) && !bus_pixi?
+    if seller.preferences.first && @ptype && (FulfillmentType.ship_codes + ['A']).include?(seller.preferences.first.fulfillment_type_code) && !bus_pixi?
       num_display(seller.preferences.first, 'ship_amt')
     else
       nil
     end
+  end
+
+  def set_ftc seller
+    seller.preferences.first && !@ptype ? seller.preferences.first.fulfillment_type_code : nil
+  end
+
+  def set_sales_tax seller
+    seller.preferences.first && !@ptype ? seller.preferences.first.sales_tax : nil
   end
 
   def toggle_buy_now f, seller, str=[]

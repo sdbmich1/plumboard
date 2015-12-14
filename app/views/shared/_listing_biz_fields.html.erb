@@ -2,7 +2,7 @@
   <div class='span3'>
     <%= f.label :fulfillment_type_code, 'Delivery Type' %>
     <%= f.collection_select :fulfillment_type_code, FulfillmentType.unhidden,
-        :code, :description, {selected: @user.preferences.first.fulfillment_type_code},
+        :code, :description, {selected: set_ftc(@user) },
         {id: 'fulfill_type', class: 'pixi-select', required: true} %>
     <%= toggle_hidden_ftc_field(f) %>
   </div>
@@ -12,7 +12,7 @@
       <%= render partial: 'shared/tooltip', locals: { msg: SALES_TAX_MSG } %>
     </div>
     <%= f.text_field :sales_tax, in: 0..MAX_SALES_TAX, step: 0.01,
-        value: @user.preferences.first.sales_tax, id: 'inv_tax', class: 'price' %>
+        value: set_sales_tax(@user), id: 'inv_tax', class: 'price' %>
   </div>
   <div id='ship_cost' class='span2'>
     <%= f.label :est_ship_cost, 'Est Ship Amt' %>
