@@ -1,4 +1,5 @@
 <div class="control-group">
+  <%= show_acct_holder f %>
   <label class="control-label">Card #</label>
   <div class='controls'><%= f.text_field :card_number, maxlength: 16, size: 16, placeholder: 'Card Number', id: 'card_number', required: true %>
     <%= show_card_image('cc-logo neg-top neg-left10 mbot') %>

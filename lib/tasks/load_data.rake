@@ -105,7 +105,7 @@ def process_record listing
 end
 
 def update_pixis
-  pixis = Listing.where(status: 'active').where(category_id: Category.where("category_type_code != 'event'")).update_all(end_date: Time.now+90.days)
+  pixis = Listing.where(status: 'active').where(category_id: Category.where("category_type_code != 'event'")).update_all(status: 'active', end_date: Time.now+90.days)
   # pixis.map! {|p| p.end_date = Time.now+30.days unless p.event?; p.job_type_code = 'FT' if p.job?; p.save!}
 end
 

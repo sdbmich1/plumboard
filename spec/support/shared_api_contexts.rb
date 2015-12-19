@@ -3,12 +3,16 @@ require 'spec_helper'
 def set_data klass, method, rte, tname, xhr=false
   @listings = stub_model(klass.constantize)
   klass.constantize.stub_chain(method.to_sym).and_return(@listings)
-  @listings.stub_chain(tname.to_sym).and_return( @listings )
-  xhr ? do_xhr_get(rte) : do_get_list(rte)
+  @listings.stub_chain(tname.to_sym).and_return( @listings ) if tname
+  xhr ? tname.blank? ? do_other_xhr_get(rte) : do_xhr_get(rte) : do_get_list(rte)
 end
               
 def do_xhr_get rte
   xhr :get, rte.to_sym, id: '1'
+end
+              
+def do_other_xhr_get rte
+  xhr :get, rte.to_sym, search: '1'
 end
 
 def do_get_list rte
@@ -31,7 +35,7 @@ shared_context "a load data request" do |klass, method, rte, tname, xhr, var|
 
     it "action should render get template" do
       do_get_list rte
-      response.should render_template rte.to_sym
+      response.should render_template rte.to_sym if tname
     end
   end
 end

@@ -147,8 +147,7 @@ class Site < ActiveRecord::Base
 
   # add an optional second picture
   def with_picture
-    pictures.build if pictures.blank? || pictures.size < 2
-    self
+    SiteProcessor.new(self).with_picture
   end
 
   # display first image

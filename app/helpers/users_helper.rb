@@ -139,4 +139,8 @@ module UsersHelper
     str = flg ? set_contact_fld(form, 'Email* ', 'email', 80) : set_contact_fld(form, 'Mobile Phone* ', 'mobile_phone', 10)
     content_tag(:td, str.join(' ').html_safe)
   end
+
+  def signin_date user
+    user.nice_date(user.current_sign_in_at) if user.current_sign_in_at
+  end
 end

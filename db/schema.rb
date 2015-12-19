@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20151112192544) do
+ActiveRecord::Schema.define(:version => 20151218230705) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -1060,6 +1060,8 @@ ActiveRecord::Schema.define(:version => 20151112192544) do
     t.string   "description"
     t.integer  "active_listings_count",  :default => 0
     t.string   "cust_token"
+    t.integer  "ein"
+    t.integer  "ssn_last4"
   end
 
   add_index "users", ["acct_token"], :name => "index_users_on_acct_token"

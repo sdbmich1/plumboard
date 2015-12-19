@@ -31,6 +31,7 @@ FactoryGirl.define do
   end
 
   factory :admin, :class => "User", :parent => :pixi_user do
+    after(:build) {|usr| usr.user_type_code = 'AD' }
     after(:create) {|usr| usr.add_role(:admin)}
   end
 

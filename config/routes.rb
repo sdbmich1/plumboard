@@ -52,8 +52,14 @@ Plumboard::Application.routes.draw do
 
   resources :settings, except: [:new, :show, :create, :edit, :destroy, :update]
   resources :users, except: [:new]
-  resources :bank_accounts, :card_accounts, except: [:edit, :update]
+  resources :bank_accounts, except: [:edit, :update]
   resources :sites, except: [:destroy]
+
+  resources :card_accounts, except: [:edit, :update] do
+    collection do
+      get :autocomplete_user_first_name
+    end
+  end
 
   resources :pixi_posts do
     collection do

@@ -1,16 +1,19 @@
 class CardAccountsController < ApplicationController
   load_and_authorize_resource
   before_filter :authenticate_user!
+  before_filter :load_vars, :set_user
   before_filter :load_data, only: [:show, :destroy]
+  before_filter :load_accts, only: [:index]
+  autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name
   respond_to :html, :json, :js, :mobile
   layout :page_layout
 
   def new
-    respond_with(@account = @user.card_accounts.build)
+    respond_with(@account = CardAccount.new(user_id: params[:uid]))
   end
 
   def index
-    respond_with(@accounts = @user.card_accounts)
+    respond_with(@accounts)
   end
 
   def show
@@ -21,7 +24,8 @@ class CardAccountsController < ApplicationController
     @account = CardAccount.new params[:card_account]
     respond_with(@account) do |format|
       if @account.save_account
-        format.json { render json: @account }
+        load_accts
+        format.json { render json: @accounts }
       else
 	format.json { render :json => { :errors => @account.errors.full_messages }, :status => 422 }
       end
@@ -30,7 +34,7 @@ class CardAccountsController < ApplicationController
 
   def destroy
     if @account.delete_card 
-      redirect_to new_card_account_path 
+      load_accts
     else
       flash[:error] = @account.errors.full_messages
       render :show 
@@ -45,5 +49,22 @@ class CardAccountsController < ApplicationController
 
   def load_data
     @account = CardAccount.find params[:id]
+  end
+
+  def load_accts
+    @accounts = CardAccount.card_list(@usr, @adminFlg).paginate(page: params[:page], per_page: 15)
+  end
+
+  def set_user
+    @usr = params[:uid].blank? ? @user : User.find(params[:uid])
+  end
+
+  def load_vars
+    @adminFlg = params[:adminFlg] || false
+  end
+
+  # parse results for active items only
+  def get_autocomplete_items(parameters)
+    super(parameters).active rescue nil
   end
 end

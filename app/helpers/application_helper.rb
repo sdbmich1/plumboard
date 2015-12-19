@@ -124,7 +124,7 @@ module ApplicationHelper
       when 'Pixis'; render partial: 'shared/navbar_pixis', locals: { loc_name: @loc_name, rFlg: show_recent?, statusFlg: false }
       when 'Pixi'; render 'shared/navbar_show_pixi'
       when 'My Pixis'; render 'shared/navbar_mypixis'
-      when 'My Accounts'; render 'shared/navbar_accounts'
+      when 'My Accounts', 'Manage Accounts'; render 'shared/navbar_accounts'
       when 'Pending Orders'; render 'shared/navbar_pending'
       when 'Messages'; render 'shared/navbar_conversations'
       when 'Home'; render 'shared/navbar_home', locals: { loc_name: @loc_name }
@@ -530,6 +530,7 @@ module ApplicationHelper
 
   def build_admin_menu str
     if can? :manage_users, @user
+      str << content_tag(:li, link_to("Accounts", card_accounts_path(adminFlg: true)))
       str << content_tag(:li, link_to("Categories", manage_categories_path(status: 'active')))
       str << content_tag(:li, link_to("Sites", sites_path(stype: 'region', status: 'active')))
       str << content_tag(:li, link_to("Transactions", transactions_path))

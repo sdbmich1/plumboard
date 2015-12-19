@@ -2,19 +2,7 @@
   <h2>Setup Your Card Account</h2>
 </div>
 <div class="row">
-  <%= form_for(account, html: { id: 'card-acct-form', class: "form-horizontal uform" }) do |f| %>
-    <div id="form_errors"><%= render partial: 'shared/error_messages', locals: { :target => f.object } %></div>
-    <div id="data_error" style="display:none" class="error"></div>
-    <div class="sm-top span6 offset3">
-      <div id='signup'>
-        <%= render partial: 'shared/card_account_fields', locals: {f:f, account: account} %>
-      </div>
-      <%= f.hidden_field :user_id, value: @user.id %>
-      <%= f.hidden_field :token, id: 'pay_token' %>
-      <%= f.hidden_field :card_no %>
-      <div class="span4 offset2 mbot">
-        <%= f.submit 'Save', id: 'cardForm', class: "btn btn-large btn-primary submit-btn" %>
-      </div>
-    </div>
+  <%= form_for(account, url: card_accounts_path(adminFlg: @adminFlg), html: {id: 'card-acct-form', class: "form-horizontal uform"}, remote: true) do |f| %>
+    <%= render partial: 'shared/account_form_fields', locals: {f: f, type: 'card', account: account, id: 'cardForm'} %>
   <% end %>
 </div>

@@ -15,36 +15,18 @@ describe SitesController do
     end
   end
 
-  describe 'GET /loc_name' do
+  describe 'GET new', new: true do
+    context 'load sites' do
+      it_behaves_like "a load data request", 'Site', 'new', 'new', 'new', false, 'site'
+    end
+  end
+
+  describe 'GET loc_name', loc: true do
     before :each do
-      @sites = stub_model(Site)
-      Site.stub!(:search).and_return( @sites )
       controller.stub_chain(:query).and_return(:success)
     end
-
-    def do_get
-      get :loc_name, search: 'test'
-    end
-
-    it "should load the requested site" do
-      Site.stub(:search).with('test').and_return(@sites)
-      do_get
-    end
-
-    it "should assign @sites" do
-      do_get
-      assigns(:sites).should == @sites
-    end
-
-    it "loc_name action should render nothing" do
-      do_get
-      controller.stub!(:render)
-    end
-
-    it "responds to JSON" do
-      get :loc_name, search: 'test', format: :json
-      expect(response).to be_success
-    end
+    it_behaves_like "a load data request", 'Site', 'search', 'loc_name', nil, true, 'sites'
+    it_behaves_like "a JSON request", 'Site', 'search', 'loc_name', nil, true, 'sites'
   end
 
   describe 'GET /:id', show: true do
@@ -56,6 +38,12 @@ describe SitesController do
   describe "PUT /:id", update: true do
     [true, false].each do |status|
       it_behaves_like 'a model update assignment', 'Site', 'find', 'update', 'update_attributes', status, 'site'
+    end
+  end
+
+  describe "POST account", create: true do
+    [true, false].each do |status|
+      it_behaves_like 'a model create assignment', 'Site', 'save_site', 'create', 'create', status, 'site'
     end
   end
 end

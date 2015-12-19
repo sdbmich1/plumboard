@@ -84,6 +84,15 @@ class CardAccount < ActiveRecord::Base
     user.cust_token rescue nil
   end
 
+  # get list of cards or card holders based on adminFlg
+  def self.card_list model, aFlg=false
+    CardProcessor.new(self).card_list(model, aFlg)
+  end
+
+  def self.inc_list
+    includes(:user => [:user_type, :pictures, :preferences])
+  end
+
   rescue => ex
     process_error ex
 end

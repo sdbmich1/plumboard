@@ -27,18 +27,19 @@ feature "CardAccounts" do
   describe "Create Card Account", js: true do 
     before do
       visit new_bank_account_path
-      click_link 'Card'
+      click_link 'Card'; sleep 3
     end
 
     it 'shows content' do
       page.should have_selector('h2', text: 'Setup Your Card Account')
+      page.should_not have_content("Card Holder")
       page.should have_content("Card #")
       page.should have_button("Save")
     end
 
     it "creates an new account" do
       expect {
-        load_credit_card "4242424242424242", "123", true, false; sleep 2.5
+        load_credit_card "4242424242424242", "123", true, false; sleep 5
       }.to change(CardAccount, :count).by(1)
       page.should have_content 'Card #'
 
@@ -48,26 +49,38 @@ feature "CardAccounts" do
     end
   end
 
-  describe "Delete Card Account", js: true do 
+  describe 'Show Card Accounts', js: true do
     before do
       @account = @user.card_accounts.create attributes_for :card_account, status: 'active'
       visit new_bank_account_path
       click_link 'Card'
     end
+    it "shows account" do
+      page.should have_content 'Card Holder'
+      page.should have_content 'Card #'
+      page.should have_content 'Default'
+    end
+  end
+
+  describe "Delete Card Account", js: true do 
+    before do
+      @account = @user.card_accounts.create attributes_for :card_account, status: 'active'
+      visit new_bank_account_path
+      click_link 'Card'; sleep 2
+      click_link 'Details'; sleep 2
+    end
 
     it 'shows content' do
       page.should have_selector('h2', text: 'Your Card Account')
       page.should have_content("Card #")
-      page.should have_link("Remove", href: card_account_path(@account))
+      page.should have_link("Remove") #, href: card_account_path(@account)
     end
 
     it "removes an account" do
-      CardAccount.any_instance.stub(:delete_card).and_return(true)
-      click_remove_cancel
-      page.should have_link('Remove', href: card_account_path(@account)) 
+      page.should have_link("Remove") #, href: card_account_path(@account)
       click_remove_ok
       page.should_not have_link("#{@account.id}", href: card_account_path(@account)) 
-      page.should have_content 'Setup'
+      page.should have_link 'Add Card'
     end
   end
 

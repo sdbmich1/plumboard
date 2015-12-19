@@ -1,0 +1,12 @@
+<% cache 'card_acct_list' do %>
+<tr>
+  <td class='center-wrapper'><%= show_card_icon card %></td>
+  <%= show_card_holder card %>
+  <td class='center-wrapper'><%= "****#{card.card_no}" %></td>
+  <td class='center-wrapper'><%= card.zip %></td>
+  <td class='center-wrapper'><%= show_exp_date card %></td>
+  <td class='center-wrapper'><%= card.default_flg %></td>
+  <td class='center-wrapper'><%= link_to 'Details', card_account_path(id: card, adminFlg: @adminFlg), class: 'btn btn-small card-det', remote: true %></td>
+</tr>
+<% end %>
+

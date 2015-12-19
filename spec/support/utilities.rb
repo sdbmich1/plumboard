@@ -200,8 +200,8 @@
   end
 
   def valid_dates
-    select "January", from: "cc_card_month"
-    select (Date.today.year+2).to_s, from: "cc_card_year"
+    select "January", from: "card_month"
+    select (Date.today.year+2).to_s, from: "card_year"
   end
 
   def load_credit_card cid="4111111111111111", cvv="123", valid=true, flg=true
@@ -209,6 +209,7 @@
     fill_in "card_code",  with: cvv
     valid ? valid_dates : invalid_card_dates
     fill_in "card_zip",  with: '94103'
+    page.execute_script %Q{ $("#card_account_user_id").val("#{@other.id}") } if @other
     flg ? click_valid_save : click_submit
   end
 

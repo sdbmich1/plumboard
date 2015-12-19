@@ -1,0 +1,13 @@
+<div id="form_errors"><%= render partial: 'shared/error_messages', locals: { :target => f.object } %></div>
+<div id="data_error" style="display:none" class="error"></div>
+<div class="sm-top span6 offset3">
+  <div id='signup'>
+    <%= render partial: "shared/#{type}_account_fields", locals: {f: f, account: account} %>
+  </div>
+</div>
+<%= f.hidden_field :user_id, value: set_holder_id %>
+<%= f.hidden_field :token, id: 'pay_token' %>
+<%= show_form_field f, type %>
+<div class="span4 offset5 mbot">
+  <%= f.submit set_btn_name, id: id, class: "btn btn-large btn-primary submit-btn", data: {disable_with: 'Processing...'} %>
+</div>

@@ -1,0 +1,5 @@
+<label class="control-label">Card Holder</label>
+<div class='controls'>
+  <%= autocomplete_field_tag 'buyer_name', load_holder, autocomplete_user_first_name_card_accounts_path,
+     :update_elements => { :id => '#card_account_user_id' }, :placeholder => 'User Name' %> 
+</div>     

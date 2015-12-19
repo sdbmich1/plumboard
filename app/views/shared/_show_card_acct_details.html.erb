@@ -1,0 +1,24 @@
+<div class='center'>
+  <h2>Your Card Account</h2>
+</div>
+<div class="row">
+  <div id="notice"><%= render 'layouts/flash_messages', flash: flash %></div>
+  <div id="data_error" style="display:none" class="error"></div>
+
+  <div class="sm-top span6 offset4">
+    <div class='mleft15'>
+    <table>
+      <tr><td>Card Holder: </td><td class='width30'></td><%= show_card_holder account, '' %></tr>
+      <tr><td>Card #: </td><td class='width30'></td><td><%= "************#{account.card_no}" %></td></tr>
+      <tr><td>Card Type: </td><td class='width30'></td><td><%= account.card_type %></td></tr> 
+      <tr><td>Exp Date: </td><td class='width30'></td><td><%= "#{account.expiration_month} / #{account.expiration_year}" %></td></tr> 
+      <tr><td>Default: </td><td class='width30'></td><td><%= account.default_flg %></td></tr> 
+    </table>
+    </div>
+  </div>
+  <div class="span4 offset5 mtop">
+    <div class='mleft15'>
+      <%= link_to 'Remove', card_account_path(uid: @usr, adminFlg: @adminFlg), method: :delete, confirm: 'Are you sure?', class: "btn btn-large", remote: true %>
+    </div>
+  </div>
+</div>

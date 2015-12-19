@@ -185,14 +185,16 @@ describe CardAccount do
 
   describe 'delete_card' do
     before do
+      @account.save!
       @card_acct = mock('Stripe::Customer')
       Stripe::Customer.stub!(:retrieve).with(@account.cust_token).and_return(@card_acct)
       @card_acct.stub_chain(:sources, :retrieve, :delete).and_return(true)
     #  Payment.should_receive(:delete_card).and_return(true)
     end
 
+    it { expect(@account.delete_card).to be_true }
+
     it 'should delete account' do
-      @account.save!
       @account.delete_card
       expect(@account.reload.status).to eq 'removed'
     end
@@ -203,7 +205,6 @@ describe CardAccount do
     end
 
     it 'resets default card' do
-      @account.save!
       @account2 = @user.card_accounts.create FactoryGirl.attributes_for :card_account, card_no: '5556'
       @account.delete_card
       expect(@account2.reload.default_flg).to eq 'Y'
@@ -243,6 +244,42 @@ describe CardAccount do
     it { expect(@account.cust_token).to be_nil }
     it 'has cust_token', run: true do
       expect(@account.cust_token).to eq @user.cust_token
+    end
+  end
+
+  describe 'card_list' do
+    before :each do
+      @account.save
+    end
+
+    context 'admins' do
+      before :each do
+        @other = FactoryGirl.create(:contact_user)
+        @acct = @other.card_accounts.create FactoryGirl.attributes_for :card_account
+        @user.update_attribute(:user_type_code, "AD")
+      end
+
+      it 'shows card holder list' do
+        expect(CardAccount.card_list(@user, true).size).to eq 2
+      end
+
+      it 'shows card list' do
+        expect(CardAccount.card_list(@user, false).size).to eq 1
+      end
+
+      it 'does not show card holder list' do
+        expect(CardAccount.card_list(@other, true).size).to eq 1
+      end
+    end
+
+    context 'non-admins' do
+      it 'does not show card holder list' do
+        expect(CardAccount.card_list(@user, true).size).to eq 1
+      end
+
+      it 'shows card list' do
+        expect(CardAccount.card_list(@user, false).size).to eq 1
+      end
     end
   end
 end

@@ -1,6 +1,7 @@
 class BankAccountsController < ApplicationController
   load_and_authorize_resource
   before_filter :authenticate_user!
+  before_filter :load_vars, :set_user
   before_filter :load_target, only: [:new, :create, :edit, :update]
   before_filter :load_data, only: [:show, :destroy]
   after_filter :mark_message, only: [:new]
@@ -79,5 +80,13 @@ class BankAccountsController < ApplicationController
 
   def mark_message
     ControllerManager::mark_message params[:cid], @user if params[:cid]
+  end
+
+  def set_user
+    @usr = params[:uid].blank? ? @user : User.find(params[:uid])
+  end
+
+  def load_vars
+    @adminFlg = params[:adminFlg] || false
   end
 end

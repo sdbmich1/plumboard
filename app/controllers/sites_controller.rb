@@ -10,22 +10,18 @@ class SitesController < ApplicationController
   end
 
   def loc_name
-    @sites = Site.search query, star: true, :page => params[:page], :per_page => 10
-    respond_to do |format|
-      format.json { render json: @sites }
-    end
+    respond_with(@sites = Site.search(query, star: true, page: params[:page], per_page: 10))
   end
 
   def new
     @site = Site.new
-    @contact = @site.contacts.build
   end
 
   def create
     @site = Site.new(params[:site])
     respond_with(@site) do |format|
       if @site.save_site(params)
-        format.json { render json: { site: @site } }
+        format.json { render json: @site }
       else
         format.json { render json: { errors: @site.errors.full_messages }, status: 422 }
       end

@@ -1,7 +1,7 @@
 <%= form_for setup_picture(category), url: get_category_path(category), html: { class: 'uform', id: 'category-form' } do |f| %>
   <div id="form_errors"><%= render partial: 'shared/error_messages', locals: { target: f.object } %></div>
   <div class="span4 center-wrapper">
-    <%= render partial: 'shared/show_user_photo', locals: { f: f, model: category, file_name: 'photo-camera.png', idName: 'usr_photo', mFlg: false } %>
+    <%= render partial: 'shared/show_user_photo', locals: {f:f, model: category, file_name: 'photo-camera.png', idName: 'usr_photo', mFlg: false} %>
   </div>
   <div class="sm-top span5">
     <div id='signup'>
@@ -11,7 +11,8 @@
       <span class="control-label">Pixi Type</span>
       <div><%= f.select :pixi_type, options_for_select( ['basic', 'premium'], :selected=>category.pixi_type ) %></div>
       <span class="control-label">Status</span> 
-      <div><%= f.select :status, options_for_select( ['active', 'inactive'], :selected=>category.status ), {}, {disabled: category.has_pixis?} %></div>
+      <div><%= f.select :status, options_for_select( ['active', 'inactive'], selected: category.status ), {}, {disabled: category.has_pixis?} %>
+      </div>
       <div class="mtop">
         <%= f.submit "Save Changes", class: "btn btn-large btn-primary submit-btn", data: {disable_with: "Submitting..."} %>
       </div>

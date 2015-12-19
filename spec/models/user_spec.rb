@@ -25,6 +25,8 @@ describe User do
     it { should respond_to(:business_name) }
     it { should respond_to(:ref_id) }
     it { should respond_to(:url) }
+    it { should respond_to(:ein) }
+    it { should respond_to(:ssn_last4) }
 
     it { should respond_to(:interests) }
     it { should respond_to(:contacts) }

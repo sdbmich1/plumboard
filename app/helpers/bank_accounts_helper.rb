@@ -1,8 +1,12 @@
 module BankAccountsHelper
 
   # set path based on action
-  def set_account_path
-    action_name == 'new' ? bank_accounts_path(@account, target: @target, format: 'js') : bank_accounts_path(@account, target: @target)
+  def set_account_path usr
+    if action_name == 'new'  
+      bank_accounts_path(@account, uid: usr, target: @target, format: 'js') 
+    else 
+      bank_accounts_path(@account, uid: usr, target: @target)
+    end 
   end
 
   # toggle btn name based on target

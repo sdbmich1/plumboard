@@ -68,11 +68,22 @@ class CardProcessor
       @acct.errors.add :base, "Error: There was a problem with your account."
       false
     end
+    result
   end
 
   def reset_card
     result = @acct.update_attributes(status: 'removed', default_flg: nil) 
-    CardAccount.active.first.update_attribute(:default_flg, 'Y') rescue nil
+    if card = CardAccount.where(user_id: @acct.user_id, status: 'active').first
+      card.update_attribute(:default_flg, 'Y')
+    end
     return result
+  end
+
+  def card_list usr, aFlg
+    if usr.is_admin? && aFlg  
+      User.joins(:card_accounts).include_list.where('card_accounts.status = ?', 'active').uniq.reorder('first_name ASC')  
+    else
+      CardAccount.inc_list.where(user_id: usr, status: 'active')
+    end
   end
 end

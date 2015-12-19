@@ -2,19 +2,8 @@
   <h2>Setup Your Payment Account</h2>
 </div>
 <div class="row">
-  <%= form_for(account, url: set_account_path, html: {id: 'bank-acct-form', class: "form-horizontal uform"}, data: {validate: 'parsley'}) do |f| %>
-    <div id="form_errors"><%= render partial: 'shared/error_messages', locals: { :target => f.object } %></div>
-    <div id="data_error" style="display:none" class="error"></div>
-    <div class="sm-top span6 offset3">
-      <div id='signup'>
-        <%= render partial: 'shared/bank_account_fields', locals: {f: f, account: account} %>
-      </div>
-    </div>
-    <%= f.hidden_field :user_id, value: @user.id %>
-    <%= f.hidden_field :token, id: 'pay_token' %>
-    <div class="span4 offset5 mbot">
-      <%= f.submit set_btn_name, class: "btn btn-large btn-primary submit-btn", data: {disable_with: 'Processing...'} %>
-    </div>
+  <%= form_for(account, url: set_account_path(@usr), html: {id: 'bank-acct-form', class: "form-horizontal uform"}, data: {validate: 'parsley'}) do |f| %>
+    <%= render partial: 'shared/account_form_fields', locals: {f: f, type: 'bank', account: account, id: 'bankForm'} %>
   <% end %>
   <div class="span4 offset5 sm-top mbot"><%= image_tag "check_sample.gif" %></div>
 </div>

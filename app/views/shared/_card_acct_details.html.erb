@@ -1,0 +1,7 @@
+<div id='card_list'>
+  <div id="top-header" class='sm-top nav pull-right'>
+    <%= link_to 'Add Card', new_card_path, class: 'btn btn-small', remote: true %>
+  </div>
+  <div class='clear-all'></div>
+  <%= render partial: 'shared/list', locals: {hname: 'shared/card_acct_top', pname: 'shared/card_acct_row', model: model, item: 'card', tag: 'cards'} %>
+</div> 

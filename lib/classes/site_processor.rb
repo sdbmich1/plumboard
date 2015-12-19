@@ -53,12 +53,20 @@ class SiteProcessor
 
   # assign lat and lng, then save
   def save_site params
-    params[:user][:pictures_attributes].each do |_, v|
-      @site.pictures.build(v)
+    if !params[:user].blank?
+      params[:user][:pictures_attributes].each do |_, v|
+        @site.pictures.build(v)
+      end
     end
     c = @site.contacts.first
     loc = [c.address, c.city, c.state].join(', ') << ' ' << c.zip
     c.lat, c.lng = LocationManager.get_lat_lng_by_loc(loc)
     @site.save
+  end
+
+  def with_picture
+    @site.pictures.build if @site.pictures.blank? || @site.pictures.size < 2
+    @site.contacts.build if @site.contacts.blank?
+    @site
   end
 end
