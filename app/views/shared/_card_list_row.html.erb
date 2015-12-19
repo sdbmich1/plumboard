@@ -1,4 +1,3 @@
-<% cache 'card_holder_list' do %>
 <tr>
   <td class='center-wrapper'>
     <%= render partial: 'shared/show_photo', locals: {model: card, file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
@@ -7,8 +6,6 @@
   <td class=''><%= card.email %></td>
   <td class=''><%= card.type_descr %></td>
   <td class=''><%= card.home_zip %></td>
-  <td class=''><%= card.active_card_accounts.size %></td>
+  <td class=''><%= card.active_cards_count %></td>
   <td class='center-wrapper'><%= link_to 'Details', card_accounts_path(uid: card, adminFlg: @adminFlg), class: 'btn btn-small', remote: true %></td>
 </tr>
-<% end %>
-

@@ -110,7 +110,7 @@ feature "UserSignins" do
       it_should_behave_like 'manage_signin_links', 'pixi_user', false, false, false, false
     end
 
-    describe 'registered admin users', base: true  do
+    describe 'registered admin users', admin: true  do
       it_should_behave_like 'manage_signin_links', 'admin', true, true, false, true
     end
 

@@ -1076,4 +1076,18 @@ describe User do
       expect(@user.has_ship_address?).to be_false
     end
   end
+
+  describe "counter cache" do
+    it "has a listing counter cache" do
+      create :listing, seller_id: @user.id, quantity: 1, status: 'active'
+	User.find_each { |usr| User.reset_counters(usr.id, :active_listings) }
+      expect(@user.reload.active_listings_count).to eq 1
+    end
+
+    it "has a card counter cache" do
+        @user.card_accounts.create attributes_for :card_account
+	User.find_each { |usr| User.reset_counters(usr.id, :active_card_accounts) }
+        expect(@user.reload.active_cards_count).to eq 1
+    end
+  end
 end

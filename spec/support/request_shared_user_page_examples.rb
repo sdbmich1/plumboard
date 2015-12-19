@@ -30,7 +30,8 @@ require 'spec_helper'
   end
 
   def admin_pages stype
-    page.send(stype, have_link('Sites', href: sites_path(stype: 'region')))
+    page.send(stype, have_link('Accounts', href: card_accounts_path(adminFlg: true)))
+    page.send(stype, have_link('Sites', href: sites_path(stype: 'region', status: 'active')))
     page.send(stype, have_link('Categories', href: manage_categories_path(status: 'active')))
     page.send(stype, have_link('Transactions', href: transactions_path))
     page.send(stype, have_link('Users', href: users_path))

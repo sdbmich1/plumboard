@@ -1,9 +1,16 @@
 require 'spec_helper'
 
-shared_examples 'a post route' do |notFlg, method, cntr|
+shared_examples 'a post method route' do |notFlg, method, cntr|
   describe 'route tests' do
     action = notFlg ? 'should' : 'should_not'
     it { post("/#{cntr}/#{method}").send(action, route_to("#{cntr}##{method}")) }
+  end
+end
+
+shared_examples 'a post route' do |notFlg, method, cntr|
+  describe 'route tests' do
+    action = notFlg ? 'should' : 'should_not'
+    it { post("/#{cntr}").send(action, route_to("#{cntr}##{method}")) }
   end
 end
 

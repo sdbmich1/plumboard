@@ -5,7 +5,7 @@ class CardAccount < ActiveRecord::Base
   attr_accessible :card_no, :card_type, :description, :expiration_month, :expiration_year, :status, :token, :user_id,
     :card_number, :card_code, :zip, :default_flg, :card_token
 
-  belongs_to :user
+  belongs_to :user, counter_cache: 'active_cards_count'
 
   validate :must_have_token
   validates :user_id, presence: true

@@ -184,10 +184,11 @@ namespace :manage_server do
     end
   end
 
+  task :set_card_counters => :environment do
+    User.find_each { |usr| User.reset_counters(usr.id, :active_card_accounts) }
+  end
+
   task :run_upgrade_tasks => :environment do
-    Rake::Task[:update_site_images].execute :file_name => "college_image_data_071915.csv"
-    Rake::Task['manage_server:update_buy_now'].invoke
-    Rake::Task['manage_server:update_fulfillment_types'].invoke
-    Rake::Task['manage_server:set_delivery_preferences'].invoke
+    Rake::Task['manage_server:set_card_counters'].invoke
   end
 end
