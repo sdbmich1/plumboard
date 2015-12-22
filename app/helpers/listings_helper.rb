@@ -719,7 +719,11 @@ module ListingsHelper
 
   # assign header of date column
   def set_date_column status
-    status == "draft" || status.blank? ? "Last Updated" : "#{status.titleize} Date"
+    case status
+    when "draft" then "Last Updated"
+    when "active" then "Expiration Date"
+    else "#{status.titleize} Date"
+    end
   end
 
   def cache_key_for_seller_band(cat, loc)

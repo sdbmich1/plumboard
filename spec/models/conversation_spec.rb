@@ -288,6 +288,7 @@ describe Conversation do
     
     it "should_not return true" do
       @conversation.due_invoice?(@user).should_not be_true
+      @conversation.sender_due_invoice?.should_not be_true
     end
     
     it "should return true" do
@@ -295,18 +296,21 @@ describe Conversation do
       @details = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
       @invoice.save!
       @conversation.due_invoice?(@recipient).should be_true
+      @conversation.recipient_due_invoice?.should be_true
     end
     
     it "should not return true when paid", run: true do
       @invoice.status = 'paid'
       @invoice.save
       @conversation.due_invoice?(@recipient).should_not be_true
+      @conversation.recipient_due_invoice?.should_not be_true
     end
     
     it "should not return true when removed", run: true do
       @listing.status = 'removed'
       @listing.save; sleep 1
       @conversation.due_invoice?(@recipient).should_not be_true
+      @conversation.recipient_due_invoice?.should_not be_true
     end
   end
 
@@ -321,28 +325,37 @@ describe Conversation do
     
     it "should_not return true" do
       @conversation.can_bill?(@recipient).should_not be_true
+      @conversation.recipient_can_bill?.should_not be_true
     end
     
     it "returns true" do
       @conversation.can_bill?(@new_user).should be_true
+    end
+
+    it "sender_can_bill? returns true" do
+      @conversation.update_attribute(:user_id, @new_user.id)
+      @conversation.sender_can_bill?.should be_true
     end
     
     it "should not return true when paid" do
       @invoice.status = 'paid'
       @invoice.save!
       @conversation.can_bill?(@recipient).should_not be_true
+      @conversation.recipient_can_bill?.should_not be_true
     end
     
     it "should not return true when removed" do
       @listing.status = 'removed'
       @listing.save; sleep 1
       @conversation.can_bill?(@recipient).should_not be_true
+      @conversation.recipient_can_bill?.should_not be_true
     end
     
     it "should not return true when sold" do
       @listing.status = 'sold'
       @listing.save; sleep 1
       @conversation.can_bill?(@recipient).should_not be_true
+      @conversation.recipient_can_bill?.should_not be_true
     end
   end
 
@@ -446,6 +459,16 @@ describe Conversation do
     it "does not return recipient name" do 
       @conversation.recipient_id = 100 
       @conversation.recipient_name.should be_nil 
+    end
+  end
+
+  describe "as_json" do
+    it "contains mobile conversation fields" do
+      json = @conversation.as_json
+      %w(sender_can_bill? recipient_can_bill? sender_due_invoice? recipient_due_invoice?).each do |fld|
+        expect(json.keys).to include fld.to_sym
+      end
+      expect(json[:listing].keys).to include :photo_url
     end
   end
 
