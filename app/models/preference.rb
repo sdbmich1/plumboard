@@ -10,4 +10,10 @@ class Preference < ActiveRecord::Base
     		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_SALES_TAX.to_i }
   validates :ship_amt, allow_blank: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
     		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_SHIP_AMT.to_i }
+
+  after_commit :update_existing_pixis, on: :update
+
+  def update_existing_pixis
+    ListingProcessor.new(nil).set_delivery_prefs(user.id, fulfillment_type_code, sales_tax, ship_amt)
+  end
 end
