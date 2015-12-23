@@ -7,9 +7,7 @@
     <div class="offset1 span5">
       <div id='signup'>
         <%= render partial: 'shared/user_info', locals: { f: f, user: @usr } %>
-        <div class="mtop">
-          <%= f.submit "Save Changes", class: "btn btn-large btn-primary submit-btn", data: {disable_with: "Submitting..."} %>
-        </div>
+        <%= render partial: 'shared/user_form_buttons', locals: { f: f, user: @usr, cls: 'mtop', txt: 'Save Changes' } %>
       </div>
     </div>
 <% end %>

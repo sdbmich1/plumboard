@@ -101,6 +101,8 @@ class User < ActiveRecord::Base
   # validates :url, :presence => {:on => :create}, uniqueness: true, length: { :minimum => 2 }, unless: :guest?
   validate :must_have_picture, unless: :guest?
   validate :must_have_zip, unless: :guest?
+  validates :ein, allow_blank: true, length: {is: 9}
+  validates :ssn_last4, allow_blank: true, length: {is: 4}
 
   # validate picture exists
   def must_have_picture

@@ -10,7 +10,7 @@
   <td class=''><%= user.birth_dt %></td>
   <td class=''><%= user.nice_date(user.created_at) %></td>
   <td class=''><%= signin_date(user) %></td>
-  <td class='center-wrapper'><%= link_to 'Details', user, class: 'btn btn-small' %></td>
+  <td class='center-wrapper'><%= link_to 'Details', user_path(id: user, adminFlg: @adminFlg), class: 'btn btn-small' %></td>
 </tr>
 <% end %>
 

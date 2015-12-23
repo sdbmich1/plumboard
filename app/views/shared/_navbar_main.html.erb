@@ -1,7 +1,9 @@
 <ul class="nav pull-right">
-  <li class="active"><%= link_to "Account", @usr, class: 'submenu', remote: true, id: 'acct-setting' %></li>
-  <li><%= link_to "Profile", settings_path, class: 'submenu', remote: true, id: 'prof-setting' %></li>
-  <li><%= link_to "Contact", settings_contact_path, class: 'submenu', remote: true, id: 'addr-setting' %></li>
+  <li class="<%= get_main_menu_status 'show' %>">
+    <%= link_to "Account", @usr, class: 'submenu', remote: true, id: 'acct-setting' %></li>
+  <li class="<%= get_main_menu_status 'edit' %>">
+    <%= link_to "Profile", settings_path(id: @usr, adminFlg: @adminFlg), class: 'submenu', remote: true, id: 'prof-setting' %></li>
+  <li><%= link_to "Contact", settings_contact_path(id: @usr, adminFlg: @adminFlg), class: 'submenu', remote: true, id: 'addr-setting' %></li>
   <%= show_pwd_link %>
   <%= show_delivery(@usr) %>
 </ul>
