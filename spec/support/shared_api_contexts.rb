@@ -4,7 +4,11 @@ def set_data klass, method, rte, tname, xhr=false
   @listings = stub_model(klass.constantize)
   klass.constantize.stub_chain(method.to_sym).and_return(@listings)
   @listings.stub_chain(tname.to_sym).and_return( @listings ) if tname
-  xhr ? tname.blank? ? do_other_xhr_get(rte) : do_xhr_get(rte) : do_get_list(rte)
+  xhr ? set_xhr_rte(tname, rte) : do_get_list(rte)
+end
+
+def set_xhr_rte tname, rte
+  tname.blank? ? do_other_xhr_get(rte) : do_xhr_get(rte)
 end
               
 def do_xhr_get rte
@@ -34,7 +38,6 @@ shared_context "a load data request" do |klass, method, rte, tname, xhr, var|
     end
 
     it "action should render get template" do
-      do_get_list rte
       response.should render_template rte.to_sym if tname
     end
   end

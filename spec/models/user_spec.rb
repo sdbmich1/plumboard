@@ -93,6 +93,12 @@ describe User do
 #    it { should validate_length_of(:url).is_at_least(2) }
 #    it { should allow_value('Tom').for(:url) }
 #    it { should_not allow_value("a").for(:url) }
+  it { should allow_value(457211111).for(:ein) }
+  it { should_not allow_value(725).for(:ein) }
+  it { should_not allow_value('a725').for(:ein) }
+  it { should allow_value(4572).for(:ssn_last4) }
+  it { should_not allow_value(725).for(:ssn_last4) }
+  it { should_not allow_value('a725').for(:ssn_last4) }
 
     it { should have_many(:favorite_sellers) }
     it { should have_many(:sellers) }

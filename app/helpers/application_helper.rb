@@ -530,6 +530,7 @@ module ApplicationHelper
 
   def build_admin_menu str
     if can? :manage_users, @user
+      str << content_tag(:li, '', class: "divider")
       str << content_tag(:li, link_to("Accounts", card_accounts_path(adminFlg: true)))
       str << content_tag(:li, link_to("Categories", manage_categories_path(status: 'active')))
       str << content_tag(:li, link_to("Sites", sites_path(stype: 'region', status: 'active')))
@@ -537,5 +538,9 @@ module ApplicationHelper
       str << content_tag(:li, link_to("Users", users_path))
     end
     str
+  end
+
+  def get_main_menu_status val
+    controller_name == 'users' && action_name == val ? 'active' : ''
   end
 end

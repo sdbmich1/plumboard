@@ -56,6 +56,8 @@ feature "Listings" do
     page.should have_content(saved ? "Active Listing" : "#{val.titleize} Listing")
     if val == "draft"
       date_column = "Last Updated"
+    elsif val == "active"
+      date_column = "Expiration Date"
     elsif saved
       date_column = "Saved Date"
     else

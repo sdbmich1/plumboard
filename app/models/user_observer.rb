@@ -14,7 +14,7 @@ class UserObserver < ActiveRecord::Observer
     PointManager::add_points usr, ptype
 
     # set role if user type changes
-    if usr.birth_date_changed? && usr.has_bank_account?
+    if (usr.birth_date_changed? || usr.ein_changed? || usr.ssn_last4_changed?) && usr.has_bank_account?
       StripePayment.update_account usr, usr.acct_token, usr.current_sign_in_ip
     end
 

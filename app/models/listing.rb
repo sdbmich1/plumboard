@@ -235,7 +235,11 @@ class Listing < ListingParent
 
   # toggle get_by_seller call based on status
   def self.get_by_status_and_seller val, usr, adminFlg
-    val == 'sold' ? sold_list(usr) : select_fields("listings.updated_at").get_by_seller(usr, val, adminFlg).get_by_status(val)
+    val == 'sold' ? sold_list(usr) : select_fields(created_date(val)).get_by_seller(usr, val, adminFlg).get_by_status(val)
+  end
+
+  def self.created_date val
+    val == 'active' ? 'listings.end_date' : 'listings.updated_at'
   end
 
   # refresh counter cache

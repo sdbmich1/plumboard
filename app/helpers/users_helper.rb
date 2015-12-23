@@ -143,4 +143,8 @@ module UsersHelper
   def signin_date user
     user.nice_date(user.current_sign_in_at) if user.current_sign_in_at
   end
+
+  def show_user_path user
+    @user.is_admin? ? users_path(utype: user.user_type_code) : user_path(id: user)
+  end
 end
