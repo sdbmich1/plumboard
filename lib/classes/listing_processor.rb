@@ -204,4 +204,8 @@ class ListingProcessor < ListingDataProcessor
     @listing.where(attrs).update_all(fulfillment_type_code: 'A')
     @listing.where(fulfillment_type_code: nil).update_all(fulfillment_type_code: 'P')
   end
+
+  def set_delivery_prefs uid, ftype, sls_tax, ship_amt
+    User.find(uid).listings.update_all({fulfillment_type_code: ftype, sales_tax: sls_tax, est_ship_cost: ship_amt})
+  end
 end
