@@ -42,9 +42,29 @@ class Conversation < ActiveRecord::Base
     !posts.detect { |post| post.due_invoice? usr }.nil?
   end
 
+  # checks whether invoice for sender is due
+  def sender_due_invoice?
+    !posts.detect { |post| post.due_invoice? user }.nil?
+  end
+
+  # checks whether invoice for recipient is due
+  def recipient_due_invoice?
+    !posts.detect { |post| post.due_invoice? recipient }.nil?
+  end
+
   # checks whether user can bill
   def can_bill? usr
     !posts.detect { |post| post.can_bill? usr }.nil?
+  end
+
+  # checks whether sender can bill
+  def sender_can_bill?
+    !posts.detect { |post| post.can_bill? user }.nil?
+  end
+
+  # checks whether recipient can bill
+  def recipient_can_bill?
+    !posts.detect { |post| post.can_bill? recipient }.nil?
   end
 
   # pixi title
@@ -146,7 +166,9 @@ class Conversation < ActiveRecord::Base
 
   # set json string
   def as_json(options={})
-    super(except: [:updated_at], methods: [:pixi_title, :recipient_name, :sender_name, :create_dt, :active_posts], 
-      include: {recipient: { only: [:first_name], methods: [:photo] }, user: { only: [:first_name], methods: [:photo] }})
+    super(except: [:updated_at], methods: [:pixi_title, :recipient_name, :sender_name, :create_dt, :active_posts,
+                                 :sender_can_bill?, :recipient_can_bill?, :sender_due_invoice?, :recipient_due_invoice?], 
+      include: {recipient: { only: [:first_name], methods: [:photo] }, user: { only: [:first_name], methods: [:photo] },
+                listing: { only: [], methods: [:photo_url] } })
   end
 end
