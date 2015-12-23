@@ -20,104 +20,28 @@ describe SettingsController do
     @user = mock_user
   end
 
-  describe 'GET index' do
-
-    before :each do
-      controller.stub!(:current_user).and_return(@user)
-      do_get
-    end
-
-    def do_get
-      get :index
-    end
-
-    it "should assign @user" do
-      assigns(:user).should_not be_nil 
-    end
-
-    it "renders the :index view" do
-      response.should render_template :index
+  describe 'GET index', index: true do
+    context 'load setting' do
+      it_behaves_like "a load data request", 'User', 'find', 'index', nil, true, 'user'
+      it_behaves_like "a load data request", 'User', 'find', 'index', nil, false, 'user'
     end
   end
 
-  describe "xhr GET 'index'" do
-
-    before :each do
-      controller.stub!(:current_user).and_return(@user)
-      do_get
-    end
-
-    def do_get
-      xhr :get, :index
-    end
-
-    it "should assign @user" do
-      assigns(:user).should_not be_nil 
-    end
-
-    it "should load nothing" do
-      controller.stub!(:render)
+  describe 'GET password', password: true do
+    context 'load setting' do
+      it_behaves_like "a load data request", 'User', 'find', 'password', 'password', true, 'user'
     end
   end
 
-  describe "GET 'password'" do
-
-    before :each do
-      controller.stub!(:current_user).and_return(@user)
-      do_get
-    end
-
-    def do_get
-      xhr :get, :password
-    end
-
-    it "should assign @user" do
-      assigns(:user).should_not be_nil 
-    end
-
-    it "should load nothing" do
-      controller.stub!(:render)
+  describe 'GET contact', contact: true do
+    context 'load setting' do
+      it_behaves_like "a load data request", 'User', 'find', 'contact', 'contact', true, 'user'
     end
   end
 
-  describe "GET 'contact'" do
-
-    before :each do
-      controller.stub!(:current_user).and_return(@user)
-      do_get
-    end
-
-    def do_get
-      xhr :get, :contact, id: '1'
-    end
-
-    it "should assign @user" do
-      assigns(:user).should_not be_nil 
-    end
-
-    it "should load nothing" do
-      controller.stub!(:render)
-    end
-  end
-
-
-  describe "GET 'delivery'" do
-
-    before :each do
-      controller.stub!(:current_user).and_return(@user)
-      do_get
-    end
-
-    def do_get
-      xhr :get, :delivery, id: '1'
-    end
-
-    it "should assign @user" do
-      assigns(:user).should_not be_nil 
-    end
-
-    it "should load nothing" do
-      controller.stub!(:render)
+  describe 'GET delivery', delivery: true do
+    context 'load setting' do
+      it_behaves_like "a load data request", 'User', 'find', 'delivery', 'delivery', true, 'user'
     end
   end
 end

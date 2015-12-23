@@ -1,14 +1,12 @@
 <div class="row">
   <%= form_for(setup_user(user), url: user_path(user, target: 'shared/user_contact'), html: {method: :put, class: "form-horizontal uform", 
     id: 'contact-form'}) do |f| %>
-      <div id="form_errors"><%= render partial: 'shared/error_messages', :locals => { :target => user } %></div>
-      <div class="sm-top span6 offset3">
-        <div id='signup'>
-	  <%= render partial: 'shared/user_contact_details', locals: { f: f } %>
-	  <div class='mtop offset2'>
-            <%= f.submit "Save Changes", class: "btn btn-large btn-primary submit-btn", data: {disable_with: "Submitting..."} %>
-	  </div>
-        </div>
+    <div id="form_errors"><%= render partial: 'shared/error_messages', :locals => { :target => f.object } %></div>
+    <div class="sm-top span6 offset3">
+      <div id='signup'>
+	<%= render partial: 'shared/user_contact_details', locals: { f: f } %>
+	<%= render partial: 'shared/user_form_buttons', locals: { f: f, user: user, cls: 'mtop offset2', txt: 'Save Changes' } %>
       </div>
+    </div>
   <% end %>
 </div>

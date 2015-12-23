@@ -1,4 +1,4 @@
 <div class="mtop pull-right">
   <%= link_to 'Edit', edit_user_path(user), id: 'usr-edit-btn', class: 'btn btn-large' %>
-  <%= link_to 'Done', users_path(utype: user.user_type_code), id: 'usr-done-btn', class: 'btn btn-large btn-primary submit-btn' %>
+  <%= link_to 'Done', show_user_path(user), id: 'usr-done-btn', class: 'btn btn-large btn-primary submit-btn' %>
 </div>

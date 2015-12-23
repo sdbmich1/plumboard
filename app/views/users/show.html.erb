@@ -1,6 +1,6 @@
 <% provide(:title, set_user_title) %>
 <%= content_for :subhead do %>
-  <%= render :partial => 'shared/navbar', locals: { menu_name: set_user_menu } %>
+  <%= render :partial => 'shared/navbar', locals: { menu_name: 'Settings' } %>
 <% end %>
 <%= content_for :content do %>
   <div class="row" id="user_form">

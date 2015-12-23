@@ -81,17 +81,21 @@ module StripePayment
   # complete settings for managed accounts
   def self.update_account model, acct_id, ip
     Rails.logger.info "PXB updating account: #{acct_id} ip: #{ip}"
-    account = Stripe::Account.retrieve(acct_id)
-    if account
+    acct = Stripe::Account.retrieve(acct_id)
+    if acct
       btype = model.is_business? ? 'company' : 'individual'
-      account.legal_entity.type = btype
-      account.tos_acceptance.date = Time.now.to_i
-      account.tos_acceptance.ip = ip
-      account.legal_entity.first_name, account.legal_entity.last_name = model.first_name, model.last_name
-      account.legal_entity.business_name = model.business_name if model.is_business?
-      account.legal_entity.dob.day, account.legal_entity.dob.month, account.legal_entity.dob.year = model.birth_date.day, model.birth_date.month, 
-        model.birth_date.year # unless model.is_business?
-      account.save
+      acct.legal_entity.type = btype
+      acct.tos_acceptance.date = Time.now.to_i
+      acct.tos_acceptance.ip = ip
+      acct.legal_entity.first_name, acct.legal_entity.last_name = model.first_name, model.last_name
+      acct.legal_entity.business_name = model.business_name if model.is_business?
+      acct.legal_entity.dob.day, acct.legal_entity.dob.month, acct.legal_entity.dob.year, acct.legal_entity.business_tax_id, 
+      acct.legal_entity.ssn_last_4 = model.birth_date.day, model.birth_date.month, model.birth_date.year, model.ein, model.ssn_last4 
+      if model.has_address?
+        acct.legal_entity.address.city, acct.legal_entity.address.line1, acct.legal_entity.address.postal_code, acct.legal_entity.address.state = 
+ 	  model.contacts[0].city, model.contacts[0].address, model.contacts[0].zip, model.contacts[0].state
+      end
+      acct.save
     end
 
     rescue => ex
