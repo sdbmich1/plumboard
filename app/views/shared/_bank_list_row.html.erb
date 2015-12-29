@@ -1,0 +1,11 @@
+<tr>
+  <td class='center-wrapper'>
+    <%= render partial: 'shared/show_photo', locals: {model: bank, file_name: "myimage", psize: '80x80', display_cnt: 0 } %>
+  </td>
+  <td class=''><%= bank.name %></td>
+  <td class=''><%= bank.email %></td>
+  <td class=''><%= bank.type_descr %></td>
+  <td class=''><%= bank.home_zip %></td>
+  <td class=''><%= bank.active_bank_accounts.size %></td>
+  <td class='center-wrapper'><%= link_to 'Details', bank_accounts_path(uid: bank, adminFlg: @adminFlg), class: 'btn btn-small', remote: true %></td>
+</tr>

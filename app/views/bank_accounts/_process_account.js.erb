@@ -1,0 +1,3 @@
+$("#flash_notice").hide('fast');
+$("#inv_form").html("<%= escape_javascript( raw render(partial: "#{toggle_bank_list}", locals: {model: @accounts}) ) %>");
+$("#spinner").hide('fast'); 

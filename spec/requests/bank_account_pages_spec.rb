@@ -5,14 +5,6 @@ feature "BankAccounts" do
   let(:user) { FactoryGirl.create(:pixi_user, first_name: 'Jack', last_name: 'Snow', email: 'jack.snow@pixitest.com') }
   let(:submit) { "Save" }
 
-  def add_data
-    fill_in 'routing_number', with: '110000000'
-    fill_in 'acct_number', with: '000123456789'
-    fill_in 'bank_account_acct_name', with: "SDB Business"
-    fill_in 'bank_account_description', with: "My business"
-    select("checking", :from => "bank_account_acct_type")
-  end
-
   def change_data
     fill_in 'acct_number', with: '000123456789'
     fill_in 'bank_account_acct_name', with: "Personal Business"
@@ -57,11 +49,12 @@ feature "BankAccounts" do
 
     it "creates an new account" do
       expect {
-          add_data
+          add_bank_data
           click_on 'Save'; sleep 3;
       }.to change(BankAccount, :count).by(1)
 
       # page.should_not have_content 'Pixis'
+      page.should have_content 'My Accounts'
       page.should have_content 'Account #'
     end
   end
@@ -83,7 +76,7 @@ feature "BankAccounts" do
     end
 
     it "removes an account" do
-      BankAccount.any_instance.stub(:delete_account).and_return(true)
+    #  BankAccount.any_instance.stub(:delete_account).and_return(true)
       expect {
           click_on 'Remove'; sleep 3;
       }.to change(BankAccount, :count).by(0)
@@ -99,7 +92,7 @@ feature "BankAccounts" do
       init_setup px_user
       @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
       visit new_bank_account_path(target: 'shared/invoice_form')
-      add_data
+      add_bank_data
     end
 
     it "shows content" do
@@ -129,7 +122,7 @@ feature "BankAccounts" do
     describe 'visit create page' do
       before do
         visit new_bank_account_path(target: 'shared/invoice_form')
-        add_data
+        add_bank_data
       end
 
       it "shows content" do

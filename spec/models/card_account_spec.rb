@@ -246,40 +246,8 @@ describe CardAccount do
       expect(@account.cust_token).to eq @user.cust_token
     end
   end
-
-  describe 'card_list' do
-    before :each do
-      @account.save
-    end
-
-    context 'admins' do
-      before :each do
-        @other = FactoryGirl.create(:contact_user)
-        @acct = @other.card_accounts.create FactoryGirl.attributes_for :card_account
-        @user.update_attribute(:user_type_code, "AD")
-      end
-
-      it 'shows card holder list' do
-        expect(CardAccount.card_list(@user, true).size).to eq 2
-      end
-
-      it 'shows card list' do
-        expect(CardAccount.card_list(@user, false).size).to eq 1
-      end
-
-      it 'does not show card holder list' do
-        expect(CardAccount.card_list(@other, true).size).to eq 1
-      end
-    end
-
-    context 'non-admins' do
-      it 'does not show card holder list' do
-        expect(CardAccount.card_list(@user, true).size).to eq 1
-      end
-
-      it 'shows card list' do
-        expect(CardAccount.card_list(@user, false).size).to eq 1
-      end
-    end
+  
+  describe 'card acct list', list: true do
+    it_behaves_like "account list methods", 'card_account', 'CardAccount', 'card_list'
   end
 end

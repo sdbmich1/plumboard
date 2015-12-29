@@ -311,3 +311,12 @@
     @new_post = @conv.posts.build attributes_for :post, user_id: @user.id, recipient_id: @recipient.id, pixi_id: @pixi.pixi_id, msg_type: mtype
     @conv.save!
   end
+
+  def add_bank_data
+    fill_in 'routing_number', with: '110000000'
+    fill_in 'acct_number', with: '000123456789'
+    fill_in 'bank_account_acct_name', with: "SDB Business"
+    fill_in 'bank_account_description', with: "My business"
+    page.execute_script %Q{ $("#bank_account_user_id").val("#{@other.id}") } if @other
+    select("checking", :from => "bank_account_acct_type")
+  end

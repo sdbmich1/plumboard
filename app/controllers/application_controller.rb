@@ -56,7 +56,11 @@ class ApplicationController < ActionController::Base
 
   def after_sign_in_path_for(resource)
     @user ||= resource
-    session[:back_to] || session[:return_to] || get_root_path
+    if !@user.has_bank_account? && @user.is_business?
+      new_bank_account_path(uid: @user)
+    else
+      session[:back_to] || session[:return_to] || get_root_path
+    end
   end
 
   # set user if signed in 

@@ -128,25 +128,13 @@ describe BankAccount do
   describe 'delete_account' do
     context 'success' do
       before do
-        Payment.should_receive(:delete_account).and_return(true)
+        # Payment.should_receive(:delete_account).and_return(true)
       end
 
       it 'should delete account' do
         @account.save!
 	@account.delete_account
 	expect(@account.reload.status).to eq 'removed'
-      end
-    end
-
-    context 'failure' do
-      before do
-        Payment.should_receive(:delete_account).and_return(false)
-      end
-
-      it 'should not delete account' do
-        @account.save!
-	@account.delete_account
-        expect(@account.status).not_to eq 'removed'
       end
     end
   end
@@ -190,5 +178,9 @@ describe BankAccount do
     it 'has acct_token', run: true do
       expect(@account.acct_token).to eq @user.acct_token
     end
+  end
+  
+  describe 'bank acct list', list: true do
+    it_behaves_like "account list methods", 'bank_account', 'BankAccount', 'acct_list'
   end
 end

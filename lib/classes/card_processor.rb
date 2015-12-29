@@ -79,6 +79,7 @@ class CardProcessor
     return result
   end
 
+  # return list of card holders or list of cards for a given user based on params
   def card_list usr, aFlg
     if usr.is_admin? && aFlg  
       User.joins(:card_accounts).include_list.where('card_accounts.status = ?', 'active').uniq.reorder('first_name ASC')  

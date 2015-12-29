@@ -9,6 +9,7 @@ describe CardAccountsController do
     it_should_behave_like 'a put route', false, 'update', 'card_accounts'
     it_should_behave_like 'a post route', true, 'create', 'card_accounts'
     it_should_behave_like 'a delete route', true, 'destroy', 'card_accounts'
+    it_should_behave_like 'a subdomain route', true, 'card_accounts/autocomplete_user_first_name', 'autocomplete_user_first_name','card_accounts'
   end
 end
 

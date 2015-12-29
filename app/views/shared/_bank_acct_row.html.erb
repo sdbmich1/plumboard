@@ -1,0 +1,10 @@
+<tr>
+  <td class='center-wrapper'><%= show_bank_icon bank %></td>
+  <%= show_card_holder bank, 'owner_name' %>
+  <td class='center-wrapper'><%= bank.bank_name %></td>
+  <td class='center-wrapper'><%= "****#{bank.acct_no}" %></td>
+  <td class='center-wrapper'><%= bank.acct_type %></td>
+  <td class='center-wrapper'><%= bank.default_flg %></td>
+  <td class='center-wrapper'>
+    <%= link_to 'Details', bank_account_path(id: bank, uid: @usr, adminFlg: @adminFlg), class: 'btn btn-small card-det', remote: true %></td>
+</tr>

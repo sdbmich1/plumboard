@@ -4,18 +4,20 @@ class BankAccountsController < ApplicationController
   before_filter :load_vars, :set_user
   before_filter :load_target, only: [:new, :create, :edit, :update]
   before_filter :load_data, only: [:show, :destroy]
+  before_filter :load_accts, only: [:index]
   after_filter :mark_message, only: [:new]
+  autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name
   respond_to :html, :json, :js, :mobile
   layout :page_layout
   include ControllerManager
 
   def new
-    flash.now[:notice] = 'You need to setup a bank account before creating an invoice.' unless @user.has_bank_account?
-    respond_with(@account = @user.bank_accounts.build)
+    flash.now[:notice] = 'You need to setup a bank account in order to receive payments.' unless @usr.has_bank_account?
+    respond_with(@account = BankAccount.new(user_id: params[:uid]))
   end
 
   def index
-    respond_with(@accounts = @user.bank_accounts.active)
+    respond_with(@accounts)
   end
 
   def show
@@ -26,6 +28,7 @@ class BankAccountsController < ApplicationController
     @account = BankAccount.new params[:bank_account]
     respond_with(@account) do |format|
       if @account.save_account request.remote_ip
+        load_accts if @adminFlg
         format.js { reload_data }
 	format.html { redirect_path }
         format.json { render json: {account: @account} }
@@ -38,14 +41,14 @@ class BankAccountsController < ApplicationController
 
   def destroy
     if @account.delete_account 
-      redirect_to new_bank_account_path 
+      set_return_path
     else
       flash[:error] = @account.errors.full_messages
       render action: :show 
     end
   end
 
-  private
+  protected
 
   def page_layout
     mobile_device? ? 'form' : 'transactions'
@@ -71,11 +74,15 @@ class BankAccountsController < ApplicationController
 
   # redirect based on target
   def redirect_path
-    if !(@target =~ /invoice/i).nil?
-      redirect_to new_invoice_path
-    else
-      redirect_to @account
-    end
+    !(@target =~ /invoice/i).nil? ? redirect_to(new_invoice_path) : set_reload_path
+  end
+
+  def set_reload_path
+    @adminFlg ? redirect_to(bank_accounts_path(adminFlg: @adminFlg)) : redirect_to(@account)
+  end
+
+  def set_return_path
+    @adminFlg ? load_accts : redirect_to(new_bank_account_path)
   end
 
   def mark_message
@@ -87,6 +94,15 @@ class BankAccountsController < ApplicationController
   end
 
   def load_vars
-    @adminFlg = params[:adminFlg] || false
+    @adminFlg = params[:adminFlg].to_bool rescue false
+  end
+
+  def load_accts
+    @accounts = BankAccount.acct_list(@usr, @adminFlg).paginate(page: params[:page], per_page: 15)
+  end
+
+  # parse results for active items only
+  def get_autocomplete_items(parameters)
+    super(parameters).active rescue nil
   end
 end

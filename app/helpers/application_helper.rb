@@ -152,12 +152,7 @@ module ApplicationHelper
 
   # set account path based on user has an account
   def get_account_path
-    if @user.has_bank_account?
-      @acct = @user.bank_accounts.first
-      @acct.new_record? ? new_bank_account_path : bank_account_path(@acct)
-    else
-      new_bank_account_path
-    end
+    adminMode? ? bank_accounts_path(adminFlg: true) : set_bank_acct_path
   end
 
   # use bootstrap for flash messages

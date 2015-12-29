@@ -1,2 +1,1 @@
-<%= collection_select :currency_type_code, :code, CurrencyType.active, :code, :description, {selected: acc.currency_type_code}, {class: 'sm-top' } %>
-
+<%= f.collection_select :currency_type_code, CurrencyType.active, :code, :description, {selected: acc.currency_type_code}, {class: 'sm-top'} %>

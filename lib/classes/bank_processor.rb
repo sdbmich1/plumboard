@@ -58,10 +58,19 @@ class BankProcessor
 
   # delete account
   def delete_account
-    result = Payment::delete_account @acct.token, @acct if @acct.token
+    # result = Payment::delete_account @acct.token, @acct if @acct.token
 
     # check for errors
-    val = process_error result, "Error: There was a problem with your bank account."
-    @acct.update_attribute(:status, 'removed') if val
+    # val = process_error result, "Error: There was a problem with your bank account."
+    @acct.update_attributes(status: 'removed', default_flg: nil) # if val
+  end
+
+  # return list of acct holders or list of accts for a given user based on params
+  def acct_list usr, aFlg
+    if usr.is_admin? && aFlg  
+      User.joins(:bank_accounts).include_list.where('bank_accounts.status = ?', 'active').uniq.reorder('first_name ASC')  
+    else
+      BankAccount.inc_list.where(user_id: usr, status: 'active')
+    end
   end
 end

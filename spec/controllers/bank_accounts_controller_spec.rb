@@ -22,294 +22,37 @@ describe BankAccountsController do
       acct_type: 'Checking', status: 'active')
   end
 
-  describe 'xhr GET index' do
-    before :each do
-      @accounts = mock("accounts")
-      controller.stub!(:current_user).and_return(@user)
-      @user.stub_chain(:bank_accounts, :active).and_return( @accounts )
-      do_get
-    end
-
-    def do_get
-      xhr :get, :index
-    end
-
-    it "loads nothing" do
-      controller.stub!(:render)
-    end
-
-    it "assigns @user" do
-      assigns(:user).should_not be_nil
-    end
-
-    it "assigns @accounts" do
-      assigns(:accounts).should_not be_nil
-    end
-
-    it "shows the requested accounts" do
-      response.should be_success
+  describe 'GET index', index: true do
+    context 'load sites' do
+      it_behaves_like "a load data request", 'BankAccount', 'acct_list', 'index', 'paginate', true, 'accounts'
     end
   end
 
-  describe "GET 'new'" do
-
-    before :each do
-      controller.stub!(:current_user).and_return(@user)
-      controller.stub!(:load_target).and_return(:success)
-      @user.stub_chain(:bank_accounts, :build).and_return( @account )
-      do_get
-    end
-
-    def do_get
-      get :new
-    end
-
-    it "assigns @account" do
-      assigns(:account).should_not be_nil
-    end
-
-    it "loads new template" do
-      response.should render_template(:new)
-    end
-  end
-
-  describe "xhr GET 'new'" do
-
-    before :each do
-      controller.stub!(:current_user).and_return(@user)
-      controller.stub!(:load_target).and_return(:success)
-      @user.stub_chain(:bank_accounts, :build).and_return( @account )
-      do_get
-    end
-
-    def do_get
-      xhr :get, :new
-    end
-
-    it "assigns @account" do
-      assigns(:account).should_not be_nil
-    end
-
-    it "loads nothing" do
-      controller.stub!(:render)
-    end
-  end
-
-  describe 'GET show/:id' do
-    before :each do
-      BankAccount.stub!(:find).and_return( @account )
-      controller.stub!(:current_user).and_return(@user)
-    end
-
-    def do_get
-      get :show, id: '1'
-    end
-
-    it "should show the requested transaction" do
-      do_get
-      response.should be_success
-    end
-
-    it "should load the requested transaction" do
-      BankAccount.stub!(:find).with('1').and_return(@account)
-      do_get
-    end
-
-    it "should assign @account" do
-      do_get
-      assigns(:account).should_not be_nil
-    end
-
-    it "show action should render show template" do
-      do_get
-      response.should render_template(:show)
-    end
-
-    it "responds to JSON" do
-      get  :show, :id => '1', format: :json
-      response.status.should eq(200)
-    end
-  end
-
-  describe "POST create" do
-    def do_create
-      post :create, :bank_account => { 'user_id'=>'test', 'acct_type'=>'test' }
-    end
-    
-    context 'failure' do
-      
-      before :each do
-        BankAccount.stub!(:save_account).and_return(false)
-      end
-
-      it "assigns @account" do
-        do_create
-        assigns(:account).should_not be_nil 
-      end
-
-      it "renders the new template" do
-        do_create
-        controller.stub!(:render)
-      end
-
-      it "responds to JSON" do
-        post :create, :bank_account => { 'user_id'=>'test', 'acct_type'=>'test' }, :format=>:json
-	response.status.should_not eq(0)
-      end
-    end
-
-    context 'success' do
-
-      before :each do
-        @my_model = stub_model(BankAccount,:save=>true)
-	BankAccount.any_instance.stub(:save_account).and_return({user_id: 1, account_number: '9900000002', routing_number: '321174851',
-	        acct_name: 'Joe Blow Checking', acct_type: 'Checking', status: 'active'})
-      end
-       
-      after :each do
-        controller.stub_chain(:load_target, :reload_data, :redirect_path).and_return(:success)
-	User.stub!(:find).with('1').and_return(@user)
-	@user.stub_chain(:reload, :bank_accounts, :first).and_return(@account)
-      end
-
-      it "loads the requested account" do
-        BankAccount.stub(:new).with({'user_id'=>'test', 'acct_type'=>'test' }) { @my_model }
-        do_create
-      end
-
-      it "assigns @account" do
-        do_create
-        assigns(:account).should_not be_nil 
-      end
-
-      it "changes BankAccount count" do
-        lambda do
-          do_create
-          should change(BankAccount, :count).by(1)
-        end
-      end
-
-      it "responds to JSON" do
-        post :create, :bank_account => { 'user_id'=>'test', 'acct_type'=>'test' }, :format=>:json
-	response.body.should_not be_nil 
+  describe 'GET new', base: true do
+    context 'load sites' do
+      [true, false].each do |status|
+        it_behaves_like "a load data request", 'BankAccount', 'new', 'new', 'new', status, 'account'
       end
     end
   end
 
-  describe "xhr POST create" do
-
-    def do_create
-      xhr :post, :create, :bank_account => { 'user_id'=>'test', 'acct_type'=>'test' }
-    end
-    
-    context 'failure' do
-      
-      before :each do
-        BankAccount.stub!(:save_account).and_return(false)
-      end
-
-      it "assigns @account" do
-        do_create
-        assigns(:account).should_not be_nil 
-      end
-
-      it "renders nothing" do
-        do_create
-        controller.stub!(:render)
-      end
-    end
-
-    context 'success' do
-
-      before :each do
-	BankAccount.any_instance.stub(:save_account).and_return({user_id: 1, account_number: '9900000002', routing_number: '321174851',
-	        acct_name: 'Joe Blow Checking', acct_type: 'Checking', status: 'active'})
-      end
-       
-      after :each do
-        controller.stub_chain(:load_target, :reload_data, :redirect_path).and_return(:success)
-      end
-
-      it "loads the requested account" do
-        BankAccount.stub(:new).with({'user_id'=>'test', 'acct_type'=>'test' }) { mock_account(:save => true) }
-        do_create
-      end
-
-      it "assigns @account" do
-        do_create
-        assigns(:account).should_not be_nil 
-      end
-
-      it "redirects to the created account" do
-        BankAccount.stub(:new).with({'user_id'=>'test', 'acct_type'=>'test' }) { mock_account(:save => true) }
-        do_create
-      end
-
-      it "changes BankAccount count" do
-        lambda do
-          do_create
-          should change(BankAccount, :count).by(1)
-        end
-      end
+  describe 'GET /:id', base: true do
+    [true, false].each do |status|
+      it_behaves_like 'a show method', 'BankAccount', 'find', 'show', true, true, 'account'
     end
   end
 
-  describe "DELETE 'destroy'" do
-
-    before (:each) do
-      BankAccount.stub!(:find).and_return(@account)
+  describe "POST account", process: true do
+    [true, false].each do |status|
+      it_behaves_like 'a model create assignment', 'BankAccount', 'save_account', 'create', 'create', status, 'account'
     end
+  end
 
-    def do_delete
-      xhr :delete, :destroy, :id => "37"
+  describe "DELETE account", process: true do
+    [true, false].each do |status|
+      it_behaves_like 'a model delete assignment', 'BankAccount', 'find', 'destroy', 'delete_account', status, 'account'
     end
-
-    context 'failure' do
-      before :each do
-        @account.stub!(:delete_account).and_return(false) 
-      end
-
-      it "should assign account" do
-        do_delete
-        assigns(:account).should_not be_nil 
-      end
-
-      it "should render nothing" do
-        do_delete
-        controller.stub!(:render)
-      end
-    end
-
-    context 'success' do
-
-      after (:each) do
-        @accounts = mock("BankAccounts")
-	User.stub_chain(:find, :bank_accounts).and_return( @accounts )
-      end
-
-      it "loads the requested account" do
-        BankAccount.stub(:find).with("37").and_return(@account)
-      end
-
-      it "destroys the requested account" do
-        BankAccount.stub(:find).with("37") { mock_account }
-        mock_account.should_receive(:delete_account)
-        do_delete
-      end
-
-      it "redirects to the accounts list" do
-        BankAccount.stub(:find) { mock_account }
-        do_delete
-        response.should be_redirect
-      end
-
-      it "decrements the BankAccount count" do
-        lambda do
-          do_delete
-          should change(BankAccount, :count).by(-1)
-        end
-      end
-    end
+    # it_behaves_like 'a delete redirected page', 'BankAccount', 'find', 'destroy', 'show', true
   end
 
 end

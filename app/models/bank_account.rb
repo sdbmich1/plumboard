@@ -70,4 +70,13 @@ class BankAccount < ActiveRecord::Base
   def acct_token
     user.acct_token rescue nil
   end
+
+  # get list of accts or acct holders based on adminFlg
+  def self.acct_list model, aFlg=false
+    BankProcessor.new(self).acct_list(model, aFlg)
+  end
+
+  def self.inc_list
+    includes(:user => [:user_type, :pictures, :preferences])
+  end
 end

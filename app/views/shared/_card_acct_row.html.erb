@@ -5,5 +5,6 @@
   <td class='center-wrapper'><%= card.zip %></td>
   <td class='center-wrapper'><%= show_exp_date card %></td>
   <td class='center-wrapper'><%= card.default_flg %></td>
-  <td class='center-wrapper'><%= link_to 'Details', card_account_path(id: card, adminFlg: @adminFlg), class: 'btn btn-small card-det', remote: true %></td>
+  <td class='center-wrapper'>
+    <%= link_to 'Details', card_account_path(id: card, adminFlg: @adminFlg), class: 'btn btn-small card-det', remote: true %></td>
 </tr>

@@ -1,0 +1,7 @@
+<div id='bank_list'>
+  <div id="top-header" class='sm-top nav pull-right'>
+    <%= link_to 'Add Account', get_account_path, class: 'btn btn-small', remote: true %>
+  </div>
+  <div class='clear-all'></div>
+  <%= render partial: 'shared/list', locals: {hname: 'shared/bank_acct_top', pname: 'shared/bank_acct_row', model: model, item: 'bank', tag: 'banks'} %>
+</div> 

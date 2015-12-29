@@ -89,8 +89,9 @@ module StripePayment
       acct.tos_acceptance.ip = ip
       acct.legal_entity.first_name, acct.legal_entity.last_name = model.first_name, model.last_name
       acct.legal_entity.business_name = model.business_name if model.is_business?
-      acct.legal_entity.dob.day, acct.legal_entity.dob.month, acct.legal_entity.dob.year, acct.legal_entity.business_tax_id, 
-      acct.legal_entity.ssn_last_4 = model.birth_date.day, model.birth_date.month, model.birth_date.year, model.ein, model.ssn_last4 
+      acct.legal_entity.dob.day, acct.legal_entity.dob.month, acct.legal_entity.dob.year = model.birth_date.day, model.birth_date.month, 
+        model.birth_date.year 
+      acct.legal_entity.business_tax_id, acct.legal_entity.ssn_last_4 = model.ein, model.ssn_last4 if model.ein
       if model.has_address?
         acct.legal_entity.address.city, acct.legal_entity.address.line1, acct.legal_entity.address.postal_code, acct.legal_entity.address.state = 
  	  model.contacts[0].city, model.contacts[0].address, model.contacts[0].zip, model.contacts[0].state

@@ -61,6 +61,7 @@ feature "UserSignins" do
       user_login @user
       page.should have_content(@user.first_name)
       page.should_not have_content('Manage')
+      page.should_not have_content('Setup Your Payment Account')
       page.should have_link('Sign out', href: destroy_user_session_path)
     end
 
@@ -69,6 +70,41 @@ feature "UserSignins" do
       page.should_not have_content "Home"
       page.should_not have_content "Pixis"
       page.should have_content "Sign in"
+    end
+  end
+
+  describe 'sign in modal - business' do
+    before :each do
+      visit root_path 
+      @user = FactoryGirl.create :business_user, confirmed_at: Time.now 
+    end
+
+    context 'no bank acct' do
+      it 'shows account content' do
+        click_link 'Login'; sleep 2
+        check_page_selectors ['#pwd, #login-btn, #fb-btn'], true, false
+        user_login @user
+        page.should have_content(@user.first_name)
+        page.should_not have_content('Manage')
+        page.should have_content('Setup Your Payment Account')
+        page.should have_link('Sign out', href: destroy_user_session_path)
+      end
+    end
+
+    context 'has bank acct' do
+      before do
+        @user.bank_accounts.create attributes_for :bank_account
+      end
+
+      it 'shows account content' do
+        click_link 'Login'; sleep 2
+        check_page_selectors ['#pwd, #login-btn, #fb-btn'], true, false
+        user_login @user
+        page.should have_content(@user.first_name)
+        page.should_not have_content('Manage')
+        page.should_not have_content('Setup Your Payment Account')
+        page.should have_link('Sign out', href: destroy_user_session_path)
+      end
     end
   end
 

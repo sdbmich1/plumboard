@@ -24,7 +24,7 @@ class CardAccountsController < ApplicationController
     @account = CardAccount.new params[:card_account]
     respond_with(@account) do |format|
       if @account.save_account
-        load_accts
+        load_accts if @adminFlg
         format.json { render json: @accounts }
       else
 	format.json { render :json => { :errors => @account.errors.full_messages }, :status => 422 }
@@ -60,7 +60,7 @@ class CardAccountsController < ApplicationController
   end
 
   def load_vars
-    @adminFlg = params[:adminFlg] || false
+    @adminFlg = params[:adminFlg].to_bool rescue false
   end
 
   # parse results for active items only

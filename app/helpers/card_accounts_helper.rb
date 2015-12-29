@@ -33,12 +33,12 @@ module CardAccountsHelper
     "#{card.expiration_month} / #{card.expiration_year}" if card
   end
 
-  def show_card_holder card, cls='center-wrapper'
-    content_tag(:td, card.buyer_name, class: cls) if @adminFlg
+  def show_card_holder acct, fld="buyer_name", cls="center-wrapper"
+    content_tag(:td, acct.send(fld), class: cls) if @adminFlg
   end
 
-  def show_card_holder_title 
-    content_tag(:th, 'Card Holder', class: 'center-wrapper')
+  def show_card_holder_title val='Card'
+    content_tag(:th, "#{val} Holder", class: "center-wrapper")
   end
 
   def new_card_path
@@ -65,8 +65,8 @@ module CardAccountsHelper
     adminMode? ? nil : @usr.id
   end
 
-  def show_acct_holder f
-    render partial: 'shared/card_acct_holder', locals: {f: f} if @adminFlg
+  def show_acct_holder f, val='card'
+    render partial: "shared/#{val}_acct_holder", locals: {f: f} if @adminFlg
   end
 
   def show_form_field f, type

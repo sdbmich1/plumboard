@@ -1,0 +1,5 @@
+<label class="control-label">Acct Holder</label>
+<div class='controls'>
+  <%= autocomplete_field_tag 'slr_name', load_holder, autocomplete_user_first_name_bank_accounts_path,
+     :update_elements => { :id => '#bank_account_user_id' }, :placeholder => 'User Name' %> 
+</div>     
