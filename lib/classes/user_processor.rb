@@ -1,5 +1,5 @@
 class UserProcessor
-  include LocationManager, PointManager, ImageManager, NameParse, ProcessMethod
+  include LocationManager, PointManager, ImageManager, NameParse, ProcessMethod, RatingManager
 
   def initialize usr
     @user = usr
@@ -218,5 +218,9 @@ class UserProcessor
   def favorite_seller_id(seller_id)
     favorite_seller = @user.favorite_sellers.find_by_seller_id(seller_id)
     favorite_seller ? favorite_seller.id : nil
+  end
+
+  def get_rating
+    RatingManager.avg_rating @user
   end
 end

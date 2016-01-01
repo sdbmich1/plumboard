@@ -427,13 +427,16 @@ class User < ActiveRecord::Base
     self.name
   end
 
+  def rating
+    UserProcessor.new(self).get_rating
+  end
+
   # set json string
   def as_json(options={})
-    super(only: [:id, :first_name, :last_name, :email, :birth_date, :gender, :current_sign_in_ip, :fb_user, :business_name, :url], 
+    super(only: [:id, :first_name, :last_name, :email, :birth_date, :gender, :current_sign_in_ip, :fb_user, :business_name, :url, :description], 
       methods: [:name, :photo, :photo_url, :unpaid_invoice_count, :pixi_count, :unread_count, :birth_dt, :home_zip, :value, :site_name,
-        :cover_photo], 
-      include: {pictures: { only: [:photo_file_name], methods: [:photo] }, unpaid_received_invoices: {}, 
-	bank_accounts: {}, contacts: {}, card_accounts: {}})
+        :cover_photo, :rating], 
+      include: {unpaid_received_invoices: {}, bank_accounts: {}, contacts: {}, card_accounts: {}})
   end
 
   # get user conversations

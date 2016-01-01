@@ -1,13 +1,13 @@
 require 'will_paginate/array'
 class FavoriteSellersController < ApplicationController
-  load_and_authorize_resource
+  # load_and_authorize_resource
   before_filter :authenticate_user!
   before_filter :load_data, only: :index
   respond_to :html, :js, :json, :mobile
   layout :page_layout
 
   def create
-    @favorite = @user.favorite_sellers.find_or_create_by_seller_id(params[:seller_id], status: 'active')
+    @favorite = FavoriteSeller.find_or_create_by_user_id_and_seller_id(params[:uid], params[:seller_id], status: 'active')
     @favorite.update_attribute(:status, 'active')
     respond_with(@favorite)
   end
@@ -17,7 +17,7 @@ class FavoriteSellersController < ApplicationController
   end
 
   def update
-    @favorite = @user.favorite_sellers.find_by_seller_id(params[:seller_id])
+    @favorite = FavoriteSeller.find_by_user_id_and_seller_id(params[:uid], params[:seller_id])
     @favorite.update_attribute(:status, 'removed')
     respond_with(@favorite)
   end

@@ -11,6 +11,9 @@ class Ability
       can :manage, PixiPost
       can :manage, Category
       can :manage, Transaction
+      can :manage, BankAccount
+      can :manage, CardAccount
+      can :manage, FavoriteSeller
       can :manage, Invoice
       can :manage, User
       can :manage, Site

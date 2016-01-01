@@ -34,7 +34,7 @@ module FavoriteSellersHelper
   end
 
   def set_follow_path seller
-    signed_in? ? favorite_sellers_path(seller_id: seller.id) : send("set_ask_path", seller.id)
+    signed_in? ? favorite_sellers_path(uid: @user.id, seller_id: seller.id) : send("set_ask_path", seller.id)
   end
 
   def get_user_loc(user)
