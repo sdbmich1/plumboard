@@ -46,4 +46,10 @@ module ProcessMethod
     end while klass.constantize.where(:url => new_url).exists?
     new_url
   end
+
+  # get full url string
+  def self.get_url model, str
+    str += '_url' if str
+    Rails.application.routes.url_helpers.send(str, model, {host: get_host})
+  end
 end

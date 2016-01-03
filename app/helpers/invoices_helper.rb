@@ -1,4 +1,5 @@
 module InvoicesHelper
+  include ProcessMethod
 
   # add new details for invoice
   def setup_inv(invoice)
@@ -180,5 +181,9 @@ module InvoicesHelper
 
   def add_col_header colFlg
     content_tag(:th, '') if colFlg
+  end
+
+  def get_invoice_url inv
+    ProcessMethod.get_url inv, 'invoice'
   end
 end

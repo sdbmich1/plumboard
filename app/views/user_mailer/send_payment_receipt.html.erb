@@ -7,7 +7,8 @@
     	<%= render :partial=>'shared/mail_header' %><br /><br />
 	Hi <%= @invoice.seller_first_name %>,<br /><br />
     	<span style="height:30px;">
-	  Congratulations on your sale!  A payment has been deposited into your account.</span><br /><br />
+	  Congratulations on your sale!  A payment has been deposited into your account.  For more details on this sale, please click on the 
+	  invoice number below.</span><br /><br />
 
   	<center>
 	<%= render :partial=>'shared/payment_details', :locals=>{:payment=>@payment, :invoice=>@invoice} %><br /><br />

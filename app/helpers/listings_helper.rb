@@ -87,15 +87,10 @@ module ListingsHelper
   def get_rating usr
     RatingManager::avg_rating usr
   end
-
-  # get host
-  def get_host
-    ProcessMethod::get_host
-  end
    
   # set absolute url for current pixi
   def get_url listing
-    Rails.application.routes.url_helpers.listing_url(listing, :host => get_host) 
+    ProcessMethod.get_url listing, 'listing'
   end
 
   def get_photo listing
