@@ -112,8 +112,7 @@ module InvoicesHelper
  
   # set inv title
   def inv_title inv
-    str = inv.pixi_count > 1 ? ' +' : ''
-    inv.pixi_title + str
+    inv.listings.pluck(:title).join(' + ')
   end
 
   # get pixi amt
