@@ -67,7 +67,7 @@ class PostProcessor
 
   # check invoice status for buyer or seller
   def check_invoice usr, flg, fld
-    if @post.listing.active?
+    if @post.listing && @post.listing.active?
       str = flg ? "buyer_id = #{@post.recipient_id}" : "buyer_id = #{@post.recipient_id} AND status = 'unpaid'"
       list = @post.listing.invoices.where(str)
       list.find_each do |invoice|
