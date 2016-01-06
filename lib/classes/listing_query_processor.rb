@@ -117,7 +117,7 @@ class ListingQueryProcessor
     if val == 'sold'
       Listing.sold_list
     else
-      select_fields(Listing.created_date(val)).exec_query(val == "active", "#{table_name}.status = '#{val}'").reorder('created_date ASC')
+      select_fields("#{table_name}.updated_at").exec_query(val == "active", "#{table_name}.status = '#{val}'")
     end
   end
 
@@ -134,6 +134,6 @@ class ListingQueryProcessor
              "#{table_name}.lat", "#{table_name}.lng", "#{table_name}.status", "#{table_name}.updated_at",
              "#{table_name}.show_alias_flg", "#{table_name}.alias_name", "#{field_name} AS created_date"]
     model = is_temp? ? TempListing : Listing
-    model.select(attrs).reorder('created_date ASC')
+    model.select(attrs).reorder('created_date DESC')
   end
 end
