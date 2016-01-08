@@ -239,7 +239,7 @@ class Listing < ListingParent
   end
 
   def self.created_date val
-    val == 'active' ? 'listings.end_date' : 'listings.updated_at'
+    val == "active" ? "end_date" : "updated_at"
   end
 
   # refresh counter cache
@@ -257,11 +257,6 @@ class Listing < ListingParent
 
   def self.load_board cid, sid
     inc_types.get_by_city(cid, sid).board_fields
-  end
-
-  # select date provided (field_name)
-  def self.select_fields field_name
-    ListingDataProcessor.new(self).select_fields(field_name)
   end
 
   # set promo code for free order if appropriate

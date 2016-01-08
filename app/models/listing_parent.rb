@@ -124,12 +124,12 @@ class ListingParent < ActiveRecord::Base
 
   # select active listings
   def self.active
-    include_list.where(where_stmt).reorder('listings.updated_at DESC')
+    include_list.where(where_stmt).order('listings.updated_at DESC')
   end
 
   # see include_list_without_job_type
   def self.active_without_job_type
-    include_list_without_job_type.where(where_stmt).reorder('listings.updated_at DESC')
+    include_list_without_job_type.where(where_stmt).order('listings.updated_at DESC')
   end    
 
   # eager load assns
@@ -475,8 +475,8 @@ class ListingParent < ActiveRecord::Base
     ListingQueryProcessor.new(self).exec_query(flg, params)
   end
 
-  def self.select_fields field_name
-    ListingQueryProcessor.new(self).select_fields(field_name)
+  def self.select_fields field_name, active_flg=false
+    ListingQueryProcessor.new(self).select_fields(field_name, active_flg)
   end
 
   def self.update_buy_now
