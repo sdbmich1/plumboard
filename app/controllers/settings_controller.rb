@@ -21,6 +21,7 @@ class SettingsController < ApplicationController
   end
 
   def delivery
+    flash.now[:notice] = 'You need to setup default preferences for your pixis.' unless @usr.has_prefs?
     respond_with(@usr)
   end
    

@@ -82,6 +82,7 @@ describe User do
     it { should respond_to(:unpaid_invoice_count) } 
     it { should respond_to(:has_unpaid_invoices?) } 
     it { should respond_to(:has_address?) } 
+    it { should respond_to(:has_prefs?) } 
     it { should respond_to(:has_pixis?) } 
     it { should respond_to(:has_bank_account?) } 
     it { should respond_to(:has_card_account?) } 
@@ -442,6 +443,19 @@ describe User do
     it 'should not return true' do
       user = build :user
       user.has_address?.should_not be_true
+    end
+  end
+
+  describe 'has_prefs?' do
+    it 'should return true' do
+      user = create :business_user
+      user.preferences.first.update_attributes(fulfillment_type_code: 'A', ship_amt: 9.99, sales_tax: 8.25)
+      expect(user.reload.has_prefs?).to be_true
+    end
+
+    it 'should not return true' do
+      user = build :user
+      user.has_prefs?.should_not be_true
     end
   end
 

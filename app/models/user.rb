@@ -288,6 +288,11 @@ class User < ActiveRecord::Base
     UserProcessor.new(self).has_address?
   end
 
+  # check if prefs are populated
+  def has_prefs?
+    UserProcessor.new(self).has_prefs?
+  end
+
   # gets primary address
   def primary_address
     contacts.first.full_address rescue nil

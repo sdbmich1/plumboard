@@ -70,6 +70,16 @@ class UserProcessor
     end
   end
 
+  # check for prefs
+  def has_prefs?
+    @user.preferences.build if @user.preferences.blank?
+    if @user.preferences[0]
+      !@user.preferences[0].fulfillment_type_code.blank? && !@user.preferences[0].sales_tax.blank? && !@user.preferences[0].ship_amt.blank? 
+    else
+      false
+    end
+  end
+
   # get message count
   def unread_count
     Post.unread_count @user rescue 0

@@ -536,6 +536,6 @@ module ApplicationHelper
   end
 
   def get_main_menu_status val
-    controller_name == 'users' && action_name == val ? 'active' : ''
+    !controller_name.match(/users|settings/).nil? && action_name == val ? 'active' : ''
   end
 end

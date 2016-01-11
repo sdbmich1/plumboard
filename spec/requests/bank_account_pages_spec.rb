@@ -33,30 +33,10 @@ feature "BankAccounts" do
     page.should_not have_content 'Successfully'
   end
 
-  describe "Create Bank Account" do 
-    before :each do
-      px_user = create :pixi_user
-      init_setup px_user
-      @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
-      visit new_bank_account_path
-    end
-
-    it "shows content" do
-      page.should have_content('Setup Your Payment Account')
-      page.should have_content("Account #")
-      page.should have_button("Save")
-    end
-
-    it "creates an new account" do
-      expect {
-          add_bank_data
-          click_on 'Save'; sleep 3;
-      }.to change(BankAccount, :count).by(1)
-
-      # page.should_not have_content 'Pixis'
-      page.should have_content 'My Accounts'
-      page.should have_content 'Account #'
-    end
+  describe "Create Bank Account", create: true do 
+    it_should_behave_like 'create_bank_account_page', 'pixi_user', 'should_not', 'should', false
+    it_should_behave_like 'create_bank_account_page', 'business_user', 'should', 'should_not', false
+    it_should_behave_like 'create_bank_account_page', 'business_user', 'should_not', 'should', true
   end
 
   describe "Delete Bank Account" do 

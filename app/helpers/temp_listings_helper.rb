@@ -178,4 +178,28 @@ module TempListingsHelper
   def show_buy_now?
     !(@user.is_business? && @user.has_bank_account?)
   end
+
+  def set_ship_amt seller
+    if seller.preferences[0] && (FulfillmentType.ship_codes + ['A']).include?(seller.preferences[0].fulfillment_type_code) && !bus_pixi?
+      num_display(seller.preferences.first, 'ship_amt')
+    else
+      nil
+    end
+  end
+
+  def set_ftc seller
+    seller.preferences.first && !@ptype ? seller.preferences.first.fulfillment_type_code : nil
+  end
+
+  def set_sales_tax seller
+    seller.preferences.first && !@ptype ? seller.preferences.first.sales_tax : nil
+  end
+
+  def toggle_buy_now f, seller, str=[]
+    if seller.bank_accounts.where(status: 'active').count > 0
+      str << f.label(:buy_now_flg, 'Buy Now')
+      str << f.check_box(:buy_now_flg, { checked: !bus_pixi? })
+    end
+    content_tag(:div, str.join('').html_safe)
+  end
 end

@@ -78,32 +78,42 @@ feature "UserSignins" do
       visit root_path 
       @user = FactoryGirl.create :business_user, confirmed_at: Time.now 
     end
+    
+    def bus_login txt, val
+      click_link 'Login'; sleep 2
+      check_page_selectors ['#pwd, #login-btn, #fb-btn'], true, false
+      user_login @user
+      page.should have_content(@user.first_name)
+      page.should_not have_content('Manage')
+      page.send(txt, have_content('Setup Your Payment Account'))
+      page.send(val, have_content('You need to setup default preferences for your pixis.'))
+      page.should have_link('Sign out', href: destroy_user_session_path)
+    end
 
     context 'no bank acct' do
       it 'shows account content' do
-        click_link 'Login'; sleep 2
-        check_page_selectors ['#pwd, #login-btn, #fb-btn'], true, false
-        user_login @user
-        page.should have_content(@user.first_name)
-        page.should_not have_content('Manage')
-        page.should have_content('Setup Your Payment Account')
-        page.should have_link('Sign out', href: destroy_user_session_path)
+        bus_login 'should', 'should_not'
       end
     end
 
-    context 'has bank acct' do
+    context 'has bank acct w/o prefs' do
       before do
         @user.bank_accounts.create attributes_for :bank_account
       end
 
       it 'shows account content' do
-        click_link 'Login'; sleep 2
-        check_page_selectors ['#pwd, #login-btn, #fb-btn'], true, false
-        user_login @user
-        page.should have_content(@user.first_name)
-        page.should_not have_content('Manage')
-        page.should_not have_content('Setup Your Payment Account')
-        page.should have_link('Sign out', href: destroy_user_session_path)
+        bus_login 'should_not', 'should'
+      end
+    end
+
+    context 'has bank acct w/ prefs' do
+      before do
+        @user.bank_accounts.create attributes_for :bank_account
+	@user.preferences.first.update_attributes(fulfillment_type_code: 'A', sales_tax: 8.25, ship_amt: 9.99)
+      end
+
+      it 'shows account content' do
+        bus_login 'should_not', 'should_not'
       end
     end
   end

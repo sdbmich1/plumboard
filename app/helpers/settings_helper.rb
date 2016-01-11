@@ -25,7 +25,7 @@ module SettingsHelper
   def show_delivery(user)
     if user.is_business?
       content_tag(:li, link_to("Delivery", settings_delivery_path(id: @usr, adminFlg: @adminFlg), class: 'submenu', remote: true, id: 
-        'delivery-setting'))
+        'delivery-setting'), class: get_main_menu_status('delivery'))
     end
   end
 end

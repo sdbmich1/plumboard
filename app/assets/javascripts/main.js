@@ -208,6 +208,10 @@ $(document).on('focus', mask_flds, function() {
   $(this).mask("(999) 999-9999");
 });
 
+$(document).on('focus', '#ein', function() {
+  $(this).mask("99-9999999");
+});
+
 // hide spinner
 $(document).on('focus', '#signup, #pixi-form', function() {
   $("#spinner").hide('fast'); 
@@ -463,7 +467,7 @@ $(document).on("keypress", "#contact_content", function(e){
 });
 
 // submit search form on enter key
-$(document).on("keypress", "#search", function(e){
+$(document).on("keypress", "#search_text", function(e){
   keyEnter(e, $(this), '#submit-btn');
 });
 

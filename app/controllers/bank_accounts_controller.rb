@@ -68,7 +68,7 @@ class BankAccountsController < ApplicationController
     if !(@target =~ /invoice/i).nil?
       @invoice = @user.invoices.build
     else
-      @account = @user.reload.bank_accounts.first if @user
+      @account = @usr.reload.bank_accounts.first if @usr
     end
   end
 
@@ -78,7 +78,11 @@ class BankAccountsController < ApplicationController
   end
 
   def set_reload_path
-    @adminFlg ? redirect_to(bank_accounts_path(adminFlg: @adminFlg)) : redirect_to(@account)
+    @adminFlg ? redirect_to(bank_accounts_path(adminFlg: @adminFlg)) : set_settings_path
+  end
+
+  def set_settings_path
+    @usr.is_business? && !@usr.has_prefs? ? redirect_to(settings_delivery_path) : redirect_to(@account)
   end
 
   def set_return_path
@@ -86,7 +90,7 @@ class BankAccountsController < ApplicationController
   end
 
   def mark_message
-    ControllerManager::mark_message params[:cid], @user if params[:cid]
+    ControllerManager::mark_message params[:cid], @usr if params[:cid]
   end
 
   def set_user

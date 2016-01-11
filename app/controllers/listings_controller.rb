@@ -155,7 +155,7 @@ class ListingsController < ApplicationController
   end
 
   def load_sellers items
-    @sellers = User.get_sellers(items) # unless ControllerManager.private_url?(action_name)
+    @sellers = User.get_sellers(items) 
     @listings = items.set_page params[:page] rescue nil
   end
 

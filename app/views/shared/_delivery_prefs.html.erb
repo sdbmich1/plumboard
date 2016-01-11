@@ -1,4 +1,4 @@
-<%= form_for(@usr, url: user_path(@usr, target: 'shared/delivery_prefs'), :html => { method: :put, class: 'uform' }, remote: true) do |f| %>
+<%= form_for(user, url: user_path(user, target: 'shared/delivery_prefs'), :html => { method: :put, class: 'uform' }, remote: true) do |f| %>
   <div id="form_errors"><%= render partial: 'shared/error_messages', :locals => { :target => f.object } %></div>
   <%= f.fields_for :preferences do |form| %>
     <div class="span2 offset4">

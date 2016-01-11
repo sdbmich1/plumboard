@@ -1,0 +1,9 @@
+<% provide(:title, 'Settings') %>
+<%= content_for :subhead do %>
+  <%= render partial: 'shared/navbar', locals: { menu_name: 'Settings' } %>
+<% end %>
+<%= content_for :content do %>
+  <div class="row mbot" id="user_form">
+    <%= render partial: pname, locals: {user: user} %>
+  </div>
+<% end %>

@@ -2,7 +2,7 @@
   $("#flash_notice").hide(300);
   $("#form_errors").html("<%= escape_javascript( render(partial: 'shared/error_messages', locals: {target: @account})) %>");
 <% else %>
-  postFlashMsg("#flash_notice","success", "Successfully #{type} account.");
+  postFlashMsg("#flash_notice","success", "Successfully #{atype} account.");
   $("#inv_form").html("<%= escape_javascript( raw render(:partial => "#{toggle_card_list}", locals: {model: @accounts}) ) %>");
 <% end %>
 $("#spinner").hide('fast'); 

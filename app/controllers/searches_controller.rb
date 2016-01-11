@@ -1,6 +1,6 @@
 require 'will_paginate/array' 
 class SearchesController < ApplicationController
-  before_filter :load_data
+  before_filter :load_data, :load_search
   after_filter :add_points, only: [:index]
   autocomplete :listing, :title, :full => true
   include PointManager, LocationManager
@@ -8,7 +8,9 @@ class SearchesController < ApplicationController
   respond_to :json, :html, :js, :mobile
 
   def index
-    respond_with(@listings = Listing.search(query, search_options) rescue nil) 
+    respond_with(@listings) do |format|
+      format.json { render json: {listings: @listings, sellers: @sellers} }
+    end
   end
 
   protected
@@ -41,5 +43,14 @@ class SearchesController < ApplicationController
   # dynamically define search options based on selections
   def search_options
     SearchBuilder.new(@cat, @loc, @page, request.remote_ip).search_options(@url, site)
+  end
+
+  def load_search
+    @listings = Listing.search(query, search_options) rescue nil 
+    load_sellers @listings
+  end
+
+  def load_sellers items
+    @sellers = User.get_sellers(items) 
   end
 end

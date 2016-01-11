@@ -162,4 +162,8 @@ module TransactionsHelper
   def change_btn id
     link_to 'Change', '#', id: id, class: 'offset2 btn' if controller_name == 'transactions'
   end
+
+  def show_rating model
+    render partial: 'shared/rating_form', locals: { transaction: model } if model.user_id == @user.id
+  end
 end
