@@ -756,9 +756,7 @@ module ListingsHelper
   end
 
   def render_header model, pname, type, cls
-    unless model.blank?
-      content_tag(:div, render(partial: pname, locals: {type: type}), id:"top-header", class: cls) 
-    end 
+    content_tag(:div, (model.blank? ? nil : render(partial: pname, locals: {type: type})), id:"top-header", class: cls) 
   end
 
   def show_contact_footer f, listing, cls

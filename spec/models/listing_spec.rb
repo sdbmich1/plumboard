@@ -139,6 +139,17 @@ describe Listing do
       Listing.active_page(1).should_not == @listing 
     end
 
+    it "get_by_status orders by updated_at DESC" do
+      @listing.update_attribute(:status, 'expired')
+      @listing2 = FactoryGirl.build(:listing, seller_id: @user.id, quantity: 1)
+      @listing2.pictures.build(FactoryGirl.attributes_for :picture)
+      @listing2.save!
+      @listing2.update_attribute(:status, 'expired')
+      result = Listing.get_by_status('expired')
+      expect(result.first.created_date.to_s).to eq @listing2.updated_at.to_s
+      expect(result.last.created_date.to_s).to eq @listing.updated_at.to_s
+    end
+
     it "get_by_status should not include inactive listings" do
       Listing.get_by_status('active').should_not == @listing 
     end
@@ -149,6 +160,14 @@ describe Listing do
     it { Listing.active.should be_true }
     it { Listing.active_page(1).should be_true }
     it { Listing.get_by_status('active').should_not be_empty }
+    it 'orders by end_date ASC' do
+      @listing2 = FactoryGirl.build(:listing, seller_id: @user.id, quantity: 1, status: 'active', end_date: @listing.end_date + 7.days)
+      @listing2.pictures.build(FactoryGirl.attributes_for :picture)
+      @listing2.save!
+      result = Listing.get_by_status('active')
+      expect(result.first.created_date).to eq @listing.end_date
+      expect(result.last.created_date).to eq @listing2.end_date
+    end
   end
 
   describe "site listings", base: true  do 

@@ -178,10 +178,11 @@ class ListingDataProcessor < ListingQueryProcessor
   def as_csv(options={})
     row = { "Title" => @listing.title, "Category" => @listing.category_name,
       "Description" => @listing.description, "Location" => @listing.site_name }
-    header = ListingProcessor.new(@listing).toggle_user_name_header(@listing.status, 'index')
-    entry = ListingProcessor.new(@listing).toggle_user_name_row(@listing.status, @listing, 'index')
+    header = ListingProcessor.new(@listing).toggle_user_name_header(options[:style], 'index')
+    entry = ListingProcessor.new(@listing).toggle_user_name_row(options[:style], @listing, 'index')
     row[header] = entry
-    row[options[:style].titleize + " Date"] = @listing.display_date(@listing.created_date)
+    date_header = (options[:style] == 'active' ? 'Expiration' : options[:style].titleize) + " Date"
+    row[date_header] = @listing.display_date(@listing.created_date)
     row
   end
 end
