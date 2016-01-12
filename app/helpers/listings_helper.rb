@@ -409,7 +409,7 @@ module ListingsHelper
 
   # display correct image based on model type
   def show_view_image model, pix_size, img_size, lazy_flg=false
-    if !action_name.match(/seller|pixter/).nil?
+    if !action_name.match(/index|seller|pixter/).nil? && !(controller_name == 'searches' && action_name == 'index')
       show_photo model, 0, img_size, '180x180'
     else
       view_pixi_image model, pix_size, get_path(model), lazy_flg
