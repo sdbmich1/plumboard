@@ -2,9 +2,9 @@
   <%= f.text_field :business_name, :placeholder=>'Business Name', required: user.is_business? %>
   <div id='bus_ein' style="<%= set_style(!show_url?(user)) %>">
     <%= f.text_field :ein, minlength: 9, maxlength: 9, size: 9, placeholder: 'Tax ID #', id: 'ein', class: 'width240', 
-      required: show_url?(user) && user.is_business? %>
+      required: show_url?(user) && @user.is_business? %>
     <%= f.text_field :ssn_last4, minlength: 4, maxlength: 4, size: 4, placeholder: 'SSN Last4', id: 'ssn_last4', class: 'width140', 
-      required: show_url?(user) && user.is_business? %>
+      required: show_url?(user) && @user.is_business? %>
   </div>
 </div>
 <div id='bus_url' style="<%= set_style(!show_url?(user)) %>">
