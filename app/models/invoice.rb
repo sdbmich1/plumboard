@@ -239,7 +239,7 @@ class Invoice < ActiveRecord::Base
   def as_json(options={})
     super(except: [:pixi_id, :price, :quantity, :subtotal, :updated_at], 
       methods: [:pixi_title, :short_title, :nice_status, :inv_dt, :get_fee, :get_processing_fee, :get_convenience_fee, :seller_amount], 
-      include: {seller: { only: [:first_name], methods: [:name, :photo] }, 
+      include: {seller: { only: [:first_name, :acct_token], methods: [:name, :photo] }, 
                 buyer: { only: [:first_name], methods: [:name, :photo] },
 		invoice_details: { only: [:price, :quantity, :subtotal], methods: [:pixi_title] },
 		listings: { only: [:pixi_id], methods: [:photo_url] }})

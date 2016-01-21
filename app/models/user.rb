@@ -438,10 +438,11 @@ class User < ActiveRecord::Base
 
   # set json string
   def as_json(options={})
-    super(only: [:id, :first_name, :last_name, :email, :birth_date, :gender, :current_sign_in_ip, :fb_user, :business_name, :url, :description], 
+    super(only: [:id, :first_name, :last_name, :email, :birth_date, :gender, :current_sign_in_ip, :fb_user, :business_name, :url, 
+        :description, :cust_token], 
       methods: [:name, :photo, :photo_url, :unpaid_invoice_count, :pixi_count, :unread_count, :birth_dt, :home_zip, :value, :site_name,
         :cover_photo, :rating], 
-      include: {unpaid_received_invoices: {}, bank_accounts: {}, contacts: {}, card_accounts: {}})
+      include: {unpaid_received_invoices: {}, bank_accounts: {}, contacts: {}, card_accounts: {}, favorite_sellers: {}})
   end
 
   # get user conversations
