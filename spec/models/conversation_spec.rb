@@ -465,7 +465,7 @@ describe Conversation do
   describe "as_json" do
     it "contains mobile conversation fields" do
       json = @conversation.as_json
-      %w(sender_can_bill? recipient_can_bill? sender_due_invoice? recipient_due_invoice?).each do |fld|
+      %w(invoice_id sender_can_bill? recipient_can_bill? sender_due_invoice? recipient_due_invoice?).each do |fld|
         expect(json.keys).to include fld.to_sym
       end
       expect(json[:listing].keys).to include :photo_url
