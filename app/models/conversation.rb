@@ -164,10 +164,15 @@ class Conversation < ActiveRecord::Base
     recipient.name if recipient
   end
 
+  def invoice_id
+    inv = Invoice.get_by_status_and_pixi('unpaid', user.id, pixi_id).first
+    inv.id if inv
+  end
+
   # set json string
   def as_json(options={})
     super(except: [:updated_at], methods: [:pixi_title, :recipient_name, :sender_name, :create_dt, :active_posts,
-                                 :sender_can_bill?, :recipient_can_bill?, :sender_due_invoice?, :recipient_due_invoice?], 
+                                 :sender_can_bill?, :recipient_can_bill?, :sender_due_invoice?, :recipient_due_invoice?, :invoice_id], 
       include: {recipient: { only: [:first_name], methods: [:photo] }, user: { only: [:first_name], methods: [:photo] },
                 listing: { only: [], methods: [:photo_url] } })
   end
