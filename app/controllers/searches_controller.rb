@@ -5,11 +5,12 @@ class SearchesController < ApplicationController
   autocomplete :listing, :title, :full => true
   include PointManager, LocationManager
   layout :page_layout
-  respond_to :json, :html, :js, :mobile
+  respond_to :html, :json, :js, :mobile
 
   def index
     respond_with(@listings) do |format|
-      format.json { render json: {listings: @listings, sellers: @sellers} }
+      format.js {}
+      format.json { render json: {listings: @listings.to_json, sellers: @sellers.to_json} }
     end
   end
 

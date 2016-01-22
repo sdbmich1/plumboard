@@ -6,10 +6,10 @@
 <tr>
   <td><label class='tbl-hdr'>Address 1* </label><%= form.text_field :ship_address, required: shipping?(@order) %></td>  
   <td></td>
-  <td><label class='tbl-hdr'>Address 2 </label><%= form.text_field :ship_address2, required: shipping?(@order) %></td>
+  <td><label class='tbl-hdr'>Address 2 </label><%= form.text_field :ship_address2, required: false %></td>
 </tr>
 <tr>
-  <td><label class='tbl-hdr'>City* </label><%= form.text_field :ship_city, required: shipping?(@order) %></td>
+  <td><label class='tbl-hdr'>City* </label><%= form.text_field :ship_city, size: 30, required: shipping?(@order) %></td>
   <td></td>
   <td><label class='neg-top tbl-hdr'>State/Province*</label>
   <%= form.collection_select :ship_state, State.all, :code, :state_name, {prompt: 'Select State'}, {class: 'pixi-select'} %></td>

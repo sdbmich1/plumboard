@@ -86,7 +86,7 @@ class ListingsController < ApplicationController
 
   def biz
     respond_with(@listings) do |format|
-      format.json { render json: {listings: @listings, sellers: @sellers} }
+      format.json { render json: {listings: @listings, sellers: @sellers, user: @user} }
     end
   end
 
