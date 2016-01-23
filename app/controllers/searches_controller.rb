@@ -9,8 +9,7 @@ class SearchesController < ApplicationController
 
   def index
     respond_with(@listings) do |format|
-      format.js {}
-      format.json { render json: {listings: @listings.to_json, sellers: @sellers.to_json} }
+      format.json { render json: {listings: @listings, sellers: @sellers} }
     end
   end
 

@@ -11,7 +11,7 @@
       <%= f.hidden_field :buyer_id %>
       <%= f.hidden_field :inv_date, value: Time.now  %>
       <%= f.hidden_field :seller_id, value: @user.id %>
-      <%= f.submit "Send", class: "btn btn-large btn-primary submit-btn pull-right", id: "send-btn" %>
+      <%= f.submit "Send", class: "btn btn-large btn-primary submit-btn pull-right", id: "send-btn", data: {disable_with: "Submitting..."} %>
     </div>
   </div>
 <% end %>

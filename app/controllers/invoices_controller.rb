@@ -30,9 +30,7 @@ class InvoicesController < ApplicationController
   end
 
   def show
-    respond_with(@invoice) do |format|
-      format.json { render json: {invoice: @invoice, user: @user} }
-    end
+    respond_with(@invoice)
   end
 
   def edit

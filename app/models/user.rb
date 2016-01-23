@@ -442,7 +442,8 @@ class User < ActiveRecord::Base
         :description, :cust_token], 
       methods: [:name, :photo, :photo_url, :unpaid_invoice_count, :pixi_count, :unread_count, :birth_dt, :home_zip, :value, :site_name,
         :cover_photo, :rating], 
-      include: {unpaid_received_invoices: {}, bank_accounts: {}, contacts: {}, card_accounts: {}, favorite_sellers: {}})
+      include: {unpaid_received_invoices: {}, bank_accounts: {}, contacts: {}, card_accounts: {}, sellers: {}, 
+        ship_addresses: { include: {contacts: {}}}})
   end
 
   # get user conversations
