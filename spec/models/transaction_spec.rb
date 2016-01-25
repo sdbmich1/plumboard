@@ -348,6 +348,7 @@ describe Transaction do
       @transaction.recipient_first_name = @user.first_name
       @transaction.recipient_last_name = @user.last_name
       @transaction.recipient_email = @user.email
+      @transaction.user_id = @user.id
       contact = Contact.create FactoryGirl.attributes_for(:contact)
       @transaction.ship_address = contact.address
       @transaction.ship_city = contact.city
@@ -378,6 +379,14 @@ describe Transaction do
     end
 
     it "does not create nil records" do
+      expect { @transaction.sync_ship_address }.not_to change { ShipAddress.count }
+      expect { @transaction.sync_ship_address }.not_to change { Contact.count }
+    end
+
+    it "does not create records if attrs are missing" do
+      set_ship_addr_flds
+      @transaction.user_id = nil
+      @transaction.ship_address = nil
       expect { @transaction.sync_ship_address }.not_to change { ShipAddress.count }
       expect { @transaction.sync_ship_address }.not_to change { Contact.count }
     end

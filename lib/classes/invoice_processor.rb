@@ -164,7 +164,7 @@ class InvoiceProcessor
               "qtyCnt" => 1, "quantity1" => result.invoice_details.first.quantity,
               "price1" => listing.price, "transaction_type" => "invoice",
               "invoice_id" => result.id, "tax_total" => result.tax_total,
-              "inv_total" => result.amount }
+              "inv_total" => result.amount, "user_id" => buyer_id }
     order["ship_amt"] = result.ship_amt if FulfillmentType.ship_codes.include?(fulfillment_type_code)
     order
   end

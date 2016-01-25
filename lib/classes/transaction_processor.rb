@@ -36,7 +36,7 @@ class TransactionProcessor
   end
 
   def load_ship_info usr
-    contact = usr.has_ship_address? ? usr.ship_address.contacts.last : usr.contacts.last
+    contact = usr.has_ship_address? ? usr.ship_addresses.last.contacts.last : usr.contacts.last
     @txn.recipient_first_name = usr.first_name
     @txn.recipient_last_name = usr.last_name
     @txn.recipient_email = usr.email
@@ -146,13 +146,18 @@ class TransactionProcessor
   end
 
   def sync_ship_address
-    if @txn.recipient_first_name && @txn.recipient_last_name && @txn.recipient_email
+    if @txn.recipient_first_name && @txn.recipient_last_name && @txn.recipient_email && @txn.user_id
       ship_attrs = {
         recipient_first_name: @txn.recipient_first_name,
         recipient_last_name: @txn.recipient_last_name,
-        recipient_email: @txn.recipient_email
+        recipient_email: @txn.recipient_email,
+        user_id: @txn.user_id
       }
-      ship_address = ShipAddress.first_or_create(ship_attrs)
+      if ShipAddress.where(ship_attrs).exists?
+        ship_address = ShipAddress.where(ship_attrs).first
+      else
+        ship_address = ShipAddress.create(ship_attrs)
+      end
       contact_attrs = {
         address: @txn.ship_address,
         address2: @txn.ship_address2,

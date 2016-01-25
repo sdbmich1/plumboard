@@ -611,7 +611,7 @@ describe Invoice do
     it 'assigns attributes' do
       order = Invoice.process_invoice(@listing, @buyer.id, 'P')
       keys = %w(id1 item1 title seller promo_code cnt qtyCnt quantity1 price1
-                transaction_type invoice_id tax_total inv_total)
+                transaction_type invoice_id tax_total inv_total user_id)
       expect(keys).to eq order.keys
     end
 

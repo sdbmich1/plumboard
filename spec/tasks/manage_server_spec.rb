@@ -78,4 +78,15 @@ describe 'manage_server' do
       }.not_to change { user.preferences }
     end
   end
+
+  describe 'set_ship_address_user_ids' do
+    it 'assigns user_id' do
+      user = create :pixi_user
+      ship_address = ShipAddress.create(recipient_first_name: user.first_name,
+        recipient_last_name: user.last_name, recipient_email: user.email)
+      expect(ship_address.user_id).to be_nil
+      Rake::Task['manage_server:set_ship_address_user_ids'].execute
+      expect(ship_address.reload.user_id).to eq user.id
+    end
+  end
 end

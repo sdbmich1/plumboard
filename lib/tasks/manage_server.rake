@@ -189,6 +189,12 @@ namespace :manage_server do
     User.find_each { |usr| User.reset_counters(usr.id, :active_card_accounts) }
   end
 
+  task :set_ship_address_user_ids => :environment do
+    ShipAddress.where(user_id: nil).find_each do |ship_addr|
+      ship_addr.update_attribute(:user_id, User.find_by_email(ship_addr.recipient_email).id)
+    end
+  end
+
   task :run_upgrade_tasks => :environment do
     Rake::Task['manage_server:set_card_counters'].invoke
   end
