@@ -159,6 +159,7 @@ feature "Listings" do
         Rake::Task["load_fulfillment_types"].execute
         site = create :site
         business_user = create :business_user
+        business_user.bank_accounts.create attributes_for :bank_account
         @business_listing = create(:listing, title: "Guitar", description: "Test",
           seller_id: business_user.id, quantity: 2, site_id: site.id, fulfillment_type_code: "SHP",
           sales_tax: 8.25, est_ship_cost: 10.0, buy_now_flg: true)
