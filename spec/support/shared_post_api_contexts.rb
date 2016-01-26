@@ -6,8 +6,12 @@ def set_create_data klass, method, rte, tname, xhr=false
   @listing.stub!(tname.to_sym).and_return(xhr)
 end
 
-def do_post_url rte
-  post rte.to_sym, :id => "1"
+def do_post_url rte, flg
+  if flg
+    xhr :post, rte.to_sym, id: '1'
+  else
+    post rte.to_sym, :id => "1"
+  end
 end
 
 def mock_klass(klass, stubs={})
@@ -24,17 +28,17 @@ shared_context "a model create assignment" do |klass, method, rte, tname, status
 
     it "should load the requested listing" do
       klass.constantize.stub(:method) { @listing }
-      do_post_url(rte)
+      do_post_url(rte, status)
     end
 
     it "should create the requested listing" do
       klass.constantize.stub(method.to_sym).with("1") { mock_klass(klass) }
-      do_post_url(rte)
+      do_post_url(rte, status)
     end
 
     it "should assign var" do
       klass.constantize.stub(method.to_sym).with({'user_id'=>'test', 'data'=>'test' }) { mock_klass(klass, tname.to_sym => status) }
-      do_post_url(rte)
+      do_post_url(rte, status)
       assigns(var.to_sym).should_not be_nil
     end
 
@@ -51,7 +55,7 @@ end
 shared_context "a post redirected page" do |klass, method, rte, tname, status|
   it "redirects the page" do
     set_data klass, method, rte, tname, status
-    do_post_url(rte)
+    do_post_url(rte, status)
     expect(response.status).to eq(302)
     # response.should be_redirect
   end
@@ -60,7 +64,7 @@ end
 shared_context "a failed create template" do |klass, method, rte, tname, xhr|
   it "action should render template" do
     set_data klass, method, rte, tname, xhr
-    do_post_url(rte)
+    do_post_url(rte, status)
     response.should render_template tname.to_sym
   end
 end

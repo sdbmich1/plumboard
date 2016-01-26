@@ -48,7 +48,7 @@ class User < ActiveRecord::Base
 
   # follow relationships
   has_many :favorite_sellers, foreign_key: 'user_id', dependent: :destroy
-  has_many :sellers, through: :favorite_sellers
+  has_many :sellers, through: :favorite_sellers, conditions: {"favorite_sellers.status" => "active"}
   has_many :inverse_favorite_sellers, :class_name => "FavoriteSeller", :foreign_key => "seller_id"
   has_many :followers, :through => :inverse_favorite_sellers, :source => :user
 
@@ -442,8 +442,9 @@ class User < ActiveRecord::Base
         :description, :cust_token], 
       methods: [:name, :photo, :photo_url, :unpaid_invoice_count, :pixi_count, :unread_count, :birth_dt, :home_zip, :value, :site_name,
         :cover_photo, :rating], 
-      include: {unpaid_received_invoices: {}, bank_accounts: {}, contacts: {}, card_accounts: {}, sellers: {}, 
-        ship_addresses: { include: {contacts: {}}}})
+      include: {unpaid_received_invoices: {}, contacts: {}, 
+        active_bank_accounts: {except: [:created_at, :updated_at]}, active_card_accounts: {except: [:created_at, :updated_at]}, 
+        sellers: {only: [:id, :business_name]}, ship_addresses: { include: {contacts: {}}}})
   end
 
   # get user conversations
