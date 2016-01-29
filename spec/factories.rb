@@ -141,6 +141,7 @@ FactoryGirl.define do
     parent_pixi_id  "1"
     site
     category
+    fulfillment_type
   end
 
   factory :listing, :class => "Listing", :parent => :listing_parent do

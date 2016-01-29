@@ -102,7 +102,7 @@ describe User do
   it { should_not allow_value('a725').for(:ssn_last4) }
 
     it { should have_many(:favorite_sellers) }
-    it { should have_many(:sellers) }
+    it { should have_many(:sellers).conditions("favorite_sellers.status"=>"active") }
     it { should have_many(:inverse_favorite_sellers).class_name('FavoriteSeller').with_foreign_key('seller_id') }
     it { should have_many(:followers) }
   end
