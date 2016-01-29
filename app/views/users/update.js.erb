@@ -11,7 +11,7 @@
   }
   else {
     postFlashMsg('#flash_notice','success', 'Successfully saved changes.');
-    $("#user_form").html("<%= escape_javascript( raw render(partial: @target)) %>");
+    $("#user_form").html("<%= escape_javascript( raw render(partial: @target, locals: {user: @usr})) %>");
 
     <% if @user == @usr %>
       $("#usr_fname").html("<%= escape_javascript( raw render(partial: 'shared/menu_user_name', locals: {user: @usr})) %>");
