@@ -618,6 +618,7 @@ describe Invoice do
     it 'assigns ship_amt if SHP or SD is passed as fulfillment type code' do
       order = Invoice.process_invoice(@listing, @buyer.id, 'SHP')
       expect(order.keys).to include 'ship_amt'
+      expect(order['invoice_id']).not_to be_blank
     end
 
     it 'does not send email' do
