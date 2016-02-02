@@ -69,7 +69,9 @@ class ConversationsController < ApplicationController
   end
 
   def show
-    respond_with(@conversation = Conversation.inc_show_list.find(params[:id]))
+    respond_with(@conversation = Conversation.inc_show_list.find(params[:id])) do |format|
+      format.json { render json: @conversation.as_json(user: @user) }
+    end
   end
 
   private

@@ -39,7 +39,7 @@ module ConversationHelper
 
   # get posts
   def get_posts conv
-    conv.posts.active_status(@user).reorder('created_at ASC') rescue nil if conv
+    conv.get_posts(@user) if conv
   end
 
   # check if bill icon should show
