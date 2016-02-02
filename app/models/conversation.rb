@@ -169,11 +169,18 @@ class Conversation < ActiveRecord::Base
     inv.id if inv
   end
 
+  # get posts
+  def get_posts user
+    posts.active_status(user).reorder('created_at ASC')
+  end
+
   # set json string
   def as_json(options={})
-    super(except: [:updated_at], methods: [:pixi_title, :recipient_name, :sender_name, :create_dt, :active_posts,
+    result = super(except: [:updated_at], methods: [:pixi_title, :recipient_name, :sender_name, :create_dt,
                                  :sender_can_bill?, :recipient_can_bill?, :sender_due_invoice?, :recipient_due_invoice?, :invoice_id], 
-      include: {recipient: { only: [:first_name], methods: [:photo] }, user: { only: [:first_name], methods: [:photo] },
+              include: {recipient: { only: [:first_name], methods: [:photo] }, user: { only: [:first_name], methods: [:photo] },
                 listing: { only: [], methods: [:photo_url] } })
+    result[:get_posts] = get_posts(options[:user] || user)
+    result
   end
 end
