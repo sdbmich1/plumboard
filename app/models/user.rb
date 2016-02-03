@@ -272,7 +272,7 @@ class User < ActiveRecord::Base
 
   # display image for user
   def photo num=0, sz='tiny'
-    self.pictures[num].photo.url(sz.to_sym) rescue nil
+    PictureProcessor.new(self.pictures[num]).get_pixi_image(sz) rescue nil
   end
 
   def photo_url
@@ -442,9 +442,10 @@ class User < ActiveRecord::Base
         :description, :cust_token], 
       methods: [:name, :photo, :photo_url, :unpaid_invoice_count, :pixi_count, :unread_count, :birth_dt, :home_zip, :value, :site_name,
         :cover_photo, :rating], 
-      include: {unpaid_received_invoices: {}, contacts: {}, 
+      include: {unpaid_received_invoices: {except: [:created_at, :updated_at]}, contacts: {except: [:created_at, :updated_at]}, 
         active_bank_accounts: {except: [:created_at, :updated_at]}, active_card_accounts: {except: [:created_at, :updated_at]}, 
-        sellers: {only: [:id, :business_name]}, ship_addresses: { include: {contacts: {}}}})
+        sellers: {only: [:id, :business_name]}, ship_addresses: { except: [:created_at, :updated_at], methods: [:recipient_name], 
+	  include: {contacts: {except: [:created_at, :updated_at]}}}})
   end
 
   # get user conversations

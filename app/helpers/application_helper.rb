@@ -250,27 +250,12 @@ module ApplicationHelper
 
   # check if using remote pix
   def use_remote_pix?
-    USE_LOCAL_PIX.upcase != 'YES' rescue true
+    PictureProcessor.use_remote_pix?
   end
 
   # check if image exists if not render uploaded image
   def get_pixi_image pic, size='default'
-    size = get_default_size(pic.imageable_type) if size == 'default'
-    if pic.photo.exists?
-      pic.photo.url(size.to_sym)
-    elsif use_remote_pix?
-      pic.direct_upload_url
-    else
-      'rsz_pixi_top_logo.png'
-    end
-  end
-
-  # get default size of an image
-  def get_default_size(imageable_type)
-    case imageable_type
-    when 'Listing', 'TempListing' then 'large'
-    else 'thumb'
-    end
+    PictureProcessor.new(pic).get_pixi_image(size)
   end
 
   # check if image exists
