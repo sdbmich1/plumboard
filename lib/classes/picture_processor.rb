@@ -113,7 +113,7 @@ class PictureProcessor
     size = get_default_size(@pic.imageable_type) if size == 'default'
     if @pic.photo.exists?
       @pic.photo.url(size.to_sym)
-    elsif use_remote_pix?
+    elsif self.class.use_remote_pix?
       @pic.direct_upload_url
     else
       'rsz_pixi_top_logo.png'
