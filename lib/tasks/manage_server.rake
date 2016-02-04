@@ -195,7 +195,12 @@ namespace :manage_server do
     end
   end
 
+  task :set_invoice_fulfillment_type => :environment do
+    data = Invoice.where('ship_amt is not null and ship_amt > ?', 0).where('created_at < ?', Date.today+6.months)
+    data.find_each { |inv| InvoiceProcessor.new(inv).process_shipping }
+  end
+
   task :run_upgrade_tasks => :environment do
-    Rake::Task['manage_server:set_card_counters'].invoke
+    Rake::Task['manage_server:set_invoice_fulfillment_type'].invoke
   end
 end

@@ -69,6 +69,24 @@ describe InvoiceObserver do
     end
   end
 
+  describe 'after_update unpaid' do
+    before do
+      @model = user.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: buyer.id) 
+      @details = @model.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: listing.pixi_id, price: 150.00 
+      @model.save!
+    end
+
+    it 'should send a post' do
+      process_post
+    end
+
+    it 'should update shipping' do
+      sleep 5
+      @model.update_attribute(:ship_amt, 9.99)
+      expect(@details.reload.fulfillment_type_code).to eq 'SHP'
+    end
+  end
+
   describe 'after_update decline' do
     before do
       @invoice = user.invoices.build attributes_for(:invoice, buyer_id: buyer.id, seller_id: user.id, status: 'unpaid')
@@ -108,6 +126,13 @@ describe InvoiceObserver do
 
     it 'should send a post' do
       process_post
+    end
+
+    it 'should update shipping' do
+      @model.ship_amt = 9.99
+      @model.save!
+      sleep 1
+      expect(@details.reload.fulfillment_type_code).to eq 'SHP'
     end
 
     it 'should add inv pixi points' do
