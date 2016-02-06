@@ -9,11 +9,12 @@ class Post < ActiveRecord::Base
 
   before_create :activate
   after_commit :process_pixi_requests, :on => :create
+  after_commit :update_counter_cache, :on => :update
 
   belongs_to :user
   belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id"
   belongs_to :recipient, class_name: 'User', foreign_key: :recipient_id
-  belongs_to :conversation, :inverse_of => :posts, touch: true, counter_cache: true
+  belongs_to :conversation, :inverse_of => :posts, touch: true, counter_cache: 'active_posts_count'
 
   validates_presence_of :conversation, :content, :user_id, :pixi_id, :recipient_id
 
@@ -186,5 +187,10 @@ class Post < ActiveRecord::Base
   # add pixi requests
   def process_pixi_requests
     user.pixi_asks.create(pixi_id: self.pixi_id) if msg_type == 'ask'
+  end
+
+  # update active_posts_count for conversation
+  def update_counter_cache
+    Conversation.reset_counters(self.conversation_id, :active_posts)
   end
 end
