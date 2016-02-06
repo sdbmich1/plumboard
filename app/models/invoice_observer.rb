@@ -6,12 +6,18 @@ class InvoiceObserver < ActiveRecord::Observer
   def after_create model
     PointManager::add_points model.seller, 'inv' if model.seller
 
+    # update shipping
+    InvoiceProcessor.new(model).process_shipping
+
     # send post
     send_post model unless model.listings.pluck(:buy_now_flg).include?(true)
   end
 
   def after_update model
-    send_post(model) if model.unpaid?
+    if model.unpaid?
+      InvoiceProcessor.new(model).process_shipping
+      send_post(model) 
+    end
     
     # toggle status
     if model.paid?

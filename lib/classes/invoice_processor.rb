@@ -92,8 +92,8 @@ class InvoiceProcessor
         end
         fee += CalcTotal::get_convenience_fee(sales_price, nil, true) if fee == 0.0 && @invoice.seller.is_business?
       end
-      fee += CalcTotal::get_convenience_fee(sales_price) if fee == 0.0
-      fee += CalcTotal::get_processing_fee(sales_price) unless sellerFlg
+      fee += CalcTotal::get_convenience_fee(@invoice.amount) if fee == 0.0 && !@invoice.seller.is_business?
+      fee += CalcTotal::get_processing_fee(@invoice.amount) unless sellerFlg
       fee.round(2)
     else
       0.0
@@ -167,5 +167,13 @@ class InvoiceProcessor
               "inv_total" => result.amount, "user_id" => buyer_id }
     order["ship_amt"] = result.ship_amt if FulfillmentType.ship_codes.include?(fulfillment_type_code)
     order
+  end
+
+  def process_shipping
+    if !@invoice.ship_amt.blank? && @invoice.ship_amt > 0
+      @invoice.invoice_details.find_each do |item|
+        item.update_attribute(:fulfillment_type_code, 'SHP') if item.fulfillment_type_code.blank?
+      end
+    end
   end
 end
