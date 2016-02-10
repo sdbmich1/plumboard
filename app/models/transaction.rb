@@ -166,7 +166,8 @@ class Transaction < ActiveRecord::Base
   # set json string
   def as_json(options={})
     super(except: [:updated_at], 
-      methods: [:pixi_title, :buyer_name, :seller_name, :txn_dt, :get_invoice, :get_invoice_listing]) 
+      methods: [:pixi_title, :buyer_name, :seller_name, :txn_dt, :get_invoice, :get_invoice_listing],
+      include: { listings: { only: [:pixi_id], methods: [:photo_url] }})
   end
 
   def as_csv(options={})
