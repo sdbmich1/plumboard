@@ -1,11 +1,12 @@
 class CardAccount < ActiveRecord::Base
   before_create :set_flds, :must_have_token
+  after_commit :update_counter_cache, :on => :update
 
   attr_accessor :card_number, :card_code
   attr_accessible :card_no, :card_type, :description, :expiration_month, :expiration_year, :status, :token, :user_id,
     :card_number, :card_code, :zip, :default_flg, :card_token
 
-  belongs_to :user, counter_cache: 'active_cards_count'
+  belongs_to :user, counter_cache: 'active_card_accounts_count'
 
   validate :must_have_token
   validates :user_id, presence: true
@@ -91,6 +92,10 @@ class CardAccount < ActiveRecord::Base
 
   def self.inc_list
     includes(:user => [:user_type, :pictures, :preferences])
+  end
+
+  def update_counter_cache
+    User.reset_counters(self.user_id, :active_card_accounts)
   end
 
   rescue => ex

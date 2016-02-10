@@ -561,4 +561,17 @@ describe Post do
       expect(PixiAsk.count).not_to eq 1
     end
   end
+
+  describe 'update_counter_cache', process: true do
+    it "updates cache on create" do
+      @post.save!
+      expect(@conversation.reload.active_posts_count).to eq 1
+    end
+    it "updates cache on update" do
+      @post.save!
+      @post.update_attributes(status: 'removed', recipient_status: 'removed')
+      expect(Post.active.size).to eq 0
+      expect(@conversation.reload.active_posts_count).to eq 0
+    end
+  end
 end

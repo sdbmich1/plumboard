@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20151219090446) do
+ActiveRecord::Schema.define(:version => 20160206010640) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -172,11 +172,11 @@ ActiveRecord::Schema.define(:version => 20151219090446) do
     t.string   "pixi_id"
     t.integer  "user_id"
     t.integer  "recipient_id"
-    t.datetime "created_at",       :null => false
-    t.datetime "updated_at",       :null => false
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
     t.string   "status"
     t.string   "recipient_status"
-    t.integer  "posts_count"
+    t.integer  "active_posts_count"
   end
 
   add_index "conversations", ["pixi_id"], :name => "index_conversations_on_pixi_id"
@@ -1025,12 +1025,12 @@ ActiveRecord::Schema.define(:version => 20151219090446) do
   create_table "users", :force => true do |t|
     t.string   "first_name"
     t.string   "last_name"
-    t.string   "email",                  :default => "", :null => false
-    t.string   "encrypted_password",     :default => "", :null => false
+    t.string   "email",                      :default => "", :null => false
+    t.string   "encrypted_password",         :default => "", :null => false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          :default => 0
+    t.integer  "sign_in_count",              :default => 0
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
@@ -1039,12 +1039,12 @@ ActiveRecord::Schema.define(:version => 20151219090446) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string   "unconfirmed_email"
-    t.integer  "failed_attempts",        :default => 0
+    t.integer  "failed_attempts",            :default => 0
     t.string   "unlock_token"
     t.datetime "locked_at"
     t.string   "authentication_token"
-    t.datetime "created_at",                             :null => false
-    t.datetime "updated_at",                             :null => false
+    t.datetime "created_at",                                 :null => false
+    t.datetime "updated_at",                                 :null => false
     t.date     "birth_date"
     t.string   "gender"
     t.boolean  "fb_user"
@@ -1058,11 +1058,11 @@ ActiveRecord::Schema.define(:version => 20151219090446) do
     t.string   "url"
     t.boolean  "guest"
     t.string   "description"
-    t.integer  "active_listings_count",  :default => 0
+    t.integer  "active_listings_count",      :default => 0
     t.string   "cust_token"
     t.integer  "ein"
     t.integer  "ssn_last4"
-    t.integer  "active_cards_count"
+    t.integer  "active_card_accounts_count"
   end
 
   add_index "users", ["acct_token"], :name => "index_users_on_acct_token"

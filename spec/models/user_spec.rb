@@ -1100,14 +1100,19 @@ describe User do
   describe "counter cache" do
     it "has a listing counter cache" do
       create :listing, seller_id: @user.id, quantity: 1, status: 'active'
-	User.find_each { |usr| User.reset_counters(usr.id, :active_listings) }
+      User.find_each { |usr| User.reset_counters(usr.id, :active_listings) }
       expect(@user.reload.active_listings_count).to eq 1
     end
 
-    it "has a card counter cache" do
-        @user.card_accounts.create attributes_for :card_account
-	User.find_each { |usr| User.reset_counters(usr.id, :active_card_accounts) }
-        expect(@user.reload.active_cards_count).to eq 1
+    it "updates active_card_accounts cache on create" do
+      @user.card_accounts.create attributes_for :card_account
+      expect(@user.reload.active_card_accounts_count).to eq 1
+    end
+
+    it "updates active_card_accounts cache on update" do
+      card_account = @user.card_accounts.create attributes_for :card_account
+      card_account.update_attributes(status: 'inactive')
+      expect(@user.reload.active_card_accounts_count).to eq 0
     end
   end
 end
