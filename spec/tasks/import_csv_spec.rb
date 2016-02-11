@@ -34,10 +34,6 @@ describe 'import_csv' do
    it_behaves_like("import_csv", "load_site_type_codes", nil, SiteType, {code: %w(region school city area country newspaper magazine state), description: ["Major Metro Area", "College or University", "City", "Neighborhood or District", "Nation", "Newspaper Publication", "Magazine Publication", "State or Province"], status: 'active', hide: %w(no)})
   end
 
-  describe 'load_org_types' do
-   it_behaves_like("import_csv", "load_org_types", nil, OrgType, {code: %w(region school city area country newspaper magazine state), description: ["Major Metro Area", "College or University", "City", "Neighborhood or District", "Nation", "Newspaper Publication", "Magazine Publication", "State or Province"], status: 'active', hide: %w(no)})
-  end           
-
   describe "load_event_types" do
     it_behaves_like("import_csv", "load_event_types", nil, EventType, { code: %w(session fund art) })
   end

@@ -166,7 +166,7 @@ describe Listing do
       @listing2.save!
       result = Listing.get_by_status('active')
       expect(result.first.created_date).to eq @listing.end_date
-      expect(result.last.created_date).to eq @listing2.end_date
+      expect(result.first.created_date).to eq @listing2.end_date
     end
   end
 
@@ -213,8 +213,9 @@ describe Listing do
     end
 
     it "only returns necessary attributes" do
-      expect(Listing.check_category_and_location('active', nil, nil, true).first.title).to eq @listing.title
-      expect(Listing.check_category_and_location('active', nil, nil, true).first.attributes[:color]).to be_nil
+      listing = Listing.check_category_and_location('active', nil, nil, true).first
+      expect(listing.attributes.keys).to include 'title'
+      expect(listing.attributes.keys).not_to include 'color'
     end
   end
 
