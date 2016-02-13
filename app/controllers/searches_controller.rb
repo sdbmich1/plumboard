@@ -1,6 +1,6 @@
 require 'will_paginate/array' 
 class SearchesController < ApplicationController
-  before_filter :load_data, :load_search
+  before_filter :set_params, :load_data, :load_search
   after_filter :add_points, only: [:index]
   autocomplete :listing, :title, :full => true
   include PointManager, LocationManager
@@ -17,6 +17,10 @@ class SearchesController < ApplicationController
 
   def page_layout
     'listings'
+  end
+
+  def set_params
+    params[:search] = JSON.parse(params[:search]) if request.xhr?
   end
 
   # wrap query text for special characters
