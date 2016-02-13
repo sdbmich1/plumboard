@@ -46,7 +46,7 @@ class SearchesController < ApplicationController
   end
 
   def load_search
-    @listings = Listing.search(query, search_options) rescue nil 
+    @listings = Listing.search(query, search_options) #rescue nil 
     load_sellers @listings
   end
 
