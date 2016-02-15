@@ -84,6 +84,7 @@ Plumboard::Application.routes.draw do
   resources :searches, except: [:new, :edit, :update, :create, :destroy, :show] do
     collection do
       get :autocomplete_listing_title
+      post :locate
     end
   end
 
