@@ -3,7 +3,7 @@ require 'spec_helper'
 def set_data klass, method, rte, tname, xhr=false
   @listings = stub_model(klass.constantize)
   klass.constantize.stub_chain(method.to_sym).and_return(@listings)
-  @listings.stub_chain(tname.to_sym).and_return( @listings ) if tname
+  @listings.stub!(tname.to_sym).and_return( @listings ) if tname
   xhr ? set_xhr_rte(tname, rte) : do_get_list(rte)
 end
 

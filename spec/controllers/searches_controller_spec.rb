@@ -16,6 +16,7 @@ describe SearchesController do
       @listings = stub_model(Listing)
       @sellers = stub_model(User)
       Listing.stub!(:search).and_return( @listings )
+      @listings.stub!(:populate).and_return(@listings)
       User.stub(:get_sellers).and_return( @sellers )
       controller.stub_chain(:query, :page, :add_points, :get_location, :set_params, :search_options).and_return(:success)
     end
@@ -41,6 +42,10 @@ describe SearchesController do
   end
 
   describe 'GET /index', base: true do
-    it_behaves_like "a load data request", 'Listing', 'search', 'index', nil, true, 'listings'
+    before :each do
+      controller.stub_chain(:query, :page, :add_points, :get_location, :set_params, :search_options).and_return(:success)
+    end
+
+    it_behaves_like "a load data request", 'Listing', 'search', 'index', 'populate', true, 'listings'
   end
 end

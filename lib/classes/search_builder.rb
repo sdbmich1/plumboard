@@ -1,8 +1,8 @@
 class SearchBuilder
   include LocationManager, ProcessMethod
 
-  def initialize(cat, loc, pg, ip)
-    @cat, @loc, @page = cat, loc, pg
+  def initialize(cat, loc, pg, sz, ip)
+    @cat, @loc, @page, @sz = cat, loc, pg, sz
     @lat, @lng = LocationManager::get_lat_lng ip rescue nil
     @sql = ProcessMethod::get_board_flds
     @models = [:pictures, :site, :category]
@@ -10,7 +10,9 @@ class SearchBuilder
 
   # dynamically define search options based on selections
   def search_options url, sid
-    url.blank? ? build_search_options(sid) : build_url_options(url, sid)
+    hash = url.blank? ? build_search_options(sid) : build_url_options(url, sid)
+    hash[:per_page] = @sz
+    hash
   end
 
   # build standard search options

@@ -32,7 +32,7 @@ class SearchesController < ApplicationController
   # parse fields to adjust formatting
   def set_params
     items = RecursiveOpenStruct.new(params[:locate])
-    @search, @loc, @cid, @url = items.search, items.loc, items.cid, items.url
+    @search, @loc, @cid, @url, @sz = items.search, items.loc, items.cid, items.url, MIN_BOARD_AMT/2
   end
 
   # wrap query text for special characters
@@ -53,16 +53,16 @@ class SearchesController < ApplicationController
   end
  
   def load_data
-    @cat, @loc, @page, @search = params[:cid], params[:loc], params[:page] || 1, params[:search]
+    @cat, @loc, @page, @search, @sz = params[:cid], params[:loc], params[:page] || 1, params[:search], MIN_BOARD_AMT
   end
 
   # dynamically define search options based on selections
   def search_options
-    SearchBuilder.new(@cat, @loc, @page, request.remote_ip).search_options(@url, site)
+    SearchBuilder.new(@cat, @loc, @page, @sz, request.remote_ip).search_options(@url, site)
   end
 
   def load_search
-    @listings = Listing.search(query, search_options) #rescue nil 
+    @listings = Listing.search(query, search_options).populate rescue nil 
     load_sellers @listings
   end
 
