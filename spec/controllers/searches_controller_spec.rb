@@ -9,34 +9,43 @@ describe SearchesController do
     end
   end
 
-  before :each do
-    log_in_test_user
-    allow_message_expectations_on_nil
-    @listings = mock("listings")
-    Listing.stub!(:search).and_return( @listings )
-    controller.stub!(:current_user).and_return(@user)
-    @user.stub_chain(:user_pixi_points, :create).and_return(:success)
-    controller.stub_chain(:query, :page, :add_points, :get_location, :search_options).and_return(:success)
-  end
+  describe 'POST /locate', locate: true do
+    before :each do
+      log_in_test_user
+      allow_message_expectations_on_nil
+      @listings = stub_model(Listing)
+      @sellers = stub_model(User)
+      Listing.stub!(:search).and_return( @listings )
+      @listings.stub!(:populate).and_return(@listings)
+      User.stub(:get_sellers).and_return( @sellers )
+      controller.stub_chain(:query, :page, :add_points, :get_location, :set_params, :search_options).and_return(:success)
+    end
 
-  describe 'GET /index' do
-    def do_get
-      xhr :get, :index, search: 'test'
+    def do_post
+      xhr :post, :locate, locate: {loc: 1, cid: 1, url: '', search: 'test'}
     end
 
     it "should load the requested listing" do
       Listing.stub(:search).with('test').and_return(@listings)
-      do_get
+      do_post
     end
 
     it "should assign @listings" do
-      do_get
+      do_post
       assigns(:listings).should == @listings
     end
 
     it "index action should render nothing" do
-      do_get
+      do_post
       controller.stub!(:render)
     end
+  end
+
+  describe 'GET /index', base: true do
+    before :each do
+      controller.stub_chain(:query, :page, :add_points, :get_location, :set_params, :search_options).and_return(:success)
+    end
+
+    it_behaves_like "a load data request", 'Listing', 'search', 'index', 'populate', true, 'listings'
   end
 end

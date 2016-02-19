@@ -1,31 +1,17 @@
 require "spec_helper"
 
-describe "routes for Searches" do
-  it "does route to #destroy" do
-    delete("/searches/1").should_not route_to("searches#destroy", :id => "1")
-  end
+  describe 'search routes', base: true do
+    it_should_behave_like 'an index route', true, 'index', 'searches'
+    # it_should_behave_like 'a post route', true, 'locate', 'searches'
+    it_should_behave_like 'a get route', false, 'new', 'searches'
+    it_should_behave_like 'a get item route', false, 'show', 'searches'
+    it_should_behave_like 'a get item route', false, 'edit', 'searches'
+    it_should_behave_like 'a put route', false, 'update', 'searches'
+    it_should_behave_like 'a post route', false, 'create', 'searches'
+    it_should_behave_like 'a delete route', false, 'destroy', 'searches'
+    it_should_behave_like 'a subdomain route', true, 'searches/autocomplete_listing_title', 'autocomplete_listing_title','searches'
 
-  it "routes to #index" do
-    get("/searches").should route_to("searches#index")
+    it 'routes to #locate' do
+      post('/searches/locate').should route_to('searches#locate')
+    end
   end
-
-  it "does not route to #show" do
-    get("/searches/1").should_not route_to("searches#show", :id => "1")
-  end
-
-  it "does not expose a new route" do
-    get("/searches/new").should_not route_to("searches#new")
-  end
-
-  it "does not expose a create route" do
-    post("/searches/create").should_not route_to("searches#create")
-  end
-
-  it "does not expose a update route" do
-    put("/searches/1").should_not route_to("searches#update", :id => "1")
-  end
-
-  it "does not route to #edit" do
-    get("/searches/1/edit").should_not route_to("searches#edit", :id => "1")
-  end
-end
