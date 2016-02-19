@@ -943,7 +943,7 @@ describe Listing do
       expect(listing.is_wanted?).to eq(false)
     end
 
-    it { expect(Listing.wanted_users(@listing.pixi_id).last.name).to eq(@buyer.name) }
+    it { expect(Listing.wanted_users(@listing.pixi_id).map(&:name)).to include(@buyer.name) }
     it { expect(Listing.wanted_users(@listing.pixi_id)).not_to include(@usr) }
     it { expect(@listing.user_wanted?(@buyer)).not_to be_nil }
     it { expect(@listing.user_wanted?(@usr)).not_to eq(true) }
@@ -1670,7 +1670,7 @@ describe Listing do
       expect(@listing.latlng).not_to be_nil
     end
     it 'gets coordinates from contact', run: true do
-      @site = create :site, org_type: 'city', name: 'San Francisco'
+      @site = create :site, site_type_code: 'city', name: 'San Francisco'
       @site.contacts.create(FactoryGirl.attributes_for(:contact, address: '101 California',
         city: 'SF', state: 'CA', zip: '94111', lat: 37.799367, lng: 122.398407))
       @listing.update_attribute(:site_id, @site.id)
@@ -1710,7 +1710,7 @@ describe Listing do
       csv_string = listing.as_csv(style: 'active')
       csv_string.keys.should =~ ['Title', 'Category', 'Description', 'Location',
                                  ListingProcessor.new(listing).toggle_user_name_header(listing.status, 'index'),
-                                 listing.status.titleize + ' Date'] 
+                                 'Expiration Date'] 
       csv_string.values.should =~ [listing.title, listing.category_name, listing.description, listing.site_name,
                                    ListingProcessor.new(listing).toggle_user_name_row(listing.status, listing, 'index'),
                                    listing.display_date(listing.created_date)]
@@ -1758,18 +1758,18 @@ describe Listing do
       seller.bank_accounts.create FactoryGirl.attributes_for :bank_account
       { listing: Listing, temp_listing: TempListing }.each do |record, model|
         listing = create record, seller_id: seller.id
-        expect(listing.fulfillment_type_code).to be_nil
+        listing.update_attribute(:fulfillment_type_code, nil)
         model.update_fulfillment_types
         listing.reload
-        expect(listing.fulfillment_type_code).to eq 'A'
+        expect(listing.reload.fulfillment_type_code).to eq 'A'
       end
     end
 
-    it 'does not set fulfillment_type_code to A for business sellers' do
+    it 'does not set fulfillment_type_code if bank account is not set up' do
       seller = create :business_user
       { listing: Listing, temp_listing: TempListing }.each do |record, model|
         listing = create record, seller_id: seller.id
-        expect(listing.fulfillment_type_code).to be_nil
+        listing.update_attribute(:fulfillment_type_code, nil)
         model.update_fulfillment_types
         listing.reload
         expect(listing.fulfillment_type_code).not_to eq 'A'
@@ -1779,6 +1779,7 @@ describe Listing do
     it 'sets fulfillment_type_code to P for non-business sellers' do
       temp_listing = create(:temp_listing, seller_id: @user.id)
       { @listing => Listing, temp_listing => TempListing }.each do |object, model|
+        object.update_attribute(:fulfillment_type_code, nil)
         object.save
         model.update_fulfillment_types
         object.reload
@@ -1813,6 +1814,7 @@ describe Listing do
     end
 
     it "does not show delivery_type description" do
+      @listing.update_attribute(:fulfillment_type_code, nil)
       expect(@listing.delivery_type).to be_nil
     end
   end

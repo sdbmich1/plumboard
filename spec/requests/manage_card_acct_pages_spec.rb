@@ -32,7 +32,7 @@ feature "CardAccounts" do
 
     it "creates an new account", js: true do
       @other = create :contact_user, last_name: 'Bling'
-      fill_autocomplete "buyer_name", with: @other.name
+      fill_in "buyer_name", with: @other.name
       expect {
         load_credit_card "4242424242424242", "123", true, false; sleep 5
       }.to change(CardAccount, :count).by(1)

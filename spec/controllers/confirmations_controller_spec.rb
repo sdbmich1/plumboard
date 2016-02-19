@@ -21,6 +21,7 @@ describe ConfirmationsController do
       @user = stub_model(User)
       User.stub_chain(:where, :first).and_return(@user)
       @user.stub_chain(:confirmed_at, :nil?).and_return(true)
+      @user.stub(:email).and_return('email@test.com')
       do_post
     end
 

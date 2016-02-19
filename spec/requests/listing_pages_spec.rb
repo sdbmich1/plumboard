@@ -438,7 +438,7 @@ feature "Listings" do
   describe "Check Pixis", main: true do 
     before(:each) do
       editor = create :editor, email: 'jsnow@pixitext.com', confirmed_at: Time.now 
-      @listing = create :listing, seller_id: editor.id
+      @listing = create :listing, seller_id: editor.id, condition_type_code: condition_type.code
       @pixi_want = editor.pixi_wants.create attributes_for :pixi_want, pixi_id: @listing.pixi_id
       @pixi_like = editor.pixi_likes.create attributes_for :pixi_like, pixi_id: @listing.pixi_id
       init_setup editor
@@ -457,7 +457,7 @@ feature "Listings" do
       end
 
       describe "Edits active pixi" do
-        it "adds a pixi pic" do
+        it "adds a pixi pic", js: true do
           click_link 'Edit'; sleep 3
           page.should have_content("Build Your Pixi") 
           page.should have_selector('#build-pixi-btn')

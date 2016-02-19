@@ -3,7 +3,8 @@ require 'spec_helper'
 describe "PendingListings", :type => :feature do
   subject { page }
   let(:user) { FactoryGirl.create :pixi_user }
-  let(:listing) { FactoryGirl.create :temp_listing_with_transaction, seller_id: user.id }
+  let(:condition_type) { create :condition_type, code: 'UG', description: 'Used - Good', hide: 'no', status: 'active' }
+  let(:listing) { FactoryGirl.create :temp_listing_with_transaction, seller_id: user.id, condition_type_code: condition_type.code }
 
   before(:each) do
     user = FactoryGirl.create :editor, email: 'jsnow@pixitext.com', confirmed_at: Time.now 
@@ -56,13 +57,13 @@ describe "PendingListings", :type => :feature do
       page.should have_content listing.seller_name
     end
 
-    it "adds a pixi pic" do
+    it "adds a pixi pic", js: true do
       click_link 'Edit'
       page.should have_selector('.sm-thumb')
       page.should have_selector('#photo')
       page.should have_content 'Build Your Pixi'
       expect{
-              attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
+              attach_file('photo', Rails.root.join("spec", "fixtures", "photo0.jpg"))
               click_button 'Next'
       }.to change(listing.pictures,:count).by(1)
       page.should have_content 'Review Your Pixi'

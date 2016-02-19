@@ -82,7 +82,7 @@ describe TempListingsController do
       TempListing.stub!(:add_listing).and_return( @listing )
       @listing.stub_chain(:user, :guest?).and_return( session )
       controller.stub!(:current_user).and_return(@user)
-      controller.stub!(:set_params, :set_uid).and_return(:success)
+      controller.stub_chain(:set_params, :set_uid).and_return(:success)
     end
     
     context 'failure' do
@@ -279,6 +279,7 @@ describe TempListingsController do
 
       it "redirects to the listings list" do
         TempListing.stub(:find_by_pixi_id) { mock_listing }
+        mock_listing.stub(:destroy).and_return(true)
         do_delete
         response.should be_redirect
       end
