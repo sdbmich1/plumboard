@@ -766,6 +766,14 @@ feature "TempListings" do
       page.should have_content('Est Ship Amt')
       page.should have_content('Buy Now')
     end
+
+    it "requires ship amount", js: true do
+      init_setup business_user
+      business_user.bank_accounts.create(FactoryGirl.attributes_for :bank_account)
+      visit new_temp_listing_path(ptype: 'bus')
+      select('Ship', :from => 'fulfill_type')
+      find_field('ship_cost_box')[:required].should == 'true'
+    end
   end
 
   describe "Edit Business Posted Pixis" do

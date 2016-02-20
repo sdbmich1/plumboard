@@ -135,10 +135,10 @@ function toggleYear(ctype) {
 function toggleShipCost() {
   if (['SHP', 'A', 'PS' , 'SD'].indexOf($('#fulfill_type').val()) >= 0) {
     $('#ship_cost').show('fast');
-    $('#ship_cost').attr('required', 'required');
+    $('#ship_cost_box').attr('required', 'required');
   } else {
     $('#ship_cost').hide('fast');
-    $('#ship_cost').removeAttr('required');
+    $('#ship_cost_box').removeAttr('required');
   }
 }
 
