@@ -372,8 +372,9 @@ feature "Invoices" do
         end
         
         it 'must have a buyer' do
-	  select_pixi @listing
-	  click_button 'Send'
+          select_pixi @listing
+          fill_in 'inv_price1', with: 40
+          click_button 'Send'
           page.should have_content "Buyer can't be blank" 
         end
         

@@ -16,6 +16,7 @@ feature "TempListings" do
     create_event_types
     create_job_types
     create_condition_types
+    create_fulfillment_types
   end
 
   def create_sites
@@ -40,12 +41,16 @@ feature "TempListings" do
     create :condition_type, code: 'U', description: 'Used'
   end
 
+  def create_fulfillment_types
+    create :fulfillment_type
+    create :fulfillment_type, code: 'P', description: 'Pickup', status: 'active', hide: 'no'
+  end
+
   def add_data val='Foo Bar', prcFlg=true, imgFlg=false, descr="Guitar for Sale", sFlg=true
     fill_in 'Title', with: "Guitar for Sale"
     select_category val if val
     if sFlg
-      fill_in 'site_name', with: "Stanford University\n"
-      set_site_id @site.id, imgFlg; sleep 1.5
+      fill_autocomplete 'site_name', with: "Stanford University"
     end
     fill_in 'Price', with: "150.00" if prcFlg
     fill_in 'Description', with: descr
@@ -89,6 +94,7 @@ feature "TempListings" do
     create :category, name: 'Books', category_type_code: 'sales'
     @cat2 = create :category, name: 'Apparel', category_type_code: 'product'
     @cat5 = create :category, name: 'Jobs', category_type_code: 'employment'
+    create :category, name: 'Foo Bar', category_type_code: 'foobar'
   end
 
   def set_event_type val
@@ -252,7 +258,7 @@ feature "TempListings" do
     end
 
     describe "Create with valid information", base: true do
-      it "Adds a new listing w/o price" do
+      it "Adds a new listing w/o price", js: true do
         expect{
 	  add_photo 'Foo Bar', false
           select('Used', :from => 'cond-type-code')
@@ -262,7 +268,7 @@ feature "TempListings" do
 	}.to change(TempListing,:count).by(1)
       end	      
 
-      it "Adds a new listing w price" do
+      it "Adds a new listing w price", js: true do
         select('Used', :from => 'cond-type-code')
         add_pixi
       end	      
@@ -719,8 +725,8 @@ feature "TempListings" do
       page.should have_selector('#seller_id')
     end
 
-    it "Adds a new pixi_post listing w price" do
-      find(:xpath, "//input[@id='seller_id']").set seller.id
+    it "Adds a new pixi_post listing w price", js: true do
+      fill_autocomplete 'slr_name', with: seller.first_name
       select('Used', :from => 'cond-type-code')
       add_pixi
       expect(TempListing.last.pixan_id).to eq pixter.id
@@ -741,9 +747,10 @@ feature "TempListings" do
       page.should have_selector('#seller_id')
     end
 
-    it "Adds a new pixi_post listing w price" do
-      find(:xpath, "//input[@id='seller_id']").set seller.id
+    it "Adds a new pixi_post listing w price", js: true do
+      fill_autocomplete 'slr_name', with: business_user.business_name
       select('Used', :from => 'cond-type-code')
+      select('Pickup', :from => 'fulfill_type')
       add_pixi
       expect(TempListing.last.pixan_id).to be_nil
     end	      
@@ -758,6 +765,14 @@ feature "TempListings" do
       page.should have_content('Sales Tax')
       page.should have_content('Est Ship Amt')
       page.should have_content('Buy Now')
+    end
+
+    it "requires ship amount", js: true do
+      init_setup business_user
+      business_user.bank_accounts.create(FactoryGirl.attributes_for :bank_account)
+      visit new_temp_listing_path(ptype: 'bus')
+      select('Ship', :from => 'fulfill_type')
+      find_field('ship_cost_box')[:required].should == 'true'
     end
   end
 
@@ -823,11 +838,10 @@ feature "TempListings" do
 
     before(:each) do
       init_setup user
-      visit new_temp_listing_path(site_id: loc.id)
+      visit new_temp_listing_path(loc: loc.id)
     end
 
-    it "Adds a new listing w price" do
-      find(:xpath, "//input[@id='site_id']").set loc.id
+    it "Adds a new listing w price", js: true do
       select('Used', :from => 'cond-type-code')
       add_pixi 'Foo Bar', true, false, "Guitar for Sale", false
       expect(TempListing.last.site_id).to eq loc.id

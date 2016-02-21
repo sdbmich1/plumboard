@@ -831,7 +831,7 @@ describe TempListing do
     end
 
     it 'does not find pixi' do
-      expect(TempListing.find_pixi(0)).to be_nil
+      expect(TempListing.find_pixi('0')).to be_nil
     end
   end
 

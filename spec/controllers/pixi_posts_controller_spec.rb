@@ -126,7 +126,7 @@ describe PixiPostsController do
       PixiPost.stub!(:add_post).and_return( @post )
       @post.stub_chain(:user, :guest?).and_return( session )
       controller.stub!(:current_user).and_return(@user)
-      controller.stub!(:set_params, :set_uid).and_return(:success)
+      controller.stub_chain(:set_params, :set_uid).and_return(:success)
     end
     
     context 'failure' do
@@ -471,7 +471,8 @@ describe PixiPostsController do
       end
 
       it "redirects to the posts list" do
-        PixiPost.stub(:find) { mock_post }
+        PixiPost.stub(:find).with("37") { mock_post }
+        mock_post.stub(:destroy).and_return(true)
         do_delete
         response.should be_redirect
       end

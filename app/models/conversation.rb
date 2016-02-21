@@ -8,7 +8,7 @@ class Conversation < ActiveRecord::Base
   after_commit :process_pixi_requests, :on => :update
   has_many :posts, :inverse_of => :conversation
   accepts_nested_attributes_for :posts, :allow_destroy => true
-  has_many :active_posts, class_name: 'Post', :conditions => { :status => 'active' }
+  has_many :active_posts, class_name: 'Post', :conditions => "status = 'active'"
 
   belongs_to :user
   belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id"

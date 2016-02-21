@@ -27,8 +27,9 @@ describe SDReaderFeed do
       doc = Nokogiri::XML(open("http://www.sandiegoreader.com/rss/events/"))
       @lnf_obj.title_xpath = doc.xpath("//item//title")
       date = Date.today.month.to_s + "/" + Date.today.day.to_s
-      expect(@lnf_obj.title_xpath[0].text).to include(date)
-      expect(@lnf_obj.get_description(0)).not_to include(date)
+      title, description = @lnf_obj.title_xpath[0].text, @lnf_obj.get_description(0)
+      expect(title).to include(date) if title
+      expect(description).not_to include(date) if description
     end
   end
 

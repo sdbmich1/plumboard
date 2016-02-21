@@ -108,6 +108,7 @@
   def click_valid_ok
     click_button submit
     # page.driver.browser.switch_to.alert.accept
+    sleep 2
     accept_btn
     sleep 2
   end

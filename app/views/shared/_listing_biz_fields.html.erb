@@ -3,7 +3,7 @@
     <%= f.label :fulfillment_type_code, 'Delivery Type' %>
     <%= f.collection_select :fulfillment_type_code, FulfillmentType.unhidden,
         :code, :description, {selected: set_ftc(@user) },
-        {id: 'fulfill_type', class: 'pixi-select', required: true} %>
+        {id: 'fulfill_type', class: 'pixi-select', required: !bus_pixi?} %>
     <%= toggle_hidden_ftc_field(f) %>
   </div>
   <div class='span2'>

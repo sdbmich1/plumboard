@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.2.12'
+gem 'rails', github: 'rails/rails', branch: '3-2-stable'
 gem 'rake', '~> 10.3.1' 
 
 #added faraday gem version 0.8.9 to run smoothly on Mac
@@ -17,7 +17,7 @@ gem "daemons"
 gem 'devise-async'
 
 # use mysql as db
-gem "mysql2", "~> 0.3.12"
+gem "mysql2", "~> 0.3.20"
 
 # add paperclip for photos
 gem 'paperclip'
@@ -150,6 +150,9 @@ gem "parsley-rails", '~> 2.0.5.0'
 # handle https uri
 gem 'open_uri_redirections'
 
+# needed for dependencies
+gem 'ffi'
+
 # development gems
 group :development do
   gem 'better_errors', '~> 1.1.0'
@@ -169,13 +172,15 @@ end
 group :development, :test do
   gem 'wdm', '~> 0.1.0', :platforms => [:mswin, :mingw], :require => false
   # gem 'wdm', :platforms => [:mswin, :mingw], :require => false
-  gem 'rspec-rails', '2.13.0'
-  gem 'guard-rspec', '3.0.2'
-  gem 'guard-spork', '1.5.1'
+  gem 'rspec-rails', '2.14.0'
+  gem 'guard-rspec', '4.3.1'
+  gem 'guard-spork', '2.0.2'
   gem 'spork', '~> 1.0rc'
   gem 'faker'
   gem "vcr", "~> 2.5.0"
   gem 'rack_session_access'
+  gem 'test-unit'
+  gem 'minitest'
 end
 
 # test gems
@@ -187,7 +192,7 @@ group :test do
   gem 'win32console', '~> 1.3.2', :platforms => [:mswin, :mingw], :require => false
   gem 'email_spec'
   gem 'launchy'
-  gem "database_cleaner"
+  gem "database_cleaner", "~> 1.5.1"
   gem 'connection_pool'
   gem 'selenium-webdriver', '~> 2.48.1'
   gem 'shoulda-matchers'
@@ -223,3 +228,5 @@ gem "handle_invalid_percent_encoding_requests"
 
 # standardize all modals
 gem 'data-confirm-modal', github: 'ifad/data-confirm-modal', branch: 'bootstrap2'
+
+gem 'eventmachine', '~> 1.0.3'

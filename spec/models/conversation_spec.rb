@@ -25,7 +25,7 @@ describe Conversation do
     it { should validate_presence_of(:user_id) }
     it { should validate_presence_of(:pixi_id) }
     it { should validate_presence_of(:recipient_id) }
-    it { should have_many(:active_posts).class_name('Post').conditions(:status=>"active") }
+    it { should have_many(:active_posts).class_name('Post').conditions("status = 'active'") }
 
     describe "when accessing posts" do
       it "has first post" do
@@ -366,14 +366,14 @@ describe Conversation do
     end
 
     it "show current created date" do
-      expect(@conversation.create_dt).to eq @conversation.created_at
+      expect(@conversation.create_dt.to_s).to eq @conversation.created_at.localtime.to_s
     end
 
     it "shows local created date" do
       @listing.lat, @listing.lng = 35.1498, -90.0492
       @listing.save
       # expect(@conversation.create_dt.to_i).to eq Time.now.to_i
-      expect(@conversation.create_dt).to eq @conversation.created_at
+      expect(@conversation.create_dt.to_s).to eq @conversation.created_at.localtime.to_s
     end
   end
 

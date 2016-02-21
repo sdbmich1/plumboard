@@ -80,8 +80,8 @@ describe Picture do
     end
   end
 
-  describe "regenerate_styles" do
-    it { @picture.should respond_to :regenerate_styles }
+  describe "regenerate_styles!" do
+    it { @picture.should respond_to :regenerate_styles! }
   end
 
   describe 'picture from url' do

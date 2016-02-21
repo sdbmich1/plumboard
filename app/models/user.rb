@@ -25,10 +25,10 @@ class User < ActiveRecord::Base
   has_many :active_listings, foreign_key: :seller_id, class_name: 'Listing', :conditions => "status = 'active' AND end_date >= curdate()"
   has_many :pixi_posted_listings, foreign_key: :seller_id, class_name: 'Listing', 
     :conditions => "status = 'active' AND end_date >= curdate() AND pixan_id IS NOT NULL"
-  has_many :purchased_listings, foreign_key: :buyer_id, class_name: 'Listing', conditions: { :status => 'sold' }
-  has_many :sold_pixis, foreign_key: :seller_id, class_name: 'Listing', conditions: { :status => 'sold' }
+  has_many :purchased_listings, foreign_key: :buyer_id, class_name: 'Listing', conditions: "status = 'sold'"
+  has_many :sold_pixis, foreign_key: :seller_id, class_name: 'Listing', conditions: "status = 'sold'"
   has_many :new_pixis, foreign_key: :seller_id, class_name: 'TempListing', conditions: "status NOT IN ('approved', 'pending')"
-  has_many :pending_pixis, foreign_key: :seller_id, class_name: 'TempListing', conditions: { :status => 'pending' }
+  has_many :pending_pixis, foreign_key: :seller_id, class_name: 'TempListing', conditions: "status = 'pending'"
   has_many :temp_listings, foreign_key: :seller_id, dependent: :destroy
   has_many :saved_listings, dependent: :destroy
   has_many :pixi_likes, dependent: :destroy
@@ -48,7 +48,7 @@ class User < ActiveRecord::Base
 
   # follow relationships
   has_many :favorite_sellers, foreign_key: 'user_id', dependent: :destroy
-  has_many :sellers, through: :favorite_sellers, conditions: {"favorite_sellers.status" => "active"}
+  has_many :sellers, through: :favorite_sellers, conditions: "favorite_sellers.status = 'active'"
   has_many :inverse_favorite_sellers, :class_name => "FavoriteSeller", :foreign_key => "seller_id"
   has_many :followers, :through => :inverse_favorite_sellers, :source => :user
 
@@ -60,15 +60,15 @@ class User < ActiveRecord::Base
 
   # define invoice relationships
   has_many :invoices, foreign_key: :seller_id, dependent: :destroy
-  has_many :unpaid_invoices, foreign_key: :seller_id, class_name: 'Invoice', conditions: { :status => 'unpaid' }
-  has_many :paid_invoices, foreign_key: :seller_id, class_name: 'Invoice', conditions: { :status => 'paid' }
+  has_many :unpaid_invoices, foreign_key: :seller_id, class_name: 'Invoice', conditions: "status = 'unpaid'"
+  has_many :paid_invoices, foreign_key: :seller_id, class_name: 'Invoice', conditions: "status = 'paid'"
   has_many :received_invoices, :foreign_key => "buyer_id", :class_name => "Invoice"
-  has_many :unpaid_received_invoices, foreign_key: :buyer_id, :class_name => "Invoice", conditions: { :status => 'unpaid' }
+  has_many :unpaid_received_invoices, foreign_key: :buyer_id, :class_name => "Invoice", conditions: "status = 'unpaid'"
 
   has_many :bank_accounts, dependent: :destroy
-  has_many :active_bank_accounts, :class_name => "BankAccount", conditions: { :status => 'active' }
+  has_many :active_bank_accounts, :class_name => "BankAccount", conditions: "status = 'active'"
   has_many :card_accounts, dependent: :destroy
-  has_many :active_card_accounts, :class_name => "CardAccount", conditions: { :status => 'active' }
+  has_many :active_card_accounts, :class_name => "CardAccount", conditions: "status = 'active'"
   has_many :transactions, dependent: :destroy
   has_many :comments, dependent: :destroy
   has_many :inquiries, dependent: :destroy
@@ -76,7 +76,7 @@ class User < ActiveRecord::Base
   has_many :seller_ratings, :foreign_key => "seller_id", :class_name => "Rating"
 
   has_many :pixi_posts, dependent: :destroy
-  has_many :active_pixi_posts, class_name: 'PixiPost', :conditions => { :status => 'active' }
+  has_many :active_pixi_posts, class_name: 'PixiPost', :conditions => "status = 'active'"
   has_many :pixan_pixi_posts, :foreign_key => "pixan_id", :class_name => "PixiPost"
 
   has_many :pictures, :as => :imageable, :dependent => :destroy
@@ -208,11 +208,13 @@ class User < ActiveRecord::Base
 
   # return whether user has any bank accounts
   def has_bank_account?
+    Rails.logger.info(active_bank_accounts)    # remove after upgrading past Rails 4.1.1
     active_bank_accounts.size > 0 rescue nil
   end
 
   # return whether user has any card accounts
   def has_card_account?
+    Rails.logger.info(active_card_accounts)    # remove after upgrading past Rails 4.1.1
     active_card_accounts.size > 0 rescue nil
   end
 
@@ -310,12 +312,13 @@ class User < ActiveRecord::Base
 
   # return any unpaid invoices count 
   def unpaid_invoice_count
-    unpaid_received_invoices.size rescue 0
+    Rails.logger.info(unpaid_received_invoices)    # remove after upgrading past Rails 4.1.1
+    unpaid_received_invoices.size
   end
 
   # return whether user has any unpaid invoices 
   def has_unpaid_invoices?
-    unpaid_invoice_count > 0 rescue nil
+    unpaid_invoice_count > 0
   end
 
   # get number of unread messages for user
@@ -501,6 +504,7 @@ class User < ActiveRecord::Base
   end
 
   def has_ship_address?
+    Rails.logger.info(ship_addresses)    # remove after upgrading past Rails 4.1.1
     ship_addresses.size > 0
   end
 

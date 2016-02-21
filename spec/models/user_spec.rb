@@ -278,6 +278,11 @@ describe User do
       @user.sold_pixis.should_not be_empty
     end
 
+    it "does not return pixis that aren't sold yet" do
+      @listing = create(:listing, seller_id: @user.id, status: 'active')
+      @user.sold_pixis.should be_empty
+    end
+
     it "does not return pixis" do
       usr = create :contact_user
       usr.sold_pixis.should be_empty

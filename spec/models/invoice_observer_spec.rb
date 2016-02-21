@@ -88,7 +88,7 @@ describe InvoiceObserver do
   end
 
   describe 'after_update decline' do
-    before do
+    before :all do
       @invoice = user.invoices.build attributes_for(:invoice, buyer_id: buyer.id, seller_id: user.id, status: 'unpaid')
       @details = @invoice.invoice_details.build attributes_for(:invoice_detail, pixi_id: listing.pixi_id)
       buyer.pixi_wants.create attributes_for(:pixi_want, pixi_id: listing.pixi_id)
