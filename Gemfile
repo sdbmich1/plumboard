@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.2.22'
+gem 'rails', github: 'rails/rails', branch: '3-2-stable'
 gem 'rake', '~> 10.3.1' 
 
 #added faraday gem version 0.8.9 to run smoothly on Mac
@@ -149,6 +149,9 @@ gem "parsley-rails", '~> 2.0.5.0'
 
 # handle https uri
 gem 'open_uri_redirections'
+
+# needed for dependencies
+gem 'ffi'
 
 # development gems
 group :development do

@@ -91,10 +91,10 @@ describe Listing do
     it { should have_many(:pixi_wants).with_foreign_key('pixi_id') }
     it { should respond_to(:saved_listings) }
     it { should have_many(:saved_listings).with_foreign_key('pixi_id')}
-    it { should have_many(:active_saved_listings).with_foreign_key('pixi_id').conditions(:status=>"active") }
+    it { should have_many(:active_saved_listings).with_foreign_key('pixi_id').conditions("status = 'active'") }
     it { should respond_to(:buyer) }
     it { should belong_to(:buyer).with_foreign_key('buyer_id') }
-    it { should have_many(:active_pixi_wants).class_name('PixiWant').with_foreign_key('pixi_id').conditions(:status=>"active") }
+    it { should have_many(:active_pixi_wants).class_name('PixiWant').with_foreign_key('pixi_id').conditions("status = 'active'") }
     it { should accept_nested_attributes_for(:contacts).allow_destroy(true) }
     it { should respond_to(:buy_now_flg) }
     it { should respond_to(:est_ship_cost) }

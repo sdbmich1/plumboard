@@ -5,7 +5,7 @@ module CardAccountsHelper
     if adminMode?
       card_accounts_path(adminFlg: @adminFlg)
     else
-      @usr.active_card_accounts.size > 0 ? card_accounts_path(uid: @usr, adminFlg: @adminFlg) : new_card_account_path(uid: @usr)
+      @usr.has_card_account? ? card_accounts_path(uid: @usr, adminFlg: @adminFlg) : new_card_account_path(uid: @usr)
     end
   end
 
