@@ -61,10 +61,17 @@ class InvoicesController < ApplicationController
   end
 
   def destroy
+    pixi_id = @invoice.listings.first.pixi_id if params[:status] == 'cancel'
     if @invoice.destroy
-      @invoices = Invoice.get_invoices(@user).paginate(page: @page, per_page: 15)
+      if params[:status] == 'cancel'
+        redirect_to listing_path(pixi_id)
+      else
+        @invoices = Invoice.get_invoices(@user).paginate(page: @page, per_page: 15)
+        respond_with(@invoice)
+      end
+    else
+      respond_with(@invoice)
     end  
-    respond_with(@invoice)
   end
 
   def remove

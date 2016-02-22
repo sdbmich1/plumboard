@@ -112,7 +112,13 @@ module TransactionsHelper
   # get cancel path
   def get_cancel_path txn, order
     inv_id = order[:invoice_id] || order['invoice_id']
-    txn.pixi? ? temp_listing_path(id: order['id1']) : invoice_path(id: inv_id)
+    if txn.pixi?
+      temp_listing_path(id: order['id1'])
+    elsif get_btn_method(order) == :delete
+      invoice_path(id: inv_id, status: 'cancel')
+    else
+      invoice_path(id: inv_id)
+    end
   end
 
   # get related invoice
@@ -165,5 +171,10 @@ module TransactionsHelper
 
   def show_rating model
     render partial: 'shared/rating_form', locals: { transaction: model } if model.user_id == @user.id
+  end
+
+  def get_btn_method order
+    listing = Listing.find_by_pixi_id(order[:id1])
+    listing && listing.buy_now_flg ? :delete : :get
   end
 end

@@ -20,7 +20,7 @@
     <%= f.hidden_field :convenience_fee, :value => txn.convenience_fee, :id=>'convenience_fee' %>
     <%= f.hidden_field :description, :value => order[:title] %>
     <div class="nav pull-right">
-      <%= link_to 'Cancel', get_cancel_path(txn, order), confirm: cancel_msg, class: 'btn btn-large' %>
+      <%= link_to 'Cancel', get_cancel_path(txn, order), method: get_btn_method(order), confirm: cancel_msg, class: 'btn btn-large' %>
       <%= f.submit "Done!", :confirm => confirm_msg, :id => 'payForm', class: "btn btn-large btn-primary submit-btn" %>
     </div>
   <% end %>

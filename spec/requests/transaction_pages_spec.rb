@@ -59,6 +59,14 @@ feature "Transactions" do
         "inv_total"=>(@listing.price*3+8.25+ship), "transaction_type"=>'invoice', "promo_code"=>'' 
   end
 
+  def visit_buy_now_txn_path ship=0.0
+    add_invoice(true)
+    @listing2.update_attribute(:buy_now_flg, true)
+    visit new_transaction_path id1: @listing2.pixi_id, promo_code: '', title: "Invoice # #{@invoice.id} from #{@invoice.seller_name}", seller: @seller.name,
+        "item1" => @listing2.title, "quantity1" => 2, "cnt"=> 1, "qtyCnt"=> 2, "price1" => 185.00, transaction_type: 'invoice',
+        "tax_total"=> @invoice.tax_total, "invoice_id"=> @invoice.id, "ship_amt"=> ship, "inv_total"=>@invoice.amount+ship
+  end
+
   def user_data home_phone
     fill_in 'first_name', with: @user.first_name
     fill_in 'last_name', with: @user.last_name
@@ -109,7 +117,6 @@ feature "Transactions" do
   end
 
   def display_inv_content ship_flg=false
-      page.should have_selector('title', text: 'PixiPay')
       page.should have_content "Invoice # #{@invoice.id} from #{@seller.name}"
       page.should have_content @invoice.pixi_title
       page.should have_content "Total Due"
@@ -212,8 +219,7 @@ feature "Transactions" do
       user_data_with_state
     end
 
-    it 'shows content' do
-      page.should have_selector('title', text: 'PixiPay')
+    it 'shows content', js: true do
       page.should have_content "Invoice # #{@invoice.id} from #{@seller.name}"
       page.should have_content @invoice.pixi_title
       page.should have_selector('.ttip', visible: true)
@@ -315,7 +321,7 @@ feature "Transactions" do
       user_data_with_state
     end
 
-    it 'shows content' do
+    it 'shows content', js: true do
       page.should have_content "Total Due"
       page.should have_content @listing.title
       page.should have_content @listing2.title
@@ -347,7 +353,7 @@ feature "Transactions" do
       visit_inv_txn_path 
     end
 
-    it 'shows content' do
+    it 'shows content', js: true do
       display_inv_content
     end
 
@@ -372,10 +378,10 @@ feature "Transactions" do
   end
 
   def add_card_account
+      page.should have_content 'Card #'
       expect {
         load_credit_card '4242424242424242'; sleep 2.5
       }.to change(CardAccount, :count).by(1)
-      page.should have_content 'Card #'
 
       visit_inv_txn_path 
       page.should have_content @user.contacts[0].address
@@ -746,6 +752,17 @@ feature "Transactions" do
 
     it "should have Export Options button", js: true do
       page.should have_button 'Export Options'
+    end
+  end
+
+  describe 'Buy Now Transactions' do
+    before :each do
+      page_setup user
+      visit_buy_now_txn_path 
+    end
+    it 'Cancel deletes invoice', js: true do
+      page.should have_link('Cancel',
+        href: invoice_path(id: @invoice.id, status: 'cancel'), method: :delete)
     end
   end
 end
