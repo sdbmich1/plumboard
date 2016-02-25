@@ -60,7 +60,7 @@ class ListingsController < ApplicationController
 
   def local
     respond_with(@listings) do |format|
-      format.json { render json: {listings: @listings, sellers: @sellers} }
+      format.json { render json: {listings: @listings, sellers: @sellers, categories: @categories} }
     end
   end
 
@@ -87,7 +87,7 @@ class ListingsController < ApplicationController
 
   def biz
     respond_with(@listings) do |format|
-      format.json { render json: {listings: @listings, sellers: @sellers, user: @user} }
+      format.json { render json: {listings: @listings, sellers: @sellers, categories: @categories, user: @user} }
     end
   end
 
@@ -158,6 +158,7 @@ class ListingsController < ApplicationController
 
   def load_sellers items
     @sellers = User.get_sellers(items) 
+    @categories = Category.get_categories(items) unless action_name == 'category'
     @listings = items.set_page(params[:page], @sz) rescue nil
   end
 
