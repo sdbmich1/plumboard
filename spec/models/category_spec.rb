@@ -164,4 +164,20 @@ describe Category do
     it { expect(Category.get_by_name(@category.name)).to eq @category.id }
     it { expect(Category.get_by_name('')).to be_nil }
   end
+
+  describe 'get_categories' do
+    before :each, run: true do
+      @user = create :contact_user
+      @cat = FactoryGirl.create(:category, name: 'Test Type', category_type_code: 'sales')
+      @listing = create :listing, seller_id: @user.id, category_id: @cat.id
+    end
+    it { expect(Category.get_categories(Listing.all)).to be_empty }
+    it 'finds the categories', run: true do
+      expect(Category.get_categories(Listing.all)).not_to be_empty
+    end
+    it 'finds the pixi w/ given category', run: true do
+      @listing = create :listing, seller_id: @user.id
+      expect(Category.get_categories(Listing.where(category_id: @cat.id)).count).to eq 1
+    end
+  end
 end

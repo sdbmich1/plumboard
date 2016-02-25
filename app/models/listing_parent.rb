@@ -4,7 +4,7 @@ class ListingParent < ActiveRecord::Base
   resourcify
   # include Area, ResetDate, LocationManager, NameParse, ProcessMethod
   self.abstract_class = true
-  self.per_page = 20
+  # self.per_page = 20
 
   before_update :must_have_pictures
 
@@ -51,8 +51,8 @@ class ListingParent < ActiveRecord::Base
   validates_datetime :event_end_time, presence: true, after: :event_start_time, :if => :start_date?
 
   # used to handle pagination settings
-  def self.set_page pg=1
-    paginate page: pg, per_page: MIN_BOARD_AMT
+  def self.set_page pg=1, sz=MIN_BOARD_AMT
+    paginate page: pg, per_page: sz
   end
 
   # check if pixi is a job
