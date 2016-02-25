@@ -153,12 +153,16 @@ class ListingProcessor < ListingDataProcessor
     User.reset_counters(@listing.seller_id, :active_listings)
   end
 
-  def get_by_url url, action_name
+  def get_by_url url, action_name, cid=''
     flg = ControllerManager.private_url?(action_name) 
     klass = flg ? 'User' : 'Site'
     result = klass.constantize.get_by_url url
-    data = flg ? Listing.inc_types.get_by_seller(result, 'active') : Listing.inc_types.get_by_city('', result)
+    data = flg ? get_seller_data(result, cid) : Listing.inc_types.get_by_city(cid, result)
     data.board_fields rescue nil
+  end
+
+  def get_seller_data result, cid
+    cid.blank? ? Listing.inc_types.get_by_seller(result, 'active') : Listing.inc_types.get_by_seller(result, 'active').where(category_id: cid)  
   end
 
   def get_board_flds

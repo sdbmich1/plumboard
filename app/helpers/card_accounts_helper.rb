@@ -38,7 +38,7 @@ module CardAccountsHelper
   end
 
   def show_card_holder_title val='Card'
-    content_tag(:th, "#{val} Holder", class: "center-wrapper")
+    content_tag(:th, "#{val} Holder", class: "center-wrapper") if @adminFlg
   end
 
   def new_card_path

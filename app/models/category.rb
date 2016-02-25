@@ -92,4 +92,13 @@ class Category < ActiveRecord::Base
   def as_json(options={})
     super(only: [:id, :name], methods: [:name_title])
   end
+
+  def self.get_ids listings
+    listings.map(&:category_id).uniq rescue nil
+  end
+
+  # get category list based on current pixis
+  def self.get_categories listings
+    Category.includes(:pictures).where(id: get_ids(listings))
+  end
 end
