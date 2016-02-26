@@ -80,7 +80,7 @@ gem 'thin'
 gem 'whenever'
 
 # amazon aws
-gem "aws-sdk", "~> 1.11.3"
+gem 'aws-sdk', '~> 2'
 #gem 'aws-s3', :require => 'aws/s3'
 
 # picture upload for s3
@@ -220,8 +220,8 @@ gem 'open4'
 gem 'gelf'
 gem 'graylog2_exceptions', :git => 'git://github.com/wr0ngway/graylog2_exceptions.git'
 gem 'graylog2-resque'
-gem 'excon', '~> 0.21.0'
-gem 'rubber'
+gem 'excon', '~> 0.45.4'
+gem 'rubber', '~> 3.1'
 gem 'recursive-open-struct'
 gem 'lazyload-rails'
 gem "handle_invalid_percent_encoding_requests"
@@ -230,3 +230,4 @@ gem "handle_invalid_percent_encoding_requests"
 gem 'data-confirm-modal', github: 'ifad/data-confirm-modal', branch: 'bootstrap2'
 
 gem 'eventmachine', '~> 1.0.3'
+gem 'nokogiri', '~> 1.5', '>= 1.5.11'
