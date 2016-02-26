@@ -33,11 +33,15 @@ class CardAccountsController < ApplicationController
   end
 
   def destroy
-    if @account.delete_card 
-      load_accts
-    else
-      flash[:error] = @account.errors.full_messages
-      render :show 
+    respond_with(@account) do |format|
+      if @account.delete_card 
+        load_accts
+        format.json { render json: @accounts }
+      else
+        flash[:error] = @account.errors.full_messages
+        format.html { render :show }
+        format.json { render :json => { :errors => @account.errors.full_messages }, :status => 422 }
+      end
     end
   end
 
