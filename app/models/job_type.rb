@@ -9,7 +9,7 @@ class JobType < ActiveRecord::Base
   has_many :temp_listings, foreign_key: 'job_type_code', primary_key: 'code'
   has_many :old_listings, foreign_key: 'job_type_code', primary_key: 'code'
 
-  default_scope :order => "job_name ASC"
+  default_scope { order "job_name ASC" }
 
   # return active categories
   def self.active

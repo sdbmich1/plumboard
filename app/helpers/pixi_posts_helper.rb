@@ -213,10 +213,10 @@ module PixiPostsHelper
   def show_pp_buttons post, str=[]
     str << link_to('Edit', edit_pixi_post_path(post), class: 'btn btn-large') if can_edit? post
     if (post.owner?(@user) || @user.is_admin?) && !post.is_completed?
-      str << link_to('Remove', post, method: :delete, confirm: 'Delete this PixiPost?', class: 'mleft10 btn btn-large', id: 'rm-btn')
+      str << link_to('Remove', post, method: :delete, class: 'mleft10 btn btn-large', id: 'rm-btn', data: { confirm: 'Delete this PixiPost?' })
     end
     if post.owner?(@user) && !post.is_completed? && post.has_appt?
-      str << link_to('Reschedule', reschedule_pixi_post_path(post), confirm: 'Cancel this appointment?', class: 'mleft10 btn btn-large') 
+      str << link_to('Reschedule', reschedule_pixi_post_path(post), class: 'mleft10 btn btn-large', data: { confirm: 'Cancel this appointment?' })
     end
     str << link_to('Done', set_pixi_post_path, class: 'mleft10 btn btn-large btn-primary submit-btn')
     content_tag(:div, str.join('').html_safe, class: 'mtop pull-right')

@@ -25,7 +25,7 @@ describe Conversation do
     it { should validate_presence_of(:user_id) }
     it { should validate_presence_of(:pixi_id) }
     it { should validate_presence_of(:recipient_id) }
-    it { should have_many(:active_posts).class_name('Post').conditions("status = 'active'") }
+    it { should have_many(:active_posts).class_name('Post').conditions(:status=>"active") }
 
     describe "when accessing posts" do
       it "has first post" do
@@ -466,9 +466,9 @@ describe Conversation do
     it "contains mobile conversation fields" do
       json = @conversation.as_json(user: @user)
       %w(invoice_id sender_can_bill? recipient_can_bill? sender_due_invoice? recipient_due_invoice? get_posts).each do |fld|
-        expect(json.keys).to include fld.to_sym
+        expect(json.keys).to include fld
       end
-      expect(json[:listing].keys).to include :photo_url
+      expect(json['listing'].keys).to include 'photo_url'
     end
   end
 

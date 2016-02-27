@@ -1,13 +1,18 @@
 source 'http://rubygems.org'
 
-gem 'rails', github: 'rails/rails', branch: '3-2-stable'
+gem 'rails', '4.0.0'
 gem 'rake', '~> 10.3.1' 
+
+# bring back things removed in Rails 4
+gem 'protected_attributes'
+gem 'rails-observers'
+gem 'activerecord-session_store'
 
 #added faraday gem version 0.8.9 to run smoothly on Mac
 gem 'faraday', '0.8.9'
  
 # use devise for user authenication
-gem 'devise'
+gem 'devise', '~> 3.0.0'
 
 # add delayed job
 gem 'delayed_job_active_record'
@@ -37,35 +42,30 @@ gem 'cancan'
 gem 'rinku', '~> 1.7.3'
 
 # used to mark messages as read/unread
-gem 'unread'
+gem 'unread', '0.3.0'
 
 # jquery
-gem 'jquery-rails', '~> 3.1.0'
+gem 'jquery-rails', '~> 3.1.2'
 
-# Gems used only for assets and not required
-# in production environments by default.
-group :assets do
-  gem 'sass-rails',   '3.2.5'
-  gem 'coffee-rails', '3.2.2'
-  gem 'compass-rails', '~> 1.1.7'
+gem 'sass-rails',   '~> 4.0.0'
+gem 'coffee-rails', '~> 4.0.0'
+gem 'compass-rails', '~> 1.1.7'
 
-  # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-  gem 'therubyracer', :platforms => :ruby
+# See https://github.com/sstephenson/execjs#readme for more supported runtimes
+gem 'therubyracer', :platforms => :ruby
 
-  gem 'uglifier', '1.2.3'
-  gem 'jquery-ui-rails'
-  gem 'jquery-ui-themes'
-  gem 'turbo-sprockets-rails3'
-end
+gem 'uglifier', '1.3.0'
+gem 'jquery-ui-rails'
+gem 'jquery-ui-themes'
 
 # add datepicker
-gem 'bootstrap-datepicker-rails'
+gem 'bootstrap-datepicker-rails', '1.5.0'
 
 # add autocomplete
-gem 'rails3-jquery-autocomplete'
+gem 'rails4-autocomplete'
 
 # To use ActiveModel has_secure_password
-# gem 'bcrypt-ruby', '~> 3.0.0'
+gem 'bcrypt'
 
 # To use Jbuilder templates for JSON
 # gem 'jbuilder'
@@ -107,7 +107,7 @@ gem "omniauth-openid"
 gem "fb_graph", '~> 1.8.4' #"~> 2.4.6"
 
 # add form validations 
-gem 'client_side_validations'  
+gem 'client_side_validations', '4.2.0'
 
 # datetime validations
 gem 'validates_timeliness', '~> 3.0'
@@ -151,7 +151,8 @@ gem "parsley-rails", '~> 2.0.5.0'
 gem 'open_uri_redirections'
 
 # needed for dependencies
-gem 'ffi'
+gem 'sprockets', '~> 2.8'
+gem 'railties', '~> 4.0.0'
 
 # development gems
 group :development do
@@ -179,8 +180,7 @@ group :development, :test do
   gem 'faker'
   gem "vcr", "~> 2.5.0"
   gem 'rack_session_access'
-  gem 'test-unit'
-  gem 'minitest'
+  gem 'minitest', '~> 4.7.5'
 end
 
 # test gems
@@ -224,7 +224,6 @@ gem 'excon', '~> 0.21.0'
 gem 'rubber'
 gem 'recursive-open-struct'
 gem 'lazyload-rails'
-gem "handle_invalid_percent_encoding_requests"
 
 # standardize all modals
 gem 'data-confirm-modal', github: 'ifad/data-confirm-modal', branch: 'bootstrap2'

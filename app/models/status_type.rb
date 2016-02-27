@@ -3,7 +3,7 @@ class StatusType < ActiveRecord::Base
 
   validates :code, :presence => true
 
-  default_scope order: 'status_types.code ASC'
+  default_scope { order 'status_types.code ASC' }
 
   # return active types
   def self.active

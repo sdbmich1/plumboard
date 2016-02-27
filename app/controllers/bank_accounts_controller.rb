@@ -29,7 +29,7 @@ class BankAccountsController < ApplicationController
     respond_with(@account) do |format|
       if @account.save_account request.remote_ip
         load_accts if @adminFlg
-        format.js { reload_data }
+        format.js { redirect_path }
 	format.html { redirect_path }
         format.json { render json: {account: @account} }
       else

@@ -296,7 +296,7 @@ module ApplicationHelper
   # used to dynamically remove field from a given form
   def link_to_remove_fields(title, f)
     f.hidden_field(:_destroy) + 
-      link_to(image_tag('rsz_minus.png', class: 'social-img mbot'), '#', confirm: 'Delete this item?', class: 'remove-row-btn pixi-link', title: title)
+      link_to(image_tag('rsz_minus.png', class: 'social-img mbot'), '#', class: 'remove-row-btn pixi-link', title: title, data: { confirm: 'Delete this item?' })
   end 
 
   # add new picture for model
@@ -312,7 +312,7 @@ module ApplicationHelper
       model.remove_item_list.collect {|item| concat(content_tag(:li, link_to(item, listing_path(model, reason: item), method: :put)))}
     elsif controller_name == 'invoices'
       model.decline_item_list.collect { |item|
-        concat(content_tag(:li, link_to(item, decline_invoice_path(model, reason: item), confirm: 'Decline this invoice?', method: :put)))
+        concat(content_tag(:li, link_to(item, decline_invoice_path(model, reason: item), method: :put, data: { confirm: 'Decline this invoice?' })))
       }
     else
       model.deny_item_list.collect {|item| concat(content_tag(:li, link_to(item, deny_pending_listing_path(model, reason: item), method: :put)))}

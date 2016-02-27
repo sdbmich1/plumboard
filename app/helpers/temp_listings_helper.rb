@@ -115,7 +115,7 @@ module TempListingsHelper
     elsif listing.active? && controller_name == 'listings'
       render partial: 'shared/button_menu', locals: {model: listing, atype: 'Remove'}
     else
-      link_to 'Remove', listing, method: :delete, confirm: msg, class: 'btn btn-large', title: 'Remove Pixi' unless expired_or_sold?(listing)
+      link_to 'Remove', listing, method: :delete, class: 'btn btn-large', title: 'Remove Pixi', data: { confirm: msg } unless expired_or_sold?(listing)
     end
   end
 
@@ -147,7 +147,7 @@ module TempListingsHelper
 
   def remove_image rmFlg, pic, model, photo_msg
     cls = 'btn btn-mini btn-primary sm-top mbot'
-    str = link_to('Remove', picture_path(pic, pixi_id: model.pixi_id), method: :delete, confirm: photo_msg, remote: true, class: cls)
+    str = link_to('Remove', picture_path(pic, pixi_id: model.pixi_id), method: :delete, remote: true, class: cls, data: { confirm: photo_msg })
     content_tag(:div, str, class: 'remove-btn') if rmFlg
   end
 

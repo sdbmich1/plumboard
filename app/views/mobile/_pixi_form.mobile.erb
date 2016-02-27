@@ -9,7 +9,7 @@
       <%= f.hidden_field :post_ip, value: @user.current_sign_in_ip %>
 
     <div class="nav pull-right">
-      <%= link_to 'Cancel', root_path, confirm: msg, 'data-role'=>'button', 'data-inline'=>'true' %>
+      <%= link_to 'Cancel', root_path, 'data-role'=>'button', 'data-inline'=>'true', data: { confirm: msg } %>
       <%= f.submit "Next", 'data-theme'=>'d', 'data-inline'=>'true' %>
     </div>
   <% end %>

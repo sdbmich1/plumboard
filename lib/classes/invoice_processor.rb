@@ -30,7 +30,6 @@ class InvoiceProcessor
   # load new invoice with most recent pixi data
   def load_new usr, buyer_id, pixi_id, fulfillment_type_code=nil
     if usr && usr.has_pixis?
-      Rails.logger.info(usr.active_listings)    # remove after upgrading past Rails 4.1.1)
       pixi = usr.active_listings.first if usr.active_listings.size == 1
       inv = usr.invoices.build buyer_id: buyer_id
       load_inv_details inv, pixi, buyer_id, pixi_id, fulfillment_type_code

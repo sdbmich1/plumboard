@@ -173,7 +173,6 @@ describe UsersController do
     before :each do
       @users = stub_model(User)
       User.stub!(:search).and_return( @users )
-      @users.stub(:contacts).and_return('')
       controller.stub_chain(:query).and_return(:success)
     end
 

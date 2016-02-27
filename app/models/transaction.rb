@@ -17,8 +17,8 @@ class Transaction < ActiveRecord::Base
 
   after_commit :sync_ship_address, on: :create, if: :has_ship_address?
 
-  name_regex =  /^[A-Z]'?['-., a-zA-Z]+$/i
-  text_regex = /^[-\w\,. _\/&@]+$/i
+  name_regex =  /\A[A-Z]'?['-., a-zA-Z]+\z/i
+  text_regex = /\A[-\w\,. _\/&@]+\z/i
 
   # validate added fields           
   validates :first_name,  :presence => true,
@@ -42,16 +42,16 @@ class Transaction < ActiveRecord::Base
   validates :home_phone, presence: true, length: {in: 10..15}
   validates :mobile_phone, allow_blank: true, length: {in: 10..15}
   validates :work_phone, allow_blank: true, length: {in: 10..15}
-  validates :amt, presence: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
+  validates :amt, presence: true, format: { with: /\A\d+??(?:\.\d{0,2})?\z/ }, 
   		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_PIXI_AMT.to_f }  
-  validates :convenience_fee, presence: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ },
+  validates :convenience_fee, presence: true, format: { with: /\A\d+??(?:\.\d{0,2})?\z/ },
    		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: (MAX_PIXI_AMT/10).to_f } 
-  validates :processing_fee, presence: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
+  validates :processing_fee, presence: true, format: { with: /\A\d+??(?:\.\d{0,2})?\z/ }, 
    		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: (MAX_PIXI_AMT/10).to_f } 
 
   # define eager load assns
   def self.inc_list
-    includes(:invoices => {:listings => :pictures})
+    includes(:invoices => {:listings => [:pictures, :site]})
   end
 
   # override find method

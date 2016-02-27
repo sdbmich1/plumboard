@@ -4,9 +4,6 @@ Plumboard::Application.routes.draw do
       confirmations: "confirmations" } 
   
   devise_scope :user do
-    get "signup" => "registrations#new", as: :new_user_registration
-    post "signup" => "registrations#create", as: :user_registration
-    delete "signout" => "sessions#destroy", as: :destroy_user_session
     get '/users/auth/:provider' => 'users/omniauth_callbacks#passthru'
     get '/users/auth/:provider/setup' => 'users/omniauth_callbacks#setup'
   end
@@ -189,21 +186,25 @@ Plumboard::Application.routes.draw do
   get "/settings/delivery", to: "settings#delivery" 
 
   # personalized paths
-  match '/biz/:url' => "listings#biz", via: :get, as: :biz
-  match '/mbr/:url' => "listings#mbr", via: :get, as: :mbr
-  match '/pub/:url' => "listings#pub", via: :get, as: :pub
-  match '/edu/:url' => "listings#edu", via: :get, as: :edu
-  match '/loc/:url' => "listings#loc", via: :get, as: :loc
-  match '/careers' => "listings#career", via: :get, as: :career
+  get '/biz/:url' => "listings#biz", as: :biz
+  get '/mbr/:url' => "listings#mbr", as: :mbr
+  get '/pub/:url' => "listings#pub", as: :pub
+  get '/edu/:url' => "listings#edu", as: :edu
+  get '/loc/:url' => "listings#loc", as: :loc
+  get '/careers' => "listings#career", as: :career
 
   # subdomain
   constraints(Subdomain) do
-    match '/' => 'shop_locals#index'
+    get '/' => 'shop_locals#index'
   end
 
   # specify root route based on user sign in status
-  root to: 'listings#local', :constraints => lambda {|r| r.env["warden"].authenticate? }
-  root to: 'pages#home'
+  authenticated :user do
+    root to: 'listings#local', as: :authenticated_root
+  end
+  unauthenticated do
+    root to: 'pages#home'
+  end
 
   # exception handling
   # match '/*path', :to => 'application#rescue_with_handler'

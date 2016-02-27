@@ -6,7 +6,7 @@ class Category < ActiveRecord::Base
   has_many :subcategories
   has_many :listings
   has_many :temp_listings
-  has_many :active_listings, class_name: 'Listing', :conditions => "status = 'active' AND end_date >= curdate()"
+  has_many :active_listings, -> { where "status = 'active' AND end_date >= curdate()" }, class_name: 'Listing'
   has_many :pictures, :as => :imageable, :dependent => :destroy
   accepts_nested_attributes_for :pictures, :allow_destroy => true, :reject_if => :all_blank
 
@@ -15,7 +15,7 @@ class Category < ActiveRecord::Base
   validates :category_type_code, :presence => true
   validate :must_have_picture
 
-  default_scope :order => "name ASC"
+  default_scope { order "name ASC" }
 
   # validate picture exists
   def must_have_picture

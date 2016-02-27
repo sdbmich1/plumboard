@@ -19,15 +19,15 @@ class Invoice < ActiveRecord::Base
 
   validates :buyer_id, presence: true  
   validates :seller_id, presence: true  
-  validates :amount, presence: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
+  validates :amount, presence: true, format: { with: /\A\d+??(?:\.\d{0,2})?\z/ }, 
   		numericality: { greater_than: 0, less_than_or_equal_to: MAX_PIXI_AMT.to_f }  
-  validates :sales_tax, allow_blank: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
+  validates :sales_tax, allow_blank: true, format: { with: /\A\d+??(?:\.\d{0,2})?\z/ }, 
     		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_SALES_TAX.to_i }
-  validates :ship_amt, allow_blank: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
+  validates :ship_amt, allow_blank: true, format: { with: /\A\d+??(?:\.\d{0,2})?\z/ }, 
     		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_SHIP_AMT.to_i }
   validate :must_have_pixis
 
-  default_scope order: 'invoices.created_at DESC'
+  default_scope { order 'invoices.created_at DESC' }
 
   # set flds
   def set_flds

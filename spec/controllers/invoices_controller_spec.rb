@@ -31,7 +31,8 @@ describe InvoicesController do
 
     before :each do
       @invoices = stub_model(Invoice)
-      Invoice.stub_chain(:all, :paginate).and_return( @invoices )
+      Invoice.stub_chain(:includes, :paginate).and_return( @invoices )
+      @invoices.stub(:seller).and_return(@user)
       controller.stub!(:current_user).and_return(@user)
       do_get
     end
@@ -69,6 +70,7 @@ describe InvoicesController do
       @invoices = stub_model(Invoice)
       Invoice.stub!(:get_invoices).and_return( @invoices )
       @invoices.stub!(:paginate).and_return( @invoices )
+      @invoices.stub(:seller).and_return(@user)
       do_get
     end
 
@@ -166,7 +168,7 @@ describe InvoicesController do
   describe 'xhr GET index' do
     before :each do
       @invoices = mock("invoices")
-      Invoice.stub_chain(:all, :paginate).and_return( @invoices )
+      Invoice.stub_chain(:includes, :paginate).and_return( @invoices )
       controller.stub!(:current_user).and_return(@user)
       do_get
     end
@@ -303,6 +305,7 @@ describe InvoicesController do
       controller.stub!(:current_user).and_return(@user)
       Invoice.stub!(:includes) { Invoice }
       Invoice.stub!(:find).and_return( @invoice )
+      @invoice.stub(:seller).and_return(@user)
     end
 
     def do_update

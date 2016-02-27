@@ -275,7 +275,7 @@ task :load_categories => :environment do
     }
 
     # find or add category
-    new_category = Category.find_or_initialize_by_name(attrs)
+    new_category = Category.find_or_initialize_by(attrs)
 
     # add photo
     if new_category.pictures.size == 0
@@ -311,7 +311,7 @@ task :update_categories => :environment do
     #update category
     updated_category = Category.find(:first, :conditions => ["name = ?", attrs2[:original_name]])
     if not updated_category
-      updated_category = Category.find_or_initialize_by_name(attrs)
+      updated_category = Category.find_or_initialize_by(attrs)
     else
       updated_category.update_attributes!(attrs)
     end
@@ -485,7 +485,7 @@ task :load_category_types => :environment do
     }
 
     # find or intialize category_type
-    new_category_type = CategoryType.find_or_initialize_by_code(attrs)
+    new_category_type = CategoryType.find_or_initialize_by(attrs)
     #new_category_type = CategoryType.first_or_initialize(attrs)
 
     # save category_type

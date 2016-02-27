@@ -85,7 +85,7 @@ describe Users::OmniauthCallbacksController do
     end
 
     it "should render text" do
-      response.should render_template(:text => "Setup complete.")
+      expect(response.body).to eq 'Setup complete.'
     end
 
     it "assigns request env" do

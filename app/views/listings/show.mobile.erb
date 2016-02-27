@@ -20,7 +20,7 @@
   <%= render partial: 'mobile/show_listing', locals: {listing: @listing, edit_mode: false} %>
 
   <% if @listing.seller? @user %>
-    <%= link_to 'Remove', @listing, method: :delete, confirm: 'Are you sure?', "data-role"=>'button', 'data-inline'=>'true' %>
+    <%= link_to 'Remove', @listing, method: :delete, "data-role"=>'button', 'data-inline'=>'true', data: { confirm: 'Are you sure?' } %>
     <%= link_to 'Edit', edit_temp_listing_path(@listing), "data-role"=>'button', 'data-inline'=>'true', 'data-theme'=>'b' %>
   <% end %>  
 <% end %>

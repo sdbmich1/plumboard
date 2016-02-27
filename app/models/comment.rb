@@ -8,7 +8,7 @@ class Comment < ActiveRecord::Base
   validates :pixi_id, :presence => true
   validates :user_id, :presence => true
 
-  default_scope order: 'comments.created_at DESC'
+  default_scope { order 'comments.created_at DESC' }
 
   CONTENT_LENGTH = 40   # set comment display length
 

@@ -6,7 +6,7 @@ class EventType < ActiveRecord::Base
   has_many :listings, foreign_key: 'event_type_code', primary_key: 'code'
   has_many :temp_listings, foreign_key: 'event_type_code', primary_key: 'code'
 
-  default_scope order: 'event_types.description ASC'
+  default_scope { order 'event_types.description ASC' }
   
   # return active types
   def self.active

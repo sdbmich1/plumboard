@@ -40,7 +40,7 @@ class ListingParent < ActiveRecord::Base
   validates_presence_of :seller_id, :site_id, :start_date, :category_id, :description
   validates :job_type_code, :presence => true, if: :job?
   validates :event_type_code, :presence => true, if: :event?
-  validates :price, allow_blank: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
+  validates :price, allow_blank: true, format: { with: /\A\d+??(?:\.\d{0,2})?\z/ }, 
     		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_PIXI_AMT.to_f }
   validate :must_have_pictures
 
