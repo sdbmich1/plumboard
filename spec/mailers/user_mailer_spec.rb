@@ -4,7 +4,7 @@ describe UserMailer do
 
   describe "send_transaction_receipt" do
     subject { UserMailer.send_transaction_receipt(transaction)}
-    let(:transaction) { create :transaction, status: 'approved' }
+    let(:transaction) { create :transaction, status: 'approved', confirmation_no: '1' }
 
     it { expect{subject.deliver}.not_to change{ActionMailer::Base.deliveries.length}.by(0) }
     its(:to) { should == [transaction.email] }

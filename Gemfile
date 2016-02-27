@@ -1,10 +1,10 @@
 source 'http://rubygems.org'
 
-gem 'rails', '4.0.0'
+gem 'rails', '4.0.13'
 gem 'rake', '~> 10.3.1' 
 
 # bring back things removed in Rails 4
-gem 'protected_attributes'
+gem 'protected_attributes', '1.1.3'
 gem 'rails-observers'
 gem 'activerecord-session_store'
 

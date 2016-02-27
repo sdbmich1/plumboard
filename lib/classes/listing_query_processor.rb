@@ -117,7 +117,8 @@ class ListingQueryProcessor
     if val == 'sold'
       Listing.sold_list
     else
-      select_fields("#{table_name}." + Listing.created_date(val), val == "active").exec_query(val == "active", "#{table_name}.status = '#{val}'")
+      query = "#{table_name}.status " + (val.is_a?(Array) ? "IN ('#{val.join('\', \'')}')" : "= '#{val}'")
+      select_fields("#{table_name}." + Listing.created_date(val), val == "active").exec_query(val == "active", query)
     end
   end
 

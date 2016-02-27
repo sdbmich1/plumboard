@@ -1027,19 +1027,13 @@ describe Listing do
     end
 
     it 'does not find pixi' do
-      expect(Listing.find_pixi(0)).to be_nil
+      expect(Listing.find_pixi(1)).to be_nil
     end
   end
 
   describe "dup pixi", process: true  do
     let(:user) { FactoryGirl.create :pixi_user }
     let(:listing) { FactoryGirl.create :listing, seller_id: user.id }
-
-    it "does not return new listing" do 
-      listing = FactoryGirl.build :listing, seller_id: user.id 
-      dup_listing = listing.dup_pixi(false) rescue nil
-      expect(dup_listing).to be_nil
-    end
 
     it "returns new listing" do 
       new_pixi = listing.dup_pixi(false)
