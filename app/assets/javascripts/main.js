@@ -569,6 +569,7 @@ function resetBoard() {
   // set search form fields
   $('#cid').val(cid);
   $('#loc').val(loc);
+  $('#url').val(site_url);
 
   // check location
   if (stype.length > 0 && stype == 'pub') 

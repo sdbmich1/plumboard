@@ -2,6 +2,7 @@ require 'will_paginate/array'
 class ListingsController < ApplicationController
   include PointManager, NameParse, ResetDate, LocationManager, ControllerManager
   before_filter :authenticate_user!, except: [:local, :category, :show, :biz, :mbr, :career, :pub, :edu, :loc]
+  before_filter :get_page_size
   before_filter :load_data, except: [:pixi_price, :repost, :update, :biz, :mbr, :pub, :edu, :loc]
   before_filter :load_pixi, only: [:show, :pixi_price, :repost, :update]
   before_filter :load_job, only: [:career]
@@ -59,7 +60,7 @@ class ListingsController < ApplicationController
 
   def local
     respond_with(@listings) do |format|
-      format.json { render json: {listings: @listings, sellers: @sellers} }
+      format.json { render json: {listings: @listings, sellers: @sellers, categories: @categories} }
     end
   end
 
@@ -86,7 +87,7 @@ class ListingsController < ApplicationController
 
   def biz
     respond_with(@listings) do |format|
-      format.json { render json: {listings: @listings, sellers: @sellers, user: @user} }
+      format.json { render json: {listings: @listings, sellers: @sellers, categories: @categories, user: @user} }
     end
   end
 
@@ -150,13 +151,23 @@ class ListingsController < ApplicationController
   end
 
   def load_url_data
-    items = Listing.get_by_url(@url, action_name)
+    cid = params[:cid] || ''
+    items = Listing.get_by_url(@url, action_name, cid)
     load_sellers items
   end
 
   def load_sellers items
     @sellers = User.get_sellers(items) 
-    @listings = items.set_page params[:page] rescue nil
+    @categories = Category.get_categories(items) unless action_name == 'category'
+    @listings = items.set_page(params[:page], @sz) rescue nil
+  end
+
+  def get_page_size
+    respond_to do |format|
+      format.html { @sz = MIN_BOARD_AMT }
+      format.js { @sz = MIN_BOARD_AMT }
+      format.json { @sz = MIN_BOARD_AMT/2 }
+    end
   end
 
   def set_location

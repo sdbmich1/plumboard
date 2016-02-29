@@ -1662,6 +1662,14 @@ describe Listing do
       end
       it { expect(Listing.get_by_url('abcd', 'pub')).to be_blank }
     end
+    context 'by category' do
+      before :each do
+        @biz = FactoryGirl.create(:business_user) 
+        @listing2 = create :listing, seller_id: @biz.id, quantity: 2, title: 'Leather Coat'
+      end
+      it { expect(Listing.get_by_url(@biz.url, 'biz', @listing2.category_id)).to include @listing2 }
+      it { expect(Listing.get_by_url(@biz.url, 'biz', @category.id)).not_to include @listing2 }
+    end
   end
 
   describe 'latlng', process: true do
