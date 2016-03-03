@@ -179,7 +179,7 @@ group :development, :test do
   gem 'faker'
   gem "vcr", "~> 2.5.0"
   gem 'rack_session_access'
-  gem 'test-unit'
+  gem 'test-unit', '~> 3.0'
   gem 'minitest'
 end
 

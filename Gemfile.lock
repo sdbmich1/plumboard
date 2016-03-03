@@ -586,7 +586,7 @@ GEM
     stripe (1.21.0)
       json (~> 1.8.1)
       rest-client (~> 1.4)
-    test-unit (3.1.5)
+    test-unit (3.1.7)
       power_assert
     test_after_commit (0.2.3)
     therubyracer (0.12.1)
@@ -738,7 +738,7 @@ DEPENDENCIES
   shoulda-matchers
   spork (~> 1.0rc)
   stripe (~> 1.21.0)
-  test-unit
+  test-unit (~> 3.0)
   test_after_commit
   therubyracer
   thin
