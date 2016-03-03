@@ -497,7 +497,7 @@ GEM
       rack (>= 1.0.0)
     rails3-jquery-autocomplete (1.0.11)
       rails (~> 3.0)
-    rake (10.3.2)
+    rake (10.5.0)
     rb-fchange (0.0.5)
       ffi
     rb-fsevent (0.9.7)
@@ -721,7 +721,7 @@ DEPENDENCIES
   rack_session_access
   rails!
   rails3-jquery-autocomplete
-  rake (~> 10.3.1)
+  rake (~> 10.4, >= 10.4.2)
   rb-fchange (= 0.0.5)
   rb-notifu (= 0.0.4)
   recursive-open-struct

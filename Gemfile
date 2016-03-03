@@ -1,7 +1,7 @@
 source 'http://rubygems.org'
 
 gem 'rails', github: 'rails/rails', branch: '3-2-stable'
-gem 'rake', '~> 10.3.1' 
+gem 'rake', '~> 10.4', '>= 10.4.2'
 
 #added faraday gem version 0.8.9 to run smoothly on Mac
 gem 'faraday', '0.8.9'

@@ -10,7 +10,7 @@ class RegistrationsController < Devise::RegistrationsController
       super
     else
       # process json for mobile
-      user = User.new(params[:user])
+      user = User.new(JSON.parse(params[:user]))
       pic = user.pictures.build
       pic.photo = File.new params[:file].tempfile 
 
