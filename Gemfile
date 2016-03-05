@@ -169,7 +169,7 @@ group :development do
   gem 'bullet'
 end
 
-group :development, :test do
+group :development, :test, :demo do
   gem 'wdm', '~> 0.1.0', :platforms => [:mswin, :mingw], :require => false
   # gem 'wdm', :platforms => [:mswin, :mingw], :require => false
   gem 'rspec-rails', '2.14.0'
