@@ -119,7 +119,7 @@ class ListingProcessor < ListingDataProcessor
   end
 
   def no_invoice_pixis pixi_ids
-    Listing.active.where(pixi_id: pixi_ids).includes(:invoices).having("count(invoice_details.id) = 0").delete_if { |x| x.id.nil? }
+    Listing.active.where(pixi_id: pixi_ids).joins(:invoices).having("count(invoice_details.id) = 0").to_a.delete_if { |x| x.id.nil? }
   end
 
   def other_pixis pixi_ids

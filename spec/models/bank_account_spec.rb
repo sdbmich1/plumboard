@@ -145,7 +145,9 @@ describe BankAccount do
     it { expect(@account.email).to eq(@user.email) } 
 
     it "should not find correct owner name" do 
-      @account.user_id = 100 
+      @account.user_id = 100
+      @account.save
+      @account.reload
       @account.owner_first_name.should be_nil 
       @account.owner_name.should be_nil 
       @account.email.should be_nil 

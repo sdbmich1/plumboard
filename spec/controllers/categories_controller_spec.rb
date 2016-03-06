@@ -307,7 +307,7 @@ describe CategoriesController do
 
   describe 'xhr GET category_type' do
     before :each do
-      @category = mock_category
+      @category = stub_model(Category)
       Category.stub_chain(:find).and_return( @category )
       do_get
     end

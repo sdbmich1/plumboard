@@ -8,6 +8,11 @@ class Invoice < ActiveRecord::Base
     :sales_tax, :tax_total, :subtotal, :inv_date, :transaction_id, :bank_account_id, :tmp_buyer_id, :ship_amt, :other_amt,
     :invoice_details_attributes, :invoice_details_count
 
+  # Prevent ActiveRecord from raising an error when overriding transaction method
+  def self.dangerous_attribute_method?(name)
+    super && name != :transaction
+  end
+
   belongs_to :seller, foreign_key: "seller_id", class_name: "User"
   belongs_to :buyer, foreign_key: "buyer_id", class_name: "User"
   belongs_to :transaction

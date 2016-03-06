@@ -153,9 +153,9 @@ describe CardAccount do
 
     it "removes cards" do
       @account.save
-      account = @user.card_accounts.create FactoryGirl.attributes_for :card_account, card_no: '5100'
-      expect(CardAccount.remove_cards(@user)).to be_true
-      expect(CardAccount.where(user_id: @user.id).count).to eq 0
+      expect {
+        CardAccount.remove_cards(@user)
+      }.to change { CardAccount.count }.from(1).to(0)
     end
   end
 

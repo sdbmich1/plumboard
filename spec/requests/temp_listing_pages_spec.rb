@@ -683,7 +683,7 @@ feature "TempListings" do
       expect { 
 	click_link "Done"
       }.not_to change(TempListing, :count)
-      expect(TempListing.get_by_status('pending').count).to eq 1
+      expect(TempListing.get_by_status('pending').count(:all)).to eq 1
       page.should have_content "Pixi Submitted!" 
     end
   end

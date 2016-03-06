@@ -105,6 +105,8 @@ describe PixiPost do
 
     it "should not find correct seller name" do 
       @pixi_post.user_id = 100 
+      @pixi_post.save
+      @pixi_post.reload
       expect(@pixi_post.seller_name).not_to eq(@user.name)
     end
   end
@@ -113,7 +115,9 @@ describe PixiPost do
     it { @pixi_post.seller_first_name.should == @user.first_name } 
 
     it "should not find correct seller first_name" do 
-      @pixi_post.user_id = 100 
+      @pixi_post.user_id = 100
+      @pixi_post.save
+      @pixi_post.reload
       expect(@pixi_post.seller_first_name).not_to eq(@user.first_name)
     end
   end
@@ -122,7 +126,9 @@ describe PixiPost do
     it { @pixi_post.seller_email.should == @user.email } 
 
     it "should not find correct seller email" do 
-      @pixi_post.user_id = 100 
+      @pixi_post.user_id = 100
+      @pixi_post.save
+      @pixi_post.reload
       expect(@pixi_post.seller_email).not_to eq(@user.email)
     end
   end
@@ -642,6 +648,7 @@ describe PixiPost do
     it 'updates contact info' do
       @post = @user.pixi_posts.build FactoryGirl.attributes_for(:pixi_post, status: 'active')
       @post.save!
+      @post.reload
       @post.user.contacts[0].address.should == @post.address 
     end
 

@@ -21,6 +21,11 @@ class ListingParent < ActiveRecord::Base
 	:color, :quantity, :item_type, :item_size, :bed_no, :bath_no, :term, :avail_date, :external_url, :ref_id,
   	:buy_now_flg, :est_ship_cost, :sales_tax, :fulfillment_type_code
 
+  # Prevent ActiveRecord from raising an error when overriding transaction method
+  def self.dangerous_attribute_method?(name)
+    super && name != :transaction
+  end
+
   belongs_to :user, foreign_key: :seller_id
   belongs_to :site
   belongs_to :category

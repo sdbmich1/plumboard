@@ -44,7 +44,7 @@ class ListingQueryProcessor
   end
 
   def exec_query flg, params
-    flg ? Listing.active.where(params) : get_data(flg, params)
+    flg && !is_temp? ? Listing.active.where(params) : get_data(flg, params)
   end
 
   # paginate

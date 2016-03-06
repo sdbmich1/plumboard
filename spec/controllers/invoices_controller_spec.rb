@@ -32,7 +32,7 @@ describe InvoicesController do
     before :each do
       @invoices = stub_model(Invoice)
       Invoice.stub_chain(:includes, :paginate).and_return( @invoices )
-      @invoices.stub(:seller).and_return(@user)
+      @invoices.stub_chain(:seller).and_return(stub_model(User))
       controller.stub!(:current_user).and_return(@user)
       do_get
     end
@@ -70,7 +70,7 @@ describe InvoicesController do
       @invoices = stub_model(Invoice)
       Invoice.stub!(:get_invoices).and_return( @invoices )
       @invoices.stub!(:paginate).and_return( @invoices )
-      @invoices.stub(:seller).and_return(@user)
+      @invoices.stub(:seller).and_return(stub_model(User))
       do_get
     end
 
@@ -305,7 +305,7 @@ describe InvoicesController do
       controller.stub!(:current_user).and_return(@user)
       Invoice.stub!(:includes) { Invoice }
       Invoice.stub!(:find).and_return( @invoice )
-      @invoice.stub(:seller).and_return(@user)
+      @invoice.stub(:seller).and_return(stub_model(User))
     end
 
     def do_update

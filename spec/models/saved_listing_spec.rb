@@ -90,6 +90,8 @@ describe SavedListing do
 
     it "does not find user name" do
       @saved_listing.user_id = 100
+      @saved_listing.save
+      @saved_listing.reload
       @saved_listing.first_name.should be_nil
     end
   end

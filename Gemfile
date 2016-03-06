@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '4.0.13'
+gem 'rails', '4.1.0'
 gem 'rake', '~> 10.3.1' 
 
 # bring back things removed in Rails 4
@@ -15,7 +15,7 @@ gem 'faraday', '0.8.9'
 gem 'devise', '~> 3.0.0'
 
 # add delayed job
-gem 'delayed_job_active_record'
+gem 'delayed_job_active_record', '4.1.0'
 gem "daemons"
 
 # process devise mails in background
@@ -25,17 +25,17 @@ gem 'devise-async'
 gem "mysql2", "~> 0.3.20"
 
 # add paperclip for photos
-gem 'paperclip'
+gem 'paperclip', '~> 4.3.5'
 gem 'delayed_paperclip', '~> 2.7.1'
 
 # add for ajax uploads
 gem 'remotipart', '~> 1.0'
 
 # add thinking sphinx
-gem 'thinking-sphinx', '~> 3.0.6' 
+gem 'thinking-sphinx', '~> 3.1.4' 
 
 # add roles
-gem 'rolify'
+gem 'rolify', '~> 4.1.1'
 gem 'cancan'
 
 # add clickable links for comment text
@@ -110,7 +110,7 @@ gem "fb_graph", '~> 1.8.4' #"~> 2.4.6"
 gem 'client_side_validations', '4.2.0'
 
 # datetime validations
-gem 'validates_timeliness', '~> 3.0'
+gem 'jc-validates_timeliness'
 
 # time select
 gem "combined_time_select", "~> 1.0.1"
@@ -128,8 +128,8 @@ gem "geocoder", "~> 1.1.8"
 gem "rmagick", "~> 2.13.1"
 
 # pagination
-gem 'will_paginate', '~> 3.0'
-gem 'bootstrap-will_paginate', '0.0.6'
+gem 'will_paginate', '~> 3.1.0'
+gem 'bootstrap-will_paginate', '0.0.10'
 
 # add sass
 gem 'bootstrap-sass', '~> 2.3.2.1'
@@ -152,7 +152,7 @@ gem 'open_uri_redirections'
 
 # needed for dependencies
 gem 'sprockets', '~> 2.8'
-gem 'railties', '~> 4.0.0'
+gem 'railties', '~> 4.1.0'
 
 # development gems
 group :development do
@@ -180,7 +180,7 @@ group :development, :test do
   gem 'faker'
   gem "vcr", "~> 2.5.0"
   gem 'rack_session_access'
-  gem 'minitest', '~> 4.7.5'
+  gem 'minitest', '~> 5.1'
 end
 
 # test gems

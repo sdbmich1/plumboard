@@ -159,7 +159,7 @@ describe Listing do
     before { @listing.save! }
     it { Listing.active.should be_true }
     it { Listing.active_page(1).should be_true }
-    it { Listing.get_by_status('active').should_not be_empty }
+    it { expect(Listing.get_by_status('active').count(:all)).not_to eq 0 }
     it 'orders by end_date ASC' do
       @listing2 = FactoryGirl.build(:listing, seller_id: @user.id, quantity: 1, status: 'active', end_date: @listing.end_date + 7.days)
       @listing2.pictures.build(FactoryGirl.attributes_for :picture)
@@ -173,14 +173,14 @@ describe Listing do
   describe "site listings", base: true  do 
     before { @listing.save! }
     it { Listing.get_by_site(0).should_not include @listing } 
-    it { Listing.get_by_site(@listing.site.id).should_not be_empty }
+    it { expect(Listing.get_by_site(@listing.site.id).count(:all)).not_to eq 0 }
   end
 
   describe "category listings", base: true   do 
     it { Listing.get_by_category(0).should_not include @listing } 
     it 'finds listing by category' do
       @listing.save!
-      Listing.get_by_category(@listing.category_id).should_not be_empty
+      expect(Listing.get_by_category(@listing.category_id).count(:all)).not_to eq 0
     end
   end
 
@@ -188,28 +188,28 @@ describe Listing do
     it 'should not get listings if none are invoiced' do
       @listing.status = 'active'
       @listing.save
-      Listing.active.should_not be_empty
-      Listing.active_invoices.should be_empty
+      expect(Listing.active.count(:all)).not_to eq 0
+      expect(Listing.active_invoices.count(:all)).to eq 0
     end
 
     it 'should get listings' do
       create_invoice "unpaid"
-      Listing.active_invoices.should_not be_empty
+      expect(Listing.active_invoices.count(:all)).not_to eq 0
     end
   end
 
   describe "check_category_and_location", main: true  do
     before { @listing.save! }
     it "should get all listings of given status if category and location are not specified" do
-      Listing.check_category_and_location('active', nil, nil, true).should_not be_empty
+      expect(Listing.check_category_and_location('active', nil, nil, true).count(:all)).not_to eq 0
     end
 
     it "should get listing when category and location are specified" do      
-      Listing.check_category_and_location('active', @listing.category_id, @listing.site_id, true).should_not be_empty
+      expect(Listing.check_category_and_location('active', @listing.category_id, @listing.site_id, true).count(:all)).not_to eq 0
     end
 
     it "should not return anything if no listings meet the parameters" do
-      Listing.check_category_and_location('removed', 100, 900, true).should be_empty
+      expect(Listing.check_category_and_location('removed', 100, 900, true).count(:all)).to eq 0
     end
 
     it "only returns necessary attributes" do
@@ -226,15 +226,15 @@ describe Listing do
     end      
 
     it "should get all listings of given status if category and location are not specified" do
-      Listing.check_invoiced_category_and_location(nil, nil).should_not be_empty
+      expect(Listing.check_invoiced_category_and_location(nil, nil).count(:all)).not_to eq 0
     end
 
     it "should get listing when category and location are specified" do      
-      Listing.check_invoiced_category_and_location(@listing.category_id, @listing.site_id).should_not be_empty
+      expect(Listing.check_invoiced_category_and_location(@listing.category_id, @listing.site_id).count(:all)).not_to eq 0
     end
 
     it "should not return anything if no listings meet the parameters" do
-      Listing.check_invoiced_category_and_location(100, 900).should be_empty
+      expect(Listing.check_invoiced_category_and_location(100, 900).count(:all)).to eq 0
     end
 
     it "only returns necessary attributes" do
@@ -264,7 +264,7 @@ describe Listing do
       @listing.save
       @user.uid = 1
       @user.save
-      Listing.get_by_seller(@user, 'active', false).should_not be_empty  
+      expect(Listing.get_by_seller(@user, 'active', false).count(:all)).not_to eq 0
     end
 
     it "does not get all listings for non-admin" do
@@ -291,7 +291,7 @@ describe Listing do
 
     it { Listing.get_by_buyer(0).should_not include @listing } 
     it "includes buyer listings", run: true do 
-      Listing.get_by_buyer(@invoice.buyer_id).should_not be_empty  
+      expect(Listing.get_by_buyer(@invoice.buyer_id).count(:all)).not_to eq 0
     end
   end
 
@@ -919,7 +919,7 @@ describe Listing do
 
     it { Listing.wanted_list(@user, nil, nil, false).should_not include @listing } 
     it { Listing.wanted_list(@usr, nil, nil, false).should_not include @listing } 
-    it { Listing.wanted_list(@buyer, nil, nil, false).should_not be_empty }
+    it { expect(Listing.wanted_list(@buyer, nil, nil, false).count(:all)).not_to eq 0 }
     it { expect(@listing.wanted_count).to eq(1) }
     it { expect(@listing.is_wanted?).to eq(true) }
     it { expect(Listing.wanted_list(@buyer, nil, nil, false).first.created_date.to_s).to eq(@pixi_want.updated_at.to_s) }
@@ -930,7 +930,7 @@ describe Listing do
 	@listing2 = create(:listing, seller_id: @seller.id, title: 'Hair brush')
 	@want = @user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing2.pixi_id
       end
-      it { Listing.wanted_list(@user, nil, nil, false).should_not be_empty } 
+      it { expect(Listing.wanted_list(@user, nil, nil, false).count(:all)).not_to eq 0 } 
     end
 
     it "only returns necessary attributes" do
@@ -950,7 +950,7 @@ describe Listing do
     it { expect(@listing.user_wanted?(@usr)).not_to eq(true) }
 
     it "shows all wanted pixis for admin" do
-      expect(Listing.wanted_list(@admin_user, @listing.category_id, @listing.site_id).count).not_to eq 0
+      expect(Listing.wanted_list(@admin_user, @listing.category_id, @listing.site_id).count(:all)).not_to eq 0
       Listing.wanted_list(@admin_user, @listing.category_id, @listing.site_id).should include @listing
       Listing.wanted_list(@usr, @listing.category_id, @listing.site_id, false).should_not include @listing
     end
@@ -1046,7 +1046,7 @@ describe Listing do
 
   describe "date display methods", date: true do
     let(:user) { FactoryGirl.create :pixi_user }
-    let(:listing) { FactoryGirl.create :listing, seller_id: user.id }
+    let(:listing) { FactoryGirl.create :listing, seller_id: user.id, lat: 1.0, lng: 1.0 }
 
     it "does not show start date" do
       listing.start_date = nil
@@ -1056,7 +1056,7 @@ describe Listing do
     it { listing.start_date.should_not be_nil }
     it "does not show local updated date" do
       listing.updated_at = nil
-      expect(listing.format_date(listing.updated_at)).to eq Time.now.strftime('%m/%d/%Y %l:%M %p')
+      expect(listing.format_date(listing.updated_at)).to be_nil
     end
 
     it "show current updated date" do
@@ -1426,7 +1426,7 @@ describe Listing do
       @listing.save!
       result = @listing.repost
       expect { result }.to be_true
-      expect(Listing.all.count).to eq 2
+      expect(Listing.all.count(:all)).to eq 2
       expect(Listing.last.active?).to be_true
       expect(Listing.last.pictures.size).to eq @listing.pictures.size
       expect(Listing.last.repost_flg).to be_true
@@ -1447,49 +1447,49 @@ describe Listing do
 	
     it "includes expired listings" do
       update_pixi @listing, 'expired', 4
-      Listing.soon_expiring_pixis(4, 'expired').should_not be_empty  
+      expect(Listing.soon_expiring_pixis(4, 'expired').count(:all)).not_to eq 0
     end
 	
     it "includes expired listings" do
       update_pixi @listing, 'expired', 4
-      Listing.soon_expiring_pixis(4, ['expired', 'active']).should_not be_empty  
+      expect(Listing.soon_expiring_pixis(4, ['expired', 'active']).count(:all)).not_to eq 0
     end
 	
     it "includes active listings" do
       update_pixi @listing, 'active', 5
-      Listing.soon_expiring_pixis(5, ['expired', 'active']).should_not be_empty  
+      expect(Listing.soon_expiring_pixis(5, ['expired', 'active']).count(:all)).not_to eq 0
     end
 	
     it "includes default active listings" do
       update_pixi @listing, 'active', 7
-      Listing.soon_expiring_pixis().should_not be_empty  
+      expect(Listing.soon_expiring_pixis.count(:all)).not_to eq 0
     end
   end
   
   describe 'not soon_expiring_pixis', process: true  do  
     it "does not include active listings" do 
       update_pixi @listing, 'active', 10
-      Listing.soon_expiring_pixis(8).should be_empty  
+      expect(Listing.soon_expiring_pixis(8).count(:all)).to eq 0
     end
 	
     it "does not include expired listings" do 
       update_pixi @listing, 'expired', 4
-      Listing.soon_expiring_pixis(3).should be_empty  
+      expect(Listing.soon_expiring_pixis(3).count(:all)).to eq 0
     end
 	
     it "does not include expiring early listings" do 
       update_pixi @listing, 'expired', 4
-      Listing.soon_expiring_pixis(5).should be_empty  
+      expect(Listing.soon_expiring_pixis(5).count(:all)).to eq 0
     end
 	
     it "does not include active listings" do 
       update_pixi @listing, 'active', 4
-      Listing.soon_expiring_pixis(5, nil).should be_empty  
+      expect(Listing.soon_expiring_pixis(5, nil).count(:all)).to eq 0
     end
 	
     it "does not include active listings" do 
       update_pixi @listing, ['expired', 'new'], 5
-      Listing.soon_expiring_pixis(5, ['expired', 'new']).should be_empty  
+      expect(Listing.soon_expiring_pixis(5, ['expired', 'new']).count(:all)).to eq 0
     end
   end
 
@@ -1594,7 +1594,7 @@ describe Listing do
       expect(Listing.purchased(@invoice.buyer).last.created_date.to_s).to eq @invoice.updated_at.to_s
     end
     it "includes buyer listings", run: true do 
-      expect(Listing.purchased(@invoice.buyer).size).to eq 2
+      expect(Listing.purchased(@invoice.buyer).count(:all)).to eq 2
     end
     it "only returns necessary attributes", run: true do
       expect(Listing.purchased(@invoice.buyer).last.title).to eq(@listing.title)
@@ -1613,7 +1613,7 @@ describe Listing do
     end
     it "includes sold listings", run: true do 
       @listing.save
-      expect(Listing.sold_list.size).to eq 2
+      expect(Listing.sold_list.count(:all)).to eq 2
     end
     it "only returns necessary attributes", run: true do
       expect(Listing.sold_list.last.title).to eq(@invoice.listings.first.title)
@@ -1629,7 +1629,7 @@ describe Listing do
     it "zeroes cache on non-active status" do
       listing = FactoryGirl.create(:listing, seller_id: @user.id, quantity: 1, status: 'active') 
       listing.update_attribute(:status, 'inactive')
-      expect(Listing.active.size).to eq 0
+      expect(Listing.active.count(:all)).to eq 0
       expect(User.find(@listing.seller_id).active_listings_count).to eq 0
     end
     it "resets cache on update" do

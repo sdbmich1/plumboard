@@ -1125,51 +1125,55 @@ describe TempListing do
   end
 
   describe 'soon_expiring_pixis', process: true do
+    before :each do
+      @temp_listing.save
+    end
+
     it "includes active temp listings" do 
       update_pixi @temp_listing, 'edit', 4
-      TempListing.soon_expiring_pixis(4, 'edit').should_not be_empty  
+      expect(TempListing.soon_expiring_pixis(4, 'edit').count(:all)).not_to eq 0
     end
 	
     it "includes expired listings" do
       update_pixi @temp_listing, 'new', 4
-      TempListing.soon_expiring_pixis(4, 'new').should_not be_empty  
+      expect(TempListing.soon_expiring_pixis(4, 'new').count(:all)).not_to eq 0
     end
 	
     it "includes expired listings" do
       update_pixi @temp_listing, 'new', 4
-      TempListing.soon_expiring_pixis(4, ['edit', 'new']).should_not be_empty  
+      expect(TempListing.soon_expiring_pixis(4, ['edit', 'new']).count(:all)).not_to eq 0
     end
   end
   
   describe 'not soon_expiring_pixis', process: true do  
     it "does not include active listings" do 
       update_pixi @temp_listing, 'new', 10
-      TempListing.soon_expiring_pixis(8).should be_empty  
+      expect(TempListing.soon_expiring_pixis(8).count(:all)).to eq 0
     end
 	
     it "does not include expired listings" do 
       update_pixi @temp_listing, 'edit', 4
-      TempListing.soon_expiring_pixis(3, 'new').should be_empty  
+      expect(TempListing.soon_expiring_pixis(3, 'new').count(:all)).to eq 0
     end
 	
     it "does not include expiring early listings" do 
       update_pixi @temp_listing, 'new', 4
-      TempListing.soon_expiring_pixis(5).should be_empty  
+      expect(TempListing.soon_expiring_pixis(5).count(:all)).to eq 0
     end
 	
     it "does not include active listings" do 
       update_pixi @temp_listing, 'edit', 4
-      TempListing.soon_expiring_pixis(5, nil).should be_empty  
+      expect(TempListing.soon_expiring_pixis(5, nil).count(:all)).to eq 0
     end
 	
     it "does not include active listings" do 
       update_pixi @temp_listing, 'new', 4
-      TempListing.soon_expiring_pixis(5, ['edit', 'new']).should be_empty  
+      expect(TempListing.soon_expiring_pixis(5, ['edit', 'new']).count(:all)).to eq 0
     end
 	
     it "does not include active listings" do 
       update_pixi @temp_listing, 'new', 7
-      TempListing.soon_expiring_pixis().should be_empty  
+      expect(TempListing.soon_expiring_pixis.count(:all)).to eq 0
     end
   end
 

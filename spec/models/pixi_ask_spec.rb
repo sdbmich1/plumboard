@@ -25,6 +25,8 @@ describe PixiAsk do
 
     it "does not find user name" do 
       @pixi_ask.user_id = 100
+      @pixi_ask.save
+      @pixi_ask.reload
       @pixi_ask.user_name.should be_nil  
     end
   end

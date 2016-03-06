@@ -71,7 +71,7 @@ class Listing < ListingParent
 
   # find listings by buyer user id
   def self.get_by_buyer val
-    includes(:invoices).where('invoices.buyer_id = ?', val)
+    includes(:invoices).references(:invoices).where('invoices.buyer_id = ?', val)
   end
 
   # get all active pixis with an end_date less than today and update their statuses to expired
