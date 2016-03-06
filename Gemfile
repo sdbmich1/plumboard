@@ -80,7 +80,7 @@ gem 'thin'
 gem 'whenever'
 
 # amazon aws
-gem 'aws-sdk', '~> 2'
+gem 'aws-sdk', '~> 1.66'
 #gem 'aws-s3', :require => 'aws/s3'
 
 # picture upload for s3
@@ -92,7 +92,7 @@ gem 's3_file_field', github: 'lastobelus/s3_file_field', ref: 'b7ebbbbae7c844350
 # add payment gateways
 gem 'activemerchant'
 gem 'stripe', '~> 1.21.0'
-gem 'balanced', "~> 0.8.1"
+# gem 'balanced', "~> 0.8.1"
 
 # install oauth
 gem 'omniauth'
