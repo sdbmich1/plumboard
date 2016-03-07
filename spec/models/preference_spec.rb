@@ -25,7 +25,7 @@ describe Preference do
   it { should respond_to(:ship_amt) }
   it { should belong_to(:user) }
   it { should belong_to(:fulfillment_type).with_foreign_key('fulfillment_type_code') }
-  it { should ensure_length_of(:zip).is_equal_to(5) }
+  it { should validate_length_of(:zip).is_equal_to(5) }
   it { should allow_value(41572).for(:zip) }
   it { should_not allow_value(725).for(:zip) }
   it { should_not allow_value('a725').for(:zip) }

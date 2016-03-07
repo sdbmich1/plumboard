@@ -1,9 +1,11 @@
 require 'spec_helper'
 
 describe InvoiceObserver do
-  let(:user) { create(:pixi_user) }
-  let(:buyer) { create(:pixi_user, first_name: 'Bob', last_name: 'Davis', email: 'bob.davis@pixitest.com') }
-  let(:listing) { create(:listing, seller_id: user.id) }
+  before :all do
+    @user = create(:pixi_user)
+    @buyer = create(:pixi_user, first_name: 'Bob', last_name: 'Davis', email: 'bob.davis@pixitest.com')
+    @listing = create(:listing, seller_id: @user.id)
+  end
 
   def process_post
     @post = mock(Post)
@@ -40,12 +42,12 @@ describe InvoiceObserver do
 
     before(:each) do
       @transaction = FactoryGirl.create :transaction, convenience_fee: 0.99
-      @account = user.bank_accounts.create FactoryGirl.attributes_for :bank_account
-      @pixi_want = user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: listing.pixi_id, status: 'active'
-      @model = user.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: buyer.id, 
+      @account = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account
+      @pixi_want = @user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id, status: 'active'
+      @model = @user.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: @buyer.id, 
         bank_account_id: @account.id, transaction_id: @transaction.id ) 
-      @details = @model.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: listing.pixi_id, price: 150.00 
-      @model.save!; sleep 3
+      @details = @model.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id, price: 150.00 
+      @model.save!; sleep 5
       @model.status = 'paid'
     end
 
@@ -55,7 +57,7 @@ describe InvoiceObserver do
 
     it 'should mark as sold' do
       mark_pixi
-      PixiWant.stub(:set_status).with(listing.pixi_id, user.id, 'sold').and_return(true)
+      PixiWant.stub(:set_status).with('1', @user.id, 'sold').and_return(true)
     end
 
     it 'should credit account' do
@@ -71,8 +73,8 @@ describe InvoiceObserver do
 
   describe 'after_update unpaid' do
     before do
-      @model = user.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: buyer.id) 
-      @details = @model.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: listing.pixi_id, price: 150.00 
+      @model = @user.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: @buyer.id) 
+      @details = @model.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id, price: 150.00 
       @model.save!
     end
 
@@ -89,13 +91,13 @@ describe InvoiceObserver do
 
   describe 'after_update decline' do
     before :all do
-      @invoice = user.invoices.build attributes_for(:invoice, buyer_id: buyer.id, seller_id: user.id, status: 'unpaid')
-      @details = @invoice.invoice_details.build attributes_for(:invoice_detail, pixi_id: listing.pixi_id)
-      buyer.pixi_wants.create attributes_for(:pixi_want, pixi_id: listing.pixi_id)
-      listing.pictures.create attributes_for(:picture)
-      listing.conversations.create attributes_for :conversation, user_id: user.id, recipient_id: buyer.id
-      listing.conversations.first.posts.create attributes_for :post, user_id: user.id, recipient_id: buyer.id, pixi_id: listing.pixi_id
-      @invoice.save; sleep 3
+      @invoice = @user.invoices.build attributes_for(:invoice, buyer_id: @buyer.id, seller_id: @user.id, status: 'unpaid')
+      @details = @invoice.invoice_details.build attributes_for(:invoice_detail, pixi_id: @listing.pixi_id)
+      @buyer.pixi_wants.create attributes_for(:pixi_want, pixi_id: @listing.pixi_id)
+      @listing.pictures.create attributes_for(:picture)
+      @listing.conversations.create attributes_for :conversation, user_id: @user.id, recipient_id: @buyer.id
+      @listing.conversations.first.posts.create attributes_for :post, user_id: @user.id, recipient_id: @buyer.id, pixi_id: @listing.pixi_id
+      @invoice.save; sleep 5
     end
 
     it 'should send a post' do
@@ -111,7 +113,7 @@ describe InvoiceObserver do
 
     it "removes wants" do
       pixi_want = double("PixiWant")
-      @invoice.buyer.pixi_wants.stub(:find_by_pixi_id).with(listing.pixi_id).and_return(pixi_want)
+      @invoice.buyer.pixi_wants.stub(:find_by_pixi_id).with(@listing.pixi_id).and_return(pixi_want)
       pixi_want.should_receive(:destroy)
       @invoice.decline("Did Not Want")
     end
@@ -120,8 +122,8 @@ describe InvoiceObserver do
   describe 'after_create' do
 
     before do
-      @model = user.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: buyer.id) 
-      @details = @model.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: listing.pixi_id, price: 150.00 
+      @model = @user.invoices.build FactoryGirl.attributes_for(:invoice, buyer_id: @buyer.id) 
+      @details = @model.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id, price: 150.00 
     end
 
     it 'should send a post' do
@@ -137,7 +139,7 @@ describe InvoiceObserver do
 
     it 'should add inv pixi points' do
       @model.save!
-      user.user_pixi_points.find_by_code('inv').code.should == 'inv'
+      @user.user_pixi_points.find_by_code('inv').code.should == 'inv'
     end
 
     it 'should send decline email' do

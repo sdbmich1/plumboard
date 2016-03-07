@@ -19,10 +19,10 @@ describe Contact do
   it { should respond_to(:lng) }
   it { should respond_to(:lat) }
   it { should respond_to(:contactable) }
-  it { should ensure_length_of(:zip).is_at_least(5).is_at_most(15) }
-  it { should ensure_length_of(:home_phone).is_at_least(10).is_at_most(15) }
-  it { should ensure_length_of(:mobile_phone).is_at_least(10).is_at_most(15) }
-  it { should ensure_length_of(:work_phone).is_at_least(10).is_at_most(15) }
+  it { should validate_length_of(:zip).is_at_least(5).is_at_most(15) }
+  it { should validate_length_of(:home_phone).is_at_least(10).is_at_most(15) }
+  it { should validate_length_of(:mobile_phone).is_at_least(10).is_at_most(15) }
+  it { should validate_length_of(:work_phone).is_at_least(10).is_at_most(15) }
 
   it { should allow_value(4157251111).for(:home_phone) }
   it { should allow_value(4157251111).for(:work_phone) }

@@ -153,6 +153,7 @@ gem 'open_uri_redirections'
 # needed for dependencies
 gem 'sprockets', '~> 2.8'
 gem 'railties', '~> 4.1.0'
+gem 'ffi'
 
 # development gems
 group :development do
@@ -173,7 +174,9 @@ end
 group :development, :test do
   gem 'wdm', '~> 0.1.0', :platforms => [:mswin, :mingw], :require => false
   # gem 'wdm', :platforms => [:mswin, :mingw], :require => false
-  gem 'rspec-rails', '2.14.0'
+  gem 'rspec-rails', '2.99.0'
+  gem 'rspec-its'
+  gem 'rspec-activemodel-mocks'
   gem 'guard-rspec', '4.3.1'
   gem 'guard-spork', '2.0.2'
   gem 'spork', '~> 1.0rc'
@@ -186,7 +189,7 @@ end
 # test gems
 group :test do
   gem 'factory_girl_rails'
-  gem 'capybara', '1.1.2'
+  gem 'capybara', '2.6.2'
   gem 'rb-fchange', '0.0.5', :platforms => [:mswin, :mingw], :require => false
   gem 'rb-notifu', '0.0.4'
   gem 'win32console', '~> 1.3.2', :platforms => [:mswin, :mingw], :require => false
@@ -195,7 +198,7 @@ group :test do
   gem "database_cleaner", "~> 1.5.1"
   gem 'connection_pool'
   gem 'selenium-webdriver', '~> 2.48.1'
-  gem 'shoulda-matchers'
+  gem 'shoulda-matchers', '2.8.0'
   # gem "webmock", "~> 1.11.0"
   gem "fakeweb", "~> 1.3"
   gem 'test_after_commit'

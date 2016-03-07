@@ -1,7 +1,7 @@
 require 'login_user_spec'
 
 describe PendingListingsController do
-  include LoginTestUser, ControllerMacros
+  include LoginTestUser
 
   def mock_listing(stubs={})
     (@mock_listing ||= mock_model(TempListing, stubs).as_null_object).tap do |listing|

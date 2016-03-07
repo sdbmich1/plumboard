@@ -41,13 +41,13 @@ shared_examples "an address" do
     it { should respond_to(:state) }
     it { should respond_to(:zip) }
     it { should respond_to(:country) }
-    it { should ensure_length_of(:zip).is_at_least(5).is_at_most(10) }
+    it { should validate_length_of(:zip).is_at_least(5).is_at_most(10) }
     it { should allow_value(41572).for(:zip) }
     it { should_not allow_value(725).for(:zip) }
 
     context 'phone number' do
       %w(home_phone work_phone mobile_phone).each do |phone|
-        it { should ensure_length_of(phone.to_sym).is_at_least(10).is_at_most(15) }
+        it { should validate_length_of(phone.to_sym).is_at_least(10).is_at_most(15) }
         it { should allow_value(4157251111).for(phone.to_sym) }
         it { should_not allow_value('4157251111abcdefg').for(phone.to_sym) }
         it { should_not allow_value(7251111).for(phone.to_sym) }

@@ -37,6 +37,7 @@ Spork.prefork do
     Balanced.configure(nil, options)
   end
 
+
   RSpec.configure do |config|
     config.treat_symbols_as_metadata_keys_with_true_values = true
     config.include(EmailSpec::Helpers)
@@ -119,4 +120,8 @@ OmniAuth.config.mock_auth[:facebook] = OmniAuth::AuthHash.new({
 
 Spork.each_run do
   FactoryGirl.reload
+end
+
+RSpec.configure do |config|
+  config.infer_spec_type_from_file_location!
 end

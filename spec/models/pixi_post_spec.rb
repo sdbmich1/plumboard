@@ -193,6 +193,7 @@ describe PixiPost do
 
     it 'should return true' do
       listing = create :listing, seller_id: @user.id
+      @pixi_post.completed_date = Date.today
       @pixi_post.pixi_post_details.build attributes_for :pixi_post_detail, pixi_id: listing.pixi_id 
       @pixi_post.save!
       @pixi_post.has_pixi?.should be_true
@@ -677,21 +678,19 @@ describe PixiPost do
   end
 
   def set_attr uid
-    attr = {"preferred_date"=>"04/05/2015", "preferred_time"=>"13:00:00", "alt_date"=>"", "alt_time"=>"12:00:00", 
+    {"preferred_date"=>Date.today + 5.days, "preferred_time"=>"13:00:00", "alt_date"=>"", "alt_time"=>"12:00:00", 
       "quantity"=>"2", "value"=>"200.0", "description"=>"xbox 360 box.", "address"=>"123 Elm", "address2"=>"", "city"=>"LA", "state"=>"CA", 
       "zip"=>"90201", "home_phone"=>"4155551212", "mobile_phone"=>"", "user_id"=>"#{uid}"}
   end
 
   describe 'add_post' do
     it 'has user id' do
-      set_attr @user.id
-      @post = PixiPost.add_post(attr, @user)
+      @post = PixiPost.add_post(set_attr(@user.id), @user)
       @post.save!
       expect(@post.user_id).to eq @user.id
     end
     it 'has no user id' do
-      set_attr ''
-      expect(PixiPost.add_post(attr, User.new).user_id).not_to eq @user.id
+      expect(PixiPost.add_post(set_attr(''), User.new).user_id).not_to eq @user.id
     end
   end
 
