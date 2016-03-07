@@ -11,7 +11,7 @@ namespace :rubber do
       task :install, :roles => :graylog_server do
         rubber.sudo_script 'install_graylog_server', <<-ENDSCRIPT
           if [[ ! -d "#{rubber_env.graylog_server_dir}" ]]; then
-            wget --no-check-certificate -qNP /tmp https://github.com/Graylog2/graylog2-server/releases/download/#{rubber_env.graylog_server_version}/graylog2-server-#{rubber_env.graylog_server_version}.tgz
+            wget -qNP /tmp http://packages.graylog2.org/releases/graylog2-server/graylog2-server-#{rubber_env.graylog_server_version}.tgz
             tar -C #{rubber_env.graylog_server_prefix} -zxf /tmp/graylog2-server-#{rubber_env.graylog_server_version}.tgz
             rm /tmp/graylog2-server-#{rubber_env.graylog_server_version}.tgz
           fi
@@ -37,7 +37,24 @@ namespace :rubber do
           rubber.run_config(:file => "role/graylog_server/", :force => true, :deploy_path => release_path)
 
           restart
+          sleep 15 # Give graylog-server a bit of time to start up.
         end
+      end
+
+      after "rubber:graylog:server:bootstrap", "rubber:graylog:server:create_inputs"
+
+      task :create_inputs, :roles => :graylog_web do
+        rubber.sudo_script 'create_inputs', <<-ENDSCRIPT
+          # Only create inputs if the system has 0 inputs.  It's a bit of a rough hack, but graylog currently (v0.20.2)
+          # doesn't prevent the creation of duplicate conflicting inputs.
+          if ! curl -s --user #{rubber_env.graylog_web_username}:#{rubber_env.graylog_web_password} -XGET http://#{rubber_instance.internal_ip}:12900/system/inputs | grep "GELFUDPInput" &> /dev/null; then
+            curl --user #{rubber_env.graylog_web_username}:#{rubber_env.graylog_web_password} -XPOST http://#{rubber_instance.internal_ip}:12900/system/inputs -H "Content-Type: application/json" -d '{"type": "org.graylog2.inputs.gelf.udp.GELFUDPInput", "creator_user_id": "admin", "title": "gelf-udp", "global": true, "configuration": { "port": #{rubber_env.graylog_server_port}, "bind_address": "0.0.0.0" } }'
+          fi
+
+          if ! curl -s --user #{rubber_env.graylog_web_username}:#{rubber_env.graylog_web_password} -XGET http://#{rubber_instance.internal_ip}:12900/system/inputs | grep "SyslogUDPInput" &> /dev/null; then
+            curl --user #{rubber_env.graylog_web_username}:#{rubber_env.graylog_web_password} -XPOST http://#{rubber_instance.internal_ip}:12900/system/inputs -H "Content-Type: application/json" -d '{"type": "org.graylog2.inputs.syslog.udp.SyslogUDPInput", "creator_user_id": "admin", "title": "syslog-udp", "global": true, "configuration": { "port": #{rubber_env.graylog_server_syslog_port}, "bind_address": "0.0.0.0" } }'
+          fi
+        ENDSCRIPT
       end
 
       desc "Stops the graylog server"
@@ -67,7 +84,7 @@ namespace :rubber do
       task :install, :roles => :graylog_web do
         rubber.sudo_script 'install_graylog_web', <<-ENDSCRIPT
           if [[ ! -d "#{rubber_env.graylog_web_dir}" ]]; then
-            wget --no-check-certificate -qNP /tmp https://github.com/Graylog2/graylog2-web-interface/releases/download/#{rubber_env.graylog_web_version}/graylog2-web-interface-#{rubber_env.graylog_web_version}.tgz
+            wget -qNP /tmp http://packages.graylog2.org/releases/graylog2-web-interface/graylog2-web-interface-#{rubber_env.graylog_web_version}.tgz
             tar -C #{rubber_env.graylog_web_prefix} -zxf /tmp/graylog2-web-interface-#{rubber_env.graylog_web_version}.tgz
             rm /tmp/graylog2-web-interface-#{rubber_env.graylog_web_version}.tgz
           fi
@@ -85,15 +102,6 @@ namespace :rubber do
 
           restart
         end
-      end
-
-      after "rubber:graylog:web:bootstrap", "rubber:graylog:web:create_inputs"
-
-      task :create_inputs, :roles => :graylog_web do
-        rubber.sudo_script 'create_inputs', <<-ENDSCRIPT
-          curl --user #{rubber_env.graylog_web_username}:#{rubber_env.graylog_web_password} -XPOST http://localhost:12900/system/inputs -H "Content-Type: application/json" -d '{"type": "org.graylog2.inputs.gelf.udp.GELFUDPInput", "creator_user_id": "admin", "title": "gelf-udp", "global": true, "configuration": { "port": #{rubber_env.graylog_server_port}, "bind_address": "0.0.0.0" } }'
-          curl --user #{rubber_env.graylog_web_username}:#{rubber_env.graylog_web_password} -XPOST http://localhost:12900/system/inputs -H "Content-Type: application/json" -d '{"type": "org.graylog2.inputs.syslog.udp.SyslogUDPInput", "creator_user_id": "admin", "title": "syslog-udp", "global": true, "configuration": { "port": #{rubber_env.graylog_server_syslog_port}, "bind_address": "0.0.0.0" } }'
-        ENDSCRIPT
       end
 
       desc "Stops the graylog web"

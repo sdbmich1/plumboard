@@ -54,6 +54,8 @@ namespace :rubber do
 
         echo "export RUBYOPT=rubygems\nexport PATH=#{rubber_env.ruby_path}/bin:$PATH" > /etc/profile.d/ruby.sh
         echo "--- \ngem: --no-ri --no-rdoc" > /etc/gemrc
+        update-alternatives --install /usr/bin/ruby ruby #{rubber_env.ruby_path}/bin/ruby 100
+        update-alternatives --set ruby #{rubber_env.ruby_path}/bin/ruby
       fi
       ENDSCRIPT
     end
@@ -101,6 +103,12 @@ namespace :rubber do
     after "rubber:bootstrap", "rubber:base:reinstall_virtualbox_additions"
     task :reinstall_virtualbox_additions, :only => { :provider => 'vagrant' } do
       rsudo "service vboxadd setup"
+    end
+
+    task :cleanup_old_kernels do
+      rubber.sudo_script 'cleanup_old_kernels', <<-ENDSCRIPT
+        dpkg -l 'linux-*' | sed '/^ii/!d;/'"$(uname -r | sed "s/\\(.*\\)-\\([^0-9]\\+\\)/\\1/")"'/d;s/^[^ ]* [^ ]* \\([^ ]*\\).*/\\1/;/[0-9]/!d' | xargs dpkg --purge
+      ENDSCRIPT
     end
   end
 end
