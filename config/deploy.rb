@@ -133,28 +133,28 @@ end
     desc "Stop the sphinx server"
     task :stop, :roles => :app do
       unless :previous_release
-        run "cd #{previous_release} && RAILS_ENV=#{rails_env} SPHINX_VERSION=2.0.8 rake ts:stop"
+        run "cd #{previous_release} && RAILS_ENV=#{rails_env} SPHINX_VERSION=2.0.8 bundle exec rake ts:stop"
       end
     end
 
     desc "Reindex the sphinx server"
     task :index, :roles => :app do
-      run "cd #{latest_release} && RAILS_ENV=#{rails_env} SPHINX_VERSION=2.0.8 rake ts:index"
+      run "cd #{latest_release} && RAILS_ENV=#{rails_env} SPHINX_VERSION=2.0.8 bundle exec rake ts:index"
     end
 
     desc "Configure the sphinx server"
     task :configure, :roles => :app do
-      run "cd #{latest_release} && RAILS_ENV=#{rails_env} SPHINX_VERSION=2.0.8 rake ts:configure"
+      run "cd #{latest_release} && RAILS_ENV=#{rails_env} SPHINX_VERSION=2.0.8 bundle exec rake ts:configure"
     end
 
     desc "Start the sphinx server"
     task :start, :roles => :app do
-      run "cd #{latest_release} && RAILS_ENV=#{rails_env} SPHINX_VERSION=2.0.8 rake ts:start"
+      run "cd #{latest_release} && RAILS_ENV=#{rails_env} SPHINX_VERSION=2.0.8 bundle exec rake ts:start"
     end
 
     desc "Rebuild the sphinx server"
     task :rebuild, :roles => :app do
-      run "cd #{latest_release} && RAILS_ENV=#{rails_env} SPHINX_VERSION=2.0.8 rake ts:rebuild"
+      run "cd #{latest_release} && RAILS_ENV=#{rails_env} SPHINX_VERSION=2.0.8 bundle exec rake ts:rebuild"
     end    
   end
 
@@ -194,8 +194,8 @@ end
 namespace :memcached do
   desc "Flushes memcached local instance"
   task :flush, :roles => [:app] do
-    # run("cd #{current_path} && rake memcached:flush")
-    run "cd #{latest_release} && RAILS_ENV=#{rails_env} rake memcached:flush"
+    # run("cd #{current_path} && bundle exec rake memcached:flush")
+    run "cd #{latest_release} && RAILS_ENV=#{rails_env} bundle exec rake memcached:flush"
   end
 end
 

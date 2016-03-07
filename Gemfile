@@ -1,7 +1,7 @@
 source 'http://rubygems.org'
 
 gem 'rails', github: 'rails/rails', branch: '3-2-stable'
-gem 'rake', '~> 10.3.1' 
+gem 'rake', '~> 10.4', '>= 10.4.2'
 
 #added faraday gem version 0.8.9 to run smoothly on Mac
 gem 'faraday', '0.8.9'
@@ -80,7 +80,7 @@ gem 'thin'
 gem 'whenever'
 
 # amazon aws
-gem 'aws-sdk', '~> 2'
+gem 'aws-sdk', '~> 1.66'
 #gem 'aws-s3', :require => 'aws/s3'
 
 # picture upload for s3
@@ -92,7 +92,7 @@ gem 's3_file_field', github: 'lastobelus/s3_file_field', ref: 'b7ebbbbae7c844350
 # add payment gateways
 gem 'activemerchant'
 gem 'stripe', '~> 1.21.0'
-gem 'balanced', "~> 0.8.1"
+# gem 'balanced', "~> 0.8.1"
 
 # install oauth
 gem 'omniauth'
@@ -169,7 +169,7 @@ group :development do
   gem 'bullet'
 end
 
-group :development, :test do
+group :development, :test, :demo do
   gem 'wdm', '~> 0.1.0', :platforms => [:mswin, :mingw], :require => false
   # gem 'wdm', :platforms => [:mswin, :mingw], :require => false
   gem 'rspec-rails', '2.14.0'
@@ -179,7 +179,7 @@ group :development, :test do
   gem 'faker'
   gem "vcr", "~> 2.5.0"
   gem 'rack_session_access'
-  gem 'test-unit'
+  gem 'test-unit', '~> 3.0'
   gem 'minitest'
 end
 
