@@ -292,7 +292,7 @@ feature "Conversations" do
         expect{
             fill_in 'reply_content', with: nil
             click_send
-        }.not_to change(Post,:count).by(1)
+        }.not_to change(Post,:count)
         expect(page).to have_content @conversation.listing.title
       end
     end

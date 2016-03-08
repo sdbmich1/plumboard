@@ -870,8 +870,8 @@ describe TempListing do
       denied_listing.status = 'approved'
       denied_listing.transaction.amt = 0.0
       expect {
-	denied_listing.save!
-      }.not_to change {Listing.count}.by(1)
+        denied_listing.save!
+      }.not_to change {Listing.count}
     end
 
     it 'adds listing and transaction' do

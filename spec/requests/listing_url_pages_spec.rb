@@ -82,7 +82,7 @@ feature "Urls" do
         visit '/biz/rhythmmusic'
         expect(page).to have_selector('#follow-btn', visible: true)
         find('#follow-btn').click
-      }.not_to change(FavoriteSeller,:count).by(1)
+      }.not_to change(FavoriteSeller,:count)
       # page.should have_content 'Sign in'
     end
   end

@@ -55,14 +55,14 @@ feature "Listings" do
     it "does not contact a seller", js: true do
       expect{
           click_link 'Want'
-      }.not_to change(Post,:count).by(1)
+      }.not_to change(Post,:count)
       expect(page).to have_content 'Sign in'
     end
 
     it "does not ask a question", js: true do
       expect{
           click_link 'Ask'
-      }.not_to change(Post,:count).by(1)
+      }.not_to change(Post,:count)
       expect(page).to have_content 'Sign in'
     end
 
@@ -70,7 +70,7 @@ feature "Listings" do
       expect{
           page.find('#cool-btn').click
           expect(page).not_to have_link 'Uncool'
-      }.not_to change(PixiLike,:count).by(1)
+      }.not_to change(PixiLike,:count)
       expect(page).to have_content 'Sign in'
     end
 
@@ -78,14 +78,14 @@ feature "Listings" do
       expect{
           page.find('#save-btn').click
           expect(page).not_to have_link 'Unsave'
-      }.not_to change(SavedListing,:count).by(1)
+      }.not_to change(SavedListing,:count)
       expect(page).to have_content 'Sign in'
     end
 
     it "does not add comment", js: true do
       expect{
           page.find('#add-comment-btn').click
-      }.not_to change(Comment,:count).by(1)
+      }.not_to change(Comment,:count)
       expect(page).to have_content 'Sign in'
       sleep 2;
       user_login user
@@ -225,7 +225,7 @@ feature "Listings" do
           sleep 3
 	        click_link 'Close'
           expect(page).not_to have_content 'Successfully sent message to seller'
-      }.not_to change(Post,:count).by(1)
+      }.not_to change(Post,:count)
     end
 
     it "does not ask a seller", js:true do
@@ -235,7 +235,7 @@ feature "Listings" do
           sleep 3
           click_link 'Close'
           expect(page).not_to have_content 'Successfully sent message to seller'
-      }.not_to change(Post,:count).by(1)
+      }.not_to change(Post,:count)
     end
 
     it "cannot ask seller with empty text box", js:true do
@@ -413,7 +413,7 @@ feature "Listings" do
     it "does not add a comment", js: true do
       expect{
 	  fill_in 'comment_content', with: "\n"
-      }.not_to change(Comment,:count).by(1)
+      }.not_to change(Comment,:count)
     end
   end
 

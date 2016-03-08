@@ -5,13 +5,13 @@ describe PixiLikesController do
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      allow(user).to receive(stubs) unless stubs.empty?
+      user.stub(stubs) unless stubs.empty?
     end
   end
 
   def mock_like(stubs={})
     (@mock_like ||= mock_model(PixiLike, stubs).as_null_object).tap do |like|
-      allow(like).to receive(stubs) unless stubs.empty?
+      like.stub(stubs) unless stubs.empty?
     end
   end
 

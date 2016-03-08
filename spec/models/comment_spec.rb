@@ -63,7 +63,7 @@ describe Comment do
 
 
   describe "sender name" do 
-    it { expect(@comment.sender_name).to eq("Joe Blow") } 
+    it { expect(@comment.sender_name).to eq(user.name) } 
 
     it "does not return sender name" do 
       @comment.user_id = 100 

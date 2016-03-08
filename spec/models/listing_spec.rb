@@ -1424,8 +1424,7 @@ describe Listing do
       picture.photo = File.new Rails.root.join("spec", "fixtures", "photo0.jpg")
       @listing.end_date = 5.days.ago
       @listing.save!
-      result = @listing.repost
-      expect { result }.to be_truthy
+      expect(@listing.repost).to be_truthy
       expect(Listing.all.count(:all)).to eq 2
       expect(Listing.last.active?).to be_truthy
       expect(Listing.last.pictures.size).to eq @listing.pictures.size

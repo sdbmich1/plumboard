@@ -421,7 +421,7 @@ feature "TempListings" do
       expect{
               attach_file('photo', Rails.root.join("spec", "fixtures", "photo2.png"))
               click_button submit
-      }.not_to change(temp_listing.pictures,:count).by(-1)
+      }.not_to change(temp_listing.pictures,:count)
       expect(page).to have_content 'Build Pixi'
     end
   end

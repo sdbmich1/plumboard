@@ -5,13 +5,13 @@ describe RatingsController do
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      allow(user).to receive(stubs) unless stubs.empty?
+      user.stub(stubs) unless stubs.empty?
     end
   end
 
   def mock_rating(stubs={})
     (@mock_rating ||= mock_model(Rating, stubs).as_null_object).tap do |rating|
-      allow(rating).to receive(stubs) unless stubs.empty?
+      rating.stub(stubs) unless stubs.empty?
     end
   end
 

@@ -5,13 +5,13 @@ describe CategoriesController do
 
   def mock_category(stubs={})
     (@mock_category ||= mock_model(Category, stubs).as_null_object).tap do |category|
-      allow(category).to receive(stubs) unless stubs.empty?
+      category.stub(stubs) unless stubs.empty?
     end
   end
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      allow(user).to receive(stubs) unless stubs.empty?
+      user.stub(stubs) unless stubs.empty?
     end
   end
 

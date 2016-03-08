@@ -5,7 +5,7 @@ describe UsersController do
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      allow(user).to receive(stubs) unless stubs.empty?
+      user.stub(stubs) unless stubs.empty?
     end
   end
 

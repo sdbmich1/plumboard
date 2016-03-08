@@ -5,7 +5,7 @@ describe PicturesController do
 
   def mock_listing(stubs={})
     (@mock_listing ||= mock_model(TempListing, stubs).as_null_object).tap do |listing|
-       allow(listing).to receive(stubs) unless stubs.empty?
+       listing.stub(stubs) unless stubs.empty?
     end
   end
 

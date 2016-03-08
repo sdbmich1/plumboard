@@ -5,13 +5,13 @@ describe CommentsController do
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      allow(user).to receive(stubs) unless stubs.empty?
+      user.stub(stubs) unless stubs.empty?
     end
   end
 
   def mock_comment(stubs={})
     (@mock_comment ||= mock_model(Comment, stubs).as_null_object).tap do |comment|
-      allow(comment).to receive(stubs) unless stubs.empty?
+      comment.stub(stubs) unless stubs.empty?
     end
   end
 

@@ -5,13 +5,13 @@ describe SavedListingsController do
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      allow(user).to receive(stubs) unless stubs.empty?
+      user.stub(stubs) unless stubs.empty?
     end
   end
 
   def mock_listing(stubs={})
     (@mock_listing ||= mock_model(SavedListing, stubs).as_null_object).tap do |listing|
-      allow(listing).to receive(stubs) unless stubs.empty?
+      listing.stub(stubs) unless stubs.empty?
     end
   end
 
@@ -26,6 +26,7 @@ describe SavedListingsController do
       @listings = stub_model(Listing)
       allow(controller).to receive(:current_user).and_return(@user)
       allow(Listing).to receive(:saved_list).and_return( @listings )
+      allow(@listings).to receive(:paginate).and_return(@listings)
       do_get
     end
 

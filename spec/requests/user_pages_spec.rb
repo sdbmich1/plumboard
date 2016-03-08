@@ -82,7 +82,7 @@ describe "Users", :type => :feature do
       expect {
         select("Subscriber", :from => "ucode")
         click_submit
-	}.not_to change(@member.contacts, :count).by(1)
+      }.not_to change(@member.contacts, :count)
       expect(page).to have_content(@user.first_name)
       expect(page).to have_selector('#ucode', visible: true) 
     end
@@ -248,7 +248,7 @@ describe "Users", :type => :feature do
       expect {
         user_address
         click_save
-	}.to change(@user.contacts, :count).by(1)
+      }.to change(@user.contacts, :count).by(1)
       expect(page).to have_content("successfully")
     end
 
@@ -258,7 +258,7 @@ describe "Users", :type => :feature do
         user_home_phone
         user_address
         click_save
-	}.to change(@user.contacts, :count).by(1)
+      }.to change(@user.contacts, :count).by(1)
       expect(page).to have_content("successfully")
     end
 
@@ -267,7 +267,7 @@ describe "Users", :type => :feature do
       expect {
         user_home_phone
         click_submit
-	}.not_to change(@user.contacts, :count).by(1)
+      }.not_to change(@user.contacts, :count)
     end
 
     it 'should not save mobile phone' do
@@ -275,7 +275,7 @@ describe "Users", :type => :feature do
       expect {
         user_mobile_phone
         click_submit
-	}.not_to change(@user.contacts, :count).by(1)
+      }.not_to change(@user.contacts, :count)
     end
 
     it 'should not save work phone' do
@@ -283,7 +283,7 @@ describe "Users", :type => :feature do
       expect {
         user_work_phone
         click_submit
-	}.not_to change(@user.contacts, :count).by(1)
+      }.not_to change(@user.contacts, :count)
     end
 
     it 'should not save with no address' do
@@ -291,28 +291,28 @@ describe "Users", :type => :feature do
       expect {
         user_address nil, nil, 'SF', '94103', true
         click_submit
-	}.not_to change(@user.contacts, :count).by(1)
+      }.not_to change(@user.contacts, :count)
     end
 
     it 'should not save w/o city' do
       expect {
         user_address '123 Elm', nil, nil, '94108'
         click_submit
-	}.not_to change(@user.contacts, :count).by(1)
+      }.not_to change(@user.contacts, :count)
     end
 
     it 'should not save w/o zip' do
       expect {
         user_address '123 Elm', nil, 'SF', nil
         click_submit
-	}.not_to change(@user.contacts, :count).by(1)
+      }.not_to change(@user.contacts, :count)
     end
 
     it 'should not save w/o state' do
       expect {
         user_address '123 Elm', nil, 'SF', '94103', false
         click_submit
-	}.not_to change(@user.contacts, :count).by(1)
+      }.not_to change(@user.contacts, :count)
     end
   end
    

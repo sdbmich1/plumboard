@@ -139,7 +139,7 @@ describe Inquiry do
       expect(inquiry.contact_type).to be_nil
     end
 
-    it { expect(@inquiry.contact_type).to eq("inquiry") } 
+    it { expect(@inquiry.contact_type).to eq("Inquiry") } 
   end
 
   describe 'set_flds' do
