@@ -5,13 +5,13 @@ describe CategoriesController do
 
   def mock_category(stubs={})
     (@mock_category ||= mock_model(Category, stubs).as_null_object).tap do |category|
-      category.stub(stubs) unless stubs.empty?
+      allow(category).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive(stubs) unless stubs.empty?
     end
   end
 
@@ -24,16 +24,16 @@ describe CategoriesController do
   def set_admin
     @user.add_role(:admin)
     @abilities = Ability.new(@user)
-    Ability.stub(:new).and_return(@abilities)
-    @abilities.stub!(:can?).and_return(true)
+    allow(Ability).to receive(:new).and_return(@abilities)
+    allow(@abilities).to receive(:can?).and_return(true)
   end
 
   def load_categories atype='active'
-    @categories = mock("categories")
-    Category.stub!(atype.to_sym).and_return(@categories)
-    @categories.stub!(:paginate).and_return(@categories)
-    controller.stub!(:current_user).and_return(@user)
-    @user.stub!(:home_zip).and_return('94108')
+    @categories = double("categories")
+    allow(Category).to receive(atype.to_sym).and_return(@categories)
+    allow(@categories).to receive(:paginate).and_return(@categories)
+    allow(controller).to receive(:current_user).and_return(@user)
+    allow(@user).to receive(:home_zip).and_return('94108')
     controller.stub_chain(:get_page, :load_data, :check_signin_status).and_return(:success)
     do_get
   end
@@ -49,15 +49,15 @@ describe CategoriesController do
     end
 
     it "renders the :manage view" do
-      response.should render_template :manage
+      expect(response).to render_template :manage
     end
 
     it "should assign @categories" do
-      assigns(:categories).should == @categories
+      expect(assigns(:categories)).to eq(@categories)
     end
 
     it "should render the correct layout" do
-      response.should render_template("layouts/categories")
+      expect(response).to render_template("layouts/categories")
     end
   end
 
@@ -71,15 +71,15 @@ describe CategoriesController do
     end
 
     it "renders the :index view" do
-      response.should render_template :index
+      expect(response).to render_template :index
     end
 
     it "should assign @categories" do
-      assigns(:categories).should == @categories
+      expect(assigns(:categories)).to eq(@categories)
     end
 
     it "should render the correct layout" do
-      response.should render_template("layouts/categories")
+      expect(response).to render_template("layouts/categories")
     end
   end
 
@@ -93,15 +93,15 @@ describe CategoriesController do
     end
 
     it "renders the :index view" do
-      response.should render_template :index
+      expect(response).to render_template :index
     end
 
     it "should assign @categories" do
-      assigns(:categories).should == @categories
+      expect(assigns(:categories)).to eq(@categories)
     end
 
     it "loads nothing" do
-      controller.stub!(:render)
+      allow(controller).to receive(:render)
     end
   end
 
@@ -116,15 +116,15 @@ describe CategoriesController do
     end
 
     it "renders the :inactive view" do
-      response.should render_template :inactive
+      expect(response).to render_template :inactive
     end
 
     it "should assign @categories" do
-      assigns(:categories).should == @categories
+      expect(assigns(:categories)).to eq(@categories)
     end
 
     it "loads nothing" do
-      controller.stub!(:render)
+      allow(controller).to receive(:render)
     end
   end
 
@@ -132,7 +132,7 @@ describe CategoriesController do
 
     before :each do
       set_admin
-      Category.stub!(:new).and_return(@category)
+      allow(Category).to receive(:new).and_return(@category)
       @category.stub_chain(:pictures, :build).and_return( @photo )
       do_get
     end
@@ -142,16 +142,16 @@ describe CategoriesController do
     end
 
     it "assigns @category" do
-      assigns(:category).should_not be_nil
+      expect(assigns(:category)).not_to be_nil
     end
 
     it "should assign @photo" do
       do_get
-      assigns(:category).pictures.should_not be_nil
+      expect(assigns(:category).pictures).not_to be_nil
     end
 
     it "loads nothing" do
-      controller.stub!(:render)
+      allow(controller).to receive(:render)
     end
   end
 
@@ -163,7 +163,7 @@ describe CategoriesController do
     context 'failure' do
       
       before :each do
-        Category.stub!(:save).and_return(false)
+        allow(Category).to receive(:save).and_return(false)
       end
 
       def do_create
@@ -172,19 +172,19 @@ describe CategoriesController do
 
       it "assigns @category" do
         do_create
-        assigns(:category).should_not be_nil 
+        expect(assigns(:category)).not_to be_nil 
       end
 
       it "loads nothing" do
         do_create
-        controller.stub!(:render)
+        allow(controller).to receive(:render)
       end
     end
 
     context 'success' do
 
       before :each do
-        Category.stub!(:save).and_return(true)
+        allow(Category).to receive(:save).and_return(true)
       end
 
       def do_create
@@ -192,24 +192,24 @@ describe CategoriesController do
       end
 
       it "loads the requested category" do
-        Category.stub(:new).with({'name'=>'test', 'category_type_code'=>'test' }) { mock_category(:save => true) }
+        allow(Category).to receive(:new).with({'name'=>'test', 'category_type_code'=>'test' }) { mock_category(:save => true) }
         do_create
       end
 
       it "assigns @category" do
         do_create
-        assigns(:category).should_not be_nil 
+        expect(assigns(:category)).not_to be_nil 
       end
 
       it "redirect to the categories page" do
         do_create
-        response.should be_success
+        expect(response).to be_success
       end
 
       it "changes category count" do
         lambda do
           do_create
-          should change(Category, :count).by(1)
+          is_expected.to change(Category, :count).by(1)
         end
       end
     end
@@ -219,7 +219,7 @@ describe CategoriesController do
 
     before :each do
       set_admin
-      Category.stub!(:find).and_return( @category )
+      allow(Category).to receive(:find).and_return( @category )
     end
 
     def do_get
@@ -227,25 +227,25 @@ describe CategoriesController do
     end
 
     it "loads the requested category" do
-      Category.should_receive(:find).with('1').and_return(@category)
+      expect(Category).to receive(:find).with('1').and_return(@category)
       do_get
     end
 
     it "assigns @category" do
       do_get
-      assigns(:category).should_not be_nil 
+      expect(assigns(:category)).not_to be_nil 
     end
 
     it "loads the requested category" do
       do_get
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
   describe "PUT /:id" do
     before (:each) do
       set_admin
-      Category.stub!(:find).and_return( @category )
+      allow(Category).to receive(:find).and_return( @category )
     end
 
     def do_update
@@ -254,53 +254,53 @@ describe CategoriesController do
 
     context "with valid params" do
       before (:each) do
-        @category.stub(:update_attributes).and_return(true)
+        allow(@category).to receive(:update_attributes).and_return(true)
       end
 
       it "loads the requested category" do
-        Category.stub(:find) { @category }
+        allow(Category).to receive(:find) { @category }
         do_update
       end
 
       it "updates the requested category" do
-        Category.stub(:find).with("1") { mock_category }
-	mock_category.should_receive(:update_attributes).with({'name' => 'test', 'category_type' => 'test'})
+        allow(Category).to receive(:find).with("1") { mock_category }
+	expect(mock_category).to receive(:update_attributes).with({'name' => 'test', 'category_type' => 'test'})
         do_update
       end
 
       it "assigns @category" do
-        Category.stub(:find) { mock_category(:update_attributes => true) }
+        allow(Category).to receive(:find) { mock_category(:update_attributes => true) }
         do_update
-        assigns(:category).should_not be_nil 
+        expect(assigns(:category)).not_to be_nil 
       end
 
       it "redirect to the categories page" do
         do_update
-        response.should be_redirect
+        expect(response).to be_redirect
       end
     end
 
     context "with invalid params" do
     
       before (:each) do
-        @category.stub(:update_attributes).and_return(false)
+        allow(@category).to receive(:update_attributes).and_return(false)
       end
 
       it "loads the requested category" do
-        Category.stub(:find) { @category }
+        allow(Category).to receive(:find) { @category }
         do_update
       end
 
       it "assigns @category" do
-        Category.stub(:find) { mock_category(:update_attributes => false) }
+        allow(Category).to receive(:find) { mock_category(:update_attributes => false) }
         do_update
-        assigns(:category).should_not be_nil 
+        expect(assigns(:category)).not_to be_nil 
       end
 
       it "renders the edit form" do 
-        Category.stub(:find) { mock_category(:update_attributes => false) }
+        allow(Category).to receive(:find) { mock_category(:update_attributes => false) }
         do_update
-        controller.stub!(:render)
+        allow(controller).to receive(:render)
       end
     end
   end
@@ -317,15 +317,15 @@ describe CategoriesController do
     end
 
     it "should load nothing" do
-      controller.stub!(:render)
+      allow(controller).to receive(:render)
     end
 
     it "should assign @category" do
-      assigns(:category).should_not be_nil
+      expect(assigns(:category)).not_to be_nil
     end
 
     it "should show the requested category category_type" do
-      response.should be_success
+      expect(response).to be_success
     end
 
     it "responds to JSON" do
@@ -344,15 +344,15 @@ describe CategoriesController do
     end
 
     it "renders the :location view" do
-      response.should render_template :location
+      expect(response).to render_template :location
     end
 
     it "should assign @categories" do
-      assigns(:categories).should == @categories
+      expect(assigns(:categories)).to eq(@categories)
     end
 
     it "loads nothing" do
-      controller.stub!(:render)
+      allow(controller).to receive(:render)
     end
   end
 

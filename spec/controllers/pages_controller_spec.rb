@@ -13,7 +13,7 @@ describe PagesController do
       @listings = stub_model(Listing)
       Listing.stub_chain(:active, :board_fields).and_return(@listings)
       @listings.stub_chain(:paginate).and_return(@listings)
-      controller.stub!(:load_data).and_return(:success)
+      allow(controller).to receive(:load_data).and_return(:success)
       do_get
     end
 
@@ -22,21 +22,21 @@ describe PagesController do
     end
 
     it "assigns @listings" do
-      assigns(:listings).should == @listings
+      expect(assigns(:listings)).to eq(@listings)
     end
 
     it "renders the :home view" do
-      response.should render_template :home
+      expect(response).to render_template :home
     end
 
     it "should render the correct layout" do
-      response.should render_template("layouts/pages")
+      expect(response).to render_template("layouts/pages")
     end
   end
 
   describe "GET 'help'" do
     before(:each) do
-      @faqs = mock("faqs")
+      @faqs = double("faqs")
       Faq.stub_chain(:active).and_return(@faqs)
       do_get
     end
@@ -46,69 +46,69 @@ describe PagesController do
     end
 
     it "renders the :help view" do
-      response.should render_template :help
+      expect(response).to render_template :help
     end
 
     it "should assign @faqs" do
-      assigns(:faqs).should == @faqs
+      expect(assigns(:faqs)).to eq(@faqs)
     end
 
     it "should render the correct layout" do
-      response.should render_template("layouts/about")
+      expect(response).to render_template("layouts/about")
     end
   end
 
   describe "GET 'privacy'" do
     it "should be successful" do
       get 'privacy'
-      response.should be_success
+      expect(response).to be_success
     end
 
     it "should render the correct layout" do
       get 'privacy'
-      response.should render_template("layouts/about")
+      expect(response).to render_template("layouts/about")
     end
   end
 
   describe "GET 'terms'" do
     it "should be successful" do
       get 'terms'
-      response.should be_success
+      expect(response).to be_success
     end
 
     it "should render the correct layout" do
       get 'terms'
-      response.should render_template("layouts/about")
+      expect(response).to render_template("layouts/about")
     end
   end
 
   describe "GET 'about'" do
     it "should be successful" do
       get 'about'
-      response.should be_success
+      expect(response).to be_success
     end
 
     it "should render the correct layout" do
       get 'about'
-      response.should render_template("layouts/about")
+      expect(response).to render_template("layouts/about")
     end
   end
 
   describe "GET 'welcome'" do
     it "should be successful" do
       get 'welcome'
-      response.should be_success
+      expect(response).to be_success
     end
 
     it "should render the correct layout" do
       get 'welcome'
-      response.should render_template("layouts/about")
+      expect(response).to render_template("layouts/about")
     end
   end
 
   describe 'xhr GET location_name' do
     before :each do
-      LocationManager.stub!(:get_region).and_return(@site)
+      allow(LocationManager).to receive(:get_region).and_return(@site)
       @region, @loc_name = [@site.id, @site.name]
       do_get
     end
@@ -118,19 +118,19 @@ describe PagesController do
     end
 
     it "should load nothing" do
-      controller.stub!(:render)
+      allow(controller).to receive(:render)
     end
 
     it "should assign @loc_name" do
-      assigns(:loc_name).should_not be_nil
+      expect(assigns(:loc_name)).not_to be_nil
     end
 
     it "should assign @region" do
-      assigns(:region).should_not be_nil 
+      expect(assigns(:region)).not_to be_nil 
     end
 
     it "should show the requested location_name" do
-      response.should be_success
+      expect(response).to be_success
     end
 
     it "responds to JSON" do

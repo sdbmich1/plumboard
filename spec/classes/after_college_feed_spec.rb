@@ -45,7 +45,7 @@ describe AfterCollegeFeed do
       expect(@lnf_obj.get_image_from_set(Set.new(['Programmer']), '')).to eq 'Computer.jpg'
     end
     it "calls handle_multiple_keywords otherwise" do
-      @lnf_obj.should_receive :handle_multiple_keywords
+      expect(@lnf_obj).to receive :handle_multiple_keywords
       @lnf_obj.get_image_from_set(Set.new(%w(Programmer Engineer)), '')
     end
   end

@@ -9,23 +9,23 @@ describe SiteUser do
 
   describe "site users" do
     it "should have a user attribute" do
-      @site_user.should respond_to(:user)
+      expect(@site_user).to respond_to(:user)
     end
 
     it "should have an site attribute" do
-      @site_user.should respond_to(:site)
+      expect(@site_user).to respond_to(:site)
     end
   end
 
   describe "validations" do
     it "should require an site_id" do
       @site_user.site_id = nil
-      @site_user.should_not be_valid
+      expect(@site_user).not_to be_valid
     end
 
     it "should require a user_id" do
       @site_user.user_id = nil
-      @site_user.should_not be_valid
+      expect(@site_user).not_to be_valid
     end
   end
 end

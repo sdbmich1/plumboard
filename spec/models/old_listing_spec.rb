@@ -9,37 +9,37 @@ describe OldListing do
 
   subject { @listing }
 
-  it { should respond_to(:title) }
-  it { should respond_to(:description) }
-  it { should respond_to(:site_id) }
-  it { should respond_to(:seller_id) }
-  it { should respond_to(:alias_name) }
-  it { should respond_to(:transaction_id) }
-  it { should respond_to(:show_alias_flg) }
-  it { should respond_to(:status) }
-  it { should respond_to(:price) }
-  it { should respond_to(:start_date) }
-  it { should respond_to(:end_date) }
-  it { should respond_to(:buyer_id) }
-  it { should respond_to(:show_phone_flg) }
-  it { should respond_to(:category_id) }
-  it { should respond_to(:pixi_id) }
-  it { should respond_to(:parent_pixi_id) }
-  it { should respond_to(:post_ip) }
-  it { should respond_to(:event_start_date) }
-  it { should respond_to(:event_end_date) }
-  it { should respond_to(:compensation) }
-  it { should respond_to(:lng) }
-  it { should respond_to(:lat) }
-  it { should respond_to(:event_start_time) }
-  it { should respond_to(:event_end_time) }
-  it { should respond_to(:year_built) }
-  it { should respond_to(:pixan_id) }
-  it { should respond_to(:job_type) }
-  it { should respond_to(:explanation) }
+  it { is_expected.to respond_to(:title) }
+  it { is_expected.to respond_to(:description) }
+  it { is_expected.to respond_to(:site_id) }
+  it { is_expected.to respond_to(:seller_id) }
+  it { is_expected.to respond_to(:alias_name) }
+  it { is_expected.to respond_to(:transaction_id) }
+  it { is_expected.to respond_to(:show_alias_flg) }
+  it { is_expected.to respond_to(:status) }
+  it { is_expected.to respond_to(:price) }
+  it { is_expected.to respond_to(:start_date) }
+  it { is_expected.to respond_to(:end_date) }
+  it { is_expected.to respond_to(:buyer_id) }
+  it { is_expected.to respond_to(:show_phone_flg) }
+  it { is_expected.to respond_to(:category_id) }
+  it { is_expected.to respond_to(:pixi_id) }
+  it { is_expected.to respond_to(:parent_pixi_id) }
+  it { is_expected.to respond_to(:post_ip) }
+  it { is_expected.to respond_to(:event_start_date) }
+  it { is_expected.to respond_to(:event_end_date) }
+  it { is_expected.to respond_to(:compensation) }
+  it { is_expected.to respond_to(:lng) }
+  it { is_expected.to respond_to(:lat) }
+  it { is_expected.to respond_to(:event_start_time) }
+  it { is_expected.to respond_to(:event_end_time) }
+  it { is_expected.to respond_to(:year_built) }
+  it { is_expected.to respond_to(:pixan_id) }
+  it { is_expected.to respond_to(:job_type) }
+  it { is_expected.to respond_to(:explanation) }
 
-  it { should respond_to(:user) }
-  it { should respond_to(:pictures) }
+  it { is_expected.to respond_to(:user) }
+  it { is_expected.to respond_to(:pictures) }
 
   describe "seller name" do 
     it { expect(@listing.seller_name).to eq(@user.name) } 
@@ -60,7 +60,7 @@ describe OldListing do
   end
 
   describe "seller rating count" do 
-    it { @listing.seller_rating_count.should == 0 } 
+    it { expect(@listing.seller_rating_count).to eq(0) } 
 
     it 'returns seller rating count' do 
       listing = create(:listing, seller_id: @user.id) 
@@ -76,9 +76,9 @@ describe OldListing do
 
     it "does not show updated date" do
       listing.updated_at = nil
-      listing.updated_dt.should be_nil
+      expect(listing.updated_dt).to be_nil
     end
 
-    it { listing.updated_dt.should_not be_nil }
+    it { expect(listing.updated_dt).not_to be_nil }
   end
 end

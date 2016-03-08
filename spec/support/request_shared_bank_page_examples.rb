@@ -11,9 +11,9 @@ shared_examples 'create_bank_account_page' do |factory, val, val2, flg|
     end
 
     it "shows content" do
-      page.should have_content('Setup Your Payment Account')
-      page.should have_content("Account #")
-      page.should have_button("Save")
+      expect(page).to have_content('Setup Your Payment Account')
+      expect(page).to have_content("Account #")
+      expect(page).to have_button("Save")
     end
 
     it "creates an new account" do

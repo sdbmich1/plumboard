@@ -5,13 +5,13 @@ describe CommentsController do
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_comment(stubs={})
     (@mock_comment ||= mock_model(Comment, stubs).as_null_object).tap do |comment|
-      comment.stub(stubs) unless stubs.empty?
+      allow(comment).to receive(stubs) unless stubs.empty?
     end
   end
 
@@ -24,8 +24,8 @@ describe CommentsController do
 
   describe "POST create" do
     before :each do
-      Comment.stub!(:new).and_return( @comment )
-      controller.stub!(:load_data).and_return(true)
+      allow(Comment).to receive(:new).and_return( @comment )
+      allow(controller).to receive(:load_data).and_return(true)
     end
     
     def do_create
@@ -35,36 +35,36 @@ describe CommentsController do
     context 'failure' do
       
       before :each do
-        @comment.stub!(:save).and_return(false)
+        allow(@comment).to receive(:save).and_return(false)
       end
 
       it "should assign @comment" do
         do_create
-        assigns(:comment).should_not be_nil 
+        expect(assigns(:comment)).not_to be_nil 
       end
 
       it "should render nothing" do
         do_create
-	controller.stub!(:render)
+	allow(controller).to receive(:render)
       end
 
       it "responds to JSON" do
         post :create, :comment => { pixi_id: '1', 'content'=>'test' }, format: :json
-	response.status.should_not eq(200)
+	expect(response.status).not_to eq(200)
       end
     end
 
     context 'success' do
 
       before :each do
-        @comment.stub!(:save).and_return(true)
-        controller.stub!(:load_data).and_return(true)
-        controller.stub!(:reload_data).and_return(true)
+        allow(@comment).to receive(:save).and_return(true)
+        allow(controller).to receive(:load_data).and_return(true)
+        allow(controller).to receive(:reload_data).and_return(true)
       end
 
       after (:each) do
         @comments = stub_model(Comment)
-        Listing.stub!(:find_pixi).with('1').and_return(@listing)
+        allow(Listing).to receive(:find_pixi).with('1').and_return(@listing)
         @listing.stub_chain(:comments, :paginate, :build).and_return( @comments )
       end
 
@@ -75,24 +75,24 @@ describe CommentsController do
 
       it "should assign @comment" do
         do_create
-        assigns(:comment).should_not be_nil 
+        expect(assigns(:comment)).not_to be_nil 
       end
 
       it "should assign @comments" do
         do_create
-        assigns(:comments).should == @comments
+        expect(assigns(:comments)).to eq(@comments)
       end
 
       it "should change comment count" do
         lambda do
           do_create
-          should change(Comment, :count).by(1)
+          is_expected.to change(Comment, :count).by(1)
         end
       end
 
       it "responds to JSON" do
         post :create, :comment => { pixi_id: '1', 'content'=>'test' }, format: :json
-	response.status.should_not eq(0)
+	expect(response.status).not_to eq(0)
       end
     end
   end

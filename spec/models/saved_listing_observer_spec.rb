@@ -7,9 +7,9 @@ describe SavedListingObserver do
     let(:saved_listing) { user.saved_listings.build FactoryGirl.attributes_for :saved_listing, pixi_id: listing.pixi_id }
 
     it 'should deliver the email' do
-      @user_mailer = mock(UserMailer)
-      UserMailer.stub(:delay).and_return(UserMailer)
-      UserMailer.should_receive(:send_save_pixi).with(saved_listing)
+      @user_mailer = double(UserMailer)
+      allow(UserMailer).to receive(:delay).and_return(UserMailer)
+      expect(UserMailer).to receive(:send_save_pixi).with(saved_listing)
       saved_listing.save
       
     end
@@ -19,7 +19,7 @@ describe SavedListingObserver do
       #expect(user).not_to be_nil
       #expect(user.user_pixi_points.count).to eq(1)
       #expect (user.user_pixi_points. Where (code: 'spr').count).to eq(1)
-      user.reload.user_pixi_points.find_by_code('spr').code.should == 'spr'
+      expect(user.reload.user_pixi_points.find_by_code('spr').code).to eq('spr')
     end
   end
 end

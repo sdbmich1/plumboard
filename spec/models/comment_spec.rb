@@ -11,36 +11,36 @@ describe Comment do
 
   subject { @comment }
 
-  it { should respond_to(:content) }
-  it { should respond_to(:user_id) }
-  it { should respond_to(:pixi_id) }
+  it { is_expected.to respond_to(:content) }
+  it { is_expected.to respond_to(:user_id) }
+  it { is_expected.to respond_to(:pixi_id) }
   its(:listing) { should == listing }
 
-  it { should be_valid }
+  it { is_expected.to be_valid }
 
   describe "when user_id is not present" do
     before { @comment.user_id = nil }
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
   end
 
   describe "when pixi_id is not present" do
     before { @comment.pixi_id = nil }
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
   end
 
   describe "large content" do 
     before { @comment.content = "a" * 500 }
 
     it "should return a summary of 40 chars" do 
-      @comment.summary.length.should == 40 
+      expect(@comment.summary.length).to eq(40) 
     end
 
     it "long content should return true" do 
-      @comment.long_content?.should be_true 
+      expect(@comment.long_content?).to be_truthy 
     end
 
     it "full content should be valid" do 
-      @comment.full_content.should be_true 
+      expect(@comment.full_content).to be_truthy 
     end
   end
 
@@ -48,31 +48,31 @@ describe Comment do
     before { @comment.content = "a" * 20 }
 
     it "should not return a summary of 40 chars" do 
-      @comment.summary.length.should_not == 40 
+      expect(@comment.summary.length).not_to eq(40) 
     end
 
     it "long content should not return true" do 
-      @comment.long_content?.should_not be_true 
+      expect(@comment.long_content?).not_to be_truthy 
     end
 
     it "full content should not be valid" do 
       @comment.content = nil
-      @comment.full_content.should_not be_true 
+      expect(@comment.full_content).not_to be_truthy 
     end
   end
 
 
   describe "sender name" do 
-    it { @comment.sender_name.should == "Joe Blow" } 
+    it { expect(@comment.sender_name).to eq("Joe Blow") } 
 
     it "does not return sender name" do 
       @comment.user_id = 100 
-      @comment.sender_name.should be_nil 
+      expect(@comment.sender_name).to be_nil 
     end
   end
 
   describe "get_by_pixi" do 
-    it { Comment.get_by_pixi(0, 1).should_not include @comment } 
+    it { expect(Comment.get_by_pixi(0, 1)).not_to include @comment } 
     it 'has comments' do
       @comment.save
       expect(Comment.get_by_pixi(@comment.pixi_id, 1)).to include(@comment)

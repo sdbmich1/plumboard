@@ -12,6 +12,6 @@ require "spec_helper"
     it_should_behave_like 'a subdomain route', true, 'searches/autocomplete_listing_title', 'autocomplete_listing_title','searches'
 
     it 'routes to #locate' do
-      post('/searches/locate').should route_to('searches#locate')
+      expect(post('/searches/locate')).to route_to('searches#locate')
     end
   end

@@ -5,7 +5,7 @@ describe PicturesController do
 
   def mock_listing(stubs={})
     (@mock_listing ||= mock_model(TempListing, stubs).as_null_object).tap do |listing|
-       listing.stub(stubs) unless stubs.empty?
+       allow(listing).to receive(stubs) unless stubs.empty?
     end
   end
 
@@ -13,10 +13,10 @@ describe PicturesController do
     before :each do
       @picture = stub_model Picture
       fname = Rails.root.join("spec", "fixtures", "photo.jpg")
-      Picture.stub!(:find).and_return( @picture )
+      allow(Picture).to receive(:find).and_return( @picture )
       controller.stub_chain(:send_file, :style).with(fname).and_return(:success)
-      controller.stub!(:style).and_return('original')
-      controller.stub!(:file_name).with(@picture).and_return(fname)
+      allow(controller).to receive(:style).and_return('original')
+      allow(controller).to receive(:file_name).with(@picture).and_return(fname)
     end
 
     def do_get
@@ -26,26 +26,26 @@ describe PicturesController do
 
     it "should load picture asset" do
       do_get
-      response.should be_success
+      expect(response).to be_success
     end
 
     it "should load the requested picture" do
-      Picture.stub(:find).with('1').and_return(@picture)
+      allow(Picture).to receive(:find).with('1').and_return(@picture)
     end
 
     it "should assign @picture" do
       do_get
-      assigns(:picture).should_not be_nil
+      expect(assigns(:picture)).not_to be_nil
     end
 
     it "should receive send file" do
-      controller.should_receive(:send_file).and_return(:success) 
+      expect(controller).to receive(:send_file).and_return(:success) 
       do_get
     end
 
     it "asset action should render nothing" do
       do_get
-      controller.stub!(:render)
+      allow(controller).to receive(:render)
     end
   end
 
@@ -53,8 +53,8 @@ describe PicturesController do
     before (:each) do
       log_in_test_user
       @listing = stub_model(TempListing, :id=>1, site_id: 1, seller_id: 1, pixi_id: '1', title: "Guitar for Sale", description: "Guitar for Sale")
-      TempListing.stub!(:find_by_pixi_id).and_return( @listing )
-      @listing.stub!(:reload).and_return(@listing)
+      allow(TempListing).to receive(:find_by_pixi_id).and_return( @listing )
+      allow(@listing).to receive(:reload).and_return(@listing)
     end
 
     def do_delete
@@ -63,48 +63,48 @@ describe PicturesController do
 
     context "success" do
       before :each do
-        @listing.stub!(:delete_photo).with('1', 0).and_return(true)
-	@listing.stub!(:reload).and_return(@listing)
+        allow(@listing).to receive(:delete_photo).with('1', 0).and_return(true)
+	allow(@listing).to receive(:reload).and_return(@listing)
       end
 
       it "should load the requested listing" do
-        TempListing.stub(:find_by_pixi_id) { @listing }
+        allow(TempListing).to receive(:find_by_pixi_id) { @listing }
         do_delete
       end
 
       it "should update the requested listing" do
-        TempListing.stub(:find_by_pixi_id).with("1") { mock_listing }
-	mock_listing.should_receive(:delete_photo).and_return(:success)
+        allow(TempListing).to receive(:find_by_pixi_id).with("1") { mock_listing }
+	expect(mock_listing).to receive(:delete_photo).and_return(:success)
         do_delete
       end
 
       it "should assign @listing" do
-        TempListing.stub(:find_by_pixi_id) { mock_listing(:delete_photo => true) }
+        allow(TempListing).to receive(:find_by_pixi_id) { mock_listing(:delete_photo => true) }
         do_delete
-        assigns(:listing).should_not be_nil 
+        expect(assigns(:listing)).not_to be_nil 
       end
 
       it "should decrement the Picture count" do
 	lambda do
 	  do_delete
-	  should change(Picture, :count).by(-1)
+	  is_expected.to change(Picture, :count).by(-1)
 	end
       end
     end
 
     context 'failure' do
       before :each do
-        @listing.stub!(:delete_photo).with('1', 0).and_return(false) 
+        allow(@listing).to receive(:delete_photo).with('1', 0).and_return(false) 
       end
 
       it "should assign listing" do
         do_delete
-        assigns(:listing).should_not be_nil 
+        expect(assigns(:listing)).not_to be_nil 
       end
 
       it "should render nothing" do
         do_delete
-        controller.stub!(:render)
+        allow(controller).to receive(:render)
       end
     end
   end
@@ -112,7 +112,7 @@ describe PicturesController do
   describe 'GET show/:id' do
     before :each do
       @picture = mock_model Picture
-      Picture.stub!(:find).and_return( @picture )
+      allow(Picture).to receive(:find).and_return( @picture )
     end
 
     def do_get
@@ -121,17 +121,17 @@ describe PicturesController do
 
     it "should show the requested picture" do
       do_get
-      response.should be_success
+      expect(response).to be_success
     end
 
     it "should load the requested picture" do
-      Picture.stub(:find).with('1').and_return(@picture)
+      allow(Picture).to receive(:find).with('1').and_return(@picture)
       do_get
     end
 
     it "should assign @picture" do
       do_get
-      assigns(:picture).should_not be_nil
+      expect(assigns(:picture)).not_to be_nil
     end
   end
 end

@@ -77,9 +77,9 @@ Spork.prefork do
       DatabaseCleaner.start
       set_selenium_window_size(1250, 800) if Capybara.current_driver == :selenium
       reset_email
-      Contact.any_instance.stub(:geocode) { [1,1] }
-      Listing.any_instance.stub(:geocode) { [1,1] }
-      User.any_instance.stub(:geocode).and_return([1,1]) 
+      allow_any_instance_of(Contact).to receive(:geocode) { [1,1] }
+      allow_any_instance_of(Listing).to receive(:geocode) { [1,1] }
+      allow_any_instance_of(User).to receive(:geocode).and_return([1,1]) 
       AWS.stub!
     end
 

@@ -9,25 +9,25 @@ feature 'Favorite Sellers' do
   describe 'My Sellers' do
     def test_navbar(page_name, status)
       ftype = page_name == 'My Followers' ? 'seller' : 'buyer'
-      page.should have_content page_name
-      page.should have_link 'Followed', href: favorite_sellers_path(ftype: ftype,
+      expect(page).to have_content page_name
+      expect(page).to have_link 'Followed', href: favorite_sellers_path(ftype: ftype,
         id: user.id, status: 'active'), class: (status == 'active' ? 'active' : '')
-      page.should have_link 'Unfollowed', href: favorite_sellers_path(ftype: ftype,
+      expect(page).to have_link 'Unfollowed', href: favorite_sellers_path(ftype: ftype,
         id: user.id, status: 'removed'), class: (status == 'removed' ? 'active' : '')
     end
 
     def test_table(active=true, has_addr=false)
       addr = has_addr ? seller.primary_address : seller.home_zip
-      page.should have_content 'Seller Name'
-      page.should have_content 'Location'
-      page.should have_content '# Pixis'
-      page.should have_content 'Follow Date'
-      page.should have_css 'img'
-      page.should have_content seller.business_name
-      page.should have_content addr
-      page.should have_content seller.listings.count
-      page.should have_content Date.today.strftime('%m/%d/%Y')
-      page.should have_content 'View'
+      expect(page).to have_content 'Seller Name'
+      expect(page).to have_content 'Location'
+      expect(page).to have_content '# Pixis'
+      expect(page).to have_content 'Follow Date'
+      expect(page).to have_css 'img'
+      expect(page).to have_content seller.business_name
+      expect(page).to have_content addr
+      expect(page).to have_content seller.listings.count
+      expect(page).to have_content Date.today.strftime('%m/%d/%Y')
+      expect(page).to have_content 'View'
     end
 
     before :each do
@@ -39,7 +39,7 @@ feature 'Favorite Sellers' do
       visit favorite_sellers_path(ftype: 'buyer', id: user.id, status: 'active')
       test_navbar('My Sellers', 'active')
       test_table
-      page.should have_content 'Displaying ' << FavoriteSeller.count.to_s << ' sellers'
+      expect(page).to have_content 'Displaying ' << FavoriteSeller.count.to_s << ' sellers'
     end
 
     it 'renders Unfollowed' do
@@ -47,13 +47,13 @@ feature 'Favorite Sellers' do
       visit favorite_sellers_path(ftype: 'buyer', id: user.id, status: 'removed')
       test_navbar('My Sellers', 'removed')
       test_table(false)
-      page.should have_content 'Displaying ' << FavoriteSeller.count.to_s << ' sellers'
+      expect(page).to have_content 'Displaying ' << FavoriteSeller.count.to_s << ' sellers'
     end
 
     it 'renders "No sellers found" if no sellers' do
       visit favorite_sellers_path(ftype: 'buyer', id: user.id, status: 'active')
       test_navbar('My Sellers', 'active')
-      page.should have_content 'No followed sellers found.'
+      expect(page).to have_content 'No followed sellers found.'
     end
 
     it 'splits more than 15 entries into separate pages' do
@@ -63,8 +63,8 @@ feature 'Favorite Sellers' do
       end
       create :favorite_seller, user_id: user.id, seller_id: seller.id, status: 'active'
       visit favorite_sellers_path(ftype: 'buyer', id: user.id, status: 'active')
-      page.should have_content 'Displaying sellers'
-      page.should have_selector('div.pagination')
+      expect(page).to have_content 'Displaying sellers'
+      expect(page).to have_selector('div.pagination')
       click_link '2'
       test_navbar('My Sellers', 'active')
       test_table

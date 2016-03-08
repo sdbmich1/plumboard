@@ -23,11 +23,11 @@ feature "CardAccounts" do
     end
 
     it 'shows content' do
-      page.should have_content 'Manage Accounts'
-      page.should have_selector('h2', text: 'Setup Your Card Account')
-      page.should have_content("Card Holder")
-      page.should have_content("Card #")
-      page.should have_button("Save")
+      expect(page).to have_content 'Manage Accounts'
+      expect(page).to have_selector('h2', text: 'Setup Your Card Account')
+      expect(page).to have_content("Card Holder")
+      expect(page).to have_content("Card #")
+      expect(page).to have_button("Save")
     end
 
     it "creates an new account", js: true do
@@ -36,9 +36,9 @@ feature "CardAccounts" do
       expect {
         load_credit_card "4242424242424242", "123", true, false; sleep 5
       }.to change(CardAccount, :count).by(1)
-      page.should have_content 'Manage Accounts'
-      page.should have_content '# Cards'
-      page.should have_content @other.name
+      expect(page).to have_content 'Manage Accounts'
+      expect(page).to have_content '# Cards'
+      expect(page).to have_content @other.name
     end
   end
 
@@ -50,12 +50,12 @@ feature "CardAccounts" do
       visit card_accounts_path(adminFlg: true)
     end
     it "shows accounts" do
-      page.should have_content 'Manage Accounts'
-      page.should have_content 'User'
-      page.should have_content 'Email'
-      page.should have_content '# Cards'
-      page.should have_content user.name
-      page.should have_content user2.name
+      expect(page).to have_content 'Manage Accounts'
+      expect(page).to have_content 'User'
+      expect(page).to have_content 'Email'
+      expect(page).to have_content '# Cards'
+      expect(page).to have_content user.name
+      expect(page).to have_content user2.name
     end
 
     context 'delete card', js: true do
@@ -65,14 +65,14 @@ feature "CardAccounts" do
       end
 
       it "removes an account" do
-        page.should have_link("Remove") #, href: card_account_path(@account)
+        expect(page).to have_link("Remove") #, href: card_account_path(@account)
         click_remove_ok
-        page.should_not have_link("#{@account.id}", href: card_account_path(@account)) 
-        page.should have_content 'Manage Accounts'
-        page.should have_content 'User'
-        page.should have_link 'Add Card'
-        page.should_not have_content user.name
-        page.should have_content user2.name
+        expect(page).not_to have_link("#{@account.id}", href: card_account_path(@account)) 
+        expect(page).to have_content 'Manage Accounts'
+        expect(page).to have_content 'User'
+        expect(page).to have_link 'Add Card'
+        expect(page).not_to have_content user.name
+        expect(page).to have_content user2.name
       end
     end
   end

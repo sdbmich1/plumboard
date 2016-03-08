@@ -7,41 +7,41 @@ describe ConditionType do
   
   subject { @condition_type }
 
-  it { should respond_to(:description) }
-  it { should respond_to(:code) }
-  it { should respond_to(:hide) }
-  it { should respond_to(:status) }
-  it { should validate_presence_of(:description) }
-  it { should validate_presence_of(:code) }
-  it { should validate_presence_of(:hide) }
-  it { should validate_presence_of(:status) }
+  it { is_expected.to respond_to(:description) }
+  it { is_expected.to respond_to(:code) }
+  it { is_expected.to respond_to(:hide) }
+  it { is_expected.to respond_to(:status) }
+  it { is_expected.to validate_presence_of(:description) }
+  it { is_expected.to validate_presence_of(:code) }
+  it { is_expected.to validate_presence_of(:hide) }
+  it { is_expected.to validate_presence_of(:status) }
 
   describe "active condition_types" do
     before { create(:condition_type, status: 'active') }
-    it { ConditionType.active.should_not be_nil }
+    it { expect(ConditionType.active).not_to be_nil }
   end
 
   describe "inactive condition_types" do
     before { create(:condition_type, status: 'inactive') }
-    it { ConditionType.active.should be_empty }
+    it { expect(ConditionType.active).to be_empty }
   end
 
   describe "hidden condition_types" do
     before { create(:condition_type, hide: 'yes') }
-    it { ConditionType.unhidden.should be_empty }
+    it { expect(ConditionType.unhidden).to be_empty }
   end
 
   describe "unhidden condition_types" do
     before { create(:condition_type, hide: 'no') }
-    it { ConditionType.unhidden.should_not be_nil }
+    it { expect(ConditionType.unhidden).not_to be_nil }
   end
 
   describe 'nice_descr' do
-    it { @condition_type.nice_descr.should == @condition_type.description.titleize }
+    it { expect(@condition_type.nice_descr).to eq(@condition_type.description.titleize) }
 
     it 'does not return titleized description' do
       @condition_type.description = nil
-      @condition_type.nice_descr.should be_nil
+      expect(@condition_type.nice_descr).to be_nil
     end
   end
 end

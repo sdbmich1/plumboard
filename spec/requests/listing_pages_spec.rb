@@ -31,20 +31,20 @@ feature "Listings" do
   end
   
   def pixi_edit_access listing
-    page.should have_content listing.category_name
-    page.should have_content "Amount Left: #{(listing.amt_left)}"
-    page.should have_content "#{listing.seller_name}"
-    page.should have_link 'Want'
-    page.should have_link 'Ask'
-    page.should have_link 'Cool'
-    page.should_not have_link 'Uncool'
-    page.should have_link 'Save'
-    page.should_not have_link 'Unsave'
-    page.should have_selector('#fb-link')
-    page.should have_selector('#tw-link')
-    page.should have_selector('#pin-link')
-    page.should have_button 'Remove'
-    page.should have_link 'Edit', href: edit_temp_listing_path(listing)
+    expect(page).to have_content listing.category_name
+    expect(page).to have_content "Amount Left: #{(listing.amt_left)}"
+    expect(page).to have_content "#{listing.seller_name}"
+    expect(page).to have_link 'Want'
+    expect(page).to have_link 'Ask'
+    expect(page).to have_link 'Cool'
+    expect(page).not_to have_link 'Uncool'
+    expect(page).to have_link 'Save'
+    expect(page).not_to have_link 'Unsave'
+    expect(page).to have_selector('#fb-link')
+    expect(page).to have_selector('#tw-link')
+    expect(page).to have_selector('#pin-link')
+    expect(page).to have_button 'Remove'
+    expect(page).to have_link 'Edit', href: edit_temp_listing_path(listing)
   end
 
   describe "Non-signed in user", contact: true do
@@ -56,48 +56,48 @@ feature "Listings" do
       expect{
           click_link 'Want'
       }.not_to change(Post,:count).by(1)
-      page.should have_content 'Sign in'
+      expect(page).to have_content 'Sign in'
     end
 
     it "does not ask a question", js: true do
       expect{
           click_link 'Ask'
       }.not_to change(Post,:count).by(1)
-      page.should have_content 'Sign in'
+      expect(page).to have_content 'Sign in'
     end
 
     it "does not add Cool", js: true do
       expect{
           page.find('#cool-btn').click
-          page.should_not have_link 'Uncool'
+          expect(page).not_to have_link 'Uncool'
       }.not_to change(PixiLike,:count).by(1)
-      page.should have_content 'Sign in'
+      expect(page).to have_content 'Sign in'
     end
 
     it "does not add Save", js: true do
       expect{
           page.find('#save-btn').click
-          page.should_not have_link 'Unsave'
+          expect(page).not_to have_link 'Unsave'
       }.not_to change(SavedListing,:count).by(1)
-      page.should have_content 'Sign in'
+      expect(page).to have_content 'Sign in'
     end
 
     it "does not add comment", js: true do
       expect{
           page.find('#add-comment-btn').click
       }.not_to change(Comment,:count).by(1)
-      page.should have_content 'Sign in'
+      expect(page).to have_content 'Sign in'
       sleep 2;
       user_login user
-      page.should have_content pixi_post_listing.nice_title(false)
+      expect(page).to have_content pixi_post_listing.nice_title(false)
     end
   end
 
     def want_request sFlg=true, qty=1
       expect{
-          page.should have_link 'Want'
-          page.should have_link 'Ask'
-          page.should have_link 'Cool'
+          expect(page).to have_link 'Want'
+          expect(page).to have_link 'Ask'
+          expect(page).to have_link 'Cool'
           click_link 'Want'; sleep 2
           check_page_selectors ['#px-qty'], true, sFlg
           if qty > 1
@@ -105,9 +105,9 @@ feature "Listings" do
           end
           click_link 'Send'
           sleep 5
-          page.should_not have_link 'Want'
-          page.should have_content 'Want'
-          page.should have_content 'Successfully sent message to seller'
+          expect(page).not_to have_link 'Want'
+          expect(page).to have_content 'Want'
+          expect(page).to have_content 'Successfully sent message to seller'
       }.to change(Post,:count).by(1)
       expect(Conversation.count).to eql(1)
       expect(PixiWant.first.quantity).to eql(qty)
@@ -127,14 +127,14 @@ feature "Listings" do
     context "Contacts a seller", js: true do
       it 'asks a question' do
         expect{
-          page.should have_link 'Ask'
-          page.should have_link 'Cool'
+          expect(page).to have_link 'Ask'
+          expect(page).to have_link 'Cool'
           click_link 'Ask'
           sleep 3
           fill_in 'ask_content', with: "Is this a new item?\n" 
           click_button 'Send'
           sleep 5
-          page.should have_content 'Successfully sent message to seller'
+          expect(page).to have_content 'Successfully sent message to seller'
         }.to change(Post,:count).by(1)
 
         it_should_behave_like 'want_request'
@@ -144,9 +144,9 @@ feature "Listings" do
       	  fill_in 'comment_content', with: "Great pixi. I highly recommend it.\n" 
 	        sleep 3
         }.to change(Comment,:count).by(1)
-        page.should have_content "Comments (#{pixi_post_listing.comments.size})"
-        page.should have_content "Great pixi. I highly recommend it." 
-        page.should have_content @user.name 
+        expect(page).to have_content "Comments (#{pixi_post_listing.comments.size})"
+        expect(page).to have_content "Great pixi. I highly recommend it." 
+        expect(page).to have_content @user.name 
         expect(page).not_to have_field('#comment_content', with: 'Great pixi')      
       end
     end
@@ -172,9 +172,9 @@ feature "Listings" do
             click_link 'Want'; sleep 2
             click_link 'Buy Now'
             sleep 5
-            page.should_not have_link 'Want'
-            page.should have_content 'Buyer Information'
-            page.should have_content 'Shipping Information'
+            expect(page).not_to have_link 'Want'
+            expect(page).to have_content 'Buyer Information'
+            expect(page).to have_content 'Shipping Information'
         }.to change(model, :count).by(1)
       end
 
@@ -189,81 +189,81 @@ feature "Listings" do
       it 'multiple times' do
         buy_now_test(PixiWant)
         visit listing_path(@business_listing)
-        page.should have_link 'Want'
+        expect(page).to have_link 'Want'
       end
     end
 
     it "Asks a seller", js: true do
       expect{
-          page.should have_link 'Ask'
-          page.should have_link 'Cool'
+          expect(page).to have_link 'Ask'
+          expect(page).to have_link 'Cool'
           click_link 'Ask'
           sleep 3
           fill_in 'ask_content', with: "What color is the item?\n" 
           click_button 'Send'
           sleep 5
-          page.should have_content 'Successfully sent message to seller'
+          expect(page).to have_content 'Successfully sent message to seller'
       }.to change(Post,:count).by(1)
 
       expect{
-          page.should have_link 'Ask'
-          page.should have_link 'Cool'
+          expect(page).to have_link 'Ask'
+          expect(page).to have_link 'Cool'
           click_link 'Ask'
           sleep 3
           fill_in 'ask_content', with: "Is this a new item?\n" 
           click_button 'Send'
           sleep 5
-          page.should have_content 'Successfully sent message to seller'
+          expect(page).to have_content 'Successfully sent message to seller'
       }.to change(Post,:count).by(1)
       expect(Conversation.count).to eq 1
     end
      
     it "does not contact a seller", js: true do
       expect{
-          page.should have_link 'Want'
+          expect(page).to have_link 'Want'
           click_link 'Want'
           sleep 3
 	        click_link 'Close'
-          page.should_not have_content 'Successfully sent message to seller'
+          expect(page).not_to have_content 'Successfully sent message to seller'
       }.not_to change(Post,:count).by(1)
     end
 
     it "does not ask a seller", js:true do
       expect{
-          page.should have_link 'Ask'
+          expect(page).to have_link 'Ask'
           click_link 'Ask'
           sleep 3
           click_link 'Close'
-          page.should_not have_content 'Successfully sent message to seller'
+          expect(page).not_to have_content 'Successfully sent message to seller'
       }.not_to change(Post,:count).by(1)
     end
 
     it "cannot ask seller with empty text box", js:true do
-          page.should have_link 'Ask'
+          expect(page).to have_link 'Ask'
           click_link 'Ask'
           sleep 3
-          page.should_not have_link 'Send'
+          expect(page).not_to have_link 'Send'
     end
 
     it "clicks on Cool", js: true do
       expect{
           page.find('#cool-btn').click
 	        sleep 3
-          page.should have_link 'Uncool'
-          page.should_not have_link 'Cool'
+          expect(page).to have_link 'Uncool'
+          expect(page).not_to have_link 'Cool'
       }.to change(PixiLike,:count).by(1)
-      page.should have_content listing.nice_title(false)
-      page.should have_content "(#{listing.liked_count})"
+      expect(page).to have_content listing.nice_title(false)
+      expect(page).to have_content "(#{listing.liked_count})"
     end
 
     it "clicks on Save", js: true do
       expect{
           page.find('#save-btn').click
 	  sleep 3
-          page.should have_link 'Unsave'
+          expect(page).to have_link 'Unsave'
       }.to change(SavedListing,:count).by(1)
 
-      page.should have_content listing.nice_title(false)
+      expect(page).to have_content listing.nice_title(false)
     end
   end
 
@@ -285,16 +285,16 @@ feature "Listings" do
     end
     it "submits want request", js: true do
       expect {
-        page.should have_link 'Want'
-        page.should have_link 'Ask'
-        page.should have_link 'Cool'
+        expect(page).to have_link 'Want'
+        expect(page).to have_link 'Ask'
+        expect(page).to have_link 'Cool'
         click_link 'Want'
         sleep 2
         click_link 'Send'
         sleep 5
         page.driver.browser.switch_to.window(page.driver.browser.window_handles.first)   # exit popup window
-        page.should_not have_link 'Want'
-        page.should have_content 'Want'
+        expect(page).not_to have_link 'Want'
+        expect(page).to have_content 'Want'
       }.to change(PixiWant, :count).by(1)
       expect(PixiWant.first.quantity).to eql(1)
     end
@@ -313,31 +313,31 @@ feature "Listings" do
 
     it "views pixi page" do
       expect(listing.user_wanted?(@user)).not_to be_nil
-      page.should have_content 'Want'
-      page.should_not have_link 'Want', href: '#'
+      expect(page).to have_content 'Want'
+      expect(page).not_to have_link 'Want', href: '#'
       page.find_link('Uncool').visible?
-      page.should_not have_link 'Cool'
-      page.should have_link 'Unsave'
+      expect(page).not_to have_link 'Cool'
+      expect(page).to have_link 'Unsave'
     end
 
     it "clicks on Uncool", js: true do
       expect{
           page.find('#cool-btn').click
 	  sleep 3
-          page.should_not have_link 'Uncool'
-          page.should have_link 'Cool'
+          expect(page).not_to have_link 'Uncool'
+          expect(page).to have_link 'Cool'
       }.to change(PixiLike,:count).by(-1)
-      page.should have_content listing.nice_title(false)
-      page.should have_content "(#{listing.liked_count})"
+      expect(page).to have_content listing.nice_title(false)
+      expect(page).to have_content "(#{listing.liked_count})"
     end
 
     it "clicks on Unsave", js: true do
       expect{
           page.find('#save-btn').click
 	  sleep 3
-          page.should have_link 'Save'
+          expect(page).to have_link 'Save'
       }.to change(SavedListing,:count).by(-1)
-      page.should have_content listing.nice_title(false)
+      expect(page).to have_content listing.nice_title(false)
     end
   end
 
@@ -364,16 +364,16 @@ feature "Listings" do
     end
      
     it "views pixi page" do
-      page.should_not have_content "Start Date: #{short_date(job_listing.event_start_date)}"
-      page.should_not have_content "End Date: #{short_date(job_listing.event_end_date)}"
-      page.should_not have_content "Start Time: #{short_time(job_listing.event_start_time)}"
-      page.should_not have_content "End Time: #{short_time(job_listing.event_end_time)}"
-      page.should_not have_content "Price: #{(job_listing.price)}"
-      page.should_not have_content "Event Type: #{job_listing.event_type_descr}"
-      page.should_not have_content "Condition: #{(job_listing.condition)}"
-      page.should_not have_content "Amount Left: #{(job_listing.amt_left)}"
-      page.should have_content "Job Type: #{(job_listing.job_type_name)}"
-      page.should have_content "Compensation: #{(job_listing.compensation)}"
+      expect(page).not_to have_content "Start Date: #{short_date(job_listing.event_start_date)}"
+      expect(page).not_to have_content "End Date: #{short_date(job_listing.event_end_date)}"
+      expect(page).not_to have_content "Start Time: #{short_time(job_listing.event_start_time)}"
+      expect(page).not_to have_content "End Time: #{short_time(job_listing.event_end_time)}"
+      expect(page).not_to have_content "Price: #{(job_listing.price)}"
+      expect(page).not_to have_content "Event Type: #{job_listing.event_type_descr}"
+      expect(page).not_to have_content "Condition: #{(job_listing.condition)}"
+      expect(page).not_to have_content "Amount Left: #{(job_listing.amt_left)}"
+      expect(page).to have_content "Job Type: #{(job_listing.job_type_name)}"
+      expect(page).to have_content "Compensation: #{(job_listing.compensation)}"
     end
   end
 
@@ -394,8 +394,8 @@ feature "Listings" do
     end
 
     it "views pixi page" do
-      page.should have_content "No comments found."
-      page.should have_content "Comments (#{listing.comments.size})"
+      expect(page).to have_content "No comments found."
+      expect(page).to have_content "Comments (#{listing.comments.size})"
     end
      
     it "adds a comment", js: true do
@@ -404,9 +404,9 @@ feature "Listings" do
 	  sleep 3
       }.to change(Comment,:count).by(1)
 
-      page.should have_content "Comments (#{listing.comments.size})"
-      page.should have_content "Great pixi. I highly recommend it." 
-      page.should have_content @user.name 
+      expect(page).to have_content "Comments (#{listing.comments.size})"
+      expect(page).to have_content "Great pixi. I highly recommend it." 
+      expect(page).to have_content @user.name 
       expect(page).not_to have_field('#comment_content', with: 'Great pixi')
     end
      
@@ -426,11 +426,11 @@ feature "Listings" do
       page.find('#comment-tab').click
     end
 
-    it { should have_selector('div.pagination') }
+    it { is_expected.to have_selector('div.pagination') }
 
     it "should list each comment" do
       listing.comments.paginate(page: 1).each do |comment|
-        page.should have_selector('li', text: comment.summary)
+        expect(page).to have_selector('li', text: comment.summary)
       end
     end
   end
@@ -450,8 +450,8 @@ feature "Listings" do
       it "Deletes a pixi" do
         expect {
           click_link 'Sold Item'; sleep 2
-          page.should_not have_content @listing.title 
-          page.should have_content "Pixis" 
+          expect(page).not_to have_content @listing.title 
+          expect(page).to have_content "Pixis" 
         }.to change(Listing, :count).by(0)
 	expect(@listing.reload.status).to eq('removed')
       end
@@ -459,30 +459,30 @@ feature "Listings" do
       describe "Edits active pixi" do
         it "adds a pixi pic", js: true do
           click_link 'Edit'; sleep 3
-          page.should have_content("Build Your Pixi") 
-          page.should have_selector('#build-pixi-btn')
+          expect(page).to have_content("Build Your Pixi") 
+          expect(page).to have_selector('#build-pixi-btn')
           expect{
 	    fill_in 'Title', with: 'Rhodes Bass Guitar'
             attach_file('photo', Rails.root.join("spec", "fixtures", "photo0.jpg"))
             page.find('#build-pixi-btn').click
-            page.should have_content 'Review Your Pixi'
+            expect(page).to have_content 'Review Your Pixi'
             click_link 'Done!'
-            page.should have_content 'Rhodes Bass Guitar'
+            expect(page).to have_content 'Rhodes Bass Guitar'
             visit pending_listing_path(@listing) 
-            page.should have_content 'Rhodes Bass Guitar'
-            page.should have_button('Deny')
-            page.should have_link 'Approve', href: approve_pending_listing_path(@listing)
+            expect(page).to have_content 'Rhodes Bass Guitar'
+            expect(page).to have_button('Deny')
+            expect(page).to have_link 'Approve', href: approve_pending_listing_path(@listing)
             click_link 'Approve'; sleep 2;
 	    visit listing_path(@listing)
-            page.should have_content 'Rhodes Bass Guitar'
-            @listing.wanted_count.should eq(1)
-            @listing.liked_count.should eq(1)
-            @listing.pictures.count.should eq(2)
-            Listing.where(seller_id: @user.id).count.should eq(1)
+            expect(page).to have_content 'Rhodes Bass Guitar'
+            expect(@listing.wanted_count).to eq(1)
+            expect(@listing.liked_count).to eq(1)
+            expect(@listing.pictures.count).to eq(2)
+            expect(Listing.where(seller_id: @user.id).count).to eq(1)
             # TempListing.where(pixi_id: @listing.pixi_id).count.should eq(0)
             # TempListing.where("title like 'Rhodes%'").count.should eq(0)
-            Listing.where("title like 'Rhodes%'").count.should eq(1)
-            Listing.where("title like 'Acoustic%'").count.should eq(0)
+            expect(Listing.where("title like 'Rhodes%'").count).to eq(1)
+            expect(Listing.where("title like 'Acoustic%'").count).to eq(0)
           }.to change(Listing,:count).by(0)
         end
       end
@@ -499,13 +499,13 @@ feature "Listings" do
       end
       
       it "views pixi category page" do
-        page.should have_content('Pixis')
-        page.should have_content 'Guitar'
-        page.should_not have_content 'No pixis found'
+        expect(page).to have_content('Pixis')
+        expect(page).to have_content 'Guitar'
+        expect(page).not_to have_content 'No pixis found'
       end
 
       it "does not show status type" do
-        page.should_not have_content "Status"
+        expect(page).not_to have_content "Status"
       end
     end  
 
@@ -527,8 +527,8 @@ feature "Listings" do
       end
 
       it 'has featured band' do
-        page.should have_content 'Featured Sellers'
-        page.should have_content @seller1.name
+        expect(page).to have_content 'Featured Sellers'
+        expect(page).to have_content @seller1.name
       end
     end  
 
@@ -541,14 +541,14 @@ feature "Listings" do
       end
       
       it "views pixi category page" do
-        page.should have_content('Pixis')
-        page.should have_content 'Guitar'
-        page.should_not have_content 'Featured Sellers'
-        page.should_not have_content 'No pixis found'
+        expect(page).to have_content('Pixis')
+        expect(page).to have_content 'Guitar'
+        expect(page).not_to have_content 'Featured Sellers'
+        expect(page).not_to have_content 'No pixis found'
       end
 
       it "does not show status type" do
-        page.should_not have_content "Status"
+        expect(page).not_to have_content "Status"
       end
     end  
 
@@ -580,9 +580,9 @@ feature "Listings" do
       
       it "views pixis page" do
         visit local_listings_path(loc: @site1.id) 
-        page.should have_link 'Recent'
-        page.should have_content('Pixis')
-        page.should_not have_content 'No pixis found'
+        expect(page).to have_link 'Recent'
+        expect(page).to have_content('Pixis')
+        expect(page).not_to have_content 'No pixis found'
       end
       
       it "scrolls listings", js: true do 
@@ -592,24 +592,24 @@ feature "Listings" do
       it "searches for a listing", js: true do
         fill_in 'search', with: 'guitar'
 	      click_on 'submit-btn'
-        page.should_not have_content 'HP Printer J4580'
+        expect(page).not_to have_content 'HP Printer J4580'
       end
 
       it "selects a site", js: true do
         fill_autocomplete('site_name', with: 'pixi')
 	      set_site_id @site3.id; sleep 2
-        page.should have_content @listing1.title
-        page.should have_content @pixi.title
-        page.should have_content @site3.name
+        expect(page).to have_content @listing1.title
+        expect(page).to have_content @pixi.title
+        expect(page).to have_content @site3.name
       end
 
       it "selects categories", js: true do
         fill_autocomplete('site_name', with: 'pixi')
 	      set_site_id @site3.id; sleep 2
         select('Music', :from => 'category_id'); sleep 2
-        page.should have_content @category.name_title
-        page.should_not have_content @listing1.title
-        page.should have_content 'Guitar'
+        expect(page).to have_content @category.name_title
+        expect(page).not_to have_content @listing1.title
+        expect(page).to have_content 'Guitar'
       end
     end
   end

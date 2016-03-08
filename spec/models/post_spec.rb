@@ -26,26 +26,26 @@ describe Post do
     let(:attr) { ProcessMethod::get_attr(@post, %w(id created_at updated_at)) }
     it_behaves_like "model attributes"
     it_behaves_like "model methods", %w(user listing recipient conversation)
-    it { should belong_to(:recipient).with_foreign_key('recipient_id').class_name('User') }
-    it { should belong_to(:conversation) }
-    it { should belong_to(:user) }
-    it { should belong_to(:listing).with_foreign_key('pixi_id') }
-    it { should validate_presence_of(:user_id) }
-    it { should validate_presence_of(:pixi_id) }
-    it { should validate_presence_of(:recipient_id) }
-    it { should validate_presence_of(:content) }
-    it { should validate_presence_of(:conversation) }
-    it { should_not allow_value('').for(:content) }
-    it { should_not allow_value(nil).for(:content) }
+    it { is_expected.to belong_to(:recipient).with_foreign_key('recipient_id').class_name('User') }
+    it { is_expected.to belong_to(:conversation) }
+    it { is_expected.to belong_to(:user) }
+    it { is_expected.to belong_to(:listing).with_foreign_key('pixi_id') }
+    it { is_expected.to validate_presence_of(:user_id) }
+    it { is_expected.to validate_presence_of(:pixi_id) }
+    it { is_expected.to validate_presence_of(:recipient_id) }
+    it { is_expected.to validate_presence_of(:content) }
+    it { is_expected.to validate_presence_of(:conversation) }
+    it { is_expected.not_to allow_value('').for(:content) }
+    it { is_expected.not_to allow_value(nil).for(:content) }
   end
 
   describe "load post", process: true do
     it "should load new post" do
-      Post.load_new(@listing).should_not be_nil
+      expect(Post.load_new(@listing)).not_to be_nil
     end
 
     it "should not load new post" do
-      Post.load_new(nil).should be_nil
+      expect(Post.load_new(nil)).to be_nil
     end
   end
   
@@ -53,23 +53,23 @@ describe Post do
     before { @post.content = "a" * 500 }
 
     it "should return a summary of 100 chars" do 
-      @post.summary.length.should == 100 
+      expect(@post.summary.length).to eq(100) 
     end
 
     it "should return a summary of 50 chars" do 
-      @post.summary(50).length.should == 50 
+      expect(@post.summary(50).length).to eq(50) 
     end
 
     it "should return a summary of 50 chars w/ ellipses" do 
-      @post.summary(50, true).length.should == 53 
+      expect(@post.summary(50, true).length).to eq(53) 
     end
 
     it "long content should return true" do 
-      @post.long_content?.should be_true 
+      expect(@post.long_content?).to be_truthy 
     end
 
     it "full content should be valid" do 
-      @post.full_content.should be_true 
+      expect(@post.full_content).to be_truthy 
     end
   end
 
@@ -77,16 +77,16 @@ describe Post do
     before { @post.content = "a" * 50 }
 
     it "should not return a summary of 100 chars" do 
-      @post.summary.length.should_not == 100 
+      expect(@post.summary.length).not_to eq(100) 
     end
 
     it "long content should not return true" do 
-      @post.long_content?.should_not be_true 
+      expect(@post.long_content?).not_to be_truthy 
     end
 
     it "full content should not be valid" do 
       @post.content = nil
-      @post.full_content.should_not be_true 
+      expect(@post.full_content).not_to be_truthy 
     end
   end
 
@@ -94,26 +94,26 @@ describe Post do
     before { @post.save; sleep 2 }
 
     it "should return a post - get_posts" do 
-      Post.get_posts(@recipient).should_not be_nil 
+      expect(Post.get_posts(@recipient)).not_to be_nil 
     end
 
     it "should not return an inactive post - get_posts" do
       @post.recipient_status = 'removed'
       @post.save
-      Post.get_posts(@recipient).count.should == 0
+      expect(Post.get_posts(@recipient).count).to eq(0)
     end
 
     it "should not return a post - get_posts" do 
-      Post.get_posts(@user).should be_empty 
+      expect(Post.get_posts(@user)).to be_empty 
     end
 
     it "returns sent posts" do 
       @listing.posts.create FactoryGirl.attributes_for :post, user_id: @user.id, recipient_id: @recipient.id
-      Post.get_sent_posts(@user).should_not be_empty 
+      expect(Post.get_sent_posts(@user)).not_to be_empty 
     end
 
     it "does not return sent posts" do 
-      Post.get_sent_posts(@buyer).should be_empty 
+      expect(Post.get_sent_posts(@buyer)).to be_empty 
     end
   end
 
@@ -121,30 +121,30 @@ describe Post do
     before { @post.save }
 
     it "should return a count > 0" do 
-      Post.unread_count(@post.recipient).should == 1 
+      expect(Post.unread_count(@post.recipient)).to eq(1) 
     end
 
     it "should not return a count > 0" do 
-      Post.unread_count(@user).should_not == 1 
+      expect(Post.unread_count(@user)).not_to eq(1) 
     end
 
     it "should return a post - get_unread" do 
-      Post.get_unread(@recipient).should_not be_nil 
+      expect(Post.get_unread(@recipient)).not_to be_nil 
     end
 
     it "should not return a post - get_unread" do 
-      Post.get_unread(@user).should be_empty 
+      expect(Post.get_unread(@user)).to be_empty 
     end
   end
 
   describe "sender", process: true do 
     
     it "should return true" do
-      @post.sender?(@user).should be_true
+      expect(@post.sender?(@user)).to be_truthy
     end
     
     it "should not return true" do
-      @post.sender?(@recipient).should_not be_true
+      expect(@post.sender?(@recipient)).not_to be_truthy
     end
   end
 
@@ -158,11 +158,11 @@ describe Post do
       @invoice.save!
       @conversation2 = @listing.conversations.create FactoryGirl.attributes_for :conversation, user_id: @person.id, recipient_id: @recipient.id
       sleep 3
-      Post.send_invoice(@invoice, @listing).should be_true
+      expect(Post.send_invoice(@invoice, @listing)).to be_truthy
     end
     
     it "should not return true" do
-      Post.send_invoice(@invoice, @listing).should_not be_true
+      expect(Post.send_invoice(@invoice, @listing)).not_to be_truthy
     end
   end
 
@@ -182,11 +182,11 @@ describe Post do
     
     it "should return true" do
       sleep 2
-      Post.add_post(@invoice, @new_pixi, @user, @person, msg, 'invmsg').should be_true
+      expect(Post.add_post(@invoice, @new_pixi, @user, @person, msg, 'invmsg')).to be_truthy
     end
     
     it "should not return true" do
-      Post.add_post(@invoice, @new_pixi, @person, nil, msg, 'invmsg').should_not be_true
+      expect(Post.add_post(@invoice, @new_pixi, @person, nil, msg, 'invmsg')).not_to be_truthy
     end
   end
 
@@ -196,16 +196,16 @@ describe Post do
     end
 
     it "seller returns true" do
-      @post.can_bill?(@user).should be_true
+      expect(@post.can_bill?(@user)).to be_truthy
     end
 
     it "buyer returns false" do
-      @post.can_bill?(@recipient).should_not be_true
+      expect(@post.can_bill?(@recipient)).not_to be_truthy
     end
     
     it "returns true" do
       add_invoice
-      @post.can_bill?(@new_user).should be_true
+      expect(@post.can_bill?(@new_user)).to be_truthy
     end
     
     it "does not return true when paid" do
@@ -217,27 +217,27 @@ describe Post do
       add_invoice
       @invoice.status = 'paid'
       @invoice.save!
-      @post.reload.can_bill?(@user).should_not be_true
-      @post2.reload.can_bill?(@user).should be_true
+      expect(@post.reload.can_bill?(@user)).not_to be_truthy
+      expect(@post2.reload.can_bill?(@user)).to be_truthy
     end
     
     it "should not return true when removed" do
       @listing.status = 'removed'
       @listing.save; sleep 2
-      @post.reload.can_bill?(@user).should_not be_true
+      expect(@post.reload.can_bill?(@user)).not_to be_truthy
     end
     
     it "should not return true when sold" do
       @listing.status = 'sold'
       @listing.save; sleep 1
-      @post.reload.can_bill?(@user).should_not be_true
+      expect(@post.reload.can_bill?(@user)).not_to be_truthy
     end
   end
 
   describe "due_invoice", invoice: true do 
     before { @post.save }
     it "should_not return true" do
-      @post.due_invoice?(@user).should_not be_true
+      expect(@post.due_invoice?(@user)).not_to be_truthy
     end
     
     context 'with invoice' do
@@ -245,17 +245,17 @@ describe Post do
         add_invoice
       end
 
-      it { expect(@post.due_invoice?(@recipient)).to be_true }
+      it { expect(@post.due_invoice?(@recipient)).to be_truthy }
     
       it "should not return true when paid" do
         @invoice.update_attribute(:status, 'paid')
-        expect(@post.reload.due_invoice?(@recipient)).not_to be_true
+        expect(@post.reload.due_invoice?(@recipient)).not_to be_truthy
       end
     
       it "should not return true when removed" do
         @listing.status = 'removed'
         @listing.save; sleep 3
-        expect(@post.reload.due_invoice?(@recipient)).not_to be_true
+        expect(@post.reload.due_invoice?(@recipient)).not_to be_truthy
       end
     end
   end
@@ -267,7 +267,7 @@ describe Post do
     end
     
     it "should not return true" do
-      Post.pay_invoice(@txn).should_not be_true
+      expect(Post.pay_invoice(@txn)).not_to be_truthy
     end
     
     it "should return true" do
@@ -276,52 +276,52 @@ describe Post do
       @details = @invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
       @invoice.save!; sleep 2
       expect(@txn.invoices.size).to eq 1
-      Post.pay_invoice(@txn).should be_true
+      expect(Post.pay_invoice(@txn)).to be_truthy
     end
   end
 
   describe "sender name", process: true do 
-    it { @post.sender_name.should == (@user.first_name + " " + @user.last_name) }
+    it { expect(@post.sender_name).to eq(@user.first_name + " " + @user.last_name) }
 
     it "does not return sender name" do 
       @post.user_id = 100 
-      @post.sender_name.should be_nil 
+      expect(@post.sender_name).to be_nil 
     end
   end
 
   describe "recipient name", process: true do 
-    it { @post.recipient_name.should == "Tom Davis" } 
+    it { expect(@post.recipient_name).to eq("Tom Davis") } 
 
     it "does not return recipient name" do 
       @post.recipient_id = 100 
-      @post.recipient_name.should be_nil 
+      expect(@post.recipient_name).to be_nil 
     end
   end
 
   describe "sender email", process: true do 
-    it { @post.sender_email.should == @user.email } 
+    it { expect(@post.sender_email).to eq(@user.email) } 
 
     it "does not return sender email" do 
       @post.user_id = 100 
-      @post.sender_email.should be_nil 
+      expect(@post.sender_email).to be_nil 
     end
   end
 
   describe "recipient email", process: true do 
-    it { @post.recipient_email.should == @recipient.email } 
+    it { expect(@post.recipient_email).to eq(@recipient.email) } 
 
     it "does not return recipient email" do 
       @post.recipient_id = 100 
-      @post.recipient_email.should be_nil 
+      expect(@post.recipient_email).to be_nil 
     end
   end
 
   describe "pixi title", process: true do 
-    it { @post.pixi_title.should == "Big Guitar" } 
+    it { expect(@post.pixi_title).to eq("Big Guitar") } 
 
     it "does not return pixi title" do 
       @post.pixi_id = 100 
-      @post.pixi_title.should be_nil 
+      expect(@post.pixi_title).to be_nil 
     end
   end
 
@@ -357,11 +357,11 @@ describe Post do
 
     it "is invalid without a conversation" do
       @post.conversation_id = ""
-      @post.should_not be_valid
+      expect(@post).not_to be_valid
     end
 
     it "is valid with a conversation" do
-      @post.should be_valid
+      expect(@post).to be_valid
     end
   end
 
@@ -485,7 +485,7 @@ describe Post do
       end
 
       it "returns false if unsuccessful" do
-        @post.stub(:update_attributes).and_return(false)
+        allow(@post).to receive(:update_attributes).and_return(false)
         @result = @post.remove_post(@user)
         expect(@result).to eql(false)
       end
@@ -509,7 +509,7 @@ describe Post do
       end
 
       it "returns false if unsuccessful" do
-        @post.stub(:update_attributes).and_return(false)
+        allow(@post).to receive(:update_attributes).and_return(false)
         @result = @post.remove_post(@recipient)
         expect(@result).to eql(false)
       end

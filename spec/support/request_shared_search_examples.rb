@@ -4,10 +4,10 @@ shared_examples 'seller_url_pages' do |follow_flg, map_flg|
   describe 'view urls' do
     it 'renders seller page for user' do
       visit seller.local_user_path
-      page.should have_content seller.name
-      page.should have_content seller.description
-      page.should have_selector('#follow-btn', visible: follow_flg)
-      page.should have_selector('#map_icon', visible: map_flg)
+      expect(page).to have_content seller.name
+      expect(page).to have_content seller.description
+      expect(page).to have_selector('#follow-btn', visible: follow_flg)
+      expect(page).to have_selector('#map_icon', visible: map_flg)
       expect(Listing.count).not_to eq 0
     end
   end
@@ -22,24 +22,24 @@ shared_examples 'site_url_pages' do |name, rte, type|
      
     it "does show site page" do
       visit "/#{rte}/#{@loc.url}"
-      page.should have_content @loc.name
-      page.should have_content 'Acoustic Guitar'
-      page.should have_content 'Bass Guitar'
+      expect(page).to have_content @loc.name
+      expect(page).to have_content 'Acoustic Guitar'
+      expect(page).to have_content 'Bass Guitar'
     end
      
     it "does not show site page" do
       visit "/#{rte}/xxxx"
-      page.should_not have_content @loc.name
-      page.should_not have_content listing.nice_title(false)
+      expect(page).not_to have_content @loc.name
+      expect(page).not_to have_content listing.nice_title(false)
     end
   end
 end	
 
 shared_examples 'searches controller index' do |klass, var|
   before :each do
-    @mock_klass = mock(klass.downcase.pluralize)
-    klass.constantize.stub!(:search).and_return(@mock_klass)
-    controller.stub!(:current_user).and_return(@mock_klass)
+    @mock_klass = double(klass.downcase.pluralize)
+    allow(klass.constantize).to receive(:search).and_return(@mock_klass)
+    allow(controller).to receive(:current_user).and_return(@mock_klass)
     controller.stub_chain(:query, :page).and_return(:success)
   end
 
@@ -48,17 +48,17 @@ shared_examples 'searches controller index' do |klass, var|
   end
 
   it "should load the requested user" do
-    klass.constantize.stub(:search).with('test').and_return(@mock_klass)
+    allow(klass.constantize).to receive(:search).with('test').and_return(@mock_klass)
     do_get
   end
 
   it "should assign @mock_klass" do
     do_get
-    assigns(var.to_sym).should == @mock_klass
+    expect(assigns(var.to_sym)).to eq(@mock_klass)
   end
 
   it "index action should render nothing" do
     do_get
-    controller.stub!(:render)
+    allow(controller).to receive(:render)
   end
 end

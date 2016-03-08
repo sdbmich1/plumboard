@@ -9,48 +9,48 @@ describe Site do
    
   subject { @site } 
 
-  it { should respond_to(:name) }
-  it { should respond_to(:email) }
-  it { should respond_to(:site_type_code) }
-  it { should respond_to(:status) }
-  it { should respond_to(:institution_id) }
-  it { should respond_to(:users) }
-  it { should respond_to(:site_users) }
-  it { should respond_to(:listings) }
-  it { should respond_to(:contacts) }
-  it { should respond_to(:pictures) }
-  it { should respond_to(:temp_listings) }
+  it { is_expected.to respond_to(:name) }
+  it { is_expected.to respond_to(:email) }
+  it { is_expected.to respond_to(:site_type_code) }
+  it { is_expected.to respond_to(:status) }
+  it { is_expected.to respond_to(:institution_id) }
+  it { is_expected.to respond_to(:users) }
+  it { is_expected.to respond_to(:site_users) }
+  it { is_expected.to respond_to(:listings) }
+  it { is_expected.to respond_to(:contacts) }
+  it { is_expected.to respond_to(:pictures) }
+  it { is_expected.to respond_to(:temp_listings) }
 
-  it { should validate_presence_of(:name) }
-  it { should validate_presence_of(:site_type_code) }
+  it { is_expected.to validate_presence_of(:name) }
+  it { is_expected.to validate_presence_of(:site_type_code) }
 
-  it {should belong_to(:site_type).with_foreign_key('site_type_code') }
+  it {is_expected.to belong_to(:site_type).with_foreign_key('site_type_code') }
 
   describe "should include active sites" do
-    it { Site.active.should_not be_nil }
+    it { expect(Site.active).not_to be_nil }
   end
 
   describe "should not include inactive sites" do
     site = Site.create(:name=>'Item', :status=>'inactive')
-    it { Site.active.should_not include (site) } 
+    it { expect(Site.active).not_to include (site) } 
   end
 
   describe "should not include sites with invalid site_type_code" do
     ['region', 'state', 'country'].each { |name|
       site = FactoryGirl.create(:site, name: 'Item', status: 'inactive', site_type_code: name)
-      it { Site.active(false).should_not include (site) }
+      it { expect(Site.active(false)).not_to include (site) }
     }
   end
 
   describe "when name is empty" do
     before { @site.name = "" }
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
   end
 
   describe 'active pixis' do
     site = Site.create(:name=>'Item', :status=>'inactive')
-    it { Site.active_with_pixis.should_not include (site) } 
-    it { Site.active_with_pixis.should include (@site) } 
+    it { expect(Site.active_with_pixis).not_to include (site) } 
+    it { expect(Site.active_with_pixis).to include (@site) } 
   end
 
   describe 'pictures' do
@@ -59,17 +59,17 @@ describe Site do
     end
 
     it "should have a pictures method" do
-      @site.should respond_to(:pictures)
+      expect(@site).to respond_to(:pictures)
     end
 				            
     it "has many pictures" do 
-      @site.pictures.should include(@sr)
+      expect(@site.pictures).to include(@sr)
     end
 
     it "should destroy associated pictures" do
       @site.destroy
       [@sr].each do |s|
-         Picture.find_by_id(s.id).should be_nil
+         expect(Picture.find_by_id(s.id)).to be_nil
        end
     end  
   end  
@@ -80,17 +80,17 @@ describe Site do
     end
 
     context "should have a contacts method" do
-      it { should respond_to(:contacts) }
+      it { is_expected.to respond_to(:contacts) }
     end
 
     it "has many contacts" do 
-      @site.contacts.should include(@sr)
+      expect(@site.contacts).to include(@sr)
     end
 
     it "should destroy associated contacts" do
       @site.destroy
       [@sr].each do |s|
-         Contact.find_by_id(s.id).should be_nil
+         expect(Contact.find_by_id(s.id)).to be_nil
        end
     end  
   end  
@@ -160,31 +160,31 @@ describe Site do
   describe 'check types' do
     it 'is a city' do
       site = create :site, name: 'Detroit', site_type_code: 'city'
-      expect(site.is_city?).to be_true
-      expect(site.is_school?).not_to be_true
-      expect(site.is_region?).not_to be_true
+      expect(site.is_city?).to be_truthy
+      expect(site.is_school?).not_to be_truthy
+      expect(site.is_region?).not_to be_truthy
     end
 
     it 'is a school' do
       site = create :site, name: 'Detroit College', site_type_code: 'school'
-      expect(site.is_school?).to be_true
-      expect(site.is_city?).not_to be_true
-      expect(site.is_region?).not_to be_true
+      expect(site.is_school?).to be_truthy
+      expect(site.is_city?).not_to be_truthy
+      expect(site.is_region?).not_to be_truthy
     end
 
     it 'is a region' do
       site = create :site, name: 'Detroit', site_type_code: 'region'
-      expect(site.is_region?).to be_true
-      expect(site.is_school?).not_to be_true
-      expect(site.is_city?).not_to be_true
+      expect(site.is_region?).to be_truthy
+      expect(site.is_school?).not_to be_truthy
+      expect(site.is_city?).not_to be_truthy
     end
 
     it 'is a pub' do
       site = create :site, name: 'City Living', site_type_code: 'pub'
-      expect(site.is_pub?).to be_true
-      expect(site.is_region?).not_to be_true
-      expect(site.is_school?).not_to be_true
-      expect(site.is_city?).not_to be_true
+      expect(site.is_pub?).to be_truthy
+      expect(site.is_region?).not_to be_truthy
+      expect(site.is_school?).not_to be_truthy
+      expect(site.is_city?).not_to be_truthy
     end
   end
 
@@ -227,7 +227,7 @@ describe Site do
   describe 'get_site' do
     it 'should return site' do
       site = create :site, name: 'Berkeley', site_type_code: 'city'
-      Site.get_site(site.id).first.name.should == 'Berkeley'
+      expect(Site.get_site(site.id).first.name).to eq('Berkeley')
     end
 
     it 'should not return invalid site' do
@@ -363,7 +363,7 @@ describe Site do
     end
     it 'calls set_flds' do
       site = build :site, site_type_code: 'pub' 
-      site.should_receive(:set_flds)
+      expect(site).to receive(:set_flds)
       site.save
     end
   end

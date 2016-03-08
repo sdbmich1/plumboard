@@ -5,13 +5,13 @@ describe RatingsController do
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_rating(stubs={})
     (@mock_rating ||= mock_model(Rating, stubs).as_null_object).tap do |rating|
-      rating.stub(stubs) unless stubs.empty?
+      allow(rating).to receive(stubs) unless stubs.empty?
     end
   end
 
@@ -24,8 +24,8 @@ describe RatingsController do
   describe "POST create" do
     before :each do
       @transaction = stub_model(Transaction)
-      Transaction.stub!(:find).with('1').and_return(@transaction)
-      controller.stub!(:current_user).and_return(@user)
+      allow(Transaction).to receive(:find).with('1').and_return(@transaction)
+      allow(controller).to receive(:current_user).and_return(@user)
       @user.stub_chain(:ratings, :build).and_return( @rating )
     end
     
@@ -36,22 +36,22 @@ describe RatingsController do
     context 'failure' do
       
       before :each do
-        @rating.stub!(:save).and_return(false)
+        allow(@rating).to receive(:save).and_return(false)
       end
 
       it "should assign @rating" do
         do_create
-        assigns(:rating).should_not be_nil 
+        expect(assigns(:rating)).not_to be_nil 
       end
 
       it "should assign @transaction" do
         do_create
-        assigns(:transaction).should_not be_nil 
+        expect(assigns(:transaction)).not_to be_nil 
       end
 
       it "should render nothing" do
         do_create
-	controller.stub!(:render)
+	allow(controller).to receive(:render)
       end
     end
 
@@ -60,28 +60,28 @@ describe RatingsController do
       before :each do
         @rating = mock_model Rating
         @user.stub_chain(:ratings, :build).and_return( @rating )
-        @rating.stub!(:save).and_return(true)
+        allow(@rating).to receive(:save).and_return(true)
       end
 
       after (:each) do
         @ratings = stub_model(Rating)
-        User.stub!(:find).with('1').and_return(@user)
+        allow(User).to receive(:find).with('1').and_return(@user)
         @user.stub_chain(:ratings, :build).and_return( @ratings )
       end
        
       it "should load the requested user" do
-        User.stub(:find).with('1').and_return(@user)
+        allow(User).to receive(:find).with('1').and_return(@user)
         do_create
       end
 
       it "should assign @user" do
         do_create
-        assigns(:user).should_not be_nil 
+        expect(assigns(:user)).not_to be_nil 
       end
 
       it "should assign @transaction" do
         do_create
-        assigns(:transaction).should_not be_nil 
+        expect(assigns(:transaction)).not_to be_nil 
       end
 
       it "should load the requested rating" do
@@ -91,19 +91,19 @@ describe RatingsController do
 
       it "should assign @rating" do
         do_create
-        assigns(:rating).should_not be_nil 
+        expect(assigns(:rating)).not_to be_nil 
       end
 
       it "should change rating count" do
         lambda do
           do_create
-          should change(Rating, :count).by(1)
+          is_expected.to change(Rating, :count).by(1)
         end
       end
 
       it "responds to JSON" do
         post :create, id: '1', :rating => { pixi_id: '1', 'comments'=>'test' }, format: :json
-	response.status.should_not eq(0)
+	expect(response.status).not_to eq(0)
       end
     end
   end

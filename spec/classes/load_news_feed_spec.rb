@@ -70,16 +70,16 @@ describe LoadNewsFeed do
     it "downloads and unzips file to folder provided if feed is reachable" do
       @lnf_obj.feed = Feed.find_by_url("https://www.aftercollege.com/exports/pixiboard.zip")
       @lnf_obj.download_feed('db')
-      expect(File.exists?(Rails.root.join('db', 'pixiboard.zip'))).to be_false
-      expect(File.exists?(Rails.root.join('db', 'pixiboard.xml'))).to be_true
+      expect(File.exists?(Rails.root.join('db', 'pixiboard.zip'))).to be_falsey
+      expect(File.exists?(Rails.root.join('db', 'pixiboard.xml'))).to be_truthy
       File.delete(Rails.root.join('db', 'pixiboard.xml'))
     end
 
     it "returns nil and doesn't save anything to folder provided if feed is unreachable" do
       @lnf_obj.feed = Feed.new(url: "https://www.aftercollege.com/exports/nil.zip")
       doc = @lnf_obj.download_feed('db')
-      expect(File.exists?(Rails.root.join('db', 'pixiboard.zip'))).to be_false
-      expect(File.exists?(Rails.root.join('db', 'pixiboard.xml'))).to be_false
+      expect(File.exists?(Rails.root.join('db', 'pixiboard.zip'))).to be_falsey
+      expect(File.exists?(Rails.root.join('db', 'pixiboard.xml'))).to be_falsey
     end
   end
 
@@ -110,22 +110,22 @@ describe LoadNewsFeed do
   describe "read_feeds" do
     it "calls add_listings on each LoadNewsFeed object" do
       feeds = [CourantFeed, StrangerFeed, SFExaminerFeed, SDReaderFeed, Sac365Feed]
-      feeds.each { |feed| feed.should_receive :add_listings }
+      feeds.each { |feed| expect(feed).to receive :add_listings }
       Delayed::Worker.delay_jobs = false
-      LoadNewsFeed.stub!(:add_listings)
+      allow(LoadNewsFeed).to receive(:add_listings)
       LoadNewsFeed.read_feeds
     end
   end
 
   describe "add_listings" do
     it "calls add_listing for each entry in feed" do
-      @lnf_obj.should_receive(:add_listing).exactly(@lnf_obj.item_xpath.count).times
+      expect(@lnf_obj).to receive(:add_listing).exactly(@lnf_obj.item_xpath.count).times
       @lnf_obj.add_listings
     end
 
     it "does not attempt to load events if feed is unreachable" do
       @lnf_obj.doc = nil
-      lambda { @lnf_obj.add_listings }.should_not raise_error
+      expect { @lnf_obj.add_listings }.not_to raise_error
     end
   end
 
@@ -512,24 +512,24 @@ describe LoadNewsFeed do
 
   describe "has_end_time_without_date?" do
     it "returns true for time" do
-      expect(@lnf_obj.has_end_time_without_date?("1 p.m.")).to be_true
+      expect(@lnf_obj.has_end_time_without_date?("1 p.m.")).to be_truthy
     end
 
     it "returns true for special times" do
-      expect(@lnf_obj.has_end_time_without_date?("noon")).to be_true
-      expect(@lnf_obj.has_end_time_without_date?("midnight")).to be_true
+      expect(@lnf_obj.has_end_time_without_date?("noon")).to be_truthy
+      expect(@lnf_obj.has_end_time_without_date?("midnight")).to be_truthy
     end
 
     it "returns false for time and date" do
-      expect(@lnf_obj.has_end_time_without_date?("noon April 1")).to be_false
+      expect(@lnf_obj.has_end_time_without_date?("noon April 1")).to be_falsey
     end
 
     it "returns false for date" do
-      expect(@lnf_obj.has_end_time_without_date?("April 1")).to be_false
+      expect(@lnf_obj.has_end_time_without_date?("April 1")).to be_falsey
     end
 
     it "returns false for invalid input" do
-      expect(@lnf_obj.has_end_time_without_date?("a")).to be_false
+      expect(@lnf_obj.has_end_time_without_date?("a")).to be_falsey
     end
   end
 

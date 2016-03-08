@@ -10,37 +10,37 @@ describe Rating do
    
   subject { @rating }
 
-  it { should respond_to(:comments) }
-  it { should respond_to(:user_id) }
-  it { should respond_to(:pixi_id) }
-  it { should respond_to(:seller_id) }
-  it { should respond_to(:value) }
+  it { is_expected.to respond_to(:comments) }
+  it { is_expected.to respond_to(:user_id) }
+  it { is_expected.to respond_to(:pixi_id) }
+  it { is_expected.to respond_to(:seller_id) }
+  it { is_expected.to respond_to(:value) }
   
-  it { should respond_to(:user) }
-  it { should respond_to(:listing) }
-  it { should respond_to(:seller) }
+  it { is_expected.to respond_to(:user) }
+  it { is_expected.to respond_to(:listing) }
+  it { is_expected.to respond_to(:seller) }
 
-  it { should belong_to(:user) }
-  it { should belong_to(:listing).with_foreign_key('pixi_id') }
+  it { is_expected.to belong_to(:user) }
+  it { is_expected.to belong_to(:listing).with_foreign_key('pixi_id') }
 
-  it { should validate_presence_of(:user_id) }
-  it { should validate_presence_of(:seller_id) }
-  it { should validate_presence_of(:pixi_id) }
-  it { should validate_presence_of(:value) }
+  it { is_expected.to validate_presence_of(:user_id) }
+  it { is_expected.to validate_presence_of(:seller_id) }
+  it { is_expected.to validate_presence_of(:pixi_id) }
+  it { is_expected.to validate_presence_of(:value) }
 
   describe "when user_id is empty" do
     before { @rating.user_id = "" }
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
   end
 
   describe "when seller_id is empty" do
     before { @rating.seller_id = "" }
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
   end
 
   describe "when value is empty" do
     before { @rating.value = nil }
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
   end
 
 end

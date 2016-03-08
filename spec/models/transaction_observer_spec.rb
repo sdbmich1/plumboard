@@ -4,15 +4,15 @@ describe TransactionObserver do
   let(:user) { create(:contact_user) }
 
   def process_post
-    @post = mock(Post)
+    @post = double(Post)
     @observer = TransactionObserver.instance
-    @observer.stub(:send_post).with(@model).and_return(@post)
+    allow(@observer).to receive(:send_post).with(@model).and_return(@post)
   end
 
   def update_addr model
-    @user = mock(User)
+    @user = double(User)
     @observer = TransactionObserver.instance
-    @observer.stub(:update_contact_info).with(model).and_return(@user)
+    allow(@observer).to receive(:update_contact_info).with(model).and_return(@user)
   end
 
   describe 'after_update' do
@@ -25,13 +25,13 @@ describe TransactionObserver do
     it 'updates contact info' do
       @txn.save!
       update_addr @txn
-      @txn.user.contacts[0].address.should == @txn.address 
+      expect(@txn.user.contacts[0].address).to eq(@txn.address) 
     end
 
     it 'should deliver the receipt' do
-      @user_mailer = mock(UserMailer)
-      UserMailer.stub(:delay).and_return(UserMailer)
-      UserMailer.should_receive(:send_transaction_receipt).with(@txn)
+      @user_mailer = double(UserMailer)
+      allow(UserMailer).to receive(:delay).and_return(UserMailer)
+      expect(UserMailer).to receive(:send_transaction_receipt).with(@txn)
       @txn.save!
     end
   end
@@ -48,19 +48,19 @@ describe TransactionObserver do
     it 'updates contact info' do
       @model.save!
       update_addr @model
-      @model.user.contacts[0].address.should == @model.address 
+      expect(@model.user.contacts[0].address).to eq(@model.address) 
     end
 
     it 'should add inv pixi points' do
       @model.save!
-      user.user_pixi_points.find_by_code('inv').code.should == 'inv'
+      expect(user.user_pixi_points.find_by_code('inv').code).to eq('inv')
     end
 
     it 'should deliver the receipt' do
       @model.status = 'approved'
-      @user_mailer = mock(UserMailer)
-      UserMailer.stub(:delay).and_return(UserMailer)
-      UserMailer.should_receive(:send_transaction_receipt).with(@model)
+      @user_mailer = double(UserMailer)
+      allow(UserMailer).to receive(:delay).and_return(UserMailer)
+      expect(UserMailer).to receive(:send_transaction_receipt).with(@model)
       @model.save!
     end
   end

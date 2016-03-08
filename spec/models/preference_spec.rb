@@ -15,20 +15,20 @@ describe Preference do
 
   subject { @preference }
 
-  it { should respond_to(:user_id) }
-  it { should respond_to(:zip) }
-  it { should respond_to(:email_msg_flg) }
-  it { should respond_to(:mobile_msg_flg) }
-  it { should respond_to(:buy_now_flg) }
-  it { should respond_to(:fulfillment_type_code) }
-  it { should respond_to(:sales_tax) }
-  it { should respond_to(:ship_amt) }
-  it { should belong_to(:user) }
-  it { should belong_to(:fulfillment_type).with_foreign_key('fulfillment_type_code') }
-  it { should validate_length_of(:zip).is_equal_to(5) }
-  it { should allow_value(41572).for(:zip) }
-  it { should_not allow_value(725).for(:zip) }
-  it { should_not allow_value('a725').for(:zip) }
+  it { is_expected.to respond_to(:user_id) }
+  it { is_expected.to respond_to(:zip) }
+  it { is_expected.to respond_to(:email_msg_flg) }
+  it { is_expected.to respond_to(:mobile_msg_flg) }
+  it { is_expected.to respond_to(:buy_now_flg) }
+  it { is_expected.to respond_to(:fulfillment_type_code) }
+  it { is_expected.to respond_to(:sales_tax) }
+  it { is_expected.to respond_to(:ship_amt) }
+  it { is_expected.to belong_to(:user) }
+  it { is_expected.to belong_to(:fulfillment_type).with_foreign_key('fulfillment_type_code') }
+  it { is_expected.to validate_length_of(:zip).is_equal_to(5) }
+  it { is_expected.to allow_value(41572).for(:zip) }
+  it { is_expected.not_to allow_value(725).for(:zip) }
+  it { is_expected.not_to allow_value('a725').for(:zip) }
 
   describe 'amount fields' do
     context 'amounts' do

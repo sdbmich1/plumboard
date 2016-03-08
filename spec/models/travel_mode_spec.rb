@@ -7,34 +7,34 @@ describe TravelMode do
 
   subject { @travel_mode }
 
-  it { should respond_to(:description) }
-  it { should respond_to(:status) }
-  it { should respond_to(:mode) }
-  it { should respond_to(:travel_type) }
-  it { should respond_to(:hide) }
-  it { should validate_presence_of(:description) }
-  it { should validate_presence_of(:status) }
-  it { should validate_presence_of(:mode) }
-  it { should validate_presence_of(:travel_type) }
+  it { is_expected.to respond_to(:description) }
+  it { is_expected.to respond_to(:status) }
+  it { is_expected.to respond_to(:mode) }
+  it { is_expected.to respond_to(:travel_type) }
+  it { is_expected.to respond_to(:hide) }
+  it { is_expected.to validate_presence_of(:description) }
+  it { is_expected.to validate_presence_of(:status) }
+  it { is_expected.to validate_presence_of(:mode) }
+  it { is_expected.to validate_presence_of(:travel_type) }
 
   describe "active travel_modes" do
     before { create(:travel_mode) }
-    it { TravelMode.active.should_not be_nil } 
+    it { expect(TravelMode.active).not_to be_nil } 
   end
 
   describe "inactive travel_modes" do
     before { create(:travel_mode, status: 'inactive') }
-    it { TravelMode.active.should be_empty } 
+    it { expect(TravelMode.active).to be_empty } 
   end
 
   describe "hidden travel_modes" do
     before { create(:travel_mode, mode: 'active', hide: 'yes') }
-    it { TravelMode.unhidden.should be_empty } 
+    it { expect(TravelMode.unhidden).to be_empty } 
   end
 
   describe "unhidden travel_modes" do
     before { create(:travel_mode, mode: 'active', hide: 'no') }
-    it { TravelMode.unhidden.should_not be_nil } 
+    it { expect(TravelMode.unhidden).not_to be_nil } 
   end
 
   describe 'descr_title' do

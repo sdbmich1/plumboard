@@ -6,7 +6,7 @@ describe StockImage do
   end
 
   subject { @stock_image }
-  it { should respond_to(:title) }
-  it { should respond_to(:category_type_code) }
-  it { should respond_to(:file_name) }
+  it { is_expected.to respond_to(:title) }
+  it { is_expected.to respond_to(:category_type_code) }
+  it { is_expected.to respond_to(:file_name) }
 end

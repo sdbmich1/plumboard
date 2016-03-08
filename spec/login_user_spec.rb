@@ -15,7 +15,7 @@ module LoginTestUser
   def log_in_test_user
     attr = { :username => "Foobar", :email => "doineedit@foobar.com" }
     #mock up an authentication in warden as per http://www.michaelharrison.ws/weblog/?p=349
-    request.env['warden'] = mock(Warden, :authenticate => mock_user(attr),
+    request.env['warden'] = double(Warden, :authenticate => mock_user(attr),
                                          :authenticate! => mock_user(attr),
                                          :authenticate? => mock_user(attr))
   end
@@ -23,7 +23,7 @@ module LoginTestUser
   def log_in_admin_user
     attr = { :username => "Foobar", :email => "doineedit@foobar.com" }
     #mock up an authentication in warden as per http://www.michaelharrison.ws/weblog/?p=349
-    request.env['warden'] = mock(Warden, :authenticate => mock_admin_user(attr),
+    request.env['warden'] = double(Warden, :authenticate => mock_admin_user(attr),
                                          :authenticate! => mock_admin_user(attr),
                                          :authenticate? => mock_admin_user(attr))
   end

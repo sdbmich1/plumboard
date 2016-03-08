@@ -9,102 +9,102 @@ describe User do
 
   describe "user methods", base: true do
     it_behaves_like "an user"
-    it { should respond_to(:password) }
-    it { should respond_to(:password_confirmation) }
-    it { should respond_to(:birth_date) }
-    it { should respond_to(:remember_me) }
-    it { should respond_to(:gender) }
-    it { should respond_to(:provider) }
-    it { should respond_to(:uid) }
-    it { should respond_to(:fb_user) }
-    it { should respond_to(:pictures) }
-    it { should respond_to(:status) }
-    it { should respond_to(:acct_token) }
-    it { should respond_to(:cust_token) }
-    it { should respond_to(:user_type_code) }
-    it { should respond_to(:business_name) }
-    it { should respond_to(:ref_id) }
-    it { should respond_to(:url) }
-    it { should respond_to(:ein) }
-    it { should respond_to(:ssn_last4) }
+    it { is_expected.to respond_to(:password) }
+    it { is_expected.to respond_to(:password_confirmation) }
+    it { is_expected.to respond_to(:birth_date) }
+    it { is_expected.to respond_to(:remember_me) }
+    it { is_expected.to respond_to(:gender) }
+    it { is_expected.to respond_to(:provider) }
+    it { is_expected.to respond_to(:uid) }
+    it { is_expected.to respond_to(:fb_user) }
+    it { is_expected.to respond_to(:pictures) }
+    it { is_expected.to respond_to(:status) }
+    it { is_expected.to respond_to(:acct_token) }
+    it { is_expected.to respond_to(:cust_token) }
+    it { is_expected.to respond_to(:user_type_code) }
+    it { is_expected.to respond_to(:business_name) }
+    it { is_expected.to respond_to(:ref_id) }
+    it { is_expected.to respond_to(:url) }
+    it { is_expected.to respond_to(:ein) }
+    it { is_expected.to respond_to(:ssn_last4) }
 
-    it { should respond_to(:interests) }
-    it { should respond_to(:contacts) }
-    it { should respond_to(:user_interests) }
-    it { should respond_to(:transactions) }
-    it { should respond_to(:user_pixi_points) }
-    it { should respond_to(:listings) } 
-    it { should respond_to(:temp_listings) } 
-    it { should respond_to(:active_listings) } 
-    it { should respond_to(:pixi_posted_listings) } 
-    it { should respond_to(:posts) } 
-    it { should respond_to(:incoming_posts) } 
-    it { should respond_to(:invoices) } 
-    it { should respond_to(:received_invoices) } 
-    it { should respond_to(:unpaid_received_invoices) } 
-    it { should respond_to(:unpaid_invoices) } 
-    it { should respond_to(:paid_invoices) } 
-    it { should respond_to(:bank_accounts) } 
-    it { should respond_to(:card_accounts) } 
-    it { should respond_to(:comments) }
-    it { should respond_to(:ratings) }
-    it { should respond_to(:inquiries) }
-    it { should respond_to(:seller_ratings) }
-    it { should respond_to(:pixi_posts) }
-    it { should respond_to(:active_pixi_posts) }
-    it { should respond_to(:pixan_pixi_posts) }
+    it { is_expected.to respond_to(:interests) }
+    it { is_expected.to respond_to(:contacts) }
+    it { is_expected.to respond_to(:user_interests) }
+    it { is_expected.to respond_to(:transactions) }
+    it { is_expected.to respond_to(:user_pixi_points) }
+    it { is_expected.to respond_to(:listings) } 
+    it { is_expected.to respond_to(:temp_listings) } 
+    it { is_expected.to respond_to(:active_listings) } 
+    it { is_expected.to respond_to(:pixi_posted_listings) } 
+    it { is_expected.to respond_to(:posts) } 
+    it { is_expected.to respond_to(:incoming_posts) } 
+    it { is_expected.to respond_to(:invoices) } 
+    it { is_expected.to respond_to(:received_invoices) } 
+    it { is_expected.to respond_to(:unpaid_received_invoices) } 
+    it { is_expected.to respond_to(:unpaid_invoices) } 
+    it { is_expected.to respond_to(:paid_invoices) } 
+    it { is_expected.to respond_to(:bank_accounts) } 
+    it { is_expected.to respond_to(:card_accounts) } 
+    it { is_expected.to respond_to(:comments) }
+    it { is_expected.to respond_to(:ratings) }
+    it { is_expected.to respond_to(:inquiries) }
+    it { is_expected.to respond_to(:seller_ratings) }
+    it { is_expected.to respond_to(:pixi_posts) }
+    it { is_expected.to respond_to(:active_pixi_posts) }
+    it { is_expected.to respond_to(:pixan_pixi_posts) }
 
-    it { should have_many(:received_conversations).class_name('Conversation').with_foreign_key('recipient_id') }
-    it { should have_many(:sent_conversations).class_name('Conversation').with_foreign_key('user_id') }
-    it { should have_many(:active_listings).class_name('Listing').with_foreign_key('seller_id')
+    it { is_expected.to have_many(:received_conversations).class_name('Conversation').with_foreign_key('recipient_id') }
+    it { is_expected.to have_many(:sent_conversations).class_name('Conversation').with_foreign_key('user_id') }
+    it { is_expected.to have_many(:active_listings).class_name('Listing').with_foreign_key('seller_id')
       .conditions("status='active' AND end_date >= curdate()") }
-    it { should have_many(:pixi_posted_listings).class_name('Listing').with_foreign_key('seller_id')
+    it { is_expected.to have_many(:pixi_posted_listings).class_name('Listing').with_foreign_key('seller_id')
       .conditions("status='active' AND end_date >= curdate() AND pixan_id IS NOT NULL") }
-    it { should have_many(:purchased_listings).class_name('Listing').with_foreign_key('buyer_id').conditions(:status=>"sold") }
-    it { should respond_to(:pixan_pixi_posts) }
-    it { should have_many(:pixan_pixi_posts).class_name('PixiPost').with_foreign_key('pixan_id') }
-    it { should respond_to(:pixi_likes) }
-    it { should have_many(:pixi_likes) }
-    it { should respond_to(:saved_listings) }
-    it { should have_many(:saved_listings) }
-    it { should respond_to(:pixi_wants) }
-    it { should have_many(:pixi_wants) }
-    it { should respond_to(:pixi_asks) }
-    it { should have_many(:pixi_asks) }
-    it { should respond_to(:preferences) }
-    it { should have_many(:ship_addresses) }
-    it { should have_many(:preferences).dependent(:destroy) }
-    it { should accept_nested_attributes_for(:preferences).allow_destroy(true) }
-    it { should belong_to(:user_type).with_foreign_key('user_type_code') }
-    it { should have_many(:active_bank_accounts).class_name('BankAccount').conditions(:status=>"active") }
-    it { should have_many(:active_card_accounts).class_name('CardAccount').conditions(:status=>"active") }
+    it { is_expected.to have_many(:purchased_listings).class_name('Listing').with_foreign_key('buyer_id').conditions(:status=>"sold") }
+    it { is_expected.to respond_to(:pixan_pixi_posts) }
+    it { is_expected.to have_many(:pixan_pixi_posts).class_name('PixiPost').with_foreign_key('pixan_id') }
+    it { is_expected.to respond_to(:pixi_likes) }
+    it { is_expected.to have_many(:pixi_likes) }
+    it { is_expected.to respond_to(:saved_listings) }
+    it { is_expected.to have_many(:saved_listings) }
+    it { is_expected.to respond_to(:pixi_wants) }
+    it { is_expected.to have_many(:pixi_wants) }
+    it { is_expected.to respond_to(:pixi_asks) }
+    it { is_expected.to have_many(:pixi_asks) }
+    it { is_expected.to respond_to(:preferences) }
+    it { is_expected.to have_many(:ship_addresses) }
+    it { is_expected.to have_many(:preferences).dependent(:destroy) }
+    it { is_expected.to accept_nested_attributes_for(:preferences).allow_destroy(true) }
+    it { is_expected.to belong_to(:user_type).with_foreign_key('user_type_code') }
+    it { is_expected.to have_many(:active_bank_accounts).class_name('BankAccount').conditions(:status=>"active") }
+    it { is_expected.to have_many(:active_card_accounts).class_name('CardAccount').conditions(:status=>"active") }
 
-    it { should respond_to(:unpaid_invoice_count) } 
-    it { should respond_to(:has_unpaid_invoices?) } 
-    it { should respond_to(:has_address?) } 
-    it { should respond_to(:has_prefs?) } 
-    it { should respond_to(:has_pixis?) } 
-    it { should respond_to(:has_bank_account?) } 
-    it { should respond_to(:has_card_account?) } 
+    it { is_expected.to respond_to(:unpaid_invoice_count) } 
+    it { is_expected.to respond_to(:has_unpaid_invoices?) } 
+    it { is_expected.to respond_to(:has_address?) } 
+    it { is_expected.to respond_to(:has_prefs?) } 
+    it { is_expected.to respond_to(:has_pixis?) } 
+    it { is_expected.to respond_to(:has_bank_account?) } 
+    it { is_expected.to respond_to(:has_card_account?) } 
 
-    it { should validate_presence_of(:gender) }
-    it { should validate_presence_of(:birth_date) }
+    it { is_expected.to validate_presence_of(:gender) }
+    it { is_expected.to validate_presence_of(:birth_date) }
 #    it { should validate_presence_of(:url).on(:create) }
 #    it { should validate_uniqueness_of(:url) }
 #    it { should validate_length_of(:url).is_at_least(2) }
 #    it { should allow_value('Tom').for(:url) }
 #    it { should_not allow_value("a").for(:url) }
-  it { should allow_value(457211111).for(:ein) }
-  it { should_not allow_value(725).for(:ein) }
-  it { should_not allow_value('a725').for(:ein) }
-  it { should allow_value(4572).for(:ssn_last4) }
-  it { should_not allow_value(725).for(:ssn_last4) }
-  it { should_not allow_value('a725').for(:ssn_last4) }
+  it { is_expected.to allow_value(457211111).for(:ein) }
+  it { is_expected.not_to allow_value(725).for(:ein) }
+  it { is_expected.not_to allow_value('a725').for(:ein) }
+  it { is_expected.to allow_value(4572).for(:ssn_last4) }
+  it { is_expected.not_to allow_value(725).for(:ssn_last4) }
+  it { is_expected.not_to allow_value('a725').for(:ssn_last4) }
 
-    it { should have_many(:favorite_sellers) }
-    it { should have_many(:sellers).conditions("favorite_sellers.status"=>"active") }
-    it { should have_many(:inverse_favorite_sellers).class_name('FavoriteSeller').with_foreign_key('seller_id') }
-    it { should have_many(:followers) }
+    it { is_expected.to have_many(:favorite_sellers) }
+    it { is_expected.to have_many(:sellers).conditions("favorite_sellers.status"=>"active") }
+    it { is_expected.to have_many(:inverse_favorite_sellers).class_name('FavoriteSeller').with_foreign_key('seller_id') }
+    it { is_expected.to have_many(:followers) }
   end
 
   describe 'name' do
@@ -113,26 +113,26 @@ describe User do
     end
 
     it "returns a user's full name as a string", run: true do
-      @usr.name.should == "John Doe"
+      expect(@usr.name).to eq("John Doe")
     end
 
     it "does not return a user's invalid full name as a string", run: true do
-      @usr.name.should_not == "John Smith"
+      expect(@usr.name).not_to eq("John Smith")
     end
 
     it "does not return a user's invalid full name when a business" do
       @usr = build :pixi_user, first_name: 'John', last_name: 'Smith', birth_date: nil, gender: nil, user_type_code: 'BUS', business_name: 'Company A'
-      @usr.name.should_not == "John Smith"
+      expect(@usr.name).not_to eq("John Smith")
     end
 
     it "returns a business name when a business" do
       @usr = build :pixi_user, first_name: 'John', last_name: 'Smith', birth_date: nil, gender: nil, user_type_code: 'BUS', business_name: 'Home + Gifts'
-      @usr.name.should == "Home + Gifts"
+      expect(@usr.name).to eq("Home + Gifts")
     end
 
     it "returns a user's abbr name as a string", run: true do
-      @usr.abbr_name.should == "John D"
-      @usr.abbr_name.should_not == "John Doe"
+      expect(@usr.abbr_name).to eq("John D")
+      expect(@usr.abbr_name).not_to eq("John Doe")
     end
   end
 
@@ -142,13 +142,13 @@ describe User do
     end
 
     it "has many contacts" do 
-      @user.contacts.should include(@sr)
+      expect(@user.contacts).to include(@sr)
     end
 
     it "should destroy associated contacts" do
       @user.destroy
       [@sr].each do |s|
-         Contact.find_by_id(s.id).should be_nil
+         expect(Contact.find_by_id(s.id)).to be_nil
        end
     end 
   end  
@@ -159,13 +159,13 @@ describe User do
     end
 
     it "has many temp_listings" do 
-      @user.temp_listings.should include(@sr)
+      expect(@user.temp_listings).to include(@sr)
     end
 
     it "should destroy associated temp_listings" do
       @user.destroy
       [@sr].each do |s|
-         TempListing.find_by_id(s.id).should be_nil
+         expect(TempListing.find_by_id(s.id)).to be_nil
        end
     end 
   end  
@@ -175,11 +175,11 @@ describe User do
     let(:pixi_user) { build :pixi_user }
 
     it "adds a picture" do
-      user.with_picture.pictures.size.should == 1
+      expect(user.with_picture.pictures.size).to eq(1)
     end
 
     it "does not add a picture" do
-      pixi_user.with_picture.pictures.size.should == 1
+      expect(pixi_user.with_picture.pictures.size).to eq(1)
     end
   end  
 
@@ -189,13 +189,13 @@ describe User do
     end
 
     it "has many pictures" do 
-      @user.pictures.should include(@sr)
+      expect(@user.pictures).to include(@sr)
     end
 
     it "destroys associated pictures" do
       @user.destroy
       [@sr].each do |s|
-         Picture.find_by_id(s.id).should be_nil
+         expect(Picture.find_by_id(s.id)).to be_nil
        end
     end 
   end  
@@ -214,7 +214,7 @@ describe User do
     it "does not save w/o at least one picture" do
       picture = user.pictures.build
       user.save
-      user.should_not be_valid
+      expect(user).not_to be_valid
     end
 
     it "saves with at least one picture" do
@@ -222,7 +222,7 @@ describe User do
       picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
       user.home_zip = '94108'
       user.save
-      user.should be_valid
+      expect(user).to be_valid
     end
   end
 
@@ -235,25 +235,25 @@ describe User do
 
     it "does not save w/o zip" do
       user.save
-      user.should_not be_valid
+      expect(user).not_to be_valid
     end
 
     it "does not save with invalid zip" do
       user.home_zip = '99999'
       user.save
-      user.should_not be_valid
+      expect(user).not_to be_valid
     end
 
     it "does not save zip with invalid length" do
       user.home_zip = '12'
       user.save
-      user.should_not be_valid
+      expect(user).not_to be_valid
     end
 
     it "saves with zip" do
       user.home_zip = '94108'
       user.save
-      user.should be_valid
+      expect(user).to be_valid
     end
   end
 
@@ -261,109 +261,109 @@ describe User do
     it "returns pixis" do
       @listing = create(:listing, seller_id: @user.id)
       @user.listings.create attributes_for(:listing, status: 'active')
-      @user.pixis.should_not be_empty
-      @user.has_pixis?.should be_true
+      expect(@user.pixis).not_to be_empty
+      expect(@user.has_pixis?).to be_truthy
     end
 
     it "does not return pixis" do
       usr = create :contact_user
-      usr.pixis.should be_empty
-      @user.has_pixis?.should_not be_true
+      expect(usr.pixis).to be_empty
+      expect(@user.has_pixis?).not_to be_truthy
     end
   end
 
   describe 'sold pixis' do
     it "returns pixis" do
       @listing = create(:listing, seller_id: @user.id, status: 'sold')
-      @user.sold_pixis.should_not be_empty
+      expect(@user.sold_pixis).not_to be_empty
     end
 
     it "does not return pixis" do
       usr = create :contact_user
-      usr.sold_pixis.should be_empty
+      expect(usr.sold_pixis).to be_empty
     end
   end
 
   describe 'new pixis' do
     it "returns new pixis" do
       @temp_listing = create(:temp_listing, seller_id: @user.id)
-      @user.new_pixis.should_not be_empty
+      expect(@user.new_pixis).not_to be_empty
     end
 
     it "returns denied pixis" do
       @temp_listing = create(:temp_listing, seller_id: @user.id, status: 'denied')
-      @user.new_pixis.should_not be_empty
+      expect(@user.new_pixis).not_to be_empty
     end
 
     it "does not return new pixis" do
       @temp_listing = create(:temp_listing, seller_id: @user.id, status: 'pending')
-      @user.new_pixis.should be_empty
+      expect(@user.new_pixis).to be_empty
     end
   end
 
   describe 'pending pixis' do
     it "returns pending pixis" do
       @temp_listing = create(:temp_listing, seller_id: @user.id, status: 'pending')
-      @user.pending_pixis.should_not be_empty
+      expect(@user.pending_pixis).not_to be_empty
     end
 
     it "does not return denied pixis" do
       @temp_listing = create(:temp_listing, seller_id: @user.id, status: 'denied')
-      @user.pending_pixis.should be_empty
+      expect(@user.pending_pixis).to be_empty
     end
 
     it "does not return pending pixis" do
       @temp_listing = create(:temp_listing, seller_id: @user.id)
-      @user.pending_pixis.should be_empty
+      expect(@user.pending_pixis).to be_empty
     end
   end
 
   describe 'bank_account' do
     it "has account" do
       @user.bank_accounts.create attributes_for(:bank_account, status: 'active')
-      @user.has_bank_account?.should be_true
+      expect(@user.has_bank_account?).to be_truthy
     end
 
     it "does not have account" do
-      @user.has_bank_account?.should_not be_true
+      expect(@user.has_bank_account?).not_to be_truthy
     end
   end
 
   describe 'card_account' do
     it "has account" do
       @user.card_accounts.create attributes_for(:card_account, status: 'active')
-      @user.has_card_account?.should be_true
+      expect(@user.has_card_account?).to be_truthy
     end
 
     it "does not have account" do
-      @user.has_card_account?.should_not be_true
+      expect(@user.has_card_account?).not_to be_truthy
     end
 
     it "has valid card" do
       @user.card_accounts.create attributes_for(:card_account, status: 'active')
-      @user.get_valid_card.should be_true
+      expect(@user.get_valid_card).to be_truthy
     end
 
     it "has valid card & expired card" do
       @user.card_accounts.create attributes_for(:card_account, status: 'active')
       @user.card_accounts.create attributes_for(:card_account, status: 'active', expiration_year: Date.today.year, 
         expiration_month: Date.today.month-1)
-      @user.get_valid_card.should be_true
+      expect(@user.get_valid_card).to be_truthy
     end
 
     it "has invalid card - old year" do
       @user.card_accounts.create attributes_for(:card_account, status: 'active', expiration_year: Date.today.year-1)
-      @user.get_valid_card.should_not be_true
+      expect(@user.get_valid_card).not_to be_truthy
     end
 
     it "has invalid card - same year, old month" do
       @user.card_accounts.create attributes_for(:card_account, status: 'active', expiration_year: Date.today.year, 
         expiration_month: Date.today.month-1)
-      @user.get_valid_card.should_not be_true
+      expect(@user.get_valid_card).not_to be_truthy
     end
 
     it "does not have valid card" do
-      @user.get_valid_card.should_not be_true
+      expect(@user.get_valid_card).not_to be_truthy
     end
   end
 
@@ -376,11 +376,11 @@ describe User do
 	                email: 'bob.smith@test.com', birthday: "01/03/1989", gender: 'male' } } }) }
 
     it 'should return a user' do
-      User.find_for_facebook_oauth(auth).email.should == 'bob.smith@test.com'
+      expect(User.find_for_facebook_oauth(auth).email).to eq('bob.smith@test.com')
     end
 
     it 'should return a picture' do
-      User.picture_from_url(user, auth).should_not be_nil
+      expect(User.picture_from_url(user, auth)).not_to be_nil
     end
   end
 
@@ -388,21 +388,21 @@ describe User do
     let(:user) { build :user }
 
     it 'should valid password' do
-      user.password_required?.should be_true  
+      expect(user.password_required?).to be_truthy  
     end
 
     it 'should confirm password' do
-      user.confirmation_required?.should be_true  
+      expect(user.confirmation_required?).to be_truthy  
     end
 
     it 'should not valid password' do
       user.provider = 'facebook'
-      user.password_required?.should_not be_true  
+      expect(user.password_required?).not_to be_truthy  
     end
 
     it 'should not confirm password' do
       user.provider = 'facebook'
-      user.confirmation_required?.should_not be_true  
+      expect(user.confirmation_required?).not_to be_truthy  
     end
   end
 
@@ -410,39 +410,39 @@ describe User do
     let(:user) { build :user }
 
     it "should not be true" do
-      user.pic_with_name.should_not be_true
+      expect(user.pic_with_name).not_to be_truthy
     end
 
     it "should be true" do
-      @user.pic_with_name.should be_true
+      expect(@user.pic_with_name).to be_truthy
     end
   end
 
   describe "status" do 
-    it { @user.active?.should be_true }
+    it { expect(@user.active?).to be_truthy }
 
     it 'should not be active' do
       user = build :user, status: 'inactive'
-      user.active?.should_not be_true
+      expect(user.active?).not_to be_truthy
     end
 
     it 'should be inactive' do
-      @user.deactivate.status.should_not == 'active'
+      expect(@user.deactivate.status).not_to eq('active')
     end
 
     it 'should be inactive' do
-      @user.deactivate.status.should == 'inactive'
+      expect(@user.deactivate.status).to eq('inactive')
     end
   end
 
   describe 'has_address?' do
     it 'should return true' do
-      @user.has_address?.should be_true
+      expect(@user.has_address?).to be_truthy
     end
 
     it 'should not return true' do
       user = build :user
-      user.has_address?.should_not be_true
+      expect(user.has_address?).not_to be_truthy
     end
   end
 
@@ -450,101 +450,101 @@ describe User do
     it 'should return true' do
       user = create :business_user
       user.preferences.first.update_attributes(fulfillment_type_code: 'A', ship_amt: 9.99, sales_tax: 8.25)
-      expect(user.reload.has_prefs?).to be_true
+      expect(user.reload.has_prefs?).to be_truthy
     end
 
     it 'should not return true' do
       user = build :user
-      user.has_prefs?.should_not be_true
+      expect(user.has_prefs?).not_to be_truthy
     end
   end
 
   describe 'new_user?' do
     it 'should return true' do
       @user.sign_in_count = 1
-      @user.new_user?.should be_true
+      expect(@user.new_user?).to be_truthy
     end
 
     it 'should not return true' do
       user = build :user
-      user.new_user?.should_not be_true
+      expect(user.new_user?).not_to be_truthy
     end
   end
 
   describe 'convert time' do
     it 'should return a date' do
-      User.convert_date("01/13/1989").should == "13/01/1989".to_date
+      expect(User.convert_date("01/13/1989")).to eq("13/01/1989".to_date)
     end
 
     it 'should not return a date' do
-      User.convert_date(nil).should_not == "13/01/1989".to_date
+      expect(User.convert_date(nil)).not_to eq("13/01/1989".to_date)
     end
   end
 
   describe 'birth_dt' do
     it 'should return a date' do
-      @user.birth_dt.should == "04/23/1967"
+      expect(@user.birth_dt).to eq("04/23/1967")
     end
 
     it 'should not return a date' do
       @user.birth_date = nil
-      @user.birth_dt.should_not == "04/23/1967"
+      expect(@user.birth_dt).not_to eq("04/23/1967")
     end
   end
 
   describe 'nice_date' do
     it 'returns a nice date' do
-      @user.nice_date(@user.created_at).should == @user.created_at.utc.getlocal.strftime('%m/%d/%Y %l:%M %p')
+      expect(@user.nice_date(@user.created_at)).to eq(@user.created_at.utc.getlocal.strftime('%m/%d/%Y %l:%M %p'))
     end
 
     it 'does not return a nice date' do
       user = build :pixi_user
-      user.nice_date(user.created_at).should be_nil
+      expect(user.nice_date(user.created_at)).to be_nil
     end
   end
 
   describe 'is_pixter?' do
-    it { @user.is_pixter?.should be_false }
+    it { expect(@user.is_pixter?).to be_falsey }
 
     it 'is true' do
       @pixter = create(:pixi_user, user_type_code: 'PT') 
-      expect(@pixter.is_pixter?).to be_true
+      expect(@pixter.is_pixter?).to be_truthy
     end
   end
 
   describe 'is_member?' do
-    it { @user.is_member?.should be_true }
+    it { expect(@user.is_member?).to be_truthy }
 
     it 'is false' do
       @pixter = create(:pixi_user, user_type_code: 'PT') 
-      expect(@pixter.is_member?).to be_false
+      expect(@pixter.is_member?).to be_falsey
     end
   end
 
   describe 'is_business?' do
-    it { @user.is_business?.should_not be_true }
+    it { expect(@user.is_business?).not_to be_truthy }
 
     it 'is a business' do
       @company = FactoryGirl.build(:pixi_user, user_type_code: 'BUS') 
-      expect(@company.is_business?).to be_true
+      expect(@company.is_business?).to be_truthy
     end
   end
 
   describe 'is_support?' do
-    it { @user.is_support?.should be_false }
+    it { expect(@user.is_support?).to be_falsey }
 
     it 'is true' do
       @support = create(:pixi_user, user_type_code: 'SP') 
-      expect(@support.is_support?).to be_true
+      expect(@support.is_support?).to be_truthy
     end
   end
 
   describe 'is_admin?' do
-    it { @user.is_admin?.should be_false }
+    it { expect(@user.is_admin?).to be_falsey }
 
     it 'is true' do
       @admin = create(:pixi_user, user_type_code: 'AD') 
-      expect(@admin.is_admin?).to be_true
+      expect(@admin.is_admin?).to be_truthy
     end
   end
 
@@ -572,23 +572,23 @@ describe User do
     end
 
     it 'should not have unpaid invoices' do
-      @user.unpaid_invoices.should be_empty
+      expect(@user.unpaid_invoices).to be_empty
     end
 
     it 'should have only unpaid invoices' do
       @invoice = @user.invoices.create attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id, status: 'unpaid')
-      @user.unpaid_invoices.should_not be_empty
-      @buyer.paid_invoices.should be_empty
-      @buyer.has_unpaid_invoices?.should be_true 
+      expect(@user.unpaid_invoices).not_to be_empty
+      expect(@buyer.paid_invoices).to be_empty
+      expect(@buyer.has_unpaid_invoices?).to be_truthy 
     end
 
     it 'should have paid invoices' do
       @account = @user.bank_accounts.create attributes_for :bank_account
       @invoice = @user.invoices.create attributes_for(:invoice, pixi_id: @listing.pixi_id, buyer_id: @buyer.id, 
         bank_account_id: @account.id, status: 'paid')
-      @user.paid_invoices.should_not be_empty
-      @user.unpaid_invoices.should be_empty
-      @buyer.has_unpaid_invoices?.should_not be_true 
+      expect(@user.paid_invoices).not_to be_empty
+      expect(@user.unpaid_invoices).to be_empty
+      expect(@buyer.has_unpaid_invoices?).not_to be_truthy 
     end
   end
 
@@ -638,22 +638,22 @@ describe User do
   describe 'async_send_notifications' do
 
     def send_mailer usr
-      @mailer = mock(UserMailer)
-      UserMailer.stub!(:delay).and_return(@mailer)
-      @mailer.stub(:welcome_email).with(usr).and_return(@mailer)
+      @mailer = double(UserMailer)
+      allow(UserMailer).to receive(:delay).and_return(@mailer)
+      allow(@mailer).to receive(:welcome_email).with(usr).and_return(@mailer)
     end
 
     it 'adds dr pixi points' do
       @user = create :pixi_user 
       expect(@user.user_pixi_points.count).not_to eq(0)
-      @user.user_pixi_points.find_by_code('dr').code.should == 'dr'
-      @user.user_pixi_points.find_by_code('fr').should be_nil
+      expect(@user.user_pixi_points.find_by_code('dr').code).to eq('dr')
+      expect(@user.user_pixi_points.find_by_code('fr')).to be_nil
     end
 
     it 'adds fr pixi points' do
       @pixi_user = create :pixi_user, uid: '11111' 
-      @pixi_user.user_pixi_points.find_by_code('fr').code.should == 'fr'
-      @pixi_user.user_pixi_points.find_by_code('dr').should be_nil
+      expect(@pixi_user.user_pixi_points.find_by_code('fr').code).to eq('fr')
+      expect(@pixi_user.user_pixi_points.find_by_code('dr')).to be_nil
     end
 
     it 'delivers the welcome message' do
@@ -676,16 +676,16 @@ describe User do
     end
 
     it "should have the right posts in the right order" do
-      @user.posts.should == [newer_post, older_post]
+      expect(@user.posts).to eq([newer_post, older_post])
     end
 
     it "should destroy associated posts" do
       posts = @user.posts.dup
       @user.destroy
-      posts.should_not be_empty
+      expect(posts).not_to be_empty
 
       posts.each do |post|
-        Post.find_by_id(post.id).should be_nil
+        expect(Post.find_by_id(post.id)).to be_nil
       end
     end
   end
@@ -693,19 +693,19 @@ describe User do
   describe "exporting as CSV" do
     it "exports data as CSV file" do
       csv_string = @user.as_csv
-      csv_string.keys.should =~ ["Name", "Email", "Type", "Zip", "Birth Date", "Enrolled"]
-      csv_string.values.should =~ [@user.name, @user.email, @user.type_descr, @user.home_zip,
-                                   @user.birth_dt, @user.nice_date(@user.created_at)]
+      expect(csv_string.keys).to match_array(["Name", "Email", "Type", "Zip", "Birth Date", "Enrolled"])
+      expect(csv_string.values).to match_array([@user.name, @user.email, @user.type_descr, @user.home_zip,
+                                   @user.birth_dt, @user.nice_date(@user.created_at)])
       @user.current_sign_in_at = Time.now
       csv_string = @user.as_csv
-      csv_string.keys.should include "Last Login"
-      csv_string.values.should include @user.nice_date(@user.current_sign_in_at)
+      expect(csv_string.keys).to include "Last Login"
+      expect(csv_string.values).to include @user.nice_date(@user.current_sign_in_at)
     end
 
     it "does not export any user data" do
       usr = build :user
       csv = usr.as_csv
-      csv.values.should include(nil)
+      expect(csv.values).to include(nil)
     end
   end
 
@@ -746,24 +746,24 @@ describe User do
       @user = create :admin
       @user.user_type_code = 'AD'
       @user.save!
-      expect(@user.is_admin?).to be_true
+      expect(@user.is_admin?).to be_truthy
     end
 
     it "returns false for non-admin" do
       @user = create :pixi_user
-      expect(@user.is_admin?).to be_false
+      expect(@user.is_admin?).to be_falsey
     end
   end
 
   describe "is_business?" do
     it "returns true for business" do
       @user = create :pixi_user, birth_date: nil, gender: nil, user_type_code: 'BUS', business_name: 'Company A'
-      expect(@user.is_business?).to be_true
+      expect(@user.is_business?).to be_truthy
     end
 
     it "returns false for non-business" do
       @user = create :pixi_user
-      expect(@user.is_business?).to be_false
+      expect(@user.is_business?).to be_falsey
     end
   end
 
@@ -808,15 +808,15 @@ describe User do
       @test_user = build :pixi_user, guest: true
     end
 
-    it { expect(@user.guest?).not_to be_true }
+    it { expect(@user.guest?).not_to be_truthy }
     it 'returns true', run: true do
-      expect(@test_user.guest?).to be_true
+      expect(@test_user.guest?).to be_truthy
     end
   end
 
   describe 'new_guest' do
     it { expect(User.new_guest.status).to eq 'inactive' }
-    it { expect(User.new_guest.guest?).to be_true }
+    it { expect(User.new_guest.guest?).to be_truthy }
     it 'saves guest user' do
       user = User.new_guest
       expect(User.where(status: 'inactive').count).to eq 1
@@ -854,7 +854,7 @@ describe User do
   end
 
   describe "user status" do
-    it { User.active.should_not be_nil }
+    it { expect(User.active).not_to be_nil }
     it 'have no active users' do
       @user.update_attribute(:status, 'inactive')
       expect(User.active).to be_blank
@@ -939,11 +939,11 @@ describe User do
     end
 
     it "returns users that are following the seller" do
-      expect(@seller.is_followed?(@user)).to be_true
+      expect(@seller.is_followed?(@user)).to be_truthy
     end
 
     it "does not return users that aren't following the seller" do
-      expect(@seller.is_followed?(@user2)).to be_false
+      expect(@seller.is_followed?(@user2)).to be_falsey
     end
   end
 
@@ -955,22 +955,22 @@ describe User do
     end
 
     it "returns users that are following the seller" do
-      expect(@user.is_following?(@seller)).to be_true
+      expect(@user.is_following?(@seller)).to be_truthy
     end
 
     it "does not return users that aren't following the seller" do
-      expect(@user.is_following?(@seller2)).to be_false
+      expect(@user.is_following?(@seller2)).to be_falsey
     end
   end
 
   describe "get_by_ftype" do
     it "calls get_by_seller if ftype='seller'" do
-      User.should_receive :get_by_seller
+      expect(User).to receive :get_by_seller
       User.get_by_ftype('seller', nil, 'active')
     end
 
     it "calls get_by_user otherwise" do
-      User.should_receive :get_by_user
+      expect(User).to receive :get_by_user
       User.get_by_ftype('buyer', nil, 'active')
     end
   end
@@ -1088,12 +1088,12 @@ describe User do
   describe "has_ship_address?" do
     it "returns true if ShipAddress record exists" do
       @user.ship_addresses.create
-      expect(@user.has_ship_address?).to be_true
+      expect(@user.has_ship_address?).to be_truthy
     end
 
     it "returns false otherwise" do
       @user.ship_addresses.delete_all
-      expect(@user.has_ship_address?).to be_false
+      expect(@user.has_ship_address?).to be_falsey
     end
   end
 

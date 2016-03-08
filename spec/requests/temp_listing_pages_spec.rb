@@ -62,14 +62,14 @@ feature "TempListings" do
   end
 
   def build_page_content val=0
-    page.should have_content "Build Your Pixi"
+    expect(page).to have_content "Build Your Pixi"
     @loc = @site.id
     stub_const("MIN_PIXI_COUNT", val)
     expect(MIN_PIXI_COUNT).to eq(val)
-    page.should have_selector('.sm-thumb')
-    page.should have_selector('#photo')
-    page.should have_selector('#pixi-cancel-btn', href: local_listings_path(loc: @loc))
-    page.should have_button 'Next'
+    expect(page).to have_selector('.sm-thumb')
+    expect(page).to have_selector('#photo')
+    expect(page).to have_selector('#pixi-cancel-btn', href: local_listings_path(loc: @loc))
+    expect(page).to have_button 'Next'
   end
 
   def set_site_id sid, jsFlg=false
@@ -128,8 +128,8 @@ feature "TempListings" do
       add_photo val, prcFlg, imgFlg, descr, sFlg
       click_button submit; sleep 3
     }.to change(TempListing,:count).by(1)
-    page.should have_content "Guitar For Sale"
-    page.should have_content 'Review Your Pixi'
+    expect(page).to have_content "Guitar For Sale"
+    expect(page).to have_content 'Review Your Pixi'
   end
 
   describe "login sets session" do
@@ -143,17 +143,17 @@ feature "TempListings" do
     end
     it 'assigns temp_listing to signed in user' do
       user_login user
-      page.should have_content 'Review Your Pixi'
-      page.should have_content @temp.pixi_id
-      page.should have_content user.first_name
+      expect(page).to have_content 'Review Your Pixi'
+      expect(page).to have_content @temp.pixi_id
+      expect(page).to have_content user.first_name
       expect(@temp.reload.seller_id).to eq user.id
     end
 
     it "creates a listing and signs in w/ FB", js: true do
       omniauth
       click_on "fb-btn"
-      page.should have_content 'Review Your Pixi'
-      page.should have_content 'Bob'
+      expect(page).to have_content 'Review Your Pixi'
+      expect(page).to have_content 'Bob'
     end
   end
 
@@ -214,7 +214,7 @@ feature "TempListings" do
       it "does not create a listing w/o start date" do
         expect { 
 	  add_photo 'Events', true, true
-          page.should have_selector('#et_code', visible: true) 
+          expect(page).to have_selector('#et_code', visible: true) 
           select('Performance', :from => 'et_code'); sleep 0.5
 	  click_button submit }.not_to change(TempListing, :count)
       end
@@ -253,7 +253,7 @@ feature "TempListings" do
         expect { 
 	  add_photo 'Foo Bar', true, true
 	  click_button submit }.not_to change(TempListing, :count)
-	  page.should have_content "Must have at least one picture"
+	  expect(page).to have_content "Must have at least one picture"
       end
     end
 
@@ -263,8 +263,8 @@ feature "TempListings" do
 	  add_photo 'Foo Bar', false
           select('Used', :from => 'cond-type-code')
 	  click_button submit; sleep 3
-          page.should have_content 'Review Your Pixi'
-          page.should have_content "Guitar for Sale" 
+          expect(page).to have_content 'Review Your Pixi'
+          expect(page).to have_content "Guitar for Sale" 
 	}.to change(TempListing,:count).by(1)
       end	      
 
@@ -367,10 +367,10 @@ feature "TempListings" do
       @loc = @site.id
       stub_const("MIN_PIXI_COUNT", 0)
       expect(MIN_PIXI_COUNT).to eq(0)
-      page.should have_selector('.sm-thumb')
-      page.should have_selector('#photo')
-      page.should have_selector('#pixi-cancel-btn', href: categories_path(loc: @loc))
-      page.should have_button 'Next'
+      expect(page).to have_selector('.sm-thumb')
+      expect(page).to have_selector('#photo')
+      expect(page).to have_selector('#pixi-cancel-btn', href: categories_path(loc: @loc))
+      expect(page).to have_button 'Next'
     end
 
     it 'shows content w local listings home' do
@@ -378,11 +378,11 @@ feature "TempListings" do
       create(:listing, title: "Guitar", description: "Lessons", seller_id: user.id, site_id: @loc ) 
       stub_const("MIN_PIXI_COUNT", 500)
       expect(MIN_PIXI_COUNT).to eq(500)
-      page.should have_selector('.sm-thumb')
-      page.should have_selector('#photo')
+      expect(page).to have_selector('.sm-thumb')
+      expect(page).to have_selector('#photo')
       expect(Listing.active.count).not_to eq(0)
-      page.should have_selector('#pixi-cancel-btn', href: local_listings_path(loc: @loc))
-      page.should have_button 'Next'
+      expect(page).to have_selector('#pixi-cancel-btn', href: local_listings_path(loc: @loc))
+      expect(page).to have_button 'Next'
     end
 
     it "empty title should not change a listing" do
@@ -390,7 +390,7 @@ feature "TempListings" do
 	      fill_in 'Title', with: nil
 	      click_button submit 
 	}.not_to change(TempListing, :count)
-      page.should have_content 'Build Pixi'
+      expect(page).to have_content 'Build Pixi'
     end
 
     it "empty description should not change a listing" do
@@ -398,7 +398,7 @@ feature "TempListings" do
 	      fill_in 'Description', with: nil
 	      click_button submit 
 	}.not_to change(TempListing, :count)
-      page.should have_content 'Build Pixi'
+      expect(page).to have_content 'Build Pixi'
     end
 
     it "invalid price should not change a listing" do
@@ -406,7 +406,7 @@ feature "TempListings" do
 	      fill_in 'Price', with: '$500'
 	      click_button submit 
 	}.not_to change(TempListing, :count)
-      page.should have_content 'Build Pixi'
+      expect(page).to have_content 'Build Pixi'
     end
 
     it "huge price should not change a listing" do
@@ -414,7 +414,7 @@ feature "TempListings" do
 	      fill_in 'Price', with: '5000000'
 	      click_button submit 
 	}.not_to change(TempListing, :count)
-      page.should have_content 'Build Pixi'
+      expect(page).to have_content 'Build Pixi'
     end
 
     it "should not add a large pic" do
@@ -422,7 +422,7 @@ feature "TempListings" do
               attach_file('photo', Rails.root.join("spec", "fixtures", "photo2.png"))
               click_button submit
       }.not_to change(temp_listing.pictures,:count).by(-1)
-      page.should have_content 'Build Pixi'
+      expect(page).to have_content 'Build Pixi'
     end
   end
 
@@ -435,9 +435,9 @@ feature "TempListings" do
     end
 
     it 'shows content' do
-      page.should have_selector('.sm-thumb')
-      page.should have_selector('#photo')
-      page.should have_button 'Next'
+      expect(page).to have_selector('.sm-thumb')
+      expect(page).to have_selector('#photo')
+      expect(page).to have_button 'Next'
     end
 
     it "Changes a pixi title", js: true do
@@ -445,17 +445,17 @@ feature "TempListings" do
 	      fill_in 'Title', with: "Guitar for Sale"
               click_button submit
       }.to change(TempListing,:count).by(0)
-      page.should have_content 'Guitar For Sale'
-      page.should have_content 'Review Your Pixi'
+      expect(page).to have_content 'Guitar For Sale'
+      expect(page).to have_content 'Review Your Pixi'
     end
 
     it "Changes a pixi site", js: true do
-      page.should have_css('#site_id', :visible => false)
+      expect(page).to have_css('#site_id', :visible => false)
       expect{
               set_site_id @site.id, true; sleep 0.5
               click_button submit
       }.to change(TempListing,:count).by(0)
-      page.should have_content 'Review Your Pixi'
+      expect(page).to have_content 'Review Your Pixi'
     end
 
     it "changes a pixi description" do
@@ -463,8 +463,8 @@ feature "TempListings" do
 	      fill_in 'Description', with: "Acoustic bass"
               click_button submit
       }.to change(TempListing,:count).by(0)
-      page.should have_content 'Review Your Pixi'
-      page.should have_content "Acoustic bass" 
+      expect(page).to have_content 'Review Your Pixi'
+      expect(page).to have_content "Acoustic bass" 
     end
 
     it "adds a pixi pic" do
@@ -472,31 +472,31 @@ feature "TempListings" do
               attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
               click_button submit
       }.to change(temp_listing.pictures,:count).by(1)
-      page.should have_content 'Review Your Pixi'
+      expect(page).to have_content 'Review Your Pixi'
     end
 
     it "cancels build pixi", js: true do
       expect{
          click_remove_ok
       }.to change(TempListing,:count).by(0)
-      page.should have_content "Pixis" 
+      expect(page).to have_content "Pixis" 
     end
 
     it "cancels delete picture from listing", js: true do
       click_remove_cancel
-      page.should have_content 'Build Your Pixi'
+      expect(page).to have_content 'Build Your Pixi'
     end
 
     it "deletes picture from listing", js: true do
       expect{
         click_remove_ok; sleep 2
       }.to change(Picture,:count).by(-1)
-      page.should have_content 'Build Your Pixi'
+      expect(page).to have_content 'Build Your Pixi'
     end
 
     it "cancels build cancel", js: true do
       click_remove_cancel
-      page.should have_content "Build Your Pixi" 
+      expect(page).to have_content "Build Your Pixi" 
     end
 
     it "changes a pixi price" do
@@ -504,7 +504,7 @@ feature "TempListings" do
               fill_in 'Price', with: nil
               click_button submit
       }.to change(TempListing,:count).by(0)
-      page.should have_content 'Review Your Pixi'
+      expect(page).to have_content 'Review Your Pixi'
     end
 
     it "changes a pixi quantity" do
@@ -512,8 +512,8 @@ feature "TempListings" do
           select('4', :from => 'pixi_qty'); sleep 0.5
           click_button submit
       }.to change(TempListing,:count).by(0)
-      page.should have_content 'Review Your Pixi'
-      page.should have_content 'Quantity: 4'
+      expect(page).to have_content 'Review Your Pixi'
+      expect(page).to have_content 'Quantity: 4'
     end
   end
 
@@ -525,12 +525,12 @@ feature "TempListings" do
     end
 
     def check_buttons model
-      page.should_not have_link 'Follow', href: '#'
+      expect(page).not_to have_link 'Follow', href: '#'
       check_page_selectors ['#fb-link', '#tw-link', '#pin-link'], false, true
-      page.should have_link 'Edit', href: edit_temp_listing_path(model, ptype:'')
-      page.should have_link 'Remove', href: temp_listing_path(model)
-      page.should have_link 'Done!', href: submit_temp_listing_path(model)
-      page.should_not have_button 'Next'
+      expect(page).to have_link 'Edit', href: edit_temp_listing_path(model, ptype:'')
+      expect(page).to have_link 'Remove', href: temp_listing_path(model)
+      expect(page).to have_link 'Done!', href: submit_temp_listing_path(model)
+      expect(page).not_to have_button 'Next'
     end
 
     it 'shows content' do
@@ -602,7 +602,7 @@ feature "TempListings" do
 
     it "cancel remove pixi", js: true do
       click_remove_cancel
-      page.should have_content "Review Your Pixi" 
+      expect(page).to have_content "Review Your Pixi" 
     end
 
     it "deletes a pixi", js: true do
@@ -613,8 +613,8 @@ feature "TempListings" do
       expect{
         click_remove_ok; sleep 3;
       }.to change(TempListing,:count).by(-1)
-      page.should have_content "Home" 
-      page.should_not have_content temp_listing.title
+      expect(page).to have_content "Home" 
+      expect(page).not_to have_content temp_listing.title
     end
 
     it "deletes a pixi w/ local pixi home", js: true do
@@ -625,21 +625,21 @@ feature "TempListings" do
       expect{
         click_remove_ok; sleep 3;
       }.to change(TempListing,:count).by(-1)
-      page.should have_content "Pixis" 
-      page.should_not have_content temp_listing.title
+      expect(page).to have_content "Pixis" 
+      expect(page).not_to have_content temp_listing.title
     end
 
     it "submits a pixi" do
       expect { 
 	      click_link 'Done!'
 	}.not_to change(TempListing, :count)
-      page.should have_selector('.big_logo')
-      page.should have_content temp_listing.title
+      expect(page).to have_selector('.big_logo')
+      expect(page).to have_content temp_listing.title
       @loc = @site.id
       stub_const("MIN_PIXI_COUNT", 0)
       expect(MIN_PIXI_COUNT).to eq(0)
-      page.should have_selector('#pixi-complete-btn', href: categories_path(loc: @loc))
-      page.should have_selector('.img-btn', href: temp_listing_path(temp_listing))
+      expect(page).to have_selector('#pixi-complete-btn', href: categories_path(loc: @loc))
+      expect(page).to have_selector('.img-btn', href: temp_listing_path(temp_listing))
     end
 
     it "submits a pixi w/ local listings home" do
@@ -650,17 +650,17 @@ feature "TempListings" do
       expect { 
 	      click_link 'Done!'
 	}.not_to change(TempListing, :count)
-      page.should have_selector('.big_logo')
-      page.should have_content temp_listing.title
-      page.should have_selector('#pixi-complete-btn', href: local_listings_path(loc: @loc))
-      page.should have_selector('.img-btn', href: temp_listing_path(temp_listing))
+      expect(page).to have_selector('.big_logo')
+      expect(page).to have_content temp_listing.title
+      expect(page).to have_selector('#pixi-complete-btn', href: local_listings_path(loc: @loc))
+      expect(page).to have_selector('.img-btn', href: temp_listing_path(temp_listing))
     end
 
     it "goes back to build a pixi" do
       expect { 
 	      click_link 'Edit'
 	}.not_to change(TempListing, :count)
-      page.should have_content "Build Your Pixi" 
+      expect(page).to have_content "Build Your Pixi" 
     end
   end
 
@@ -673,10 +673,10 @@ feature "TempListings" do
     end
 
     it 'shows content' do
-      page.should have_content "Step 2 of 2"
-      page.should_not have_link 'Done!', href: resubmit_temp_listing_path(temp_listing)
-      page.should have_link 'Done!', href: submit_temp_listing_path(temp_listing)
-      page.should_not have_button 'Next'
+      expect(page).to have_content "Step 2 of 2"
+      expect(page).not_to have_link 'Done!', href: resubmit_temp_listing_path(temp_listing)
+      expect(page).to have_link 'Done!', href: submit_temp_listing_path(temp_listing)
+      expect(page).not_to have_button 'Next'
     end
 
     it "submits a pixi" do
@@ -684,7 +684,7 @@ feature "TempListings" do
 	click_link "Done"
       }.not_to change(TempListing, :count)
       expect(TempListing.get_by_status('pending').count(:all)).to eq 1
-      page.should have_content "Pixi Submitted!" 
+      expect(page).to have_content "Pixi Submitted!" 
     end
   end
 
@@ -696,18 +696,18 @@ feature "TempListings" do
     end
 
     it 'shows content' do
-      page.should have_link 'Done!', href: submit_temp_listing_path(temp_listing)
-      page.should_not have_button 'Next'
+      expect(page).to have_link 'Done!', href: submit_temp_listing_path(temp_listing)
+      expect(page).not_to have_button 'Next'
     end
 
     it "cancels review of active pixi" do
       click_cancel_cancel
-      page.should have_content "Review Your Pixi" 
+      expect(page).to have_content "Review Your Pixi" 
     end
 
     it "cancels pixi review" do
       click_cancel_ok; sleep 2
-      page.should have_content "Pixis" 
+      expect(page).to have_content "Pixis" 
     end
   end
 
@@ -721,8 +721,8 @@ feature "TempListings" do
 
     it 'shows content' do
       build_page_content
-      page.should have_content('Seller')
-      page.should have_selector('#seller_id')
+      expect(page).to have_content('Seller')
+      expect(page).to have_selector('#seller_id')
     end
 
     it "Adds a new pixi_post listing w price", js: true do
@@ -743,8 +743,8 @@ feature "TempListings" do
 
     it 'shows content' do
       build_page_content
-      page.should have_content('Seller')
-      page.should have_selector('#seller_id')
+      expect(page).to have_content('Seller')
+      expect(page).to have_selector('#seller_id')
     end
 
     it "Adds a new pixi_post listing w price", js: true do
@@ -761,10 +761,10 @@ feature "TempListings" do
       init_setup business_user
       business_user.bank_accounts.create(FactoryGirl.attributes_for :bank_account)
       visit new_temp_listing_path(ptype: 'bus')
-      page.should have_content('Delivery Type')
-      page.should have_content('Sales Tax')
-      page.should have_content('Est Ship Amt')
-      page.should have_content('Buy Now')
+      expect(page).to have_content('Delivery Type')
+      expect(page).to have_content('Sales Tax')
+      expect(page).to have_content('Est Ship Amt')
+      expect(page).to have_content('Buy Now')
     end
 
     it "requires ship amount", js: true do
@@ -772,7 +772,7 @@ feature "TempListings" do
       business_user.bank_accounts.create(FactoryGirl.attributes_for :bank_account)
       visit new_temp_listing_path(ptype: 'bus')
       select('Ship', :from => 'fulfill_type')
-      find_field('ship_cost_box')[:required].should == 'true'
+      expect(find_field('ship_cost_box')[:required]).to eq('true')
     end
   end
 
@@ -796,8 +796,8 @@ feature "TempListings" do
 	      fill_in 'Title', with: "Leather Loveseat for Sale"
               click_button submit
       }.to change(TempListing,:count).by(0)
-      page.should have_content 'Leather Loveseat For Sale'
-      page.should have_content 'Review Your Pixi'
+      expect(page).to have_content 'Leather Loveseat For Sale'
+      expect(page).to have_content 'Review Your Pixi'
       expect(@temp.reload.seller_id).to eq user.id
     end
 
@@ -806,7 +806,7 @@ feature "TempListings" do
               attach_file('photo', Rails.root.join("spec", "fixtures", "photo.jpg"))
               click_button submit
       }.to change(@temp.pictures,:count).by(1)
-      page.should have_content 'Review Your Pixi'
+      expect(page).to have_content 'Review Your Pixi'
       expect(@temp.reload.seller_id).to eq user.id
     end
 
@@ -821,14 +821,14 @@ feature "TempListings" do
       pref.save
       init_setup business_user
       visit edit_temp_listing_path(@temp, ptype: 'bus')
-      page.should have_content('Delivery Type')
-      page.should have_xpath("//option[@value='#{pref.fulfillment_type_code}' and @selected='selected']")
-      page.should have_content('Est Ship Amt')
-      page.should have_xpath("//input[@value='#{pref.ship_amt.to_s << '0'}']")
-      page.should have_content('Sales Tax')
-      page.should have_xpath("//input[@value='#{pref.sales_tax}']")
-      page.should have_content("Buy Now")
-      page.should have_xpath("//input[@id='temp_listing_buy_now_flg' and @checked='checked']")
+      expect(page).to have_content('Delivery Type')
+      expect(page).to have_xpath("//option[@value='#{pref.fulfillment_type_code}' and @selected='selected']")
+      expect(page).to have_content('Est Ship Amt')
+      expect(page).to have_xpath("//input[@value='#{pref.ship_amt.to_s << '0'}']")
+      expect(page).to have_content('Sales Tax')
+      expect(page).to have_xpath("//input[@value='#{pref.sales_tax}']")
+      expect(page).to have_content("Buy Now")
+      expect(page).to have_xpath("//input[@id='temp_listing_buy_now_flg' and @checked='checked']")
     end
   end
 

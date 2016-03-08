@@ -5,19 +5,19 @@ describe PostSearchesController do
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_post(stubs={})
     (@mock_post ||= mock_model(Post, stubs).as_null_object).tap do |post|
-       post.stub(stubs) unless stubs.empty?
+       allow(post).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_listing(stubs={})
     (@mock_listing ||= mock_model(Listing, stubs).as_null_object).tap do |listing|
-      listing.stub(stubs) unless stubs.empty?
+      allow(listing).to receive(stubs) unless stubs.empty?
     end
   end
 
@@ -27,9 +27,9 @@ describe PostSearchesController do
 
   describe 'GET /index' do
     before :each do
-      @posts = mock("posts")
-      Post.stub!(:search).and_return( @posts )
-      controller.stub!(:current_user).and_return(@user)
+      @posts = double("posts")
+      allow(Post).to receive(:search).and_return( @posts )
+      allow(controller).to receive(:current_user).and_return(@user)
       @user.stub_chain(:user_pixi_points, :create).and_return(:success)
       controller.stub_chain(:query, :page, :add_points).and_return(:success)
     end
@@ -39,18 +39,18 @@ describe PostSearchesController do
     end
 
     it "should load the requested post" do
-      Post.stub(:search).with('test').and_return(@posts)
+      allow(Post).to receive(:search).with('test').and_return(@posts)
       do_get
     end
 
     it "should assign @posts" do
       do_get
-      assigns(:posts).should == @posts
+      expect(assigns(:posts)).to eq(@posts)
     end
 
     it "index action should render nothing" do
       do_get
-      controller.stub!(:render)
+      allow(controller).to receive(:render)
     end
   end
 end

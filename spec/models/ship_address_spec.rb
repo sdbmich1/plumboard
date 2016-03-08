@@ -6,12 +6,12 @@ describe ShipAddress do
   end
 
   describe 'attributes', base: true do 
-    it { should respond_to(:recipient_first_name) }
-    it { should respond_to(:recipient_last_name) }
-    it { should respond_to(:recipient_email) }
-    it { should respond_to(:user_id) }
-    it { should belong_to(:user) }
-    it { should have_many(:contacts) }
+    it { is_expected.to respond_to(:recipient_first_name) }
+    it { is_expected.to respond_to(:recipient_last_name) }
+    it { is_expected.to respond_to(:recipient_email) }
+    it { is_expected.to respond_to(:user_id) }
+    it { is_expected.to belong_to(:user) }
+    it { is_expected.to have_many(:contacts) }
   end
 
   describe 'recipient_name' do

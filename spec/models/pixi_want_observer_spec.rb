@@ -8,9 +8,9 @@ describe PixiWantObserver do
     let(:pixi_want) { buyer.pixi_wants.build FactoryGirl.attributes_for :pixi_want, pixi_id: listing.pixi_id }
 
     it 'should deliver the receipt' do
-      @user_mailer = mock(UserMailer)
-      UserMailer.stub(:delay).and_return(UserMailer)
-      UserMailer.should_receive(:send_interest).with(pixi_want)
+      @user_mailer = double(UserMailer)
+      allow(UserMailer).to receive(:delay).and_return(UserMailer)
+      expect(UserMailer).to receive(:send_interest).with(pixi_want)
       pixi_want.save!
     end
 
@@ -23,7 +23,7 @@ describe PixiWantObserver do
 
     it 'should add pixi points' do
       pixi_want.save!
-      buyer.user_pixi_points.find_by_code('cs').code.should == 'cs'
+      expect(buyer.user_pixi_points.find_by_code('cs').code).to eq('cs')
     end
   end
 end

@@ -5,13 +5,13 @@ describe PixiWantsController do
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_want(stubs={})
     (@mock_want ||= mock_model(PixiWant, stubs).as_null_object).tap do |want|
-      want.stub(stubs) unless stubs.empty?
+      allow(want).to receive(stubs) unless stubs.empty?
     end
   end
 
@@ -31,7 +31,7 @@ describe PixiWantsController do
 
   describe "POST buy_now", create: true do
     before :each do
-      Invoice.stub!(:process_invoice).and_return(:order)
+      allow(Invoice).to receive(:process_invoice).and_return(:order)
     end
     [true, false].each do |status|
       it_behaves_like 'a model create assignment', 'PixiWant', 'save', 'buy_now', 'buy_now', status, 'want'

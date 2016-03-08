@@ -25,40 +25,40 @@ describe "Users", :type => :feature do
     end
 
     it "should display users" do 
-      page.should have_link 'All', href: users_path
-      page.should have_link 'Pixans', href: users_path(utype: 'PX')
-      page.should have_link 'Pixters', href: users_path(utype: 'PT')
-      page.should have_link 'Export as CSV file', href: users_path(format: 'csv')
-      page.should have_content @member.name
-      page.should have_content @user.name
-      page.should have_content @pixter.name
-      page.should have_content @pixan.name
-      page.should have_content 'Enrolled'
-      page.should have_content 'Displaying'
+      expect(page).to have_link 'All', href: users_path
+      expect(page).to have_link 'Pixans', href: users_path(utype: 'PX')
+      expect(page).to have_link 'Pixters', href: users_path(utype: 'PT')
+      expect(page).to have_link 'Export as CSV file', href: users_path(format: 'csv')
+      expect(page).to have_content @member.name
+      expect(page).to have_content @user.name
+      expect(page).to have_content @pixter.name
+      expect(page).to have_content @pixan.name
+      expect(page).to have_content 'Enrolled'
+      expect(page).to have_content 'Displaying'
     end
 
     it "should display pixans", js: true do 
       click_link 'Pixans'
-      page.should have_link 'All', href: users_path
-      page.should have_link 'Pixans', href: users_path(utype: 'PX')
-      page.should have_link 'Pixters', href: users_path(utype: 'PT')
-      page.should have_content @user.name
-      page.should_not have_content @member.name
-      page.should_not have_content @pixter.name
-      page.should have_content @pixan.name
-      page.should have_content 'Enrolled'
+      expect(page).to have_link 'All', href: users_path
+      expect(page).to have_link 'Pixans', href: users_path(utype: 'PX')
+      expect(page).to have_link 'Pixters', href: users_path(utype: 'PT')
+      expect(page).to have_content @user.name
+      expect(page).not_to have_content @member.name
+      expect(page).not_to have_content @pixter.name
+      expect(page).to have_content @pixan.name
+      expect(page).to have_content 'Enrolled'
     end
 
     it "should display pixters", js: true do 
       click_link 'Pixters'
-      page.should have_link 'All', href: users_path
-      page.should have_link 'Pixans', href: users_path(utype: 'PX')
-      page.should have_link 'Pixters', href: users_path(utype: 'PT')
-      page.should_not have_content @user.name
-      page.should_not have_content @member.name
-      page.should have_content @pixter.name
-      page.should_not have_content @pixan.name
-      page.should have_content 'Enrolled'
+      expect(page).to have_link 'All', href: users_path
+      expect(page).to have_link 'Pixans', href: users_path(utype: 'PX')
+      expect(page).to have_link 'Pixters', href: users_path(utype: 'PT')
+      expect(page).not_to have_content @user.name
+      expect(page).not_to have_content @member.name
+      expect(page).to have_content @pixter.name
+      expect(page).not_to have_content @pixan.name
+      expect(page).to have_content 'Enrolled'
     end
 
     it "views user", js: true do
@@ -67,16 +67,16 @@ describe "Users", :type => :feature do
 	visit user_path(@member)
       }.not_to change(User, :count)
 
-      page.should have_content "View User"
-      page.should have_content @member.name
-      page.should have_content @member.email
-      page.should have_content @member.birth_dt
-      page.should have_content "Facebook"
-      page.should have_content "Address"
-      page.should_not have_selector('#follow-btn', visible: true)
-      page.should have_link 'Edit', href: edit_user_path(@member) 
-      page.should have_link 'Done', href: users_path(utype: @member.user_type_code) 
-      page.should_not have_content @user.name
+      expect(page).to have_content "View User"
+      expect(page).to have_content @member.name
+      expect(page).to have_content @member.email
+      expect(page).to have_content @member.birth_dt
+      expect(page).to have_content "Facebook"
+      expect(page).to have_content "Address"
+      expect(page).not_to have_selector('#follow-btn', visible: true)
+      expect(page).to have_link 'Edit', href: edit_user_path(@member) 
+      expect(page).to have_link 'Done', href: users_path(utype: @member.user_type_code) 
+      expect(page).not_to have_content @user.name
 
       visit edit_user_path(@member)
       expect {
@@ -122,9 +122,9 @@ describe "Users", :type => :feature do
       expect { 
 	      fill_in 'user_first_name', with: 'Ted'
 	      click_save
-	      page.should have_content 'Ted'
+	      expect(page).to have_content 'Ted'
 	}.not_to change(User, :count)
-      @user.reload.first_name.should  == 'Ted' 
+      expect(@user.reload.first_name).to  eq('Ted') 
     end
 
     it "changed last name should update a profile", js: true do
@@ -132,7 +132,7 @@ describe "Users", :type => :feature do
 	      fill_in 'user_last_name', with: 'White'
 	      click_save
 	}.not_to change(User, :count)
-      @user.reload.last_name.should == 'White' 
+      expect(@user.reload.last_name).to eq('White') 
     end
 
     it "changed gender should update a profile", js: true do
@@ -140,7 +140,7 @@ describe "Users", :type => :feature do
       	      select('Female', :from => 'user_gender')
 	      click_save
 	}.not_to change(User, :count)
-      @user.reload.gender.should == 'Female' 
+      expect(@user.reload.gender).to eq('Female') 
     end
 
     it "empty home_zip should not change a profile", js: true do
@@ -162,7 +162,7 @@ describe "Users", :type => :feature do
 	      fill_in 'home_zip', with: '94111'
 	      click_save
 	}.not_to change(User, :count)
-      @user.reload.home_zip.should == '94111' 
+      expect(@user.reload.home_zip).to eq('94111') 
     end
 
     it "Changes profile file pic" do
@@ -171,7 +171,7 @@ describe "Users", :type => :feature do
               attach_file('user_pic', Rails.root.join("spec", "fixtures", "photo0.jpg"))
 	      click_save
       }.to change(@user.pictures,:count).by(0)
-      page.should have_content("successfully")
+      expect(page).to have_content("successfully")
     end
 
     it "changed email should update a profile", js: true do
@@ -179,7 +179,7 @@ describe "Users", :type => :feature do
 	      fill_in "user_email", with: "tedwhite@test.com"
 	      click_save
 	}.not_to change(User, :count)
-      @user.reload.unconfirmed_email.should == "tedwhite@test.com"
+      expect(@user.reload.unconfirmed_email).to eq("tedwhite@test.com")
     end
   end
   
@@ -201,7 +201,7 @@ describe "Users", :type => :feature do
 	fill_in "user_description", with: "PXB is a great company."
 	click_save
 	}.not_to change(User, :count)
-      @user.reload.url.should == "PXB"
+      expect(@user.reload.url).to eq("PXB")
     end
   end
 
@@ -236,34 +236,34 @@ describe "Users", :type => :feature do
     end
 
     it 'shows contact page' do
-      page.should have_link("Contact")
-      page.should have_content("Home Phone")
-      page.should have_content("Mobile Phone")
-      page.should have_content("Work Phone")
+      expect(page).to have_link("Contact")
+      expect(page).to have_content("Home Phone")
+      expect(page).to have_content("Mobile Phone")
+      expect(page).to have_content("Work Phone")
     end
 
     it 'should save contact address info' do
-      page.should have_link("Contact")
-      page.should have_content("Work Phone")
+      expect(page).to have_link("Contact")
+      expect(page).to have_content("Work Phone")
       expect {
         user_address
         click_save
 	}.to change(@user.contacts, :count).by(1)
-      page.should have_content("successfully")
+      expect(page).to have_content("successfully")
     end
 
     it 'should save contact address & home phone info' do
-      page.should have_link("Contact")
+      expect(page).to have_link("Contact")
       expect {
         user_home_phone
         user_address
         click_save
 	}.to change(@user.contacts, :count).by(1)
-      page.should have_content("successfully")
+      expect(page).to have_content("successfully")
     end
 
     it 'should not save home phone' do
-      page.should have_link("Contact")
+      expect(page).to have_link("Contact")
       expect {
         user_home_phone
         click_submit
@@ -271,7 +271,7 @@ describe "Users", :type => :feature do
     end
 
     it 'should not save mobile phone' do
-      page.should have_link("Contact")
+      expect(page).to have_link("Contact")
       expect {
         user_mobile_phone
         click_submit
@@ -279,7 +279,7 @@ describe "Users", :type => :feature do
     end
 
     it 'should not save work phone' do
-      page.should have_link("Contact")
+      expect(page).to have_link("Contact")
       expect {
         user_work_phone
         click_submit
@@ -287,7 +287,7 @@ describe "Users", :type => :feature do
     end
 
     it 'should not save with no address' do
-      page.should have_link("Contact")
+      expect(page).to have_link("Contact")
       expect {
         user_address nil, nil, 'SF', '94103', true
         click_submit
@@ -324,31 +324,31 @@ describe "Users", :type => :feature do
     end
 
     it 'should show change password page' do
-      page.should have_button("Change Password")
+      expect(page).to have_button("Change Password")
     end
 
     it 'should change password' do
       fill_in 'user_password', :with => 'userpassword'
       fill_in "user_password_confirmation", with: 'userpassword'
       click_button 'Change Password'
-      page.should have_content("successfully")
+      expect(page).to have_content("successfully")
     end
 
     it 'should not accept blank password & confirmation' do
       click_button 'Change Password'
-      page.should have_content("Password can't be blank")
+      expect(page).to have_content("Password can't be blank")
     end
 
     it 'should not accept blank password' do
       fill_in "user_password_confirmation", with: 'userpassword'
       click_button 'Change Password'
-      page.should have_content("Password can't be blank")
+      expect(page).to have_content("Password can't be blank")
     end
 
     it 'should not accept blank password confirmation' do
       fill_in 'user_password', :with => 'userpassword'
       click_button 'Change Password'
-      page.should have_content("Password doesn't match confirmation")
+      expect(page).to have_content("Password doesn't match confirmation")
     end
   end
 
@@ -392,9 +392,9 @@ describe "Users", :type => :feature do
     end
 
     it "assigns values", js: true do
-      page.should have_content 'Delivery Type'
-      page.should have_content 'Sales Tax (%)'
-      page.should have_content 'Ship Amt'
+      expect(page).to have_content 'Delivery Type'
+      expect(page).to have_content 'Sales Tax (%)'
+      expect(page).to have_content 'Ship Amt'
       select 'All', from: 'user_preferences_attributes_0_fulfillment_type_code'
       fill_in 'inv_tax', with: 9.0
       fill_in 'ship_cost_box', with: 5.0

@@ -9,23 +9,23 @@ describe UserInterest do
 
   describe "user interests" do
     it "should have a user attribute" do
-      @user_interest.should respond_to(:user)
+      expect(@user_interest).to respond_to(:user)
     end
 
     it "should have an interest attribute" do
-      @user_interest.should respond_to(:interest)
+      expect(@user_interest).to respond_to(:interest)
     end
   end
 
   describe "validations" do
     it "should require an interest_id" do
       @user_interest.interest_id = nil
-      @user_interest.should_not be_valid
+      expect(@user_interest).not_to be_valid
     end
 
     it "should require a user_id" do
       @user_interest.user_id = nil
-      @user_interest.should_not be_valid
+      expect(@user_interest).not_to be_valid
     end
   end
 

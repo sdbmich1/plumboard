@@ -5,19 +5,19 @@ describe InvoicesController do
 
   def mock_invoice(stubs={})
     (@mock_invoice ||= mock_model(Invoice, stubs).as_null_object).tap do |invoice|
-      invoice.stub(stubs) unless stubs.empty?
+      allow(invoice).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_listing(stubs={})
     (@mock_listing ||= mock_model(Listing, stubs).as_null_object).tap do |listing|
-      listing.stub(stubs) unless stubs.empty?
+      allow(listing).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive(stubs) unless stubs.empty?
     end
   end
 
@@ -33,7 +33,7 @@ describe InvoicesController do
       @invoices = stub_model(Invoice)
       Invoice.stub_chain(:includes, :paginate).and_return( @invoices )
       @invoices.stub_chain(:seller).and_return(stub_model(User))
-      controller.stub!(:current_user).and_return(@user)
+      allow(controller).to receive(:current_user).and_return(@user)
       do_get
     end
 
@@ -42,25 +42,25 @@ describe InvoicesController do
     end
 
     it "should assign @user" do
-      assigns(:user).should_not be_nil 
+      expect(assigns(:user)).not_to be_nil 
     end
 
     it "should assign @invoices" do
-      assigns(:invoices).should_not be_nil
+      expect(assigns(:invoices)).not_to be_nil
     end
 
     it "renders the :index view" do
-      response.should render_template :index
+      expect(response).to render_template :index
     end
 
     it "should show the requested invoices" do
-      response.should be_success
+      expect(response).to be_success
     end
 
     it "responds to JSON" do
       @expected = @invoices.to_json
       get  :index, format: :json
-      response.body.should == @expected
+      expect(response.body).to eq(@expected)
     end
   end
 
@@ -68,9 +68,9 @@ describe InvoicesController do
 
     before :each do
       @invoices = stub_model(Invoice)
-      Invoice.stub!(:get_invoices).and_return( @invoices )
-      @invoices.stub!(:paginate).and_return( @invoices )
-      @invoices.stub(:seller).and_return(stub_model(User))
+      allow(Invoice).to receive(:get_invoices).and_return( @invoices )
+      allow(@invoices).to receive(:paginate).and_return( @invoices )
+      allow(@invoices).to receive(:seller).and_return(stub_model(User))
       do_get
     end
 
@@ -79,29 +79,29 @@ describe InvoicesController do
     end
 
     it "should assign @invoices" do
-      assigns(:invoices).should_not be_nil
+      expect(assigns(:invoices)).not_to be_nil
     end
 
     it "renders the :sent view" do
-      response.should render_template :sent
+      expect(response).to render_template :sent
     end
 
     it "should show the requested invoices" do
-      response.should be_success
+      expect(response).to be_success
     end
 
     it "responds to JSON" do
       @expected = { :invoices  => @invoices }.to_json
       get  :sent, format: :json
-      response.body.should_not be_nil
+      expect(response.body).not_to be_nil
     end
   end
 
   describe "GET 'new'" do
 
     before :each do
-      controller.stub!(:current_user).and_return(@user)
-      Invoice.stub!(:load_new).with(@user, '1', '1').and_return( @invoice )
+      allow(controller).to receive(:current_user).and_return(@user)
+      allow(Invoice).to receive(:load_new).with(@user, '1', '1').and_return( @invoice )
     end
 
     def do_get
@@ -110,20 +110,20 @@ describe InvoicesController do
 
     it "should assign @invoice" do
       do_get
-      assigns(:invoice).should eq(@invoice)
+      expect(assigns(:invoice)).to eq(@invoice)
     end
 
     it "new action should render new template" do
       do_get
-      response.should render_template(:new)
+      expect(response).to render_template(:new)
     end
   end
 
   describe "GET 'new'" do
 
     before :each do
-      controller.stub!(:current_user).and_return(@user)
-      Invoice.stub!(:load_new).with(@user, '1', '1').and_return( @invoice )
+      allow(controller).to receive(:current_user).and_return(@user)
+      allow(Invoice).to receive(:load_new).with(@user, '1', '1').and_return( @invoice )
       do_get
     end
 
@@ -132,19 +132,19 @@ describe InvoicesController do
     end
 
     it "should assign @invoice" do
-      assigns(:invoice).should_not be_nil
+      expect(assigns(:invoice)).not_to be_nil
     end
 
     it "should load nothing" do
-      controller.stub!(:render)
+      allow(controller).to receive(:render)
     end
   end
 
   describe 'xhr GET received' do
     before :each do
-      @invoices = mock("invoices")
-      Invoice.stub!(:get_buyer_invoices).and_return( @invoices )
-      @invoices.stub!(:paginate).and_return( @invoices )
+      @invoices = double("invoices")
+      allow(Invoice).to receive(:get_buyer_invoices).and_return( @invoices )
+      allow(@invoices).to receive(:paginate).and_return( @invoices )
       do_get
     end
 
@@ -153,23 +153,23 @@ describe InvoicesController do
     end
 
     it "should load nothing" do
-      controller.stub!(:render)
+      allow(controller).to receive(:render)
     end
 
     it "should assign @invoices" do
-      assigns(:invoices).should_not be_nil
+      expect(assigns(:invoices)).not_to be_nil
     end
 
     it "should show the requested invoices" do
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
   describe 'xhr GET index' do
     before :each do
-      @invoices = mock("invoices")
+      @invoices = double("invoices")
       Invoice.stub_chain(:includes, :paginate).and_return( @invoices )
-      controller.stub!(:current_user).and_return(@user)
+      allow(controller).to receive(:current_user).and_return(@user)
       do_get
     end
 
@@ -178,22 +178,22 @@ describe InvoicesController do
     end
 
     it "should load nothing" do
-      controller.stub!(:render)
+      allow(controller).to receive(:render)
     end
 
     it "should assign @invoices" do
-      assigns(:invoices).should_not be_nil
+      expect(assigns(:invoices)).not_to be_nil
     end
 
     it "should show the requested invoices" do
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
   describe 'GET show' do
     before :each do
-      Invoice.stub!(:includes) { Invoice }
-      Invoice.stub!(:find).and_return( @invoice )
+      allow(Invoice).to receive(:includes) { Invoice }
+      allow(Invoice).to receive(:find).and_return( @invoice )
       do_get
     end
 
@@ -202,27 +202,27 @@ describe InvoicesController do
     end
 
     it "should load the requested invoice" do
-      Invoice.should_receive(:find).with('1').and_return(@invoice)
+      expect(Invoice).to receive(:find).with('1').and_return(@invoice)
       do_get
     end
 
     it "should assign @invoice" do
-      assigns(:invoice).should_not be_nil
+      expect(assigns(:invoice)).not_to be_nil
     end
 
     it "renders the :show view" do
-      response.should render_template :show
+      expect(response).to render_template :show
     end
 
     it "should show the requested invoice" do
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
   describe 'xhr GET show' do
     before :each do
-      Invoice.stub!(:includes) { Invoice }
-      Invoice.stub!(:find).and_return( @invoice )
+      allow(Invoice).to receive(:includes) { Invoice }
+      allow(Invoice).to receive(:find).and_return( @invoice )
       do_get
     end
 
@@ -231,28 +231,28 @@ describe InvoicesController do
     end
 
     it "should load nothing" do
-      controller.stub!(:render)
+      allow(controller).to receive(:render)
     end
 
     it "should load the requested invoice" do
-      Invoice.should_receive(:find).with('1').and_return(@invoice)
+      expect(Invoice).to receive(:find).with('1').and_return(@invoice)
       do_get
     end
 
     it "should assign @invoice" do
-      assigns(:invoice).should_not be_nil
+      expect(assigns(:invoice)).not_to be_nil
     end
 
     it "should show the requested invoices" do
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
   describe "xhr GET 'edit/:id'" do
 
     before :each do
-      Invoice.stub!(:includes) { Invoice }
-      Invoice.stub!(:find).and_return( @invoice )
+      allow(Invoice).to receive(:includes) { Invoice }
+      allow(Invoice).to receive(:find).and_return( @invoice )
     end
 
     def do_get
@@ -261,24 +261,24 @@ describe InvoicesController do
 
     it "should assign @invoice" do
       do_get
-      assigns(:invoice).should_not be_nil 
+      expect(assigns(:invoice)).not_to be_nil 
     end
 
     it "should load nothing" do
-      controller.stub!(:render)
+      allow(controller).to receive(:render)
     end
 
     it "should load the requested invoice" do
       do_get
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
   describe "GET 'edit/:id'" do
 
     before :each do
-      Invoice.stub!(:includes) { Invoice }
-      Invoice.stub!(:find).and_return( @invoice )
+      allow(Invoice).to receive(:includes) { Invoice }
+      allow(Invoice).to receive(:find).and_return( @invoice )
       do_get
     end
 
@@ -287,25 +287,25 @@ describe InvoicesController do
     end
 
     it "should assign @invoice" do
-      assigns(:invoice).should_not be_nil 
+      expect(assigns(:invoice)).not_to be_nil 
     end
 
     it "renders the :edit view" do
-      response.should render_template :edit
+      expect(response).to render_template :edit
     end
 
     it "should load the requested invoice" do
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
   describe "PUT /:id" do
     before (:each) do
-      controller.stub!(:set_params).and_return(:success)
-      controller.stub!(:current_user).and_return(@user)
-      Invoice.stub!(:includes) { Invoice }
-      Invoice.stub!(:find).and_return( @invoice )
-      @invoice.stub(:seller).and_return(stub_model(User))
+      allow(controller).to receive(:set_params).and_return(:success)
+      allow(controller).to receive(:current_user).and_return(@user)
+      allow(Invoice).to receive(:includes) { Invoice }
+      allow(Invoice).to receive(:find).and_return( @invoice )
+      allow(@invoice).to receive(:seller).and_return(stub_model(User))
     end
 
     def do_update
@@ -314,59 +314,59 @@ describe InvoicesController do
 
     context "with valid params" do
       before (:each) do
-        @invoice.stub(:update_attributes).and_return(true)
+        allow(@invoice).to receive(:update_attributes).and_return(true)
       end
 
       it "should load the requested invoice" do
-        Invoice.stub!(:find) { @invoice }
+        allow(Invoice).to receive(:find) { @invoice }
         do_update
       end
 
       it "should update the requested invoice" do
-        Invoice.stub!(:find).with("1") { mock_invoice }
-	mock_invoice.should_receive(:update_attributes).with({'pixi_id' => 'test', 'comment' => 'test'})
+        allow(Invoice).to receive(:find).with("1") { mock_invoice }
+	expect(mock_invoice).to receive(:update_attributes).with({'pixi_id' => 'test', 'comment' => 'test'})
         do_update
       end
 
       it "should assign @invoice" do
-        Invoice.stub!(:find) { mock_invoice(:update_attributes => true) }
+        allow(Invoice).to receive(:find) { mock_invoice(:update_attributes => true) }
         do_update
-        assigns(:invoice).should_not be_nil 
+        expect(assigns(:invoice)).not_to be_nil 
       end
 
       it "responds to JSON" do
         @expected = { :invoice  => @invoice }.to_json
         put :update, :id => "1", :invoice => {'pixi_id'=>'test', 'comment' => 'test'}, format: :json
-        response.body.should == @expected
+        expect(response.body).to eq(@expected)
       end
     end
 
     context "with invalid params" do
     
       before (:each) do
-        @invoice.stub(:update_attributes).and_return(false)
+        allow(@invoice).to receive(:update_attributes).and_return(false)
       end
 
       it "should load the requested invoice" do
-        Invoice.stub!(:find) { @invoice }
+        allow(Invoice).to receive(:find) { @invoice }
         do_update
       end
 
       it "should assign @invoice" do
-        Invoice.stub!(:find) { mock_invoice(:update_attributes => false) }
+        allow(Invoice).to receive(:find) { mock_invoice(:update_attributes => false) }
         do_update
-        assigns(:invoice).should_not be_nil 
+        expect(assigns(:invoice)).not_to be_nil 
       end
 
       it "should not render anything" do 
-        Invoice.stub!(:find) { mock_invoice(:update_attributes => false) }
+        allow(Invoice).to receive(:find) { mock_invoice(:update_attributes => false) }
         do_update
-        controller.stub!(:render)
+        allow(controller).to receive(:render)
       end
 
       it "responds to JSON" do
         put :update, :id => "1", :invoice => {'pixi_id'=>'test', 'comment' => 'test'}, format: :json
-	response.status.should eq(422)
+	expect(response.status).to eq(422)
       end
     end
   end
@@ -374,9 +374,9 @@ describe InvoicesController do
   describe "POST create" do
 
     def setup
-      controller.stub!(:current_user).and_return(@user)
+      allow(controller).to receive(:current_user).and_return(@user)
       @user.stub_chain(:invoices, :build).and_return(@invoice)
-      controller.stub!(:set_params).and_return(:success)
+      allow(controller).to receive(:set_params).and_return(:success)
     end
 
     def do_create
@@ -387,51 +387,51 @@ describe InvoicesController do
     context 'failure' do
       
       before :each do
-        Invoice.stub!(:save).and_return(false)
+        allow(Invoice).to receive(:save).and_return(false)
       end
 
       it "assigns @invoice" do
         do_create
-        assigns(:invoice).should_not be_nil 
+        expect(assigns(:invoice)).not_to be_nil 
       end
 
       it "renders the new template" do
         do_create
-        controller.stub!(:render)
+        allow(controller).to receive(:render)
       end
 
       it "responds to JSON" do
         setup
         post :create, :invoice => { 'pixi_id'=>'test', 'comment'=>'test' }, format: :json
-	response.status.should_not eq(0)
+	expect(response.status).not_to eq(0)
       end
     end
 
     context 'success' do
 
       before :each do
-        Invoice.stub!(:save).and_return(true)
+        allow(Invoice).to receive(:save).and_return(true)
       end
 
       it "loads the requested invoice" do
-        Invoice.stub(:new).with({'pixi_id'=>'test', 'comment'=>'test' }) { mock_invoice(:save => true) }
+        allow(Invoice).to receive(:new).with({'pixi_id'=>'test', 'comment'=>'test' }) { mock_invoice(:save => true) }
         do_create
       end
 
       it "assigns @invoice" do
         do_create
-        assigns(:invoice).should_not be_nil 
+        expect(assigns(:invoice)).not_to be_nil 
       end
 
       it "redirects to the created invoice" do
-        Invoice.stub(:new).with({'pixi_id'=>'test', 'comment'=>'test' }) { mock_invoice(:save => true) }
+        allow(Invoice).to receive(:new).with({'pixi_id'=>'test', 'comment'=>'test' }) { mock_invoice(:save => true) }
         do_create
       end
 
       it "changes invoice count" do
         lambda do
           do_create
-          should change(Invoice, :count).by(1)
+          is_expected.to change(Invoice, :count).by(1)
         end
       end
 
@@ -439,15 +439,15 @@ describe InvoicesController do
         setup
         post :create, :invoice => { 'pixi_id'=>'test', 'comment'=>'test' }, format: :json
         # expect(response).to be_success
-	response.status.should_not eq(0)
+	expect(response.status).not_to eq(0)
       end
     end
   end
 
   describe "PUT /remove/:id" do
     before (:each) do
-      Invoice.stub!(:includes) { Invoice }
-      Invoice.stub!(:find).and_return( @invoice )
+      allow(Invoice).to receive(:includes) { Invoice }
+      allow(Invoice).to receive(:find).and_return( @invoice )
     end
 
     def do_remove
@@ -456,45 +456,45 @@ describe InvoicesController do
 
     context "with valid params" do
       before (:each) do
-        @invoice.stub(:update_attribute).and_return(true)
+        allow(@invoice).to receive(:update_attribute).and_return(true)
       end
 
       it "should load the requested invoice" do
-        Invoice.stub(:find) { @invoice }
+        allow(Invoice).to receive(:find) { @invoice }
         do_remove
       end
 
       it "should update the requested invoice" do
-        Invoice.stub(:find).with("1") { mock_invoice }
-	mock_invoice.should_receive(:update_attribute).with(:status, "removed")
+        allow(Invoice).to receive(:find).with("1") { mock_invoice }
+	expect(mock_invoice).to receive(:update_attribute).with(:status, "removed")
         do_remove
       end
 
       it "should assign @invoice" do
-        Invoice.stub(:find) { mock_invoice(:update_attribute => true) }
+        allow(Invoice).to receive(:find) { mock_invoice(:update_attribute => true) }
         do_remove
-        assigns(:invoice).should_not be_nil 
+        expect(assigns(:invoice)).not_to be_nil 
       end
 
       it "redirects to the updated invoice" do
         do_remove
-        response.should be_redirect
+        expect(response).to be_redirect
       end
     end
 
     context "with invalid params" do
     
       before (:each) do
-        @invoice.stub(:update_attribute).and_return(false)
+        allow(@invoice).to receive(:update_attribute).and_return(false)
       end
 
       it "should load the requested invoice" do
-        Invoice.stub(:find) { @invoice }
+        allow(Invoice).to receive(:find) { @invoice }
         do_remove
       end
 
       it "should assign @invoice" do
-        Invoice.stub(:find) { mock_invoice(:update_attribute => false) }
+        allow(Invoice).to receive(:find) { mock_invoice(:update_attribute => false) }
         do_remove
       end
     end
@@ -502,8 +502,8 @@ describe InvoicesController do
 
   describe "PUT /decline/:id" do
     before (:each) do
-      Invoice.stub!(:includes) { Invoice }
-      Invoice.stub!(:find).and_return( @invoice )
+      allow(Invoice).to receive(:includes) { Invoice }
+      allow(Invoice).to receive(:find).and_return( @invoice )
     end
 
     def do_decline
@@ -512,45 +512,45 @@ describe InvoicesController do
 
     context "with valid params" do
       before (:each) do
-        @invoice.stub(:decline).and_return(true)
+        allow(@invoice).to receive(:decline).and_return(true)
       end
 
       it "should load the requested invoice" do
-        Invoice.stub(:find) { @invoice }
+        allow(Invoice).to receive(:find) { @invoice }
         do_decline
       end
 
       it "should update the requested invoice" do
-        Invoice.stub(:find).with("1") { mock_invoice }
-        mock_invoice.should_receive(:decline)
+        allow(Invoice).to receive(:find).with("1") { mock_invoice }
+        expect(mock_invoice).to receive(:decline)
         do_decline
       end
 
       it "should assign @invoice" do
-        Invoice.stub(:find) { mock_invoice(:decline => true) }
+        allow(Invoice).to receive(:find) { mock_invoice(:decline => true) }
         do_decline
-        assigns(:invoice).should_not be_nil 
+        expect(assigns(:invoice)).not_to be_nil 
       end
 
       it "redirects to the updated invoice" do
         do_decline
-        response.should be_redirect
+        expect(response).to be_redirect
       end
     end
 
     context "with invalid params" do
     
       before (:each) do
-        @invoice.stub(:decline).and_return(false)
+        allow(@invoice).to receive(:decline).and_return(false)
       end
 
       it "should load the requested invoice" do
-        Invoice.stub(:find) { @invoice }
+        allow(Invoice).to receive(:find) { @invoice }
         do_decline
       end
 
       it "should assign @invoice" do
-        Invoice.stub(:find) { mock_invoice(:decline => false) }
+        allow(Invoice).to receive(:find) { mock_invoice(:decline => false) }
         do_decline
       end
     end
@@ -559,8 +559,8 @@ describe InvoicesController do
   describe "DELETE 'destroy'" do
 
     before (:each) do
-      Invoice.stub!(:includes) { Invoice }
-      Invoice.stub!(:find).and_return(@invoice)
+      allow(Invoice).to receive(:includes) { Invoice }
+      allow(Invoice).to receive(:find).and_return(@invoice)
     end
 
     def do_delete(status=nil)
@@ -570,29 +570,29 @@ describe InvoicesController do
     context 'success' do
 
       it "destroys the requested invoice" do
-        Invoice.stub!(:find).with("37") { mock_invoice }
-        mock_invoice.should_receive(:destroy)
+        allow(Invoice).to receive(:find).with("37") { mock_invoice }
+        expect(mock_invoice).to receive(:destroy)
         do_delete
       end
 
       it "responds with @invoice if status is not cancel" do
-        Invoice.stub!(:find) { mock_invoice }
+        allow(Invoice).to receive(:find) { mock_invoice }
         do_delete
-        response.should_not be_redirect
+        expect(response).not_to be_redirect
       end
 
       it "redirects to listing if status is cancel" do
-        Invoice.stub!(:find) { mock_invoice }
+        allow(Invoice).to receive(:find) { mock_invoice }
         mock_invoice.stub_chain(:listings, :first, :pixi_id).and_return('abc')
-        mock_invoice.stub(:destroy).and_return(:true)
+        allow(mock_invoice).to receive(:destroy).and_return(:true)
         do_delete('cancel')
-        response.should be_redirect
+        expect(response).to be_redirect
       end
 
       it "should decrement the Invoice count" do
         lambda do
           do_delete
-          should change(Invoice, :count).by(-1)
+          is_expected.to change(Invoice, :count).by(-1)
         end
       end
     end

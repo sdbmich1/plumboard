@@ -14,10 +14,10 @@ feature "UserRegistrations" do
       end
 
       it 'shows content' do
-        page.should have_content 'Already have an account?'
-        page.should have_link 'Sign In', href: new_user_session_path
-        page.should have_link "Pixiboard's Terms of Service", href: terms_path
-        page.should have_link 'Privacy Policy', href: privacy_path
+        expect(page).to have_content 'Already have an account?'
+        expect(page).to have_link 'Sign In', href: new_user_session_path
+        expect(page).to have_link "Pixiboard's Terms of Service", href: terms_path
+        expect(page).to have_link 'Privacy Policy', href: privacy_path
       end
 
       it "should not create a empty user" do
@@ -25,7 +25,7 @@ feature "UserRegistrations" do
           fill_in "user_first_name", with: ''
 	  click_button submit 
 	}.not_to change(User, :count)
-        page.should have_content "Create Your Account"
+        expect(page).to have_content "Create Your Account"
       end
 
       it "should not create a incomplete user" do
@@ -33,7 +33,7 @@ feature "UserRegistrations" do
 		reg_user_info
 		click_button submit 
 	}.not_to change(User, :count)
-        page.should have_content "Create Your Account"
+        expect(page).to have_content "Create Your Account"
       end
 
       it "should not create user w/o email" do
@@ -43,7 +43,7 @@ feature "UserRegistrations" do
 		select('Male', :from => 'user_gender')
 		click_button submit 
 	}.not_to change(User, :count)
-        page.should have_content "Create Your Account"
+        expect(page).to have_content "Create Your Account"
       end
 
       it "should not create user w/o gender" do
@@ -55,7 +55,7 @@ feature "UserRegistrations" do
       		add_data_w_photo
 		click_button submit 
 	}.not_to change(User, :count)
-        page.should have_content "Create Your Account"
+        expect(page).to have_content "Create Your Account"
       end
 
       it "should not create user w/o birthdate" do
@@ -67,7 +67,7 @@ feature "UserRegistrations" do
       		add_data_w_photo
 		click_button submit 
 	}.not_to change(User, :count)
-        page.should have_content "Create Your Account"
+        expect(page).to have_content "Create Your Account"
       end
 
       it "should not create user w/o zip" do
@@ -80,7 +80,7 @@ feature "UserRegistrations" do
       		add_data_w_photo
 		click_button submit 
 	}.not_to change(User, :count)
-        page.should have_content "Create Your Account"
+        expect(page).to have_content "Create Your Account"
       end
 
       it "should not create user w/o valid zip" do
@@ -94,7 +94,7 @@ feature "UserRegistrations" do
       		add_data_w_photo
 		click_button submit 
 	}.not_to change(User, :count)
-        page.should have_content "Create Your Account"
+        expect(page).to have_content "Create Your Account"
       end
 
       it "should not create user w/o password" do
@@ -107,7 +107,7 @@ feature "UserRegistrations" do
       		add_data_w_photo
 		click_button submit 
 	}.not_to change(User, :count)
-        page.should have_content "Create Your Account"
+        expect(page).to have_content "Create Your Account"
       end
 
       it "should not create user w/o password confirmation" do
@@ -120,7 +120,7 @@ feature "UserRegistrations" do
       		add_data_w_photo
 		click_button submit 
 	}.not_to change(User, :count)
-        page.should have_content "Create Your Account"
+        expect(page).to have_content "Create Your Account"
       end
 
       it "should not create a user with no photo" do
@@ -128,7 +128,7 @@ feature "UserRegistrations" do
       		reg_user_data
 		click_button submit 
 	}.not_to change(User, :count)
-        page.should have_content "Create Your Account"
+        expect(page).to have_content "Create Your Account"
       end
 
       it "should not create a business user with name" do
@@ -139,7 +139,7 @@ feature "UserRegistrations" do
         	fill_in "user_business_name", with: ''
 		click_button submit 
 	}.not_to change(User, :count)
-        page.should have_content "Create Your Account"
+        expect(page).to have_content "Create Your Account"
       end
     end
     

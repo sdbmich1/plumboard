@@ -5,22 +5,22 @@ describe UsersController do
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive(stubs) unless stubs.empty?
     end
   end
 
   before(:each) do
     log_in_test_user
     @user = mock_user
-    controller.stub!(:current_user).and_return(@user)
+    allow(controller).to receive(:current_user).and_return(@user)
   end
 
   describe 'GET index' do
     before(:each) do
       @user = stub_model(User)
       @user.birth_date = DateTime.current
-      User.stub!(:get_by_type).and_return(@user)
-      @user.stub!(:paginate).and_return(@user)
+      allow(User).to receive(:get_by_type).and_return(@user)
+      allow(@user).to receive(:paginate).and_return(@user)
       controller.stub_chain(:load_data, :check_permissions).and_return(:success)
     end
 
@@ -30,13 +30,13 @@ describe UsersController do
 
     it "renders the :index view" do
       do_get
-      response.should render_template :index
+      expect(response).to render_template :index
     end
 
     it "should assign @user" do
-      User.should_receive(:get_by_type).and_return(@user)
+      expect(User).to receive(:get_by_type).and_return(@user)
       do_get 
-      assigns(:users).should_not be_nil
+      expect(assigns(:users)).not_to be_nil
     end
 
     it "responds to CSV" do
@@ -48,8 +48,8 @@ describe UsersController do
   describe 'GET show/:id' do
     before :each do
       @photo = stub_model(Picture)
-      User.stub!(:find).and_return( @user )
-      @user.stub!(:pictures).and_return( @photo )
+      allow(User).to receive(:find).and_return( @user )
+      allow(@user).to receive(:pictures).and_return( @photo )
     end
 
     def do_get
@@ -58,34 +58,34 @@ describe UsersController do
 
     it "should show the requested user" do
       do_get
-      response.should be_success
+      expect(response).to be_success
     end
 
     it "should load the requested user" do
-      User.stub(:find).with(@user.id).and_return(@user)
+      allow(User).to receive(:find).with(@user.id).and_return(@user)
       do_get
     end
 
     it "should assign @user" do
       do_get
-      assigns(:user).should_not be_nil
+      expect(assigns(:user)).not_to be_nil
     end
 
     it "should assign @photo" do
       do_get
-      assigns(:user).pictures.should_not be_nil
+      expect(assigns(:user).pictures).not_to be_nil
     end
 
     it "show action should render show template" do
       do_get
-      response.should render_template(:show)
+      expect(response).to render_template(:show)
     end
   end
 
   describe "GET 'edit/:id'" do
 
     before :each do
-      User.stub!(:find).and_return( @user )
+      allow(User).to receive(:find).and_return( @user )
     end
 
     def do_get
@@ -93,26 +93,26 @@ describe UsersController do
     end
 
     it "should load the requested user" do
-      User.stub(:find).with('1').and_return(@user)
+      allow(User).to receive(:find).with('1').and_return(@user)
       do_get
     end
 
     it "should assign @user" do
       do_get
-      assigns(:user).should_not be_nil
+      expect(assigns(:user)).not_to be_nil
     end
 
     it "should load the edit template" do
       do_get
-      response.should render_template :edit
+      expect(response).to render_template :edit
     end
   end
 
   describe "PUT /:id" do
     before (:each) do
       controller.stub_chain(:changing_email, :is_profile?).and_return(true)
-      controller.stub!(:match).and_return(true)
-      User.stub!(:find).and_return( @user )
+      allow(controller).to receive(:match).and_return(true)
+      allow(User).to receive(:find).and_return( @user )
     end
 
     def do_update
@@ -121,50 +121,50 @@ describe UsersController do
 
     context "with valid params" do
       before (:each) do
-        @user.stub(:update_attributes).and_return(true)
+        allow(@user).to receive(:update_attributes).and_return(true)
       end
 
       it "should load the requested user" do
-        User.stub(:find) { @user }
+        allow(User).to receive(:find) { @user }
         do_update
       end
 
       it "should update the requested user" do
-        User.stub(:find).with("1") { mock_user }
-	mock_user.should_receive(:update_attributes).with({'first_name'=>'test', 'last_name' => 'test'})
+        allow(User).to receive(:find).with("1") { mock_user }
+	expect(mock_user).to receive(:update_attributes).with({'first_name'=>'test', 'last_name' => 'test'})
         do_update
       end
 
       it "should assign @user" do
-        User.stub(:find) { mock_user(:update_attributes => true) }
+        allow(User).to receive(:find) { mock_user(:update_attributes => true) }
         do_update
-        assigns(:user).should_not be_nil 
+        expect(assigns(:user)).not_to be_nil 
       end
       
       it "should render nothing" do
         do_update
-        controller.stub!(:render)
+        allow(controller).to receive(:render)
       end
     end
 
     context "with invalid params" do
       before (:each) do
-        @user.stub(:update_attributes).and_return(false)
+        allow(@user).to receive(:update_attributes).and_return(false)
       end
 
       it "should load the requested user" do
-        User.stub(:find) { @user }
+        allow(User).to receive(:find) { @user }
         do_update
       end
 
       it "should assign @user" do
-        User.stub(:find) { mock_user(:update_attributes => false) }
+        allow(User).to receive(:find) { mock_user(:update_attributes => false) }
         do_update
-        assigns(:user).should_not be_nil 
+        expect(assigns(:user)).not_to be_nil 
       end
 
       it "renders nothing" do 
-        controller.stub!(:render)
+        allow(controller).to receive(:render)
       end
     end
   end
@@ -172,7 +172,7 @@ describe UsersController do
   describe 'GET /buyer_name' do
     before :each do
       @users = stub_model(User)
-      User.stub!(:search).and_return( @users )
+      allow(User).to receive(:search).and_return( @users )
       controller.stub_chain(:query).and_return(:success)
     end
 
@@ -181,18 +181,18 @@ describe UsersController do
     end
 
     it "should load the requested user" do
-      User.stub(:search).with('test').and_return(@users)
+      allow(User).to receive(:search).with('test').and_return(@users)
       do_get
     end
 
     it "assigns @users" do
       do_get
-      assigns(:users).should == @users
+      expect(assigns(:users)).to eq(@users)
     end
 
     it "renders nothing" do
       do_get
-      controller.stub!(:render)
+      allow(controller).to receive(:render)
     end
 
     it "responds to JSON" do
@@ -204,7 +204,7 @@ describe UsersController do
   describe 'GET states' do
     before(:each) do
       @states = stub_model(State)
-      State.stub!(:all).and_return(@states)
+      allow(State).to receive(:all).and_return(@states)
     end
 
     def do_get
@@ -212,18 +212,18 @@ describe UsersController do
     end
 
     it "loads the requested data" do
-      State.stub(:all).and_return(@users)
+      allow(State).to receive(:all).and_return(@users)
       do_get
     end
 
     it "renders nothing" do
       do_get
-      controller.stub!(:render)
+      allow(controller).to receive(:render)
     end
 
     it "assigns @states" do
       do_get 
-      assigns(:states).should_not be_nil
+      expect(assigns(:states)).not_to be_nil
     end
 
     it "responds to JSON" do

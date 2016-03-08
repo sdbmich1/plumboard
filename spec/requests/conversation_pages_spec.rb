@@ -62,13 +62,13 @@ feature "Conversations" do
 
     it 'shows content' do
       @conversation = @listing.conversations.create attributes_for :conversation, user_id: @sender.id, recipient_id: @user.id
-      page.should have_link('Sent', href: conversations_path(status: 'sent'))
-      page.should have_link('Received', href: conversations_path(status: 'received'))
-      page.should_not have_link('Mark All Read', href: mark_posts_path)
-      page.should have_content 'No conversations found.'
-      page.should_not have_selector('#conv-trash-btn') 
-      page.should_not have_selector('#conv-pay-btn') 
-      page.should_not have_button('Reply')
+      expect(page).to have_link('Sent', href: conversations_path(status: 'sent'))
+      expect(page).to have_link('Received', href: conversations_path(status: 'received'))
+      expect(page).not_to have_link('Mark All Read', href: mark_posts_path)
+      expect(page).to have_content 'No conversations found.'
+      expect(page).not_to have_selector('#conv-trash-btn') 
+      expect(page).not_to have_selector('#conv-pay-btn') 
+      expect(page).not_to have_button('Reply')
     end
   end
 
@@ -81,19 +81,19 @@ feature "Conversations" do
 
     it 'shows content' do
       #page.should have_selector('title', :text => full_title('Messages'))
-      page.should have_content @conversation.user.name
-      page.should have_link('Sent', href: conversations_path(status: 'sent'))
-      page.should have_link('Received', href: conversations_path(status: 'received'))
-      page.should have_link('Mark All Read', href: mark_posts_path)
-      page.should have_selector('#conv-trash-btn') 
-      page.should have_selector('#conv-bill-btn') 
-      page.should_not have_selector('#conv-pay-btn') 
-      page.should have_selector('#conv-show-btn') 
+      expect(page).to have_content @conversation.user.name
+      expect(page).to have_link('Sent', href: conversations_path(status: 'sent'))
+      expect(page).to have_link('Received', href: conversations_path(status: 'received'))
+      expect(page).to have_link('Mark All Read', href: mark_posts_path)
+      expect(page).to have_selector('#conv-trash-btn') 
+      expect(page).to have_selector('#conv-bill-btn') 
+      expect(page).not_to have_selector('#conv-pay-btn') 
+      expect(page).to have_selector('#conv-show-btn') 
     end
 
     it "marks all posts read", js: true do
       click_on 'Mark All Read'
-      page.should have_css('li.active a') 
+      expect(page).to have_css('li.active a') 
     end
      
     describe 'show messages' do
@@ -102,9 +102,9 @@ feature "Conversations" do
       end
 
       it "opens messages page" do
-        page.should have_selector('#conv-show-btn') 
+        expect(page).to have_selector('#conv-show-btn') 
         page.find('#conv-show-btn').click
-        page.should have_content @conversation.pixi_title
+        expect(page).to have_content @conversation.pixi_title
       end
     end
 
@@ -115,7 +115,7 @@ feature "Conversations" do
       end
 
       it "opens create invoice page", js: true do
-        page.should have_selector('#conv-bill-btn') 
+        expect(page).to have_selector('#conv-bill-btn') 
         page.find('#conv-bill-btn').click
 	sleep 3
 	  expect { 
@@ -124,7 +124,7 @@ feature "Conversations" do
 	    click_link 'OK'
 	    click_button 'Send'; sleep 3
 	  }.to change(Invoice, :count).by(1)
-	  page.should have_content "$400.00" 
+	  expect(page).to have_content "$400.00" 
       end
     end
      
@@ -135,9 +135,9 @@ feature "Conversations" do
       end
 
       it "opens pay invoice page" do
-        page.should have_selector('#conv-pay-btn') 
+        expect(page).to have_selector('#conv-pay-btn') 
         page.find('#conv-pay-btn').click
-        page.should have_content 'Amount Due'
+        expect(page).to have_content 'Amount Due'
       end
     end
      
@@ -147,7 +147,7 @@ feature "Conversations" do
         visit conversations_path(status: 'received')
       end
 
-      it { should_not have_selector('#conv-pay-btn') }
+      it { is_expected.not_to have_selector('#conv-pay-btn') }
     end
      
     describe 'paid invoice after opening messages' do
@@ -158,12 +158,12 @@ feature "Conversations" do
       end
 
       it "opens pay invoice page" do
-        page.should have_selector('#conv-pay-btn') 
+        expect(page).to have_selector('#conv-pay-btn') 
 	@invoice.status = 'paid'; @invoice.save
 	sleep 3;
         page.find('#conv-pay-btn').click
-        page.should have_content 'Amount Due'
-        page.should_not have_content 'Unpaid'
+        expect(page).to have_content 'Amount Due'
+        expect(page).not_to have_content 'Unpaid'
       end
     end
      
@@ -173,7 +173,7 @@ feature "Conversations" do
         visit conversations_path
       end
 
-      it { should_not have_selector('#conv-pay-btn') }
+      it { is_expected.not_to have_selector('#conv-pay-btn') }
     end
   end
      
@@ -188,19 +188,19 @@ feature "Conversations" do
     end
     
     it 'shows content' do
-      page.should have_link('Mark All Read', href: mark_posts_path)
-      page.should have_content @conversation.user.name
-      page.should have_content @conversation.listing.title
-      page.should have_content @post.content
-      page.should have_selector('#conv-trash-btn') 
-      page.should have_selector('#conv-pay-btn') 
-      page.should_not have_content 'No conversations found' 
+      expect(page).to have_link('Mark All Read', href: mark_posts_path)
+      expect(page).to have_content @conversation.user.name
+      expect(page).to have_content @conversation.listing.title
+      expect(page).to have_content @post.content
+      expect(page).to have_selector('#conv-trash-btn') 
+      expect(page).to have_selector('#conv-pay-btn') 
+      expect(page).not_to have_content 'No conversations found' 
     end
 
     it "pays an invoice" do
-      page.should have_selector('#conv-pay-btn') 
+      expect(page).to have_selector('#conv-pay-btn') 
       page.find('#conv-pay-btn').click
-      page.should have_content 'Amount Due'
+      expect(page).to have_content 'Amount Due'
     end
 
   end
@@ -212,8 +212,8 @@ feature "Conversations" do
 
     it 'shows no sent conversations', js: true do
       click_on 'Sent'
-      page.should_not have_link('Mark All Read', href: mark_posts_path) 
-      page.should have_content 'No conversations found' 
+      expect(page).not_to have_link('Mark All Read', href: mark_posts_path) 
+      expect(page).to have_content 'No conversations found' 
     end
   end
      
@@ -227,11 +227,11 @@ feature "Conversations" do
 
     it 'shows sent conversations', js: true do
       click_on 'Sent'
-      page.should_not have_link('Mark All Read', href: mark_posts_path) 
-      page.should have_content @reply_conv.recipient.name 
-      page.should have_content @reply_conv.listing.title 
-      page.should have_content @reply_post.content 
-      page.should_not have_content 'No conversations found' 
+      expect(page).not_to have_link('Mark All Read', href: mark_posts_path) 
+      expect(page).to have_content @reply_conv.recipient.name 
+      expect(page).to have_content @reply_conv.listing.title 
+      expect(page).to have_content @reply_post.content 
+      expect(page).not_to have_content 'No conversations found' 
     end
   end
 
@@ -244,41 +244,41 @@ feature "Conversations" do
     end
     
     it 'shows content' do
-      page.should have_content @conversation.user.name
-      page.should have_content @conversation.listing.title
-      page.should have_content @post.content
+      expect(page).to have_content @conversation.user.name
+      expect(page).to have_content @conversation.listing.title
+      expect(page).to have_content @post.content
     end
 
     it "can go back to received page" do
       click_on 'Received'
       sleep 5
-      page.should have_selector('#conv-show-btn') 
+      expect(page).to have_selector('#conv-show-btn') 
     end
 
     it "can go back to sent page" do
       click_on 'Sent'
-      page.should have_content 'No conversations found' 
+      expect(page).to have_content 'No conversations found' 
     end
 
     it 'removes last message' do
       expect(Post.count).to eq 1
-      page.should have_selector('.msg-trash-btn') 
+      expect(page).to have_selector('.msg-trash-btn') 
       page.find(".msg-trash-btn", :visible => true).click
       accept_btn
       sleep 5
       expect(Post.where(recipient_status: 'removed').count).to eq 1
-      page.should have_content 'No conversations found' 
+      expect(page).to have_content 'No conversations found' 
     end
 
     it 'removes a message' do
       add_post @conversation; sleep 2
       expect(Post.all.count).to eq 2
-      page.should have_selector('.msg-trash-btn') 
+      expect(page).to have_selector('.msg-trash-btn') 
       page.find(".msg-trash-btn", :visible => true).click
       accept_btn
       sleep 5
-      page.should_not have_content 'No conversations found' 
-      page.should have_selector('.msg-trash-btn') 
+      expect(page).not_to have_content 'No conversations found' 
+      expect(page).to have_selector('.msg-trash-btn') 
       expect(Post.where(recipient_status: 'active').count).to eq 1
       expect(Post.where(recipient_status: 'removed').count).to eq 1
     end
@@ -293,7 +293,7 @@ feature "Conversations" do
             fill_in 'reply_content', with: nil
             click_send
         }.not_to change(Post,:count).by(1)
-        page.should have_content @conversation.listing.title
+        expect(page).to have_content @conversation.listing.title
       end
     end
   end
@@ -321,27 +321,27 @@ feature "Conversations" do
     end
 
     it 'opens new invoice' do
-      page.should have_selector('#conv-bill-btn') 
+      expect(page).to have_selector('#conv-bill-btn') 
       sleep 2;
       page.find("#conv-bill-btn", :visible => true).click
-      page.should have_content 'Sales Tax'
+      expect(page).to have_content 'Sales Tax'
     end
 
     it 'handles removed pixi' do
-      page.should have_selector('#conv-bill-btn') 
+      expect(page).to have_selector('#conv-bill-btn') 
       @listing.status = 'removed'; @listing.save
       sleep 2;
       page.find("#conv-bill-btn", :visible => true).click
-      page.should_not have_selector('#pay-btn') 
+      expect(page).not_to have_selector('#pay-btn') 
     end
 
     it 'handles sold pixi' do
-      page.should have_selector('#conv-bill-btn') 
+      expect(page).to have_selector('#conv-bill-btn') 
       @listing.status = 'sold'; @listing.save
       sleep 2;
       page.find("#conv-bill-btn", :visible => true).click
       sleep 2;
-      page.should have_content NO_INV_PIXI_MSG
+      expect(page).to have_content NO_INV_PIXI_MSG
     end
   end
 
@@ -358,15 +358,15 @@ feature "Conversations" do
     
     it 'shows content' do
       sleep 2;
-      page.should have_content @conversation.pixi_title
-      page.should have_content @post.content
+      expect(page).to have_content @conversation.pixi_title
+      expect(page).to have_content @post.content
     end
 
     it 'removes conversation' do
       page.find("#conv-trash-btn", :visible => true).click
       accept_btn
       sleep 3
-      page.should have_content 'No conversations found' 
+      expect(page).to have_content 'No conversations found' 
       expect(Conversation.where(status: 'removed').count).to eq 1
     end
   end
@@ -378,21 +378,21 @@ feature "Conversations" do
     end
     
     it 'shows conversation content' do
-      page.should have_selector('#conv-show-btn') 
-      page.should have_selector('#conv-trash-btn') 
-      page.should_not have_selector('#conv-pay-btn') 
-      page.should_not have_selector('#conv-bill-btn') 
+      expect(page).to have_selector('#conv-show-btn') 
+      expect(page).to have_selector('#conv-trash-btn') 
+      expect(page).not_to have_selector('#conv-pay-btn') 
+      expect(page).not_to have_selector('#conv-bill-btn') 
     end
     
     it 'shows message content' do
       sleep 5
       page.find("#conv-show-btn", :visible => true).click
-      page.should have_selector('#conv-trash-btn') 
-      page.should_not have_selector('#conv-pay-btn') 
-      page.should_not have_selector('#conv-bill-btn') 
-      page.should have_content @conversation.user.name
-      page.should have_content @conversation.listing.title
-      page.should have_content @post.content
+      expect(page).to have_selector('#conv-trash-btn') 
+      expect(page).not_to have_selector('#conv-pay-btn') 
+      expect(page).not_to have_selector('#conv-bill-btn') 
+      expect(page).to have_content @conversation.user.name
+      expect(page).to have_content @conversation.listing.title
+      expect(page).to have_content @post.content
     end
 
     it 'removes conversation' do
@@ -400,7 +400,7 @@ feature "Conversations" do
       accept_btn
       sleep 5
       expect(Conversation.where(recipient_status: 'removed').count).to eq 1
-      page.should have_content 'No conversations found' 
+      expect(page).to have_content 'No conversations found' 
     end
   end
 
@@ -420,17 +420,17 @@ feature "Conversations" do
     let(:first_page)  { Conversation.paginate(page: 1) }
     let(:second_page)  { Conversation.paginate(page: 2) }
 
-    it { should have_selector('div', class: 'pagination') }
+    it { is_expected.to have_selector('div', class: 'pagination') }
 
     it 'lists each conversation' do
       first_page.each do |conv|
-        page.should have_selector('li', :value => conv.id)
+        expect(page).to have_selector('li', :value => conv.id)
       end
     end
 
     it 'does not list second page for conversation' do
       second_page.each do |conv|
-        page.should_not have_selector('li', :value => conv.id)
+        expect(page).not_to have_selector('li', :value => conv.id)
       end
     end
 

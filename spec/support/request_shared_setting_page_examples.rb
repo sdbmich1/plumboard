@@ -1,43 +1,43 @@
 require 'spec_helper'
 
   def general_settings usr, val
-    page.should have_content("Settings")
-      page.should have_link("Account", href: "/users/#{usr.id}")
-      page.should have_link("Profile", href: settings_path(id: usr))
-      page.should have_link("Contact", href: settings_contact_path(id: usr))
-      page.should have_link("Password", href: settings_password_path(id: usr))
-      page.should have_link("Delivery", href: settings_delivery_path(id: usr)) if usr.is_business?
+    expect(page).to have_content("Settings")
+      expect(page).to have_link("Account", href: "/users/#{usr.id}")
+      expect(page).to have_link("Profile", href: settings_path(id: usr))
+      expect(page).to have_link("Contact", href: settings_contact_path(id: usr))
+      expect(page).to have_link("Password", href: settings_password_path(id: usr))
+      expect(page).to have_link("Delivery", href: settings_delivery_path(id: usr)) if usr.is_business?
   end
 
   def account_settings usr
-    page.should have_content("#{usr.name}")
-    page.should have_content("Pixis Posted")
-    page.should have_content("Member Since")
-    page.should have_content("URL")
-    page.should have_content("#{usr.user_url}")
+    expect(page).to have_content("#{usr.name}")
+    expect(page).to have_content("Pixis Posted")
+    expect(page).to have_content("Member Since")
+    expect(page).to have_content("URL")
+    expect(page).to have_content("#{usr.user_url}")
   end
 
   def delivery_settings usr, msg
     page.send(msg, have_content("Delivery"))
     if msg == 'should'
       click_link 'Delivery'
-      page.should have_content("Delivery Type")
-      page.should have_content("Sales Tax")
-      page.should have_content("Ship Amt")
+      expect(page).to have_content("Delivery Type")
+      expect(page).to have_content("Sales Tax")
+      expect(page).to have_content("Ship Amt")
     end
   end
 
   def profile_settings usr
     click_link 'Profile'
     # page.should have_content("#{usr.first_name}")
-    page.should have_selector("#user_first_name")
-    page.should have_selector('#usr_photo')
+    expect(page).to have_selector("#user_first_name")
+    expect(page).to have_selector('#usr_photo')
   end
 
   def contact_settings usr
     click_link 'Contact'
-    page.should have_content("Home Phone")
-    page.should have_content("Address")
+    expect(page).to have_content("Home Phone")
+    expect(page).to have_content("Address")
   end
 
   def set_accts factory, factory2, flg
@@ -75,7 +75,7 @@ shared_examples 'setting_pages' do |factory, factory2, msg, val, flg|
 
     it 'should show password page', js: true do
       click_link 'Password'
-      page.should have_content("Password")
+      expect(page).to have_content("Password")
     end
 
     it 'should show delivery page', js: true do

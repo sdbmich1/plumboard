@@ -8,13 +8,13 @@ describe UserObserver do
     it 'should add act pixi points' do
       user.first_name = 'Sam'
       user.save!
-      user.user_pixi_points.last.code.should == 'act'
+      expect(user.user_pixi_points.last.code).to eq('act')
     end
 
     it 'should add lb pixi points' do
       user.last_sign_in_at = Time.now
       user.save!
-      user.user_pixi_points.last.code.should == 'lb'
+      expect(user.user_pixi_points.last.code).to eq('lb')
     end
 
     it 'updates the role' do
@@ -46,20 +46,20 @@ describe UserObserver do
       it 'should not call update account' do
         user.birth_date = '01/03/1989'.to_date
         user.save!
-        StripePayment.stub(:update_account).and_return(StripePayment)
-        StripePayment.should_not_receive(:update_account).with(user)
+        allow(StripePayment).to receive(:update_account).and_return(StripePayment)
+        expect(StripePayment).not_to receive(:update_account).with(user)
       end
 
       it 'should call update account', run: true do
         user.birth_date = '01/03/1989'.to_date
         user.save!
-        StripePayment.should_receive(:update_account)
+        expect(StripePayment).to receive(:update_account)
 	StripePayment.update_account(user, user.acct_token, '127.0.0.1')
       end
 
       it 'should not call update account' do
         user.first_name = 'Jack'
-        StripePayment.should_not_receive(:update_account).with(user)
+        expect(StripePayment).not_to receive(:update_account).with(user)
         user.save!
       end
     end

@@ -7,9 +7,9 @@ describe PixiPoint do
    
   subject { @pixi_point }
 
-  it { should respond_to(:category_name) }
-  it { should respond_to(:action_name) }
-  it { should respond_to(:value) }
-  it { should respond_to(:code) } 
-  it { should respond_to(:user_pixi_points) } 
+  it { is_expected.to respond_to(:category_name) }
+  it { is_expected.to respond_to(:action_name) }
+  it { is_expected.to respond_to(:value) }
+  it { is_expected.to respond_to(:code) } 
+  it { is_expected.to respond_to(:user_pixi_points) } 
 end

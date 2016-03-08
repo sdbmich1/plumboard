@@ -12,7 +12,7 @@ describe FavoriteSellersController do
 
   def set_ability
     @abilities = Ability.new(@user)
-    Ability.stub(:new).and_return(@abilities)
+    allow(Ability).to receive(:new).and_return(@abilities)
   end
 
   describe "POST seller", create: true do
@@ -29,8 +29,8 @@ describe FavoriteSellersController do
 
   describe "PUT /:seller_id", seller: true do
     def setup success
-      FavoriteSeller.stub!(:find_by_user_id_and_seller_id).and_return(@favorite)
-      @favorite.stub!(:update_attribute).and_return(success)
+      allow(FavoriteSeller).to receive(:find_by_user_id_and_seller_id).and_return(@favorite)
+      allow(@favorite).to receive(:update_attribute).and_return(success)
     end
 
     def do_update success
@@ -41,30 +41,30 @@ describe FavoriteSellersController do
     context "failure" do
       it "assigns @favorite" do
         do_update(false)
-        assigns(:favorite).should_not be_nil
+        expect(assigns(:favorite)).not_to be_nil
       end
 
       it "renders tempate" do
         do_update(false)
-        response.should render_template(:update)
+        expect(response).to render_template(:update)
       end
     end
 
     context "success" do
       it "assigns @favorite" do
         do_update(true)
-        assigns(:favorite).should_not be_nil 
+        expect(assigns(:favorite)).not_to be_nil 
       end
 
       it "renders template" do 
         do_update(true)
-        response.should render_template(:update)
+        expect(response).to render_template(:update)
       end
 
       it "changes FavoriteSeller count" do
         lambda do
           do_create(true)
-          should_not change(FavoriteSeller, :count)
+          is_expected.not_to change(FavoriteSeller, :count)
         end
       end
     end

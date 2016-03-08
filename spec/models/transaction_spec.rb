@@ -14,43 +14,43 @@ describe Transaction do
     it_behaves_like "model methods", %w(user listings transaction_details invoices pixi_payments)
     it_behaves_like 'an user', @transaction, :transaction
     it_behaves_like 'an address', @transaction, :transaction
-    it { should respond_to(:payment_type) }
-    it { should respond_to(:credit_card_no) }
-    it { should respond_to(:description) }
-    it { should respond_to(:amt) }
-    it { should respond_to(:transaction_type) }
-    it { should respond_to(:code) }
-    it { should respond_to(:promo_code) }
-    it { should respond_to(:user_id) }
-    it { should respond_to(:cvv) }
-    it { should respond_to(:confirmation_no) }
-    it { should respond_to(:token) }
-    it { should respond_to(:processing_fee) }
-    it { should respond_to(:convenience_fee) }
-    it { should respond_to(:debit_token) }
-    it { should respond_to(:card_number) }
-    it { should respond_to(:exp_month) }
-    it { should respond_to(:exp_year) }
-    it { should respond_to(:recipient_first_name) }
-    it { should respond_to(:recipient_last_name) }
-    it { should respond_to(:recipient_email) }
-    it { should respond_to(:ship_address) }
-    it { should respond_to(:ship_address2) }
-    it { should respond_to(:ship_city) }
-    it { should respond_to(:ship_state) }
-    it { should respond_to(:ship_zip) }
-    it { should respond_to(:ship_country) }
-    it { should respond_to(:recipient_phone) }
-    it { should validate_presence_of(:home_phone) }
-    it { should belong_to(:user) }
-    it { should have_many(:transaction_details) }
-    it { should have_many(:pixi_payments) }
-    it { should have_many(:invoices) }
-    it { should have_many(:listings).through(:invoices) }
-    it { should_not allow_value('').for(:amt) }
+    it { is_expected.to respond_to(:payment_type) }
+    it { is_expected.to respond_to(:credit_card_no) }
+    it { is_expected.to respond_to(:description) }
+    it { is_expected.to respond_to(:amt) }
+    it { is_expected.to respond_to(:transaction_type) }
+    it { is_expected.to respond_to(:code) }
+    it { is_expected.to respond_to(:promo_code) }
+    it { is_expected.to respond_to(:user_id) }
+    it { is_expected.to respond_to(:cvv) }
+    it { is_expected.to respond_to(:confirmation_no) }
+    it { is_expected.to respond_to(:token) }
+    it { is_expected.to respond_to(:processing_fee) }
+    it { is_expected.to respond_to(:convenience_fee) }
+    it { is_expected.to respond_to(:debit_token) }
+    it { is_expected.to respond_to(:card_number) }
+    it { is_expected.to respond_to(:exp_month) }
+    it { is_expected.to respond_to(:exp_year) }
+    it { is_expected.to respond_to(:recipient_first_name) }
+    it { is_expected.to respond_to(:recipient_last_name) }
+    it { is_expected.to respond_to(:recipient_email) }
+    it { is_expected.to respond_to(:ship_address) }
+    it { is_expected.to respond_to(:ship_address2) }
+    it { is_expected.to respond_to(:ship_city) }
+    it { is_expected.to respond_to(:ship_state) }
+    it { is_expected.to respond_to(:ship_zip) }
+    it { is_expected.to respond_to(:ship_country) }
+    it { is_expected.to respond_to(:recipient_phone) }
+    it { is_expected.to validate_presence_of(:home_phone) }
+    it { is_expected.to belong_to(:user) }
+    it { is_expected.to have_many(:transaction_details) }
+    it { is_expected.to have_many(:pixi_payments) }
+    it { is_expected.to have_many(:invoices) }
+    it { is_expected.to have_many(:listings).through(:invoices) }
+    it { is_expected.not_to allow_value('').for(:amt) }
     context 'amounts' do
       [['processing_fee', 1500], ['convenience_fee', 1500], ['amt', 15000]].each do |item|
-        it { should validate_numericality_of(item[0].to_sym).is_greater_than_or_equal_to(0) }
+        it { is_expected.to validate_numericality_of(item[0].to_sym).is_greater_than_or_equal_to(0) }
         it_behaves_like 'an amount', item[0], item[1]
       end
     end
@@ -62,39 +62,39 @@ describe Transaction do
       "promo_code"=>''} }
     it "should load new transaction" do
       contact_user = create :contact_user 
-      Transaction.load_new(contact_user, order).first_name.should_not be_nil
+      expect(Transaction.load_new(contact_user, order).first_name).not_to be_nil
     end
 
     it "should not load new transaction" do
-      Transaction.load_new(nil, order).first_name.should be_nil
+      expect(Transaction.load_new(nil, order).first_name).to be_nil
     end
   end
   
   describe "refundable" do
     it "should be refundable" do
       @transaction.created_at = Time.now
-      @transaction.refundable?.should be_true
+      expect(@transaction.refundable?).to be_truthy
     end
 
     it "should not be refundable" do
       @transaction.created_at = Time.now-6.months
-      @transaction.refundable?.should_not be_true
+      expect(@transaction.refundable?).not_to be_truthy
     end
   end
 
   describe "load item detail" do
     it "should load new item detail" do
-      @transaction.add_details('pixi', 1, 10.99).should_not be_nil
+      expect(@transaction.add_details('pixi', 1, 10.99)).not_to be_nil
     end
 
     it "checks new item detail" do
-      @transaction.add_details('pixi', 3, 10.99).should_not be_nil
+      expect(@transaction.add_details('pixi', 3, 10.99)).not_to be_nil
       @transaction.save
       expect(TransactionDetail.last.price).to eq 10.99
     end
 
     it "should not load new item detail" do
-      @transaction.add_details(nil, 0, 0).should be_nil
+      expect(@transaction.add_details(nil, 0, 0)).to be_nil
     end
   end
 
@@ -104,48 +104,48 @@ describe Transaction do
       "promo_code"=>''} }
 
     it "should save order" do
-      Transaction.any_instance.stub(:save_transaction).and_return(true)
-      @transaction.save_transaction(order).should be_true
+      allow_any_instance_of(Transaction).to receive(:save_transaction).and_return(true)
+      expect(@transaction.save_transaction(order)).to be_truthy
     end
 
     it "should not save order" do
       @transaction.first_name = nil
-      @transaction.save_transaction(order).should_not be_true
+      expect(@transaction.save_transaction(order)).not_to be_truthy
     end
   end
 
   describe 'approved?' do
     it 'should return true' do
       @transaction.status = 'approved'
-      @transaction.approved?.should be_true
+      expect(@transaction.approved?).to be_truthy
     end
 
     it 'should not return true' do
       @transaction.status = 'pending'
-      @transaction.approved?.should_not be_true
+      expect(@transaction.approved?).not_to be_truthy
     end
   end
 
   describe 'has_address?' do
     it 'should return true' do
-      @transaction.has_address?.should be_true
+      expect(@transaction.has_address?).to be_truthy
     end
 
     it 'should not return true' do
       transaction = build :transaction, address: '', city: ''
-      transaction.has_address?.should_not be_true
+      expect(transaction.has_address?).not_to be_truthy
     end
   end
 
   describe 'has_token?' do
     it 'returns true' do
       @account = @user.card_accounts.create FactoryGirl.attributes_for :card_account
-      expect(@transaction.has_token?).to be_true
+      expect(@transaction.has_token?).to be_truthy
     end
 
     it 'does not return true' do
       transaction = build :transaction, token: ''
-      transaction.has_token?.should_not be_true
+      expect(transaction.has_token?).not_to be_truthy
     end
   end
 
@@ -153,23 +153,23 @@ describe Transaction do
     it 'should return true' do
       @transaction.card_number, @transaction.cvv = '4111111111111111', '123'
       @transaction.exp_month, @transaction.exp_year = 6, 2018
-      @transaction.valid_card?.should be_true
+      expect(@transaction.valid_card?).to be_truthy
     end
 
     it 'should not return true' do
-      @transaction.valid_card?.should_not be_true
+      expect(@transaction.valid_card?).not_to be_truthy
     end
   end
 
   describe 'pixi?' do
     it 'should return true' do
       @transaction.transaction_type = 'pixi'
-      @transaction.pixi?.should be_true
+      expect(@transaction.pixi?).to be_truthy
     end
 
     it 'should not return true' do
       @transaction.transaction_type = 'invoice'
-      @transaction.pixi?.should_not be_true
+      expect(@transaction.pixi?).not_to be_truthy
     end
   end
 
@@ -183,12 +183,12 @@ describe Transaction do
     end
 
     it "does not get invoice pixi" do
-      @transaction.get_invoice_listing.should_not be_true
-      @transaction.get_invoice.should_not be_true
-      @transaction.seller.should_not be_true
-      @transaction.seller_name.should_not be_true
-      @transaction.seller_id.should_not be_true
-      @transaction.pixi_id.should_not be_true
+      expect(@transaction.get_invoice_listing).not_to be_truthy
+      expect(@transaction.get_invoice).not_to be_truthy
+      expect(@transaction.seller).not_to be_truthy
+      expect(@transaction.seller_name).not_to be_truthy
+      expect(@transaction.seller_id).not_to be_truthy
+      expect(@transaction.pixi_id).not_to be_truthy
       expect(@transaction.pixi_title).not_to eq @listing.title
     end
 
@@ -196,33 +196,33 @@ describe Transaction do
       @txn = @user.transactions.create FactoryGirl.attributes_for(:transaction, transaction_type: 'invoice')
       @invoice.transaction_id, @invoice.status = @txn.id, 'pending'
       @invoice.save!
-      @invoice.transaction.get_invoice_listing.should be_true
-      @invoice.transaction.get_invoice.should be_true
-      @invoice.transaction.seller.should_not be_nil
-      @invoice.transaction.seller_name.should == @seller.name
-      @invoice.transaction.seller_id.should == @seller.id
-      @invoice.transaction.pixi_id.should == @invoice.pixi_id
-      @invoice.transaction.pixi_title.should == @listing.title
+      expect(@invoice.transaction.get_invoice_listing).to be_truthy
+      expect(@invoice.transaction.get_invoice).to be_truthy
+      expect(@invoice.transaction.seller).not_to be_nil
+      expect(@invoice.transaction.seller_name).to eq(@seller.name)
+      expect(@invoice.transaction.seller_id).to eq(@seller.id)
+      expect(@invoice.transaction.pixi_id).to eq(@invoice.pixi_id)
+      expect(@invoice.transaction.pixi_title).to eq(@listing.title)
     end
   end
 
   describe "process transaction - Balanced" do
     before do
       set_payment_const('balanced')
-      @customer = mock('Balanced::Customer')
+      @customer = double('Balanced::Customer')
       Balanced::Customer.stub_chain(:new, :save, :uri).and_return(@customer)
-      @customer.stub!(:uri).and_return(true)
-      @customer.stub!(:debit).with(amount: 10000, appears_on_statement_as: 'pixiboard.com', meta: {}).and_return(true)
+      allow(@customer).to receive(:uri).and_return(true)
+      allow(@customer).to receive(:debit).with(amount: 10000, appears_on_statement_as: 'pixiboard.com', meta: {}).and_return(true)
     end
 
     it "does not process" do
       @transaction.first_name = nil
-      @transaction.process_transaction.should_not be_true
+      expect(@transaction.process_transaction).not_to be_truthy
     end
 
     it "processes txn" do
-      Transaction.any_instance.stub(:process_transaction).and_return(true)
-      @transaction.process_transaction.should be_true
+      allow_any_instance_of(Transaction).to receive(:process_transaction).and_return(true)
+      expect(@transaction.process_transaction).to be_truthy
     end
   end
 
@@ -243,23 +243,23 @@ describe Transaction do
       @txn = @user.transactions.build FactoryGirl.attributes_for(:balanced_transaction, transaction_type: 'invoice')
     end
 
-    it { should be_valid }
+    it { is_expected.to be_valid }
 
     it "should not save payment" do
       @txn.first_name = nil
-      @txn.save_transaction(@order).should_not be_true
+      expect(@txn.save_transaction(@order)).not_to be_truthy
     end
 
     it "should save payment" do
-      Transaction.any_instance.stub(:save_transaction).and_return(true)
-      @txn.save_transaction(@order).should be_true
+      allow_any_instance_of(Transaction).to receive(:save_transaction).and_return(true)
+      expect(@txn.save_transaction(@order)).to be_truthy
     end
   end
 
   describe 'get_fee' do
     it "should get fee" do 
       transaction = FactoryGirl.build :transaction, convenience_fee: 3.00, processing_fee: 0.99
-      transaction.get_fee.should be_true
+      expect(transaction.get_fee).to be_truthy
     end
 
     it "should not get fee" do 
@@ -310,12 +310,12 @@ describe Transaction do
     end
 
     it "should get transactions in range" do
-      Transaction.get_by_date(DateTime.current - 2.days, DateTime.current).should_not be_empty
-      Transaction.get_by_date(DateTime.current - 2.days, DateTime.current + 1.days).should_not be_empty
+      expect(Transaction.get_by_date(DateTime.current - 2.days, DateTime.current)).not_to be_empty
+      expect(Transaction.get_by_date(DateTime.current - 2.days, DateTime.current + 1.days)).not_to be_empty
     end
 
     it "should not get transactions out of range" do
-      Transaction.get_by_date(DateTime.current - 2.days, DateTime.current - 1.days).should be_empty
+      expect(Transaction.get_by_date(DateTime.current - 2.days, DateTime.current - 1.days)).to be_empty
     end
   end
 
@@ -335,11 +335,11 @@ describe Transaction do
       @transaction.ship_city = "San Francisco"
       @transaction.ship_state = "CA"
       @transaction.ship_zip = "94111"
-      expect(@transaction.has_ship_address?).to be_true
+      expect(@transaction.has_ship_address?).to be_truthy
     end
 
     it "returns false otherwise" do
-      expect(@transaction.has_ship_address?).to be_false
+      expect(@transaction.has_ship_address?).to be_falsey
     end
   end
 
