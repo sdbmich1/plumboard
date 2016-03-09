@@ -5,25 +5,25 @@ describe ConversationsController do
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      allow(user).to receive(stubs) unless stubs.empty?
+      allow(user).to receive_messages(stubs) unless stubs.empty?
     end
   end
 
   def mock_listing(stubs={})
     (@mock_listing ||= mock_model(Listing, stubs).as_null_object).tap do |listing|
-      allow(listing).to receive(stubs) unless stubs.empty?
+      allow(listing).to receive_messages(stubs) unless stubs.empty?
     end
   end
 
   def mock_conversation(stubs={})
     (@mock_conversation ||= mock_model(Conversation, stubs).as_null_object).tap do |conversation|
-      allow(conversation).to receive(stubs) unless stubs.empty?
+      allow(conversation).to receive_messages(stubs) unless stubs.empty?
     end
   end
 
   def mock_post(stubs={})
     (@mock_post ||= mock_model(Post, stubs).as_null_object).tap do |post|
-      allow(post).to receive(stubs) unless stubs.empty?
+      allow(post).to receive_messages(stubs) unless stubs.empty?
     end
   end
 

@@ -5,7 +5,7 @@ describe SearchesController do
 
   def mock_listing(stubs={})
     (@mock_listing ||= mock_model(Listing, stubs).as_null_object).tap do |listing|
-       allow(listing).to receive(stubs) unless stubs.empty?
+      allow(listing).to receive_messages(stubs) unless stubs.empty?
     end
   end
 

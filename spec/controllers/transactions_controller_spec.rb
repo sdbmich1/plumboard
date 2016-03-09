@@ -5,19 +5,19 @@ describe TransactionsController do
 
   def mock_transaction(stubs={})
     (@mock_transaction ||= mock_model(Transaction, stubs).as_null_object).tap do |transaction|
-      allow(transaction).to receive(stubs) unless stubs.empty?
+      allow(transaction).to receive_messages(stubs) unless stubs.empty?
     end
   end
 
   def mock_invoice(stubs={})
     (@mock_invoice ||= mock_model(Invoice, stubs).as_null_object).tap do |invoice|
-      allow(invoice).to receive(stubs) unless stubs.empty?
+      allow(invoice).to receive_messages(stubs) unless stubs.empty?
     end
   end
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      allow(user).to receive(stubs) unless stubs.empty?
+      allow(user).to receive_messages(stubs) unless stubs.empty?
     end
   end
 

@@ -5,13 +5,13 @@ describe InquiriesController do
 
   def mock_inquiry(stubs={})
     (@mock_inquiry ||= mock_model(Inquiry, stubs).as_null_object).tap do |inquiry|
-      allow(inquiry).to receive(stubs) unless stubs.empty?
+      allow(inquiry).to receive_messages(stubs) unless stubs.empty?
     end
   end
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      allow(user).to receive(stubs) unless stubs.empty?
+      allow(user).to receive_messages(stubs) unless stubs.empty?
     end
   end
 

@@ -93,11 +93,7 @@ describe InvoiceObserver do
     before :all do
       @invoice = @user.invoices.build attributes_for(:invoice, buyer_id: @buyer.id, seller_id: @user.id, status: 'unpaid')
       @details = @invoice.invoice_details.build attributes_for(:invoice_detail, pixi_id: @listing.pixi_id)
-      @buyer.pixi_wants.create attributes_for(:pixi_want, pixi_id: @listing.pixi_id)
-      @listing.pictures.create attributes_for(:picture)
-      @listing.conversations.create attributes_for :conversation, user_id: @user.id, recipient_id: @buyer.id
-      @listing.conversations.first.posts.create attributes_for :post, user_id: @user.id, recipient_id: @buyer.id, pixi_id: @listing.pixi_id
-      @invoice.save; sleep 5
+      @invoice.save
     end
 
     it 'should send a post' do

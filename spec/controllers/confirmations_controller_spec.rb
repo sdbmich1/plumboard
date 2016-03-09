@@ -8,7 +8,7 @@ describe ConfirmationsController do
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      allow(user).to receive(stubs) unless stubs.empty?
+      allow(user).to receive_messages(stubs) unless stubs.empty?
     end
   end
 
