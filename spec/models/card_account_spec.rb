@@ -188,7 +188,7 @@ describe CardAccount do
       @account.save!
       @card_acct = double('Stripe::Customer')
       allow(Stripe::Customer).to receive(:retrieve).with(@account.cust_token).and_return(@card_acct)
-      @card_acct.stub_chain(:sources, :retrieve, :delete).and_return(true)
+      allow(@card_acct).to receive_message_chain(:sources, :retrieve, :delete).and_return(true)
     #  Payment.should_receive(:delete_card).and_return(true)
     end
 

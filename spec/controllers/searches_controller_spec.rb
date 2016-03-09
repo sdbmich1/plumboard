@@ -18,7 +18,7 @@ describe SearchesController do
       allow(Listing).to receive(:search).and_return( @listings )
       allow(@listings).to receive(:populate).and_return(@listings)
       allow(User).to receive(:get_sellers).and_return( @sellers )
-      controller.stub_chain(:query, :page, :add_points, :get_location, :set_params, :search_options).and_return(:success)
+      allow(controller).to receive_message_chain(:query, :page, :add_points, :get_location, :set_params, :search_options).and_return(:success)
     end
 
     def do_post
@@ -43,7 +43,7 @@ describe SearchesController do
 
   describe 'GET /index', base: true do
     before :each do
-      controller.stub_chain(:query, :page, :add_points, :get_location, :set_params, :search_options).and_return(:success)
+      allow(controller).to receive_message_chain(:query, :page, :add_points, :get_location, :set_params, :search_options).and_return(:success)
     end
 
     it_behaves_like "a load data request", 'Listing', 'search', 'index', 'populate', true, 'listings'

@@ -210,7 +210,7 @@ describe Transaction do
     before do
       set_payment_const('balanced')
       @customer = double('Balanced::Customer')
-      Balanced::Customer.stub_chain(:new, :save, :uri).and_return(@customer)
+      allow(Balanced::Customer).to receive_message_chain(:new, :save, :uri).and_return(@customer)
       allow(@customer).to receive(:uri).and_return(true)
       allow(@customer).to receive(:debit).with(amount: 10000, appears_on_statement_as: 'pixiboard.com', meta: {}).and_return(true)
     end

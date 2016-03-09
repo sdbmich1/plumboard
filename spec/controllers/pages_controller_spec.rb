@@ -11,8 +11,8 @@ describe PagesController do
   describe 'GET home' do
     before(:each) do
       @listings = stub_model(Listing)
-      Listing.stub_chain(:active, :board_fields).and_return(@listings)
-      @listings.stub_chain(:paginate).and_return(@listings)
+      allow(Listing).to receive_message_chain(:active, :board_fields).and_return(@listings)
+      allow(@listings).to receive_message_chain(:paginate).and_return(@listings)
       allow(controller).to receive(:load_data).and_return(:success)
       do_get
     end
@@ -37,7 +37,7 @@ describe PagesController do
   describe "GET 'help'" do
     before(:each) do
       @faqs = double("faqs")
-      Faq.stub_chain(:active).and_return(@faqs)
+      allow(Faq).to receive_message_chain(:active).and_return(@faqs)
       do_get
     end
 

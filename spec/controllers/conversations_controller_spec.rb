@@ -5,25 +5,25 @@ describe ConversationsController do
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_listing(stubs={})
     (@mock_listing ||= mock_model(Listing, stubs).as_null_object).tap do |listing|
-      listing.stub(stubs) unless stubs.empty?
+      allow(listing).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_conversation(stubs={})
     (@mock_conversation ||= mock_model(Conversation, stubs).as_null_object).tap do |conversation|
-      conversation.stub(stubs) unless stubs.empty?
+      allow(conversation).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_post(stubs={})
     (@mock_post ||= mock_model(Post, stubs).as_null_object).tap do |post|
-      post.stub(stubs) unless stubs.empty?
+      allow(post).to receive(stubs) unless stubs.empty?
     end
   end
 
@@ -234,7 +234,7 @@ describe ConversationsController do
 
   describe 'GET show conversation' do
      before (:each) do
-      Conversation.stub_chain(:inc_show_list, :find).and_return( @conversation )
+      allow(Conversation).to receive_message_chain(:inc_show_list, :find).and_return( @conversation )
       allow(@conversation).to receive(:mark_all_posts).and_return(:success)
       @user = mock_model(User, :id => 3)
       @conversation = mock_model(Conversation, :id => 1, :pixi_id => 1, :user_id => 3)

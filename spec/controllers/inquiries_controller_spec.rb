@@ -5,13 +5,13 @@ describe InquiriesController do
 
   def mock_inquiry(stubs={})
     (@mock_inquiry ||= mock_model(Inquiry, stubs).as_null_object).tap do |inquiry|
-      inquiry.stub(stubs) unless stubs.empty?
+      allow(inquiry).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive(stubs) unless stubs.empty?
     end
   end
 
@@ -103,7 +103,7 @@ describe InquiriesController do
 
     before :each do
       allow(controller).to receive(:current_user).and_return(@user)
-      @user.stub_chain(:inquiries, :build).and_return( @inquiry )
+      allow(@user).to receive_message_chain(:inquiries, :build).and_return( @inquiry )
       do_get
     end
 

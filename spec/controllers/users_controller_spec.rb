@@ -5,7 +5,7 @@ describe UsersController do
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive(stubs) unless stubs.empty?
     end
   end
 
@@ -21,7 +21,7 @@ describe UsersController do
       @user.birth_date = DateTime.current
       allow(User).to receive(:get_by_type).and_return(@user)
       allow(@user).to receive(:paginate).and_return(@user)
-      controller.stub_chain(:load_data, :check_permissions).and_return(:success)
+      allow(controller).to receive_message_chain(:load_data, :check_permissions).and_return(:success)
     end
 
     def do_get
@@ -110,7 +110,7 @@ describe UsersController do
 
   describe "PUT /:id" do
     before (:each) do
-      controller.stub_chain(:changing_email, :is_profile?).and_return(true)
+      allow(controller).to receive_message_chain(:changing_email, :is_profile?).and_return(true)
       allow(controller).to receive(:match).and_return(true)
       allow(User).to receive(:find).and_return( @user )
     end
@@ -173,7 +173,7 @@ describe UsersController do
     before :each do
       @users = stub_model(User)
       allow(User).to receive(:search).and_return( @users )
-      controller.stub_chain(:query).and_return(:success)
+      allow(controller).to receive_message_chain(:query).and_return(:success)
     end
 
     def do_get

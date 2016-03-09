@@ -5,13 +5,13 @@ describe PixiLikesController do
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_like(stubs={})
     (@mock_like ||= mock_model(PixiLike, stubs).as_null_object).tap do |like|
-      like.stub(stubs) unless stubs.empty?
+      allow(like).to receive(stubs) unless stubs.empty?
     end
   end
 
@@ -24,7 +24,7 @@ describe PixiLikesController do
     before :each do
       @like = stub_model PixiLike
       allow(controller).to receive(:current_user).and_return(@user)
-      @user.stub_chain(:pixi_likes, :build).and_return(@like)
+      allow(@user).to receive_message_chain(:pixi_likes, :build).and_return(@like)
       allow(controller).to receive(:reload_data).and_return(true)
     end
     
@@ -56,7 +56,7 @@ describe PixiLikesController do
       end
 
       it "should load the requested like" do
-        @user.stub_chain(:pixi_likes, :build) { mock_like(:save => true) }
+        allow(@user).to receive_message_chain(:pixi_likes, :build) { mock_like(:save => true) }
         do_create
       end
 
@@ -83,7 +83,7 @@ describe PixiLikesController do
     before (:each) do
       @like = mock_model PixiLike
       allow(controller).to receive(:current_user).and_return(@user)
-      @user.stub_chain(:build, :pixi_likes, :find_by_pixi_id).and_return(@like)
+      allow(@user).to receive_message_chain(:build, :pixi_likes, :find_by_pixi_id).and_return(@like)
       allow(controller).to receive(:reload_data).and_return(true)
     end
 
@@ -97,18 +97,18 @@ describe PixiLikesController do
       end
 
       it "should load the requested like" do
-        @user.stub_chain(:pixi_likes, :find_by_pixi_id) { @like }
+        allow(@user).to receive_message_chain(:pixi_likes, :find_by_pixi_id) { @like }
         do_delete
       end
 
       it "should delete the requested like" do
-        @user.stub_chain(:pixi_likes, :find_by_pixi_id) { mock_like }
+        allow(@user).to receive_message_chain(:pixi_likes, :find_by_pixi_id) { mock_like }
 	expect(mock_like).to receive(:destroy).and_return(:success)
         do_delete
       end
 
       it "should assign @like" do
-        @user.stub_chain(:pixi_likes, :find_by_pixi_id) { mock_like(:destroy => true) }
+        allow(@user).to receive_message_chain(:pixi_likes, :find_by_pixi_id) { mock_like(:destroy => true) }
         do_delete
         expect(assigns(:like)).not_to be_nil 
       end

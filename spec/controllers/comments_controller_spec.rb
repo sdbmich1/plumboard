@@ -5,13 +5,13 @@ describe CommentsController do
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_comment(stubs={})
     (@mock_comment ||= mock_model(Comment, stubs).as_null_object).tap do |comment|
-      comment.stub(stubs) unless stubs.empty?
+      allow(comment).to receive(stubs) unless stubs.empty?
     end
   end
 
@@ -65,11 +65,11 @@ describe CommentsController do
       after (:each) do
         @comments = stub_model(Comment)
         allow(Listing).to receive(:find_pixi).with('1').and_return(@listing)
-        @listing.stub_chain(:comments, :paginate, :build).and_return( @comments )
+        allow(@listing).to receive_message_chain(:comments, :paginate, :build).and_return( @comments )
       end
 
       it "should load the requested comment" do
-        @listing.stub_chain(:comments, :build).with({'pixi_id'=>'1', 'content'=>'test' }) { mock_comment(:save => true) }
+        allow(@listing).to receive_message_chain(:comments, :build).with({'pixi_id'=>'1', 'content'=>'test' }) { mock_comment(:save => true) }
         do_create
       end
 

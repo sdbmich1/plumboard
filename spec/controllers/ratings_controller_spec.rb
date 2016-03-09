@@ -5,13 +5,13 @@ describe RatingsController do
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_rating(stubs={})
     (@mock_rating ||= mock_model(Rating, stubs).as_null_object).tap do |rating|
-      rating.stub(stubs) unless stubs.empty?
+      allow(rating).to receive(stubs) unless stubs.empty?
     end
   end
 
@@ -26,7 +26,7 @@ describe RatingsController do
       @transaction = stub_model(Transaction)
       allow(Transaction).to receive(:find).with('1').and_return(@transaction)
       allow(controller).to receive(:current_user).and_return(@user)
-      @user.stub_chain(:ratings, :build).and_return( @rating )
+      allow(@user).to receive_message_chain(:ratings, :build).and_return( @rating )
     end
     
     def do_create
@@ -59,14 +59,14 @@ describe RatingsController do
 
       before :each do
         @rating = mock_model Rating
-        @user.stub_chain(:ratings, :build).and_return( @rating )
+        allow(@user).to receive_message_chain(:ratings, :build).and_return( @rating )
         allow(@rating).to receive(:save).and_return(true)
       end
 
       after (:each) do
         @ratings = stub_model(Rating)
         allow(User).to receive(:find).with('1').and_return(@user)
-        @user.stub_chain(:ratings, :build).and_return( @ratings )
+        allow(@user).to receive_message_chain(:ratings, :build).and_return( @ratings )
       end
        
       it "should load the requested user" do
@@ -85,7 +85,7 @@ describe RatingsController do
       end
 
       it "should load the requested rating" do
-        @user.stub_chain(:ratings, :build).with({'pixi_id'=>'1', 'comments'=>'test' }) { mock_rating(:save => true) }
+        allow(@user).to receive_message_chain(:ratings, :build).with({'pixi_id'=>'1', 'comments'=>'test' }) { mock_rating(:save => true) }
         do_create
       end
 

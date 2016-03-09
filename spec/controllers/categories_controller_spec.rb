@@ -5,13 +5,13 @@ describe CategoriesController do
 
   def mock_category(stubs={})
     (@mock_category ||= mock_model(Category, stubs).as_null_object).tap do |category|
-      category.stub(stubs) unless stubs.empty?
+      allow(category).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive(stubs) unless stubs.empty?
     end
   end
 
@@ -34,7 +34,7 @@ describe CategoriesController do
     allow(@categories).to receive(:paginate).and_return(@categories)
     allow(controller).to receive(:current_user).and_return(@user)
     allow(@user).to receive(:home_zip).and_return('94108')
-    controller.stub_chain(:get_page, :load_data, :check_signin_status).and_return(:success)
+    allow(controller).to receive_message_chain(:get_page, :load_data, :check_signin_status).and_return(:success)
     do_get
   end
 
@@ -133,7 +133,7 @@ describe CategoriesController do
     before :each do
       set_admin
       allow(Category).to receive(:new).and_return(@category)
-      @category.stub_chain(:pictures, :build).and_return( @photo )
+      allow(@category).to receive_message_chain(:pictures, :build).and_return( @photo )
       do_get
     end
 
@@ -308,7 +308,7 @@ describe CategoriesController do
   describe 'xhr GET category_type' do
     before :each do
       @category = stub_model(Category)
-      Category.stub_chain(:find).and_return( @category )
+      allow(Category).to receive_message_chain(:find).and_return( @category )
       do_get
     end
 

@@ -5,7 +5,7 @@ describe PicturesController do
 
   def mock_listing(stubs={})
     (@mock_listing ||= mock_model(TempListing, stubs).as_null_object).tap do |listing|
-       listing.stub(stubs) unless stubs.empty?
+       allow(listing).to receive(stubs) unless stubs.empty?
     end
   end
 
@@ -14,7 +14,7 @@ describe PicturesController do
       @picture = stub_model Picture
       fname = Rails.root.join("spec", "fixtures", "photo.jpg")
       allow(Picture).to receive(:find).and_return( @picture )
-      controller.stub_chain(:send_file, :style).with(fname).and_return(:success)
+      allow(controller).to receive_message_chain(:send_file, :style).with(fname).and_return(:success)
       allow(controller).to receive(:style).and_return('original')
       allow(controller).to receive(:file_name).with(@picture).and_return(fname)
     end

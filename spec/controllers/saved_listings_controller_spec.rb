@@ -5,13 +5,13 @@ describe SavedListingsController do
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_listing(stubs={})
     (@mock_listing ||= mock_model(SavedListing, stubs).as_null_object).tap do |listing|
-      listing.stub(stubs) unless stubs.empty?
+      allow(listing).to receive(stubs) unless stubs.empty?
     end
   end
 
@@ -56,7 +56,7 @@ describe SavedListingsController do
     before :each do
       @saved_listing = mock_model SavedListing
       allow(controller).to receive(:current_user).and_return(@user)
-      @user.stub_chain(:saved_listings, :build).and_return(@saved_listing)
+      allow(@user).to receive_message_chain(:saved_listings, :build).and_return(@saved_listing)
       allow(controller).to receive(:reload_data).and_return(true)
     end
     
@@ -93,7 +93,7 @@ describe SavedListingsController do
       end
 
       it "should load the requested listing" do
-        @user.stub_chain(:saved_listings, :build).with({pixi_id: '1'}) { mock_listing(:save => true) }
+        allow(@user).to receive_message_chain(:saved_listings, :build).with({pixi_id: '1'}) { mock_listing(:save => true) }
         do_create
       end
 
@@ -115,7 +115,7 @@ describe SavedListingsController do
     before (:each) do
       @saved_listing = mock_model SavedListing
       allow(controller).to receive(:current_user).and_return(@user)
-      @user.stub_chain(:saved_listings, :find_by_pixi_id).and_return(@saved_listing)
+      allow(@user).to receive_message_chain(:saved_listings, :find_by_pixi_id).and_return(@saved_listing)
       allow(controller).to receive(:reload_data).and_return(true)
     end
 
@@ -129,18 +129,18 @@ describe SavedListingsController do
       end
 
       it "should load the requested listing" do
-        @user.stub_chain(:saved_listings, :find_by_pixi_id) { @saved_listing }
+        allow(@user).to receive_message_chain(:saved_listings, :find_by_pixi_id) { @saved_listing }
         do_delete
       end
 
       it "should delete the requested listing" do
-        @user.stub_chain(:saved_listings, :find_by_pixi_id) { mock_listing }
+        allow(@user).to receive_message_chain(:saved_listings, :find_by_pixi_id) { mock_listing }
 	expect(mock_listing).to receive(:destroy).and_return(:success)
         do_delete
       end
 
       it "should assign @saved_listing" do
-        @user.stub_chain(:saved_listings, :find_by_pixi_id) { mock_listing(:destroy => true) }
+        allow(@user).to receive_message_chain(:saved_listings, :find_by_pixi_id) { mock_listing(:destroy => true) }
         do_delete
         expect(assigns(:saved_listing)).not_to be_nil 
       end

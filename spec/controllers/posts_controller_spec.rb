@@ -5,25 +5,25 @@ describe PostsController do
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_listing(stubs={})
     (@mock_listing ||= mock_model(Listing, stubs).as_null_object).tap do |listing|
-      listing.stub(stubs) unless stubs.empty?
+      allow(listing).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_conversation(stubs={})
     (@mock_conversation ||= mock_model(Conversation, stubs).as_null_object).tap do |conversation|
-      conversation.stub(stubs) unless stubs.empty?
+      allow(conversation).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_post(stubs={})
     (@mock_post ||= mock_model(Post, stubs).as_null_object).tap do |post|
-      post.stub(stubs) unless stubs.empty?
+      allow(post).to receive(stubs) unless stubs.empty?
     end
   end
 
@@ -55,7 +55,7 @@ describe PostsController do
     before :each do
       @post = mock_model Post
       allow(Post).to receive(:find).and_return( @post )
-      @post.stub_chain(:mark_as_read!, :for, :unread?).with(@user).and_return(true)
+      allow(@post).to receive_message_chain(:mark_as_read!, :for, :unread?).with(@user).and_return(true)
       allow(@post).to receive(:unread?).and_return(true)
     end
     

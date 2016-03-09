@@ -5,19 +5,19 @@ describe PostSearchesController do
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_post(stubs={})
     (@mock_post ||= mock_model(Post, stubs).as_null_object).tap do |post|
-       post.stub(stubs) unless stubs.empty?
+       allow(post).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_listing(stubs={})
     (@mock_listing ||= mock_model(Listing, stubs).as_null_object).tap do |listing|
-      listing.stub(stubs) unless stubs.empty?
+      allow(listing).to receive(stubs) unless stubs.empty?
     end
   end
 
@@ -30,8 +30,8 @@ describe PostSearchesController do
       @posts = double("posts")
       allow(Post).to receive(:search).and_return( @posts )
       allow(controller).to receive(:current_user).and_return(@user)
-      @user.stub_chain(:user_pixi_points, :create).and_return(:success)
-      controller.stub_chain(:query, :page, :add_points).and_return(:success)
+      allow(@user).to receive_message_chain(:user_pixi_points, :create).and_return(:success)
+      allow(controller).to receive_message_chain(:query, :page, :add_points).and_return(:success)
     end
 
     def do_get

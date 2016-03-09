@@ -5,13 +5,13 @@ describe PixiPostsController do
 
   def mock_post(stubs={})
     (@mock_post ||= mock_model(PixiPost, stubs).as_null_object).tap do |post|
-      post.stub(stubs) unless stubs.empty?
+      allow(post).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive(stubs) unless stubs.empty?
     end
   end
 
@@ -124,9 +124,9 @@ describe PixiPostsController do
   describe "POST create" do
     before do
       allow(PixiPost).to receive(:add_post).and_return( @post )
-      @post.stub_chain(:user, :guest?).and_return( session )
+      allow(@post).to receive_message_chain(:user, :guest?).and_return( session )
       allow(controller).to receive(:current_user).and_return(@user)
-      controller.stub_chain(:set_params, :set_uid).and_return(:success)
+      allow(controller).to receive_message_chain(:set_params, :set_uid).and_return(:success)
     end
     
     context 'failure' do
@@ -276,7 +276,7 @@ describe PixiPostsController do
   describe 'GET seller' do
     before :each do
       @posts = stub_model(PixiPost)
-      PixiPost.stub_chain(:get_by_seller, :get_by_status).and_return( @posts )
+      allow(PixiPost).to receive_message_chain(:get_by_seller, :get_by_status).and_return( @posts )
       allow(@posts).to receive(:paginate).and_return( @posts )
       do_get
     end
@@ -306,7 +306,7 @@ describe PixiPostsController do
   describe 'xhr GET seller' do
     before(:each) do
       @posts = stub_model(PixiPost)
-      PixiPost.stub_chain(:get_by_seller, :get_by_status).and_return( @posts )
+      allow(PixiPost).to receive_message_chain(:get_by_seller, :get_by_status).and_return( @posts )
       allow(@posts).to receive(:paginate).and_return( @posts )
       do_get
     end
@@ -327,7 +327,7 @@ describe PixiPostsController do
   describe 'GET pixter' do
     before :each do
       @posts = stub_model(PixiPost)
-      PixiPost.stub_chain(:get_by_pixter, :get_by_status).and_return( @posts )
+      allow(PixiPost).to receive_message_chain(:get_by_pixter, :get_by_status).and_return( @posts )
       allow(@posts).to receive(:paginate).and_return( @posts )
       do_get
     end
@@ -357,7 +357,7 @@ describe PixiPostsController do
   describe 'xhr GET pixter' do
     before(:each) do
       @posts = stub_model(PixiPost)
-      PixiPost.stub_chain(:get_by_pixter, :get_by_status).and_return( @posts )
+      allow(PixiPost).to receive_message_chain(:get_by_pixter, :get_by_status).and_return( @posts )
       allow(@posts).to receive(:paginate).and_return( @posts )
       do_get
     end
@@ -491,7 +491,7 @@ describe PixiPostsController do
       @posts = double("posts")
       allow(PixiPost).to receive(:get_by_type).and_return(@posts)
       allow(@posts).to receive(:paginate).and_return(@posts)
-      controller.stub_chain(:init_vars, :set_pixter_id).and_return(:success)
+      allow(controller).to receive_message_chain(:init_vars, :set_pixter_id).and_return(:success)
     end
 
     def do_get

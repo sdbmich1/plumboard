@@ -5,19 +5,19 @@ describe InvoicesController do
 
   def mock_invoice(stubs={})
     (@mock_invoice ||= mock_model(Invoice, stubs).as_null_object).tap do |invoice|
-      invoice.stub(stubs) unless stubs.empty?
+      allow(invoice).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_listing(stubs={})
     (@mock_listing ||= mock_model(Listing, stubs).as_null_object).tap do |listing|
-      listing.stub(stubs) unless stubs.empty?
+      allow(listing).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive(stubs) unless stubs.empty?
     end
   end
 
@@ -31,8 +31,8 @@ describe InvoicesController do
 
     before :each do
       @invoices = stub_model(Invoice)
-      Invoice.stub_chain(:includes, :paginate).and_return( @invoices )
-      @invoices.stub_chain(:seller).and_return(stub_model(User))
+      allow(Invoice).to receive_message_chain(:includes, :paginate).and_return( @invoices )
+      allow(@invoices).to receive_message_chain(:seller).and_return(stub_model(User))
       allow(controller).to receive(:current_user).and_return(@user)
       do_get
     end
@@ -168,7 +168,7 @@ describe InvoicesController do
   describe 'xhr GET index' do
     before :each do
       @invoices = double("invoices")
-      Invoice.stub_chain(:includes, :paginate).and_return( @invoices )
+      allow(Invoice).to receive_message_chain(:includes, :paginate).and_return( @invoices )
       allow(controller).to receive(:current_user).and_return(@user)
       do_get
     end
@@ -375,7 +375,7 @@ describe InvoicesController do
 
     def setup
       allow(controller).to receive(:current_user).and_return(@user)
-      @user.stub_chain(:invoices, :build).and_return(@invoice)
+      allow(@user).to receive_message_chain(:invoices, :build).and_return(@invoice)
       allow(controller).to receive(:set_params).and_return(:success)
     end
 
@@ -583,7 +583,7 @@ describe InvoicesController do
 
       it "redirects to listing if status is cancel" do
         allow(Invoice).to receive(:find) { mock_invoice }
-        mock_invoice.stub_chain(:listings, :first, :pixi_id).and_return('abc')
+        allow(mock_invoice).to receive_message_chain(:listings, :first, :pixi_id).and_return('abc')
         allow(mock_invoice).to receive(:destroy).and_return(:true)
         do_delete('cancel')
         expect(response).to be_redirect

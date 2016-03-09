@@ -5,13 +5,13 @@ describe TempListingsController do
 
   def mock_listing(stubs={})
     (@mock_listing ||= mock_model(TempListing, stubs).as_null_object).tap do |listing|
-      listing.stub(stubs) unless stubs.empty?
+      allow(listing).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive(stubs) unless stubs.empty?
     end
   end
 
@@ -80,9 +80,9 @@ describe TempListingsController do
   describe "POST create" do
     before do
       allow(TempListing).to receive(:add_listing).and_return( @listing )
-      @listing.stub_chain(:user, :guest?).and_return( session )
+      allow(@listing).to receive_message_chain(:user, :guest?).and_return( session )
       allow(controller).to receive(:current_user).and_return(@user)
-      controller.stub_chain(:set_params, :set_uid).and_return(:success)
+      allow(controller).to receive_message_chain(:set_params, :set_uid).and_return(:success)
     end
     
     context 'failure' do
@@ -361,7 +361,7 @@ describe TempListingsController do
   describe "xhr GET /unposted" do
     before :each do
       @listings = stub_model(TempListing)
-      TempListing.stub_chain(:draft, :get_by_seller).and_return( @listings )
+      allow(TempListing).to receive_message_chain(:draft, :get_by_seller).and_return( @listings )
       allow(@listings).to receive(:paginate).and_return( @listings )
       do_get
     end
@@ -391,7 +391,7 @@ describe TempListingsController do
   describe "xhr GET /pending" do
     before :each do
       @listings = stub_model(TempListing)
-      TempListing.stub_chain(:get_by_status, :get_by_seller).and_return( @listings )
+      allow(TempListing).to receive_message_chain(:get_by_status, :get_by_seller).and_return( @listings )
       allow(@listings).to receive(:paginate).and_return( @listings )
       do_get
     end

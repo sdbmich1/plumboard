@@ -7,8 +7,16 @@ describe UserMailer do
     let(:transaction) { create :transaction, status: 'approved', confirmation_no: '1' }
 
     it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
-    its(:to) { should == [transaction.email] }
-    its(:subject) { should include "Your Purchase Receipt: #{transaction.confirmation_no} " }
+
+    describe '#to' do
+      subject { super().to }
+      it { is_expected.to eq([transaction.email]) }
+    end
+
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.to include "Your Purchase Receipt: #{transaction.confirmation_no} " }
+    end
 
     it 'assigns buyer first_name' do
       expect(subject.body.encoded).to match(transaction.first_name)
@@ -30,8 +38,16 @@ describe UserMailer do
     end
 
     it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
-    its(:to) { should == [invoice.seller_email] }
-    its(:subject) { should include "Your Payment Receipt: #{payment.id} " }
+
+    describe '#to' do
+      subject { super().to }
+      it { is_expected.to eq([invoice.seller_email]) }
+    end
+
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.to include "Your Payment Receipt: #{payment.id} " }
+    end
 
     it 'assigns buyer first_name' do
       expect(subject.body.encoded).to match(invoice.seller_first_name)
@@ -48,8 +64,16 @@ describe UserMailer do
     let(:listing) { create :listing, seller_id: user.id }
 
     it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
-    its(:to) { should == [listing.seller_email] }
-    its(:subject) { should include "Pixi Approved: #{listing.title}" }
+
+    describe '#to' do
+      subject { super().to }
+      it { is_expected.to eq([listing.seller_email]) }
+    end
+
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.to include "Pixi Approved: #{listing.title}" }
+    end
 
     it 'assigns seller_first_name' do
       expect(subject.body.encoded).to match(listing.seller_first_name)
@@ -70,8 +94,16 @@ describe UserMailer do
     let(:listing) { FactoryGirl.create :listing, seller_id: user.id, repost_flg: true }
 
     it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
-    its(:to) { should == [listing.seller_email] }
-    its(:subject) { should include "Pixi Reposted: #{listing.title}" }
+
+    describe '#to' do
+      subject { super().to }
+      it { is_expected.to eq([listing.seller_email]) }
+    end
+
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.to include "Pixi Reposted: #{listing.title}" }
+    end
 
     it 'assigns seller_first_name' do
       expect(subject.body.encoded).to match(listing.seller_first_name)
@@ -90,8 +122,16 @@ describe UserMailer do
     let(:want) { buyer.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: listing.pixi_id }
 
     it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
-    its(:to) { should == [listing.seller_email] }
-    its(:subject) { should include "Pixiboard Post: Someone Wants Your #{listing.title}" }
+
+    describe '#to' do
+      subject { super().to }
+      it { is_expected.to eq([listing.seller_email]) }
+    end
+
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.to include "Pixiboard Post: Someone Wants Your #{listing.title}" }
+    end
 
     it 'assigns seller_first_name' do
       expect(subject.body.encoded).to match(listing.seller_first_name)
@@ -104,8 +144,16 @@ describe UserMailer do
     let(:post) { user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post) }
 
     it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
-    its(:to) { should == [post.seller_email] }
-    its(:subject) { should include "PixiPost Request Submitted" }
+
+    describe '#to' do
+      subject { super().to }
+      it { is_expected.to eq([post.seller_email]) }
+    end
+
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.to include "PixiPost Request Submitted" }
+    end
 
     it 'assigns seller_first_name' do
       expect(subject.body.encoded).to match(post.seller_first_name)
@@ -118,8 +166,16 @@ describe UserMailer do
     let(:post) { user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post) }
 
     it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
-    its(:to) { should == [post.seller_email] }
-    its(:subject) { should include "PixiPost Appointment Scheduled" }
+
+    describe '#to' do
+      subject { super().to }
+      it { is_expected.to eq([post.seller_email]) }
+    end
+
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.to include "PixiPost Appointment Scheduled" }
+    end
 
     it 'assigns seller_first_name' do
       expect(subject.body.encoded).to match(post.seller_first_name)
@@ -132,8 +188,16 @@ describe UserMailer do
     let(:post) { user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post) }
 
     it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
-    its(:to) { should include "support@pixiboard.com" }
-    its(:subject) { should include "PixiPost Request Submitted" }
+
+    describe '#to' do
+      subject { super().to }
+      it { is_expected.to include "support@pixiboard.com" }
+    end
+
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.to include "PixiPost Request Submitted" }
+    end
 
     it 'assigns seller_name' do
       expect(subject.body.encoded).to match(post.seller_name)
@@ -145,18 +209,34 @@ describe UserMailer do
     let (:inquiry) { FactoryGirl.create :inquiry}
 
     it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
-    its(:to) { should == ["support@pixiboard.com"] }
-    its(:subject) { should include "[ TEST ]" }
+
+    describe '#to' do
+      subject { super().to }
+      it { is_expected.to eq(["support@pixiboard.com"]) }
+    end
+
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.to include "[ TEST ]" }
+    end
   end
 
   describe "production_send_inquiry_notice" do
-    before { Rails.stub_chain(:env, :production?) { true } }
+    before { allow(Rails).to receive_message_chain(:env, :production?) { true } }
     subject { UserMailer.send_inquiry_notice(inquiry)}
     let (:inquiry) { FactoryGirl.create :inquiry}
 
     it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
-    its(:to) { should == ["support@pixiboard.com"] }
-    its(:subject) { should_not include "[ TEST ]" }
+
+    describe '#to' do
+      subject { super().to }
+      it { is_expected.to eq(["support@pixiboard.com"]) }
+    end
+
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.not_to include "[ TEST ]" }
+    end
   end
 
   describe "ask_question" do
@@ -168,8 +248,16 @@ describe UserMailer do
       @pixi_ask = FactoryGirl.create(:pixi_ask, pixi_id: @listing.pixi_id)
     end
     it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
-    its(:to) { should == [@listing.seller_email] }
-    its(:subject) {should include "Pixiboard Ask: Someone Has a Question About Your"}
+
+    describe '#to' do
+      subject { super().to }
+      it { is_expected.to eq([@listing.seller_email]) }
+    end
+
+    describe '#subject' do
+      subject { super().subject }
+      it {is_expected.to include "Pixiboard Ask: Someone Has a Question About Your"}
+    end
   end
 
   describe "send_invoiceless_pixi_notice" do
@@ -178,8 +266,16 @@ describe UserMailer do
     let(:listing) { create :listing, seller_id: user.id }
 
     it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
-    its(:to) { should == [listing.seller_email] }
-    its(:subject) { should include "Reminder: Someone Wants Your #{listing.title}" }
+
+    describe '#to' do
+      subject { super().to }
+      it { is_expected.to eq([listing.seller_email]) }
+    end
+
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.to include "Reminder: Someone Wants Your #{listing.title}" }
+    end
 
     it 'assigns seller_first_name' do
       expect(subject.body.encoded).to match(listing.seller_first_name)
@@ -194,8 +290,16 @@ describe UserMailer do
     let(:invoice) { build :invoice, status: 'declined', buyer_id: buyer.id, seller_id: seller.id, id: 1 }
 
     it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
-    its(:to) { should == [invoice.seller_email] }
-    its(:subject) { should include "Invoice Declined" }
+
+    describe '#to' do
+      subject { super().to }
+      it { is_expected.to eq([invoice.seller_email]) }
+    end
+
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.to include "Invoice Declined" }
+    end
 
     it 'assigns seller_first_name' do
       expect(subject.body.encoded).to match(invoice.seller_first_name)
@@ -213,8 +317,16 @@ describe UserMailer do
     let(:invoice) { build :invoice, status: 'unpaid', buyer_id: buyer.id, seller_id: seller.id, id: 1 }
 
     it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
-    its(:to) { should == [invoice.buyer_email] }
-    its(:subject) { should include "Reminder: Pixiboard Post: #{invoice.pixi_title}" }
+
+    describe '#to' do
+      subject { super().to }
+      it { is_expected.to eq([invoice.buyer_email]) }
+    end
+
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.to include "Reminder: Pixiboard Post: #{invoice.pixi_title}" }
+    end
 
     it 'assigns seller_first_name' do
       expect(subject.body.encoded).to match(invoice.buyer_first_name)
@@ -226,8 +338,16 @@ describe UserMailer do
     let(:user) { create :pixi_user }
 
     it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
-    its(:to) { should == [user.email] }
-    its(:subject) { should include "Your Pixis are Expiring Soon!" }
+
+    describe '#to' do
+      subject { super().to }
+      it { is_expected.to eq([user.email]) }
+    end
+
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.to include "Your Pixis are Expiring Soon!" }
+    end
 
     it 'assigns user first_name' do
       expect(subject.body.encoded).to match(user.first_name)
@@ -246,8 +366,16 @@ describe UserMailer do
     end
 
     it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
-    its(:to) { should == [invoice.buyer_email] }
-    its(:subject) { should include "PixiPay Invoice ##{invoice.id} from #{invoice.seller_name}" }
+
+    describe '#to' do
+      subject { super().to }
+      it { is_expected.to eq([invoice.buyer_email]) }
+    end
+
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.to include "PixiPay Invoice ##{invoice.id} from #{invoice.seller_name}" }
+    end
 
     it 'assigns buyer_first_name' do
       expect(subject.body.encoded).to match(invoice.buyer_first_name)

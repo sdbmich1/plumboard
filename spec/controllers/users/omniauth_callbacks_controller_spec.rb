@@ -29,7 +29,7 @@ describe Users::OmniauthCallbacksController do
 
   def do_get
     @user = stub_model(User, :null_object => true).as_new_record
-    User.stub_chain(:find_for_facebook_oauth, :picture_from_url, :sub).with(request.env["omniauth.auth"], @user).and_return(@user)
+    allow(User).to receive_message_chain(:find_for_facebook_oauth, :picture_from_url, :sub).with(request.env["omniauth.auth"], @user).and_return(@user)
     allow(@user).to receive(:persisted?).and_return(true)
     get :facebook
   end

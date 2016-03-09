@@ -16,7 +16,7 @@ end
 
 def mock_klass(klass, stubs={})
   (@mock_klass ||= mock_model(klass, stubs).as_null_object).tap do |obj|
-    obj.stub(stubs) unless stubs.empty?
+    allow(obj).to receive(stubs) unless stubs.empty?
   end
 end
 

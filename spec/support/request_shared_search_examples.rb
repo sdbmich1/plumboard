@@ -40,7 +40,7 @@ shared_examples 'searches controller index' do |klass, var|
     @mock_klass = double(klass.downcase.pluralize)
     allow(klass.constantize).to receive(:search).and_return(@mock_klass)
     allow(controller).to receive(:current_user).and_return(@mock_klass)
-    controller.stub_chain(:query, :page).and_return(:success)
+    allow(controller).to receive_message_chain(:query, :page).and_return(:success)
   end
 
   def do_get

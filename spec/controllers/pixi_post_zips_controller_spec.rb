@@ -5,13 +5,13 @@ describe PixiPostZipsController do
 
   def mock_zip(stubs={})
     (@mock_zip ||= mock_model(PixiPostZip, stubs).as_null_object).tap do |zip|
-      zip.stub(stubs) unless stubs.empty?
+      allow(zip).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive(stubs) unless stubs.empty?
     end
   end
 

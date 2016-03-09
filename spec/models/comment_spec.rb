@@ -14,7 +14,11 @@ describe Comment do
   it { is_expected.to respond_to(:content) }
   it { is_expected.to respond_to(:user_id) }
   it { is_expected.to respond_to(:pixi_id) }
-  its(:listing) { should == listing }
+
+  describe '#listing' do
+    subject { super().listing }
+    it { is_expected.to eq(listing) }
+  end
 
   it { is_expected.to be_valid }
 

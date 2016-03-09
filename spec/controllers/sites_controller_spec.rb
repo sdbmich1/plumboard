@@ -23,7 +23,7 @@ describe SitesController do
 
   describe 'GET loc_name', loc: true do
     before :each do
-      controller.stub_chain(:query).and_return(:success)
+      allow(controller).to receive_message_chain(:query).and_return(:success)
     end
     it_behaves_like "a load data request", 'Site', 'search', 'loc_name', nil, true, 'sites'
     it_behaves_like "a JSON request", 'Site', 'search', 'loc_name', nil, true, 'sites'

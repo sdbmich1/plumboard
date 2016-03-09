@@ -5,19 +5,19 @@ describe TransactionsController do
 
   def mock_transaction(stubs={})
     (@mock_transaction ||= mock_model(Transaction, stubs).as_null_object).tap do |transaction|
-      transaction.stub(stubs) unless stubs.empty?
+      allow(transaction).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_invoice(stubs={})
     (@mock_invoice ||= mock_model(Invoice, stubs).as_null_object).tap do |invoice|
-      invoice.stub(stubs) unless stubs.empty?
+      allow(invoice).to receive(stubs) unless stubs.empty?
     end
   end
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive(stubs) unless stubs.empty?
     end
   end
 
@@ -41,9 +41,9 @@ describe TransactionsController do
       @invoice = stub_model(Invoice)
       @invoice.amount = 0
       @transactions.invoices.push(@invoice)
-      Transaction.stub_chain(:get_by_date).and_return(@transactions)
+      allow(Transaction).to receive_message_chain(:get_by_date).and_return(@transactions)
       allow(@transactions).to receive(:paginate).and_return(@transactions)
-      controller.stub_chain(:load_date_range, :load_page).and_return(:success)
+      allow(controller).to receive_message_chain(:load_date_range, :load_page).and_return(:success)
       do_get
     end
 
@@ -99,7 +99,7 @@ describe TransactionsController do
       allow(controller).to receive(:order) {['order', 'order']}
       allow(controller).to receive(:order) {['transaction_type', 'invoice']}
       allow(controller).to receive(:current_user).and_return(@user)
-      controller.stub_chain(:load_vars).and_return(:success)
+      allow(controller).to receive_message_chain(:load_vars).and_return(:success)
       allow(Transaction).to receive(:load_new).with(@user, @order).and_return( @transaction )
     end
 
