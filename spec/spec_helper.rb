@@ -39,7 +39,6 @@ Spork.prefork do
 
 
   RSpec.configure do |config|
-    config.treat_symbols_as_metadata_keys_with_true_values = true
     config.include(EmailSpec::Helpers)
     config.include(EmailSpec::Matchers)
     config.mock_with :rspec
@@ -52,6 +51,7 @@ Spork.prefork do
     config.use_transactional_fixtures = false
     config.extend ControllerMacros, :type => :controller
     config.infer_base_class_for_anonymous_controllers = false
+    config.infer_spec_type_from_file_location!
     config.include Rails.application.routes.url_helpers
     config.include(MailerMacros)  
     config.include IntegrationSpecHelper, :type => :request
@@ -120,8 +120,4 @@ OmniAuth.config.mock_auth[:facebook] = OmniAuth::AuthHash.new({
 
 Spork.each_run do
   FactoryGirl.reload
-end
-
-RSpec.configure do |config|
-  config.infer_spec_type_from_file_location!
 end

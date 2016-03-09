@@ -1596,8 +1596,8 @@ describe Listing do
       expect(Listing.purchased(@invoice.buyer).count(:all)).to eq 2
     end
     it "only returns necessary attributes", run: true do
-      expect(Listing.purchased(@invoice.buyer).last.title).to eq(@listing.title)
-      expect(Listing.purchased(@invoice.buyer).last.attributes[:color]).to be_nil
+      expect(Listing.purchased(@invoice.buyer).first.title).to eq(@listing.title)
+      expect(Listing.purchased(@invoice.buyer).first.attributes[:color]).to be_nil
     end
   end
 

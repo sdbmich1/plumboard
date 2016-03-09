@@ -116,13 +116,13 @@ describe PostsController do
       end
 
       it "should assign @post" do
-        allow(Post).to receive(:find) { mock_post(:update_attributes => false) }
+        allow(Post).to receive(:find) { @post }
         do_remove
         expect(assigns(:post)).not_to be_nil 
       end
 
       it "renders nothing" do 
-        allow(Post).to receive(:find) { mock_post(:update_attributes => false) }
+        allow(Post).to receive(:find) { @post }
         do_remove
         allow(controller).to receive(:render)
       end
