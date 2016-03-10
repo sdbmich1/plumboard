@@ -366,14 +366,14 @@ describe Conversation do
     end
 
     it "show current created date" do
-      expect(@conversation.create_dt.to_s).to eq @conversation.created_at.localtime.to_s
+      expect(@conversation.create_dt.to_s).to eq @conversation.posts.last.created_at.localtime.to_s
     end
 
     it "shows local created date" do
       @listing.lat, @listing.lng = 35.1498, -90.0492
       @listing.save
       # expect(@conversation.create_dt.to_i).to eq Time.now.to_i
-      expect(@conversation.create_dt.to_s).to eq @conversation.created_at.localtime.to_s
+      expect(@conversation.create_dt.to_s).to eq @conversation.posts.last.created_at.localtime.to_s
     end
   end
 

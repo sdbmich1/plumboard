@@ -102,7 +102,7 @@ describe Listing do
     it { is_expected.to respond_to(:fulfillment_type_code) }
     it { is_expected.to belong_to(:fulfillment_type).with_foreign_key('fulfillment_type_code') }
     context 'IDs' do
-      %w(site_id seller_id category_id transaction_id).each do |fld|
+      %w(site_id seller_id category_id).each do |fld|
         it_behaves_like 'an ID', fld
       end
     end

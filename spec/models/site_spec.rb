@@ -313,10 +313,7 @@ describe Site do
         end
 
         it "renders all pixis in its cities", :run => true do
-          site_ids = []
-          Listing.get_by_city(1, @region.id, true).each do |listing|
-              site_ids.push(listing.site_id)
-          end
+          site_ids = Listing.get_by_city(1, @region.id, true).pluck(:site_id)
           expect(site_ids.sort).to eql(@listing_sites)
         end
 

@@ -174,7 +174,7 @@ end
 group :development, :test do
   gem 'wdm', '~> 0.1.0', :platforms => [:mswin, :mingw], :require => false
   # gem 'wdm', :platforms => [:mswin, :mingw], :require => false
-  gem 'rspec-rails', '3.0.0'
+  gem 'rspec-rails', '3.4.2'
   gem 'rspec-its'
   gem 'rspec-activemodel-mocks'
   gem 'guard-rspec', '4.3.1'
@@ -232,3 +232,4 @@ gem 'lazyload-rails'
 gem 'data-confirm-modal', github: 'ifad/data-confirm-modal', branch: 'bootstrap2'
 
 gem 'eventmachine', '~> 1.0.3'
+gem 'rack-cors'
