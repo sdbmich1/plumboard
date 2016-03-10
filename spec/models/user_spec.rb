@@ -712,8 +712,8 @@ describe User do
   describe "get conversations" do
     before(:each) do
       @user = create :pixi_user
-      @recipient = create :pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tom.davis@pixitest.com'
-      @buyer = create :pixi_user, first_name: 'Jack', last_name: 'Smith', email: 'jack.smith99@pixitest.com'
+      @recipient = create :pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tom.davis4@pixitest.com'
+      @buyer = create :pixi_user, first_name: 'Jack', last_name: 'Smith', email: 'jack.smith97@pixitest.com'
       @listing = create :listing, seller_id: @user.id, title: 'Big Guitar'
       @listing2 = create :listing, seller_id: @recipient.id, title: 'Small Guitar'
       @conversation = @listing.conversations.create attributes_for :conversation, user_id: @recipient.id, recipient_id: @user.id

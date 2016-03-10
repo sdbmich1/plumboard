@@ -4,8 +4,8 @@ include ProcessMethod
 describe Post do
   before :all do
     @user = create :pixi_user
-    @recipient = create :pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tom.davis@pixitest.com'
-    @buyer = create :pixi_user, first_name: 'Jack', last_name: 'Smith', email: 'jack.smith99@pixitest.com'
+    @recipient = create :pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tom.davis2@pixitest.com'
+    @buyer = create :pixi_user, first_name: 'Jack', last_name: 'Smith', email: 'jack.smith98@pixitest.com'
     @listing = create :listing, seller_id: @user.id, title: 'Big Guitar', status: 'active'
     @conversation = @listing.conversations.create FactoryGirl.attributes_for :conversation, user_id: @user.id, recipient_id: @recipient.id
   end

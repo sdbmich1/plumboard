@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Rating do
   before(:each) do
     @user = FactoryGirl.create :pixi_user
-    @seller = FactoryGirl.create :pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tom.davis@pixitest.com'
+    @seller = FactoryGirl.create :pixi_user, first_name: 'Tom', last_name: 'Davis', email: 'tom.davis3@pixitest.com'
     @listing = FactoryGirl.create :listing, seller_id: @user.id, title: 'Big Guitar'
     @rating = @user.ratings.build seller_id: @seller.id, pixi_id: @listing.id
   end

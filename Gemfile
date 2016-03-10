@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '4.1.0'
+gem 'rails', '4.1.15'
 gem 'rake', '~> 10.3.1' 
 
 # bring back things removed in Rails 4
@@ -152,7 +152,7 @@ gem 'open_uri_redirections'
 
 # needed for dependencies
 gem 'sprockets', '~> 2.8'
-gem 'railties', '~> 4.1.0'
+gem 'railties', '~> 4.1.15'
 gem 'ffi'
 
 # development gems

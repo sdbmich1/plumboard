@@ -4,7 +4,7 @@ include ProcessMethod
 describe Invoice do
   before :all do
     @user = create(:pixi_user, email: "jblow1234@pixitest.com") 
-    @buyer = create(:pixi_user, first_name: 'Jaine', last_name: 'Smith', email: 'jaine.smith@pixitest.com') 
+    @buyer = create(:pixi_user, first_name: 'Jaine', last_name: 'Smith', email: 'jaine.smith2@pixitest.com') 
     @listing = create(:listing, seller_id: @user.id)
     @account = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account
   end
