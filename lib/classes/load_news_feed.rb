@@ -209,7 +209,7 @@ class LoadNewsFeed
 
   # Load each item in the feed as a Listing if the URL was reached
   def add_listings
-    num_listings = @title_xpath.count
+    num_listings = @title_xpath.try(:count) || 0
     for i in 0...num_listings
       add_listing(i)
     end
@@ -444,7 +444,11 @@ class LoadNewsFeed
   def add_image(pic, img_loc_text, stock_images=nil)
     description = Nokogiri::HTML(img_loc_text)
     image = description.xpath("//img")[0]
-    ImageManager.parse_url_image(pic, URI.escape(image[:src])) rescue nil
+    begin
+      ImageManager.parse_url_image(pic, URI.escape(image[:src]))
+    rescue
+      add_user_image(pic)
+    end
   end
 
   # Assigns pic.photo to @user_image
@@ -585,7 +589,7 @@ class LoadNewsFeed
     string = fix_leading_time(string)
     begin
       datetime = DateTime.parse(string)
-    rescue ArgumentError
+    rescue ArgumentError, RangeError
       nil
     end
   end

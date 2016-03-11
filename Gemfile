@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '4.2.0'
+gem 'rails', '4.2.6'
 gem 'rake', '~> 10.3.1' 
 
 # bring back things removed in Rails 4
@@ -44,7 +44,7 @@ gem 'cancan'
 gem 'rinku', '~> 1.7.3'
 
 # used to mark messages as read/unread
-gem 'unread', '0.3.0'
+gem 'unread', '0.7.1'
 
 # jquery
 gem 'jquery-rails', '~> 3.1.2'
@@ -140,9 +140,6 @@ gem 'bootstrap-sass', '~> 2.3.2.1'
 gem 'dalli'
 gem 'dalli-elasticache'
 
-#add cache digests for russian doll caching
-gem 'cache_digests', '~> 0.3.1'
-
 # add area
 gem 'area', '~> 0.10.0'
 
@@ -229,7 +226,7 @@ gem 'excon', '~> 0.45'
 gem 'rubber', '~> 3.2', '>= 3.2.1'
 gem 'fog', '~> 1.37'
 gem 'recursive-open-struct'
-gem 'lazyload-rails-42'
+gem 'lazyload-rails'
 
 # standardize all modals
 gem 'data-confirm-modal', github: 'ifad/data-confirm-modal', branch: 'bootstrap2'

@@ -21,8 +21,8 @@ describe PixiPostObserver do
     it 'should deliver request notice' do
       @model = user.pixi_posts.build FactoryGirl.attributes_for(:pixi_post, status: 'active')
       @user_mailer = double(UserMailer)
-      allow(UserMailer).to receive(:delay).and_return(UserMailer)
-      expect(UserMailer).to receive(:send_pixipost_request).with(@model)
+      expect(UserMailer).to receive(:send_pixipost_request).with(@model).and_return(@user_mailer)
+      expect(@user_mailer).to receive(:deliver_later)
       @model.save!
     end
 
@@ -30,8 +30,8 @@ describe PixiPostObserver do
     it 'should deliver internal request notice' do
       @model = user.pixi_posts.build FactoryGirl.attributes_for(:pixi_post, status: 'active')
       @user_mailer = double(UserMailer)
-      allow(UserMailer).to receive(:delay).and_return(UserMailer)
-      expect(UserMailer).to receive(:send_pixipost_request_internal).with(@model)
+      expect(UserMailer).to receive(:send_pixipost_request_internal).with(@model).and_return(@user_mailer)
+      expect(@user_mailer).to receive(:deliver_later)
       @model.save!
 
     end
@@ -53,8 +53,8 @@ describe PixiPostObserver do
       @model.pixan_id = @pixan.id 
       @model.appt_date = @model.appt_time = Time.now+5.days
       @user_mailer = double(UserMailer)
-      allow(UserMailer).to receive(:delay).and_return(UserMailer)
-      expect(UserMailer).to receive(:send_pixipost_appt).with(@model)
+      expect(UserMailer).to receive(:send_pixipost_appt).with(@model).and_return(@user_mailer)
+      expect(@user_mailer).to receive(:deliver_later)
       @model.save!
     end
   end

@@ -9,8 +9,8 @@ describe PixiWantObserver do
 
     it 'should deliver the receipt' do
       @user_mailer = double(UserMailer)
-      allow(UserMailer).to receive(:delay).and_return(UserMailer)
-      expect(UserMailer).to receive(:send_interest).with(pixi_want)
+      expect(UserMailer).to receive(:send_interest).with(pixi_want).and_return(@user_mailer)
+      expect(@user_mailer).to receive(:deliver_later)
       pixi_want.save!
     end
 

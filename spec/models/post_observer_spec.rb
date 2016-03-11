@@ -10,10 +10,10 @@ describe PostObserver do
 
     def process_msg model, mtype
       @user_mailer = double(UserMailer)
-      allow(UserMailer).to receive(:delay).and_return(UserMailer)
 
       if mtype.blank?
-        expect(UserMailer).to receive(:send_notice).with(model)
+        expect(UserMailer).to receive(:send_notice).with(model).and_return(@user_mailer)
+        expect(@user_mailer).to receive(:deliver_later)
       else
         model.msg_type = mtype
         expect(UserMailer).not_to receive(:send_notice).with(post)

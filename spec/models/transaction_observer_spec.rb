@@ -30,8 +30,8 @@ describe TransactionObserver do
 
     it 'should deliver the receipt' do
       @user_mailer = double(UserMailer)
-      allow(UserMailer).to receive(:delay).and_return(UserMailer)
-      expect(UserMailer).to receive(:send_transaction_receipt).with(@txn)
+      expect(UserMailer).to receive(:send_transaction_receipt).with(@txn).and_return(@user_mailer)
+      expect(@user_mailer).to receive(:deliver_later)
       @txn.save!
     end
   end
@@ -59,8 +59,8 @@ describe TransactionObserver do
     it 'should deliver the receipt' do
       @model.status = 'approved'
       @user_mailer = double(UserMailer)
-      allow(UserMailer).to receive(:delay).and_return(UserMailer)
-      expect(UserMailer).to receive(:send_transaction_receipt).with(@model)
+      expect(UserMailer).to receive(:send_transaction_receipt).with(@model).and_return(@user_mailer)
+      expect(@user_mailer).to receive(:deliver_later)
       @model.save!
     end
   end

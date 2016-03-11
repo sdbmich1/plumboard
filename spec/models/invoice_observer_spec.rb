@@ -33,8 +33,8 @@ describe InvoiceObserver do
   def send_mailer
     @mailer = double(UserMailer)
     @observer = InvoiceObserver.instance
-    allow(@observer).to receive(:delay).with(@mailer).and_return(@mailer)
-    allow(@observer).to receive(:send_payment_receipt).with(@model).and_return(@mailer)
+    allow(UserMailer).to receive(:send_payment_receipt).with(@model).and_return(@mailer)
+    allow(@mailer).to receive(:deliver_later)
   end
 
   describe 'after_update' do
@@ -102,8 +102,9 @@ describe InvoiceObserver do
     end
 
     it 'should send decline email' do
-      allow(UserMailer).to receive(:delay).and_return(UserMailer)
-      expect(UserMailer).to receive(:send_decline_notice).and_return(double("UserMailer", :deliver => true))
+      @mailer = double("UserMailer", :deliver => true)
+      expect(UserMailer).to receive(:send_decline_notice).and_return(@mailer)
+      expect(@mailer).to receive(:deliver_later)
       @invoice.decline("Incorrect Price")
     end
 
@@ -139,8 +140,10 @@ describe InvoiceObserver do
     end
 
     it 'should send decline email' do
-      allow(UserMailer).to receive(:delay).and_return(UserMailer)
-      expect(UserMailer).to receive(:send_invoice_notice).and_return(double("UserMailer", :deliver => true))
+      allow(Post).to receive(:add_post).and_return(true)
+      @mailer = double("UserMailer", :deliver => true)
+      expect(UserMailer).to receive(:send_invoice_notice).and_return(@mailer)
+      expect(@mailer).to receive(:deliver_later)
       @model.save!
     end
   end

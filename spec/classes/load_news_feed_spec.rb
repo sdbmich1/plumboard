@@ -84,6 +84,7 @@ describe LoadNewsFeed do
 
   describe "initialize_with_attrs" do
     it "creates LoadNewsFeed object with attrs provided" do
+      allow(User).to receive(:find).and_return(double(User))
       expect(LoadNewsFeed.new_with_attrs({user_image: "test.png"}).user_image).to eq "test.png"
     end
   end
@@ -96,7 +97,7 @@ describe LoadNewsFeed do
       expect(attrs[:user_email]).to eq @lnf_obj.user_email
       expect(attrs[:category]).to eq @lnf_obj.category
       expect(attrs[:site]).to eq @lnf_obj.site
-      expect(attrs[:user]).to eq @lnf_obj.user
+      expect(attrs[:user_id]).to eq @lnf_obj.user.id
       expect(attrs[:stock_images]).to eq @lnf_obj.stock_images
     end
 
@@ -109,9 +110,13 @@ describe LoadNewsFeed do
   describe "read_feeds" do
     it "calls add_listings on each LoadNewsFeed object" do
       feeds = [CourantFeed, StrangerFeed, SFExaminerFeed, SDReaderFeed, Sac365Feed]
-      feeds.each { |feed| expect(feed).to receive :add_listings }
-      Delayed::Worker.delay_jobs = false
-      allow(LoadNewsFeed).to receive(:add_listings)
+      feeds.each do |feed_class|
+        feed = double(feed_class)
+        allow(feed_class).to receive(:new).and_return(feed)
+        allow(feed).to receive(:add_listing).and_return(true)
+        times = feed_class == Sac365Feed ? 2 : 1
+        expect(feed).to receive(:add_listings).exactly(times).times
+      end
       LoadNewsFeed.read_feeds
     end
   end
@@ -123,7 +128,7 @@ describe LoadNewsFeed do
     end
 
     it "does not attempt to load events if feed is unreachable" do
-      @lnf_obj.doc = nil
+      @lnf_obj.doc, @lnf_obj.title_xpath = nil, nil
       expect { @lnf_obj.add_listings }.not_to raise_error
     end
   end
@@ -138,8 +143,10 @@ describe LoadNewsFeed do
       urls.each do |url|
         doc = Nokogiri::XML(open(url))
         @lnf_obj.description_xpath = doc.xpath("//item//description")
-        expect(@lnf_obj.description_xpath[0].text).to include("img")
-        expect(@lnf_obj.get_description(0)).not_to include("img")
+        if (description = @lnf_obj.description_xpath[0])
+          expect(description.text).to include("img")
+          expect(@lnf_obj.get_description(0)).not_to include("img")
+        end
       end
     end
 
@@ -199,7 +206,7 @@ describe LoadNewsFeed do
     end
 
     it "should find or create account corresponding to email provided" do
-      user = @lnf_obj.add_user("", @lnf_obj.description_xpath[0].text, "user@pixiboard.com")
+      user = @lnf_obj.add_user("", "", "user@pixiboard.com")
       expect(user.email).to eq "user@pixiboard.com"
       expect(user.first_name).to eq "User "
       expect(user.last_name).to eq "Feed"
