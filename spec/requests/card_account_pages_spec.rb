@@ -34,6 +34,7 @@ feature "CardAccounts" do
       page.should have_selector('h2', text: 'Setup Your Card Account')
       page.should_not have_content("Card Holder")
       page.should have_content("Card #")
+      page.should have_content('Default')
       page.should have_button("Save")
     end
 
@@ -45,7 +46,6 @@ feature "CardAccounts" do
 
       # page.should have_content 'Home'
       page.should have_content 'Card #'
-      page.should have_content 'Default'
     end
   end
 

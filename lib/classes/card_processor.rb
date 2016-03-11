@@ -87,4 +87,10 @@ class CardProcessor
       CardAccount.inc_list.where(user_id: usr, status: 'active')
     end
   end
+
+  def toggle_default_flg
+    if @acct.default_flg == 'Y'
+      @acct.user.card_accounts.where("default_flg = 'Y' AND id != ?", @acct.id).update_all(default_flg: nil)
+    end
+  end
 end

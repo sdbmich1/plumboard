@@ -250,4 +250,14 @@ describe CardAccount do
   describe 'card acct list', list: true do
     it_behaves_like "account list methods", 'card_account', 'CardAccount', 'card_list'
   end
+
+  describe 'toggle_default_flg' do
+    it 'sets default_flg to nil' do
+      @account.default_flg = 'Y'
+      @account.save
+      default_card = @user.card_accounts.create FactoryGirl.attributes_for(:card_account, default_flg: 'Y')
+      expect(@account.reload.default_flg).to be_nil
+      expect(default_card.reload.default_flg).to eq 'Y'
+    end
+  end
 end

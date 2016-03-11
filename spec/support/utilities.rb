@@ -205,12 +205,13 @@
     select (Date.today.year+2).to_s, from: "card_year"
   end
 
-  def load_credit_card cid="4111111111111111", cvv="123", valid=true, flg=true
+  def load_credit_card cid="4111111111111111", cvv="123", valid=true, flg=true, default=false
     credit_card cid
     fill_in "card_code",  with: cvv
     valid ? valid_dates : invalid_card_dates
     fill_in "card_zip",  with: '94103'
     page.execute_script %Q{ $("#card_account_user_id").val("#{@other.id}") } if @other
+    find(:css, "#card_account_default_flg[value='Y']").set(true) if default
     flg ? click_valid_save : click_submit
   end
 

@@ -1,6 +1,7 @@
 class CardAccount < ActiveRecord::Base
   before_create :set_flds, :must_have_token
   after_commit :update_counter_cache, :on => :update
+  after_commit :toggle_default_flg
 
   attr_accessor :card_number, :card_code
   attr_accessible :card_no, :card_type, :description, :expiration_month, :expiration_year, :status, :token, :user_id,
@@ -96,6 +97,10 @@ class CardAccount < ActiveRecord::Base
 
   def update_counter_cache
     User.reset_counters(self.user_id, :active_card_accounts)
+  end
+
+  def toggle_default_flg
+    CardProcessor.new(self).toggle_default_flg
   end
 
   rescue => ex
