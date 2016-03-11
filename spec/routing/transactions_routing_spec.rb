@@ -11,20 +11,20 @@ describe TransactionsController do
       expect(get("/transactions/1")).to route_to("transactions#show", :id => "1")
     end
 
-    it "routes to #edit" do
-      expect(get("/transactions/1/edit")).to route_to("transactions#edit", :id => "1")
+    it "does not route to #edit" do
+      expect(get("/transactions/1/edit")).not_to route_to("transactions#edit", :id => "1")
     end
 
     it "routes to #create" do
       expect(post("/transactions")).to route_to("transactions#create")
     end
 
-    it "routes to #update" do
-      expect(put("/transactions/1")).to route_to("transactions#update", :id => "1")
+    it "does not route to #update" do
+      expect(put("/transactions/1")).not_to route_to("transactions#update", :id => "1")
     end
 
-    it "routes to #destroy" do
-      expect(delete("/transactions/1")).to route_to("transactions#destroy", :id => "1")
+    it "does not route to #destroy" do
+      expect(delete("/transactions/1")).not_to route_to("transactions#destroy", :id => "1")
     end
 
     it "routes to #new" do

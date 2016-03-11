@@ -34,9 +34,9 @@ feature "BankAccounts" do
   end
 
   describe "Create Bank Account", create: true do 
-    it_should_behave_like 'create_bank_account_page', 'pixi_user', 'should_not', 'should', false
-    it_should_behave_like 'create_bank_account_page', 'business_user', 'should', 'should_not', false
-    it_should_behave_like 'create_bank_account_page', 'business_user', 'should_not', 'should', true
+    it_should_behave_like 'create_bank_account_page', 'pixi_user', 'not_to', 'to', false
+    it_should_behave_like 'create_bank_account_page', 'business_user', 'to', 'not_to', false
+    it_should_behave_like 'create_bank_account_page', 'business_user', 'not_to', 'to', true
   end
 
   describe "Delete Bank Account" do 

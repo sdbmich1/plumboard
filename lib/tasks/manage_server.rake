@@ -46,7 +46,7 @@ namespace :manage_server do
     if !pixis.nil?
       users = User.where(id: pixis.all.map(&:seller_id))
       users.each do |user|
-        UserMailer.delay.send_expiring_pixi_notice(args.arg1, user)
+        UserMailer.send_expiring_pixi_notice(args.arg1, user).deliver_later
       end
     end
   end
@@ -57,7 +57,7 @@ namespace :manage_server do
     pixis = TempListing.soon_expiring_pixis(a, ['edit', 'new'])
     if !pixis.nil?
       pixis.each do |pixi|
-        UserMailer.delay.send_expiring_pixi_notice(args.arg1, pixi)
+        UserMailer.send_expiring_pixi_notice(args.arg1, pixi).deliver_later
       end
     end
   end	
@@ -94,7 +94,7 @@ namespace :manage_server do
     listings = Listing.invoiceless_pixis
     unless listings.blank?
       listings.each do |listing|
-        UserMailer.delay.send_invoiceless_pixi_notice listing
+        UserMailer.send_invoiceless_pixi_notice(listing).deliver_later
       end
     end
   end
@@ -103,7 +103,7 @@ namespace :manage_server do
     invoices = Invoice.unpaid_old_invoices
     unless invoices.blank?
       invoices.each do |invoice|
-        UserMailer.delay.send_unpaid_old_invoice_notice invoice
+        UserMailer.send_unpaid_old_invoice_notice(invoice).deliver_later
       end
     end
   end

@@ -14,16 +14,16 @@ shared_examples 'owner_listings' do |val, factory|
   end
 
   def get_method factory
-    selector, content = factory == 'pixi_user' ? ['should_not', 'should'] : ['should', 'should_not']
-      page.send(selector, have_selector('#comment_content'))
-      page.send(selector, have_selector('#cool-btn'))
-      page.send(selector, have_selector('#save-btn'))
-      page.send(selector, have_selector('#want-btn'))
-      page.send(selector, have_selector('#ask-btn'))
-      page.send(content, have_content("#{listing.wanted_count}Wants"))
-      page.send(content, have_content("#{listing.asked_count}Asks"))
-      page.send(content, have_content("#{listing.liked_count}Cools"))
-      page.send(content, have_content("#{listing.saved_count}Saves"))
+    selector, content = factory == 'pixi_user' ? ['not_to', 'to'] : ['to', 'not_to']
+    expect(page).send(selector, have_selector('#comment_content'))
+    expect(page).send(selector, have_selector('#cool-btn'))
+    expect(page).send(selector, have_selector('#save-btn'))
+    expect(page).send(selector, have_selector('#wantDialog'))
+    expect(page).send(selector, have_selector('#askDialog'))
+    expect(page).send(content, have_content("#{listing.wanted_count} Wants"))
+    expect(page).send(content, have_content("#{listing.asked_count} Asks"))
+    expect(page).send(content, have_content("#{listing.liked_count} Cools"))
+    expect(page).send(content, have_content("#{listing.saved_count} ZZZZSaves"))
   end
 
   describe 'Review Pixi', owned: true do

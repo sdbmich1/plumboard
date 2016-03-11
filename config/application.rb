@@ -24,6 +24,9 @@ module Plumboard
       :invoice_observer, :post_observer, :comment_observer, :inquiry_observer, 
       :pixi_want_observer, :pixi_ask_observer  # , :listing_observer, :pixi_post_observer, :saved_listing_observer
 
+    # Raise errors in `after_rollback`/`after_commit` callbacks
+    config.active_record.raise_in_transactional_callbacks = true
+
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
     # config.time_zone = 'Central Time (US & Canada)'
@@ -61,6 +64,9 @@ module Plumboard
       g.view_specs false
       g.helper_specs false
     end
+
+    # Use Delayed::Job for ActiveJob queueing
+    config.active_job.queue_adapter = :delayed_job
 
     config.middleware.insert_before 0, "Rack::Cors" do
       allow do

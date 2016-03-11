@@ -26,7 +26,7 @@ Plumboard::Application.configure do
   config.active_support.deprecation = :log
    
   # do not precompile assets
-  config.serve_static_assets = false
+  config.serve_static_files = false
 
   # Expands the lines which load the assets
   config.assets.debug = false

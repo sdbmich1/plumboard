@@ -1,4 +1,3 @@
-# encoding: UTF-8
 require 'spec_helper'
 require 'load_news_feed'
 require 'nokogiri'

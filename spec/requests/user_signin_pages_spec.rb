@@ -85,14 +85,14 @@ feature "UserSignins" do
       user_login @user
       expect(page).to have_content(@user.first_name)
       expect(page).not_to have_content('Manage')
-      page.send(txt, have_content('Setup Your Payment Account'))
-      page.send(val, have_content('You need to setup default preferences for your pixis.'))
+      expect(page).send(txt, have_content('Setup Your Payment Account'))
+      expect(page).send(val, have_content('You need to setup default preferences for your pixis.'))
       expect(page).to have_link('Sign out', href: destroy_user_session_path)
     end
 
     context 'no bank acct' do
       it 'shows account content' do
-        bus_login 'should', 'should_not'
+        bus_login 'to', 'not_to'
       end
     end
 
@@ -102,7 +102,7 @@ feature "UserSignins" do
       end
 
       it 'shows account content' do
-        bus_login 'should_not', 'should'
+        bus_login 'not_to', 'to'
       end
     end
 
@@ -113,7 +113,7 @@ feature "UserSignins" do
       end
 
       it 'shows account content' do
-        bus_login 'should_not', 'should_not'
+        bus_login 'not_to', 'not_to'
       end
     end
   end

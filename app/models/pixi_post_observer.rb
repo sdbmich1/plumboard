@@ -11,13 +11,13 @@ class PixiPostObserver < ActiveRecord::Observer
     # update buyer address info
     update_contact_info post
       
-    UserMailer.delay.send_pixipost_request(post) if post.status == 'active'
-    UserMailer.delay.send_pixipost_request_internal(post) if post.status == 'active'
+    UserMailer.send_pixipost_request(post).deliver_later if post.status == 'active'
+    UserMailer.send_pixipost_request_internal(post).deliver_later if post.status == 'active'
   end
 
   # send appointment notice
   def after_update post
-    UserMailer.delay.send_pixipost_appt(post) if post.has_appt? && !post.is_completed?
+    UserMailer.send_pixipost_appt(post).deliver_later if post.has_appt? && !post.is_completed?
   end
 
   # update user contact info if no address is already saved

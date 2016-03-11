@@ -342,8 +342,14 @@ class LoadNewsFeed
   def get_email_from_description(description, item_text)
     words = description.split(" ")
     email = nil
-    words.each { |word| email = word.downcase if word.match(Devise::email_regexp) }
-    # Remove punctuation at the end if it is there
+    words.each do |word|
+      if word.match(Devise::email_regexp)
+        email = word.downcase
+      # Remove punctuation at the end if it is there
+      elsif word && !(word[-1] =~ /[A-Za-z]/) && word[0..-2].match(Devise::email_regexp)
+        email = word[0..-2].downcase
+      end
+    end
     email = email[0..-2] if email && !(email[-1] =~ /[A-Za-z]/)
     email
   end

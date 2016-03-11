@@ -1,18 +1,20 @@
 source 'http://rubygems.org'
 
-gem 'rails', '4.1.15'
+gem 'rails', '4.2.0'
 gem 'rake', '~> 10.3.1' 
 
 # bring back things removed in Rails 4
 gem 'protected_attributes', '1.1.3'
 gem 'rails-observers'
 gem 'activerecord-session_store'
+gem 'responders'
 
 #added faraday gem version 0.8.9 to run smoothly on Mac
 gem 'faraday', '0.8.9'
  
 # use devise for user authenication
-gem 'devise', '~> 3.0.0'
+gem 'devise', '~> 3.5.6'
+gem 'devise-token_authenticatable'
 
 # add delayed job
 gem 'delayed_job_active_record', '4.1.0'
@@ -49,7 +51,7 @@ gem 'jquery-rails', '~> 3.1.2'
 
 gem 'sass-rails',   '~> 4.0.0'
 gem 'coffee-rails', '~> 4.0.0'
-gem 'compass-rails', '~> 1.1.7'
+gem 'compass-rails', '2.0.0'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 gem 'therubyracer', :platforms => :ruby
@@ -80,7 +82,7 @@ gem 'thin'
 gem 'whenever'
 
 # amazon aws
-gem "aws-sdk", "~> 1.11.3"
+gem "aws-sdk", "~> 1.66.0"
 #gem 'aws-s3', :require => 'aws/s3'
 
 # picture upload for s3
@@ -152,8 +154,8 @@ gem 'open_uri_redirections'
 
 # needed for dependencies
 gem 'sprockets', '~> 2.8'
-gem 'railties', '~> 4.1.15'
 gem 'ffi'
+gem 'money', '~> 6.7'
 
 # development gems
 group :development do
@@ -168,7 +170,7 @@ group :development do
   gem 'rvm-capistrano', :require => false
 
   gem 'quiet_assets'
-  gem 'bullet'
+  gem 'bullet', '~> 5.0'
 end
 
 group :development, :test do
@@ -180,7 +182,7 @@ group :development, :test do
   gem 'guard-rspec', '4.3.1'
   gem 'guard-spork', '2.0.2'
   gem 'spork', '~> 1.0rc'
-  gem 'faker'
+  gem 'ffaker'
   gem "vcr", "~> 2.5.0"
   gem 'rack_session_access'
   gem 'minitest', '~> 5.1'
@@ -201,7 +203,7 @@ group :test do
   gem 'shoulda-matchers', '2.8.0'
   # gem "webmock", "~> 1.11.0"
   gem "fakeweb", "~> 1.3"
-  gem 'test_after_commit'
+  gem 'test_after_commit', '~> 0.4.0'
 end
 
 # production gems
@@ -223,13 +225,15 @@ gem 'open4'
 gem 'gelf'
 gem 'graylog2_exceptions', :git => 'git://github.com/wr0ngway/graylog2_exceptions.git'
 gem 'graylog2-resque'
-gem 'excon', '~> 0.21.0'
-gem 'rubber'
+gem 'excon', '~> 0.45'
+gem 'rubber', '~> 3.2', '>= 3.2.1'
+gem 'fog', '~> 1.37'
 gem 'recursive-open-struct'
-gem 'lazyload-rails'
+gem 'lazyload-rails-42'
 
 # standardize all modals
 gem 'data-confirm-modal', github: 'ifad/data-confirm-modal', branch: 'bootstrap2'
 
 gem 'eventmachine', '~> 1.0.3'
 gem 'rack-cors'
+gem 'nokogiri', '~> 1.6.0'

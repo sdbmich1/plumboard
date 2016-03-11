@@ -18,8 +18,8 @@ require 'spec_helper'
   end
 
   def delivery_settings usr, msg
-    page.send(msg, have_content("Delivery"))
-    if msg == 'should'
+    expect(page).send(msg, have_content("Delivery"))
+    if msg == 'to'
       click_link 'Delivery'
       expect(page).to have_content("Delivery Type")
       expect(page).to have_content("Sales Tax")

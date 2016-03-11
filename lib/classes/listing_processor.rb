@@ -48,7 +48,7 @@ class ListingProcessor < ListingDataProcessor
       if saved_listings
         saved_listings.each do |saved_listing|
           if closed_arr.detect {|closed| saved_listing.status == closed }
-            UserMailer.delay.send_saved_pixi_removed(saved_listing) unless @listing.buyer_id == saved_listing.user_id
+            UserMailer.send_saved_pixi_removed(saved_listing).deliver_later unless @listing.buyer_id == saved_listing.user_id
           end
         end
       end
@@ -74,7 +74,7 @@ class ListingProcessor < ListingDataProcessor
       # update points & send message
       PointManager::add_points @listing.user, ptype if @listing.user
       SystemMessenger::send_message @listing.user, @listing, val rescue nil
-      UserMailer.delay.send_approval(@listing) if @listing.user.active?
+      UserMailer.send_approval(@listing).deliver_later if @listing.user.try(:active?)
 
       # remove temp pixi
       delete_temp_pixi @listing.pixi_id unless @listing.repost_flg

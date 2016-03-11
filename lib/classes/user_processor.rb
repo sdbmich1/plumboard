@@ -41,7 +41,7 @@ class UserProcessor
     PointManager::add_points @user, ptype
 
     # send welcome message to facebook users
-    UserMailer.delay.welcome_email(@user) if @user.fb_user?
+    UserMailer.welcome_email(@user).deliver_later if @user.fb_user?
   end
 
   # build url image

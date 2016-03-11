@@ -18,14 +18,14 @@ shared_examples 'create_bank_account_page' do |factory, val, val2, flg|
 
     it "creates an new account" do
       expect {
-          add_bank_data
-          click_on 'Save'; sleep 3;
+        add_bank_data
+        click_on 'Save'; sleep 3;
       }.to change(BankAccount, :count).by(1)
 
-      page.send(val, have_content('Delivery Type'))
-      page.send(val, have_content('Sales Tax'))
-      page.send(val2, have_content('Your Payment Account'))
-      page.send(val2, have_content('Account #'))
+      expect(page).send(val, have_content('Delivery Type'))
+      expect(page).send(val, have_content('Sales Tax'))
+      expect(page).send(val2, have_content('Your Payment Account'))
+      expect(page).send(val2, have_content('Account #'))
     end
   end
 end

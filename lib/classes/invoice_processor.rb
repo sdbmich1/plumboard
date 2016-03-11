@@ -124,7 +124,7 @@ class InvoiceProcessor
   # marked as closed any other invoice associated with this pixi
   def mark_as_closed 
     if @invoice.paid?
-      listings.find_each do |listing|
+      @invoice.listings.find_each do |listing|
         inv_list = Invoice.where(status: 'unpaid').joins(:invoice_details).where("`invoice_details`.`pixi_id` = ?", listing.pixi_id).readonly(false)
         inv_list.find_each do |inv|
           inv.update_attribute(:status, 'closed') if inv.pixi_count == 1 && inv.id != @invoice.id && inv.buyer_id == @invoice.buyer_id

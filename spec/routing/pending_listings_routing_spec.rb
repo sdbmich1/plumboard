@@ -19,10 +19,6 @@ describe PendingListingsController do
       expect(put("/pending_listings/1/deny")).to route_to("pending_listings#deny", :id => "1")
     end
 
-    it "routes to #invoiced" do
-      expect(get("/pending_listings/invoiced")).to route_to("pending_listings#invoiced")
-    end
-
     it "should not route to #edit" do
       expect(get("/pending_listings/1/edit")).not_to route_to("pending_listings#edit", :id => "1")
     end

@@ -30,11 +30,11 @@ require 'spec_helper'
   end
 
   def admin_pages stype
-    page.send(stype, have_link('Accounts', href: card_accounts_path(adminFlg: true)))
-    page.send(stype, have_link('Sites', href: sites_path(stype: 'region', status: 'active')))
-    page.send(stype, have_link('Categories', href: manage_categories_path(status: 'active')))
-    page.send(stype, have_link('Transactions', href: transactions_path))
-    page.send(stype, have_link('Users', href: users_path))
+    expect(page).send(stype, have_link('Accounts', href: card_accounts_path(adminFlg: true)))
+    expect(page).send(stype, have_link('Sites', href: sites_path(stype: 'region', status: 'active')))
+    expect(page).send(stype, have_link('Categories', href: manage_categories_path(status: 'active')))
+    expect(page).send(stype, have_link('Transactions', href: transactions_path))
+    expect(page).send(stype, have_link('Users', href: users_path))
   end
 
   def set_acct factory
@@ -82,14 +82,14 @@ shared_examples 'manage_signin_links' do |factory, accessFlg, showFlg, sellerFlg
       user_login @user
     end
     it 'toggles manage links' do
-      stype = accessFlg ? 'should' : 'should_not'
+      stype = accessFlg ? 'to' : 'not_to'
       expect(page).to have_content(@user.first_name)
       expect(page).to have_link('Sign out', href: destroy_user_session_path)
-      page.send(stype, have_content('Manage')) if has_access? factory
-      page.send(stype, have_link('Pixis', href: listings_path(status: 'active')))
-      page.send(stype, have_link('PixiPosts', href: pixi_posts_path(status: 'active')))
-      page.send(stype, have_link('Inquiries', href: inquiries_path(ctype: 'inquiry')))
-      page.send(stype, have_link('Followers', href: favorite_sellers_path(ftype: 'buyer', status: 'active')))
+      expect(page).send(stype, have_content('Manage')) if has_access? factory
+      expect(page).send(stype, have_link('Pixis', href: listings_path(status: 'active')))
+      expect(page).send(stype, have_link('PixiPosts', href: pixi_posts_path(status: 'active')))
+      expect(page).send(stype, have_link('Inquiries', href: inquiries_path(ctype: 'inquiry')))
+      expect(page).send(stype, have_link('Followers', href: favorite_sellers_path(ftype: 'buyer', status: 'active')))
       admin_pages stype if factory == 'admin'
       user_menu_items showFlg, sellerFlg, adminFlg
     end

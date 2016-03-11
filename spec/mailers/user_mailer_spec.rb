@@ -6,7 +6,7 @@ describe UserMailer do
     subject { UserMailer.send_transaction_receipt(transaction)}
     let(:transaction) { create :transaction, status: 'approved', confirmation_no: '1' }
 
-    it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
+    it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
 
     describe '#to' do
       subject { super().to }
@@ -37,7 +37,7 @@ describe UserMailer do
       invoice.save!
     end
 
-    it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
+    it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
 
     describe '#to' do
       subject { super().to }
@@ -63,7 +63,7 @@ describe UserMailer do
     let(:user) { create :pixi_user }
     let(:listing) { create :listing, seller_id: user.id }
 
-    it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
+    it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
 
     describe '#to' do
       subject { super().to }
@@ -93,7 +93,7 @@ describe UserMailer do
     let(:user) { create :pixi_user }
     let(:listing) { FactoryGirl.create :listing, seller_id: user.id, repost_flg: true }
 
-    it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
+    it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
 
     describe '#to' do
       subject { super().to }
@@ -121,7 +121,7 @@ describe UserMailer do
     let(:listing) { create :listing, seller_id: user.id }
     let(:want) { buyer.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: listing.pixi_id }
 
-    it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
+    it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
 
     describe '#to' do
       subject { super().to }
@@ -143,7 +143,7 @@ describe UserMailer do
     let(:user) { create :pixi_user }
     let(:post) { user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post) }
 
-    it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
+    it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
 
     describe '#to' do
       subject { super().to }
@@ -165,7 +165,7 @@ describe UserMailer do
     let(:user) { create :pixi_user }
     let(:post) { user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post) }
 
-    it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
+    it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
 
     describe '#to' do
       subject { super().to }
@@ -187,7 +187,7 @@ describe UserMailer do
     let(:user) { create :pixi_user }
     let(:post) { user.pixi_posts.create FactoryGirl.attributes_for(:pixi_post) }
 
-    it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
+    it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
 
     describe '#to' do
       subject { super().to }
@@ -208,7 +208,7 @@ describe UserMailer do
     subject { UserMailer.send_inquiry_notice(inquiry)}
     let (:inquiry) { FactoryGirl.create :inquiry}
 
-    it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
+    it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
 
     describe '#to' do
       subject { super().to }
@@ -226,7 +226,7 @@ describe UserMailer do
     subject { UserMailer.send_inquiry_notice(inquiry)}
     let (:inquiry) { FactoryGirl.create :inquiry}
 
-    it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
+    it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
 
     describe '#to' do
       subject { super().to }
@@ -247,7 +247,7 @@ describe UserMailer do
       @listing = FactoryGirl.create(:listing, seller_id: @user.id) 
       @pixi_ask = FactoryGirl.create(:pixi_ask, pixi_id: @listing.pixi_id)
     end
-    it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
+    it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
 
     describe '#to' do
       subject { super().to }
@@ -265,7 +265,7 @@ describe UserMailer do
     let(:user) { create :pixi_user }
     let(:listing) { create :listing, seller_id: user.id }
 
-    it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
+    it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
 
     describe '#to' do
       subject { super().to }
@@ -289,7 +289,7 @@ describe UserMailer do
     let(:buyer) { create :pixi_user }
     let(:invoice) { build :invoice, status: 'declined', buyer_id: buyer.id, seller_id: seller.id, id: 1 }
 
-    it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
+    it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
 
     describe '#to' do
       subject { super().to }
@@ -316,7 +316,7 @@ describe UserMailer do
     let(:buyer) { create :pixi_user }
     let(:invoice) { build :invoice, status: 'unpaid', buyer_id: buyer.id, seller_id: seller.id, id: 1 }
 
-    it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
+    it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
 
     describe '#to' do
       subject { super().to }
@@ -337,7 +337,7 @@ describe UserMailer do
     subject { UserMailer.send_expiring_pixi_notice(7, user) }
     let(:user) { create :pixi_user }
 
-    it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
+    it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
 
     describe '#to' do
       subject { super().to }
@@ -365,7 +365,7 @@ describe UserMailer do
       invoice.save!
     end
 
-    it { expect{subject.deliver}.to change{ActionMailer::Base.deliveries.length} }
+    it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
 
     describe '#to' do
       subject { super().to }

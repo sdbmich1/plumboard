@@ -14,8 +14,8 @@ describe "routes for Pictures" do
       expect(get("/pictures")).not_to route_to("pictures#index")
     end
 
-    it "does not route to #show" do
-      expect(get("/pictures/1")).not_to route_to("pictures#show", :id => "1")
+    it "routes to #show" do
+      expect(get("/pictures/1")).to route_to("pictures#show", :id => "1")
     end
 
     it "does not expose a new picture route" do

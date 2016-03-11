@@ -178,10 +178,6 @@ Devise.setup do |config|
   # REST_AUTH_SITE_KEY to pepper)
   # config.encryptor = :sha512
 
-  # ==> Configuration for :token_authenticatable
-  # Defines name of the authentication token params key
-  config.token_authentication_key = :auth_token
-
   # ==> Scopes configuration
   # Turn scoped views on. Before rendering "sessions/new", it will first check for
   # "users/sessions/new". It's turned off by default because it's slower if you
@@ -221,4 +217,18 @@ Devise.setup do |config|
   config.omniauth :facebook, API_KEYS['facebook']['api_key'], API_KEYS['facebook']['api_secret'], 
     {:scope => 'email, user_birthday, user_events, user_likes', :client_options => {:ssl => FACEBOOK_SSL_OPTIONS} }
   #  {:scope => 'email, user_birthday, user_events, user_interests, user_likes', :client_options => {:ssl => {:ca_path => "/etc/ssl/certs"}} }
+end
+
+Devise::TokenAuthenticatable.setup do |config|
+  # set the authentication key name used by this module,
+  # defaults to :auth_token
+  config.token_authentication_key = :auth_token
+
+  # enable reset of the authentication token before the model is saved,
+  # defaults to false
+  config.should_reset_authentication_token = true
+
+  # enables the setting of the authentication token - if not already - before the model is saved,
+  # defaults to false
+  config.should_ensure_authentication_token = true
 end

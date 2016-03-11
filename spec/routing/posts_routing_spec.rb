@@ -11,7 +11,7 @@ describe "routes for Posts" do
     end
 
     it "does route to #remove" do
-      expect(get("/posts/1/remove")).to route_to("posts#remove", :id => "1")
+      expect(put("/posts/1/remove")).to route_to("posts#remove", :id => "1")
     end
 
     it "does route to #mark_read" do

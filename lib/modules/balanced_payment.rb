@@ -208,7 +208,7 @@ module BalancedPayment
     # record payment & send receipt
     if result
       Payment::add_transaction(model, fee, result)
-      UserMailer.delay.send_payment_receipt(model, result) rescue nil
+      UserMailer.send_payment_receipt(model, result).deliver_later rescue nil
     end
   end
 end
