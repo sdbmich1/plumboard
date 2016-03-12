@@ -212,7 +212,8 @@ describe User do
     let(:user) { build :user }
 
     it "does not save w/o at least one picture" do
-      picture = user.pictures.build
+      user.user_type_code = 'BUS'
+      user.business_name = 'Test Biz'
       user.save
       user.should_not be_valid
     end
@@ -223,6 +224,13 @@ describe User do
       user.home_zip = '94108'
       user.save
       user.should be_valid
+    end
+
+    it "saves w/o pic for individuals" do
+      member = build :user
+      member.home_zip = '94108'
+      member.save
+      member.should be_valid
     end
   end
 

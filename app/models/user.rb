@@ -13,10 +13,10 @@ class User < ActiveRecord::Base
   # Setup accessible (or protected) attributes for your model
   attr_accessible :first_name, :last_name, :email, :password, :password_confirmation, :remember_me, :birth_date, :gender, :pictures_attributes,
     :fb_user, :provider, :uid, :contacts_attributes, :status, :acct_token, :preferences_attributes, :user_type_code, :business_name, :ref_id, :url,
-    :user_url, :description, :active_listings_count, :cust_token, :ein, :ssn_last4, :active_card_accounts_count
-  attr_accessor :user_url
+    :user_url, :description, :active_listings_count, :cust_token, :ein, :ssn_last4, :active_card_accounts_count, :home_zip
+  attr_accessor :user_url, :home_zip
 
-  before_save :ensure_authentication_token, unless: :guest_or_test?
+  before_save :ensure_authentication_token, unless: :guest?
   before_create :set_flds
   after_commit :async_send_notification, :on => :create, unless: :guest?
 
@@ -99,7 +99,7 @@ class User < ActiveRecord::Base
   validates :birth_date,  :presence => true, unless: :guest_or_other?
   validates :gender,  :presence => true, unless: :guest_or_other?
   # validates :url, :presence => {:on => :create}, uniqueness: true, length: { :minimum => 2 }, unless: :guest?
-  validate :must_have_picture, unless: :guest?
+  validate :must_have_picture, if: :is_business?
   validate :must_have_zip, unless: :guest?
   validates :ein, allow_blank: true, length: {is: 9}
   validates :ssn_last4, allow_blank: true, length: {is: 4}

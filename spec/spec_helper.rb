@@ -16,7 +16,6 @@ Spork.prefork do
   require "paperclip/matchers"
   require "cancan/matchers"
   require "thinking_sphinx/test"
-  require 'balanced'
   require "rack_session_access/capybara"
 
   # Requires supporting ruby files with custom matchers and macros, etc,
@@ -34,7 +33,6 @@ Spork.prefork do
     options[:host] = host
     options[:port] = 5000
     options[:ssl_verify] = false
-    Balanced.configure(nil, options)
   end
 
   RSpec.configure do |config|
@@ -55,6 +53,7 @@ Spork.prefork do
     config.include(MailerMacros)  
     config.include IntegrationSpecHelper, :type => :request
     config.include SphinxHelpers, type: :feature
+    config.include Requests::JsonHelpers, type: :request
     # config.include TokenInputHelper, :type => :feature
 
     config.before(:suite) do

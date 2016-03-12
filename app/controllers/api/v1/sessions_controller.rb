@@ -19,7 +19,6 @@ class Api::V1::SessionsController < ApplicationController
     @user=User.find_by_email(email.downcase)
 
     if @user.nil?
-      logger.info("User #{email} failed signin, user cannot be found.")
       render :status=>401, :json=>{:message=>"Invalid email or password."}
       return
     end
@@ -27,7 +26,6 @@ class Api::V1::SessionsController < ApplicationController
     @user.ensure_authentication_token!
 
     if not @user.valid_password?(password)
-      logger.info("User #{email} failed signin, password \"#{password}\" is invalid")
       render :status=>401, :json=>{:message=>"Invalid email or password."}
     else
       render :status=>200, :json=>{:user=>@user, :token=>@user.authentication_token}
@@ -38,7 +36,6 @@ class Api::V1::SessionsController < ApplicationController
     @user=User.find_by_authentication_token(params[:id])
 
     if @user.nil?
-      logger.info('Token not found.')
       render :status=>404, :json=>{:message=>"Invalid token."}
     else
       @user.reset_authentication_token!

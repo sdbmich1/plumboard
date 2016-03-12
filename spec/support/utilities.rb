@@ -266,7 +266,7 @@
 
     def reg_user_with_photo flg=true
       reg_user_data flg
-      add_data_w_photo
+      # add_data_w_photo
     end
 
     def register val="YES", cnt=1, flg=true
