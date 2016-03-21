@@ -73,5 +73,14 @@ module Plumboard
       g.view_specs false
       g.helper_specs false
     end
+
+    config.middleware.insert_before 0, "Rack::Cors" do
+      allow do
+        origins *(['localhost', 'staging.pixiboard.com',
+                   'pixiboard.com', 'rippleapi.herokuapp.com'] +
+                   Socket.ip_address_list.map(&:ip_address))
+        resource '*', :headers => :any, :methods => :any
+      end
+    end
   end
 end
