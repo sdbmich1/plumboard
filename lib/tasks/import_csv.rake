@@ -788,7 +788,6 @@ task :load_stock_images, [:file_name] => [:environment] do |t, args|
 
   CSV.foreach(Rails.root.join('db', args[:file_name]), :headers => true) do |row|
     unless StockImage.find_by_title(row[0])
-      Rails.logger.info("row[1]: #{row[1]}")
       attrs = {
         :title => row[0],
         :category_type_code => Category.find_by_name(row[1]).category_type_code,

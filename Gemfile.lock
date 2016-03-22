@@ -469,7 +469,6 @@ GEM
     quiet_assets (1.0.2)
       railties (>= 3.1, < 5.0)
     rack (1.6.4)
-    rack-cors (0.4.0)
     rack-google_analytics (1.0.2)
       rack
     rack-oauth2 (1.0.0)
@@ -668,6 +667,10 @@ GEM
     warden (1.2.6)
       rack (>= 1.0)
     wdm (0.1.0)
+    web-console (3.1.1)
+      activemodel (>= 4.2)
+      debug_inspector
+      railties (>= 4.2)
     websocket (1.2.2)
     whenever (0.8.3)
       activesupport (>= 2.3.4)
@@ -754,7 +757,6 @@ DEPENDENCIES
   parsley-rails (~> 2.0.5.0)
   protected_attributes (= 1.1.3)
   quiet_assets
-  rack-cors
   rack-google_analytics
   rack_session_access
   rails (= 4.2.6)
@@ -790,6 +792,7 @@ DEPENDENCIES
   unread (= 0.7.1)
   vcr (~> 2.5.0)
   wdm (~> 0.1.0)
+  web-console
   whenever
   will_paginate (~> 3.1.0)
   win32console (~> 1.3.2)

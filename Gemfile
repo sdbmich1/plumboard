@@ -168,6 +168,7 @@ group :development do
 
   gem 'quiet_assets'
   gem 'bullet', '~> 5.0'
+  gem 'web-console'
 end
 
 group :development, :test do
@@ -232,5 +233,4 @@ gem 'lazyload-rails'
 gem 'data-confirm-modal', github: 'ifad/data-confirm-modal', branch: 'bootstrap2'
 
 gem 'eventmachine', '~> 1.0.3'
-gem 'rack-cors'
 gem 'nokogiri', '~> 1.6.0'

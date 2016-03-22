@@ -504,10 +504,6 @@ class User < ActiveRecord::Base
     ship_addresses.size > 0
   end
 
-  def self.foo
-    puts 1
-  end
-
   # set sphinx scopes
    sphinx_scope(:first_name) { 
      {:order => 'first_name, last_name ASC'}

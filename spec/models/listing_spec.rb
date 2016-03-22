@@ -657,7 +657,7 @@ describe Listing do
       @buyer2 = create :pixi_user
       @invoice2 = @user.invoices.build attributes_for(:invoice, buyer_id: @buyer2.id) 
       @details = @invoice2.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id, quantity: 1 
-      @invoice2.save!
+      @invoice2.save!; sleep 2
       @listing.mark_as_sold
       expect(@invoice2.reload.status).to eq 'closed'
     end

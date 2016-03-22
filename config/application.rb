@@ -67,14 +67,5 @@ module Plumboard
 
     # Use Delayed::Job for ActiveJob queueing
     config.active_job.queue_adapter = :delayed_job
-
-    config.middleware.insert_before 0, "Rack::Cors" do
-      allow do
-        origins *(['localhost', 'staging.pixiboard.com',
-                   'pixiboard.com', 'rippleapi.herokuapp.com'] +
-                   Socket.ip_address_list.map(&:ip_address))
-        resource '*', :headers => :any, :methods => :any
-      end
-    end
   end
 end

@@ -6,8 +6,7 @@ class CardProcessor
   end
 
   # delete saved cards
-  def remove_cards uid
-    usr = User.find uid
+  def remove_cards usr
     usr.card_accounts.delete_all if usr.has_card_account?
   end
 
