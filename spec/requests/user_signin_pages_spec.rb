@@ -12,11 +12,11 @@ feature "UserSignins" do
   end
 
   def about_menu
-    page.should have_link('About', href: about_path)
-    page.should have_link('Contact', href: contact_path)
-    page.should have_link('Privacy', href: privacy_path)
-    page.should have_link('Terms', href: terms_path )
-    page.should have_link('Help', href: help_path )
+    expect(page).to have_link('About', href: about_path)
+    expect(page).to have_link('Contact', href: contact_path)
+    expect(page).to have_link('Privacy', href: privacy_path)
+    expect(page).to have_link('Terms', href: terms_path )
+    expect(page).to have_link('Help', href: help_path )
   end
 
   describe 'home page' do 
@@ -31,21 +31,21 @@ feature "UserSignins" do
       user_login @user
       expect(Listing.get_by_site(@loc, 1).size).to eq(1)
       expect(Listing.get_by_city(nil, @loc).size).to eq(1)
-      page.should have_content "Home"
+      expect(page).to have_content "Home"
     end
 
     it "signs in a registered user with local pixi home" do
       set_const 500
       user_login @user
-      page.should_not have_content "Home"
-      page.should have_content "Pixis"
+      expect(page).not_to have_content "Home"
+      expect(page).to have_content "Pixis"
     end
 
     it "does not sign in a unregistered user" do
       invalid_login
-      page.should_not have_content "Home"
-      page.should_not have_content "Pixis"
-      page.should have_content "Sign in"
+      expect(page).not_to have_content "Home"
+      expect(page).not_to have_content "Pixis"
+      expect(page).to have_content "Sign in"
     end
   end
 
@@ -59,17 +59,17 @@ feature "UserSignins" do
       click_link 'Login'; sleep 2
       check_page_selectors ['#pwd, #login-btn, #fb-btn'], true, false
       user_login @user
-      page.should have_content(@user.first_name)
-      page.should_not have_content('Manage')
-      page.should_not have_content('Setup Your Payment Account')
-      page.should have_link('Sign out', href: destroy_user_session_path)
+      expect(page).to have_content(@user.first_name)
+      expect(page).not_to have_content('Manage')
+      expect(page).not_to have_content('Setup Your Payment Account')
+      expect(page).to have_link('Sign out', href: destroy_user_session_path)
     end
 
     it "does not sign in a unregistered user" do
       invalid_login
-      page.should_not have_content "Home"
-      page.should_not have_content "Pixis"
-      page.should have_content "Sign in"
+      expect(page).not_to have_content "Home"
+      expect(page).not_to have_content "Pixis"
+      expect(page).to have_content "Sign in"
     end
   end
 
@@ -83,16 +83,16 @@ feature "UserSignins" do
       click_link 'Login'; sleep 2
       check_page_selectors ['#pwd, #login-btn, #fb-btn'], true, false
       user_login @user
-      page.should have_content(@user.first_name)
-      page.should_not have_content('Manage')
-      page.send(txt, have_content('Setup Your Payment Account'))
-      page.send(val, have_content('You need to setup default preferences for your pixis.'))
-      page.should have_link('Sign out', href: destroy_user_session_path)
+      expect(page).to have_content(@user.first_name)
+      expect(page).not_to have_content('Manage')
+      expect(page).send(txt, have_content('Setup Your Payment Account'))
+      expect(page).send(val, have_content('You need to setup default preferences for your pixis.'))
+      expect(page).to have_link('Sign out', href: destroy_user_session_path)
     end
 
     context 'no bank acct' do
       it 'shows account content' do
-        bus_login 'should', 'should_not'
+        bus_login 'to', 'not_to'
       end
     end
 
@@ -102,7 +102,7 @@ feature "UserSignins" do
       end
 
       it 'shows account content' do
-        bus_login 'should_not', 'should'
+        bus_login 'not_to', 'to'
       end
     end
 
@@ -113,7 +113,7 @@ feature "UserSignins" do
       end
 
       it 'shows account content' do
-        bus_login 'should_not', 'should_not'
+        bus_login 'not_to', 'not_to'
       end
     end
   end
@@ -122,9 +122,9 @@ feature "UserSignins" do
     before { visit new_user_session_path }
 
     it 'shows content' do
-      page.should have_selector '#fb-btn' #, text: user_omniauth_authorize_path(:facebook)
-      page.should have_button('Sign in')
-      page.should have_link 'Sign up for free!', href: new_user_registration_path
+      expect(page).to have_selector '#fb-btn' #, text: user_omniauth_authorize_path(:facebook)
+      expect(page).to have_button('Sign in')
+      expect(page).to have_link 'Sign up for free!', href: new_user_registration_path
     end
 
     describe 'facebook', fb: true do 
@@ -143,12 +143,12 @@ feature "UserSignins" do
 
       it "displays confirm message to a registered user" do
         user_login @user
-        page.should have_content("You have to confirm your account before continuing") 
+        expect(page).to have_content("You have to confirm your account before continuing") 
       end
 
       it "does not allow an unregistered user to sign in" do
         invalid_login
-        page.should_not have_content("Signed in successfully")
+        expect(page).not_to have_content("Signed in successfully")
       end
     end
 
@@ -186,8 +186,8 @@ feature "UserSignins" do
       end
 
       it 'shows content' do
-        page.should have_content('My Accounts')
-        page.should have_link('My Accounts', href: bank_account_path(@account))
+        expect(page).to have_content('My Accounts')
+        expect(page).to have_link('My Accounts', href: bank_account_path(@account))
       end
     end
   end

@@ -41,7 +41,7 @@ class UserProcessor
     PointManager::add_points @user, ptype
 
     # send welcome message to facebook users
-    UserMailer.delay.welcome_email(@user) if @user.fb_user?
+    UserMailer.welcome_email(@user).deliver_later if @user.fb_user?
   end
 
   # build url image
@@ -109,9 +109,9 @@ class UserProcessor
   # transfer data between user accounts
   def move_to usr
     if usr
-      @user.pixi_posts.update_all({user_id: usr.id, status: 'active'}, {})
+      @user.pixi_posts.update_all({user_id: usr.id, status: 'active'})
       @user.contacts.update_all(contactable_id: usr.id) unless usr.has_address? 
-      @user.temp_listings.update_all({seller_id: usr.id, status: 'new'}, {})
+      @user.temp_listings.update_all({seller_id: usr.id, status: 'new'})
     end
   end
 

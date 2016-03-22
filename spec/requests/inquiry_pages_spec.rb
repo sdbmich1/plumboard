@@ -60,16 +60,16 @@ feature "Inquiries" do
     end
 
     it "shows content" do
-      page.should have_selector('title', text: 'Contact Us')
-      page.should have_content 'Contact Us'
-      page.should have_content 'Pixiboard Relations'
-      page.should have_content 'First Name'
-      page.should have_content 'Last Name'
-      page.should have_content 'Subject'
-      page.should have_selector('.frm-name', visible: false)
-      page.should have_selector('#inq_status', visible: false)
-      page.should have_link('Cancel')
-      page.should have_button('Submit')
+      expect(page).to have_selector('title', text: 'Contact Us')
+      expect(page).to have_content 'Contact Us'
+      expect(page).to have_content 'Pixiboard Relations'
+      expect(page).to have_content 'First Name'
+      expect(page).to have_content 'Last Name'
+      expect(page).to have_content 'Subject'
+      expect(page).to have_selector('.frm-name', visible: false)
+      expect(page).to have_selector('#inq_status', visible: false)
+      expect(page).to have_link('Cancel')
+      expect(page).to have_button('Submit')
     end
 
     it "adds an inquiry", js: true do
@@ -79,21 +79,21 @@ feature "Inquiries" do
 	click_button submit 
       }.to change(Inquiry, :count).by(1)
 
-      page.should_not have_content("Contact Us")
+      expect(page).not_to have_content("Contact Us")
     end
 
     it "cancel an inquiry", js: true do
       expect {
         click_cancel_ok
       }.to change(Inquiry, :count).by(0)
-      page.should_not have_content("Contact Us")
+      expect(page).not_to have_content("Contact Us")
     end
 
     it "does not cancel an inquiry", js: true do
       expect {
         click_cancel_cancel
       }.to change(Inquiry, :count).by(0)
-      page.should have_content("Contact Us")
+      expect(page).to have_content("Contact Us")
     end
 
     describe "Creates with invalid email information", js: true do
@@ -104,7 +104,7 @@ feature "Inquiries" do
           select("Other Questions", :from => "inq_subject")
 	}.not_to change(Inquiry, :count)
 
-	page.should have_css("#inq-done-btn[disabled]")
+	expect(page).to have_css("#inq-done-btn[disabled]")
       end
 
       it "should not create an inquiry with bad email" do
@@ -115,7 +115,7 @@ feature "Inquiries" do
 	  click_button submit 
 	}.not_to change(Inquiry, :count)
 
-        page.should have_content 'Email is invalid'
+        expect(page).to have_content 'Email is invalid'
       end
     end
   end
@@ -128,18 +128,18 @@ feature "Inquiries" do
     end
 
     it "shows content" do
-      page.should have_selector('title', text: 'Contact Us')
-      page.should have_content 'Contact Us'
-      page.should have_content 'Pixiboard Relations'
-      page.should have_selector('#inq_first_name', visible: false)
-      page.should have_selector('#inq_last_name', visible: false)
-      page.should have_selector('#inq_email', visible: false)
-      page.should have_selector('#inq_status', visible: false)
-      page.should have_content 'Subject'
-      page.should have_content 'From:'
-      page.should have_content @user.name
-      page.should have_link('Cancel')
-      page.should have_button('Submit')
+      expect(page).to have_selector('title', text: 'Contact Us')
+      expect(page).to have_content 'Contact Us'
+      expect(page).to have_content 'Pixiboard Relations'
+      expect(page).to have_selector('#inq_first_name', visible: false)
+      expect(page).to have_selector('#inq_last_name', visible: false)
+      expect(page).to have_selector('#inq_email', visible: false)
+      expect(page).to have_selector('#inq_status', visible: false)
+      expect(page).to have_content 'Subject'
+      expect(page).to have_content 'From:'
+      expect(page).to have_content @user.name
+      expect(page).to have_link('Cancel')
+      expect(page).to have_button('Submit')
     end
 
     it "adds an inquiry", js: true do
@@ -150,7 +150,7 @@ feature "Inquiries" do
 	click_button submit 
       }.to change(Inquiry, :count).by(1)
 
-      page.should_not have_content("Contact Us")
+      expect(page).not_to have_content("Contact Us")
     end
   end
 
@@ -162,17 +162,17 @@ feature "Inquiries" do
     end
 
     it "shows content" do
-      page.should have_content 'Pixiboard Support'
-      page.should have_selector('title', text: 'Contact Us')
-      page.should have_selector('#inq_first_name', visible: false)
-      page.should have_selector('#inq_last_name', visible: false)
-      page.should have_selector('#inq_email', visible: false)
-      page.should have_selector('#inq_status', visible: false)
-      page.should have_content 'Subject'
-      page.should have_content 'From:'
-      page.should have_content @user.name
-      page.should have_link('Cancel')
-      page.should have_button('Submit')
+      expect(page).to have_content 'Pixiboard Support'
+      expect(page).to have_selector('title', text: 'Contact Us')
+      expect(page).to have_selector('#inq_first_name', visible: false)
+      expect(page).to have_selector('#inq_last_name', visible: false)
+      expect(page).to have_selector('#inq_email', visible: false)
+      expect(page).to have_selector('#inq_status', visible: false)
+      expect(page).to have_content 'Subject'
+      expect(page).to have_content 'From:'
+      expect(page).to have_content @user.name
+      expect(page).to have_link('Cancel')
+      expect(page).to have_button('Submit')
     end
 
     it "adds a support inquiry", js: true do
@@ -183,7 +183,7 @@ feature "Inquiries" do
 	click_button submit 
       }.to change(Inquiry, :count).by(1)
 
-      page.should_not have_content("Contact Us")
+      expect(page).not_to have_content("Contact Us")
     end
   end
 
@@ -200,32 +200,32 @@ feature "Inquiries" do
     end
 
     it "shows content" do
-      page.should_not have_content('No inquiries found')
-      page.should have_link 'General', href: inquiries_path(ctype: 'inquiry')
-      page.should have_link 'Support', href: inquiries_path(ctype: 'support')
-      page.should have_link 'Closed', href: closed_inquiries_path
-      page.should have_link("#{@inquiry.id}", href: inquiry_path(@inquiry))
-      page.should have_selector('title', text: 'Inquiries')
-      page.should have_content "Inquiry #"
-      page.should have_content "User Name" 
-      page.should_not have_link("#{@support.id}", href: inquiry_path(@support))
-      page.should_not have_link("#{@closed.id}", href: inquiry_path(@closed))
+      expect(page).not_to have_content('No inquiries found')
+      expect(page).to have_link 'General', href: inquiries_path(ctype: 'inquiry')
+      expect(page).to have_link 'Support', href: inquiries_path(ctype: 'support')
+      expect(page).to have_link 'Closed', href: closed_inquiries_path
+      expect(page).to have_link("#{@inquiry.id}", href: inquiry_path(@inquiry))
+      expect(page).to have_selector('title', text: 'Inquiries')
+      expect(page).to have_content "Inquiry #"
+      expect(page).to have_content "User Name" 
+      expect(page).not_to have_link("#{@support.id}", href: inquiry_path(@support))
+      expect(page).not_to have_link("#{@closed.id}", href: inquiry_path(@closed))
     end
 
     it "displays support inquiries", js: true do
       page.find('#support-inq').click
-      page.should_not have_content 'No inquiries found.'
-      page.should have_link("#{@support.id}", href: inquiry_path(@support)) 
-      page.should_not have_link("#{@closed.id}", href: inquiry_path(@closed)) 
-      page.should_not have_link("#{@inquiry.id}", href: inquiry_path(@inquiry)) 
+      expect(page).not_to have_content 'No inquiries found.'
+      expect(page).to have_link("#{@support.id}", href: inquiry_path(@support)) 
+      expect(page).not_to have_link("#{@closed.id}", href: inquiry_path(@closed)) 
+      expect(page).not_to have_link("#{@inquiry.id}", href: inquiry_path(@inquiry)) 
     end
 
     it "displays closed inquiries", js: true do
       page.find('#closed-inq').click
-      page.should_not have_content 'No inquiries found.'
-      page.should have_link("#{@closed.id}", href: inquiry_path(@closed)) 
-      page.should_not have_link("#{@support.id}", href: inquiry_path(@support)) 
-      page.should_not have_link("#{@inquiry.id}", href: inquiry_path(@inquiry)) 
+      expect(page).not_to have_content 'No inquiries found.'
+      expect(page).to have_link("#{@closed.id}", href: inquiry_path(@closed)) 
+      expect(page).not_to have_link("#{@support.id}", href: inquiry_path(@support)) 
+      expect(page).not_to have_link("#{@inquiry.id}", href: inquiry_path(@inquiry)) 
     end
 
     it "clicks to open an inquiry" do
@@ -237,13 +237,13 @@ feature "Inquiries" do
         click_on "#{@inquiry.id}"
       }.not_to change(Inquiry, :count)
 
-      page.should have_content 'Inquiry Details'
-      page.should have_content "#{@inquiry.id}"
-      page.should have_content @inquiry.comments
-      page.should have_content @inquiry.user_name
-      page.should have_link 'Edit', href: edit_inquiry_path(@inquiry, source: 'inquiry') 
-      page.should have_link 'Remove', href: @inquiry 
-      page.should have_selector('#done-inquiry-btn', href: inquiries_path(ctype: 'inquiry'))
+      expect(page).to have_content 'Inquiry Details'
+      expect(page).to have_content "#{@inquiry.id}"
+      expect(page).to have_content @inquiry.comments
+      expect(page).to have_content @inquiry.user_name
+      expect(page).to have_link 'Edit', href: edit_inquiry_path(@inquiry, source: 'inquiry') 
+      expect(page).to have_link 'Remove', href: @inquiry 
+      expect(page).to have_selector('#done-inquiry-btn', href: inquiries_path(ctype: 'inquiry'))
     end
 
     it "clicks to open an inquiry w/ local listing home" do
@@ -255,13 +255,13 @@ feature "Inquiries" do
         click_on "#{@inquiry.id}"
       }.not_to change(Inquiry, :count)
 
-      page.should have_content 'Inquiry Details'
-      page.should have_content "#{@inquiry.id}"
-      page.should have_content @inquiry.comments
-      page.should have_content @inquiry.user_name
-      page.should have_link 'Edit', href: edit_inquiry_path(@inquiry, source: 'inquiry') 
-      page.should have_link 'Remove', href: inquiry_path(@inquiry)
-      page.should have_selector('#done-inquiry-btn', href: inquiries_path(ctype: 'inquiry'))
+      expect(page).to have_content 'Inquiry Details'
+      expect(page).to have_content "#{@inquiry.id}"
+      expect(page).to have_content @inquiry.comments
+      expect(page).to have_content @inquiry.user_name
+      expect(page).to have_link 'Edit', href: edit_inquiry_path(@inquiry, source: 'inquiry') 
+      expect(page).to have_link 'Remove', href: inquiry_path(@inquiry)
+      expect(page).to have_selector('#done-inquiry-btn', href: inquiries_path(ctype: 'inquiry'))
     end
 
     it "cancel remove inquiry", js: true do
@@ -270,7 +270,7 @@ feature "Inquiries" do
       }.not_to change(Inquiry, :count)
 
       click_remove_cancel
-      page.should have_content "Inquiry Details" 
+      expect(page).to have_content "Inquiry Details" 
     end
 
     it "deletes a inquiry", js: true do
@@ -279,8 +279,8 @@ feature "Inquiries" do
         click_remove_ok; sleep 3;
       }.to change(Inquiry,:count).by(-1)
 
-      page.should have_content "Inquiries" 
-      page.should have_content "No inquiries found." 
+      expect(page).to have_content "Inquiries" 
+      expect(page).to have_content "No inquiries found." 
     end
 
     it 'shows a closed inquiry', js: true do
@@ -288,9 +288,9 @@ feature "Inquiries" do
       expect { 
         click_on "#{@closed.id}"
       }.not_to change(Inquiry, :count)
-      page.should_not have_link 'Edit', href: edit_inquiry_path(@inquiry, source: 'inquiry') 
-      page.should have_link('Done', href: inquiries_path(ctype: 'inquiry'))
-      page.should have_link('Remove')
+      expect(page).not_to have_link 'Edit', href: edit_inquiry_path(@inquiry, source: 'inquiry') 
+      expect(page).to have_link('Done', href: inquiries_path(ctype: 'inquiry'))
+      expect(page).to have_link('Remove')
     end
   end
 
@@ -303,13 +303,13 @@ feature "Inquiries" do
     end
 
     it "opens edit page" do
-      page.should have_content 'Pixiboard Support'
-      page.should have_content @inquiry.user_name
-      page.should_not have_content @user.name
-      page.should have_selector('title', text: 'Edit Inquiry') 
-      page.should have_link 'Cancel'
-      page.should have_selector('#inq_status', visible: true) 
-      page.should have_button('Submit') 
+      expect(page).to have_content 'Pixiboard Support'
+      expect(page).to have_content @inquiry.user_name
+      expect(page).not_to have_content @user.name
+      expect(page).to have_selector('title', text: 'Edit Inquiry') 
+      expect(page).to have_link 'Cancel'
+      expect(page).to have_selector('#inq_status', visible: true) 
+      expect(page).to have_button('Submit') 
     end
 
     it "changes status", js: true do
@@ -318,22 +318,22 @@ feature "Inquiries" do
         click_button submit; sleep 2
       }.to change(Inquiry,:count).by(0)
 
-      page.should have_content 'Inquiry Details'
-      page.should have_content 'Closed'
-      page.should have_link 'Edit', href: edit_inquiry_path(@inquiry, source: 'support') 
-      page.should have_link 'Remove', href: inquiry_path(@inquiry) 
-      page.should have_link 'Done', href: inquiries_path(ctype: 'inquiry') 
+      expect(page).to have_content 'Inquiry Details'
+      expect(page).to have_content 'Closed'
+      expect(page).to have_link 'Edit', href: edit_inquiry_path(@inquiry, source: 'support') 
+      expect(page).to have_link 'Remove', href: inquiry_path(@inquiry) 
+      expect(page).to have_link 'Done', href: inquiries_path(ctype: 'inquiry') 
     end
 
     it "cancels inquiry edit", js: true do
       click_cancel_ok; sleep 2
-      page.should have_content "Inquiry Details" 
+      expect(page).to have_content "Inquiry Details" 
     end
 
     it "cancels edit of inquiry", js: true do
       click_cancel_cancel
-      page.should have_content "From" 
-      page.should have_content "Status" 
+      expect(page).to have_content "From" 
+      expect(page).to have_content "Status" 
     end
   end
 end

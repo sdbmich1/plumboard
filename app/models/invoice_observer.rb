@@ -32,7 +32,7 @@ class InvoiceObserver < ActiveRecord::Observer
       Post.add_post(model, model.listings.first, model.buyer, model.seller, model.decline_msg, 'inv')
 
       # send email
-      UserMailer.delay.send_decline_notice(model, model.decline_msg)
+      UserMailer.send_decline_notice(model, model.decline_msg).deliver_later
 
       # delete wants if buyer selected "Did Not Want"
       if model.decline_reason == "Did Not Want"
@@ -49,7 +49,7 @@ class InvoiceObserver < ActiveRecord::Observer
   # notify buyer
   def send_post model
     Post.send_invoice model, model.listings.first if model.listings
-    UserMailer.delay.send_invoice_notice(model)
+    UserMailer.send_invoice_notice(model).deliver_later
   end
 
   # mark pixi as sold

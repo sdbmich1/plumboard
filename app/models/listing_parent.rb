@@ -21,6 +21,11 @@ class ListingParent < ActiveRecord::Base
 	:color, :quantity, :item_type, :item_size, :bed_no, :bath_no, :term, :avail_date, :external_url, :ref_id,
   	:buy_now_flg, :est_ship_cost, :sales_tax, :fulfillment_type_code
 
+  # Prevent ActiveRecord from raising an error when overriding transaction method
+  def self.dangerous_attribute_method?(name)
+    super && name != :transaction
+  end
+
   belongs_to :user, foreign_key: :seller_id
   belongs_to :site
   belongs_to :category
@@ -40,7 +45,7 @@ class ListingParent < ActiveRecord::Base
   validates_presence_of :seller_id, :site_id, :start_date, :category_id, :description
   validates :job_type_code, :presence => true, if: :job?
   validates :event_type_code, :presence => true, if: :event?
-  validates :price, allow_blank: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
+  validates :price, allow_blank: true, format: { with: /\A\d+??(?:\.\d{0,2})?\z/ }, 
     		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_PIXI_AMT.to_f }
   validate :must_have_pictures
 

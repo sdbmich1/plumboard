@@ -10,37 +10,39 @@ describe PixiWant do
 
   subject { @pixi_want }
 
-  it { should respond_to(:pixi_id) }
-  it { should respond_to(:user_id) }
-  it { should respond_to(:quantity) }
-  it { should respond_to(:status) }
-  it { should respond_to(:fulfillment_type_code) }
-  it { should respond_to(:user) }
-  it { should respond_to(:listing) }
-  it { should validate_presence_of(:pixi_id) }
-  it { should belong_to(:listing).with_foreign_key('pixi_id') }
-  it { should belong_to(:user) }
+  it { is_expected.to respond_to(:pixi_id) }
+  it { is_expected.to respond_to(:user_id) }
+  it { is_expected.to respond_to(:quantity) }
+  it { is_expected.to respond_to(:status) }
+  it { is_expected.to respond_to(:fulfillment_type_code) }
+  it { is_expected.to respond_to(:user) }
+  it { is_expected.to respond_to(:listing) }
+  it { is_expected.to validate_presence_of(:pixi_id) }
+  it { is_expected.to belong_to(:listing).with_foreign_key('pixi_id') }
+  it { is_expected.to belong_to(:user) }
 
   describe "user name" do 
-    it { @pixi_want.user_name.should == @user.name } 
+    it { expect(@pixi_want.user_name).to eq(@user.name) } 
 
     it "does not find user name" do 
       @pixi_want.user_id = 100
-      @pixi_want.user_name.should be_nil  
+      @pixi_want.save
+      @pixi_want.reload
+      expect(@pixi_want.user_name).to be_nil  
     end
   end
 
   describe "get_by_status" do 
-    it { PixiWant.get_by_status('active').should be_empty }
+    it { expect(PixiWant.get_by_status('active')).to be_empty }
     it "includes active wants" do  
       @pixi_want.save
-      PixiWant.get_by_status('active').should_not be_empty 
+      expect(PixiWant.get_by_status('active')).not_to be_empty 
     end
   end
 
   describe "set_status" do
     before { @pixi_want.save }
-    it { PixiWant.set_status(nil, @user.id, 'active').should_not == 1 }
-    it { PixiWant.set_status(@listing.pixi_id, @user.id, 'sold').should == 1 }
+    it { expect(PixiWant.set_status(nil, @user.id, 'active')).not_to eq(1) }
+    it { expect(PixiWant.set_status(@listing.pixi_id, @user.id, 'sold')).to eq(1) }
   end
 end

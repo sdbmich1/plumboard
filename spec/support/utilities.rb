@@ -162,9 +162,9 @@
   def check_page_expectations str_arr, txt, notFlg=true
     str_arr.each do |str|
       if notFlg
-        page.should_not have_content "#{str} #{txt}"
+        expect(page).not_to have_content "#{str} #{txt}"
       else
-        page.should have_content "#{str}#{txt}"
+        expect(page).to have_content "#{str}#{txt}"
       end
     end
   end
@@ -172,9 +172,9 @@
   def check_page_selectors str_arr, vFlg, notFlg=true
     str_arr.each do |str|
       if notFlg
-        page.should_not have_selector("#{str}", visible: vFlg)
+        expect(page).not_to have_selector("#{str}", visible: vFlg)
       else
-        page.should have_selector("#{str}", visible: vFlg)
+        expect(page).to have_selector("#{str}", visible: vFlg)
       end
     end
   end
@@ -205,7 +205,7 @@
     select (Date.today.year+2).to_s, from: "card_year"
   end
 
-  def load_credit_card cid="4111111111111111", cvv="123", valid=true, flg=true, default=false
+  def load_credit_card cid="4111111111111111", cvv="123", valid=true, flg=true
     credit_card cid
     fill_in "card_code",  with: cvv
     valid ? valid_dates : invalid_card_dates
@@ -223,9 +223,9 @@
   end
 
   def send_mailer model, msg
-    @mailer = mock(UserMailer)
-    UserMailer.stub!(:delay).and_return(@mailer)
-    @mailer.stub(msg.to_sym).with(model).and_return(@mailer)
+    @mailer = double(UserMailer)
+    allow(UserMailer).to receive(:delay).and_return(@mailer)
+    allow(@mailer).to receive(msg.to_sym).with(model).and_return(@mailer)
   end
 
     def reg_user_info
@@ -275,7 +275,7 @@
         stub_const("USE_LOCAL_PIX", val)
         reg_user_with_photo
         click_button submit; sleep 2 
-        page.should have_content 'A message with a confirmation link has been sent to your email address' if cnt > 0
+        expect(page).to have_content 'A message with a confirmation link has been sent to your email address' if cnt > 0
       }.to change(User, :count).by(cnt)
     end
 

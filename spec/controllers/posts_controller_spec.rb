@@ -5,25 +5,25 @@ describe PostsController do
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive_messages(stubs) unless stubs.empty?
     end
   end
 
   def mock_listing(stubs={})
     (@mock_listing ||= mock_model(Listing, stubs).as_null_object).tap do |listing|
-      listing.stub(stubs) unless stubs.empty?
+      allow(listing).to receive_messages(stubs) unless stubs.empty?
     end
   end
 
   def mock_conversation(stubs={})
     (@mock_conversation ||= mock_model(Conversation, stubs).as_null_object).tap do |conversation|
-      conversation.stub(stubs) unless stubs.empty?
+      allow(conversation).to receive_messages(stubs) unless stubs.empty?
     end
   end
 
   def mock_post(stubs={})
     (@mock_post ||= mock_model(Post, stubs).as_null_object).tap do |post|
-      post.stub(stubs) unless stubs.empty?
+      allow(post).to receive_messages(stubs) unless stubs.empty?
     end
   end
 
@@ -32,13 +32,13 @@ describe PostsController do
     @user = mock_user
     @listing = stub_model Listing
     @post = stub_model Post
-    controller.stub!(:current_user).and_return(@user)
+    allow(controller).to receive(:current_user).and_return(@user)
   end
 
   describe "GET /mark" do
     before :each do
       @post = mock_model Post
-      Post.stub!(:mark_as_read).with(@user).and_return(true)
+      allow(Post).to receive(:mark_as_read).with(@user).and_return(true)
     end
     
     def do_mark
@@ -47,16 +47,16 @@ describe PostsController do
 
     it "should render nothing" do
       do_mark
-      controller.stub!(:render)
+      allow(controller).to receive(:render)
     end
   end
 
   describe "PUT /mark_read" do
     before :each do
       @post = mock_model Post
-      Post.stub!(:find).and_return( @post )
-      @post.stub_chain(:mark_as_read!, :for, :unread?).with(@user).and_return(true)
-      @post.stub!(:unread?).and_return(true)
+      allow(Post).to receive(:find).and_return( @post )
+      allow(@post).to receive_message_chain(:mark_as_read!, :for, :unread?).with(@user).and_return(true)
+      allow(@post).to receive(:unread?).and_return(true)
     end
     
     def do_mark
@@ -65,7 +65,7 @@ describe PostsController do
 
     it "should render nothing" do
       do_mark
-      controller.stub!(:render)
+      allow(controller).to receive(:render)
     end
   end
 
@@ -73,7 +73,7 @@ describe PostsController do
      before (:each) do
       @user = mock_model(User, :id => 3)
       @post = mock_model(Post, :id => 1, :pixi_id => 1, :user_id => 3, conversation_id: 1)
-      Post.stub!(:find).and_return( @post )
+      allow(Post).to receive(:find).and_return( @post )
     end
 
     def do_remove
@@ -82,49 +82,49 @@ describe PostsController do
 
     context "with valid params" do
       before (:each) do
-        @post.stub!(:remove_post).and_return(true)
-        controller.stub!(:set_redirect_path).and_return('/conversations')
+        allow(@post).to receive(:remove_post).and_return(true)
+        allow(controller).to receive(:set_redirect_path).and_return('/conversations')
       end
 
       it "should load the requested post" do
-        Post.stub(:find) { @post }
+        allow(Post).to receive(:find) { @post }
         do_remove
       end
 
       it "should update the requested post" do
-        Post.stub(:find).with("1") { @post }
-        @post.should_receive(:remove_post)
+        allow(Post).to receive(:find).with("1") { @post }
+        expect(@post).to receive(:remove_post)
         do_remove
       end
 
       it "should assign @post" do
-        Post.stub(:find) { mock_post }
+        allow(Post).to receive(:find) { mock_post }
         do_remove
-        assigns(:post).should_not be_nil 
+        expect(assigns(:post)).not_to be_nil 
       end
     end
 
     context "with invalid params" do
     
       before (:each) do
-        @post.stub!(:remove_post).and_return(false)
+        allow(@post).to receive(:remove_post).and_return(false)
       end
 
       it "should load the requested post" do
-        Post.stub(:find) { @post }
+        allow(Post).to receive(:find) { @post }
         do_remove
       end
 
       it "should assign @post" do
-        Post.stub(:find) { mock_post(:update_attributes => false) }
+        allow(Post).to receive(:find) { @post }
         do_remove
-        assigns(:post).should_not be_nil 
+        expect(assigns(:post)).not_to be_nil 
       end
 
       it "renders nothing" do 
-        Post.stub(:find) { mock_post(:update_attributes => false) }
+        allow(Post).to receive(:find) { @post }
         do_remove
-        controller.stub!(:render)
+        allow(controller).to receive(:render)
       end
     end
   end

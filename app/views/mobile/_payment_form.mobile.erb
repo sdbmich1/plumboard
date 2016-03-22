@@ -20,7 +20,7 @@
     <%= link_to 'Prev', set_prev_btn, 'data-role'=>'button', 'data-inline'=>'true' %>
 
     <div class="nav pull-right">
-      <%= link_to 'Cancel', @listing, method: :delete, confirm: cancel_msg, 'data-role'=>'button', 'data-inline'=>'true' if @transaction.pixi? %>
+      <%= link_to 'Cancel', @listing, method: :delete, 'data-role'=>'button', 'data-inline'=>'true', data: { confirm: cancel_msg } if @transaction.pixi? %>
       <%= f.submit "Done!", :id => 'payForm', 'data-inline'=>'true', 'data-theme'=>'d' %>
     </div>
   <% end %>

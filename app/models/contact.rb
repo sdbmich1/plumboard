@@ -2,9 +2,9 @@ class Contact < ActiveRecord::Base
   include AddressManager
   attr_accessible :address, :address2, :city, :home_phone, :mobile_phone, :state, :work_phone, :zip, :website, :country, :lng, :lat, :county
    
-  belongs_to :contactable, :polymorphic => true, :dependent => :destroy
+  belongs_to :contactable, :polymorphic => true
 
-  name_regex =  /^[A-Z]'?['-., a-zA-Z]+$/i
+  name_regex =  /\A[A-Z]'?['-., a-zA-Z]+\z/i
 
   validates :city, :presence => true, :format => { :with => name_regex }
   validates :state, :presence => true

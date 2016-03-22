@@ -8,7 +8,7 @@ class Conversation < ActiveRecord::Base
   after_commit :process_pixi_requests, :on => :update
   has_many :posts, :inverse_of => :conversation
   accepts_nested_attributes_for :posts, :allow_destroy => true
-  has_many :active_posts, class_name: 'Post', :conditions => "status = 'active'"
+  has_many :active_posts, -> { where status: 'active' }, class_name: 'Post'
 
   belongs_to :user
   belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id"
@@ -180,7 +180,7 @@ class Conversation < ActiveRecord::Base
                                  :sender_can_bill?, :recipient_can_bill?, :sender_due_invoice?, :recipient_due_invoice?, :invoice_id], 
               include: {recipient: { only: [:first_name], methods: [:photo] }, user: { only: [:first_name], methods: [:photo] },
                 listing: { only: [], methods: [:photo_url] } })
-    result[:get_posts] = get_posts(options[:user] || user)
+    result['get_posts'] = get_posts(options[:user] || user)
     result
   end
 end

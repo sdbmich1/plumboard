@@ -27,82 +27,82 @@ describe Listing do
 
   describe 'attributes', base: true do
     let(:listing) { FactoryGirl.build :listing, seller_id: user.id }
-    it { should respond_to(:title) }
-    it { should respond_to(:description) }
-    it { should respond_to(:site_id) }
-    it { should respond_to(:seller_id) }
-    it { should respond_to(:alias_name) }
-    it { should respond_to(:transaction_id) }
-    it { should respond_to(:show_alias_flg) }
-    it { should respond_to(:status) }
-    it { should respond_to(:price) }
-    it { should respond_to(:start_date) }
-    it { should respond_to(:end_date) }
-    it { should respond_to(:buyer_id) }
-    it { should respond_to(:show_phone_flg) }
-    it { should respond_to(:category_id) }
-    it { should respond_to(:pixi_id) }
-    it { should respond_to(:parent_pixi_id) }
-    it { should respond_to(:post_ip) }
-    it { should respond_to(:event_start_date) }
-    it { should respond_to(:event_end_date) }
-    it { should respond_to(:compensation) }
-    it { should respond_to(:lng) }
-    it { should respond_to(:lat) }
-    it { should respond_to(:event_start_time) }
-    it { should respond_to(:event_end_time) }
-    it { should respond_to(:year_built) }
-    it { should respond_to(:pixan_id) }
-    it { should respond_to(:job_type_code) }
-    it { should respond_to(:event_type_code) }
-    it { should respond_to(:explanation) }
-    it { should respond_to(:repost_flg) }
-    it { should respond_to(:quantity) }
-    it { should respond_to(:condition_type_code) }
-    it { should respond_to(:color) }
-    it { should respond_to(:other_id) }
-    it { should respond_to(:mileage) }
-    it { should respond_to(:item_type) }
-    it { should respond_to(:item_size) }
-    it { should respond_to(:bed_no) }
-    it { should respond_to(:bath_no) }
-    it { should respond_to(:term) }
-    it { should respond_to(:avail_date) }
+    it { is_expected.to respond_to(:title) }
+    it { is_expected.to respond_to(:description) }
+    it { is_expected.to respond_to(:site_id) }
+    it { is_expected.to respond_to(:seller_id) }
+    it { is_expected.to respond_to(:alias_name) }
+    it { is_expected.to respond_to(:transaction_id) }
+    it { is_expected.to respond_to(:show_alias_flg) }
+    it { is_expected.to respond_to(:status) }
+    it { is_expected.to respond_to(:price) }
+    it { is_expected.to respond_to(:start_date) }
+    it { is_expected.to respond_to(:end_date) }
+    it { is_expected.to respond_to(:buyer_id) }
+    it { is_expected.to respond_to(:show_phone_flg) }
+    it { is_expected.to respond_to(:category_id) }
+    it { is_expected.to respond_to(:pixi_id) }
+    it { is_expected.to respond_to(:parent_pixi_id) }
+    it { is_expected.to respond_to(:post_ip) }
+    it { is_expected.to respond_to(:event_start_date) }
+    it { is_expected.to respond_to(:event_end_date) }
+    it { is_expected.to respond_to(:compensation) }
+    it { is_expected.to respond_to(:lng) }
+    it { is_expected.to respond_to(:lat) }
+    it { is_expected.to respond_to(:event_start_time) }
+    it { is_expected.to respond_to(:event_end_time) }
+    it { is_expected.to respond_to(:year_built) }
+    it { is_expected.to respond_to(:pixan_id) }
+    it { is_expected.to respond_to(:job_type_code) }
+    it { is_expected.to respond_to(:event_type_code) }
+    it { is_expected.to respond_to(:explanation) }
+    it { is_expected.to respond_to(:repost_flg) }
+    it { is_expected.to respond_to(:quantity) }
+    it { is_expected.to respond_to(:condition_type_code) }
+    it { is_expected.to respond_to(:color) }
+    it { is_expected.to respond_to(:other_id) }
+    it { is_expected.to respond_to(:mileage) }
+    it { is_expected.to respond_to(:item_type) }
+    it { is_expected.to respond_to(:item_size) }
+    it { is_expected.to respond_to(:bed_no) }
+    it { is_expected.to respond_to(:bath_no) }
+    it { is_expected.to respond_to(:term) }
+    it { is_expected.to respond_to(:avail_date) }
 
-    it { should respond_to(:user) }
-    it { should respond_to(:site) }
-    it { should respond_to(:posts) }
-    it { should respond_to(:conversations) }
-    it { should respond_to(:invoices) }
+    it { is_expected.to respond_to(:user) }
+    it { is_expected.to respond_to(:site) }
+    it { is_expected.to respond_to(:posts) }
+    it { is_expected.to respond_to(:conversations) }
+    it { is_expected.to respond_to(:invoices) }
     #it { should respond_to(:site_listings) }
-    it { should respond_to(:transaction) }
-    it { should respond_to(:pictures) }
-    it { should respond_to(:contacts) }
-    it { should respond_to(:category) }
-    it { should respond_to(:job_type) }
-    it { should respond_to(:event_type) }
-    it { should belong_to(:event_type).with_foreign_key('event_type_code') }
-    it { should respond_to(:condition_type) }
-    it { should belong_to(:condition_type).with_foreign_key('condition_type_code') }
-    it { should respond_to(:comments) }
-    it { should respond_to(:pixi_likes) }
-    it { should have_many(:pixi_likes).with_foreign_key('pixi_id') }
-    it { should respond_to(:pixi_wants) }
-    it { should have_many(:pixi_wants).with_foreign_key('pixi_id') }
-    it { should respond_to(:saved_listings) }
-    it { should have_many(:saved_listings).with_foreign_key('pixi_id')}
-    it { should have_many(:active_saved_listings).with_foreign_key('pixi_id').conditions("status = 'active'") }
-    it { should respond_to(:buyer) }
-    it { should belong_to(:buyer).with_foreign_key('buyer_id') }
-    it { should have_many(:active_pixi_wants).class_name('PixiWant').with_foreign_key('pixi_id').conditions("status = 'active'") }
-    it { should accept_nested_attributes_for(:contacts).allow_destroy(true) }
-    it { should respond_to(:buy_now_flg) }
-    it { should respond_to(:est_ship_cost) }
-    it { should respond_to(:sales_tax) }
-    it { should respond_to(:fulfillment_type_code) }
-    it { should belong_to(:fulfillment_type).with_foreign_key('fulfillment_type_code') }
+    it { is_expected.to respond_to(:transaction) }
+    it { is_expected.to respond_to(:pictures) }
+    it { is_expected.to respond_to(:contacts) }
+    it { is_expected.to respond_to(:category) }
+    it { is_expected.to respond_to(:job_type) }
+    it { is_expected.to respond_to(:event_type) }
+    it { is_expected.to belong_to(:event_type).with_foreign_key('event_type_code') }
+    it { is_expected.to respond_to(:condition_type) }
+    it { is_expected.to belong_to(:condition_type).with_foreign_key('condition_type_code') }
+    it { is_expected.to respond_to(:comments) }
+    it { is_expected.to respond_to(:pixi_likes) }
+    it { is_expected.to have_many(:pixi_likes).with_foreign_key('pixi_id') }
+    it { is_expected.to respond_to(:pixi_wants) }
+    it { is_expected.to have_many(:pixi_wants).with_foreign_key('pixi_id') }
+    it { is_expected.to respond_to(:saved_listings) }
+    it { is_expected.to have_many(:saved_listings).with_foreign_key('pixi_id')}
+    it { is_expected.to have_many(:active_saved_listings).with_foreign_key('pixi_id').conditions(:status=>"active") }
+    it { is_expected.to respond_to(:buyer) }
+    it { is_expected.to belong_to(:buyer).with_foreign_key('buyer_id') }
+    it { is_expected.to have_many(:active_pixi_wants).class_name('PixiWant').with_foreign_key('pixi_id').conditions(:status=>"active") }
+    it { is_expected.to accept_nested_attributes_for(:contacts).allow_destroy(true) }
+    it { is_expected.to respond_to(:buy_now_flg) }
+    it { is_expected.to respond_to(:est_ship_cost) }
+    it { is_expected.to respond_to(:sales_tax) }
+    it { is_expected.to respond_to(:fulfillment_type_code) }
+    it { is_expected.to belong_to(:fulfillment_type).with_foreign_key('fulfillment_type_code') }
     context 'IDs' do
-      %w(site_id seller_id category_id transaction_id).each do |fld|
+      %w(site_id seller_id category_id).each do |fld|
         it_behaves_like 'an ID', fld
       end
     end
@@ -112,11 +112,11 @@ describe Listing do
       end
     end
     it_behaves_like 'an amount', 'price', 15000
-    it { should allow_value('chair').for(:title) }
-    it { should_not allow_value("a"*81).for(:title) }
-    it { should_not allow_value("").for(:title) }
-    it { should allow_value('chair').for(:description) }
-    it { should_not allow_value("").for(:description) }
+    it { is_expected.to allow_value('chair').for(:title) }
+    it { is_expected.not_to allow_value("a"*81).for(:title) }
+    it { is_expected.not_to allow_value("").for(:title) }
+    it { is_expected.to allow_value('chair').for(:description) }
+    it { is_expected.not_to allow_value("").for(:description) }
 
     context 'status' do
       %w(active edit pending denied expired sold closed inactive removed).each do |fld|
@@ -132,11 +132,11 @@ describe Listing do
     end
 
     it "should not include inactive listings" do
-      Listing.active.should_not == @listing 
+      expect(Listing.active).not_to eq(@listing) 
     end
 
     it "active page should not include inactive listings" do
-      Listing.active_page(1).should_not == @listing 
+      expect(Listing.active_page(1)).not_to eq(@listing) 
     end
 
     it "get_by_status orders by updated_at DESC" do
@@ -151,15 +151,15 @@ describe Listing do
     end
 
     it "get_by_status should not include inactive listings" do
-      Listing.get_by_status('active').should_not == @listing 
+      expect(Listing.get_by_status('active')).not_to eq(@listing) 
     end
   end
 
   describe "includes active listings", base: true  do 
     before { @listing.save! }
-    it { Listing.active.should be_true }
-    it { Listing.active_page(1).should be_true }
-    it { Listing.get_by_status('active').should_not be_empty }
+    it { expect(Listing.active).to be_truthy }
+    it { expect(Listing.active_page(1)).to be_truthy }
+    it { expect(Listing.get_by_status('active').count(:all)).not_to eq 0 }
     it 'orders by end_date ASC' do
       @listing2 = FactoryGirl.build(:listing, seller_id: @user.id, quantity: 1, status: 'active', end_date: @listing.end_date + 7.days)
       @listing2.pictures.build(FactoryGirl.attributes_for :picture)
@@ -172,15 +172,15 @@ describe Listing do
 
   describe "site listings", base: true  do 
     before { @listing.save! }
-    it { Listing.get_by_site(0).should_not include @listing } 
-    it { Listing.get_by_site(@listing.site.id).should_not be_empty }
+    it { expect(Listing.get_by_site(0)).not_to include @listing } 
+    it { expect(Listing.get_by_site(@listing.site.id).count(:all)).not_to eq 0 }
   end
 
   describe "category listings", base: true   do 
-    it { Listing.get_by_category(0).should_not include @listing } 
+    it { expect(Listing.get_by_category(0)).not_to include @listing } 
     it 'finds listing by category' do
       @listing.save!
-      Listing.get_by_category(@listing.category_id).should_not be_empty
+      expect(Listing.get_by_category(@listing.category_id).count(:all)).not_to eq 0
     end
   end
 
@@ -188,28 +188,28 @@ describe Listing do
     it 'should not get listings if none are invoiced' do
       @listing.status = 'active'
       @listing.save
-      Listing.active.should_not be_empty
-      Listing.active_invoices.should be_empty
+      expect(Listing.active.count(:all)).not_to eq 0
+      expect(Listing.active_invoices.count(:all)).to eq 0
     end
 
     it 'should get listings' do
       create_invoice "unpaid"
-      Listing.active_invoices.should_not be_empty
+      expect(Listing.active_invoices.count(:all)).not_to eq 0
     end
   end
 
   describe "check_category_and_location", main: true  do
     before { @listing.save! }
     it "should get all listings of given status if category and location are not specified" do
-      Listing.check_category_and_location('active', nil, nil, true).should_not be_empty
+      expect(Listing.check_category_and_location('active', nil, nil, true).count(:all)).not_to eq 0
     end
 
     it "should get listing when category and location are specified" do      
-      Listing.check_category_and_location('active', @listing.category_id, @listing.site_id, true).should_not be_empty
+      expect(Listing.check_category_and_location('active', @listing.category_id, @listing.site_id, true).count(:all)).not_to eq 0
     end
 
     it "should not return anything if no listings meet the parameters" do
-      Listing.check_category_and_location('removed', 100, 900, true).should be_empty
+      expect(Listing.check_category_and_location('removed', 100, 900, true).count(:all)).to eq 0
     end
 
     it "only returns necessary attributes" do
@@ -226,15 +226,15 @@ describe Listing do
     end      
 
     it "should get all listings of given status if category and location are not specified" do
-      Listing.check_invoiced_category_and_location(nil, nil).should_not be_empty
+      expect(Listing.check_invoiced_category_and_location(nil, nil).count(:all)).not_to eq 0
     end
 
     it "should get listing when category and location are specified" do      
-      Listing.check_invoiced_category_and_location(@listing.category_id, @listing.site_id).should_not be_empty
+      expect(Listing.check_invoiced_category_and_location(@listing.category_id, @listing.site_id).count(:all)).not_to eq 0
     end
 
     it "should not return anything if no listings meet the parameters" do
-      Listing.check_invoiced_category_and_location(100, 900).should be_empty
+      expect(Listing.check_invoiced_category_and_location(100, 900).count(:all)).to eq 0
     end
 
     it "only returns necessary attributes" do
@@ -248,13 +248,13 @@ describe Listing do
     it "returns true" do
       stub_const("MIN_PIXI_COUNT", 0)
       expect(MIN_PIXI_COUNT).to eq(0)
-      expect(Listing.has_enough_pixis?(@listing.category_id, @listing.site_id)).to be_true
+      expect(Listing.has_enough_pixis?(@listing.category_id, @listing.site_id)).to be_truthy
     end
 
     it "returns false" do
       stub_const("MIN_PIXI_COUNT", 500)
       expect(MIN_PIXI_COUNT).to eq(500)
-      expect(Listing.has_enough_pixis?(@listing.category_id, 1)).not_to be_true
+      expect(Listing.has_enough_pixis?(@listing.category_id, 1)).not_to be_truthy
     end
   end
 
@@ -264,13 +264,13 @@ describe Listing do
       @listing.save
       @user.uid = 1
       @user.save
-      Listing.get_by_seller(@user, 'active', false).should_not be_empty  
+      expect(Listing.get_by_seller(@user, 'active', false).count(:all)).not_to eq 0
     end
 
     it "does not get all listings for non-admin" do
       @listing.seller_id = 100
       @listing.save
-      Listing.get_by_seller(@user, 'active', false).should_not include @listing
+      expect(Listing.get_by_seller(@user, 'active', false)).not_to include @listing
     end
 
     it "gets all listings for admin" do
@@ -289,9 +289,9 @@ describe Listing do
       create_invoice 'paid'
     end
 
-    it { Listing.get_by_buyer(0).should_not include @listing } 
+    it { expect(Listing.get_by_buyer(0)).not_to include @listing } 
     it "includes buyer listings", run: true do 
-      Listing.get_by_buyer(@invoice.buyer_id).should_not be_empty  
+      expect(Listing.get_by_buyer(@invoice.buyer_id).count(:all)).not_to eq 0
     end
   end
 
@@ -300,15 +300,15 @@ describe Listing do
       @listing.site_id = 100 
     end
 
-    it { @listing.site_name.should_not be_empty } 
+    it { expect(@listing.site_name).not_to be_empty } 
     it "should not find correct site name", run: true do 
-      @listing.site_name.should be_nil 
+      expect(@listing.site_name).to be_nil 
     end
 
     it "should not return site count > 0", run: true do 
-      @listing.get_site_count.should == 0  
+      expect(@listing.get_site_count).to eq(0)  
     end
-    it { @listing.get_site_count.should_not == 0 } 
+    it { expect(@listing.get_site_count).not_to eq(0) } 
   end
 
   describe 'primary_address', main: true do
@@ -333,10 +333,10 @@ describe Listing do
   end
 
   describe "should find correct category name", main: true  do 
-    it { @listing.category_name.should == 'Foo Bar' } 
+    it { expect(@listing.category_name).to eq('Foo Bar') } 
     it "should not find correct category name" do 
       @listing.category_id = 100 
-      @listing.category_name.should be_nil  
+      expect(@listing.category_name).to be_nil  
     end
   end
 
@@ -369,13 +369,13 @@ describe Listing do
       end
     end
 
-    it { @listing.seller_photo.should_not be_nil } 
+    it { expect(@listing.seller_photo).not_to be_nil } 
     it 'does not return seller photo' do 
       @listing.seller_id = 100 
-      @listing.seller_photo.should be_nil  
+      expect(@listing.seller_photo).to be_nil  
     end
 
-    it { @listing.seller_rating_count.should == 0 } 
+    it { expect(@listing.seller_rating_count).to eq(0) } 
     it 'returns seller rating count' do 
       @listing.save!
       @buyer = create(:pixi_user)
@@ -385,17 +385,17 @@ describe Listing do
 
     it "checks if seller name is an alias" do 
       @listing.show_alias_flg = 'yes'
-      expect(@listing.alias?).to be_true 
+      expect(@listing.alias?).to be_truthy 
     end
 
     it "does not have an alias" do 
       @listing.show_alias_flg = 'no'
-      expect(@listing.alias?).not_to be_true 
+      expect(@listing.alias?).not_to be_truthy 
     end
 
     context "does not have a business seller" do
-      it { expect(@listing.sold_by_business?).not_to be_true }
-      it { expect(@listing.seller_address?).not_to be_true }
+      it { expect(@listing.sold_by_business?).not_to be_truthy }
+      it { expect(@listing.seller_address?).not_to be_truthy }
     end
 
     context 'has a business seller' do
@@ -403,16 +403,16 @@ describe Listing do
         @seller = create :business_user
         @listing2 = build :listing, seller_id: @seller.id, quantity: 2, title: 'Leather Coat'
       end
-      it { expect(@listing2.sold_by_business?).to be_true }
-      it { expect(@listing2.seller_address?).to be_true }
+      it { expect(@listing2.sold_by_business?).to be_truthy }
+      it { expect(@listing2.seller_address?).to be_truthy }
     end
   end
 
   describe 'any_locations?', main: true do
-    it { expect(@listing.any_locations?).not_to be_true }
+    it { expect(@listing.any_locations?).not_to be_truthy }
     it 'has locations' do
       @listing.contacts.build attributes_for :contact
-      expect(@listing.any_locations?).to be_true
+      expect(@listing.any_locations?).to be_truthy
     end
   end
 
@@ -429,9 +429,9 @@ describe Listing do
     before :each, run: true do
       @listing.transaction_id = nil
     end
-    it { @listing.has_transaction?.should be_true }
+    it { expect(@listing.has_transaction?).to be_truthy }
     it 'has no txn', run: true do
-      @listing.has_transaction?.should_not be_true
+      expect(@listing.has_transaction?).not_to be_truthy
     end
   end
 
@@ -441,11 +441,11 @@ describe Listing do
     end
 
     it "should verify user is seller" do 
-      @listing.seller?(@user).should be_true 
+      expect(@listing.seller?(@user)).to be_truthy 
     end
 
     it  "should not verify user is seller" do 
-      @listing.seller?(@user2).should_not be_true 
+      expect(@listing.seller?(@user2)).not_to be_truthy 
     end
   end
 
@@ -457,11 +457,11 @@ describe Listing do
     end
 
     it "should verify user is pixter" do 
-      @listing.pixter?(@pixter).should be_true 
+      expect(@listing.pixter?(@pixter)).to be_truthy 
     end
 
     it "should not verify user is pixter" do 
-      @listing.pixter?(@user2).should_not be_true 
+      expect(@listing.pixter?(@user2)).not_to be_truthy 
     end
   end
 
@@ -476,14 +476,14 @@ describe Listing do
     end
 
     it "is editable" do 
-      @listing.editable?(@pixter).should be_true 
-      @listing.editable?(@user).should be_true 
-      @listing.editable?(@admin).should be_true 
-      @listing.editable?(@support).should be_true 
+      expect(@listing.editable?(@pixter)).to be_truthy 
+      expect(@listing.editable?(@user)).to be_truthy 
+      expect(@listing.editable?(@admin)).to be_truthy 
+      expect(@listing.editable?(@support)).to be_truthy 
     end
 
     it "is not editable" do 
-      @listing.editable?(@user2).should_not be_true 
+      expect(@listing.editable?(@user2)).not_to be_truthy 
     end
   end
 
@@ -491,32 +491,32 @@ describe Listing do
     before { @listing.description = "a" * 100 }
 
     it "should return a short description" do 
-      @listing.brief_descr.length.should == 100 
+      expect(@listing.brief_descr.length).to eq(100) 
     end
 
     it "should return a summary" do 
-      @listing.summary.should be_true 
+      expect(@listing.summary).to be_truthy 
     end
 
     it "should not return a short description of 100 chars" do 
       @listing.description = "a" 
-      @listing.brief_descr.length.should_not == 100 
+      expect(@listing.brief_descr.length).not_to eq(100) 
     end
 
     it "should not return a summary" do 
       @listing.description = nil
-      @listing.summary.should_not be_true 
+      expect(@listing.summary).not_to be_truthy 
     end
   end
 
   describe "nice title", detail: true  do 
     it "should return a nice title" do 
-      @listing.nice_title.should be_true 
+      expect(@listing.nice_title).to be_truthy 
     end
 
     it "should not return a nice title" do 
       @listing.title = nil
-      @listing.nice_title.should_not be_true 
+      expect(@listing.nice_title).not_to be_truthy 
     end
 
     it "returns a nice title w/ $" do 
@@ -531,9 +531,9 @@ describe Listing do
       @pixan = FactoryGirl.create(:contact_user) 
       @listing.pixan_id = @pixan.id 
     end
-    it { @listing.pixi_post?.should_not be_true }
+    it { expect(@listing.pixi_post?).not_to be_truthy }
     it 'has a pixan', run: true do
-      @listing.pixi_post?.should be_true
+      expect(@listing.pixi_post?).to be_truthy
     end
   end
 
@@ -541,17 +541,17 @@ describe Listing do
     let(:listing) { FactoryGirl.build :invalid_listing }
     it "should not save w/o at least one picture" do 
       listing.save
-      listing.should_not be_valid 
+      expect(listing).not_to be_valid 
     end
   end 
     
   describe "activate", detail: true do 
     let(:listing) { FactoryGirl.build :listing, start_date: Time.now, status: 'pending', end_date: Date.today-3.months }
-    it { listing.activate.status.should == 'active' } 
+    it { expect(listing.activate.status).to eq('active') } 
     it { expect(listing.activate.end_date).to be > Date.today }
     it 'does not activate' do
       listing.status = 'sold'
-      listing.activate.status.should_not == 'active'
+      expect(listing.activate.status).not_to eq('active')
     end
   end
 
@@ -562,13 +562,13 @@ describe Listing do
     end
 				            
     it "should have many pictures" do 
-      @listing.pictures.should include(@sr)
+      expect(@listing.pictures).to include(@sr)
     end
 
     it "should destroy associated pictures" do
       @listing.destroy
       [@sr].each do |s|
-         Picture.find_by_id(s.id).should be_nil
+         expect(Picture.find_by_id(s.id)).to be_nil
        end
     end  
   end  
@@ -580,13 +580,13 @@ describe Listing do
     end
 				            
     it "should have many contacts" do 
-      @listing.contacts.should include(@sr)
+      expect(@listing.contacts).to include(@sr)
     end
 
     it "should destroy associated contacts" do
       @listing.destroy
       [@sr].each do |s|
-         Contact.find_by_id(s.id).should be_nil
+         expect(Contact.find_by_id(s.id)).to be_nil
        end
     end  
   end  
@@ -596,26 +596,26 @@ describe Listing do
       @pixi = FactoryGirl.create(:listing, seller_id: @user.id, site_id: 100) 
       stub_const("Listing::SITE_FREE_AMT", 0)
       expect(Listing::SITE_FREE_AMT).to eq(0)
-      Listing.free_order?(@pixi.site_id).should_not be_true  
+      expect(Listing.free_order?(@pixi.site_id)).not_to be_truthy  
     end
 
     it "should allow free order" do 
       @listing.site_id = 2 
       @listing.save!
-      Listing.free_order?(2).should be_true  
+      expect(Listing.free_order?(2)).to be_truthy  
     end
   end  
 
   describe 'premium?', detail: true  do
     it 'should return true' do
       @listing.category_id = @category.id 
-      @listing.premium?.should be_true
+      expect(@listing.premium?).to be_truthy
     end
 
     it 'should not return true' do
       category = FactoryGirl.create(:category)
       @listing.category_id = category.id
-      @listing.premium?.should_not be_true
+      expect(@listing.premium?).not_to be_truthy
     end
   end
 
@@ -625,22 +625,22 @@ describe Listing do
     end
 
     it 'should return true' do
-      @listing.get_invoice(@invoice.id).should be_true
+      expect(@listing.get_invoice(@invoice.id)).to be_truthy
     end
 
     it 'should not return true' do
-      @listing.get_invoice(0).should_not be_true
+      expect(@listing.get_invoice(0)).not_to be_truthy
     end
   end
 
   describe 'inactive?', detail: true  do
     it 'should return true' do
       @listing.status = 'inactive'
-      @listing.inactive?.should be_true
+      expect(@listing.inactive?).to be_truthy
     end
 
     it 'should not return true' do
-      @listing.inactive?.should_not be_true
+      expect(@listing.inactive?).not_to be_truthy
     end
   end
 
@@ -650,14 +650,14 @@ describe Listing do
     end
 
     it 'returns true', run: true do
-      @listing.mark_as_sold.should be_true
+      expect(@listing.mark_as_sold).to be_truthy
     end
 
     it 'closes other invoices', run: true do
       @buyer2 = create :pixi_user
       @invoice2 = @user.invoices.build attributes_for(:invoice, buyer_id: @buyer2.id) 
       @details = @invoice2.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id, quantity: 1 
-      @invoice2.save!
+      @invoice2.save!; sleep 2
       @listing.mark_as_sold
       expect(@invoice2.reload.status).to eq 'closed'
     end
@@ -665,12 +665,12 @@ describe Listing do
     it 'does not mark when amt left > 0' do
       @listing.update_attribute(:quantity, 5)
       create_invoice 'paid'
-      @listing.mark_as_sold.should_not be_true
+      expect(@listing.mark_as_sold).not_to be_truthy
     end
 
     it 'does not mark when already sold' do
       @listing.status = 'sold'
-      @listing.mark_as_sold.should_not be_true
+      expect(@listing.mark_as_sold).not_to be_truthy
     end
   end
 
@@ -685,16 +685,17 @@ describe Listing do
     end
 
     it "should have the right comments in the right order" do
-      @listing.comments.should == [newer_comment, older_comment]
+      expect(@listing.comments).to eq([newer_comment, older_comment])
     end
 
     it "should destroy associated comments" do
-      comments = @listing.comments.dup
+      comments = []
+      @listing.comments.each { |comment| comments.push(comment) }
       @listing.destroy
-      comments.should_not be_empty
+      expect(comments).not_to be_empty
 
       comments.each do |comment|
-        Comment.find_by_id(comment.id).should be_nil
+        expect(Comment.find_by_id(comment.id)).to be_nil
       end
     end
   end
@@ -706,19 +707,19 @@ describe Listing do
     end
 
     it "should respond to same_day? method" do
-      @listing.should respond_to(:same_day?)
+      expect(@listing).to respond_to(:same_day?)
     end
 
     it "should be the same day" do
       @listing.event_start_date = Date.today
       @listing.event_end_date = Date.today
-      @listing.same_day?.should be_true
+      expect(@listing.same_day?).to be_truthy
     end
 
     it "should not be the same day" do
       @listing.event_start_date = Date.today
       @listing.event_end_date = Date.today+1.day
-      @listing.same_day?.should be_false 
+      expect(@listing.same_day?).to be_falsey 
     end
   end
 
@@ -731,44 +732,44 @@ describe Listing do
   end
 
   describe '.is_category_type?', detail: true  do
-    it { check_cat_type(@listing, 'event').should be_false }
+    it { expect(check_cat_type(@listing, 'event')).to be_falsey }
     it "is an category type" do
-      check_cat_type(@listing, 'event', true).should be_true
-      check_cat_type(@listing, ['service', 'sales', 'event'], true).should be_true
-      check_cat_type(@listing, %w(service sales event), true).should be_true
+      expect(check_cat_type(@listing, 'event', true)).to be_truthy
+      expect(check_cat_type(@listing, ['service', 'sales', 'event'], true)).to be_truthy
+      expect(check_cat_type(@listing, %w(service sales event), true)).to be_truthy
     end
   end
 
   describe '.has_status?', detail: true  do
-    it { @listing.has_status?('').should be_false }
+    it { expect(@listing.has_status?('')).to be_falsey }
     it "return true" do
-      @listing.has_status?('active').should be_true
-      @listing.has_status?(['sold', 'removed','active']).should be_true
+      expect(@listing.has_status?('active')).to be_truthy
+      expect(@listing.has_status?(['sold', 'removed','active'])).to be_truthy
     end
   end
 
   describe '.event?', detail: true  do
-    it { @listing.event?.should be_false }
+    it { expect(@listing.event?).to be_falsey }
     it "is an event" do
       @cat = FactoryGirl.create(:category, name: 'Event', category_type_code: 'event', pixi_type: 'premium') 
       @listing.category_id = @cat.id
-      @listing.event?.should be_true
+      expect(@listing.event?).to be_truthy
     end
   end
 
   describe '.has_year?', detail: true  do
-    it { @listing.has_year?.should be_false }
+    it { expect(@listing.has_year?).to be_falsey }
 
     it "when it's an asset" do
       @cat = FactoryGirl.create(:category, name: 'Homes', category_type_code: 'asset', pixi_type: 'premium') 
       @listing.category_id = @cat.id
-      @listing.has_year?.should be_true 
+      expect(@listing.has_year?).to be_truthy 
     end
 
     it "when it's an vehicle" do
       @cat = FactoryGirl.create(:category, name: 'Homes', category_type_code: 'vehicle', pixi_type: 'premium') 
       @listing.category_id = @cat.id
-      @listing.has_year?.should be_true 
+      expect(@listing.has_year?).to be_truthy 
     end
   end
 
@@ -778,35 +779,35 @@ describe Listing do
     end
 
     it "is not a job" do
-      @listing.job?.should be_false 
+      expect(@listing.job?).to be_falsey 
     end
 
     it "is a job", run: true do
       @listing.category_id = @cat.id
-      @listing.job?.should be_true 
+      expect(@listing.job?).to be_truthy 
     end
 
     it "is not valid", run: true  do
       @listing.category_id = @cat.id
-      @listing.should_not be_valid
+      expect(@listing).not_to be_valid
     end
 
     it "is valid", run: true do
       create :job_type
       @listing.category_id = @cat.id
       @listing.job_type_code = 'CT'
-      @listing.should be_valid
+      expect(@listing).to be_valid
     end
   end
 
   describe '.start_date?', date: true  do
     it "has no start date" do
-      @listing.start_date?.should be_false
+      expect(@listing.start_date?).to be_falsey
     end
 
     it "has a start date" do
       @listing.event_start_date = Time.now
-      @listing.start_date?.should be_true
+      expect(@listing.start_date?).to be_truthy
     end
   end
 
@@ -820,8 +821,8 @@ describe Listing do
 
     it { expect(Listing.saved_list(@user).first.created_date.to_s).to eq @saved_listing.created_at.to_s }
     it "checks saved list" do
-      Listing.saved_list(@usr).should_not include @listing  
-      Listing.saved_list(@user).should_not be_empty 
+      expect(Listing.saved_list(@usr)).not_to include @listing  
+      expect(Listing.saved_list(@user)).not_to be_empty 
     end
 
     it "is saved" do
@@ -916,9 +917,9 @@ describe Listing do
       @pixi_want = @buyer.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
     end
 
-    it { Listing.wanted_list(@user, nil, nil, false).should_not include @listing } 
-    it { Listing.wanted_list(@usr, nil, nil, false).should_not include @listing } 
-    it { Listing.wanted_list(@buyer, nil, nil, false).should_not be_empty }
+    it { expect(Listing.wanted_list(@user, nil, nil, false)).not_to include @listing } 
+    it { expect(Listing.wanted_list(@usr, nil, nil, false)).not_to include @listing } 
+    it { expect(Listing.wanted_list(@buyer, nil, nil, false).count(:all)).not_to eq 0 }
     it { expect(@listing.wanted_count).to eq(1) }
     it { expect(@listing.is_wanted?).to eq(true) }
     it { expect(Listing.wanted_list(@buyer, nil, nil, false).first.created_date.to_s).to eq(@pixi_want.updated_at.to_s) }
@@ -929,7 +930,7 @@ describe Listing do
 	@listing2 = create(:listing, seller_id: @seller.id, title: 'Hair brush')
 	@want = @user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing2.pixi_id
       end
-      it { Listing.wanted_list(@user, nil, nil, false).should_not be_empty } 
+      it { expect(Listing.wanted_list(@user, nil, nil, false).count(:all)).not_to eq 0 } 
     end
 
     it "only returns necessary attributes" do
@@ -949,9 +950,9 @@ describe Listing do
     it { expect(@listing.user_wanted?(@usr)).not_to eq(true) }
 
     it "shows all wanted pixis for admin" do
-      expect(Listing.wanted_list(@admin_user, @listing.category_id, @listing.site_id).count).not_to eq 0
-      Listing.wanted_list(@admin_user, @listing.category_id, @listing.site_id).should include @listing
-      Listing.wanted_list(@usr, @listing.category_id, @listing.site_id, false).should_not include @listing
+      expect(Listing.wanted_list(@admin_user, @listing.category_id, @listing.site_id).count(:all)).not_to eq 0
+      expect(Listing.wanted_list(@admin_user, @listing.category_id, @listing.site_id)).to include @listing
+      expect(Listing.wanted_list(@usr, @listing.category_id, @listing.site_id, false)).not_to include @listing
     end
   end
 
@@ -963,8 +964,8 @@ describe Listing do
       @pixi_ask = @buyer.pixi_asks.create FactoryGirl.attributes_for :pixi_ask, pixi_id: @listing.pixi_id
     end
 
-    it { Listing.asked_list(@usr).should_not include @listing } 
-    it { Listing.asked_list(@buyer).should_not be_empty }
+    it { expect(Listing.asked_list(@usr)).not_to include @listing } 
+    it { expect(Listing.asked_list(@buyer)).not_to be_empty }
     it { expect(@listing.asked_count).to eq(1) }
     it { expect(@listing.is_asked?).to eq(true) }
 
@@ -987,8 +988,8 @@ describe Listing do
       @pixi_like = @user.pixi_likes.create FactoryGirl.attributes_for :pixi_like, pixi_id: @listing.pixi_id
     end
 
-    it { Listing.cool_list(@usr).should_not include @listing } 
-    it { Listing.cool_list(@user).should_not be_empty }
+    it { expect(Listing.cool_list(@usr)).not_to include @listing } 
+    it { expect(Listing.cool_list(@user)).not_to be_empty }
     it { expect(@listing.liked_count).to eq(1) }
     it { expect(@listing.is_liked?).to eq(true) }
 
@@ -1026,19 +1027,13 @@ describe Listing do
     end
 
     it 'does not find pixi' do
-      expect(Listing.find_pixi(0)).to be_nil
+      expect(Listing.find_pixi(1)).to be_nil
     end
   end
 
   describe "dup pixi", process: true  do
     let(:user) { FactoryGirl.create :pixi_user }
     let(:listing) { FactoryGirl.create :listing, seller_id: user.id }
-
-    it "does not return new listing" do 
-      listing = FactoryGirl.build :listing, seller_id: user.id 
-      dup_listing = listing.dup_pixi(false) rescue nil
-      expect(dup_listing).to be_nil
-    end
 
     it "returns new listing" do 
       new_pixi = listing.dup_pixi(false)
@@ -1051,17 +1046,17 @@ describe Listing do
 
   describe "date display methods", date: true do
     let(:user) { FactoryGirl.create :pixi_user }
-    let(:listing) { FactoryGirl.create :listing, seller_id: user.id }
+    let(:listing) { FactoryGirl.create :listing, seller_id: user.id, lat: 1.0, lng: 1.0 }
 
     it "does not show start date" do
       listing.start_date = nil
-      listing.start_date.should be_nil
+      expect(listing.start_date).to be_nil
     end
 
-    it { listing.start_date.should_not be_nil }
+    it { expect(listing.start_date).not_to be_nil }
     it "does not show local updated date" do
       listing.updated_at = nil
-      expect(listing.format_date(listing.updated_at)).to eq Time.now.strftime('%m/%d/%Y %l:%M %p')
+      expect(listing.format_date(listing.updated_at)).to be_nil
     end
 
     it "show current updated date" do
@@ -1175,17 +1170,17 @@ describe Listing do
     describe 'start date' do
       it "has valid start date" do
         @listing.event_start_date = Date.today+2.days
-        @listing.should be_valid
+        expect(@listing).to be_valid
       end
 
       it "should reject a bad start date" do
         @listing.event_start_date = Date.today-2.days
-        @listing.should_not be_valid
+        expect(@listing).not_to be_valid
       end
 
       it "should not be valid without a start date" do
         @listing.event_start_date = nil
-        @listing.should_not be_valid
+        expect(@listing).not_to be_valid
       end
     end
 
@@ -1198,22 +1193,22 @@ describe Listing do
 
       it "has valid end date" do
         @listing.event_end_date = Date.today+3.days
-        @listing.should be_valid
+        expect(@listing).to be_valid
       end
 
       it "should reject a bad end date" do
         @listing.event_end_date = ''
-        @listing.should_not be_valid
+        expect(@listing).not_to be_valid
       end
 
       it "should reject end date < start date" do
         @listing.event_end_date = Date.today-2.days
-        @listing.should_not be_valid
+        expect(@listing).not_to be_valid
       end
 
       it "should not be valid without a end date" do
         @listing.event_end_date = nil
-        @listing.should_not be_valid
+        expect(@listing).not_to be_valid
       end
     end
 
@@ -1226,17 +1221,17 @@ describe Listing do
 
       it "has valid start time" do
         @listing.event_start_time = Time.now+2.hours
-        @listing.should be_valid
+        expect(@listing).to be_valid
       end
 
       it "should reject a bad start time" do
         @listing.event_start_time = ''
-        @listing.should_not be_valid
+        expect(@listing).not_to be_valid
       end
 
       it "should not be valid without a start time" do
         @listing.event_start_time = nil
-        @listing.should_not be_valid
+        expect(@listing).not_to be_valid
       end
     end
 
@@ -1249,23 +1244,23 @@ describe Listing do
 
       it "has valid end time" do
         @listing.event_end_time = Time.now+3.hours
-        @listing.should be_valid
+        expect(@listing).to be_valid
       end
 
       it "should reject a bad end time" do
         @listing.event_end_time = ''
-        @listing.should_not be_valid
+        expect(@listing).not_to be_valid
       end
 
       it "should reject end time < start time" do
         @listing.event_end_date = @listing.event_start_date
         @listing.event_end_time = Time.now.advance(:hours => -2)
-        @listing.should_not be_valid
+        expect(@listing).not_to be_valid
       end
 
       it "should not be valid without a end time" do
         @listing.event_end_time = nil
-        @listing.should_not be_valid
+        expect(@listing).not_to be_valid
       end
     end
   end
@@ -1275,17 +1270,17 @@ describe Listing do
     it "should not close pixi if end_date is invalid" do
       @listing.update_attribute(:end_date, nil)
       Listing.close_pixis
-      @listing.reload.status.should_not == 'expired'
+      expect(@listing.reload.status).not_to eq('expired')
     end
     it "should not close pixi with an end_date >= today" do
       @listing.update_attribute(:end_date, Date.today + 1.days)
       Listing.close_pixis
-      @listing.reload.status.should_not == 'expired'
+      expect(@listing.reload.status).not_to eq('expired')
     end
     it "should close pixi with an end_date < today" do
       @listing.update_attribute(:end_date, Date.today - 1.days)
       Listing.close_pixis
-      @listing.reload.status.should == 'expired'
+      expect(@listing.reload.status).to eq('expired')
     end
   end
 
@@ -1299,7 +1294,7 @@ describe Listing do
     end
     
     it "should be an event" do
-      expect(@listing1.event?).to be_true
+      expect(@listing1.event?).to be_truthy
     end
     
     it "should respond to .event_type" do
@@ -1324,15 +1319,15 @@ describe Listing do
     it 'adds abp pixi points' do
       create(:listing, seller_id: @user.id)
       expect(@user.user_pixi_points.count).not_to eq(0)
-      @user.user_pixi_points.find_by_code('abp').code.should == 'abp'
-      @user.user_pixi_points.find_by_code('app').should be_nil
+      expect(@user.user_pixi_points.find_by_code('abp').code).to eq('abp')
+      expect(@user.user_pixi_points.find_by_code('app')).to be_nil
     end
 
     it 'adds app pixi points' do
       @category = create(:category, pixi_type: 'premium')
       create(:listing, category_id: @category.id, seller_id: @user.id)
       expect(@user.user_pixi_points.count).not_to eq(0)
-      @user.user_pixi_points.find_by_code('app').code.should == 'app'
+      expect(@user.user_pixi_points.find_by_code('app').code).to eq('app')
     end
 
     it 'delivers the submitted pixi message' do
@@ -1354,7 +1349,7 @@ describe Listing do
       send_mailer listing, 'send_approval'
       expect(Conversation.all.count).not_to eq(0)
       expect(Post.all.count).not_to eq(0)
-      SystemMessenger.stub!(:send_system_message).with(@user, listing, 'approve').and_return(true)
+      allow(SystemMessenger).to receive(:send_system_message).with(@user, listing, 'approve').and_return(true)
     end
 
     it 'delivers reposted pixi message' do
@@ -1364,7 +1359,7 @@ describe Listing do
       send_mailer listing, 'send_approval'
       expect(Conversation.all.count).not_to eq(0)
       expect(Post.all.count).not_to eq(0)
-      SystemMessenger.stub!(:send_system_message).with(@user, listing, 'repost').and_return(true)
+      allow(SystemMessenger).to receive(:send_system_message).with(@user, listing, 'repost').and_return(true)
     end
   end
 
@@ -1391,11 +1386,11 @@ describe Listing do
   describe 'expired?', base: true do
     it 'should return true' do
       @listing.status = 'expired'
-      @listing.expired?.should be_true
+      expect(@listing.expired?).to be_truthy
     end
 
     it 'should not return true' do
-      @listing.expired?.should_not be_true
+      expect(@listing.expired?).not_to be_truthy
     end
   end
 
@@ -1405,9 +1400,9 @@ describe Listing do
       @listing.update_attribute(:status, 'expired')
       @listing.update_attribute(:end_date, 100.days.ago)
       expect { @listing.repost }.to change { @listing.end_date }
-      @listing.active?.should be_true
+      expect(@listing.active?).to be_truthy
       expect(@listing.end_date).to be > Date.today
-      expect(@listing.reload.repost_flg).to be_true
+      expect(@listing.reload.repost_flg).to be_truthy
       expect(ActionMailer::Base.deliveries.last.subject).to include("Pixi Reposted: #{@listing.title} ") 
     end
 
@@ -1417,8 +1412,8 @@ describe Listing do
       @listing.end_date = 5.days.ago
       @listing.save!
       expect { @listing.repost }.to change { @listing.end_date }
-      @listing.active?.should be_true
-      expect(@listing.reload.repost_flg).to be_true
+      expect(@listing.active?).to be_truthy
+      expect(@listing.reload.repost_flg).to be_truthy
       expect(@listing.explanation).to be_nil
       expect(ActionMailer::Base.deliveries.last.subject).to include("Pixi Reposted: #{@listing.title} ") 
     end
@@ -1429,18 +1424,17 @@ describe Listing do
       picture.photo = File.new Rails.root.join("spec", "fixtures", "photo0.jpg")
       @listing.end_date = 5.days.ago
       @listing.save!
-      result = @listing.repost
-      expect { result }.to be_true
-      expect(Listing.all.count).to eq 2
-      expect(Listing.last.active?).to be_true
+      expect(@listing.repost).to be_truthy
+      expect(Listing.all.count(:all)).to eq 2
+      expect(Listing.last.active?).to be_truthy
       expect(Listing.last.pictures.size).to eq @listing.pictures.size
-      expect(Listing.last.repost_flg).to be_true
+      expect(Listing.last.repost_flg).to be_truthy
       expect(Listing.last.end_date).not_to eq @listing.end_date
     end
 
     it 'returns false if listing is not expired/sold' do
       @listing.status = 'active'
-      @listing.repost.should be_false
+      expect(@listing.repost).to be_falsey
     end
   end
 
@@ -1452,49 +1446,49 @@ describe Listing do
 	
     it "includes expired listings" do
       update_pixi @listing, 'expired', 4
-      Listing.soon_expiring_pixis(4, 'expired').should_not be_empty  
+      expect(Listing.soon_expiring_pixis(4, 'expired').count(:all)).not_to eq 0
     end
 	
     it "includes expired listings" do
       update_pixi @listing, 'expired', 4
-      Listing.soon_expiring_pixis(4, ['expired', 'active']).should_not be_empty  
+      expect(Listing.soon_expiring_pixis(4, ['expired', 'active']).count(:all)).not_to eq 0
     end
 	
     it "includes active listings" do
       update_pixi @listing, 'active', 5
-      Listing.soon_expiring_pixis(5, ['expired', 'active']).should_not be_empty  
+      expect(Listing.soon_expiring_pixis(5, ['expired', 'active']).count(:all)).not_to eq 0
     end
 	
     it "includes default active listings" do
       update_pixi @listing, 'active', 7
-      Listing.soon_expiring_pixis().should_not be_empty  
+      expect(Listing.soon_expiring_pixis.count(:all)).not_to eq 0
     end
   end
   
   describe 'not soon_expiring_pixis', process: true  do  
     it "does not include active listings" do 
       update_pixi @listing, 'active', 10
-      Listing.soon_expiring_pixis(8).should be_empty  
+      expect(Listing.soon_expiring_pixis(8).count(:all)).to eq 0
     end
 	
     it "does not include expired listings" do 
       update_pixi @listing, 'expired', 4
-      Listing.soon_expiring_pixis(3).should be_empty  
+      expect(Listing.soon_expiring_pixis(3).count(:all)).to eq 0
     end
 	
     it "does not include expiring early listings" do 
       update_pixi @listing, 'expired', 4
-      Listing.soon_expiring_pixis(5).should be_empty  
+      expect(Listing.soon_expiring_pixis(5).count(:all)).to eq 0
     end
 	
     it "does not include active listings" do 
       update_pixi @listing, 'active', 4
-      Listing.soon_expiring_pixis(5, nil).should be_empty  
+      expect(Listing.soon_expiring_pixis(5, nil).count(:all)).to eq 0
     end
 	
     it "does not include active listings" do 
       update_pixi @listing, ['expired', 'new'], 5
-      Listing.soon_expiring_pixis(5, ['expired', 'new']).should be_empty  
+      expect(Listing.soon_expiring_pixis(5, ['expired', 'new']).count(:all)).to eq 0
     end
   end
 
@@ -1525,14 +1519,14 @@ describe Listing do
 
   describe "get_by_city", process: true  do
     before { @listing.save! }
-    it { Listing.get_by_city(0, 1).should_not include @listing } 
+    it { expect(Listing.get_by_city(0, 1)).not_to include @listing } 
     it "should be able to toggle get_active" do
       @site = create :site, site_type_code: 'city', name: 'SF'
       @site.contacts.create(FactoryGirl.attributes_for(:contact, address: '101 California', city: 'SF', state: 'CA', zip: '94111'))
       @listing.update_attribute(:site_id, @site.id)
       @listing.update_attribute(:status, 'removed')
-      Listing.get_by_city(@listing.category_id, @listing.site_id, true).should be_empty
-      Listing.get_by_city(@listing.category_id, @listing.site_id, false).should_not be_empty
+      expect(Listing.get_by_city(@listing.category_id, @listing.site_id, true)).to be_empty
+      expect(Listing.get_by_city(@listing.category_id, @listing.site_id, false)).not_to be_empty
     end
 
     it "finds active pixis by site_type_code" do
@@ -1557,14 +1551,14 @@ describe Listing do
     end
 
     it "toggles number_of_days" do
-      Listing.invoiceless_pixis.should include @listing
-      Listing.invoiceless_pixis(5).should_not include @listing
+      expect(Listing.invoiceless_pixis).to include @listing
+      expect(Listing.invoiceless_pixis(5)).not_to include @listing
     end
 
     it "does not return pixis with wants less than two days old" do
       @pixi_want.created_at = Time.now
       @pixi_want.save!
-      Listing.invoiceless_pixis.should_not include @listing
+      expect(Listing.invoiceless_pixis).not_to include @listing
     end
 
     it "returns invoiced pixis in job category" do
@@ -1573,19 +1567,19 @@ describe Listing do
       @listing.job_type_code = 'FT'
       @listing.save!
       create_invoice
-      Listing.invoiceless_pixis.should include @listing
+      expect(Listing.invoiceless_pixis).to include @listing
     end
 
     it "returns invoiced pixis with no price" do
       @listing.price = nil
       @listing.save!
       create_invoice
-      Listing.invoiceless_pixis.should include @listing
+      expect(Listing.invoiceless_pixis).to include @listing
     end
 
     it "does not return other pixis with invoices" do
       create_invoice
-      Listing.invoiceless_pixis.should_not include @listing
+      expect(Listing.invoiceless_pixis).not_to include @listing
     end
   end
 
@@ -1594,16 +1588,16 @@ describe Listing do
       create_invoice 'paid', 2
     end
 
-    it { Listing.purchased(@user).should_not include @listing } 
+    it { expect(Listing.purchased(@user)).not_to include @listing } 
     it "assigns created_date", run: true do
       expect(Listing.purchased(@invoice.buyer).last.created_date.to_s).to eq @invoice.updated_at.to_s
     end
     it "includes buyer listings", run: true do 
-      expect(Listing.purchased(@invoice.buyer).size).to eq 2
+      expect(Listing.purchased(@invoice.buyer).count(:all)).to eq 2
     end
     it "only returns necessary attributes", run: true do
-      expect(Listing.purchased(@invoice.buyer).last.title).to eq(@listing.title)
-      expect(Listing.purchased(@invoice.buyer).last.attributes[:color]).to be_nil
+      expect(Listing.purchased(@invoice.buyer).first.title).to eq(@listing.title)
+      expect(Listing.purchased(@invoice.buyer).first.attributes[:color]).to be_nil
     end
   end
 
@@ -1612,13 +1606,13 @@ describe Listing do
       create_invoice 'paid', 2
     end
 
-    it { Listing.sold_list.should_not include @listing } 
+    it { expect(Listing.sold_list).not_to include @listing } 
     it "assigns created_date", run: true do
       expect(Listing.sold_list.last.created_date.to_s).to eq @invoice.updated_at.to_s
     end
     it "includes sold listings", run: true do 
       @listing.save
-      expect(Listing.sold_list.size).to eq 2
+      expect(Listing.sold_list.count(:all)).to eq 2
     end
     it "only returns necessary attributes", run: true do
       expect(Listing.sold_list.last.title).to eq(@invoice.listings.first.title)
@@ -1634,7 +1628,7 @@ describe Listing do
     it "zeroes cache on non-active status" do
       listing = FactoryGirl.create(:listing, seller_id: @user.id, quantity: 1, status: 'active') 
       listing.update_attribute(:status, 'inactive')
-      expect(Listing.active.size).to eq 0
+      expect(Listing.active.count(:all)).to eq 0
       expect(User.find(@listing.seller_id).active_listings_count).to eq 0
     end
     it "resets cache on update" do
@@ -1692,9 +1686,9 @@ describe Listing do
       create_invoice 'paid'
     end
 
-    it { expect(@listing.any_sold?).not_to be_true } 
+    it { expect(@listing.any_sold?).not_to be_truthy } 
     it "has paid invoices", run: true do 
-      expect(@listing.any_sold?).to be_true  
+      expect(@listing.any_sold?).to be_truthy  
     end
   end
 
@@ -1716,12 +1710,12 @@ describe Listing do
       # call check_category_and_location to load created_date
       listing = Listing.check_category_and_location('active', nil, nil, true).first
       csv_string = listing.as_csv(style: 'active')
-      csv_string.keys.should =~ ['Title', 'Category', 'Description', 'Location',
+      expect(csv_string.keys).to match_array(['Title', 'Category', 'Description', 'Location',
                                  ListingProcessor.new(listing).toggle_user_name_header(listing.status, 'index'),
-                                 'Expiration Date'] 
-      csv_string.values.should =~ [listing.title, listing.category_name, listing.description, listing.site_name,
+                                 'Expiration Date']) 
+      expect(csv_string.values).to match_array([listing.title, listing.category_name, listing.description, listing.site_name,
                                    ListingProcessor.new(listing).toggle_user_name_row(listing.status, listing, 'index'),
-                                   listing.display_date(listing.created_date)]
+                                   listing.display_date(listing.created_date)])
     end
   end
 
@@ -1734,7 +1728,7 @@ describe Listing do
         expect(listing.buy_now_flg).to be_nil
         model.update_buy_now
         listing.reload
-        expect(listing.buy_now_flg).to be_true
+        expect(listing.buy_now_flg).to be_truthy
       end
     end
 
@@ -1745,7 +1739,7 @@ describe Listing do
         expect(listing.buy_now_flg).to be_nil
         model.update_buy_now
         listing.reload
-        expect(listing.buy_now_flg).not_to be_true
+        expect(listing.buy_now_flg).not_to be_truthy
       end
     end
 

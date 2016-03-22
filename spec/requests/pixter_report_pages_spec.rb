@@ -19,19 +19,19 @@ feature "PixiPosts" do
     end
 
     it "it should display 'No Posts Found'", js: true do
-      page.should have_content 'No posts found'
+      expect(page).to have_content 'No posts found'
     end
     it "should have a selector for date range", js: true do
-      page.should have_selector('#date_range_name', visible: true)
+      expect(page).to have_selector('#date_range_name', visible: true)
     end
     it "should not have a selector for pixter list", js: true do
-      page.should_not have_selector('#user_id', visible: true)
+      expect(page).not_to have_selector('#user_id', visible: true)
     end
     it "should not have a link Export to CSV", js: true do
-      page.should_not have_link('#csv-exp', visible: true)
+      expect(page).not_to have_link('#csv-exp', visible: true)
     end
     it "should not have content 'Pixter Report for'", js: true do
-      page.should have_content("Pixter Report for")
+      expect(page).to have_content("Pixter Report for")
     end
   end
 
@@ -56,14 +56,14 @@ feature "PixiPosts" do
       visit pixter_report_pixi_posts_path(status: 'pixter_report')
     end
     it "should not have a content 'no posts found'", js: true do
-      page.should_not have_content 'No posts found'
+      expect(page).not_to have_content 'No posts found'
     end
     it "should contain the pixter name", js: true do
-      page.should have_content @user.name
+      expect(page).to have_content @user.name
     end
     it "should have sale amt and revenue", js: true do
-      page.should have_content @details.subtotal
-      page.should have_content @sold.revenue
+      expect(page).to have_content @details.subtotal
+      expect(page).to have_content @sold.revenue
     end
   end
 
@@ -74,19 +74,19 @@ feature "PixiPosts" do
     end
 
     it "should display 'No Posts Found'", js: true do
-      page.should have_content 'No posts found'
+      expect(page).to have_content 'No posts found'
     end
     it "should have a selector for date range", js: true do
-      page.should have_selector('#date_range_name', visible: true)
+      expect(page).to have_selector('#date_range_name', visible: true)
     end
     it "should have a selector for pixter list", js: true do
-      page.should have_selector('#user_id', visible: true)
+      expect(page).to have_selector('#user_id', visible: true)
     end
     it "should not have a link Export to CSV", js: true do
-      page.should_not have_link('#csv-exp', visible: true)
+      expect(page).not_to have_link('#csv-exp', visible: true)
     end
     it "should no have content 'Pixter Report for'", js: true do
-      page.should have_content("Pixter Report for")
+      expect(page).to have_content("Pixter Report for")
     end
   end
 
@@ -109,20 +109,20 @@ feature "PixiPosts" do
     end
 
     it "should have both pixters' names", js: true do
-      page.should have_content pixter.name
-      page.should have_content pixter2.name
+      expect(page).to have_content pixter.name
+      expect(page).to have_content pixter2.name
     end
 
     it "should only have pixter1's name", js: true do
       select(pixter.first_name, :from => 'user_id')
-      page.should have_content "for #{pixter.name}"
-      page.should_not have_content "for #{pixter2.name}"
+      expect(page).to have_content "for #{pixter.name}"
+      expect(page).not_to have_content "for #{pixter2.name}"
     end
 
     it "should have No Posts Found content", js: true do
-      page.should have_selector('#date_range_name', visible: true)
+      expect(page).to have_selector('#date_range_name', visible: true)
       select("Last Month", :from => 'date_range_name')
-      page.should_not have_content("No Posts Found")
+      expect(page).not_to have_content("No Posts Found")
     end
   end
 end

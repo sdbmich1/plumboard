@@ -8,8 +8,8 @@ Spork.prefork do
   ENV["RAILS_ENV"] ||= 'test'
   require File.expand_path("../../config/environment", __FILE__)
   require 'rspec/rails'
-  require 'email_spec'
   require 'rspec/autorun'
+  require 'email_spec'
   require 'capybara/rspec'
   require 'capybara/rails'
   require 'database_cleaner'
@@ -35,8 +35,8 @@ Spork.prefork do
     options[:ssl_verify] = false
   end
 
+
   RSpec.configure do |config|
-    config.treat_symbols_as_metadata_keys_with_true_values = true
     config.include(EmailSpec::Helpers)
     config.include(EmailSpec::Matchers)
     config.mock_with :rspec
@@ -49,6 +49,7 @@ Spork.prefork do
     config.use_transactional_fixtures = false
     config.extend ControllerMacros, :type => :controller
     config.infer_base_class_for_anonymous_controllers = false
+    config.infer_spec_type_from_file_location!
     config.include Rails.application.routes.url_helpers
     config.include(MailerMacros)  
     config.include IntegrationSpecHelper, :type => :request
@@ -75,9 +76,9 @@ Spork.prefork do
       DatabaseCleaner.start
       set_selenium_window_size(1250, 800) if Capybara.current_driver == :selenium
       reset_email
-      Contact.any_instance.stub(:geocode) { [1,1] }
-      Listing.any_instance.stub(:geocode) { [1,1] }
-      User.any_instance.stub(:geocode).and_return([1,1]) 
+      allow_any_instance_of(Contact).to receive(:geocode) { [1,1] }
+      allow_any_instance_of(Listing).to receive(:geocode) { [1,1] }
+      allow_any_instance_of(User).to receive(:geocode).and_return([1,1]) 
       AWS.stub!
     end
 

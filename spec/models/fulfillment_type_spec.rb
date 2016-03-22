@@ -7,45 +7,45 @@ describe FulfillmentType do
 
   subject { @fulfillment_type }
 
-  it { should respond_to(:description) }
-  it { should respond_to(:code) }
-  it { should respond_to(:hide) }
-  it { should respond_to(:status) }
-  it { should validate_presence_of(:description) }
-  it { should validate_presence_of(:code) }
-  it { should validate_presence_of(:hide) }
-  it { should validate_presence_of(:status) }
-  it { should have_many(:listings).with_foreign_key('fulfillment_type_code') }
-  it { should have_many(:temp_listings).with_foreign_key('fulfillment_type_code') }
-  it { should have_many(:invoice_details).with_foreign_key('fulfillment_type_code') }
-  it { should have_many(:preferences).with_foreign_key('fulfillment_type_code') }
+  it { is_expected.to respond_to(:description) }
+  it { is_expected.to respond_to(:code) }
+  it { is_expected.to respond_to(:hide) }
+  it { is_expected.to respond_to(:status) }
+  it { is_expected.to validate_presence_of(:description) }
+  it { is_expected.to validate_presence_of(:code) }
+  it { is_expected.to validate_presence_of(:hide) }
+  it { is_expected.to validate_presence_of(:status) }
+  it { is_expected.to have_many(:listings).with_foreign_key('fulfillment_type_code') }
+  it { is_expected.to have_many(:temp_listings).with_foreign_key('fulfillment_type_code') }
+  it { is_expected.to have_many(:invoice_details).with_foreign_key('fulfillment_type_code') }
+  it { is_expected.to have_many(:preferences).with_foreign_key('fulfillment_type_code') }
 
   describe "active fulfillment_types" do
     before { create(:fulfillment_type, status: 'active') }
-    it { FulfillmentType.active.should_not be_nil }
+    it { expect(FulfillmentType.active).not_to be_nil }
   end
 
   describe "inactive fulfillment_types" do
     before { create(:fulfillment_type, status: 'inactive') }
-    it { FulfillmentType.active.should be_empty }
+    it { expect(FulfillmentType.active).to be_empty }
   end
 
   describe "hidden fulfillment_types" do
     before { create(:fulfillment_type, hide: 'yes') }
-    it { FulfillmentType.unhidden.should be_empty }
+    it { expect(FulfillmentType.unhidden).to be_empty }
   end
 
   describe "unhidden fulfillment_types" do
     before { create(:fulfillment_type, hide: 'no') }
-    it { FulfillmentType.unhidden.should_not be_nil }
+    it { expect(FulfillmentType.unhidden).not_to be_nil }
   end
 
   describe 'nice_descr' do
-    it { @fulfillment_type.nice_descr.should == @fulfillment_type.description.titleize }
+    it { expect(@fulfillment_type.nice_descr).to eq(@fulfillment_type.description.titleize) }
 
     it 'does not return titleized description' do
       @fulfillment_type.description = nil
-      @fulfillment_type.nice_descr.should be_nil
+      expect(@fulfillment_type.nice_descr).to be_nil
     end
   end
 

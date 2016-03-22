@@ -8,80 +8,80 @@ describe CardAccount do
 
   subject { @account }
 
-  it { should respond_to(:user_id) }
-  it { should respond_to(:card_no) }
-  it { should respond_to(:card_number) }
-  it { should respond_to(:card_type) }
-  it { should respond_to(:status) }
-  it { should respond_to(:token) }
-  it { should respond_to(:description) }
-  it { should respond_to(:expiration_month) }
-  it { should respond_to(:expiration_year) }
-  it { should respond_to(:zip) }
-  it { should respond_to(:default_flg) }
-  it { should respond_to(:card_token) }
+  it { is_expected.to respond_to(:user_id) }
+  it { is_expected.to respond_to(:card_no) }
+  it { is_expected.to respond_to(:card_number) }
+  it { is_expected.to respond_to(:card_type) }
+  it { is_expected.to respond_to(:status) }
+  it { is_expected.to respond_to(:token) }
+  it { is_expected.to respond_to(:description) }
+  it { is_expected.to respond_to(:expiration_month) }
+  it { is_expected.to respond_to(:expiration_year) }
+  it { is_expected.to respond_to(:zip) }
+  it { is_expected.to respond_to(:default_flg) }
+  it { is_expected.to respond_to(:card_token) }
 
-  it { should respond_to(:user) }
-  it { should respond_to(:set_flds) }
+  it { is_expected.to respond_to(:user) }
+  it { is_expected.to respond_to(:set_flds) }
 
-  it { should belong_to(:user) }
-  it { should validate_presence_of(:user_id) }
-  it { should validate_presence_of(:expiration_year) }
-  it { should validate_presence_of(:expiration_month) }
-  it { should validate_presence_of(:card_type) }
-  it { should validate_presence_of(:zip) }
-  it { should ensure_length_of(:zip).is_equal_to(5) }
-  it { should allow_value(41572).for(:zip) }
-  it { should_not allow_value(725).for(:zip) }
+  it { is_expected.to belong_to(:user) }
+  it { is_expected.to validate_presence_of(:user_id) }
+  it { is_expected.to validate_presence_of(:expiration_year) }
+  it { is_expected.to validate_presence_of(:expiration_month) }
+  it { is_expected.to validate_presence_of(:card_type) }
+  it { is_expected.to validate_presence_of(:zip) }
+  it { is_expected.to validate_length_of(:zip).is_equal_to(5) }
+  it { is_expected.to allow_value(41572).for(:zip) }
+  it { is_expected.not_to allow_value(725).for(:zip) }
   
   describe "when user_id is empty" do
     before { @account.user_id = "" }
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
   end
 
   describe "when user_id is entered" do
     before { @account.user_id = 1 }
-    it { @account.user_id.should == 1 }
+    it { expect(@account.user_id).to eq(1) }
   end
   
   describe "when expiration_month is empty" do
     before { @account.expiration_month = "" }
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
   end
 
   describe "when expiration_month is entered" do
     before { @account.expiration_month = 1 }
-    it { @account.expiration_month.should == 1 }
+    it { expect(@account.expiration_month).to eq(1) }
   end
   
   describe "when expiration_year is empty" do
     before { @account.expiration_year = "" }
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
   end
 
   describe "when expiration_year is entered" do
     before { @account.expiration_year = 1 }
-    it { @account.expiration_year.should == 1 }
+    it { expect(@account.expiration_year).to eq(1) }
   end
   
   describe "when card_type is empty" do
     before { @account.card_type = "" }
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
   end
 
   describe "when card_type is entered" do
     before { @account.card_type = "visa" }
-    it { @account.card_type.should == "visa" }
+    it { expect(@account.card_type).to eq("visa") }
   end
 
   describe 'must_have_token' do
     it 'has a token' do
-      @account.valid?.should be_true
+      expect(@account.valid?).to be_truthy
     end
 
     it 'has no token' do
       @account.token = nil
-      @account.valid?.should_not be_true
+      expect(@account.valid?).not_to be_truthy
     end
   end
   
@@ -89,29 +89,29 @@ describe CardAccount do
     it 'should be active' do
       @account.status = 'active'
       @account.save
-      CardAccount.active.should be_true
+      expect(CardAccount.active).to be_truthy
     end
 
     it 'should not be active' do
       @account.status = 'pending'
-      CardAccount.active.should be_empty
+      expect(CardAccount.active).to be_empty
     end
   end
 
   describe 'save_account' do
     context 'success' do
       before do
-        CardAccount.any_instance.stub(:save_account).and_return({user_id: 1, card_number: '4111111111111111', status: 'active', card_code: '123',
+        allow_any_instance_of(CardAccount).to receive(:save_account).and_return({user_id: 1, card_number: '4111111111111111', status: 'active', card_code: '123',
                   expiration_month: 6, expiration_year: 2019, zip: '94108'})
       end
-      it { expect(@account.save_account).to be_true }
+      it { expect(@account.save_account).to be_truthy }
     end
 
     context 'save_account w/ bad data' do
       before do
-        CardAccount.any_instance.stub(:save_account).and_return(false)
+        allow_any_instance_of(CardAccount).to receive(:save_account).and_return(false)
       end
-      it { expect(@account.save_account).not_to be_true }
+      it { expect(@account.save_account).not_to be_truthy }
     end
   end
 
@@ -119,80 +119,80 @@ describe CardAccount do
     it "sets default flag" do
       account = @user.card_accounts.build FactoryGirl.attributes_for :card_account, status: nil
       account.save
-      account.status.should == 'active'
-      account.default_flg.should == 'Y'
+      expect(account.status).to eq('active')
+      expect(account.default_flg).to eq('Y')
     end
 
     it "does not set default flag" do
       @user.card_accounts.create FactoryGirl.attributes_for :card_account
       account = @user.card_accounts.build FactoryGirl.attributes_for :card_account, status: 'inactive'
       account.save
-      account.status.should == 'active'
-      account.default_flg.should_not == 'Y'
+      expect(account.status).to eq('active')
+      expect(account.default_flg).not_to eq('Y')
     end
   end
 
   describe 'has_expired?' do
     it 'does not return true' do
-      @account.has_expired?.should_not be_true
+      expect(@account.has_expired?).not_to be_truthy
     end
 
     it 'has past expiration year' do
       account = FactoryGirl.build :card_account, expiration_year: Date.today.year-1
-      account.has_expired?.should be_true
+      expect(account.has_expired?).to be_truthy
     end
 
     it 'has past expiration month' do
       account = FactoryGirl.build :card_account, expiration_year: Date.today.year, expiration_month: Date.today.month-1
-      account.has_expired?.should be_true
+      expect(account.has_expired?).to be_truthy
     end
   end
 
   describe "remove cards", process: true do
-    it { CardAccount.remove_cards(@user).should be_false }
+    it { expect(CardAccount.remove_cards(@user)).to be_falsey }
 
     it "removes cards" do
       @account.save
-      account = @user.card_accounts.create FactoryGirl.attributes_for :card_account, card_no: '5100'
-      expect(CardAccount.remove_cards(@user)).to be_true
-      expect(CardAccount.where(user_id: @user.id).count).to eq 0
+      expect {
+        CardAccount.remove_cards(@user)
+      }.to change { CardAccount.count }.from(1).to(0)
     end
   end
 
   describe 'add_card', process: true do
     before :each, run: true do
-      CardAccount.any_instance.stub(:save_account).and_return({user_id: 1, card_number: '4111111111111111', status: 'active', card_code: '123',
+      allow_any_instance_of(CardAccount).to receive(:save_account).and_return({user_id: 1, card_number: '4111111111111111', status: 'active', card_code: '123',
                   expiration_month: 6, expiration_year: 2019, zip: '94108'})
       @txn = @user.transactions.build FactoryGirl.attributes_for(:transaction, card_number: '4111111111111111', exp_month: Date.today.month+1,
         exp_year: Date.today.year+1, cvv: '123', zip: '11111', payment_type: 'visa')
     end
 
     it 'has an existing token', run: true do
-      CardAccount.add_card(@txn, @txn.token).should be_true
+      expect(CardAccount.add_card(@txn, @txn.token)).to be_truthy
     end
 
     it 'has an existing card', run: true do
       acct = @user.card_accounts.create FactoryGirl.attributes_for :card_account
-      CardAccount.add_card(@txn, @txn.token).should be_true
+      expect(CardAccount.add_card(@txn, @txn.token)).to be_truthy
     end
 
     it 'has no card number' do
-      CardAccount.any_instance.stub(:save_account).and_return(false)
+      allow_any_instance_of(CardAccount).to receive(:save_account).and_return(false)
       @txn = @user.transactions.build FactoryGirl.attributes_for(:transaction, card_number: nil)
-      CardAccount.add_card(@txn, @txn.token).should_not be_true
+      expect(CardAccount.add_card(@txn, @txn.token)).not_to be_truthy
     end
   end
 
   describe 'delete_card' do
     before do
       @account.save!
-      @card_acct = mock('Stripe::Customer')
-      Stripe::Customer.stub!(:retrieve).with(@account.cust_token).and_return(@card_acct)
-      @card_acct.stub_chain(:sources, :retrieve, :delete).and_return(true)
+      @card_acct = double('Stripe::Customer')
+      allow(Stripe::Customer).to receive(:retrieve).with(@account.cust_token).and_return(@card_acct)
+      allow(@card_acct).to receive_message_chain(:sources, :retrieve, :delete).and_return(true)
     #  Payment.should_receive(:delete_card).and_return(true)
     end
 
-    it { expect(@account.delete_card).to be_true }
+    it { expect(@account.delete_card).to be_truthy }
 
     it 'should delete account' do
       @account.delete_card
@@ -201,7 +201,7 @@ describe CardAccount do
 
     it 'should not delete account' do
       @account.token = nil
-      @account.delete_card.should_not be_true
+      expect(@account.delete_card).not_to be_truthy
     end
 
     it 'resets default card' do

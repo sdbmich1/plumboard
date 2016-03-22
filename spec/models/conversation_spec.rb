@@ -14,18 +14,18 @@ describe Conversation do
 
     subject { @conversation }
 
-    it { should respond_to(:user_id) }
-    it { should respond_to(:pixi_id) }
-    it { should respond_to(:recipient_id) }
-    it { should respond_to(:user) }
-    it { should respond_to(:listing) }
-    it { should respond_to(:recipient) }
-    it { should respond_to(:posts) }
-    it { should respond_to(:fulfillment_type_code) }
-    it { should validate_presence_of(:user_id) }
-    it { should validate_presence_of(:pixi_id) }
-    it { should validate_presence_of(:recipient_id) }
-    it { should have_many(:active_posts).class_name('Post').conditions("status = 'active'") }
+    it { is_expected.to respond_to(:user_id) }
+    it { is_expected.to respond_to(:pixi_id) }
+    it { is_expected.to respond_to(:recipient_id) }
+    it { is_expected.to respond_to(:user) }
+    it { is_expected.to respond_to(:listing) }
+    it { is_expected.to respond_to(:recipient) }
+    it { is_expected.to respond_to(:posts) }
+    it { is_expected.to respond_to(:fulfillment_type_code) }
+    it { is_expected.to validate_presence_of(:user_id) }
+    it { is_expected.to validate_presence_of(:pixi_id) }
+    it { is_expected.to validate_presence_of(:recipient_id) }
+    it { is_expected.to have_many(:active_posts).class_name('Post').conditions(:status=>"active") }
 
     describe "when accessing posts" do
       it "has first post" do
@@ -148,8 +148,8 @@ describe Conversation do
 
       context 'active' do
         it "returns active conversations" do
-          Conversation.active.should include(@conversation)
-          Conversation.active.should include(@conversation2)
+          expect(Conversation.active).to include(@conversation)
+          expect(Conversation.active).to include(@conversation2)
         end
 
         it "doesn't return non-active conversations" do
@@ -157,8 +157,8 @@ describe Conversation do
           @conversation2.recipient_status = 'removed'
           @conversation2.save
           expect(Conversation.active.count).to eql(1)
-          Conversation.active.should include(@conversation)
-          Conversation.active.should_not include(@conversation2)
+          expect(Conversation.active).to include(@conversation)
+          expect(Conversation.active).not_to include(@conversation2)
         end
 
         it "correctly activates conversations" do
@@ -176,11 +176,11 @@ describe Conversation do
       end
 
       it "gets first conversation" do
-        Conversation.get_conversations(@user).should include(@conversation)
+        expect(Conversation.get_conversations(@user)).to include(@conversation)
       end
 
       it "gets second conversation" do
-        Conversation.get_conversations(@user).should include(@conversation2)
+        expect(Conversation.get_conversations(@user)).to include(@conversation2)
       end
 
       it "only gets active conversations" do
@@ -188,30 +188,30 @@ describe Conversation do
         @conversation2.recipient_status = 'removed'
         @conversation2.save
         expect(Conversation.get_conversations(@user).count).to eql(1)
-        Conversation.get_conversations(@user).should_not include(@conversation2)
+        expect(Conversation.get_conversations(@user)).not_to include(@conversation2)
       end
 
       context 'getting specific conversations' do
         it "gets sent conversations" do
-          Conversation.get_specific_conversations(@user, "sent").should include(@conversation)
+          expect(Conversation.get_specific_conversations(@user, "sent")).to include(@conversation)
           expect(Conversation.get_specific_conversations(@user, "sent").count).to eql(1)
         end
 
         it "only gets active sent conversations" do
           @conversation.status = 'removed'
           @conversation.save
-          Conversation.get_specific_conversations(@user, "sent").should_not include(@conversation)
+          expect(Conversation.get_specific_conversations(@user, "sent")).not_to include(@conversation)
         end
 
         it "gets received conversations" do
-          Conversation.get_specific_conversations(@user, "received").should include(@conversation2)
+          expect(Conversation.get_specific_conversations(@user, "received")).to include(@conversation2)
           expect(Conversation.get_specific_conversations(@user, "received").count).to eql(1)
         end
 
         it "only gets active received conversations" do
           @conversation2.recipient_status = 'removed'
           @conversation2.save
-          Conversation.get_specific_conversations(@user, "received").should_not include(@conversation2)
+          expect(Conversation.get_specific_conversations(@user, "received")).not_to include(@conversation2)
         end
       end
     end
@@ -233,7 +233,7 @@ describe Conversation do
         end
 
         it 'does return true when user has replied' do
-          expect(@conversation.replied_conv?(@user)).to be_true
+          expect(@conversation.replied_conv?(@user)).to be_truthy
         end
 
         it 'does not return true when user has not replied' do
@@ -248,13 +248,13 @@ describe Conversation do
     it "returns a long message" do 
       @post.content = "a" * 100 
       @post.save!
-      @conversation.content_msg.length.should be > 35 
+      expect(@conversation.content_msg.length).to be > 35 
     end
 
     it "does not return a long message" do 
       @conversation.posts.first.content = "a" * 20 
       @conversation.save!
-      @conversation.content_msg.length.should_not be > 35 
+      expect(@conversation.content_msg.length).not_to be > 35 
     end
   end
 
@@ -269,11 +269,11 @@ describe Conversation do
   end
 
   describe "pixi_title" do 
-    it { @conversation.pixi_title.should_not be_empty } 
+    it { expect(@conversation.pixi_title).not_to be_empty } 
 
     it "should not find correct pixi_title" do 
       @conversation.pixi_id = '100' 
-      @conversation.pixi_title.should be_nil 
+      expect(@conversation.pixi_title).to be_nil 
     end
   end
 
@@ -287,30 +287,30 @@ describe Conversation do
     end
     
     it "should_not return true" do
-      @conversation.due_invoice?(@user).should_not be_true
-      @conversation.sender_due_invoice?.should_not be_true
+      expect(@conversation.due_invoice?(@user)).not_to be_truthy
+      expect(@conversation.sender_due_invoice?).not_to be_truthy
     end
     
     it "should return true" do
       @invoice = @buyer.invoices.build attributes_for(:invoice, buyer_id: @recipient.id)
       @details = @invoice.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
       @invoice.save!
-      @conversation.due_invoice?(@recipient).should be_true
-      @conversation.recipient_due_invoice?.should be_true
+      expect(@conversation.due_invoice?(@recipient)).to be_truthy
+      expect(@conversation.recipient_due_invoice?).to be_truthy
     end
     
     it "should not return true when paid", run: true do
       @invoice.status = 'paid'
       @invoice.save
-      @conversation.due_invoice?(@recipient).should_not be_true
-      @conversation.recipient_due_invoice?.should_not be_true
+      expect(@conversation.due_invoice?(@recipient)).not_to be_truthy
+      expect(@conversation.recipient_due_invoice?).not_to be_truthy
     end
     
     it "should not return true when removed", run: true do
       @listing.status = 'removed'
       @listing.save; sleep 1
-      @conversation.due_invoice?(@recipient).should_not be_true
-      @conversation.recipient_due_invoice?.should_not be_true
+      expect(@conversation.due_invoice?(@recipient)).not_to be_truthy
+      expect(@conversation.recipient_due_invoice?).not_to be_truthy
     end
   end
 
@@ -324,38 +324,38 @@ describe Conversation do
     end
     
     it "should_not return true" do
-      @conversation.can_bill?(@recipient).should_not be_true
-      @conversation.recipient_can_bill?.should_not be_true
+      expect(@conversation.can_bill?(@recipient)).not_to be_truthy
+      expect(@conversation.recipient_can_bill?).not_to be_truthy
     end
     
     it "returns true" do
-      @conversation.can_bill?(@new_user).should be_true
+      expect(@conversation.can_bill?(@new_user)).to be_truthy
     end
 
     it "sender_can_bill? returns true" do
       @conversation.update_attribute(:user_id, @new_user.id)
-      @conversation.sender_can_bill?.should be_true
+      expect(@conversation.sender_can_bill?).to be_truthy
     end
     
     it "should not return true when paid" do
       @invoice.status = 'paid'
       @invoice.save!
-      @conversation.can_bill?(@recipient).should_not be_true
-      @conversation.recipient_can_bill?.should_not be_true
+      expect(@conversation.can_bill?(@recipient)).not_to be_truthy
+      expect(@conversation.recipient_can_bill?).not_to be_truthy
     end
     
     it "should not return true when removed" do
       @listing.status = 'removed'
       @listing.save; sleep 1
-      @conversation.can_bill?(@recipient).should_not be_true
-      @conversation.recipient_can_bill?.should_not be_true
+      expect(@conversation.can_bill?(@recipient)).not_to be_truthy
+      expect(@conversation.recipient_can_bill?).not_to be_truthy
     end
     
     it "should not return true when sold" do
       @listing.status = 'sold'
       @listing.save; sleep 1
-      @conversation.can_bill?(@recipient).should_not be_true
-      @conversation.recipient_can_bill?.should_not be_true
+      expect(@conversation.can_bill?(@recipient)).not_to be_truthy
+      expect(@conversation.recipient_can_bill?).not_to be_truthy
     end
   end
 
@@ -366,14 +366,14 @@ describe Conversation do
     end
 
     it "show current created date" do
-      expect(@conversation.create_dt.to_s).to eq @conversation.created_at.localtime.to_s
+      expect(@conversation.create_dt.to_s).to eq @conversation.posts.last.created_at.localtime.to_s
     end
 
     it "shows local created date" do
       @listing.lat, @listing.lng = 35.1498, -90.0492
       @listing.save
       # expect(@conversation.create_dt.to_i).to eq Time.now.to_i
-      expect(@conversation.create_dt.to_s).to eq @conversation.created_at.localtime.to_s
+      expect(@conversation.create_dt.to_s).to eq @conversation.posts.last.created_at.localtime.to_s
     end
   end
 
@@ -397,11 +397,11 @@ describe Conversation do
 
   describe 'mark_all_posts' do
     it 'marks posts' do
-      expect(@conversation.mark_all_posts(@user)).not_to be_false
+      expect(@conversation.mark_all_posts(@user)).not_to be_falsey
     end
 
     it 'marks no posts' do
-      expect(@conversation.mark_all_posts(nil)).to be_false
+      expect(@conversation.mark_all_posts(nil)).to be_falsey
     end
   end
 
@@ -445,20 +445,20 @@ describe Conversation do
   end
 
   describe "sender name", process: true do 
-    it { @conversation.sender_name.should == (@user.first_name + " " + @user.last_name) }
+    it { expect(@conversation.sender_name).to eq(@user.first_name + " " + @user.last_name) }
 
     it "does not return sender name" do 
       @conversation.user_id = 100 
-      @conversation.sender_name.should be_nil 
+      expect(@conversation.sender_name).to be_nil 
     end
   end
 
   describe "recipient name", process: true do 
-    it { @conversation.recipient_name.should == "Tom Davis" } 
+    it { expect(@conversation.recipient_name).to eq("Tom Davis") } 
 
     it "does not return recipient name" do 
       @conversation.recipient_id = 100 
-      @conversation.recipient_name.should be_nil 
+      expect(@conversation.recipient_name).to be_nil 
     end
   end
 
@@ -466,9 +466,9 @@ describe Conversation do
     it "contains mobile conversation fields" do
       json = @conversation.as_json(user: @user)
       %w(invoice_id sender_can_bill? recipient_can_bill? sender_due_invoice? recipient_due_invoice? get_posts).each do |fld|
-        expect(json.keys).to include fld.to_sym
+        expect(json.keys).to include fld
       end
-      expect(json[:listing].keys).to include :photo_url
+      expect(json['listing'].keys).to include 'photo_url'
     end
   end
 

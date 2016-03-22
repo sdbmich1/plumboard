@@ -4,7 +4,7 @@ class PixiAskObserver < ActiveRecord::Observer
 
 	def after_create model
 		#send notice to recipient
-		UserMailer.delay.ask_question(model) if model.listing
+		UserMailer.ask_question(model).deliver_later if model.listing
 
 		#reset saved pixi status
 		SavedListing.update_status_by_user model.user_id, model.pixi_id, 'asked'

@@ -31,11 +31,11 @@ feature "Categories" do
     end
 
     it 'shows content' do
-      page.should have_content('Categories')
-      page.should have_content(@category.name_title)
-      page.should have_content('Computer')
-      page.should_not have_content('Stuff')
-      page.should have_link(@category.name, href: edit_category_path(@category))
+      expect(page).to have_content('Categories')
+      expect(page).to have_content(@category.name_title)
+      expect(page).to have_content('Computer')
+      expect(page).not_to have_content('Stuff')
+      expect(page).to have_link(@category.name, href: edit_category_path(@category))
     end
   end
 
@@ -47,11 +47,11 @@ feature "Categories" do
     end
 
     it 'shows content' do
-      page.should have_content('Home')
-      page.should have_content(@category.name_title)
-      page.should have_content('Computer')
-      page.should_not have_content('Stuff')
-      page.should_not have_link(@category.name, href: edit_category_path(@category))
+      expect(page).to have_content('Home')
+      expect(page).to have_content(@category.name_title)
+      expect(page).to have_content('Computer')
+      expect(page).not_to have_content('Stuff')
+      expect(page).not_to have_link(@category.name, href: edit_category_path(@category))
     end
   end
 
@@ -65,13 +65,13 @@ feature "Categories" do
     end
 
     it 'shows content' do
-      page.should have_content('Categories')
-      page.should have_link('Active', href: manage_categories_path(status: 'active'))
-      page.should have_link('Inactive', href: inactive_categories_path(status: 'inactive'))
-      page.should have_link('New', href: new_category_path(status: 'new'))
-      page.should have_content(@category.name_title)
-      page.should have_content('Computer')
-      page.should have_link(@category.name_title, href: edit_category_path(@category))
+      expect(page).to have_content('Categories')
+      expect(page).to have_link('Active', href: manage_categories_path(status: 'active'))
+      expect(page).to have_link('Inactive', href: inactive_categories_path(status: 'inactive'))
+      expect(page).to have_link('New', href: new_category_path(status: 'new'))
+      expect(page).to have_content(@category.name_title)
+      expect(page).to have_content('Computer')
+      expect(page).to have_link(@category.name_title, href: edit_category_path(@category))
     end
 
     describe 'create - valid category' do
@@ -79,7 +79,7 @@ feature "Categories" do
 	visit new_category_path(status: 'new')
       end
         
-      it { should have_button('Save Changes') }
+      it { is_expected.to have_button('Save Changes') }
 
       it 'accepts valid data' do
         expect { 
@@ -89,7 +89,7 @@ feature "Categories" do
 	    click_button submit; sleep 3
 	}.to change(Category, :count).by(1)
 
-        page.should have_content "Boat"
+        expect(page).to have_content "Boat"
       end
     end
 
@@ -98,13 +98,13 @@ feature "Categories" do
           click_on 'New'
 	end
         
-        it { should have_button('Save Changes') }
+        it { is_expected.to have_button('Save Changes') }
 
         it 'does not accept blank name' do
           expect { 
 	    click_button submit }.not_to change(Category, :count)
 
-          page.should have_content "blank" 
+          expect(page).to have_content "blank" 
         end
         
         it 'must have a picture', js: true do
@@ -114,7 +114,7 @@ feature "Categories" do
           expect { 
 	    fill_in 'category_name', with: 'Boat'
 	    click_button submit }.not_to change(Category, :count)
-          page.should have_content "Must have a picture"
+          expect(page).to have_content "Must have a picture"
         end
       end
 
@@ -123,7 +123,7 @@ feature "Categories" do
         click_on 'Inactive'
       end
 
-      it { should have_content('Stuff') }
+      it { is_expected.to have_content('Stuff') }
     end
 
     describe 'visits edit page', js: true do
@@ -132,26 +132,26 @@ feature "Categories" do
       end
 
       it 'shows content' do
-        page.should have_button("Save Changes")
+        expect(page).to have_button("Save Changes")
       end
 
       it 'does not accept blank name' do
         expect { 
             fill_in 'category_name', with: ''
 	    click_button submit }.not_to change(Category, :count)
-        page.should_not have_content "Successfully" 
+        expect(page).not_to have_content "Successfully" 
       end
 
       it 'changes status to inactive' do
         expect { 
           select('inactive', :from => 'category_status')
 	  click_button submit }.not_to change(Category, :count)
-        page.should_not have_content @category.name_title
+        expect(page).not_to have_content @category.name_title
       end
 
       it 'does not change status to inactive', js:true do
-	expect(@category.has_pixis?).to be_true
-	find('#category_status')['disabled'].should be_true
+	expect(@category.has_pixis?).to be_truthy
+	expect(find('#category_status')['disabled']).to be_truthy
       end
 
       it 'changes name', js: true do
@@ -159,7 +159,7 @@ feature "Categories" do
           fill_in 'category_name', with: 'Technology'
           select('sales', :from => 'category_category_type_code')
 	  click_button submit }.not_to change(Category, :count)
-        page.should have_content 'Technology'
+        expect(page).to have_content 'Technology'
       end
     end
   end

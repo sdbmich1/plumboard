@@ -6,9 +6,9 @@ class Preference < ActiveRecord::Base
   belongs_to :fulfillment_type, primary_key: 'code', foreign_key: 'fulfillment_type_code'
 
   validates :zip, allow_blank: true, length: {is: 5}
-  validates :sales_tax, allow_blank: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
+  validates :sales_tax, allow_blank: true, format: { with: /\A\d+??(?:\.\d{0,2})?\z/ }, 
     		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_SALES_TAX.to_i }
-  validates :ship_amt, allow_blank: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
+  validates :ship_amt, allow_blank: true, format: { with: /\A\d+??(?:\.\d{0,2})?\z/ }, 
     		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_SHIP_AMT.to_i }
 
   after_commit :update_existing_pixis, on: :update

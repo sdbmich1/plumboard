@@ -5,13 +5,13 @@ describe PixiPostZipsController do
 
   def mock_zip(stubs={})
     (@mock_zip ||= mock_model(PixiPostZip, stubs).as_null_object).tap do |zip|
-      zip.stub(stubs) unless stubs.empty?
+      allow(zip).to receive_messages(stubs) unless stubs.empty?
     end
   end
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive_messages(stubs) unless stubs.empty?
     end
   end
 
@@ -30,17 +30,17 @@ describe PixiPostZipsController do
     end
 
     it "renders the :check view" do
-      response.should render_template :check
+      expect(response).to render_template :check
     end
 
     it "should render the correct layout" do
-      response.should render_template("layouts/pixi_post_zips")
+      expect(response).to render_template("layouts/pixi_post_zips")
     end
   end
 
   describe "GET /submit/:zip" do
     before (:each) do
-      PixiPostZip.stub!(:find_by_zip).and_return( @zip )
+      allow(PixiPostZip).to receive(:find_by_zip).and_return( @zip )
     end
 
     def do_submit
@@ -49,26 +49,26 @@ describe PixiPostZipsController do
 
     context "success" do
       it "should load the requested zip" do
-        PixiPostZip.stub(:find_by_zip) { @zip }
+        allow(PixiPostZip).to receive(:find_by_zip) { @zip }
         do_submit
       end
 
       it "should assign @zip" do
-        PixiPostZip.stub(:find_by_zip) { mock_zip }
+        allow(PixiPostZip).to receive(:find_by_zip) { mock_zip }
         do_submit
-        assigns(:zip).should_not be_nil 
+        expect(assigns(:zip)).not_to be_nil 
       end
 
       it "redirects the page" do
         do_submit
-	response.should be_redirect
+	expect(response).to be_redirect
       end
     end
 
     context 'failure' do
       it "redirects the page" do
         do_submit
-	response.should be_redirect
+	expect(response).to be_redirect
       end
     end
   end

@@ -7,7 +7,7 @@ describe CommentObserver do
 
     it 'should add pixi points' do
       listing.comments.create(content: "Lorem ipsum", user_id: user.id)
-      user.user_pixi_points.find_by_code('pc').code.should == 'pc'
+      expect(user.user_pixi_points.find_by_code('pc').code).to eq('pc')
     end
   end
 end

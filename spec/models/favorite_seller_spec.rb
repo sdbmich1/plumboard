@@ -7,10 +7,13 @@ describe FavoriteSeller do
 
   subject { @favorite_seller }
   describe 'attributes', base: true do
-    its(:attributes) { should include(*%w(seller_id user_id status)) }
-    it { should validate_presence_of(:seller_id) }
-    it { should validate_presence_of(:user_id) }
-    it { should validate_presence_of(:status) }
+    describe '#attributes' do
+      subject { super().attributes }
+      it { is_expected.to include(*%w(seller_id user_id status)) }
+    end
+    it { is_expected.to validate_presence_of(:seller_id) }
+    it { is_expected.to validate_presence_of(:user_id) }
+    it { is_expected.to validate_presence_of(:status) }
   end
 
   describe "get_by_status" do

@@ -39,12 +39,12 @@ feature "Messages" do
     end
 
     it 'shows content' do
-      page.should have_link('Sent', href: sent_posts_path)
-      page.should have_link('Received', href: posts_path)
-      page.should_not have_link('Mark All Read', href: mark_posts_path)
-      page.should have_content 'No messages found.'
-      page.should_not have_button('Pay')
-      page.should_not have_button('Reply')
+      expect(page).to have_link('Sent', href: sent_posts_path)
+      expect(page).to have_link('Received', href: posts_path)
+      expect(page).not_to have_link('Mark All Read', href: mark_posts_path)
+      expect(page).to have_content 'No messages found.'
+      expect(page).not_to have_button('Pay')
+      expect(page).not_to have_button('Reply')
     end
   end
 
@@ -56,12 +56,12 @@ feature "Messages" do
     end
 
     it 'shows content' do
-      page.should have_selector('title', :text => full_title('Messages'))
-      page.should have_content @post.user.name
-      page.should have_link('Sent', href: sent_posts_path)
-      page.should have_link('Received', href: posts_path)
-      page.should have_link('Mark All Read', href: mark_posts_path)
-      page.should_not have_button('Pay')
+      expect(page).to have_selector('title', :text => full_title('Messages'))
+      expect(page).to have_content @post.user.name
+      expect(page).to have_link('Sent', href: sent_posts_path)
+      expect(page).to have_link('Received', href: posts_path)
+      expect(page).to have_link('Mark All Read', href: mark_posts_path)
+      expect(page).not_to have_button('Pay')
     end
 
     it "replies to a message", js: true do
@@ -74,12 +74,12 @@ feature "Messages" do
           click_reply
       }.not_to change(Post,:count).by(1)
 
-      page.should have_content "Content can't be blank"
+      expect(page).to have_content "Content can't be blank"
     end
 
     it "marks all posts read", js: true do
       click_on 'Mark All Read'
-      page.should have_css('li.active a') 
+      expect(page).to have_css('li.active a') 
     end
      
     describe 'pay invoice' do
@@ -89,11 +89,11 @@ feature "Messages" do
 	visit posts_path
       end
 
-      it { should have_button('Pay') }
+      it { is_expected.to have_button('Pay') }
 
       it "opens pay invoice page" do
         click_on 'Pay'
-        page.should have_content 'Amount Due'
+        expect(page).to have_content 'Amount Due'
       end
     end
      
@@ -108,7 +108,7 @@ feature "Messages" do
 
       it "does not show pay button for removed pixi" do
 	expect(Invoice.where(status: 'removed').count).to eq 1
-        page.should_not have_button('Pay')
+        expect(page).not_to have_button('Pay')
       end
     end
      
@@ -121,7 +121,7 @@ feature "Messages" do
 
       it "does not show pay button for paid pixi" do
 	expect(Invoice.where(status: 'paid').count).to eq 1
-        page.should_not have_button('Pay')
+        expect(page).not_to have_button('Pay')
       end
     end
   end
@@ -136,12 +136,12 @@ feature "Messages" do
     end
     
     it 'shows content' do
-      page.should have_link('Mark All Read', href: mark_posts_path)
-      page.should have_content @post.user.name
-      page.should have_content @post.listing.title
-      page.should have_content @post.content
-      page.should have_button('Reply')
-      page.should have_button('Pay')
+      expect(page).to have_link('Mark All Read', href: mark_posts_path)
+      expect(page).to have_content @post.user.name
+      expect(page).to have_content @post.listing.title
+      expect(page).to have_content @post.content
+      expect(page).to have_button('Reply')
+      expect(page).to have_button('Pay')
     end
 
     it "replies to a message" do
@@ -154,12 +154,12 @@ feature "Messages" do
           click_reply
       }.not_to change(Post,:count).by(1)
 
-      page.should have_content "Content can't be blank"
+      expect(page).to have_content "Content can't be blank"
     end
 
     it "pays an invoice" do
       click_on 'Pay'
-      page.should have_content 'Total Due'
+      expect(page).to have_content 'Total Due'
     end
   end
      
@@ -170,8 +170,8 @@ feature "Messages" do
 
     it 'shows no sent messages', js: true do
       click_on 'Sent'
-      page.should_not have_link('Mark All Read', href: mark_posts_path) 
-      page.should have_content 'No messages found' 
+      expect(page).not_to have_link('Mark All Read', href: mark_posts_path) 
+      expect(page).to have_content 'No messages found' 
     end
   end
      
@@ -183,10 +183,10 @@ feature "Messages" do
 
     it 'shows sent messages', js: true do
       click_on 'Sent'
-      page.should_not have_link('Mark All Read', href: mark_posts_path) 
-      page.should have_content @reply_post.recipient.name 
-      page.should have_content @reply_post.listing.title 
-      page.should have_content @reply_post.content 
+      expect(page).not_to have_link('Mark All Read', href: mark_posts_path) 
+      expect(page).to have_content @reply_post.recipient.name 
+      expect(page).to have_content @reply_post.listing.title 
+      expect(page).to have_content @reply_post.content 
     end
   end
 end

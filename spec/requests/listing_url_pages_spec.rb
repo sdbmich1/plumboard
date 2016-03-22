@@ -30,18 +30,18 @@ feature "Urls" do
 
     it 'does not find a valid seller' do
       visit '/biz/testuser'
-      page.should have_content 'No pixis found'
+      expect(page).to have_content 'No pixis found'
     end
 
     it "can follow and unfollow a business" do
       visit '/biz/rhythmmusic'
-      page.should have_selector('#follow-btn', visible: true)
+      expect(page).to have_selector('#follow-btn', visible: true)
       find('#follow-btn').click
       visit '/biz/rhythmmusic'
-      page.should have_selector('#unfollow-btn', visible: true)
+      expect(page).to have_selector('#unfollow-btn', visible: true)
       find('#unfollow-btn').click
       visit '/biz/rhythmmusic'
-      page.should have_selector('#follow-btn', visible: true)
+      expect(page).to have_selector('#follow-btn', visible: true)
     end
   end
 
@@ -68,7 +68,7 @@ feature "Urls" do
 
     it 'does not find a valid site' do
       visit '/loc/anytown'
-      page.should have_content 'No pixis found'
+      expect(page).to have_content 'No pixis found'
     end
   end
 
@@ -80,9 +80,9 @@ feature "Urls" do
     it "does not follow a seller" do
       expect{
         visit '/biz/rhythmmusic'
-        page.should have_selector('#follow-btn', visible: true)
+        expect(page).to have_selector('#follow-btn', visible: true)
         find('#follow-btn').click
-      }.not_to change(FavoriteSeller,:count).by(1)
+      }.not_to change(FavoriteSeller,:count)
       # page.should have_content 'Sign in'
     end
   end

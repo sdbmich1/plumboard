@@ -53,7 +53,7 @@ feature "Listings" do
   def process_element val, saved=false
     str_arr = %w(Sold Active Expired Purchased Removed Draft Denied)
     str_arr.select! { |x| x != val.titleize }
-    page.should have_content(saved ? "Active Listing" : "#{val.titleize} Listing")
+    expect(page).to have_content(saved ? "Active Listing" : "#{val.titleize} Listing")
     if val == "draft"
       date_column = "Last Updated"
     elsif val == "active"
@@ -63,17 +63,17 @@ feature "Listings" do
     else
       date_column = "#{val.titleize} Date"
     end
-    page.should have_content date_column
+    expect(page).to have_content date_column
     name_column = %w(sold invoiced wanted).include?(val) ? 'Buyer Name' :  'Seller Name'
-    page.should have_content name_column
+    expect(page).to have_content name_column
     check_page_expectations str_arr, 'Listing'
-    page.should_not have_content 'No pixis found.'
+    expect(page).not_to have_content 'No pixis found.'
   end
 
   describe "My Pixis pagination", js: true do
     it "should list each listing" do
       user.pixis.paginate(page: 1).each do |listing|
-        page.should have_selector('td', text: listing.title)
+        expect(page).to have_selector('td', text: listing.title)
       end
     end
   end
@@ -87,15 +87,15 @@ feature "Listings" do
       
     it "views my pixis page", js: true do
       visit seller_listings_path(status: 'active', adminFlg: false)
-      page.should have_content('My Pixis')
-      page.should have_link 'Active', href: seller_listings_path(status: 'active', adminFlg: false)
-      page.should have_link 'Draft', href: unposted_temp_listings_path(status: 'draft', adminFlg: false)
-      page.should have_link 'Pending', href: pending_temp_listings_path(status: 'pending', adminFlg: false)
-      page.should have_link 'Purchased', href: purchased_listings_path(status: 'purchased')
-      page.should have_link 'Sold', href: seller_listings_path(status: 'sold', adminFlg: false)
-      page.should have_link 'Saved', href: saved_listings_path(status: 'saved')
-      page.should have_link 'Wanted', href: seller_wanted_listings_path(status: 'wanted')
-      page.should have_link 'Expired', href: seller_listings_path(status: 'expired', adminFlg: false)
+      expect(page).to have_content('My Pixis')
+      expect(page).to have_link 'Active', href: seller_listings_path(status: 'active', adminFlg: false)
+      expect(page).to have_link 'Draft', href: unposted_temp_listings_path(status: 'draft', adminFlg: false)
+      expect(page).to have_link 'Pending', href: pending_temp_listings_path(status: 'pending', adminFlg: false)
+      expect(page).to have_link 'Purchased', href: purchased_listings_path(status: 'purchased')
+      expect(page).to have_link 'Sold', href: seller_listings_path(status: 'sold', adminFlg: false)
+      expect(page).to have_link 'Saved', href: saved_listings_path(status: 'saved')
+      expect(page).to have_link 'Wanted', href: seller_wanted_listings_path(status: 'wanted')
+      expect(page).to have_link 'Expired', href: seller_listings_path(status: 'expired', adminFlg: false)
     end
 
     it "displays active listings", js: true do

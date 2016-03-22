@@ -19,8 +19,8 @@
     <%= link_to 'Prev', get_cancel_path(txn, invoice), class: 'btn btn-large back-btn' %>
 
     <div class="nav pull-right">
-      <%= link_to 'Cancel', get_cancel_path(txn, invoice), method: :delete, confirm: cancel_msg, class: 'btn btn-large' %>
-      <%= f.submit "Done!", :confirm => confirm_msg, :id => 'payForm', class: "btn btn-large btn-primary submit-btn" %>
+      <%= link_to 'Cancel', get_cancel_path(txn, invoice), method: :delete, class: 'btn btn-large', data: { confirm: cancel_msg } %>
+      <%= f.submit "Done!", :id => 'payForm', class: "btn btn-large btn-primary submit-btn", data: { confirm: cancel_msg } %>
     </div>
   <% end %>
 </div>

@@ -37,7 +37,7 @@ class PixiPost < ActiveRecord::Base
   validates_datetime :appt_time, presence: true, unless: "appt_date.nil?"
   validate :must_have_pixis, unless: "completed_date.nil?"
 
-  default_scope :order => "preferred_date, preferred_time ASC"
+  default_scope { order "preferred_date, preferred_time ASC" }
 
   # check if zip is in current service area
   def zip_service_area

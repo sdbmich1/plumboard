@@ -2,6 +2,11 @@ class PixiPayment < ActiveRecord::Base
   include ResetDate
   attr_accessible :amount, :buyer_id, :invoice_id, :pixi_fee, :pixi_id, :seller_id, :token, :transaction_id, :confirmation_no
 
+  # Prevent ActiveRecord from raising an error when overriding transaction method
+  def self.dangerous_attribute_method?(name)
+    super && name != :transaction
+  end
+
   # belongs_to :listing, foreign_key: "pixi_id", primary_key: "pixi_id"
   belongs_to :seller, foreign_key: "seller_id", class_name: "User"
   belongs_to :buyer, foreign_key: "buyer_id", class_name: "User"

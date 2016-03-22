@@ -7,42 +7,42 @@ describe Faq do
    
   subject { @faq } 
 
-  it { should respond_to(:description) }
-  it { should respond_to(:question_type) }
-  it { should respond_to(:status) }
-  it { should respond_to(:subject) }
+  it { is_expected.to respond_to(:description) }
+  it { is_expected.to respond_to(:question_type) }
+  it { is_expected.to respond_to(:status) }
+  it { is_expected.to respond_to(:subject) }
 
   describe "should include active inquiries" do
-    it { Faq.active.should_not be_nil }
+    it { expect(Faq.active).not_to be_nil }
   end
 
   describe "should not include inactive inquiries" do
     faq = FactoryGirl.create(:faq, :status=>'inactive')
-    it { Faq.active.should_not include (faq) } 
+    it { expect(Faq.active).not_to include (faq) } 
   end
 
   describe 'set_flds' do
     it "sets status to active" do
       @faq = FactoryGirl.build(:faq, :status=>nil)
       @faq.save
-      @faq.status.should == 'active'
+      expect(@faq.status).to eq('active')
     end
 
     it "does not set status to active" do
       @faq = FactoryGirl.build(:faq, :status=>'inactive')
       @faq.save
-      @faq.status.should_not == 'active'
+      expect(@faq.status).not_to eq('active')
     end
   end
 
   describe 'summary' do
     it "should return a summary" do 
-      @faq.summary.should be_true 
+      expect(@faq.summary).to be_truthy 
     end
 
     it "should not return a summary" do 
       @faq.description = nil
-      @faq.summary.should_not be_true 
+      expect(@faq.summary).not_to be_truthy 
     end
   end
 end

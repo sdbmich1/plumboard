@@ -10,7 +10,7 @@ describe 'load_conversations rake task' do
     end
 
     it "should call map posts to conversations" do
-      Post.should_receive :map_posts_to_conversations
+      expect(Post).to receive :map_posts_to_conversations
       Rake::Task["map_posts_to_conversations"].invoke
     end
   end

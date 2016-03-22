@@ -9,7 +9,7 @@ require 'spec_helper'
 shared_examples "import_csv" do |task, params, model, attrs|
   it 'should load into database' do
     Rake::Task[task].execute params
-    attrs.each { |key, values| Array.wrap(values).each { |value| model.exists?(key => value).should be_true } }
+    attrs.each { |key, values| Array.wrap(values).each { |value| expect(model.exists?(key => value)).to be_truthy } }
   end
 end
 
@@ -18,7 +18,7 @@ end
 # method -- method being called in rake task
 shared_examples "manage_server" do |task, params, model, method|
   it "should receive method call" do
-    model.should_receive method
+    expect(model).to receive method
     Rake::Task[task].execute params
   end
 end

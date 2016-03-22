@@ -29,11 +29,11 @@ feature "ManagePixis" do
     if val == 'pending' || val == 'denied'
       #visit pending_listings_path(status: val, loc: @site.id, cid: @category.id)
       visit pending_listing_path(listing)
-      page.should have_button('Deny')
+      expect(page).to have_button('Deny')
       ['Improper Content', 'Bad Pictures', 'Insufficient Information'].each do |item|
-        page.should have_link item, href: deny_pending_listing_path(listing, reason: item)
+        expect(page).to have_link item, href: deny_pending_listing_path(listing, reason: item)
       end
-      page.should have_link 'Approve', href: approve_pending_listing_path(listing)
+      expect(page).to have_link 'Approve', href: approve_pending_listing_path(listing)
       visit pending_listings_path(status: val, loc: @site.id, cid: @category.id)
     elsif val == 'draft'
       visit unposted_temp_listings_path(status: 'new/edit', loc: @site.id, cid: @category.id)
@@ -59,16 +59,16 @@ feature "ManagePixis" do
   def process_element val, flg
     str_arr = %w(Sold Active Expired Purchased Removed Draft Denied Invoiced)
     str_arr.select! { |x| x != val.titleize }
-    page.should have_content "#{val.titleize} Listing" 
+    expect(page).to have_content "#{val.titleize} Listing" 
     date_header = val == "draft" ? "Last Updated" : "#{val.titleize} Date"
-    page.should have_content date_header
+    expect(page).to have_content date_header
     name_header = %w(sold invoiced wanted).include?(val) ? 'Buyer Name' :  'Seller Name'
-    page.should have_content name_header
+    expect(page).to have_content name_header
     str_arr.each do |str|
-      page.should_not have_content "#{str} Listing"
+      expect(page).not_to have_content "#{str} Listing"
     end
-    page.should_not have_content 'No pixis found.'
-    page.should have_content 'Export as CSV file'
+    expect(page).not_to have_content 'No pixis found.'
+    expect(page).to have_content 'Export as CSV file'
 
     ftype = flg ? 'csv' : 'js'
     if val == 'pending'
@@ -99,19 +99,19 @@ feature "ManagePixis" do
     end
 
     it "should display all active listings when category or location are not specified", js: true do
-      page.should have_content 'Manage Pixis'
-      page.should have_content 'Guitar'
-      page.should have_content 'Lessons'
-      page.should have_content 'Berkeley'
+      expect(page).to have_content 'Manage Pixis'
+      expect(page).to have_content 'Guitar'
+      expect(page).to have_content 'Lessons'
+      expect(page).to have_content 'Berkeley'
     end
 
     it "has 'next' and 'previous' page links" do
-      page.should have_link "Next"
-      page.should have_link "Previous"
+      expect(page).to have_link "Next"
+      expect(page).to have_link "Previous"
     end
 
     it "has export CSV button" do
-      page.should have_link 'Export as CSV file' # , href: wanted_listings_path(loc: @site.id, cid: @category.id, format: 'csv')
+      expect(page).to have_link 'Export as CSV file' # , href: wanted_listings_path(loc: @site.id, cid: @category.id, format: 'csv')
     end
   end
 

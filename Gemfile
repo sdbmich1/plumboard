@@ -1,16 +1,23 @@
 source 'http://rubygems.org'
 
-gem 'rails', github: 'rails/rails', branch: '3-2-stable'
+gem 'rails', '4.2.6'
 gem 'rake', '~> 10.4', '>= 10.4.2'
+
+# bring back things removed in Rails 4
+gem 'protected_attributes', '1.1.3'
+gem 'rails-observers'
+gem 'activerecord-session_store'
+gem 'responders'
 
 #added faraday gem version 0.8.9 to run smoothly on Mac
 gem 'faraday', '0.8.9'
  
 # use devise for user authenication
-gem 'devise'
+gem 'devise', '~> 3.5.6'
+gem 'devise-token_authenticatable'
 
 # add delayed job
-gem 'delayed_job_active_record'
+gem 'delayed_job_active_record', '4.1.0'
 gem "daemons"
 
 # process devise mails in background
@@ -20,52 +27,47 @@ gem 'devise-async'
 gem "mysql2", "~> 0.3.20"
 
 # add paperclip for photos
-gem 'paperclip'
+gem 'paperclip', '~> 4.3.5'
 gem 'delayed_paperclip', '~> 2.7.1'
 
 # add for ajax uploads
 gem 'remotipart', '~> 1.0'
 
 # add thinking sphinx
-gem 'thinking-sphinx', '~> 3.0.6' 
+gem 'thinking-sphinx', '~> 3.1.4' 
 
 # add roles
-gem 'rolify'
+gem 'rolify', '~> 4.1.1'
 gem 'cancan'
 
 # add clickable links for comment text
 gem 'rinku', '~> 1.7.3'
 
 # used to mark messages as read/unread
-gem 'unread'
+gem 'unread', '0.7.1'
 
 # jquery
-gem 'jquery-rails', '~> 3.1.0'
+gem 'jquery-rails', '~> 3.1.2'
 
-# Gems used only for assets and not required
-# in production environments by default.
-group :assets do
-  gem 'sass-rails',   '3.2.5'
-  gem 'coffee-rails', '3.2.2'
-  gem 'compass-rails', '~> 1.1.7'
+gem 'sass-rails',   '~> 4.0.0'
+gem 'coffee-rails', '~> 4.0.0'
+gem 'compass-rails', '2.0.0'
 
-  # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-  gem 'therubyracer', :platforms => :ruby
+# See https://github.com/sstephenson/execjs#readme for more supported runtimes
+gem 'therubyracer', :platforms => :ruby
 
-  gem 'uglifier', '1.2.3'
-  gem 'jquery-ui-rails'
-  gem 'jquery-ui-themes'
-  gem 'turbo-sprockets-rails3'
-end
+gem 'uglifier', '1.3.0'
+gem 'jquery-ui-rails'
+gem 'jquery-ui-themes'
 
 # add datepicker
-gem 'bootstrap-datepicker-rails'
+gem 'bootstrap-datepicker-rails', '1.5.0'
 
 # add autocomplete
-gem 'rails3-jquery-autocomplete'
+gem 'rails4-autocomplete'
 
 # To use ActiveModel has_secure_password
-# gem 'bcrypt-ruby', '~> 3.0.0'
+gem 'bcrypt'
 
 # To use Jbuilder templates for JSON
 # gem 'jbuilder'
@@ -107,10 +109,10 @@ gem "omniauth-openid"
 gem "fb_graph", '~> 1.8.4' #"~> 2.4.6"
 
 # add form validations 
-gem 'client_side_validations'  
+gem 'client_side_validations', '4.2.0'
 
 # datetime validations
-gem 'validates_timeliness', '~> 3.0'
+gem 'jc-validates_timeliness'
 
 # time select
 gem "combined_time_select", "~> 1.0.1"
@@ -128,8 +130,8 @@ gem "geocoder", "~> 1.1.8"
 gem "rmagick", "~> 2.13.1"
 
 # pagination
-gem 'will_paginate', '~> 3.0'
-gem 'bootstrap-will_paginate', '0.0.6'
+gem 'will_paginate', '~> 3.1.0'
+gem 'bootstrap-will_paginate', '0.0.10'
 
 # add sass
 gem 'bootstrap-sass', '~> 2.3.2.1'
@@ -137,9 +139,6 @@ gem 'bootstrap-sass', '~> 2.3.2.1'
 # add memcached
 gem 'dalli'
 gem 'dalli-elasticache'
-
-#add cache digests for russian doll caching
-gem 'cache_digests', '~> 0.3.1'
 
 # add area
 gem 'area', '~> 0.10.0'
@@ -151,7 +150,9 @@ gem "parsley-rails", '~> 2.0.5.0'
 gem 'open_uri_redirections'
 
 # needed for dependencies
+gem 'sprockets', '~> 2.8'
 gem 'ffi'
+gem 'money', '~> 6.7'
 
 # development gems
 group :development do
@@ -166,27 +167,29 @@ group :development do
   gem 'rvm-capistrano', :require => false
 
   gem 'quiet_assets'
-  gem 'bullet'
+  gem 'bullet', '~> 5.0'
+  gem 'web-console'
 end
 
 group :development, :test, :demo do
   gem 'wdm', '~> 0.1.0', :platforms => [:mswin, :mingw], :require => false
   # gem 'wdm', :platforms => [:mswin, :mingw], :require => false
-  gem 'rspec-rails', '2.14.0'
+  gem 'rspec-rails', '3.4.2'
+  gem 'rspec-its'
+  gem 'rspec-activemodel-mocks'
   gem 'guard-rspec', '4.3.1'
   gem 'guard-spork', '2.0.2'
   gem 'spork', '~> 1.0rc'
-  gem 'faker'
+  gem 'ffaker'
   gem "vcr", "~> 2.5.0"
   gem 'rack_session_access'
-  gem 'test-unit', '~> 3.0'
-  gem 'minitest'
+  gem 'minitest', '~> 5.1'
 end
 
 # test gems
 group :test do
   gem 'factory_girl_rails'
-  gem 'capybara', '1.1.2'
+  gem 'capybara', '2.6.2'
   gem 'rb-fchange', '0.0.5', :platforms => [:mswin, :mingw], :require => false
   gem 'rb-notifu', '0.0.4'
   gem 'win32console', '~> 1.3.2', :platforms => [:mswin, :mingw], :require => false
@@ -195,10 +198,10 @@ group :test do
   gem "database_cleaner", "~> 1.5.1"
   gem 'connection_pool'
   gem 'selenium-webdriver', '~> 2.48.1'
-  gem 'shoulda-matchers'
+  gem 'shoulda-matchers', '2.8.0'
   # gem "webmock", "~> 1.11.0"
   gem "fakeweb", "~> 1.3"
-  gem 'test_after_commit'
+  gem 'test_after_commit', '~> 0.4.0'
 end
 
 # production gems
@@ -220,15 +223,15 @@ gem 'open4'
 gem 'gelf'
 gem 'graylog2_exceptions', :git => 'git://github.com/wr0ngway/graylog2_exceptions.git'
 gem 'graylog2-resque'
-gem 'excon', '~> 0.45.4'
+gem 'excon', '~> 0.45'
 gem 'rubber', '~> 3.2', '>= 3.2.1'
 gem 'fog', '~> 1.37'
 gem 'recursive-open-struct'
 gem 'lazyload-rails'
-gem "handle_invalid_percent_encoding_requests"
 
 # standardize all modals
 gem 'data-confirm-modal', github: 'ifad/data-confirm-modal', branch: 'bootstrap2'
 
 gem 'eventmachine', '~> 1.0.3'
-gem 'nokogiri', '~> 1.5', '>= 1.5.11'
+gem 'nokogiri', '~> 1.6.0'
+gem 'rack-cors'

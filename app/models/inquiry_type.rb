@@ -8,7 +8,7 @@ class InquiryType < ActiveRecord::Base
 
   has_many :inquiries, foreign_key: 'code', primary_key: 'code'
 
-  default_scope :order => "subject ASC"
+  default_scope { order "subject ASC" }
 
   # return active types
   def self.active
