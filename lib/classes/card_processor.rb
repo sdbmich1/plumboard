@@ -6,8 +6,7 @@ class CardProcessor
   end
 
   # delete saved cards
-  def remove_cards uid
-    usr = User.find uid
+  def remove_cards usr
     usr.card_accounts.delete_all if usr.has_card_account?
   end
 
@@ -85,6 +84,12 @@ class CardProcessor
       User.joins(:card_accounts).include_list.where('card_accounts.status = ?', 'active').uniq.reorder('first_name ASC')  
     else
       CardAccount.inc_list.where(user_id: usr, status: 'active')
+    end
+  end
+
+  def toggle_default_flg
+    if @acct.default_flg == 'Y'
+      @acct.user.card_accounts.where("default_flg = 'Y' AND id != ?", @acct.id).update_all(default_flg: nil)
     end
   end
 end

@@ -3,8 +3,8 @@ include ProcessMethod
 
 describe Invoice do
   before :all do
-    @user = create(:pixi_user, email: "jblow123@pixitest.com") 
-    @buyer = create(:pixi_user, first_name: 'Jaine', last_name: 'Smith', email: 'jaine.smith@pixitest.com') 
+    @user = create(:pixi_user, email: "jblow1234@pixitest.com") 
+    @buyer = create(:pixi_user, first_name: 'Jaine', last_name: 'Smith', email: 'jaine.smith2@pixitest.com') 
     @listing = create(:listing, seller_id: @user.id)
     @account = @user.bank_accounts.create FactoryGirl.attributes_for :bank_account
   end
@@ -19,18 +19,18 @@ describe Invoice do
     let(:attr) { ProcessMethod::get_attr(@invoice, %w(id created_at updated_at)) }
     it_behaves_like "model attributes"
     it_behaves_like "model methods", %w(seller buyer transaction bank_account pixi_payments)
-    it { should belong_to(:buyer).with_foreign_key('buyer_id').class_name('User') }
-    it { should belong_to(:seller).with_foreign_key('seller_id').class_name('User') }
-    it { should have_many(:invoice_details) }
-    it { should have_many(:listings).through(:invoice_details) }
-    it { should accept_nested_attributes_for(:invoice_details).allow_destroy(true) }
-    it { should belong_to(:transaction) }
-    it { should belong_to(:bank_account) }
-    it { should have_many(:pixi_payments) }
-    it { should validate_presence_of(:buyer_id) }
-    it { should validate_presence_of(:seller_id) }
-    it { should_not allow_value('').for(:amount) }
-    it { should_not allow_value(0).for(:amount) }
+    it { is_expected.to belong_to(:buyer).with_foreign_key('buyer_id').class_name('User') }
+    it { is_expected.to belong_to(:seller).with_foreign_key('seller_id').class_name('User') }
+    it { is_expected.to have_many(:invoice_details) }
+    it { is_expected.to have_many(:listings).through(:invoice_details) }
+    it { is_expected.to accept_nested_attributes_for(:invoice_details).allow_destroy(true) }
+    it { is_expected.to belong_to(:transaction) }
+    it { is_expected.to belong_to(:bank_account) }
+    it { is_expected.to have_many(:pixi_payments) }
+    it { is_expected.to validate_presence_of(:buyer_id) }
+    it { is_expected.to validate_presence_of(:seller_id) }
+    it { is_expected.not_to allow_value('').for(:amount) }
+    it { is_expected.not_to allow_value(0).for(:amount) }
     context 'amounts' do
       [['sales_tax', 15], ['ship_amt', 500], ['amount', 15000]].each do |item|
         it_behaves_like 'an amount', item[0], item[1]
@@ -50,9 +50,9 @@ describe Invoice do
     before { @invoice.save! }
     it "find specific invoices" do 
       expect(Invoice.count).to eq 1
-      Invoice.get_by_status('unpaid').should_not be_empty 
+      expect(Invoice.get_by_status('unpaid')).not_to be_empty 
     end
-    it { Invoice.get_by_status('paid').should be_empty }
+    it { expect(Invoice.get_by_status('paid')).to be_empty }
   end
 
   describe "get invoices by user" do 
@@ -62,25 +62,25 @@ describe Invoice do
 
     context "get seller invoices" do 
       it "finds invoices", run: true do
-        Invoice.get_invoices(@user).should_not be_empty 
+        expect(Invoice.get_invoices(@user)).not_to be_empty 
       end
-      it { Invoice.get_invoices(@buyer).should be_empty }
+      it { expect(Invoice.get_invoices(@buyer)).to be_empty }
       it 'does not list invoice', run: true do
         @listing.status = 'removed'
         @listing.save!
-        Invoice.get_invoices(@user).should be_empty 
+        expect(Invoice.get_invoices(@user)).to be_empty 
       end
     end
 
     context "get_buyer_invoices" do 
-      it { Invoice.get_buyer_invoices(@user).should be_empty }
+      it { expect(Invoice.get_buyer_invoices(@user)).to be_empty }
       it 'lists invoice', run: true do
-        Invoice.get_buyer_invoices(@buyer).should_not be_empty 
+        expect(Invoice.get_buyer_invoices(@buyer)).not_to be_empty 
       end
       it 'does not list invoice', run: true do
         @listing.status = 'removed'
         @listing.save!
-        Invoice.get_buyer_invoices(@buyer).should be_empty 
+        expect(Invoice.get_buyer_invoices(@buyer)).to be_empty 
       end
     end
   end
@@ -91,68 +91,68 @@ describe Invoice do
     let(:order1) { {"cnt"=> 1, "quantity1"=> 1, "item1"=> 'Pixi Post', "price1"=> 75.0, "invoice_id"=> @invoice.id, "transaction_type"=>'pixi'} }
     let(:order2) { {"cnt"=> 1, "quantity1"=> 1, "item1"=> 'Pixi Post', "price1"=> 75.0, "invoice_id"=> ''} }
 
-    it { Invoice.find_invoice(order).should_not be_nil }
-    it { Invoice.find_invoice(order1).should be_nil }
-    it { Invoice.find_invoice(order2).should be_nil }
+    it { expect(Invoice.find_invoice(order)).not_to be_nil }
+    it { expect(Invoice.find_invoice(order1)).to be_nil }
+    it { expect(Invoice.find_invoice(order2)).to be_nil }
   end
 
   describe "paid" do 
     it "should not verify invoice is paid" do 
-      @invoice.paid?.should_not be_true 
+      expect(@invoice.paid?).not_to be_truthy 
     end
 
     it "should verify invoice is paid" do 
       @invoice.status = 'paid'
-      @invoice.paid?.should be_true 
+      expect(@invoice.paid?).to be_truthy 
     end
   end
 
   describe "unpaid?" do 
     it "should verify invoice is unpaid" do 
-      @invoice.unpaid?.should be_true 
+      expect(@invoice.unpaid?).to be_truthy 
     end
 
     it "should not verify invoice is unpaid" do 
       @invoice.status = 'paid'
-      @invoice.unpaid?.should_not be_true 
+      expect(@invoice.unpaid?).not_to be_truthy 
     end
   end
 
   describe "has_shipping?" do 
     it "verifies invoice doesn't have shipping" do 
-      @invoice.has_shipping?.should_not be_true 
+      expect(@invoice.has_shipping?).not_to be_truthy 
     end
 
     it "verifies invoice has_shipping" do 
       @invoice.ship_amt = 4.99
-      @invoice.has_shipping?.should be_true 
+      expect(@invoice.has_shipping?).to be_truthy 
     end
   end
 
   describe "owner" do 
     it "should verify user is owner" do 
-      @invoice.owner?(@user).should be_true 
+      expect(@invoice.owner?(@user)).to be_truthy 
     end
 
     it "should not verify user is owner" do 
-      @invoice.owner?(@buyer).should_not be_true 
-      @invoice.owner?(nil).should_not be_true 
+      expect(@invoice.owner?(@buyer)).not_to be_truthy 
+      expect(@invoice.owner?(nil)).not_to be_truthy 
     end
   end
 
   describe 'credit_account' do
     context 'credit_account w/ success' do
       before do
-        Invoice.any_instance.stub(:credit_account).and_return(true)
+        allow_any_instance_of(Invoice).to receive(:credit_account).and_return(true)
       end
-      it { expect(@invoice.credit_account).to be_true }
+      it { expect(@invoice.credit_account).to be_truthy }
     end
 
     context 'credit_account w/ bad data' do
       before do
-        Invoice.any_instance.stub(:credit_account).and_return(false)
+        allow_any_instance_of(Invoice).to receive(:credit_account).and_return(false)
       end
-      it { expect(@invoice.credit_account).not_to be_true }
+      it { expect(@invoice.credit_account).not_to be_truthy }
     end
   end
 
@@ -224,7 +224,7 @@ describe Invoice do
 
   describe 'get_processing_fee' do
     it "should get fee" do 
-      @invoice.get_processing_fee.should be_true
+      expect(@invoice.get_processing_fee).to be_truthy
     end
 
     it "should not get fee" do 
@@ -235,7 +235,7 @@ describe Invoice do
 
   describe 'get_convenience_fee' do
     it "should get fee" do 
-      @invoice.get_convenience_fee.should be_true
+      expect(@invoice.get_convenience_fee).to be_truthy
     end
 
     it "should not get fee" do 
@@ -251,8 +251,8 @@ describe Invoice do
     end
 
     context 'submit_payment' do
-      it { @invoice.submit_payment(nil).should_not be_true }
-      it { @invoice.submit_payment(transaction.id).should be_true }
+      it { expect(@invoice.submit_payment(nil)).not_to be_truthy }
+      it { expect(@invoice.submit_payment(transaction.id)).to be_truthy }
     end
 
     context 'description' do
@@ -282,13 +282,13 @@ describe Invoice do
       invoice = build :invoice, seller_id: @user.id, buyer_id: @buyer.id, status: 'paid'
       details = invoice.invoice_details.build FactoryGirl.attributes_for :invoice_detail, pixi_id: @listing.pixi_id 
       invoice.save
-      invoice.status.should_not == 'unpaid'
+      expect(invoice.status).not_to eq('unpaid')
     end
 
     it "does not set flds" do 
       @invoice.status = nil
       @invoice.save
-      @invoice.status.should == 'unpaid'
+      expect(@invoice.status).to eq('unpaid')
     end
   end
 
@@ -299,13 +299,13 @@ describe Invoice do
 
     it "should not find correct buyer name" do 
       @invoice.buyer_id = 100 
-      @invoice.buyer_first_name.should be_nil 
-      @invoice.buyer_name.should be_nil 
+      expect(@invoice.buyer_first_name).to be_nil 
+      expect(@invoice.buyer_name).to be_nil 
     end
 
     it "should not find correct buyer email" do 
       @invoice.buyer_id = 100 
-      @invoice.buyer_email.should be_nil 
+      expect(@invoice.buyer_email).to be_nil 
     end
   end
 
@@ -316,13 +316,13 @@ describe Invoice do
 
     it "should not find correct seller name" do 
       @invoice.seller_id = 100 
-      @invoice.seller_first_name.should be_nil 
-      @invoice.seller_name.should be_nil 
+      expect(@invoice.seller_first_name).to be_nil 
+      expect(@invoice.seller_name).to be_nil 
     end
 
     it "should not find correct seller email" do 
       @invoice.seller_id = 100 
-      @invoice.seller_email.should be_nil 
+      expect(@invoice.seller_email).to be_nil 
     end
   end
 
@@ -333,16 +333,16 @@ describe Invoice do
 
     context 'pixi_title' do
       it "has a title", run: true do
-        @invoice.pixi_title.should_not be_empty  
+        expect(@invoice.pixi_title).not_to be_empty  
       end
 
       it "should not find correct pixi_title" do 
         @invoice.pixi_id = '100' 
-        @invoice.pixi_title.should be_nil 
+        expect(@invoice.pixi_title).to be_nil 
       end
     end
     context 'pixan_id' do
-      it { @invoice.pixan_id.should be_nil } 
+      it { expect(@invoice.pixan_id).to be_nil } 
 
       it "finds pixan_id", run: true do
         @listing.pixan_id = 100 
@@ -353,33 +353,33 @@ describe Invoice do
 
     context "short_title" do 
       it "has a short title", run: true do
-        @invoice.short_title.should_not be_empty  
+        expect(@invoice.short_title).not_to be_empty  
       end
       it "should not find correct short_title" do 
         @invoice.pixi_id = '100' 
-        @invoice.short_title.should be_nil 
+        expect(@invoice.short_title).to be_nil 
       end
     end
     context "pixi_post" do 
-      it { @invoice.pixi_post?.should_not be_true }
+      it { expect(@invoice.pixi_post?).not_to be_truthy }
 
       it 'has a pixi post', run: true do 
         @pixan = FactoryGirl.create(:contact_user) 
         @listing.pixan_id = @pixan.id 
         @listing.save
-        @invoice.pixi_post?.should be_true 
+        expect(@invoice.pixi_post?).to be_truthy 
       end
     end
   end
 
   describe "nice status" do 
     it "should return a nice status" do 
-      @invoice.nice_status.should be_true 
+      expect(@invoice.nice_status).to be_truthy 
     end
 
     it "should not return a nice status" do 
       @invoice.status = nil
-      @invoice.nice_status.should_not be_true 
+      expect(@invoice.nice_status).not_to be_truthy 
     end
   end
   
@@ -387,7 +387,7 @@ describe Invoice do
     def check_inv flg=false, fulfillment_type_code=nil
       fulfillment_type_code ||= @listing.fulfillment_type_code 
       inv = Invoice.load_new(@user.reload, @buyer.id, @listing.pixi_id, fulfillment_type_code) 
-      inv.should_not be_nil
+      expect(inv).not_to be_nil
       expect(inv.buyer_id).to eq @buyer.id
       expect(inv.amount).to eq @listing.price unless flg
       expect(inv.invoice_details.first.quantity).to eq @pixi_want.quantity if flg
@@ -510,18 +510,18 @@ describe Invoice do
     it "toggles number_of_days" do
       @invoice.created_at = 3.days.ago
       @invoice.save!
-      Invoice.unpaid_old_invoices.should include @invoice
-      Invoice.unpaid_old_invoices(5).should_not include @invoice
+      expect(Invoice.unpaid_old_invoices).to include @invoice
+      expect(Invoice.unpaid_old_invoices(5)).not_to include @invoice
     end
 
     it "does not return invoices less than two days old" do
-      Invoice.unpaid_old_invoices.should_not include @invoice
+      expect(Invoice.unpaid_old_invoices).not_to include @invoice
     end
 
     it "does not return paid invoices" do
       @invoice.status = "paid"
       @invoice.save!
-      Invoice.unpaid_old_invoices.should_not include @invoice
+      expect(Invoice.unpaid_old_invoices).not_to include @invoice
     end
   end  
 

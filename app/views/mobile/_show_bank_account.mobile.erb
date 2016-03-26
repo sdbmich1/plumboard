@@ -11,7 +11,7 @@
     </table>
   </div>
   <div class="mtop center-wrapper">
-    <%= link_to 'Remove', @account, method: :delete, confirm: 'Are you sure?', 'data-role'=>'button', 'data-inline'=>'true' %>
+    <%= link_to 'Remove', @account, method: :delete, 'data-role'=>'button', 'data-inline'=>'true', data: { confirm: 'Are you sure?' } %>
   </div>
 </div>
 

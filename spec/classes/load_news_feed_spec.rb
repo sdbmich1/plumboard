@@ -1,4 +1,3 @@
-# encoding: UTF-8
 require 'spec_helper'
 require 'load_news_feed'
 require 'nokogiri'
@@ -70,21 +69,22 @@ describe LoadNewsFeed do
     it "downloads and unzips file to folder provided if feed is reachable" do
       @lnf_obj.feed = Feed.find_by_url("https://www.aftercollege.com/exports/pixiboard.zip")
       @lnf_obj.download_feed('db')
-      expect(File.exists?(Rails.root.join('db', 'pixiboard.zip'))).to be_false
-      expect(File.exists?(Rails.root.join('db', 'pixiboard.xml'))).to be_true
+      expect(File.exists?(Rails.root.join('db', 'pixiboard.zip'))).to be_falsey
+      expect(File.exists?(Rails.root.join('db', 'pixiboard.xml'))).to be_truthy
       File.delete(Rails.root.join('db', 'pixiboard.xml'))
     end
 
     it "returns nil and doesn't save anything to folder provided if feed is unreachable" do
       @lnf_obj.feed = Feed.new(url: "https://www.aftercollege.com/exports/nil.zip")
       doc = @lnf_obj.download_feed('db')
-      expect(File.exists?(Rails.root.join('db', 'pixiboard.zip'))).to be_false
-      expect(File.exists?(Rails.root.join('db', 'pixiboard.xml'))).to be_false
+      expect(File.exists?(Rails.root.join('db', 'pixiboard.zip'))).to be_falsey
+      expect(File.exists?(Rails.root.join('db', 'pixiboard.xml'))).to be_falsey
     end
   end
 
   describe "initialize_with_attrs" do
     it "creates LoadNewsFeed object with attrs provided" do
+      allow(User).to receive(:find).and_return(double(User))
       expect(LoadNewsFeed.new_with_attrs({user_image: "test.png"}).user_image).to eq "test.png"
     end
   end
@@ -97,7 +97,7 @@ describe LoadNewsFeed do
       expect(attrs[:user_email]).to eq @lnf_obj.user_email
       expect(attrs[:category]).to eq @lnf_obj.category
       expect(attrs[:site]).to eq @lnf_obj.site
-      expect(attrs[:user]).to eq @lnf_obj.user
+      expect(attrs[:user_id]).to eq @lnf_obj.user.id
       expect(attrs[:stock_images]).to eq @lnf_obj.stock_images
     end
 
@@ -110,22 +110,26 @@ describe LoadNewsFeed do
   describe "read_feeds" do
     it "calls add_listings on each LoadNewsFeed object" do
       feeds = [CourantFeed, StrangerFeed, SFExaminerFeed, SDReaderFeed, Sac365Feed]
-      feeds.each { |feed| feed.should_receive :add_listings }
-      Delayed::Worker.delay_jobs = false
-      LoadNewsFeed.stub!(:add_listings)
+      feeds.each do |feed_class|
+        feed = double(feed_class)
+        allow(feed_class).to receive(:new).and_return(feed)
+        allow(feed).to receive(:add_listing).and_return(true)
+        times = feed_class == Sac365Feed ? 2 : 1
+        expect(feed).to receive(:add_listings).exactly(times).times
+      end
       LoadNewsFeed.read_feeds
     end
   end
 
   describe "add_listings" do
     it "calls add_listing for each entry in feed" do
-      @lnf_obj.should_receive(:add_listing).exactly(@lnf_obj.item_xpath.count).times
+      expect(@lnf_obj).to receive(:add_listing).exactly(@lnf_obj.item_xpath.count).times
       @lnf_obj.add_listings
     end
 
     it "does not attempt to load events if feed is unreachable" do
-      @lnf_obj.doc = nil
-      lambda { @lnf_obj.add_listings }.should_not raise_error
+      @lnf_obj.doc, @lnf_obj.title_xpath = nil, nil
+      expect { @lnf_obj.add_listings }.not_to raise_error
     end
   end
 
@@ -139,8 +143,10 @@ describe LoadNewsFeed do
       urls.each do |url|
         doc = Nokogiri::XML(open(url))
         @lnf_obj.description_xpath = doc.xpath("//item//description")
-        expect(@lnf_obj.description_xpath[0].text).to include("img")
-        expect(@lnf_obj.get_description(0)).not_to include("img")
+        if (description = @lnf_obj.description_xpath[0])
+          expect(description.text).to include("img")
+          expect(@lnf_obj.get_description(0)).not_to include("img")
+        end
       end
     end
 
@@ -200,7 +206,7 @@ describe LoadNewsFeed do
     end
 
     it "should find or create account corresponding to email provided" do
-      user = @lnf_obj.add_user("", @lnf_obj.description_xpath[0].text, "user@pixiboard.com")
+      user = @lnf_obj.add_user("", "", "user@pixiboard.com")
       expect(user.email).to eq "user@pixiboard.com"
       expect(user.first_name).to eq "User "
       expect(user.last_name).to eq "Feed"
@@ -512,24 +518,24 @@ describe LoadNewsFeed do
 
   describe "has_end_time_without_date?" do
     it "returns true for time" do
-      expect(@lnf_obj.has_end_time_without_date?("1 p.m.")).to be_true
+      expect(@lnf_obj.has_end_time_without_date?("1 p.m.")).to be_truthy
     end
 
     it "returns true for special times" do
-      expect(@lnf_obj.has_end_time_without_date?("noon")).to be_true
-      expect(@lnf_obj.has_end_time_without_date?("midnight")).to be_true
+      expect(@lnf_obj.has_end_time_without_date?("noon")).to be_truthy
+      expect(@lnf_obj.has_end_time_without_date?("midnight")).to be_truthy
     end
 
     it "returns false for time and date" do
-      expect(@lnf_obj.has_end_time_without_date?("noon April 1")).to be_false
+      expect(@lnf_obj.has_end_time_without_date?("noon April 1")).to be_falsey
     end
 
     it "returns false for date" do
-      expect(@lnf_obj.has_end_time_without_date?("April 1")).to be_false
+      expect(@lnf_obj.has_end_time_without_date?("April 1")).to be_falsey
     end
 
     it "returns false for invalid input" do
-      expect(@lnf_obj.has_end_time_without_date?("a")).to be_false
+      expect(@lnf_obj.has_end_time_without_date?("a")).to be_falsey
     end
   end
 

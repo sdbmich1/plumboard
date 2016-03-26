@@ -1,2 +1,2 @@
-<%= link_to 'Remove', listing, method: :delete, confirm: msg, class: 'btn btn-large' %>
-<%= link_to 'Cancel', get_return_path, confirm: msg, class: 'btn btn-large' %>
+<%= link_to 'Remove', listing, method: :delete, class: 'btn btn-large', data: { confirm: msg } %>
+<%= link_to 'Cancel', get_return_path, class: 'btn btn-large', data: { confirm: msg } %>

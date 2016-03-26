@@ -101,13 +101,13 @@ class PixiPostProcessor
   def process_request
     PointManager::add_points @post.user, 'ppx' 
     AddressManager::set_user_address @post.user, @post
-    UserMailer.delay.send_pixipost_request(@post) if @post.status == 'active'
-    UserMailer.delay.send_pixipost_request_internal(@post) if @post.status == 'active'
+    UserMailer.send_pixipost_request(@post).deliver_later if @post.status == 'active'
+    UserMailer.send_pixipost_request_internal(@post).deliver_later if @post.status == 'active'
   end
 
   # send appointment notice
   def send_appt_notice 
-    UserMailer.delay.send_pixipost_appt(@post) if @post.has_appt? && !@post.is_completed?
+    UserMailer.send_pixipost_appt(@post).deliver_later if @post.has_appt? && !@post.is_completed?
   end
 
   # add new post

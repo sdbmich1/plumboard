@@ -44,7 +44,7 @@ class ListingQueryProcessor
   end
 
   def exec_query flg, params
-    flg ? Listing.active.where(params) : get_data(flg, params)
+    flg && !is_temp? ? Listing.active.where(params) : get_data(flg, params)
   end
 
   # paginate
@@ -117,7 +117,8 @@ class ListingQueryProcessor
     if val == 'sold'
       Listing.sold_list
     else
-      select_fields("#{table_name}." + Listing.created_date(val), val == "active").exec_query(val == "active", "#{table_name}.status = '#{val}'")
+      query = "#{table_name}.status " + (val.is_a?(Array) ? "IN ('#{val.join('\', \'')}')" : "= '#{val}'")
+      select_fields("#{table_name}." + Listing.created_date(val), val == "active").exec_query(val == "active", query)
     end
   end
 
@@ -131,8 +132,10 @@ class ListingQueryProcessor
     attrs = ["#{table_name}.id", "#{table_name}.pixi_id", "#{table_name}.title",
              "#{table_name}.description", "#{table_name}.seller_id",
              "#{table_name}.site_id", "#{table_name}.category_id",
-             "#{table_name}.lat", "#{table_name}.lng", "#{table_name}.status", "#{table_name}.updated_at",
-             "#{table_name}.show_alias_flg", "#{table_name}.alias_name", "#{field_name} AS created_date"]
+             "#{table_name}.lat", "#{table_name}.lng", "#{table_name}.status",
+             "#{table_name}.updated_at", "#{table_name}.show_alias_flg",
+             "#{table_name}.alias_name", "#{field_name} AS created_date",
+             "#{table_name}.job_type_code"]
     model = is_temp? ? TempListing : Listing
     model.select(attrs).reorder("created_date " + (active_flg ? "ASC" : "DESC"))
   end

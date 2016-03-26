@@ -23,11 +23,11 @@ feature "BankAccounts" do
     end
 
     it 'shows content' do
-      page.should have_content 'Manage Accounts'
-      page.should have_selector('h2', text: 'Setup Your Payment Account')
-      page.should have_content("Acct Holder")
-      page.should have_content("Account #")
-      page.should have_button("Save")
+      expect(page).to have_content 'Manage Accounts'
+      expect(page).to have_selector('h2', text: 'Setup Your Payment Account')
+      expect(page).to have_content("Acct Holder")
+      expect(page).to have_content("Account #")
+      expect(page).to have_button("Save")
     end
 
     it "creates an new account", js: true do
@@ -37,9 +37,9 @@ feature "BankAccounts" do
         add_bank_data
         click_on 'Save'; sleep 5;
       }.to change(BankAccount, :count).by(1)
-      page.should have_content 'Manage Accounts'
-      page.should have_content '# Accts'
-      page.should have_content @other.name
+      expect(page).to have_content 'Manage Accounts'
+      expect(page).to have_content '# Accts'
+      expect(page).to have_content @other.name
     end
   end
 
@@ -51,12 +51,12 @@ feature "BankAccounts" do
       visit bank_accounts_path(adminFlg: true)
     end
     it "shows accounts" do
-      page.should have_content 'Manage Accounts'
-      page.should have_content 'User'
-      page.should have_content 'Email'
-      page.should have_content '# Accts'
-      page.should have_content user.name
-      page.should have_content user2.name
+      expect(page).to have_content 'Manage Accounts'
+      expect(page).to have_content 'User'
+      expect(page).to have_content 'Email'
+      expect(page).to have_content '# Accts'
+      expect(page).to have_content user.name
+      expect(page).to have_content user2.name
     end
 
     context 'delete bank', js: true do
@@ -66,14 +66,14 @@ feature "BankAccounts" do
       end
 
       it "removes an account" do
-        page.should have_link("Remove") #, href: bank_account_path(@account)
+        expect(page).to have_link("Remove") #, href: bank_account_path(@account)
         click_remove_ok
-        page.should_not have_link("#{@account.id}", href: bank_account_path(@account)) 
-        page.should have_content 'Manage Accounts'
-        page.should have_content 'User'
-        page.should have_link 'Add Account'
-        page.should_not have_content user.name
-        page.should have_content user2.name
+        expect(page).not_to have_link("#{@account.id}", href: bank_account_path(@account)) 
+        expect(page).to have_content 'Manage Accounts'
+        expect(page).to have_content 'User'
+        expect(page).to have_link 'Add Account'
+        expect(page).not_to have_content user.name
+        expect(page).to have_content user2.name
       end
     end
   end

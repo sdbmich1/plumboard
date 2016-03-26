@@ -12,36 +12,36 @@ describe SavedListing do
 
   subject { @saved_listing }
 
-  it { should respond_to(:pixi_id) }
-  it { should respond_to(:user_id) }
-  it { should respond_to(:status) }
-  it { should respond_to(:user) }
-  it { should respond_to(:listing) }
-  it { should respond_to(:set_flds) }
+  it { is_expected.to respond_to(:pixi_id) }
+  it { is_expected.to respond_to(:user_id) }
+  it { is_expected.to respond_to(:status) }
+  it { is_expected.to respond_to(:user) }
+  it { is_expected.to respond_to(:listing) }
+  it { is_expected.to respond_to(:set_flds) }
 
-  it { should validate_presence_of(:pixi_id) }
-  it { should validate_presence_of(:user_id) }
-  it { should belong_to(:listing).with_foreign_key('pixi_id') }
-  it { should belong_to(:user) }
+  it { is_expected.to validate_presence_of(:pixi_id) }
+  it { is_expected.to validate_presence_of(:user_id) }
+  it { is_expected.to belong_to(:listing).with_foreign_key('pixi_id') }
+  it { is_expected.to belong_to(:user) }
 
   describe 'set_flds' do
     it "sets status to active" do
       @saved_listing.save
-      @saved_listing.status.should == 'active'
+      expect(@saved_listing.status).to eq('active')
     end
 
     it "does not set status to active" do
       @saved_listing.status = 'inactive'
       @saved_listing.save
-      @saved_listing.status.should_not == 'active'
+      expect(@saved_listing.status).not_to eq('active')
     end
   end
 
   describe "get_by_status" do 
-    it { SavedListing.get_by_status('active').should be_empty }
+    it { expect(SavedListing.get_by_status('active')).to be_empty }
     it "includes active listings" do  
       @saved_listing.save
-      SavedListing.get_by_status('active').should_not be_empty 
+      expect(SavedListing.get_by_status('active')).not_to be_empty 
     end
   end
 
@@ -78,7 +78,7 @@ describe SavedListing do
   describe 'update status by user' do
     it "updates status" do
       @saved_listing.save
-      expect(SavedListing.update_status_by_user(@saved_listing.user_id, @listing.pixi_id, 'wanted')).to be_true
+      expect(SavedListing.update_status_by_user(@saved_listing.user_id, @listing.pixi_id, 'wanted')).to be_truthy
     end
 
     it "does not update status" do
@@ -86,11 +86,13 @@ describe SavedListing do
     end
   end
   describe "first name" do
-    it { @saved_listing.first_name.should == @user.first_name }
+    it { expect(@saved_listing.first_name).to eq(@user.first_name) }
 
     it "does not find user name" do
       @saved_listing.user_id = 100
-      @saved_listing.first_name.should be_nil
+      @saved_listing.save
+      @saved_listing.reload
+      expect(@saved_listing.first_name).to be_nil
     end
   end
 

@@ -2,6 +2,7 @@ require 'will_paginate/array'
 class InvoicesController < ApplicationController
   load_and_authorize_resource
   before_filter :authenticate_user!
+  skip_load_resource only: [:index]
   skip_authorize_resource :only => [:autocomplete_user_first_name]
   before_filter :load_data, only: [:index, :sent, :received, :new, :show, :edit]
   before_filter :load_invoice, only: [:show, :edit, :update, :destroy, :remove, :decline]
@@ -18,7 +19,7 @@ class InvoicesController < ApplicationController
   end
    
   def index
-    respond_with(@invoices = Invoice.all.paginate(page: @page, per_page: 15))
+    respond_with(@invoices = Invoice.includes(:buyer, :seller).paginate(page: @page, per_page: 15))
   end
    
   def sent

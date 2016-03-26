@@ -28,15 +28,15 @@ feature "BankAccounts" do
       click_on 'Next'; sleep 3;
     }.to change(BankAccount, :count).by(0)
 
-    page.should_not have_content 'Bill To'
-    page.should have_content 'Account #'
-    page.should_not have_content 'Successfully'
+    expect(page).not_to have_content 'Bill To'
+    expect(page).to have_content 'Account #'
+    expect(page).not_to have_content 'Successfully'
   end
 
   describe "Create Bank Account", create: true do 
-    it_should_behave_like 'create_bank_account_page', 'pixi_user', 'should_not', 'should', false
-    it_should_behave_like 'create_bank_account_page', 'business_user', 'should', 'should_not', false
-    it_should_behave_like 'create_bank_account_page', 'business_user', 'should_not', 'should', true
+    it_should_behave_like 'create_bank_account_page', 'pixi_user', 'not_to', 'to', false
+    it_should_behave_like 'create_bank_account_page', 'business_user', 'to', 'not_to', false
+    it_should_behave_like 'create_bank_account_page', 'business_user', 'not_to', 'to', true
   end
 
   describe "Delete Bank Account" do 
@@ -50,9 +50,9 @@ feature "BankAccounts" do
     end
 
     it "shows content" do
-      page.should have_content('Your Payment Account')
-      page.should have_content("Account #")
-      page.should have_link("Remove", href: bank_account_path(@account))
+      expect(page).to have_content('Your Payment Account')
+      expect(page).to have_content("Account #")
+      expect(page).to have_link("Remove", href: bank_account_path(@account))
     end
 
     it "removes an account" do
@@ -62,7 +62,7 @@ feature "BankAccounts" do
       }.to change(BankAccount, :count).by(0)
 
       # page.should_not have_content 'Pixis'
-      page.should have_content 'Account #'
+      expect(page).to have_content 'Account #'
     end
   end
 
@@ -76,10 +76,10 @@ feature "BankAccounts" do
     end
 
     it "shows content" do
-      page.should have_content('Setup Your Payment Account')
-      page.should have_content("You need to setup a bank account")
-      page.should have_content("Account #")
-      page.should have_button("Next")
+      expect(page).to have_content('Setup Your Payment Account')
+      expect(page).to have_content("You need to setup a bank account")
+      expect(page).to have_content("Account #")
+      expect(page).to have_button("Next")
     end
 
     it "creates an new account" do
@@ -87,8 +87,8 @@ feature "BankAccounts" do
           click_on 'Next'; sleep 3;
       }.to change(BankAccount, :count).by(1)
 
-      page.should have_content 'My Invoices'
-      page.should_not have_content 'Account #'
+      expect(page).to have_content 'My Invoices'
+      expect(page).not_to have_content 'Account #'
     end
   end
 
@@ -106,17 +106,17 @@ feature "BankAccounts" do
       end
 
       it "shows content" do
-        page.should have_content('Setup Your Payment Account')
-        page.should have_content("Account #")
-        page.should have_button("Next")
+        expect(page).to have_content('Setup Your Payment Account')
+        expect(page).to have_content("Account #")
+        expect(page).to have_button("Next")
       end
 
       it "creates an new account" do
         expect {
             click_on 'Next'; sleep 3;
           }.to change(BankAccount, :count).by(1)
-        page.should have_content 'Bill To'
-        page.should_not have_content 'Account #'
+        expect(page).to have_content 'Bill To'
+        expect(page).not_to have_content 'Account #'
       end
 
       it "attempts to create an invalid account" do

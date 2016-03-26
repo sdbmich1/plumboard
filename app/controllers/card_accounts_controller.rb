@@ -24,7 +24,7 @@ class CardAccountsController < ApplicationController
     @account = CardAccount.new params[:card_account]
     respond_with(@account) do |format|
       if @account.save_account
-        load_accts if @adminFlg
+        load_accts
         format.json { render json: @accounts }
       else
 	format.json { render :json => { :errors => @account.errors.full_messages }, :status => 422 }

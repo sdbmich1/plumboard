@@ -7,7 +7,7 @@ describe State do
    
   subject { @state }
 
-  it { should respond_to(:code) }
-  it { should respond_to(:state_name) }
+  it { is_expected.to respond_to(:code) }
+  it { is_expected.to respond_to(:state_name) }
 
 end

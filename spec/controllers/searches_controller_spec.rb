@@ -5,7 +5,7 @@ describe SearchesController do
 
   def mock_listing(stubs={})
     (@mock_listing ||= mock_model(Listing, stubs).as_null_object).tap do |listing|
-       listing.stub(stubs) unless stubs.empty?
+      allow(listing).to receive_messages(stubs) unless stubs.empty?
     end
   end
 
@@ -15,10 +15,10 @@ describe SearchesController do
       allow_message_expectations_on_nil
       @listings = stub_model(Listing)
       @sellers = stub_model(User)
-      Listing.stub!(:search).and_return( @listings )
-      @listings.stub!(:populate).and_return(@listings)
-      User.stub(:get_sellers).and_return( @sellers )
-      controller.stub_chain(:query, :page, :add_points, :get_location, :set_params, :search_options).and_return(:success)
+      allow(Listing).to receive(:search).and_return( @listings )
+      allow(@listings).to receive(:populate).and_return(@listings)
+      allow(User).to receive(:get_sellers).and_return( @sellers )
+      allow(controller).to receive_message_chain(:query, :page, :add_points, :get_location, :set_params, :search_options).and_return(:success)
     end
 
     def do_post
@@ -26,24 +26,24 @@ describe SearchesController do
     end
 
     it "should load the requested listing" do
-      Listing.stub(:search).with('test').and_return(@listings)
+      allow(Listing).to receive(:search).with('test').and_return(@listings)
       do_post
     end
 
     it "should assign @listings" do
       do_post
-      assigns(:listings).should == @listings
+      expect(assigns(:listings)).to eq(@listings)
     end
 
     it "index action should render nothing" do
       do_post
-      controller.stub!(:render)
+      allow(controller).to receive(:render)
     end
   end
 
   describe 'GET /index', base: true do
     before :each do
-      controller.stub_chain(:query, :page, :add_points, :get_location, :set_params, :search_options).and_return(:success)
+      allow(controller).to receive_message_chain(:query, :page, :add_points, :get_location, :set_params, :search_options).and_return(:success)
     end
 
     it_behaves_like "a load data request", 'Listing', 'search', 'index', 'populate', true, 'listings'

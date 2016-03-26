@@ -3,31 +3,31 @@ require "spec_helper"
 describe "routes for Settings" do
 
   it "does route to #index" do
-    get("/settings").should route_to("settings#index")
+    expect(get("/settings")).to route_to("settings#index")
   end
 
   it "does not route to #create" do
-    post("/settings").should_not route_to("settings#create")
+    expect(post("/settings")).not_to route_to("settings#create")
   end
 
   it "does not expose a new setting route" do
-    get("/settings/new").should_not route_to("settings#new")
+    expect(get("/settings/new")).not_to route_to("settings#new")
   end
 
   it "does not route to #edit" do
-    get("/settings/1/edit").should_not route_to("settings#edit", :id => "1")
+    expect(get("/settings/1/edit")).not_to route_to("settings#edit", :id => "1")
   end
 
   it "does not expose an update setting route" do
-    put("/settings/1").should_not route_to("settings#update", :id => "1")
+    expect(put("/settings/1")).not_to route_to("settings#update", :id => "1")
   end
 
   it "does not route to #destroy" do
-    delete("/settings/1").should_not route_to("settings#destroy", :id => "1")
+    expect(delete("/settings/1")).not_to route_to("settings#destroy", :id => "1")
   end
 
   it "does not route to #show" do 
-    get("/settings/1").should_not route_to("settings#show", :id => "1")
+    expect(get("/settings/1")).not_to route_to("settings#show", :id => "1")
   end
 
   it "routes /settings/contact the settings controller" do

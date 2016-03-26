@@ -17,40 +17,40 @@ describe Users::OmniauthCallbacksController do
 
   def stub_env_for_omniauth(provider = "facebook", uid = "1234567", email = "bob@contoso.com", name = "John Doe")
     env = { "omniauth.auth" => fb_hash(provider, uid, email, name) }
-    @controller.stub!(:env).and_return(env)
+    allow(@controller).to receive(:env).and_return(env)
     env
   end
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive(stubs) unless stubs.empty?
     end
   end
 
   def do_get
     @user = stub_model(User, :null_object => true).as_new_record
-    User.stub_chain(:find_for_facebook_oauth, :picture_from_url, :sub).with(request.env["omniauth.auth"], @user).and_return(@user)
-    @user.stub!(:persisted?).and_return(true)
+    allow(User).to receive_message_chain(:find_for_facebook_oauth, :picture_from_url, :sub).with(request.env["omniauth.auth"], @user).and_return(@user)
+    allow(@user).to receive(:persisted?).and_return(true)
     get :facebook
   end
 
   describe ".create" do
     it "should redirect back to sign_up page with an error when omniauth.auth is missing" do
-      @controller.stub!(:env).and_return({"some_other_key" => "some_other_value"})
+      allow(@controller).to receive(:env).and_return({"some_other_key" => "some_other_value"})
       do_get
-      response.should be_redirect
+      expect(response).to be_redirect
     end
 
     it "should redirect back to sign_up page with an error when provider is missing" do
       stub_env_for_omniauth(nil)
       do_get
-      response.should be_redirect
+      expect(response).to be_redirect
     end
 
     it "should change user count" do
       lambda do
         do_get
-        should change(User, :count).by(1)
+        is_expected.to change(User, :count).by(1)
       end
     end
 
@@ -59,22 +59,22 @@ describe Users::OmniauthCallbacksController do
 
       lambda do
         do_get
-        should change(User, :count).by(0)
+        is_expected.to change(User, :count).by(0)
       end
     end
 
     it "should redirect to pixi page when provider is provided" do
       stub_env_for_omniauth
       do_get
-      flash[:notice].should match /Successfully authenticated from Facebook account/
-      response.should be_redirect
+      expect(flash[:notice]).to match /Successfully authenticated from Facebook account/
+      expect(response).to be_redirect
     end
   end
 
   describe "passthru" do
     it "should render file" do
       get :passthru, use_route: "/users/auth/facebook"
-      response.should render_template(:file => "#{Rails.root}/public/404.html")
+      expect(response).to render_template(:file => "#{Rails.root}/public/404.html")
     end
   end
 
@@ -85,11 +85,11 @@ describe Users::OmniauthCallbacksController do
     end
 
     it "should render text" do
-      response.should render_template(:text => "Setup complete.")
+      expect(response.body).to eq 'Setup complete.'
     end
 
     it "assigns request env" do
-      request.env['omniauth.strategy'].options[:display].should == "page"
+      expect(request.env['omniauth.strategy'].options[:display]).to eq("page")
     end
   end
 end

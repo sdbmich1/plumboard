@@ -109,7 +109,7 @@ feature "Invoices" do
   def zero_price
     fill_in 'inv_price1', with: 0
     click_button 'Send'
-    page.should_not have_content "Less Convenience Fee"
+    expect(page).not_to have_content "Less Convenience Fee"
   end
 
   describe "Check menu invoice link", base: true do
@@ -120,7 +120,7 @@ feature "Invoices" do
     end
 
     describe 'user has no pixis' do
-      it { should_not have_link('Bill', href: new_invoice_path) }
+      it { is_expected.not_to have_link('Bill', href: new_invoice_path) }
     end
   end
 
@@ -133,8 +133,8 @@ feature "Invoices" do
     end
 
     it 'shows content' do
-      page.should have_link('Bill', href: new_bank_account_path(target: 'shared/invoice_form'))
-      page.should_not have_link('Bill', href: new_invoice_path)
+      expect(page).to have_link('Bill', href: new_bank_account_path(target: 'shared/invoice_form'))
+      expect(page).not_to have_link('Bill', href: new_invoice_path)
     end
   end
 
@@ -148,8 +148,8 @@ feature "Invoices" do
     end
 
     it 'shows content' do
-      page.should_not have_link('Bill', href: new_bank_account_path(target: 'shared/invoice_form'))
-      page.should have_link('Bill', href: new_invoice_path)
+      expect(page).not_to have_link('Bill', href: new_bank_account_path(target: 'shared/invoice_form'))
+      expect(page).to have_link('Bill', href: new_invoice_path)
     end
   end
 
@@ -162,11 +162,11 @@ feature "Invoices" do
     end
 
     it 'shows content' do
-      page.should have_content("Invoices")
-      page.should have_selector('title', text: 'Invoices')
-      page.should have_link('Sent', href: sent_invoices_path)
-      page.should have_link('Received', href: received_invoices_path)
-      page.should have_content "No invoices found."
+      expect(page).to have_content("Invoices")
+      expect(page).to have_selector('title', text: 'Invoices')
+      expect(page).to have_link('Sent', href: sent_invoices_path)
+      expect(page).to have_link('Received', href: received_invoices_path)
+      expect(page).to have_content "No invoices found."
     end
   end
 
@@ -179,25 +179,25 @@ feature "Invoices" do
     end
 
     it 'shows content' do
-      page.should have_link("#{@invoice.id}", href: invoice_path(@invoice))
-      page.should have_content "Status"
-      page.should have_content "Phil Hayes"
-      page.should have_content @listing.title
+      expect(page).to have_link("#{@invoice.id}", href: invoice_path(@invoice))
+      expect(page).to have_content "Status"
+      expect(page).to have_content "Phil Hayes"
+      expect(page).to have_content @listing.title
     end
 
     it "shows invoice page" do
-      page.should have_link("#{@invoice.id}", href: invoice_path(@invoice)) 
+      expect(page).to have_link("#{@invoice.id}", href: invoice_path(@invoice)) 
       visit invoice_path(@invoice)
-      page.should have_content @invoice.buyer_name
-      page.should have_content @invoice.pixi_title
-      page.should have_content "Amount Due" 
-      page.should have_content @invoice.amount
-      page.should have_content "Less Convenience Fee"
-      page.should have_content "#{@invoice.get_fee(true)}"
-      page.should have_content "Amount You Receive"
-      page.should have_content "#{@invoice.amount - @invoice.get_fee(true)}"
-      page.should have_link('Edit', href: edit_invoice_path(@invoice)) 
-      page.should have_link('Remove', href: remove_invoice_path(@invoice)) 
+      expect(page).to have_content @invoice.buyer_name
+      expect(page).to have_content @invoice.pixi_title
+      expect(page).to have_content "Amount Due" 
+      expect(page).to have_content @invoice.amount
+      expect(page).to have_content "Less Convenience Fee"
+      expect(page).to have_content "#{@invoice.get_fee(true)}"
+      expect(page).to have_content "Amount You Receive"
+      expect(page).to have_content "#{@invoice.amount - @invoice.get_fee(true)}"
+      expect(page).to have_link('Edit', href: edit_invoice_path(@invoice)) 
+      expect(page).to have_link('Remove', href: remove_invoice_path(@invoice)) 
     end
   end
 
@@ -210,11 +210,11 @@ feature "Invoices" do
     end
 
     it "shows invoice page" do
-      page.should have_link("#{@invoice.id}", href: invoice_path(@invoice)) 
+      expect(page).to have_link("#{@invoice.id}", href: invoice_path(@invoice)) 
       visit invoice_path(@invoice)
-      page.should have_content "Amount Due" 
-      page.should_not have_link('Edit', href: edit_invoice_path(@invoice)) 
-      page.should_not have_link('Remove', href: invoice_path(@invoice)) 
+      expect(page).to have_content "Amount Due" 
+      expect(page).not_to have_link('Edit', href: edit_invoice_path(@invoice)) 
+      expect(page).not_to have_link('Remove', href: invoice_path(@invoice)) 
     end
   end
 
@@ -227,9 +227,9 @@ feature "Invoices" do
     end
         
     it 'changes price', js: true  do
-      page.should have_link("#{@invoice.id}", href: invoice_path(@invoice)) 
+      expect(page).to have_link("#{@invoice.id}", href: invoice_path(@invoice)) 
       visit invoice_path(@invoice)
-      page.should have_link('Edit', href: edit_invoice_path(@invoice)) 
+      expect(page).to have_link('Edit', href: edit_invoice_path(@invoice)) 
 
       click_on 'Edit'
       zero_price
@@ -237,33 +237,33 @@ feature "Invoices" do
       expect { 
 	    click_button 'Send'; sleep 3
 	}.to change(Invoice, :count).by(0)
-      page.should have_content "Status" 
+      expect(page).to have_content "Status" 
     end
         
     it 'removes invoice', js: true  do
-      page.should have_link("#{@invoice.id}", href: invoice_path(@invoice)) 
+      expect(page).to have_link("#{@invoice.id}", href: invoice_path(@invoice)) 
       visit invoice_path(@invoice)
-      page.should have_link('Remove', href: remove_invoice_path(@invoice)) 
+      expect(page).to have_link('Remove', href: remove_invoice_path(@invoice)) 
       click_remove_cancel
-      page.should have_link('Remove', href: remove_invoice_path(@invoice)) 
+      expect(page).to have_link('Remove', href: remove_invoice_path(@invoice)) 
 
       click_remove_ok
       sleep 2
-      page.should_not have_link("#{@invoice.id}", href: invoice_path(@invoice)) 
+      expect(page).not_to have_link("#{@invoice.id}", href: invoice_path(@invoice)) 
       expect(Invoice.find(@invoice.id).status).to eq('removed')
     end
         
     it 'removes a pixi', js: true  do
       visit invoice_path(@invoice5)
-      page.should have_link('Edit', href: edit_invoice_path(@invoice5)) 
+      expect(page).to have_link('Edit', href: edit_invoice_path(@invoice5)) 
       click_on 'Edit'
       sleep 2
-      page.should have_content @listing.title
-      page.should have_selector('.add-row-btn')
-      page.should have_selector('.remove-row-btn')
+      expect(page).to have_content @listing.title
+      expect(page).to have_selector('.add-row-btn')
+      expect(page).to have_selector('.remove-row-btn')
       page.find('.remove-row-btn').click
       accept_btn
-      page.should_not have_content @listing4.title
+      expect(page).not_to have_content @listing4.title
     end
   end
 
@@ -276,7 +276,7 @@ feature "Invoices" do
 
     it "has no received invoices", js: true do
       click_link 'Received'
-      page.should have_content "No invoices found." 
+      expect(page).to have_content "No invoices found." 
     end
   end
 
@@ -289,44 +289,44 @@ feature "Invoices" do
     end
 
     it "shows paid received invoices", js: true do
-      page.should have_link('Received', href: received_invoices_path) 
+      expect(page).to have_link('Received', href: received_invoices_path) 
       click_link 'Received'
     
-      page.should have_content "Status" 
-      page.should have_content @buyer.name
-      page.should have_link("#{@invoice2.id}", href: invoice_path(@invoice2)) 
+      expect(page).to have_content "Status" 
+      expect(page).to have_content @buyer.name
+      expect(page).to have_link("#{@invoice2.id}", href: invoice_path(@invoice2)) 
 
       visit invoice_path(@invoice2)
-      page.should have_content "Bookbag" 
-      page.should_not have_content "Less Convenience Fee"
-      page.should have_content "Convenience Fee"
-      page.should_not have_content "#{@invoice.get_fee(true)}"
-      page.should_not have_content "Amount You Receive"
-      page.should have_content "#{@invoice.amount + @invoice.get_fee}"
-      page.should_not have_button "Decline"
-      page.should_not have_selector('#pay-btn') 
+      expect(page).to have_content "Bookbag" 
+      expect(page).not_to have_content "Less Convenience Fee"
+      expect(page).to have_content "Convenience Fee"
+      expect(page).not_to have_content "#{@invoice.get_fee(true)}"
+      expect(page).not_to have_content "Amount You Receive"
+      expect(page).to have_content "#{@invoice.amount + @invoice.get_fee}"
+      expect(page).not_to have_button "Decline"
+      expect(page).not_to have_selector('#pay-btn') 
     end
 
     it "shows unpaid received invoices", js: true do
-      page.should have_link('Received', href: received_invoices_path) 
+      expect(page).to have_link('Received', href: received_invoices_path) 
       click_link 'Received'
-      page.should have_link("#{@invoice4.id}", href: invoice_path(@invoice4)) 
+      expect(page).to have_link("#{@invoice4.id}", href: invoice_path(@invoice4)) 
 
       visit invoice_path(@invoice4)
-      page.should have_content "Trek Bike" 
-      page.should have_button "Decline"
-      page.should have_selector('#pay-btn', visible: true) 
+      expect(page).to have_content "Trek Bike" 
+      expect(page).to have_button "Decline"
+      expect(page).to have_selector('#pay-btn', visible: true) 
     end
 
     it "shows declined received invoices", js: true do
-      page.should have_link('Received', href: received_invoices_path) 
+      expect(page).to have_link('Received', href: received_invoices_path) 
       click_link 'Received'
-      page.should have_link("#{@invoice7.id}", href: invoice_path(@invoice7)) 
+      expect(page).to have_link("#{@invoice7.id}", href: invoice_path(@invoice7)) 
 
       visit invoice_path(@invoice7)
-      page.should have_content "Trek Bike" 
-      page.should_not have_button "Decline"
-      page.should_not have_selector('#pay-btn', visible: true) 
+      expect(page).to have_content "Trek Bike" 
+      expect(page).not_to have_button "Decline"
+      expect(page).not_to have_selector('#pay-btn', visible: true) 
     end
   end
 
@@ -340,10 +340,10 @@ feature "Invoices" do
     end
 
     it "displays invoice content", js: true do
-      page.should have_content "From:" 
-      page.should have_content @user.name 
-      page.should have_content "Bill To:" 
-      page.should have_content "Amount Due" 
+      expect(page).to have_content "From:" 
+      expect(page).to have_content @user.name 
+      expect(page).to have_content "Bill To:" 
+      expect(page).to have_content "Amount Due" 
     end 
 
     describe "Create Invoices" do
@@ -357,25 +357,25 @@ feature "Invoices" do
       describe 'invalid invoices', js: true do
         it 'does not submit empty form' do
 	  click_button 'Send'
-          page.should have_content "can't be blank" 
+          expect(page).to have_content "can't be blank" 
         end
         
         it 'has pixi' do
 	  select_buyer
 	  click_button 'Send'
-          page.should have_content "can't be blank" 
+          expect(page).to have_content "can't be blank" 
         end
         
         it 'does not accept unknown buyer' do
 	  unknown_buyer
-          page.should have_content "can't be blank" 
+          expect(page).to have_content "can't be blank" 
         end
         
         it 'must have a buyer' do
           select_pixi @listing
           fill_in 'inv_price1', with: 40
           click_button 'Send'
-          page.should have_content "Buyer can't be blank" 
+          expect(page).to have_content "Buyer can't be blank" 
         end
         
         it 'should not accept bad sales tax', run: true do
@@ -423,16 +423,16 @@ feature "Invoices" do
 	  expect { 
 	    click_button 'Send'; sleep 3
 	  }.to change(Invoice, :count).by(1)
-	  page.should have_content "Status" 
-	  page.should have_content "Bob Jones" 
+	  expect(page).to have_content "Status" 
+	  expect(page).to have_content "Bob Jones" 
         end
         
         it 'accepts invoice w/o sales tax', run: true  do
 	  expect { 
 	    click_button 'Send'; sleep 3
 	  }.to change(Invoice, :count).by(1)
-	  page.should have_content "Status" 
-	  page.should have_content "Bob Jones" 
+	  expect(page).to have_content "Status" 
+	  expect(page).to have_content "Bob Jones" 
         end
         
         it 'accepts invoice changes quantity', run: true  do
@@ -442,9 +442,9 @@ feature "Invoices" do
 	    click_link 'OK'
 	    click_button 'Send'; sleep 3
 	  }.to change(Invoice, :count).by(1)
-	  page.should have_content "$400.00" 
-	  page.should have_content "Status" 
-	  page.should have_content "Bob Jones" 
+	  expect(page).to have_content "$400.00" 
+	  expect(page).to have_content "Status" 
+	  expect(page).to have_content "Bob Jones" 
         end
         
         it 'accepts invoice w/ shipping', run: true do
@@ -453,10 +453,10 @@ feature "Invoices" do
 	  expect { 
 	    click_button 'Send'; sleep 3
 	  }.to change(Invoice, :count).by(1)
-	  page.should have_content "Status" 
-	  page.should have_content "Shipping" 
-	  page.should have_content "$9.99" 
-	  page.should have_content "Bob Jones" 
+	  expect(page).to have_content "Status" 
+	  expect(page).to have_content "Shipping" 
+	  expect(page).to have_content "$9.99" 
+	  expect(page).to have_content "Bob Jones" 
         end
 
         it 'accepts invoice with pixi post' do
@@ -468,9 +468,9 @@ feature "Invoices" do
 	    click_button 'Send'; sleep 5
 	  }.to change(Invoice, :count).by(1)
 
-	  page.should have_content "Status" 
-	  page.should have_content "Bob Jones" 
-          page.should have_content "#{@pxp_listing.seller_name}"
+	  expect(page).to have_content "Status" 
+	  expect(page).to have_content "Bob Jones" 
+          expect(page).to have_content "#{@pxp_listing.seller_name}"
         end
 
         it 'accepts invoice with free pixi' do
@@ -481,14 +481,14 @@ feature "Invoices" do
 	  expect { 
 	    click_button 'Send'; sleep 5
 	  }.to change(Invoice, :count).by(1)
-	  page.should have_content "Status" 
-	  page.should have_content "Bob Jones" 
-          page.should have_content "#{@free.seller_name}"
+	  expect(page).to have_content "Status" 
+	  expect(page).to have_content "Bob Jones" 
+          expect(page).to have_content "#{@free.seller_name}"
         end
 
 	it 'handles multiple pixis', run: true do
-          page.should have_selector('.add-row-btn')
-          page.should have_selector('.remove-row-btn')
+          expect(page).to have_selector('.add-row-btn')
+          expect(page).to have_selector('.remove-row-btn')
           page.find('.add-row-btn').click
           select_pixi @pixi, 'pixi_id2'
 	  set_buyer_id
@@ -496,20 +496,20 @@ feature "Invoices" do
 	  expect { 
 	    click_button 'Send'; sleep 5
 	  }.to change(Invoice, :count).by(1)
-	  page.should have_content "Macbook" 
-	  page.should have_content "Bob Jones" 
+	  expect(page).to have_content "Macbook" 
+	  expect(page).to have_content "Bob Jones" 
 	end
 
 	it 'handles multiple pixis w/ free item', run: true do
-          page.should have_selector('.add-row-btn')
-          page.should have_selector('.remove-row-btn')
+          expect(page).to have_selector('.add-row-btn')
+          expect(page).to have_selector('.remove-row-btn')
           page.find('.add-row-btn').click
           select_pixi @free, 'pixi_id2'
 	  set_buyer_id
 	  expect { 
 	    click_button 'Send'; sleep 5
 	  }.to change(Invoice, :count).by(1)
-	  page.should have_content @free.title
+	  expect(page).to have_content @free.title
 	end
 
         it 'assigns default values from preferences', run: true do
@@ -524,8 +524,8 @@ feature "Invoices" do
           init_data
           init_setup @user
           visit new_invoice_path
-          page.should have_xpath("//input[@value='#{pref.ship_amt.to_s << '0'}']")
-          page.should have_xpath("//input[@value='#{pref.sales_tax}']")
+          expect(page).to have_xpath("//input[@value='#{pref.ship_amt.to_s << '0'}']")
+          expect(page).to have_xpath("//input[@value='#{pref.sales_tax}']")
         end
       end
     end
@@ -540,13 +540,13 @@ feature "Invoices" do
     end
         
     it 'invoice w/ selected buyer & sold pixi', js: true do
-      expect(@user.has_pixis?).to be_false
+      expect(@user.has_pixis?).to be_falsey
       visit new_invoice_path(buyer_id: @buyer.id, pixi_id: @listing.pixi_id)
-      page.should_not have_selector "#buyer_name"
-      page.should have_content "Status"
-      page.should have_content NO_INV_PIXI_MSG
-      page.should have_content @listing.title
-      page.should have_content @buyer.name
+      expect(page).not_to have_selector "#buyer_name"
+      expect(page).to have_content "Status"
+      expect(page).to have_content NO_INV_PIXI_MSG
+      expect(page).to have_content @listing.title
+      expect(page).to have_content @buyer.name
     end
 
     it 'invoice w/ shipping', js: true do
@@ -563,13 +563,13 @@ feature "Invoices" do
       @txn.save
       @invoice.save
       visit invoice_path(@invoice)
-      page.should have_content 'Shipping Information'
-      page.should have_content @txn.recipient_first_name
-      page.should have_content @txn.recipient_last_name
-      page.should have_content @txn.ship_address
-      page.should have_content @txn.ship_city
-      page.should have_content @txn.ship_state
-      page.should have_content @txn.ship_zip
+      expect(page).to have_content 'Shipping Information'
+      expect(page).to have_content @txn.recipient_first_name
+      expect(page).to have_content @txn.recipient_last_name
+      expect(page).to have_content @txn.ship_address
+      expect(page).to have_content @txn.ship_city
+      expect(page).to have_content @txn.ship_state
+      expect(page).to have_content @txn.ship_zip
     end
   end
 

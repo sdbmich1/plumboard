@@ -10,15 +10,12 @@ class Site < ActiveRecord::Base
   has_many :users, :through => :site_users
 
   has_many :listings, :dependent => :destroy
-  has_many :active_listings, class_name: 'Listing', 
-        conditions: proc { "'#{Date.today.to_s(:db)}' BETWEEN start_date AND end_date AND status = 'active'" }
+  has_many :active_listings, -> { where "'#{Date.today.to_s(:db)}' BETWEEN start_date AND end_date AND status = 'active'" }, class_name: 'Listing'
 
-  scope :with_pixis, :include    => :listings, 
-                     :conditions => "listings.id IS NOT NULL"
+  scope :with_pixis, -> { includes(:listings).where("listings.id IS NOT NULL") }
 
   has_many :temp_listings, :dependent => :destroy
-  scope :with_new_pixis, :include    => :temp_listings, 
-                         :conditions => "temp_listings.id IS NOT NULL"
+  scope :with_new_pixis, -> { includes(:temp_listings).where("temp_listings.id IS NOT NULL") }
 
   has_many :pictures, :as => :imageable, :dependent => :destroy
   accepts_nested_attributes_for :pictures, :allow_destroy => true
@@ -31,7 +28,7 @@ class Site < ActiveRecord::Base
   validates :name, :presence => true
   validates :site_type_code, :presence => true
 
-  default_scope :order => "name ASC"
+  default_scope { order "name ASC" }
   
   # select active sites and remove dups
   def self.active regionFlg=true

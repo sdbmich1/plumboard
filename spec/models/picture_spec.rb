@@ -19,30 +19,30 @@ describe Picture do
 
   subject { @picture } 
 
-  it { should respond_to(:photo) }
-  it { should respond_to(:processing) }
-  it { should respond_to(:photo_file_name) }
-  it { should respond_to(:photo_file_path) }
-  it { should respond_to(:photo_content_type) }
-  it { should respond_to(:photo_file_size) }
-  it { should respond_to(:photo_updated_at) }
-  it { should respond_to(:set_default_url) }
-  it { should respond_to(:direct_upload_url) }
+  it { is_expected.to respond_to(:photo) }
+  it { is_expected.to respond_to(:processing) }
+  it { is_expected.to respond_to(:photo_file_name) }
+  it { is_expected.to respond_to(:photo_file_path) }
+  it { is_expected.to respond_to(:photo_content_type) }
+  it { is_expected.to respond_to(:photo_file_size) }
+  it { is_expected.to respond_to(:photo_updated_at) }
+  it { is_expected.to respond_to(:set_default_url) }
+  it { is_expected.to respond_to(:direct_upload_url) }
 
-  it { should respond_to(:imageable) }
-  it { should have_attached_file(:photo) }
-  it { should validate_attachment_content_type(:photo).
+  it { is_expected.to respond_to(:imageable) }
+  it { is_expected.to have_attached_file(:photo) }
+  it { is_expected.to validate_attachment_content_type(:photo).
                       allowing('image/png', 'image/gif', 'image/jpg', 'image/jpeg', 'image/bmp', 'image/tiff').
                       rejecting('text/plain', 'text/xml') }
-  it { should validate_attachment_size(:photo).less_than(5.megabytes) }
+  it { is_expected.to validate_attachment_size(:photo).less_than(5.megabytes) }
 
   describe "listing photo validations" do
     it "big pic should not be valid" do
-      @bigpic.should_not be_valid
+      expect(@bigpic).not_to be_valid
     end
 
     it "should be valid" do
-      @picture.should be_valid
+      expect(@picture).to be_valid
     end
 
     it "should create a new instance given valid attributes" do
@@ -56,13 +56,13 @@ describe Picture do
     end
 
     it "should receive photo_file_name from :photo" do 
-      @picture.photo_file_name.should_not be_empty
+      expect(@picture.photo_file_name).not_to be_empty
     end
   end
 
   describe "site photo validations" do
     it "should be valid" do
-      @site_picture.should be_valid
+      expect(@site_picture).to be_valid
     end
 
     it "should create a new instance given valid attributes" do
@@ -76,12 +76,12 @@ describe Picture do
     end
 
     it "should receive photo_file_name from :photo" do 
-      @site_picture.photo_file_name.should_not be_empty
+      expect(@site_picture.photo_file_name).not_to be_empty
     end
   end
 
   describe "regenerate_styles!" do
-    it { @picture.should respond_to :regenerate_styles! }
+    it { expect(@picture).to respond_to :regenerate_styles! }
   end
 
   describe 'picture from url' do

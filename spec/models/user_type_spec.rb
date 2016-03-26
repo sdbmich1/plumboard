@@ -7,32 +7,32 @@ describe UserType do
 
   subject { @user_type }
 
-  it { should respond_to(:description) }
-  it { should respond_to(:status) }
-  it { should respond_to(:code) }
-  it { should respond_to(:hide) }
-  it { should validate_presence_of(:description) }
-  it { should validate_presence_of(:status) }
-  it { should validate_presence_of(:code) }
-  it { should have_many(:users).with_foreign_key('user_type_code') }
+  it { is_expected.to respond_to(:description) }
+  it { is_expected.to respond_to(:status) }
+  it { is_expected.to respond_to(:code) }
+  it { is_expected.to respond_to(:hide) }
+  it { is_expected.to validate_presence_of(:description) }
+  it { is_expected.to validate_presence_of(:status) }
+  it { is_expected.to validate_presence_of(:code) }
+  it { is_expected.to have_many(:users).with_foreign_key('user_type_code') }
 
   describe "active user_types" do
     before { create(:user_type) }
-    it { UserType.active.should_not be_nil } 
+    it { expect(UserType.active).not_to be_nil } 
   end
 
   describe "inactive user_types" do
     before { create(:user_type, status: 'inactive') }
-    it { UserType.active.should be_empty } 
+    it { expect(UserType.active).to be_empty } 
   end
 
   describe "hidden user_types" do
     before { create(:user_type, code: 'active', hide: 'yes') }
-    it { UserType.unhidden.should be_empty } 
+    it { expect(UserType.unhidden).to be_empty } 
   end
 
   describe "unhidden user_types" do
     before { create(:user_type, code: 'active', hide: 'no') }
-    it { UserType.unhidden.should_not be_nil } 
+    it { expect(UserType.unhidden).not_to be_nil } 
   end
 end

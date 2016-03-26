@@ -9,14 +9,14 @@ describe PostObserver do
     let(:post) { conversation.posts.build FactoryGirl.attributes_for :post, user_id: user.id, recipient_id: recipient.id, pixi_id: listing.pixi_id }
 
     def process_msg model, mtype
-      @user_mailer = mock(UserMailer)
-      UserMailer.stub(:delay).and_return(UserMailer)
+      @user_mailer = double(UserMailer)
 
       if mtype.blank?
-        UserMailer.should_receive(:send_notice).with(model)
+        expect(UserMailer).to receive(:send_notice).with(model).and_return(@user_mailer)
+        expect(@user_mailer).to receive(:deliver_later)
       else
         model.msg_type = mtype
-        UserMailer.should_not_receive(:send_notice).with(post)
+        expect(UserMailer).not_to receive(:send_notice).with(post)
       end
       model.save!
     end
@@ -31,7 +31,7 @@ describe PostObserver do
 
     it 'deny msg does not deliver 2nd notice' do
       process_msg post, 'deny'
-      post.reload.content.should_not match(/explanation/)
+      expect(post.reload.content).not_to match(/explanation/)
     end
 
     it 'wanted msg does not deliver 2nd notice' do
@@ -52,7 +52,7 @@ describe PostObserver do
 
     it 'should add pixi points' do
       post.save!
-      user.user_pixi_points.find_by_code('cs').code.should == 'cs'
+      expect(user.user_pixi_points.find_by_code('cs').code).to eq('cs')
     end
   end
 end

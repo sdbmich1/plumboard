@@ -13,22 +13,22 @@ feature "site" do
 
   def test_navbar(has_site_type=true)
     ['Active', 'Inactive', 'Create'].each do |link|
-      page.should have_link link
+      expect(page).to have_link link
     end
     if has_site_type
-      page.should have_selector '#site_type'
+      expect(page).to have_selector '#site_type'
     else
-      page.should_not have_selector '#site_type'
+      expect(page).not_to have_selector '#site_type'
     end
   end
 
   describe "Sites page" do
     def test_table
       ['Name', 'URL', 'Type', 'Status', 'Last Updated'].each do |column|
-        page.should have_content column
+        expect(page).to have_content column
       end
-      page.should have_link 'Details'
-      page.should_not have_content 'No sites found.'
+      expect(page).to have_link 'Details'
+      expect(page).not_to have_content 'No sites found.'
     end
 
     def load_site_type_codes
@@ -61,7 +61,7 @@ feature "site" do
       site_type_codes.each do |stype|
         site = create :site, name: stype, status: 'active', site_type_code: stype
         visit sites_path(status: 'active', stype: stype)
-        page.should have_content site.name
+        expect(page).to have_content site.name
         test_navbar
         test_table
       end
@@ -70,7 +70,7 @@ feature "site" do
     it "displays 'No sites found.' if there are no sites" do
       click_link('Inactive')
       test_navbar
-      page.should have_content 'No sites found.'
+      expect(page).to have_content 'No sites found.'
     end
 
     it "paginates" do
@@ -78,8 +78,8 @@ feature "site" do
         create :site, name: 'test', site_type_code: 'region'
       end
       visit sites_path(status: 'active', stype: 'region')
-      page.should have_content 'Displaying sites'
-      page.should have_selector('div.pagination')
+      expect(page).to have_content 'Displaying sites'
+      expect(page).to have_selector('div.pagination')
       click_link '2'
       test_navbar
       test_table
@@ -95,21 +95,21 @@ feature "site" do
     end
 
     it "displays banner" do
-      page.should have_content @site.name
-      page.should have_css '.item-container'
-      page.should have_css '.camera'
+      expect(page).to have_content @site.name
+      expect(page).to have_css '.item-container'
+      expect(page).to have_css '.camera'
     end
 
     it "displays details" do
       ['Name', 'Description', 'URL', 'Status', 'Address',
        'Latitude, Longitude', 'Last Updated'].each do |attribute|
-        page.should have_content attribute
+        expect(page).to have_content attribute
       end
     end
 
     it "displays buttons" do
-      page.should have_link 'Edit'
-      page.should have_link 'Done'
+      expect(page).to have_link 'Edit'
+      expect(page).to have_link 'Done'
     end
 
     it "displays navbar" do

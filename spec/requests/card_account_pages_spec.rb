@@ -20,8 +20,8 @@ feature "CardAccounts" do
       click_on 'Save'; sleep 3;
     }.to change(CardAccount, :count).by(0)
 
-    page.should have_content 'Card #'
-    page.should have_content 'invalid'
+    expect(page).to have_content 'Card #'
+    expect(page).to have_content 'invalid'
   end
 
   describe "Create Card Account", js: true do 
@@ -31,21 +31,21 @@ feature "CardAccounts" do
     end
 
     it 'shows content' do
-      page.should have_selector('h2', text: 'Setup Your Card Account')
-      page.should_not have_content("Card Holder")
-      page.should have_content("Card #")
-      page.should have_button("Save")
+      expect(page).to have_selector('h2', text: 'Setup Your Card Account')
+      expect(page).not_to have_content("Card Holder")
+      expect(page).to have_content("Card #")
+      expect(page).to have_content("Default")
+      expect(page).to have_button("Save")
     end
 
     it "creates an new account" do
       expect {
         load_credit_card "4242424242424242", "123", true, false; sleep 5
       }.to change(CardAccount, :count).by(1)
-      page.should have_content 'Card #'
+      expect(page).to have_content 'Card #'
 
       # page.should have_content 'Home'
-      page.should have_content 'Card #'
-      page.should have_content 'Default'
+      expect(page).to have_content 'Card #'
     end
   end
 
@@ -56,9 +56,9 @@ feature "CardAccounts" do
       click_link 'Card'
     end
     it "shows account" do
-      page.should have_content 'Card Holder'
-      page.should have_content 'Card #'
-      page.should have_content 'Default'
+      expect(page).to have_content 'Card Holder'
+      expect(page).to have_content 'Card #'
+      expect(page).to have_content 'Default'
     end
   end
 
@@ -71,51 +71,51 @@ feature "CardAccounts" do
     end
 
     it 'shows content' do
-      page.should have_selector('h2', text: 'Your Card Account')
-      page.should have_content("Card #")
-      page.should have_link("Remove") #, href: card_account_path(@account)
+      expect(page).to have_selector('h2', text: 'Your Card Account')
+      expect(page).to have_content("Card #")
+      expect(page).to have_link("Remove") #, href: card_account_path(@account)
     end
 
     it "removes an account" do
-      page.should have_link("Remove") #, href: card_account_path(@account)
+      expect(page).to have_link("Remove") #, href: card_account_path(@account)
       click_remove_ok
-      page.should_not have_link("#{@account.id}", href: card_account_path(@account)) 
-      page.should have_link 'Add Card'
+      expect(page).not_to have_link("#{@account.id}", href: card_account_path(@account)) 
+      expect(page).to have_link 'Add Card'
     end
   end
 
   describe "Invalid Card Account" do 
     before do
-      CardAccount.any_instance.stub(:save_account).and_return(false)
+      allow_any_instance_of(CardAccount).to receive(:save_account).and_return(false)
       visit new_bank_account_path
       click_link 'Card'
     end
 
     describe 'visit create page' do
       it 'shows content' do
-        page.should have_content('Setup Your Card Account')
-        page.should have_content("Card #")
-        page.should have_button("Save")
+        expect(page).to have_content('Setup Your Card Account')
+        expect(page).to have_content("Card #")
+        expect(page).to have_button("Save")
       end
 
       it "rejects missing card #", js: true do
 	credit_card_data nil, '123', true
-        page.should_not have_content('Successfully')
+        expect(page).not_to have_content('Successfully')
 
 	credit_card_data '0000', '123', true
-        page.should_not have_content('Successfully')
+        expect(page).not_to have_content('Successfully')
 
 	credit_card_data '4111111111111111', '  ', true
-        page.should have_content('Card declined')
+        expect(page).to have_content('Card declined')
 
 	credit_card_data '4111111111111111', '123', false
-        page.should have_content('Card declined')
+        expect(page).to have_content('Card declined')
 
 	credit_card_data '4111111111111111', '123', false, 99999
-        page.should have_content('Card declined')
+        expect(page).to have_content('Card declined')
 
 	credit_card_data '4111111111111111', '123', false, ''
-        page.should_not have_content('Successfully')
+        expect(page).not_to have_content('Successfully')
       end
     end
   end

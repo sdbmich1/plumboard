@@ -16,13 +16,13 @@ class Listing < ListingParent
   has_many :pixi_likes, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :pixi_wants, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :saved_listings, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
-  has_many :active_saved_listings, primary_key: 'pixi_id', foreign_key: 'pixi_id', class_name: 'SavedListing', conditions: "status = 'active'"
+  has_many :active_saved_listings, -> { where status: 'active' }, primary_key: 'pixi_id', foreign_key: 'pixi_id', class_name: 'SavedListing'
   has_many :pixi_asks, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   #has_many :site_listings, :dependent => :destroy
   #has_many :sites, :through => :site_listings, :dependent => :destroy
   has_many :invoice_details, primary_key: 'pixi_id', foreign_key: 'pixi_id', :dependent => :destroy
   has_many :invoices, through: :invoice_details, :dependent => :destroy
-  has_many :active_pixi_wants, primary_key: 'pixi_id', foreign_key: 'pixi_id', class_name: 'PixiWant', conditions: "status = 'active'"
+  has_many :active_pixi_wants, -> { where status: 'active' }, primary_key: 'pixi_id', foreign_key: 'pixi_id', class_name: 'PixiWant'
 
   # finds specific pixi
   def self.find_pixi pid
@@ -71,7 +71,7 @@ class Listing < ListingParent
 
   # find listings by buyer user id
   def self.get_by_buyer val
-    includes(:invoices).where('invoices.buyer_id = ?', val)
+    includes(:invoices).references(:invoices).where('invoices.buyer_id = ?', val)
   end
 
   # get all active pixis with an end_date less than today and update their statuses to expired

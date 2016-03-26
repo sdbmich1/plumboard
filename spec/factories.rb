@@ -1,8 +1,8 @@
 FactoryGirl.define do
   sequence(:email) {|n| "person#{n}@example.com" }
   factory :user, aliases: [:recipient, :seller] do |u|
-    first_name { Faker::Name.first_name }
-    last_name { Faker::Name.last_name }
+    first_name { FFaker::Name.first_name }
+    last_name { FFaker::Name.last_name }
     email 
     password "setup#123"
     password_confirmation "setup#123"
@@ -17,7 +17,7 @@ FactoryGirl.define do
       usr.preferences.build FactoryGirl.attributes_for(:preference)
     end
     after(:create) do |usr|
-      usr.confirm!
+      usr.confirm
       usr.confirmed_at  { Time.now }
     end
   end

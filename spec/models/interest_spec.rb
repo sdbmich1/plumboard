@@ -8,25 +8,25 @@ describe Interest do
   subject { @interest }
 
   context "should have an users method" do
-    it { should respond_to(:users) }
+    it { is_expected.to respond_to(:users) }
   end
 
   context "should have an user_interests method" do
-    it { should respond_to(:user_interests) }
+    it { is_expected.to respond_to(:user_interests) }
   end
 
   describe "should include active interests" do
-    it { Interest.active.should_not be_nil }
+    it { expect(Interest.active).not_to be_nil }
   end
 
   describe "when name is empty" do 
     before { @interest.name = "" }
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
   end
 
   describe "when interest is inactive" do
     interest = Interest.create(:name=>'Item', :status=>'inactive')
-    it { Interest.active.should_not include (interest) }  
+    it { expect(Interest.active).not_to include (interest) }  
   end
 
 end

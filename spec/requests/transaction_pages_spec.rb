@@ -117,26 +117,26 @@ feature "Transactions" do
   end
 
   def display_inv_content ship_flg=false
-      page.should have_content "Invoice # #{@invoice.id} from #{@seller.name}"
-      page.should have_content @invoice.pixi_title
-      page.should have_content "Total Due"
-      page.should have_content "Buyer Information"
-      page.should have_content @user.contacts[0].address
-      page.should have_content @user.contacts[0].city
-      page.should have_content @user.contacts[0].state
-      page.should have_content @user.contacts[0].zip
+      expect(page).to have_content "Invoice # #{@invoice.id} from #{@seller.name}"
+      expect(page).to have_content @invoice.pixi_title
+      expect(page).to have_content "Total Due"
+      expect(page).to have_content "Buyer Information"
+      expect(page).to have_content @user.contacts[0].address
+      expect(page).to have_content @user.contacts[0].city
+      expect(page).to have_content @user.contacts[0].state
+      expect(page).to have_content @user.contacts[0].zip
       if ship_flg
-        page.should have_content "Shipping Information"
-        page.should have_content @txn.ship_address
-        page.should have_content @txn.ship_city
-        page.should have_content @txn.ship_state
-        page.should have_content @txn.ship_zip
+        expect(page).to have_content "Shipping Information"
+        expect(page).to have_content @txn.ship_address
+        expect(page).to have_content @txn.ship_city
+        expect(page).to have_content @txn.ship_state
+        expect(page).to have_content @txn.ship_zip
       end
-      page.should have_selector('#edit-txn-addr', visible: false)
-      page.should have_content "Payment Information"
-      page.should have_selector('#edit-card-btn', visible: true)
-      page.should have_link('Cancel', href: invoice_path(@invoice))
-      page.should have_button('Done!')
+      expect(page).to have_selector('#edit-txn-addr', visible: false)
+      expect(page).to have_content "Payment Information"
+      expect(page).to have_selector('#edit-card-btn', visible: true)
+      expect(page).to have_link('Cancel', href: invoice_path(@invoice))
+      expect(page).to have_button('Done!')
   end
 
   describe "Manage Free Valid Transactions", process: true do
@@ -146,15 +146,15 @@ feature "Transactions" do
     end
 
     it 'shows content' do
-      page.should have_link('Cancel', href: temp_listing_path(@listing))
-      page.should have_button('Done!')
+      expect(page).to have_link('Cancel', href: temp_listing_path(@listing))
+      expect(page).to have_button('Done!')
     end
 
     it "Reviews a pixi" do
       expect { 
 	      click_link 'Cancel'
 	}.not_to change(Transaction, :count)
-      page.should have_content "Review Your Pixi" 
+      expect(page).to have_content "Review Your Pixi" 
     end
 
     describe "Cancel Free Valid Transactions", js: true do
@@ -164,7 +164,7 @@ feature "Transactions" do
           click_cancel_cancel
 	}.not_to change(Transaction, :count)
 
-        page.should have_content "Total Due" 
+        expect(page).to have_content "Total Due" 
       end
  
       it "creates a transaction with 100% discount" do
@@ -172,13 +172,13 @@ feature "Transactions" do
         expect { 
           ; sleep 2
 	}.to change(Transaction, :count).by(1)
-        page.should have_content "has been submitted"
+        expect(page).to have_content "has been submitted"
       end
 
       it "Cancels transaction" do
         click_cancel_ok
-        page.should_not have_content "Total Due"
-        page.should have_content "Pixi" 
+        expect(page).not_to have_content "Total Due"
+        expect(page).to have_content "Pixi" 
       end
     end
   end
@@ -191,13 +191,13 @@ feature "Transactions" do
     end
 
     it 'shows content' do
-      page.should have_selector('title', text: 'PixiPay')
-      page.should have_content "Invoice # #{@invoice.id} from #{@seller.name}"
-      page.should have_content @invoice.pixi_title
-      page.should have_selector('.ttip', visible: true)
-      page.should have_content "Total Due"
-      page.should have_content "Shipping"
-      page.should have_content @invoice.ship_amt
+      expect(page).to have_selector('title', text: 'PixiPay')
+      expect(page).to have_content "Invoice # #{@invoice.id} from #{@seller.name}"
+      expect(page).to have_content @invoice.pixi_title
+      expect(page).to have_selector('.ttip', visible: true)
+      expect(page).to have_content "Total Due"
+      expect(page).to have_content "Shipping"
+      expect(page).to have_content @invoice.ship_amt
       fill_in 'transaction_ship_address', with: '251 Connecticut St'
       fill_in 'transaction_ship_city', with: 'San Francisco'
       select 'California', :from => 'transaction_ship_state'
@@ -207,7 +207,7 @@ feature "Transactions" do
     it "creates shipping transaction with valid visa card", :js=>true do
       expect { 
         credit_card_data '4242424242424242'
-        page.should have_content("Purchase Complete")
+        expect(page).to have_content("Purchase Complete")
       }.to change(Transaction, :count).by(1)
     end
   end
@@ -220,50 +220,50 @@ feature "Transactions" do
     end
 
     it 'shows content', js: true do
-      page.should have_content "Invoice # #{@invoice.id} from #{@seller.name}"
-      page.should have_content @invoice.pixi_title
-      page.should have_selector('.ttip', visible: true)
-      page.should have_content "Total Due"
-      page.should_not have_content "Shipping"
-      page.should have_selector('.addr-tbl', visible: false)
-      page.should have_selector('#edit-txn-addr', visible: false)
-      page.should_not have_content "Payment Information"
-      page.should_not have_selector('#edit-card-btn', visible: false)
-      page.should have_link('Cancel', href: invoice_path(@invoice))
-      page.should have_button('Done!')
+      expect(page).to have_content "Invoice # #{@invoice.id} from #{@seller.name}"
+      expect(page).to have_content @invoice.pixi_title
+      expect(page).to have_selector('.ttip', visible: true)
+      expect(page).to have_content "Total Due"
+      expect(page).not_to have_content "Shipping"
+      expect(page).to have_selector('.addr-tbl', visible: false)
+      expect(page).to have_selector('#edit-txn-addr', visible: false)
+      expect(page).not_to have_content "Payment Information"
+      expect(page).not_to have_selector('#edit-card-btn', visible: false)
+      expect(page).to have_link('Cancel', href: invoice_path(@invoice))
+      expect(page).to have_button('Done!')
     end
 
     it "Reviews an invoice" do
       expect { 
 	click_link 'Cancel'
       }.not_to change(Transaction, :count)
-      page.should have_selector('title', text: 'Invoices')
-      page.should have_content "INVOICE" 
+      expect(page).to have_selector('title', text: 'Invoices')
+      expect(page).to have_content "INVOICE" 
     end
 
     it "creates transaction with valid visa card", :js=>true do
       expect { 
         credit_card_data '4242424242424242'
-        page.should have_content("Purchase Complete")
-        page.should have_content("Please Rate Your Seller")
-        page.should have_link('Add Comment', href: '#') 
+        expect(page).to have_content("Purchase Complete")
+        expect(page).to have_content("Please Rate Your Seller")
+        expect(page).to have_link('Add Comment', href: '#') 
       }.to change(Transaction, :count).by(1)
     end
 
     it "creates transaction with valid mc card", :js=>true do
       expect { 
         credit_card_data '5200828282828210'
-        page.should have_content("Purchase Complete")
-        page.should have_content("Please Rate Your Seller")
-        page.should have_link('Add Comment', href: '#') 
+        expect(page).to have_content("Purchase Complete")
+        expect(page).to have_content("Please Rate Your Seller")
+        expect(page).to have_link('Add Comment', href: '#') 
       }.to change(Transaction, :count).by(1)
     end
 
     it "creates transaction with valid amex card", :js=>true do
       expect { 
         credit_card_data '378282246310005', '1234'
-        page.should have_content("Purchase Complete")
-        page.should have_link('Add Comment', href: '#') 
+        expect(page).to have_content("Purchase Complete")
+        expect(page).to have_link('Add Comment', href: '#') 
       }.to change(Transaction, :count).by(1)
     end
 
@@ -274,14 +274,14 @@ feature "Transactions" do
       expect(MIN_PIXI_COUNT).to eq(0)
       expect { 
         credit_card_data '378282246310005', '1234'
-        page.should have_content("Purchase Complete")
-        page.should have_link('Add Comment', href: '#') 
-        page.should have_selector("#rateit5", visible: true) 
-        page.should have_selector('.cmt-descr', visible: false) 
+        expect(page).to have_content("Purchase Complete")
+        expect(page).to have_link('Add Comment', href: '#') 
+        expect(page).to have_selector("#rateit5", visible: true) 
+        expect(page).to have_selector('.cmt-descr', visible: false) 
         page.find("#rateit5").click
         page.find('#rating-done-btn').click; sleep 3
       }.to change(Transaction, :count).by(1)
-      page.should have_content "Pixis" 
+      expect(page).to have_content "Pixis" 
     end
   end
 
@@ -294,21 +294,21 @@ feature "Transactions" do
     end
 
     it 'shows content' do
-      page.should have_content "Total Due"
-      page.should have_selector('.addr-tbl', visible: false)
-      page.should have_selector('#edit-txn-addr', visible: false)
-      page.should_not have_content "Payment Information"
-      page.should_not have_selector('#edit-card-btn', visible: false)
-      page.should have_link('Cancel', href: invoice_path(@invoice))
-      page.should have_button('Done!')
+      expect(page).to have_content "Total Due"
+      expect(page).to have_selector('.addr-tbl', visible: false)
+      expect(page).to have_selector('#edit-txn-addr', visible: false)
+      expect(page).not_to have_content "Payment Information"
+      expect(page).not_to have_selector('#edit-card-btn', visible: false)
+      expect(page).to have_link('Cancel', href: invoice_path(@invoice))
+      expect(page).to have_button('Done!')
     end
 
     it "creates transaction with valid mc card", :js=>true do
       expect { 
         credit_card_data '5555555555554444'; sleep 2
-        page.should have_content("Purchase Complete")
-        page.should have_content("Please Rate Your Seller")
-        page.should have_link('Add Comment', href: '#') 
+        expect(page).to have_content("Purchase Complete")
+        expect(page).to have_content("Please Rate Your Seller")
+        expect(page).to have_link('Add Comment', href: '#') 
       }.to change(Transaction, :count).by(1)
       expect(CardAccount.all.count).to eq 1
     end
@@ -322,25 +322,25 @@ feature "Transactions" do
     end
 
     it 'shows content', js: true do
-      page.should have_content "Total Due"
-      page.should have_content @listing.title
-      page.should have_content @listing2.title
-      page.should have_selector('.addr-tbl', visible: false)
-      page.should have_selector('#edit-txn-addr', visible: false)
-      page.should_not have_content "Payment Information"
-      page.should_not have_selector('#edit-card-btn', visible: false)
-      page.should have_link('Cancel', href: invoice_path(@invoice))
-      page.should have_button('Done!')
+      expect(page).to have_content "Total Due"
+      expect(page).to have_content @listing.title
+      expect(page).to have_content @listing2.title
+      expect(page).to have_selector('.addr-tbl', visible: false)
+      expect(page).to have_selector('#edit-txn-addr', visible: false)
+      expect(page).not_to have_content "Payment Information"
+      expect(page).not_to have_selector('#edit-card-btn', visible: false)
+      expect(page).to have_link('Cancel', href: invoice_path(@invoice))
+      expect(page).to have_button('Done!')
     end
 
     it "creates transaction with valid mc card", :js=>true do
       expect { 
-        page.should have_content @listing.title
-        page.should have_content @listing2.title
+        expect(page).to have_content @listing.title
+        expect(page).to have_content @listing2.title
         credit_card_data '5555555555554444'; sleep 4
-        page.should have_content("Purchase Complete")
-        page.should have_content("Please Rate Your Seller")
-        page.should have_link('Add Comment', href: '#') 
+        expect(page).to have_content("Purchase Complete")
+        expect(page).to have_content("Please Rate Your Seller")
+        expect(page).to have_link('Add Comment', href: '#') 
       }.to change(Transaction, :count).by(1)
     end
   end
@@ -361,9 +361,9 @@ feature "Transactions" do
       expect { 
         page.find('#edit-txn-addr').click
         fill_in 'transaction_home_phone', with: '4152415555'
-        page.should have_content("Address")
-        page.should have_content("City")
-        page.should have_content("Zip")
+        expect(page).to have_content("Address")
+        expect(page).to have_content("City")
+        expect(page).to have_content("Zip")
       }.to change(Transaction, :count).by(0)
     end
 
@@ -371,27 +371,27 @@ feature "Transactions" do
       expect { 
         page.find('#edit-card-btn').click; sleep 1
         fill_in "card_number", with: '5555555555554444'
-        page.should have_content("Credit Card #")
-        page.should have_content("Code")
+        expect(page).to have_content("Credit Card #")
+        expect(page).to have_content("Code")
       }.to change(Transaction, :count).by(0)
     end
   end
 
   def add_card_account
-      page.should have_content 'Card #'
+      expect(page).to have_content 'Card #'
       expect {
         load_credit_card '4242424242424242'; sleep 2.5
       }.to change(CardAccount, :count).by(1)
 
       visit_inv_txn_path 
-      page.should have_content @user.contacts[0].address
-      page.should have_content @user.contacts[0].city
-      page.should have_content @user.contacts[0].state
-      page.should have_content @user.contacts[0].zip
-      page.should have_selector('#edit-txn-addr', visible: false)
-      page.should have_content "Payment Information"
-      page.should have_selector('#edit-card-btn', visible: true)
-      page.should have_link('Cancel', href: invoice_path(@invoice))
+      expect(page).to have_content @user.contacts[0].address
+      expect(page).to have_content @user.contacts[0].city
+      expect(page).to have_content @user.contacts[0].state
+      expect(page).to have_content @user.contacts[0].zip
+      expect(page).to have_selector('#edit-txn-addr', visible: false)
+      expect(page).to have_content "Payment Information"
+      expect(page).to have_selector('#edit-card-btn', visible: true)
+      expect(page).to have_link('Cancel', href: invoice_path(@invoice))
   end
 
   describe "Valid Invoice Transactions w/ existing card", main: true do
@@ -406,10 +406,10 @@ feature "Transactions" do
     it "submits payment", js: true do
       expect { 
         click_valid_ok
-        page.should have_content("Purchase Complete")
-        page.should have_link('Add Comment', href: '#') 
-        page.should have_selector('#rateit5', visible: true) 
-        page.should have_selector('.cmt-descr', visible: false) 
+        expect(page).to have_content("Purchase Complete")
+        expect(page).to have_link('Add Comment', href: '#') 
+        expect(page).to have_selector('#rateit5', visible: true) 
+        expect(page).to have_selector('.cmt-descr', visible: false) 
       }.to change(Transaction, :count).by(1)
     end
 
@@ -417,7 +417,7 @@ feature "Transactions" do
       expect { 
         page.find('#edit-card-btn').click; sleep 1
 	credit_card_data '5555555555554444'
-        page.should have_content("Purchase Complete")
+        expect(page).to have_content("Purchase Complete")
       }.to change(Transaction, :count).by(1)
       expect(CardAccount.where(user_id: @user.id).count).to eq 2
       expect(@user.card_accounts.get_default_acct.card_no).not_to eq '4444'
@@ -448,8 +448,8 @@ feature "Transactions" do
       visit_inv_txn_path 
       expect { 
         credit_card_data '378282246310005', '1234'
-        page.should have_content("Purchase Complete")
-        page.should have_link('Add Comment', href: '#') 
+        expect(page).to have_content("Purchase Complete")
+        expect(page).to have_link('Add Comment', href: '#') 
       }.to change(Transaction, :count).by(1)
     end
   end
@@ -458,7 +458,7 @@ feature "Transactions" do
       expect {
           click_on 'Save'; sleep 3;
       }.to change(BankAccount, :count).by(1)
-      page.should have_content 'Account #'
+      expect(page).to have_content 'Account #'
 
       # visit new_bank_account_path
       click_link 'Card'
@@ -466,7 +466,7 @@ feature "Transactions" do
       expect {
         load_credit_card '4242424242424242'; sleep 2.5
       }.to change(CardAccount, :count).by(1)
-      page.should have_content 'Card #'
+      expect(page).to have_content 'Card #'
 
       visit_inv_txn_path 
   end
@@ -483,10 +483,10 @@ feature "Transactions" do
     it "creates transaction with saved card", :js=>true do
       expect { 
         click_valid_ok
-        page.should have_content("Purchase Complete")
-        page.should have_link('Add Comment', href: '#') 
-        page.should have_selector('#rateit5', visible: true) 
-        page.should have_selector('.cmt-descr', visible: false) 
+        expect(page).to have_content("Purchase Complete")
+        expect(page).to have_link('Add Comment', href: '#') 
+        expect(page).to have_selector('#rateit5', visible: true) 
+        expect(page).to have_selector('.cmt-descr', visible: false) 
       }.to change(Transaction, :count).by(1)
     end
 
@@ -494,8 +494,8 @@ feature "Transactions" do
       expect { 
         page.find('#edit-card-btn').click; sleep 1
 	credit_card_data '5555555555554444'
-        page.should have_content("Purchase Complete")
-        page.should have_content("MasterCard")
+        expect(page).to have_content("Purchase Complete")
+        expect(page).to have_content("MasterCard")
       }.to change(Transaction, :count).by(1)
       expect(CardAccount.where(user_id: @user.id).count).to eq 2
       expect(@user.card_accounts.get_default_acct.card_no).not_to eq '4444'
@@ -514,53 +514,53 @@ feature "Transactions" do
       expect { 
 	  credit_card_data '', '123', true
       }.not_to change(Transaction, :count)
-      page.should have_content 'invalid'
+      expect(page).to have_content 'invalid'
     end
 
     it "should not create a transaction with invalid card #", :js=>true do
       expect { 
 	  credit_card_data '4444444444444448', '123', true
       }.not_to change(Transaction, :count)
-      page.should_not have_content("Purchase Complete")
+      expect(page).not_to have_content("Purchase Complete")
     end
 
     it "should not create a transaction with bad card #", :js=>true do
       expect { 
 	  credit_card_data '6666666666666666', '123', true
 	  }.not_to change(Transaction, :count)
-      page.should have_content 'invalid'
+      expect(page).to have_content 'invalid'
     end
 
     it "should not create a transaction with bad card token", :js=>true do
       expect { 
 	  credit_card_data '4222222222222220', '123', true
 	  }.not_to change(Transaction, :count)
-      page.should have_content 'invalid'
+      expect(page).to have_content 'invalid'
     end
 
     it "should not create a transaction with no cvv", :js=>true do
       expect { 
 	  credit_card_data '4242424242424242', '', true
 	  }.not_to change(Transaction, :count)
-      page.should have_content 'invalid'
+      expect(page).to have_content 'invalid'
     end
 
     it "should not create a transaction with bad_dates card", :js=>true do
       expect { 
 	  credit_card_data '4242424242424242', '123', false
 	  }.not_to change(Transaction, :count)
-      page.should have_content 'invalid'
+      expect(page).to have_content 'invalid'
     end
 
     it "creates a transaction after bad_dates error", :js=>true do
       expect { 
 	  credit_card_data '4242424242424242', '123', false
 	  }.not_to change(Transaction, :count)
-      page.should have_content 'invalid'
+      expect(page).to have_content 'invalid'
 
       expect { 
         credit_card_data '4111111111111111'
-        page.should have_content("Purchase Complete")
+        expect(page).to have_content("Purchase Complete")
       }.to change(Transaction, :count).by(1)
     end
   end
@@ -577,7 +577,7 @@ feature "Transactions" do
       expect { 
 	click_submit_cancel      
       }.not_to change(Transaction, :count)
-      page.should have_content "Submit Your Pixi" 
+      expect(page).to have_content "Submit Your Pixi" 
     end
   end
 
@@ -697,15 +697,15 @@ feature "Transactions" do
     end
 
     it "should display 'No transactions found'", js: true do
-      page.should have_content 'No transactions found.'
+      expect(page).to have_content 'No transactions found.'
     end
 
     it "should have a selector for date range", js: true do
-      page.should have_selector('#date_range_name', visible: true)
+      expect(page).to have_selector('#date_range_name', visible: true)
     end
 
     it "should have Export Options button", js: true do
-      page.should have_button 'Export Options'
+      expect(page).to have_button 'Export Options'
     end
   end
 
@@ -729,29 +729,29 @@ feature "Transactions" do
     end
 
     it "should have table", js: true do
-      page.should have_content "Transaction Date"
-      page.should have_content "Item Title"
-      page.should have_content "Buyer"
-      page.should have_content "Seller"
-      page.should have_content "Buyer Total"
-      page.should have_content "Seller Total"
+      expect(page).to have_content "Transaction Date"
+      expect(page).to have_content "Item Title"
+      expect(page).to have_content "Buyer"
+      expect(page).to have_content "Seller"
+      expect(page).to have_content "Buyer Total"
+      expect(page).to have_content "Seller Total"
     end
 
     it "should display transaction", js: true do
-      page.should have_content short_date(@txn.updated_at)
-      page.should have_content @txn.pixi_title
-      page.should have_content @txn.buyer_name
-      page.should have_content @txn.seller_name
-      page.should have_content @txn.amt
-      page.should have_content @txn.get_invoice.amount - @txn.get_invoice.get_fee(true)
+      expect(page).to have_content short_date(@txn.updated_at)
+      expect(page).to have_content @txn.pixi_title
+      expect(page).to have_content @txn.buyer_name
+      expect(page).to have_content @txn.seller_name
+      expect(page).to have_content @txn.amt
+      expect(page).to have_content @txn.get_invoice.amount - @txn.get_invoice.get_fee(true)
     end
 
     it "should have a selector for date range", js: true do
-      page.should have_selector('#date_range_name', visible: true)
+      expect(page).to have_selector('#date_range_name', visible: true)
     end
 
     it "should have Export Options button", js: true do
-      page.should have_button 'Export Options'
+      expect(page).to have_button 'Export Options'
     end
   end
 
@@ -761,7 +761,7 @@ feature "Transactions" do
       visit_buy_now_txn_path 
     end
     it 'Cancel deletes invoice', js: true do
-      page.should have_link('Cancel',
+      expect(page).to have_link('Cancel',
         href: invoice_path(id: @invoice.id, status: 'cancel'), method: :delete)
     end
   end

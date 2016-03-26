@@ -12,7 +12,7 @@ class Subcategory < ActiveRecord::Base
   validates :subcategory_type, :presence => true
   validate :must_have_picture
 
-  default_scope :order => "name ASC"
+  default_scope { order "name ASC" }
 
   # validate picture exists
   def must_have_picture

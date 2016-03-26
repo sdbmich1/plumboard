@@ -7,7 +7,10 @@ describe Feed do
 
   subject { @feed }
   describe 'attributes', base: true do
-    its(:attributes) { should include(*%w(description site_id site_name status url)) }
-    it { should validate_presence_of(:url) }
+    describe '#attributes' do
+      subject { super().attributes }
+      it { is_expected.to include(*%w(description site_id site_name status url)) }
+    end
+    it { is_expected.to validate_presence_of(:url) }
   end
 end

@@ -5,13 +5,13 @@ describe CardAccountsController do
 
   def mock_account(stubs={})
     (@mock_account ||= mock_model(CardAccount, stubs).as_null_object).tap do |account|
-      account.stub(stubs) unless stubs.empty?
+      allow(account).to receive_messages(stubs) unless stubs.empty?
     end
   end
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive_messages(stubs) unless stubs.empty?
     end
   end
 

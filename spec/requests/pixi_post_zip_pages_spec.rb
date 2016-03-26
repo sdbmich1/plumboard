@@ -28,14 +28,14 @@ feature "PixiPostZips" do
     end
 
     it 'shows content' do
-      page.should have_selector('title', text: 'PixiPost Zipcheck')
-      page.should have_content "My PixiPosts" 
-      page.should have_content "Move Your Stuff" 
-      page.should have_link "Active", href: seller_pixi_posts_path(status: 'active')
-      page.should have_link "Scheduled", href: seller_pixi_posts_path(status: 'scheduled')
-      page.should have_link "Completed", href: seller_pixi_posts_path(status: 'completed')
-      page.should have_content "Enter Your Zip Code" 
-      page.should have_selector('#zip_code')
+      expect(page).to have_selector('title', text: 'PixiPost Zipcheck')
+      expect(page).to have_content "My PixiPosts" 
+      expect(page).to have_content "Move Your Stuff" 
+      expect(page).to have_link "Active", href: seller_pixi_posts_path(status: 'active')
+      expect(page).to have_link "Scheduled", href: seller_pixi_posts_path(status: 'scheduled')
+      expect(page).to have_link "Completed", href: seller_pixi_posts_path(status: 'completed')
+      expect(page).to have_content "Enter Your Zip Code" 
+      expect(page).to have_selector('#zip_code')
     end
 
     it "finds valid zip" do
@@ -44,11 +44,11 @@ feature "PixiPostZips" do
 	click_button submit
       }.not_to change(PixiPost, :count)
 
-      page.should have_content "PixiPost" 
-      page.should have_content "Requested By: " 
-      page.should have_content @user.name
-      page.should have_content @zip.city
-      page.should have_content @zip.zip
+      expect(page).to have_content "PixiPost" 
+      expect(page).to have_content "Requested By: " 
+      expect(page).to have_content @user.name
+      expect(page).to have_content @zip.city
+      expect(page).to have_content @zip.zip
     end
 
     it "does not find valid zip" do
@@ -57,9 +57,9 @@ feature "PixiPostZips" do
 	click_button submit
       }.not_to change(PixiPost, :count)
 
-      page.should_not have_content "Requested By: " 
-      page.should have_content "#{PIXI_POST_ZIP_ERROR}"
-      page.should have_content "Enter Your Zip Code" 
+      expect(page).not_to have_content "Requested By: " 
+      expect(page).to have_content "#{PIXI_POST_ZIP_ERROR}"
+      expect(page).to have_content "Enter Your Zip Code" 
     end
   end
 
@@ -78,51 +78,51 @@ feature "PixiPostZips" do
     it 'shows active content' do
       visit check_pixi_post_zips_path
       page.find('#active-posts').click
-      page.should have_link("#{@pixi_post.id}", href: pixi_post_path(@pixi_post))
-      page.should_not have_link("#{@scheduled.id}", href: pixi_post_path(@scheduled))
-      page.should_not have_link("#{@completed.id}", href: pixi_post_path(@completed))
-      page.should have_selector('title', text: 'My PixiPosts')
-      page.should have_link "Submitted"
-      page.should have_link "Scheduled"
-      page.should have_link "Completed"
-      page.should have_content "Preferred Date"
-      page.should have_content "Preferred Time"
-      page.should_not have_content "Scheduled Date"
-      page.should_not have_content "Scheduled Time"
-      page.should_not have_content "Completed Date"
-      page.should_not have_content "Completed Time"
-      page.should have_content "My PixiPosts"
-      page.should have_content "Seller Name" 
+      expect(page).to have_link("#{@pixi_post.id}", href: pixi_post_path(@pixi_post))
+      expect(page).not_to have_link("#{@scheduled.id}", href: pixi_post_path(@scheduled))
+      expect(page).not_to have_link("#{@completed.id}", href: pixi_post_path(@completed))
+      expect(page).to have_selector('title', text: 'My PixiPosts')
+      expect(page).to have_link "Submitted"
+      expect(page).to have_link "Scheduled"
+      expect(page).to have_link "Completed"
+      expect(page).to have_content "Preferred Date"
+      expect(page).to have_content "Preferred Time"
+      expect(page).not_to have_content "Scheduled Date"
+      expect(page).not_to have_content "Scheduled Time"
+      expect(page).not_to have_content "Completed Date"
+      expect(page).not_to have_content "Completed Time"
+      expect(page).to have_content "My PixiPosts"
+      expect(page).to have_content "Seller Name" 
     end
 
     it "displays scheduled posts" do
       visit check_pixi_post_zips_path
       page.find('#schd-posts').click
-      page.should_not have_content "Preferred Date"
-      page.should_not have_content "Preferred Time"
-      page.should have_content "Scheduled Date"
-      page.should have_content "Scheduled Time"
-      page.should_not have_content "Completed Date"
-      page.should_not have_content "Completed Time"
-      page.should_not have_content @pixi_post.description
-      page.should_not have_content @completed.description
-      page.should have_content @scheduled.description
-      page.should_not have_content 'No posts found.'
+      expect(page).not_to have_content "Preferred Date"
+      expect(page).not_to have_content "Preferred Time"
+      expect(page).to have_content "Scheduled Date"
+      expect(page).to have_content "Scheduled Time"
+      expect(page).not_to have_content "Completed Date"
+      expect(page).not_to have_content "Completed Time"
+      expect(page).not_to have_content @pixi_post.description
+      expect(page).not_to have_content @completed.description
+      expect(page).to have_content @scheduled.description
+      expect(page).not_to have_content 'No posts found.'
     end
 
     it "displays completed posts" do
       visit check_pixi_post_zips_path
       page.find('#comp-posts').click
-      page.should_not have_content "Preferred Date"
-      page.should_not have_content "Preferred Time"
-      page.should_not have_content "Scheduled Date"
-      page.should_not have_content "Scheduled Time"
-      page.should have_content "Completed Date"
-      page.should have_content "Completed Time"
-      page.should_not have_content @pixi_post.description
-      page.should_not have_content @scheduled.description
-      page.should have_content @completed.description
-      page.should_not have_content 'No posts found.'
+      expect(page).not_to have_content "Preferred Date"
+      expect(page).not_to have_content "Preferred Time"
+      expect(page).not_to have_content "Scheduled Date"
+      expect(page).not_to have_content "Scheduled Time"
+      expect(page).to have_content "Completed Date"
+      expect(page).to have_content "Completed Time"
+      expect(page).not_to have_content @pixi_post.description
+      expect(page).not_to have_content @scheduled.description
+      expect(page).to have_content @completed.description
+      expect(page).not_to have_content 'No posts found.'
     end
   end
 

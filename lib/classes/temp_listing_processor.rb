@@ -29,12 +29,12 @@ class TempListingProcessor < ListingDataProcessor
   def async_send_notification 
     case @listing.status
       when 'pending'
-        UserMailer.delay.send_submit_notice(@listing)
+        UserMailer.send_submit_notice(@listing).deliver_later
       when 'approved'
         post_to_board
         @listing.transaction.process_transaction unless @listing.transaction.approved? rescue nil
       when 'denied'
-        UserMailer.delay.send_denial(@listing)
+        UserMailer.send_denial(@listing).deliver_later
         SystemMessenger::send_message @listing.user, @listing, 'deny'
     end
   end

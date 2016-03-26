@@ -8,7 +8,7 @@ class Inquiry < ActiveRecord::Base
   belongs_to :inquiry_type, foreign_key: 'code', primary_key: 'code'
 
   # name format validators
-  name_regex = 	/^[A-Z]'?['-., a-zA-Z]+$/i
+  name_regex = 	/\A[A-Z]'?['-., a-zA-Z]+\z/i
   email_regex = /[\w-]+@([\w-]+\.)+[\w-]+/i
 
   # validate added fields  				  
@@ -24,7 +24,7 @@ class Inquiry < ActiveRecord::Base
   validates :comments, presence: true
   validates :code, presence: true
 
-  default_scope order: 'inquiries.created_at DESC'
+  default_scope { order 'inquiries.created_at DESC' }
 
   # set fields upon creation
   def set_flds

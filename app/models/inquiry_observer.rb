@@ -3,7 +3,7 @@ class InquiryObserver < ActiveRecord::Observer
 
   # send emails upon request
   def after_create inquiry
-    UserMailer.delay.send_inquiry(inquiry) # to user
-    UserMailer.delay.send_inquiry_notice(inquiry) # to pixiboard
+    UserMailer.send_inquiry(inquiry).deliver_later # to user
+    UserMailer.send_inquiry_notice(inquiry).deliver_later # to pixiboard
   end
 end

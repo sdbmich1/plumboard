@@ -12,26 +12,26 @@ describe ListingsController do
   def set_status
     allow_message_expectations_on_nil
     controller.instance_variable_set(:@status, 'active')
-    @status.stub!(:to_sym).and_return(:active)
+    allow(@status).to receive(:to_sym).and_return(:active)
   end
 
   def set_index_data
     set_status
-    Listing.any_instance.stub(:geocode) { [1,1] }
-    Listing.any_instance.stub(:created_date).and_return(DateTime.current)
-    controller.stub!(:get_location).and_return(:success)
+    allow_any_instance_of(Listing).to receive(:geocode) { [1,1] }
+    allow_any_instance_of(Listing).to receive(:created_date).and_return(DateTime.current)
+    allow(controller).to receive(:get_location).and_return(:success)
   end
 
   def get_board_data
     @sellers = stub_model(User)
-    User.stub!(:get_sellers).and_return(@sellers)
-    controller.stub!(:load_data).and_return(:success)
+    allow(User).to receive(:get_sellers).and_return(@sellers)
+    allow(controller).to receive(:load_data).and_return(:success)
   end
 
   def load_comments
     @comments = stub_model(Comment)
-    @comments.stub!(:paginate).and_return(@comments)
-    controller.stub!(:add_points).and_return(:success)
+    allow(@comments).to receive(:paginate).and_return(@comments)
+    allow(controller).to receive(:add_points).and_return(:success)
   end
 
   describe 'GET index', index: true do

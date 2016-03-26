@@ -5,25 +5,25 @@ describe TransactionsController do
 
   def mock_transaction(stubs={})
     (@mock_transaction ||= mock_model(Transaction, stubs).as_null_object).tap do |transaction|
-      transaction.stub(stubs) unless stubs.empty?
+      allow(transaction).to receive_messages(stubs) unless stubs.empty?
     end
   end
 
   def mock_invoice(stubs={})
     (@mock_invoice ||= mock_model(Invoice, stubs).as_null_object).tap do |invoice|
-      invoice.stub(stubs) unless stubs.empty?
+      allow(invoice).to receive_messages(stubs) unless stubs.empty?
     end
   end
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive_messages(stubs) unless stubs.empty?
     end
   end
 
   def set_ability
     @abilities = Ability.new(@user)
-    Ability.stub(:new).and_return(@abilities)
+    allow(Ability).to receive(:new).and_return(@abilities)
   end
 
   before(:each) do
@@ -41,9 +41,9 @@ describe TransactionsController do
       @invoice = stub_model(Invoice)
       @invoice.amount = 0
       @transactions.invoices.push(@invoice)
-      Transaction.stub_chain(:get_by_date).and_return(@transactions)
-      @transactions.stub!(:paginate).and_return(@transactions)
-      controller.stub_chain(:load_date_range, :load_page).and_return(:success)
+      allow(Transaction).to receive_message_chain(:get_by_date).and_return(@transactions)
+      allow(@transactions).to receive(:paginate).and_return(@transactions)
+      allow(controller).to receive_message_chain(:load_date_range, :load_page).and_return(:success)
       do_get
     end
 
@@ -52,11 +52,11 @@ describe TransactionsController do
     end
 
     it "renders the :index view" do
-      response.should render_template :index
+      expect(response).to render_template :index
     end
 
     it "should assign @transactions" do
-      assigns(:transactions).should_not be_nil
+      expect(assigns(:transactions)).not_to be_nil
     end
 
     it "responds to JSON" do
@@ -73,8 +73,8 @@ describe TransactionsController do
   describe 'xhr GET index' do
     before(:each) do
       @transactions = stub_model(Transaction)
-      Transaction.stub!(:get_by_date).and_return(@transactions)
-      @transactions.stub!(:paginate).and_return(@transactions)
+      allow(Transaction).to receive(:get_by_date).and_return(@transactions)
+      allow(@transactions).to receive(:paginate).and_return(@transactions)
     end
 
     def do_get
@@ -83,24 +83,24 @@ describe TransactionsController do
 
     it "renders the :index view" do
       do_get
-      response.should render_template :index
+      expect(response).to render_template :index
     end
 
     it "should assign @transactions" do
-      Transaction.should_receive(:get_by_date).and_return(@transactions)
+      expect(Transaction).to receive(:get_by_date).and_return(@transactions)
       do_get 
-      assigns(:transactions).should_not be_nil
+      expect(assigns(:transactions)).not_to be_nil
     end
   end
 
   describe "GET 'new'" do
 
     before :each do
-      controller.stub(:order) {['order', 'order']}
-      controller.stub(:order) {['transaction_type', 'invoice']}
-      controller.stub!(:current_user).and_return(@user)
-      controller.stub_chain(:load_vars).and_return(:success)
-      Transaction.stub!(:load_new).with(@user, @order).and_return( @transaction )
+      allow(controller).to receive(:order) {['order', 'order']}
+      allow(controller).to receive(:order) {['transaction_type', 'invoice']}
+      allow(controller).to receive(:current_user).and_return(@user)
+      allow(controller).to receive_message_chain(:load_vars).and_return(:success)
+      allow(Transaction).to receive(:load_new).with(@user, @order).and_return( @transaction )
     end
 
     def do_get
@@ -109,19 +109,19 @@ describe TransactionsController do
 
     it "should assign @transaction" do
       do_get
-      assigns(:transaction).should_not be_nil
+      expect(assigns(:transaction)).not_to be_nil
     end
 
     it "new action should render new template" do
       do_get
-      response.should render_template(:new)
+      expect(response).to render_template(:new)
     end
   end
 
   describe 'GET show/:id' do
     before :each do
-      Transaction.stub!(:find).and_return( @transaction )
-      controller.stub!(:current_user).and_return(@user)
+      allow(Transaction).to receive(:find).and_return( @transaction )
+      allow(controller).to receive(:current_user).and_return(@user)
     end
 
     def do_get
@@ -130,33 +130,33 @@ describe TransactionsController do
 
     it "should show the requested transaction" do
       do_get
-      response.should be_success
+      expect(response).to be_success
     end
 
     it "should load the requested transaction" do
-      Transaction.stub!(:find).with('1').and_return(@transaction)
+      allow(Transaction).to receive(:find).with('1').and_return(@transaction)
       do_get
     end
 
     it "should assign @transaction" do
       do_get
-      assigns(:transaction).should_not be_nil
+      expect(assigns(:transaction)).not_to be_nil
     end
 
     it "show action should render show template" do
       do_get
-      response.should render_template(:show)
+      expect(response).to render_template(:show)
     end
 
     it "responds to JSON" do
       get  :show, :id => '1', format: :json
-      response.status.should eq(200)
+      expect(response.status).to eq(200)
     end
   end
 
   describe "POST create" do
     before :each do
-      Transaction.stub!(:new).and_return(@transaction)
+      allow(Transaction).to receive(:new).and_return(@transaction)
     end
 
     def do_create
@@ -166,23 +166,23 @@ describe TransactionsController do
     
     context 'failure' do
       before :each do
-        Transaction.stub!(:save_transaction).and_return(false)
+        allow(Transaction).to receive(:save_transaction).and_return(false)
       end
 
       it "should assign @transaction" do
         do_create
-        assigns(:transaction).should_not be_nil 
+        expect(assigns(:transaction)).not_to be_nil 
       end
 
       it "create action should render new action" do
         do_create
-        response.should_not be_redirect
+        expect(response).not_to be_redirect
       end
 
       it "responds to JSON" do
         post :create, id: '1', transaction: { 'first_name'=>'test', 'description'=>'test' }, order: { "title" => 'New Pixi', "quantity1" => 1, 
 	   "price1" => 5.00, 'id1' => '1234', 'item1' => 'bicycle' }, :format=>:json
-	response.status.should_not eq(0)
+	expect(response.status).not_to eq(0)
       end
     end
 
@@ -190,36 +190,36 @@ describe TransactionsController do
 
       before :each do
 	@my_model = stub_model(Transaction,:save=>true)
-        Transaction.stub!(:save_transaction).and_return(true)
+        allow(Transaction).to receive(:save_transaction).and_return(true)
       end
 
       it "should load the requested transaction" do
-        Transaction.stub(:new).with({'first_name'=>'test', 'description'=>'test' }) { mock_transaction(:save_transaction => true) }
+        allow(Transaction).to receive(:new).with({'first_name'=>'test', 'description'=>'test' }) { mock_transaction(:save_transaction => true) }
         do_create
       end
 
       it "should assign @transaction" do
         do_create
-        assigns(:transaction).should_not be_nil 
+        expect(assigns(:transaction)).not_to be_nil 
       end
 
       it "should redirect to the created transaction" do
-        Transaction.stub(:new).with({'first_name'=>'test', 'description'=>'test' }) { mock_transaction(:save_transaction => true) }
+        allow(Transaction).to receive(:new).with({'first_name'=>'test', 'description'=>'test' }) { mock_transaction(:save_transaction => true) }
         do_create
-        response.should be_redirect
+        expect(response).to be_redirect
       end
 
       it "should change transaction count" do
         lambda do
           do_create
-          should change(Transaction, :count).by(1)
+          is_expected.to change(Transaction, :count).by(1)
         end
       end
 
       it "responds to JSON" do
         post :create, id: '1', transaction: { 'first_name'=>'test', 'description'=>'test' }, order: { "item_name" => 'New Pixi', "quantity" => 1, 
 	   "price" => 5.00 }, format: :json
-	response.status.should_not eq(0)
+	expect(response.status).not_to eq(0)
       end
     end
   end

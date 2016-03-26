@@ -29,69 +29,69 @@ describe PixiPost do
   subject { @pixi_post }
 
   describe 'post_attributes', base: true do
-    it { should respond_to(:user_id) }
-    it { should respond_to(:preferred_date) }
-    it { should respond_to(:preferred_time) }
-    it { should respond_to(:alt_time) }
-    it { should respond_to(:alt_date) }
-    it { should respond_to(:value) }
-    it { should respond_to(:quantity) }
-    it { should respond_to(:description) }
-    it { should respond_to(:pixan_id) }
-    it { should respond_to(:appt_date) }
-    it { should respond_to(:appt_time) }
-    it { should respond_to(:completed_time) }
-    it { should respond_to(:completed_date) }
-    it { should respond_to(:set_flds) }
-    it { should respond_to(:comments) }
-    it { should respond_to(:editor_id) }
-    it { should respond_to(:pixan_name) }
-    it { should respond_to(:zip_service_area) }
+    it { is_expected.to respond_to(:user_id) }
+    it { is_expected.to respond_to(:preferred_date) }
+    it { is_expected.to respond_to(:preferred_time) }
+    it { is_expected.to respond_to(:alt_time) }
+    it { is_expected.to respond_to(:alt_date) }
+    it { is_expected.to respond_to(:value) }
+    it { is_expected.to respond_to(:quantity) }
+    it { is_expected.to respond_to(:description) }
+    it { is_expected.to respond_to(:pixan_id) }
+    it { is_expected.to respond_to(:appt_date) }
+    it { is_expected.to respond_to(:appt_time) }
+    it { is_expected.to respond_to(:completed_time) }
+    it { is_expected.to respond_to(:completed_date) }
+    it { is_expected.to respond_to(:set_flds) }
+    it { is_expected.to respond_to(:comments) }
+    it { is_expected.to respond_to(:editor_id) }
+    it { is_expected.to respond_to(:pixan_name) }
+    it { is_expected.to respond_to(:zip_service_area) }
 
-    it { should validate_presence_of(:user_id) }
-    it { should validate_presence_of(:preferred_time) }
-    it { should validate_presence_of(:quantity) }
-    it { should validate_presence_of(:description) }
-    it { should validate_presence_of(:value) }
+    it { is_expected.to validate_presence_of(:user_id) }
+    it { is_expected.to validate_presence_of(:preferred_time) }
+    it { is_expected.to validate_presence_of(:quantity) }
+    it { is_expected.to validate_presence_of(:description) }
+    it { is_expected.to validate_presence_of(:value) }
 
-    it { should belong_to(:user) }
-    it { should belong_to(:pixan).with_foreign_key('pixan_id') }
-    it { should have_many(:pixi_post_details) }
-    it { should have_many(:listings).through(:pixi_post_details) }
+    it { is_expected.to belong_to(:user) }
+    it { is_expected.to belong_to(:pixan).with_foreign_key('pixan_id') }
+    it { is_expected.to have_many(:pixi_post_details) }
+    it { is_expected.to have_many(:listings).through(:pixi_post_details) }
 
     it_behaves_like "an address", @post, :pixi_post
 
-    it { should validate_numericality_of(:quantity).is_greater_than(0) }
-    it { should validate_numericality_of(:value).is_greater_than_or_equal_to(50) }
-    it { should validate_numericality_of(:value).is_less_than_or_equal_to(MAX_PIXI_AMT.to_f) }
-    it { should allow_value(400).for(:value) }
-    it { should_not allow_value(30).for(:value) }
-    it { should_not allow_value(200000).for(:value) }
+    it { is_expected.to validate_numericality_of(:quantity).is_greater_than(0) }
+    it { is_expected.to validate_numericality_of(:value).is_greater_than_or_equal_to(50) }
+    it { is_expected.to validate_numericality_of(:value).is_less_than_or_equal_to(MAX_PIXI_AMT.to_f) }
+    it { is_expected.to allow_value(400).for(:value) }
+    it { is_expected.not_to allow_value(30).for(:value) }
+    it { is_expected.not_to allow_value(200000).for(:value) }
   end
 
   describe "active pixi posts" do
     before { @user.pixi_posts.create attributes_for(:pixi_post)}
-    it { PixiPost.active.should_not be_nil } 
+    it { expect(PixiPost.active).not_to be_nil } 
   end
 
   describe "inactive pixi posts" do
     before { @user.pixi_posts.create attributes_for(:pixi_post, status: 'inactive') }
-    it { PixiPost.active.should be_empty } 
+    it { expect(PixiPost.active).to be_empty } 
   end
 
   describe "get by status" do
     it "get_by_status should not include active posts" do
       @user.pixi_posts.create attributes_for(:pixi_post) 
-      PixiPost.get_by_status('active').should_not be_empty 
+      expect(PixiPost.get_by_status('active')).not_to be_empty 
     end
 
     it "get_by_status should not include inactive posts" do
-      PixiPost.get_by_status('inactive').should_not == @pixi_post 
+      expect(PixiPost.get_by_status('inactive')).not_to eq(@pixi_post) 
     end
   end
 
   describe "pixter name" do 
-    it { @pixi_post.pixter_name.should be_nil } 
+    it { expect(@pixi_post.pixter_name).to be_nil } 
 
     it "should not find correct pixter name" do 
       pixan = create(:pixi_user)
@@ -101,51 +101,57 @@ describe PixiPost do
   end
 
   describe "seller name" do 
-    it { @pixi_post.seller_name.should == @user.name } 
+    it { expect(@pixi_post.seller_name).to eq(@user.name) } 
 
     it "should not find correct seller name" do 
       @pixi_post.user_id = 100 
+      @pixi_post.save
+      @pixi_post.reload
       expect(@pixi_post.seller_name).not_to eq(@user.name)
     end
   end
 
   describe "seller first name" do 
-    it { @pixi_post.seller_first_name.should == @user.first_name } 
+    it { expect(@pixi_post.seller_first_name).to eq(@user.first_name) } 
 
     it "should not find correct seller first_name" do 
-      @pixi_post.user_id = 100 
+      @pixi_post.user_id = 100
+      @pixi_post.save
+      @pixi_post.reload
       expect(@pixi_post.seller_first_name).not_to eq(@user.first_name)
     end
   end
 
   describe "seller email" do 
-    it { @pixi_post.seller_email.should == @user.email } 
+    it { expect(@pixi_post.seller_email).to eq(@user.email) } 
 
     it "should not find correct seller email" do 
-      @pixi_post.user_id = 100 
+      @pixi_post.user_id = 100
+      @pixi_post.save
+      @pixi_post.reload
       expect(@pixi_post.seller_email).not_to eq(@user.email)
     end
   end
 
   describe "owner" do 
     it "should verify user is owner" do 
-      @pixi_post.owner?(@user).should be_true 
+      expect(@pixi_post.owner?(@user)).to be_truthy 
     end
 
     it "should not verify user is owner" do 
       other_user = create :contact_user
-      @pixi_post.owner?(other_user).should_not be_true 
+      expect(@pixi_post.owner?(other_user)).not_to be_truthy 
     end
   end
 
   describe 'has_address?' do
     it 'should return true' do
-      @pixi_post.has_address?.should be_true
+      expect(@pixi_post.has_address?).to be_truthy
     end
 
     it 'should not return true' do
       pixi_post = build :pixi_post, address: '', city: ''
-      pixi_post.has_address?.should_not be_true
+      expect(pixi_post.has_address?).not_to be_truthy
     end
   end
   
@@ -164,96 +170,97 @@ describe PixiPost do
     end
 
     it "does not load new pixipost" do
-      PixiPost.load_new(nil, '90201').should_not be_nil
+      expect(PixiPost.load_new(nil, '90201')).not_to be_nil
     end
   end
 
   describe '.has_pixan?' do
     it "has no pixan" do
-      @pixi_post.has_pixan?.should be_false
+      expect(@pixi_post.has_pixan?).to be_falsey
     end
 
     it "has a pixan" do
       pixan = create :pixi_user
       @pixi_post.pixan_id = pixan.id
-      @pixi_post.has_pixan?.should be_true
+      expect(@pixi_post.has_pixan?).to be_truthy
     end
   end
 
   describe 'has_pixi?' do
     it 'should not return true' do
-      @pixi_post.has_pixi?.should_not be_true
+      expect(@pixi_post.has_pixi?).not_to be_truthy
     end
 
     it 'should return true' do
       listing = create :listing, seller_id: @user.id
+      @pixi_post.completed_date = Date.today
       @pixi_post.pixi_post_details.build attributes_for :pixi_post_detail, pixi_id: listing.pixi_id 
       @pixi_post.save!
-      @pixi_post.has_pixi?.should be_true
+      expect(@pixi_post.has_pixi?).to be_truthy
     end
   end
 
   describe 'has_appt?' do
     it 'should not return true' do
-      @pixi_post.has_appt?.should_not be_true
+      expect(@pixi_post.has_appt?).not_to be_truthy
     end
 
     it 'should return true' do
       pixi_post = build :pixi_post, appt_date: Date.today+1.day
-      pixi_post.has_appt?.should be_true
+      expect(pixi_post.has_appt?).to be_truthy
     end
   end
 
   describe 'is_completed?' do
     it 'should not return true' do
-      @pixi_post.is_completed?.should_not be_true
+      expect(@pixi_post.is_completed?).not_to be_truthy
     end
 
     it 'should return true' do
       pixi_post = build :pixi_post, completed_date: Date.today+1.day
-      pixi_post.is_completed?.should be_true
+      expect(pixi_post.is_completed?).to be_truthy
     end
   end
 
   describe 'is_admin?' do
     it 'should not return true' do
-      @pixi_post.is_admin?.should_not be_true
+      expect(@pixi_post.is_admin?).not_to be_truthy
     end
 
     it 'should return true' do
       pixi_post = build :pixi_post, completed_date: Date.today+1.day, appt_date: Date.today+1.day
-      pixi_post.is_admin?.should be_true
+      expect(pixi_post.is_admin?).to be_truthy
     end
   end
 
   describe 'has_comments?' do
     it 'does not return true' do
-      @pixi_post.has_comments?.should_not be_true
+      expect(@pixi_post.has_comments?).not_to be_truthy
     end
 
     it 'returns true' do
       pixi_post = build :pixi_post, comments: 'ask for julie'
-      pixi_post.has_comments?.should be_true
+      expect(pixi_post.has_comments?).to be_truthy
     end
   end
 
   describe 'get_time' do
     it 'should not return true' do
-      @pixi_post.get_time('test').should_not be_true
+      expect(@pixi_post.get_time('test')).not_to be_truthy
     end
 
     it 'should return true' do
-      @pixi_post.get_time('preferred_time').should be_true
+      expect(@pixi_post.get_time('preferred_time')).to be_truthy
     end
   end
 
   describe 'get_date' do
     it 'should not return true' do
-      @pixi_post.get_date('test').should_not be_true
+      expect(@pixi_post.get_date('test')).not_to be_truthy
     end
 
     it 'should return true' do
-      @pixi_post.get_date('preferred_date').should be_true
+      expect(@pixi_post.get_date('preferred_date')).to be_truthy
     end
   end
 
@@ -288,13 +295,13 @@ describe PixiPost do
     it "sets status to active" do
       @post = @user.pixi_posts.build attributes_for :pixi_post, status: nil
       @post.save
-      @post.status.should == 'active'
+      expect(@post.status).to eq('active')
     end
 
     it "does not set status to active" do
       @post = @user.pixi_posts.build attributes_for :pixi_post, status: 'inactive'
       @post.save
-      @post.status.should_not == 'active'
+      expect(@post.status).not_to eq('active')
     end
 
     it "sets status to scheduled" do
@@ -302,7 +309,7 @@ describe PixiPost do
       @post = @user.pixi_posts.build attributes_for :pixi_post, pixan_id: @pixan.id, appt_date: Date.today+3.days, 
         appt_time: Time.now+3.days
       @post.save
-      @post.status.should == 'scheduled'
+      expect(@post.status).to eq('scheduled')
     end
 
     it "sets status to completed" do
@@ -312,7 +319,7 @@ describe PixiPost do
         appt_time: Time.now+3.days, completed_date: Time.now+3.days
       @post.pixi_post_details.build attributes_for :pixi_post_detail, pixi_id: @listing.pixi_id 
       @post.save
-      @post.status.should_not == 'scheduled'
+      expect(@post.status).not_to eq('scheduled')
       expect(@post.status).to eq('completed')
     end
   end
@@ -321,20 +328,20 @@ describe PixiPost do
     it "includes seller posts" do
       @user.pixi_posts.create attributes_for(:pixi_post) 
       expect(PixiPost.all.count).to eq(1)
-      PixiPost.get_by_seller(@user).should_not be_empty  
+      expect(PixiPost.get_by_seller(@user)).not_to be_empty  
     end
       
-    it { PixiPost.get_by_seller(0).should_not include @pixi_post } 
+    it { expect(PixiPost.get_by_seller(0)).not_to include @pixi_post } 
   end
 
   describe "pixter posts" do 
-    it { PixiPost.get_by_pixter(0).should_not include @pixi_post } 
+    it { expect(PixiPost.get_by_pixter(0)).not_to include @pixi_post } 
 
     it "includes pixter posts" do 
       @pixi_post.appt_date = @pixi_post.appt_time = Time.now+3.days
       @pixi_post.pixan_id = 1
       @pixi_post.save
-      PixiPost.get_by_pixter(1).should_not be_empty  
+      expect(PixiPost.get_by_pixter(1)).not_to be_empty  
     end
   end
 
@@ -348,7 +355,7 @@ describe PixiPost do
     describe 'preferred date' do
       it "has valid preferred date" do
         @pixi_post.preferred_date = Date.today+4.days
-        @pixi_post.should be_valid
+        expect(@pixi_post).to be_valid
       end
 
       it "does not reject a old preferred date" do
@@ -356,22 +363,22 @@ describe PixiPost do
         @pixi_post.preferred_date = Date.today-1.day
         @pixi_post.appt_date = @pixi_post.appt_time = Time.now+3.days
 	@pixi_post.pixan_id = @pixan.id
-        @pixi_post.should be_valid
+        expect(@pixi_post).to be_valid
       end
 
       it "rejects a bad preferred date" do
         @pixi_post.preferred_date = Date.today-1.day
-        @pixi_post.should_not be_valid
+        expect(@pixi_post).not_to be_valid
       end
 
       it "rejects a bad preferred time" do
         @pixi_post.preferred_time = nil
-        @pixi_post.should_not be_valid
+        expect(@pixi_post).not_to be_valid
       end
 
       it "is not be valid without a preferred date" do
         @pixi_post.preferred_date = nil
-        @pixi_post.should_not be_valid
+        expect(@pixi_post).not_to be_valid
       end
     end
 
@@ -384,7 +391,7 @@ describe PixiPost do
 
       it "has valid alternate date" do
         @pixi_post.alt_date = Date.today+3.days
-        @pixi_post.should be_valid
+        expect(@pixi_post).to be_valid
       end
 
       it "does not reject a old alt date" do
@@ -392,18 +399,18 @@ describe PixiPost do
         @pixi_post.alt_date = Date.today-1.day
         @pixi_post.appt_date = @pixi_post.appt_time = Time.now+3.days
 	@pixi_post.pixan_id = @pixan.id
-        @pixi_post.should be_valid
+        expect(@pixi_post).to be_valid
       end
 
       it "has invalid alternate time" do
         @pixi_post.alt_date = Date.today+3.days
         @pixi_post.alt_time = nil
-        @pixi_post.should_not be_valid
+        expect(@pixi_post).not_to be_valid
       end
 
       it "should reject a bad alternate date" do
         @pixi_post.alt_date = Date.today-1.day
-        @pixi_post.should_not be_valid
+        expect(@pixi_post).not_to be_valid
       end
     end
 
@@ -415,29 +422,29 @@ describe PixiPost do
 
       it "has valid appt date" do
         @post.appt_date = @post.appt_time = Time.now+3.days
-        @post.should be_valid
+        expect(@post).to be_valid
       end
 
       it "has valid appt date w/ old preferred date" do
         @post.appt_date = @post.appt_time = Time.now+3.days
         @post.preferred_date = Time.now-3.days
-        @post.should be_valid
+        expect(@post).to be_valid
       end
 
       it "rejects a bad or missing appt date" do
-        @post.should_not be_valid
+        expect(@post).not_to be_valid
       end
 
       it "has invalid appt time" do
         @pixi_post.appt_date = Date.today+3.days
         @pixi_post.appt_time = nil
-        @pixi_post.should_not be_valid
+        expect(@pixi_post).not_to be_valid
       end
 
       it "rejects a missing pixan id" do
         @post.appt_date = Date.today+3.days
 	@post.pixan_id = nil
-        @post.should_not be_valid
+        expect(@post).not_to be_valid
       end
     end
 
@@ -450,25 +457,25 @@ describe PixiPost do
 
       it "has valid completed date" do
         @post.completed_date = Date.today+3.days
-        @post.should be_valid
+        expect(@post).to be_valid
       end
 
       it "has valid completed date w/ old preferred date" do
         @post.completed_date = Time.now+3.days
         @post.preferred_date = Time.now-3.days
-        @post.should be_valid
+        expect(@post).to be_valid
       end
 
       it "has valid completed date w/ old alt date" do
         @post.completed_date = Time.now+3.days
         @post.alt_date = Time.now-3.days
-        @post.should be_valid
+        expect(@post).to be_valid
       end
 
       it "has valid old completed date w/ old alt date" do
         @post.completed_date = Time.now-3.days
         @post.alt_date = Time.now-3.days
-        @post.should be_valid
+        expect(@post).to be_valid
       end
 
       it "has valid completed date w/ old appt date" do
@@ -476,11 +483,11 @@ describe PixiPost do
 	@post.pixan_id = @pixan.id
         @post.completed_date = Time.now+3.days
         @post.appt_date = @post.appt_time = Time.now-3.days
-        @post.should be_valid
+        expect(@post).to be_valid
       end
 
       it "rejects a bad or missing completed date" do
-        @post.should_not be_valid
+        expect(@post).not_to be_valid
       end
     end
   end
@@ -489,12 +496,12 @@ describe PixiPost do
     let(:pixan) { create :pixi_user }
     it "checks appt date" do
       @post = @user.pixi_posts.build attributes_for :pixi_post, pixan_id: pixan.id, appt_date: Date.today+3.days 
-      @pixi_post.should be_valid
+      expect(@pixi_post).to be_valid
     end
 
     it "checks for missing appt date" do
       @post = @user.pixi_posts.build attributes_for :pixi_post, pixan_id: pixan.id
-      @post.should_not be_valid
+      expect(@post).not_to be_valid
     end
   end
 
@@ -506,28 +513,28 @@ describe PixiPost do
       @post = @user.pixi_posts.build attributes_for :pixi_post, pixan_id: pixan.id, appt_date: Time.now+3.days, 
         completed_date: Time.now+3.days, appt_time: Time.now+3.days
       @post.pixi_post_details.build attributes_for :pixi_post_detail, pixi_id: listing.pixi_id 
-      @post.should be_valid
+      expect(@post).to be_valid
     end
 
     it "checks for missing completed date" do
       @post = @user.pixi_posts.build attributes_for :pixi_post, pixan_id: pixan.id
-      @post.should_not be_valid
+      expect(@post).not_to be_valid
     end
 
     it "checks for missing pixi" do
       @post = @user.pixi_posts.build attributes_for :pixi_post, pixan_id: pixan.id, appt_date: Time.now+3.days, 
         completed_date: Time.now+3.days, appt_time: Time.now+3.days
-      @post.should_not be_valid
+      expect(@post).not_to be_valid
     end
   end
 
   describe "zip service area" do 
     let(:pixi_post) { build :pixi_post, zip: '94720' }
-    it { @pixi_post.should be_valid }
+    it { expect(@pixi_post).to be_valid }
 
     it "should not save w/o valid zip" do 
       pixi_post.save
-      pixi_post.should_not be_valid 
+      expect(pixi_post).not_to be_valid 
     end
   end 
 
@@ -576,7 +583,7 @@ describe PixiPost do
       end
       it { expect(@pixi_post.sale_value).to eq @details.subtotal }
       it { expect(@pixi_post.sale_date.to_date).to eq @invoice.created_at.to_date }
-      it { expect(@pixi_post.any_sold?).to be_true }
+      it { expect(@pixi_post.any_sold?).to be_truthy }
       it { expect(@pixi_post.revenue).to eq (@details.subtotal * PXB_TXN_PERCENT * PIXTER_PERCENT) }
       it { expect(@pixi_post.get_val('sale_value')).to eq @details.subtotal }
     end
@@ -584,7 +591,7 @@ describe PixiPost do
     context 'not sold' do
       it { expect(@pixi_post.sale_value).not_to eq @listing.price }
       it { expect(@pixi_post.sale_date).not_to eq @invoice.created_at }
-      it { expect(@pixi_post.any_sold?).not_to be_true }
+      it { expect(@pixi_post.any_sold?).not_to be_truthy }
       it { expect(@pixi_post.revenue).to eq 0.0 }
       it { expect(@pixi_post.get_val('revenue')).to eq 'Not sold yet' }
     end
@@ -635,14 +642,15 @@ describe PixiPost do
 
     it 'adds ppx pixi points' do
       expect(@user.user_pixi_points.count).not_to eq(0)
-      @user.user_pixi_points.find_by_code('ppx').code.should == 'ppx'
-      @user.user_pixi_points.find_by_code('app').should be_nil
+      expect(@user.user_pixi_points.find_by_code('ppx').code).to eq('ppx')
+      expect(@user.user_pixi_points.find_by_code('app')).to be_nil
     end
 
     it 'updates contact info' do
       @post = @user.pixi_posts.build FactoryGirl.attributes_for(:pixi_post, status: 'active')
       @post.save!
-      @post.user.contacts[0].address.should == @post.address 
+      @post.reload
+      expect(@post.user.contacts[0].address).to eq(@post.address) 
     end
 
     it 'delivers approved pixi message' do
@@ -670,21 +678,19 @@ describe PixiPost do
   end
 
   def set_attr uid
-    attr = {"preferred_date"=>"04/05/2015", "preferred_time"=>"13:00:00", "alt_date"=>"", "alt_time"=>"12:00:00", 
+    {"preferred_date"=>Date.today + 5.days, "preferred_time"=>"13:00:00", "alt_date"=>"", "alt_time"=>"12:00:00", 
       "quantity"=>"2", "value"=>"200.0", "description"=>"xbox 360 box.", "address"=>"123 Elm", "address2"=>"", "city"=>"LA", "state"=>"CA", 
       "zip"=>"90201", "home_phone"=>"4155551212", "mobile_phone"=>"", "user_id"=>"#{uid}"}
   end
 
   describe 'add_post' do
     it 'has user id' do
-      set_attr @user.id
-      @post = PixiPost.add_post(attr, @user)
+      @post = PixiPost.add_post(set_attr(@user.id), @user)
       @post.save!
       expect(@post.user_id).to eq @user.id
     end
     it 'has no user id' do
-      set_attr ''
-      expect(PixiPost.add_post(attr, User.new).user_id).not_to eq @user.id
+      expect(PixiPost.add_post(set_attr(''), User.new).user_id).not_to eq @user.id
     end
   end
 
@@ -705,16 +711,16 @@ describe PixiPost do
   describe "exporting as CSV" do
     it "exports data as CSV file" do
       csv_string = @pixi_post.as_csv
-      csv_string.keys.should =~ ["Post Date", "Item Title", "Customer", "Pixter", "Sale Date", "List Value", "Sale Amount", "Pixter Revenue"]
-      csv_string.values.should =~ [@pixi_post.completed_date, @pixi_post.item_title, @pixi_post.seller_name, @pixi_post.pixter_name,
+      expect(csv_string.keys).to match_array(["Post Date", "Item Title", "Customer", "Pixter", "Sale Date", "List Value", "Sale Amount", "Pixter Revenue"])
+      expect(csv_string.values).to match_array([@pixi_post.completed_date, @pixi_post.item_title, @pixi_post.seller_name, @pixi_post.pixter_name,
                                    @pixi_post.get_val('sale_date'), @pixi_post.listing_value, @pixi_post.get_val('sale_value'), 
-                                   @pixi_post.get_val('revenue')]
+                                   @pixi_post.get_val('revenue')])
     end
 
     it "does not export any pixi_post data" do
       post = build :pixi_post
       csv = post.as_csv
-      csv.values.should include(nil)
+      expect(csv.values).to include(nil)
     end
   end
 end

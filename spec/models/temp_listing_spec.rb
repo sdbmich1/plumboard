@@ -12,133 +12,133 @@ describe TempListing do
   subject { @temp_listing }
 
   describe 'attributes', base: true do
-    it { should respond_to(:title) }
-    it { should respond_to(:description) }
-    it { should respond_to(:site_id) }
-    it { should respond_to(:seller_id) }
-    it { should respond_to(:alias_name) }
-    it { should respond_to(:transaction_id) }
-    it { should respond_to(:show_alias_flg) }
-    it { should respond_to(:status) }
-    it { should respond_to(:price) }
-    it { should respond_to(:start_date) }
-    it { should respond_to(:end_date) }
-    it { should respond_to(:buyer_id) }
-    it { should respond_to(:show_phone_flg) }
-    it { should respond_to(:category_id) }
-    it { should respond_to(:pixi_id) }
-    it { should respond_to(:parent_pixi_id) }
-    it { should respond_to(:post_ip) }
-    it { should respond_to(:event_start_date) }
-    it { should respond_to(:event_end_date) }
-    it { should respond_to(:compensation) }
-    it { should respond_to(:lng) }
-    it { should respond_to(:lat) }
-    it { should respond_to(:event_start_time) }
-    it { should respond_to(:event_end_time) }
-    it { should respond_to(:year_built) }
-    it { should respond_to(:pixan_id) }
-    it { should respond_to(:event_type_code) }
-    it { should respond_to(:job_type_code) }
-    it { should respond_to(:repost_flg) }
-    it { should respond_to(:quantity) }
-    it { should respond_to(:condition_type_code) }
-    it { should respond_to(:color) }
-    it { should respond_to(:other_id) }
-    it { should respond_to(:mileage) }
-    it { should respond_to(:item_type) }
-    it { should respond_to(:item_size) }
-    it { should respond_to(:user) }
-    it { should respond_to(:site) }
-    it { should respond_to(:transaction) }
-    it { should respond_to(:pictures) }
-    it { should respond_to(:category) }
-    it { should respond_to(:job_type) }
-    it { should respond_to(:event_type) }
-    it { should respond_to(:set_flds) }
-    it { should respond_to(:generate_token) }
-    it { should respond_to(:buy_now_flg) }
-    it { should respond_to(:est_ship_cost) }
-    it { should respond_to(:sales_tax) }
-    it { should respond_to(:fulfillment_type_code) }
-    it { should belong_to(:fulfillment_type).with_foreign_key('fulfillment_type_code') }
-    it { should allow_value(50.00).for(:price) }
-    it { should allow_value(5000).for(:price) }
-    it { should allow_value('').for(:price) }
-    it { should_not allow_value(500000).for(:price) }
-    it { should_not allow_value(5000.001).for(:price) }
-    it { should_not allow_value(-5000.00).for(:price) }
-    it { should_not allow_value('$5000.0').for(:price) }
+    it { is_expected.to respond_to(:title) }
+    it { is_expected.to respond_to(:description) }
+    it { is_expected.to respond_to(:site_id) }
+    it { is_expected.to respond_to(:seller_id) }
+    it { is_expected.to respond_to(:alias_name) }
+    it { is_expected.to respond_to(:transaction_id) }
+    it { is_expected.to respond_to(:show_alias_flg) }
+    it { is_expected.to respond_to(:status) }
+    it { is_expected.to respond_to(:price) }
+    it { is_expected.to respond_to(:start_date) }
+    it { is_expected.to respond_to(:end_date) }
+    it { is_expected.to respond_to(:buyer_id) }
+    it { is_expected.to respond_to(:show_phone_flg) }
+    it { is_expected.to respond_to(:category_id) }
+    it { is_expected.to respond_to(:pixi_id) }
+    it { is_expected.to respond_to(:parent_pixi_id) }
+    it { is_expected.to respond_to(:post_ip) }
+    it { is_expected.to respond_to(:event_start_date) }
+    it { is_expected.to respond_to(:event_end_date) }
+    it { is_expected.to respond_to(:compensation) }
+    it { is_expected.to respond_to(:lng) }
+    it { is_expected.to respond_to(:lat) }
+    it { is_expected.to respond_to(:event_start_time) }
+    it { is_expected.to respond_to(:event_end_time) }
+    it { is_expected.to respond_to(:year_built) }
+    it { is_expected.to respond_to(:pixan_id) }
+    it { is_expected.to respond_to(:event_type_code) }
+    it { is_expected.to respond_to(:job_type_code) }
+    it { is_expected.to respond_to(:repost_flg) }
+    it { is_expected.to respond_to(:quantity) }
+    it { is_expected.to respond_to(:condition_type_code) }
+    it { is_expected.to respond_to(:color) }
+    it { is_expected.to respond_to(:other_id) }
+    it { is_expected.to respond_to(:mileage) }
+    it { is_expected.to respond_to(:item_type) }
+    it { is_expected.to respond_to(:item_size) }
+    it { is_expected.to respond_to(:user) }
+    it { is_expected.to respond_to(:site) }
+    it { is_expected.to respond_to(:transaction) }
+    it { is_expected.to respond_to(:pictures) }
+    it { is_expected.to respond_to(:category) }
+    it { is_expected.to respond_to(:job_type) }
+    it { is_expected.to respond_to(:event_type) }
+    it { is_expected.to respond_to(:set_flds) }
+    it { is_expected.to respond_to(:generate_token) }
+    it { is_expected.to respond_to(:buy_now_flg) }
+    it { is_expected.to respond_to(:est_ship_cost) }
+    it { is_expected.to respond_to(:sales_tax) }
+    it { is_expected.to respond_to(:fulfillment_type_code) }
+    it { is_expected.to belong_to(:fulfillment_type).with_foreign_key('fulfillment_type_code') }
+    it { is_expected.to allow_value(50.00).for(:price) }
+    it { is_expected.to allow_value(5000).for(:price) }
+    it { is_expected.to allow_value('').for(:price) }
+    it { is_expected.not_to allow_value(500000).for(:price) }
+    it { is_expected.not_to allow_value(5000.001).for(:price) }
+    it { is_expected.not_to allow_value(-5000.00).for(:price) }
+    it { is_expected.not_to allow_value('$5000.0').for(:price) }
   end
 
   describe "when site_id is empty" do
     before { @temp_listing.site_id = "" }
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
   end
   
   describe "when site_id is entered" do
     before { @temp_listing.site_id = 1 }
-    it { @temp_listing.site_id.should == 1 }
+    it { expect(@temp_listing.site_id).to eq(1) }
   end
 
   describe "when seller_id is empty" do
     before { @temp_listing.seller_id = "" }
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
   end
 
   describe "when seller_id is entered" do
     before { @temp_listing.seller_id = 1 }
-    it { @temp_listing.seller_id.should == 1 }
+    it { expect(@temp_listing.seller_id).to eq(1) }
   end
 
   describe "when transaction_id is entered" do
     before { @temp_listing.transaction_id = 1 }
-    it { @temp_listing.transaction_id.should == 1 }
+    it { expect(@temp_listing.transaction_id).to eq(1) }
   end
 
   describe "when start_date is empty" do
     before { @temp_listing.start_date = "" }
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
   end
 
   describe "when start_date is entered" do
     before { @temp_listing.start_date = Time.now }
-    it { should be_valid }
+    it { is_expected.to be_valid }
   end
 
   describe "when title is empty" do
     before { @temp_listing.title = "" }
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
   end
 
   describe "when title is entered" do 
     before { @temp_listing.title = "chair" }
-    it { @temp_listing.title.should == "chair" }
+    it { expect(@temp_listing.title).to eq("chair") }
   end
 
   describe "when title is too large" do
     before { @temp_listing.title = "a" * 81 }
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
   end
 
   describe "when description is entered" do 
     before { @temp_listing.description = "chair" }
-    it { @temp_listing.description.should == "chair" }
+    it { expect(@temp_listing.description).to eq("chair") }
   end
 
   describe "when description is empty" do
     before { @temp_listing.description = "" }
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
   end
 
   describe "when category_id is entered" do 
     before { @temp_listing.category_id = 1 }
-    it { @temp_listing.category_id.should == 1 }
+    it { expect(@temp_listing.category_id).to eq(1) }
   end
 
   describe "when category_id is empty" do
     before { @temp_listing.category_id = "" }
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
   end
 
   describe 'set_end_date', date: true do
@@ -179,12 +179,12 @@ describe TempListing do
 
   describe "seller listings", base: true do
     before { @temp_listing.save! }
-    it { TempListing.get_by_seller(@user, 'new', false).should_not be_empty }
+    it { expect(TempListing.get_by_seller(@user, 'new', false)).not_to be_empty }
 
     it "does not get all listings for non-admin" do
       @temp_listing.seller_id = 100
       @temp_listing.save
-      TempListing.get_by_seller(@user, 'new', false).should_not include @temp_listing
+      expect(TempListing.get_by_seller(@user, 'new', false)).not_to include @temp_listing
     end
 
     it "gets all listings for admin" do
@@ -198,25 +198,25 @@ describe TempListing do
   end
 
   describe "get_by_status should not include inactive listings" do
-    it { TempListing.get_by_status('inactive').should_not include (@temp_listing) }
+    it { expect(TempListing.get_by_status('inactive')).not_to include (@temp_listing) }
   end
 
   describe "should return correct site name" do 
-    it { @temp_listing.site_name.should_not be_empty } 
+    it { expect(@temp_listing.site_name).not_to be_empty } 
   end
 
   describe "should not find correct site name" do 
     temp_listing = FactoryGirl.create :temp_listing, site_id: 100
-    it { temp_listing.site_name.should be_nil } 
+    it { expect(temp_listing.site_name).to be_nil } 
   end
 
   describe "should find correct category name" do 
-    it { @temp_listing.category_name.should == @category.name.titleize } 
+    it { expect(@temp_listing.category_name).to eq(@category.name.titleize) } 
   end
 
   describe "should not find correct category name" do 
     temp_listing = FactoryGirl.build :temp_listing, category_id: nil
-    it { temp_listing.category_name.should be_nil } 
+    it { expect(temp_listing.category_name).to be_nil } 
   end
 
   describe "seller name" do 
@@ -244,31 +244,31 @@ describe TempListing do
   describe "should find correct seller photo" do 
     let(:user) { FactoryGirl.create(:pixi_user) }
     let(:temp_listing) { FactoryGirl.create(:temp_listing, seller_id: user.id) }
-    it { temp_listing.seller_photo.should_not be_nil } 
+    it { expect(temp_listing.seller_photo).not_to be_nil } 
   end
 
   describe "should not find correct seller photo" do 
     temp_listing = FactoryGirl.create :temp_listing, seller_id: 100
-    it { temp_listing.seller_photo.should be_nil } 
+    it { expect(temp_listing.seller_photo).to be_nil } 
   end
 
   describe "should have a transaction" do 
-    it { @temp_listing.has_transaction?.should be_true }
+    it { expect(@temp_listing.has_transaction?).to be_truthy }
   end
 
   describe "should not have a transaction" do 
     temp_listing = FactoryGirl.create :temp_listing, transaction_id: nil
-    it { temp_listing.has_transaction?.should_not be_true }
+    it { expect(temp_listing.has_transaction?).not_to be_truthy }
   end
 
   describe "should verify if seller name is an alias" do  
     temp_listing = FactoryGirl.create :temp_listing, show_alias_flg: 'yes'
-    it { temp_listing.alias?.should be_true }
+    it { expect(temp_listing.alias?).to be_truthy }
   end
 
   describe "should not have an alias" do 
     temp_listing = FactoryGirl.create :temp_listing, show_alias_flg: 'no'
-    it { temp_listing.alias?.should_not be_true }
+    it { expect(temp_listing.alias?).not_to be_truthy }
   end
 
   describe "seller?" do 
@@ -277,55 +277,55 @@ describe TempListing do
     let(:temp_listing) { FactoryGirl.create :temp_listing, seller_id: user.id }
 
     it "should verify user is seller" do 
-      temp_listing.seller?(user).should be_true 
+      expect(temp_listing.seller?(user)).to be_truthy 
     end
 
     it "should not verify user is seller" do 
-      temp_listing.seller?(user2).should_not be_true 
+      expect(temp_listing.seller?(user2)).not_to be_truthy 
     end
   end
 
   describe "should return a short description" do 
     temp_listing = FactoryGirl.create :temp_listing, description: "a" * 500
-    it { temp_listing.brief_descr.length.should == 100 }
-    it { temp_listing.summary.should be_true }
+    it { expect(temp_listing.brief_descr.length).to eq(100) }
+    it { expect(temp_listing.summary).to be_truthy }
   end
 
   describe "should not return a short description" do 
     temp_listing = FactoryGirl.create :temp_listing, description: 'qqq'
-    it { temp_listing.brief_descr.length.should_not == 100 }
+    it { expect(temp_listing.brief_descr.length).not_to eq(100) }
   end
 
   describe "should not return a summary" do 
     temp_listing = FactoryGirl.build :temp_listing, description: nil
-    it { temp_listing.summary.should_not be_true }
+    it { expect(temp_listing.summary).not_to be_truthy }
   end
 
   describe "should return a nice title" do 
     temp_listing = FactoryGirl.create :temp_listing, title: 'guitar - acoustic (for sale)'
-    it { temp_listing.nice_title.should == 'Guitar - Acoustic (For Sale) - ' }
+    it { expect(temp_listing.nice_title).to eq('Guitar - Acoustic (For Sale) - ') }
   end
 
   describe "should not return a nice title" do 
     temp_listing = FactoryGirl.create :temp_listing, title: 'qqq'
-    it { temp_listing.nice_title.should_not == 'Guitar For Sale' }
+    it { expect(temp_listing.nice_title).not_to eq('Guitar For Sale') }
   end
 
   describe "should return a short title" do 
     temp_listing = FactoryGirl.create :temp_listing, title: "a" * 40
-    it { temp_listing.short_title.length.should_not == 40 }
+    it { expect(temp_listing.short_title.length).not_to eq(40) }
   end
 
   describe "should not return a short title" do 
     temp_listing = FactoryGirl.build :temp_listing, title: 'qqq'
-    it { temp_listing.short_title.length.should_not == 18 }
+    it { expect(temp_listing.short_title.length).not_to eq(18) }
   end
 
   describe "set flds" do 
     let(:temp_listing) { FactoryGirl.create :temp_listing, status: "" }
 
     it "should call set flds" do 
-      temp_listing.status.should == "new"
+      expect(temp_listing.status).to eq("new")
     end
   end
 
@@ -334,17 +334,17 @@ describe TempListing do
     
     it "should not call set flds" do 
       temp_listing.save
-      temp_listing.status.should_not == 'new'
+      expect(temp_listing.status).not_to eq('new')
     end
   end 
 
   describe "should return site count > 0" do 
     temp_listing = FactoryGirl.create :temp_listing, site_id: 100
-    it { temp_listing.get_site_count.should == 0 } 
+    it { expect(temp_listing.get_site_count).to eq(0) } 
   end
 
   describe "should not return site count > 0" do 
-    it { @temp_listing.get_site_count.should_not == 0 } 
+    it { expect(@temp_listing.get_site_count).not_to eq(0) } 
   end
 
   describe "transactions", base: true  do
@@ -356,27 +356,27 @@ describe TempListing do
     end
 
     context "get_by_status should include new listings" do
-      it { TempListing.get_by_status('active').should_not be_empty } 
+      it { expect(TempListing.get_by_status('active')).not_to be_empty } 
     end
 
     it "should not submit order" do 
       @temp_listing.category_id = @cat.id
       @temp_listing.save
-      @temp_listing.submit_order(nil).should_not be_true
+      expect(@temp_listing.submit_order(nil)).not_to be_truthy
     end
 
     it "should submit order" do 
-      @temp_listing.submit_order(transaction.id).should be_true
+      expect(@temp_listing.submit_order(transaction.id)).to be_truthy
     end
 
     it "should resubmit order" do 
       temp_listing = FactoryGirl.create :temp_listing, transaction_id: transaction.id
-      temp_listing.resubmit_order.should be_true 
+      expect(temp_listing.resubmit_order).to be_truthy 
     end
 
     it "should not resubmit order" do 
       temp_listing = FactoryGirl.create :temp_listing, transaction_id: nil, category_id: @cat.id
-      temp_listing.resubmit_order.should_not be_true
+      expect(temp_listing.resubmit_order).not_to be_truthy
     end
   end
 
@@ -386,12 +386,12 @@ describe TempListing do
 
     it "approve order should not return approved status" do 
       @temp_listing.approve_order(nil)
-      @temp_listing.status.should_not == 'approved'
+      expect(@temp_listing.status).not_to eq('approved')
     end
 
     it "approve order should return approved status" do 
       temp_listing.approve_order(user)
-      temp_listing.status.should == 'approved'
+      expect(temp_listing.status).to eq('approved')
     end
   end
 
@@ -401,13 +401,13 @@ describe TempListing do
 
     it "deny order should not return denied status" do 
       @temp_listing.deny_order(nil)
-      @temp_listing.status.should_not == 'denied'
+      expect(@temp_listing.status).not_to eq('denied')
     end
 
     it "deny order should return denied status" do 
       temp_listing.deny_order(user, 'Improper Content')
-      temp_listing.status.should == 'denied'
-      temp_listing.explanation.should == 'Improper Content'
+      expect(temp_listing.status).to eq('denied')
+      expect(temp_listing.explanation).to eq('Improper Content')
     end
   end
 
@@ -418,7 +418,7 @@ describe TempListing do
     it "should not include pending temp_listings" do
       @temp_listing.status = 'pending' 
       @temp_listing.save
-      TempListing.draft.should_not include @temp_listing 
+      expect(TempListing.draft).not_to include @temp_listing 
     end
 
     it "only returns necessary attributes" do
@@ -435,11 +435,11 @@ describe TempListing do
     end
 
     it "should verify user is pixter" do 
-      @temp_listing.pixter?(@pixter).should be_true 
+      expect(@temp_listing.pixter?(@pixter)).to be_truthy 
     end
 
     it "should not verify user is pixter" do 
-      @temp_listing.pixter?(@user2).should_not be_true 
+      expect(@temp_listing.pixter?(@user2)).not_to be_truthy 
     end
   end
 
@@ -453,14 +453,14 @@ describe TempListing do
     end
 
     it "is editable" do 
-      @temp_listing.editable?(@pixter).should be_true 
-      @temp_listing.editable?(@user).should be_true 
-      @temp_listing.editable?(@admin).should be_true 
-      @temp_listing.editable?(@support).should be_true 
+      expect(@temp_listing.editable?(@pixter)).to be_truthy 
+      expect(@temp_listing.editable?(@user)).to be_truthy 
+      expect(@temp_listing.editable?(@admin)).to be_truthy 
+      expect(@temp_listing.editable?(@support)).to be_truthy 
     end
 
     it "is not editable" do 
-      @temp_listing.editable?(@user2).should_not be_true 
+      expect(@temp_listing.editable?(@user2)).not_to be_truthy 
     end
   end
 
@@ -554,12 +554,12 @@ describe TempListing do
 
   describe "should verify new status" do 
     temp_listing = FactoryGirl.build :temp_listing, status: 'new'
-    it { temp_listing.new_status?.should be_true }
+    it { expect(temp_listing.new_status?).to be_truthy }
   end
 
   describe "should not verify new status" do 
     temp_listing = FactoryGirl.build :temp_listing, status: 'pending'
-    it { temp_listing.new_status?.should_not be_true }
+    it { expect(temp_listing.new_status?).not_to be_truthy }
   end
 
   describe "must have pictures", base: true  do
@@ -567,14 +567,14 @@ describe TempListing do
 
     it "should not save w/o at least one picture" do
       picture = temp_listing.pictures.build
-      temp_listing.should_not be_valid
+      expect(temp_listing).not_to be_valid
     end
 
     it "should save with at least one picture" do
       picture = temp_listing.pictures.build
       picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
       temp_listing.save
-      temp_listing.should be_valid
+      expect(temp_listing).to be_valid
     end
   end
 
@@ -583,15 +583,15 @@ describe TempListing do
 
     it "should not delete photo" do 
       pic = temp_listing.pictures.first
-      temp_listing.delete_photo(pic.id).should_not be_true
-      temp_listing.delete_photo(5000).should_not be_true
+      expect(temp_listing.delete_photo(pic.id)).not_to be_truthy
+      expect(temp_listing.delete_photo(5000)).not_to be_truthy
     end
 
     it "deletes photo w/ one photo" do 
       pic = temp_listing.pictures.first
-      temp_listing.delete_photo(pic.id, 0).should be_true
+      expect(temp_listing.delete_photo(pic.id, 0)).to be_truthy
       expect(temp_listing.pictures(true).size).to eq 0
-      temp_listing.should_not be_valid
+      expect(temp_listing).not_to be_valid
     end
 
     it "should delete photo" do 
@@ -599,7 +599,7 @@ describe TempListing do
       picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
       temp_listing.save
       pic = temp_listing.pictures.first
-      temp_listing.delete_photo(pic.id).should be_true
+      expect(temp_listing.delete_photo(pic.id)).to be_truthy
     end
   end
 
@@ -607,11 +607,11 @@ describe TempListing do
     before { @cat = FactoryGirl.create(:category, name: 'Jobs', pixi_type: 'premium') }
     it 'should return true' do
       temp_listing = FactoryGirl.create(:temp_listing, category_id: @cat.id) 
-      temp_listing.premium?.should be_true
+      expect(temp_listing.premium?).to be_truthy
     end
 
     it 'should not return true' do
-      @temp_listing.premium?.should_not be_true
+      expect(@temp_listing.premium?).not_to be_truthy
     end
   end
 
@@ -622,19 +622,19 @@ describe TempListing do
     end
 				            
     it "should have pictures" do 
-      @temp_listing.pictures.should include(@sr)
+      expect(@temp_listing.pictures).to include(@sr)
     end
 
     it "should not have too many pictures" do 
       20.times { @temp_listing.pictures.build FactoryGirl.attributes_for(:picture) }
       @temp_listing.save
-      @temp_listing.should_not be_valid
+      expect(@temp_listing).not_to be_valid
     end
 
     it "should destroy associated pictures" do
       @temp_listing.destroy
       [@sr].each do |s|
-         Picture.find_by_id(s.id).should be_nil
+         expect(Picture.find_by_id(s.id)).to be_nil
        end
     end  
   end  
@@ -646,63 +646,63 @@ describe TempListing do
     end
 
     it "should respond to same_day? method" do
-      @temp_listing.should respond_to(:same_day?)
+      expect(@temp_listing).to respond_to(:same_day?)
     end
 
     it "should be the same day" do
       @temp_listing.event_start_date = Date.today
       @temp_listing.event_end_date = Date.today
-      @temp_listing.same_day?.should be_true
+      expect(@temp_listing.same_day?).to be_truthy
     end
 
     it "should not be the same day" do
       @temp_listing.event_start_date = Date.today
       @temp_listing.event_end_date = Date.today+1.day
-      @temp_listing.same_day?.should be_false 
+      expect(@temp_listing.same_day?).to be_falsey 
     end
   end
 
   describe 'sold?' do
     it 'should return true' do
       @temp_listing.status = 'sold'
-      @temp_listing.sold?.should be_true
+      expect(@temp_listing.sold?).to be_truthy
     end
 
     it 'should not return true' do
-      @temp_listing.sold?.should_not be_true
+      expect(@temp_listing.sold?).not_to be_truthy
     end
   end
 
   describe '.pending?' do
     it "is not pending" do
-      @temp_listing.pending?.should be_false 
+      expect(@temp_listing.pending?).to be_falsey 
     end
 
     it "is pending" do
       @temp_listing.status = 'pending'
-      @temp_listing.pending?.should be_true 
+      expect(@temp_listing.pending?).to be_truthy 
     end
   end
 
   describe '.denied?' do
     it "is not denied" do
-      @temp_listing.denied?.should be_false 
+      expect(@temp_listing.denied?).to be_falsey 
     end
 
     it "is denied" do
       @temp_listing.status = 'denied'
-      @temp_listing.denied?.should be_true 
+      expect(@temp_listing.denied?).to be_truthy 
     end
   end
 
   describe '.edit?' do
     it "is not edit" do
-      @temp_listing.edit?.should be_false 
+      expect(@temp_listing.edit?).to be_falsey 
     end
 
     it "is edit" do
       @temp_listing.status = 'edit'
-      @temp_listing.edit?.should be_true 
+      expect(@temp_listing.edit?).to be_truthy 
     end
   end
 
@@ -712,12 +712,12 @@ describe TempListing do
     end
 
     it "is not an event" do
-      @temp_listing.event?.should be_false 
+      expect(@temp_listing.event?).to be_falsey 
     end
 
     it "is an event" do
       @temp_listing.category_id = @cat.id
-      @temp_listing.event?.should be_true 
+      expect(@temp_listing.event?).to be_truthy 
     end
   end
 
@@ -727,12 +727,12 @@ describe TempListing do
     end
 
     it "does not have a year" do
-      @temp_listing.has_year?.should be_false 
+      expect(@temp_listing.has_year?).to be_falsey 
     end
 
     it "has a year" do
       @temp_listing.category_id = @cat.id
-      @temp_listing.has_year?.should be_true 
+      expect(@temp_listing.has_year?).to be_truthy 
     end
   end
 
@@ -742,24 +742,24 @@ describe TempListing do
     end
 
     it "is not a job" do
-      @temp_listing.job?.should be_false 
+      expect(@temp_listing.job?).to be_falsey 
     end
 
     it "is a job" do
       @temp_listing.category_id = @cat.id
-      @temp_listing.job?.should be_true 
+      expect(@temp_listing.job?).to be_truthy 
     end
 
     it "is not valid" do
       @temp_listing.category_id = @cat.id
-      @temp_listing.should_not be_valid
+      expect(@temp_listing).not_to be_valid
     end
 
     it "is valid" do
       create :job_type
       @temp_listing.category_id = @cat.id
       @temp_listing.job_type_code = 'CT'
-      @temp_listing.should be_valid
+      expect(@temp_listing).to be_valid
     end
   end
 
@@ -773,16 +773,16 @@ describe TempListing do
       expect(PIXI_PREMIUM_PRICE).to eq(10.00)
       @temp_listing.category_id = @cat.id
       @temp_listing.save
-      @temp_listing.free?.should be_false 
+      expect(@temp_listing.free?).to be_falsey 
     end
 
     it "is free" do
-      @temp_listing.free?.should be_true 
+      expect(@temp_listing.free?).to be_truthy 
     end
   end
 
   describe "is not pixi_post" do 
-    it { @temp_listing.pixi_post?.should_not be_true }
+    it { expect(@temp_listing.pixi_post?).not_to be_truthy }
   end
 
   describe "is a pixi_post" do 
@@ -791,7 +791,7 @@ describe TempListing do
       @temp_listing.pixan_id = @pixan.id 
       @temp_listing.save
     end
-    it { @temp_listing.pixi_post?.should be_true }
+    it { expect(@temp_listing.pixi_post?).to be_truthy }
   end
 
   describe 'contacts' do
@@ -800,13 +800,13 @@ describe TempListing do
     end
 				            
     it "should have many contacts" do 
-      @temp_listing.contacts.should include(@sr)
+      expect(@temp_listing.contacts).to include(@sr)
     end
 
     it "should destroy associated contacts" do
       @temp_listing.destroy
       [@sr].each do |s|
-         Contact.find_by_id(s.id).should be_nil
+         expect(Contact.find_by_id(s.id)).to be_nil
        end
     end  
   end  
@@ -852,9 +852,9 @@ describe TempListing do
     let(:denied_listing) {create :temp_listing_with_transaction, seller_id: @user.id, status: 'denied'}
 
     def send_mailer model, msg
-      @mailer = mock(UserMailer)
-      UserMailer.stub!(:delay).and_return(@mailer)
-      @mailer.stub(msg.to_sym).with(model).and_return(@mailer)
+      @mailer = double(UserMailer)
+      allow(UserMailer).to receive(:delay).and_return(@mailer)
+      allow(@mailer).to receive(msg.to_sym).with(model).and_return(@mailer)
     end
 
     it 'delivers the submitted pixi message' do
@@ -870,8 +870,8 @@ describe TempListing do
       denied_listing.status = 'approved'
       denied_listing.transaction.amt = 0.0
       expect {
-	denied_listing.save!
-      }.not_to change {Listing.count}.by(1)
+        denied_listing.save!
+      }.not_to change {Listing.count}
     end
 
     it 'adds listing and transaction' do
@@ -880,9 +880,9 @@ describe TempListing do
       expect {
 	temp_listing.save!
       }.to change {Listing.count}.by(1)
-      Listing.stub(:create).with(temp_listing.attributes).and_return(true)
-      temp_listing.transaction.status.should == 'approved'
-      temp_listing.transaction.status.should_not == 'pending'
+      allow(Listing).to receive(:create).with(temp_listing.attributes).and_return(true)
+      expect(temp_listing.transaction.status).to eq('approved')
+      expect(temp_listing.transaction.status).not_to eq('pending')
     end
 
     it 'delivers the denied pixi message' do
@@ -890,18 +890,18 @@ describe TempListing do
       temp_listing.status = 'denied'
       temp_listing.save!
       send_mailer temp_listing, 'send_denial'
-      SystemMessenger.stub!(:send_system_message).with(@user, temp_listing, 'deny').and_return(true)
+      allow(SystemMessenger).to receive(:send_system_message).with(@user, temp_listing, 'deny').and_return(true)
     end
   end
 
   describe '.start_date?' do
     it "has no start date" do
-      @temp_listing.start_date?.should be_false
+      expect(@temp_listing.start_date?).to be_falsey
     end
 
     it "has a start date" do
       @temp_listing.event_start_date = Time.now
-      @temp_listing.start_date?.should be_true
+      expect(@temp_listing.start_date?).to be_truthy
     end
   end
 
@@ -957,17 +957,17 @@ describe TempListing do
     describe 'start date' do
       it "has valid start date" do
         @temp_listing.event_start_date = Date.today+2.days
-        @temp_listing.should be_valid
+        expect(@temp_listing).to be_valid
       end
 
       it "should reject a bad start date" do
         @temp_listing.event_start_date = Date.today-7.days
-        @temp_listing.should_not be_valid
+        expect(@temp_listing).not_to be_valid
       end
 
       it "should not be valid without a start date" do
         @temp_listing.event_start_date = nil
-        @temp_listing.should_not be_valid
+        expect(@temp_listing).not_to be_valid
       end
     end
 
@@ -980,22 +980,22 @@ describe TempListing do
 
       it "has valid end date" do
         @temp_listing.event_end_date = Date.today+3.days
-        @temp_listing.should be_valid
+        expect(@temp_listing).to be_valid
       end
 
       it "should reject a bad end date" do
         @temp_listing.event_end_date = ''
-        @temp_listing.should_not be_valid
+        expect(@temp_listing).not_to be_valid
       end
 
       it "should reject end date < start date" do
         @temp_listing.event_end_date = Date.today-2.days
-        @temp_listing.should_not be_valid
+        expect(@temp_listing).not_to be_valid
       end
 
       it "should not be valid without a end date" do
         @temp_listing.event_end_date = nil
-        @temp_listing.should_not be_valid
+        expect(@temp_listing).not_to be_valid
       end
     end
 
@@ -1008,17 +1008,17 @@ describe TempListing do
 
       it "has valid start time" do
         @temp_listing.event_start_time = Time.now+2.hours
-        @temp_listing.should be_valid
+        expect(@temp_listing).to be_valid
       end
 
       it "should reject a bad start time" do
         @temp_listing.event_start_time = ''
-        @temp_listing.should_not be_valid
+        expect(@temp_listing).not_to be_valid
       end
 
       it "should not be valid without a start time" do
         @temp_listing.event_start_time = nil
-        @temp_listing.should_not be_valid
+        expect(@temp_listing).not_to be_valid
       end
     end
 
@@ -1031,23 +1031,23 @@ describe TempListing do
 
       it "has valid end time" do
         @temp_listing.event_end_time = Time.now+3.hours
-        @temp_listing.should be_valid
+        expect(@temp_listing).to be_valid
       end
 
       it "should reject a bad end time" do
         @temp_listing.event_end_time = ''
-        @temp_listing.should_not be_valid
+        expect(@temp_listing).not_to be_valid
       end
 
       it "should reject end time < start time" do
         @temp_listing.event_end_date = @temp_listing.event_start_date
         @temp_listing.event_end_time = Time.now.advance(:hours => -2)
-        @temp_listing.should_not be_valid
+        expect(@temp_listing).not_to be_valid
       end
 
       it "should not be valid without a end time" do
         @temp_listing.event_end_time = nil
-        @temp_listing.should_not be_valid
+        expect(@temp_listing).not_to be_valid
       end
     end
   end
@@ -1057,8 +1057,8 @@ describe TempListing do
       temp_listing = FactoryGirl.create :temp_listing
       temp_listing.status = 'pending'
       temp_listing.save!
-      TempListing.get_by_city(0, 1, false).should_not include temp_listing
-      TempListing.get_by_city(temp_listing.category_id, temp_listing.site_id, false).should_not be_empty
+      expect(TempListing.get_by_city(0, 1, false)).not_to include temp_listing
+      expect(TempListing.get_by_city(temp_listing.category_id, temp_listing.site_id, false)).not_to be_empty
     end
 
     it "finds by site_type_code" do
@@ -1082,15 +1082,15 @@ describe TempListing do
     end
 
     it "should get all listings of given status if category and location are not specified" do
-      TempListing.check_category_and_location('pending', nil, nil).should_not be_empty
+      expect(TempListing.check_category_and_location('pending', nil, nil)).not_to be_empty
     end
 
     it "should get listing when category and location are specified" do      
-      TempListing.check_category_and_location('pending', @listings.category_id, @listings.site_id).should_not be_empty
+      expect(TempListing.check_category_and_location('pending', @listings.category_id, @listings.site_id)).not_to be_empty
     end
 
     it "should not return anything if no listings meet the parameters" do
-      TempListing.check_category_and_location('removed', 100, 900).should be_empty
+      expect(TempListing.check_category_and_location('removed', 100, 900)).to be_empty
     end
   end
 
@@ -1104,7 +1104,7 @@ describe TempListing do
     end
     
     it "should be an event" do
-      expect(@listing1.event?).to be_true
+      expect(@listing1.event?).to be_truthy
     end
     
     it "should respond to .event_type" do
@@ -1125,51 +1125,55 @@ describe TempListing do
   end
 
   describe 'soon_expiring_pixis', process: true do
+    before :each do
+      @temp_listing.save
+    end
+
     it "includes active temp listings" do 
       update_pixi @temp_listing, 'edit', 4
-      TempListing.soon_expiring_pixis(4, 'edit').should_not be_empty  
+      expect(TempListing.soon_expiring_pixis(4, 'edit').count(:all)).not_to eq 0
     end
 	
     it "includes expired listings" do
       update_pixi @temp_listing, 'new', 4
-      TempListing.soon_expiring_pixis(4, 'new').should_not be_empty  
+      expect(TempListing.soon_expiring_pixis(4, 'new').count(:all)).not_to eq 0
     end
 	
     it "includes expired listings" do
       update_pixi @temp_listing, 'new', 4
-      TempListing.soon_expiring_pixis(4, ['edit', 'new']).should_not be_empty  
+      expect(TempListing.soon_expiring_pixis(4, ['edit', 'new']).count(:all)).not_to eq 0
     end
   end
   
   describe 'not soon_expiring_pixis', process: true do  
     it "does not include active listings" do 
       update_pixi @temp_listing, 'new', 10
-      TempListing.soon_expiring_pixis(8).should be_empty  
+      expect(TempListing.soon_expiring_pixis(8).count(:all)).to eq 0
     end
 	
     it "does not include expired listings" do 
       update_pixi @temp_listing, 'edit', 4
-      TempListing.soon_expiring_pixis(3, 'new').should be_empty  
+      expect(TempListing.soon_expiring_pixis(3, 'new').count(:all)).to eq 0
     end
 	
     it "does not include expiring early listings" do 
       update_pixi @temp_listing, 'new', 4
-      TempListing.soon_expiring_pixis(5).should be_empty  
+      expect(TempListing.soon_expiring_pixis(5).count(:all)).to eq 0
     end
 	
     it "does not include active listings" do 
       update_pixi @temp_listing, 'edit', 4
-      TempListing.soon_expiring_pixis(5, nil).should be_empty  
+      expect(TempListing.soon_expiring_pixis(5, nil).count(:all)).to eq 0
     end
 	
     it "does not include active listings" do 
       update_pixi @temp_listing, 'new', 4
-      TempListing.soon_expiring_pixis(5, ['edit', 'new']).should be_empty  
+      expect(TempListing.soon_expiring_pixis(5, ['edit', 'new']).count(:all)).to eq 0
     end
 	
     it "does not include active listings" do 
       update_pixi @temp_listing, 'new', 7
-      TempListing.soon_expiring_pixis().should be_empty  
+      expect(TempListing.soon_expiring_pixis.count(:all)).to eq 0
     end
   end
 
@@ -1195,12 +1199,12 @@ describe TempListing do
       # call check_category_and_location to load created_date
       temp_listing = TempListing.check_category_and_location('pending', nil, nil, true).first
       csv_string = temp_listing.as_csv(style: 'pending')
-      csv_string.keys.should =~ ['Title', 'Category', 'Description', 'Location',
+      expect(csv_string.keys).to match_array(['Title', 'Category', 'Description', 'Location',
                                  ListingProcessor.new(temp_listing).toggle_user_name_header(temp_listing.status, 'index'),
-                                 temp_listing.status.titleize + ' Date'] 
-      csv_string.values.should =~ [temp_listing.title, temp_listing.category_name, temp_listing.description, temp_listing.site_name,
+                                 temp_listing.status.titleize + ' Date']) 
+      expect(csv_string.values).to match_array([temp_listing.title, temp_listing.category_name, temp_listing.description, temp_listing.site_name,
                                    ListingProcessor.new(temp_listing).toggle_user_name_row(temp_listing.status, temp_listing, 'index'),
-                                   temp_listing.display_date(temp_listing.created_date)]
+                                   temp_listing.display_date(temp_listing.created_date)])
     end
   end
 end

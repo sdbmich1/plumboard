@@ -10,22 +10,24 @@ describe PixiAsk do
 
   subject { @pixi_ask }
 
-  it { should respond_to(:pixi_id) }
-  it { should respond_to(:user_id) }
-  it { should respond_to(:user) }
-  it { should respond_to(:listing) }
+  it { is_expected.to respond_to(:pixi_id) }
+  it { is_expected.to respond_to(:user_id) }
+  it { is_expected.to respond_to(:user) }
+  it { is_expected.to respond_to(:listing) }
 
-  it { should validate_presence_of(:pixi_id) }
-  it { should validate_uniqueness_of(:user_id).scoped_to(:pixi_id) }
-  it { should belong_to(:listing).with_foreign_key('pixi_id') }
-  it { should belong_to(:user) }
+  it { is_expected.to validate_presence_of(:pixi_id) }
+  it { is_expected.to validate_uniqueness_of(:user_id).scoped_to(:pixi_id) }
+  it { is_expected.to belong_to(:listing).with_foreign_key('pixi_id') }
+  it { is_expected.to belong_to(:user) }
 
   describe "user name" do 
-    it { @pixi_ask.user_name.should == @user.name } 
+    it { expect(@pixi_ask.user_name).to eq(@user.name) } 
 
     it "does not find user name" do 
       @pixi_ask.user_id = 100
-      @pixi_ask.user_name.should be_nil  
+      @pixi_ask.save
+      @pixi_ask.reload
+      expect(@pixi_ask.user_name).to be_nil  
     end
   end
 end

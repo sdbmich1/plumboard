@@ -10,7 +10,7 @@ class TempListing < ListingParent
   attr_accessor :slr_name
   attr_accessible :slr_name, :item_color, :item_id, :car_color, :car_id, :location_size, :product_size, :product_color, :item_size2
 
-  default_scope :order => "temp_listings.updated_at DESC"
+  default_scope { order "temp_listings.updated_at DESC" }
 
   # set fields upon creation
   def set_flds

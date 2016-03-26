@@ -16,7 +16,7 @@
     </table>
   </div>
   <div class="span4 offset5 mtop">
-    <%= link_to 'Remove', bank_account_path(adminFlg: @adminFlg), method: :delete, confirm: 'Are you sure?', class: "btn btn-large", remote: true %>
+    <%= link_to 'Remove', bank_account_path(adminFlg: @adminFlg), method: :delete, class: "btn btn-large", remote: true, data: { confirm: 'Are you sure?' } %>
   </div>
 </div>
 <% else %>

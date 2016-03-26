@@ -3,7 +3,7 @@ class ConditionType < ActiveRecord::Base
 
   validates_presence_of :description, :code, :hide, :status
 
-  default_scope :order => "description ASC"
+  default_scope { order "description ASC" }
 
   # return active types
   def self.active

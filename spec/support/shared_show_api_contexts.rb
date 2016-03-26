@@ -2,7 +2,7 @@ require 'spec_helper'
 
 def set_show_data klass, method
   @listing = stub_model(klass.constantize)
-  klass.constantize.stub(method.to_sym).and_return(@listing)
+  allow(klass.constantize).to receive(method.to_sym).and_return(@listing)
 end
 
 def do_get_url rte, status
@@ -24,26 +24,26 @@ shared_context "a show method" do |klass, method, rte, status, renderFlg, var|
     end
 
     it "loads the requested listing" do
-      klass.constantize.stub(method.to_sym).with("1").and_return(@listing)
+      allow(klass.constantize).to receive(method.to_sym).with("1").and_return(@listing)
       do_get_url(rte, status)
     end
 
     it "assigns var" do
       do_get_url(rte, status)
-      assigns(var.to_sym).should_not be_nil
+      expect(assigns(var.to_sym)).not_to be_nil
     end
 
     it "renders template" do
       do_get_url(rte, status)
       if renderFlg
-        response.should render_template rte.to_sym
+        expect(response).to render_template rte.to_sym
       else
-        controller.stub!(:render)
+        allow(controller).to receive(:render)
       end
     end
 
     it "responds successfully" do
-      response.should be_success
+      expect(response).to be_success
     end
 
     it "responds to JSON" do

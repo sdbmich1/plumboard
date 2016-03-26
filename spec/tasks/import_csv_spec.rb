@@ -31,7 +31,7 @@ describe 'import_csv' do
   end
 
   describe 'load_site_type_codes' do
-   it_behaves_like("import_csv", "load_site_type_codes", nil, SiteType, {code: %w(region school city area country newspaper magazine state), description: ["Major Metro Area", "College or University", "City", "Neighborhood or District", "Nation", "Newspaper Publication", "Magazine Publication", "State or Province"], status: 'active', hide: %w(no)})
+   it_behaves_like("import_csv", "load_site_type_codes", nil, SiteType, {code: %w(region school city area country pub state), description: ["Region", "College/University", "City", "Neighborhood/District", "Nation/Country", "Newspaper/Magazine", "State/Province"], status: 'active'})
   end
 
   describe "load_event_types" do
@@ -51,7 +51,7 @@ describe 'import_csv' do
 
   describe "load_fulfillment_types" do
     it_behaves_like("import_csv", "load_fulfillment_types", nil, FulfillmentType,
-      { code: %w(SHP D M P), description: %w(Ship Delivery Meetup Pickup), status: 'active', hide: %w(no yes) })
+      { code: %w(SHP D A P SD PS), description: ['Ship', 'Delivery', 'All', 'Pickup', 'Same-Day', 'Pickup & Ship'], status: %w(active inactive), hide: %w(no yes) })
   end
 
   describe 'load_status_types' do
@@ -90,6 +90,6 @@ describe 'import_csv' do
       Rake::Task["load_categories"].invoke
     end
     it_behaves_like('import_csv', 'load_stock_images', nil, StockImage,
-      { title: 'Programmer / Analyst / Developer', category_type_code: 'Employment', file_name: 'Computer.jpg' })
+      { title: 'Programmer / Analyst / Developer / Software / Computer', category_type_code: 'Employment', file_name: 'Computer.jpg' })
   end
 end

@@ -8,7 +8,7 @@ describe ConfirmationsController do
 
   def mock_user(stubs={})
     (@mock_user ||= mock_model(User, stubs).as_null_object).tap do |user|
-      user.stub(stubs) unless stubs.empty?
+      allow(user).to receive_messages(stubs) unless stubs.empty?
     end
   end
 
@@ -19,29 +19,28 @@ describe ConfirmationsController do
   describe "POST create" do
     before :each do
       @user = stub_model(User)
-      User.stub_chain(:where, :first).and_return(@user)
-      @user.stub_chain(:confirmed_at, :nil?).and_return(true)
-      @user.stub(:email).and_return('email@test.com')
+      allow(User).to receive_message_chain(:where, :first).and_return(@user)
+      allow(@user).to receive_message_chain(:confirmed_at, :nil?).and_return(true)
+      mailer = double(UserMailer)
+      allow(UserMailer).to receive(:confirmation_instructions).with(@user).and_return(mailer)
+      allow(mailer).to receive(:deliver_later)
+      allow(@user).to receive(:email).and_return('email@test.com')
       do_post
     end
 
     context 'success' do
-      before :each do
-        UserMailer.stub_chain(:delay, :confirmation_instructions).with(@user).and_return(:success)
-      end
-
       it "should assign @user" do
-	assigns(:user).should_not be_nil
+        expect(assigns(:user)).not_to be_nil
       end
 
       it "renders home page" do
-	response.should be_redirect
+        expect(response).to be_redirect
       end
     end
 
     context 'failure' do
       it "should render the next page" do
-	response.should be_redirect
+        expect(response).to be_redirect
       end
     end
 

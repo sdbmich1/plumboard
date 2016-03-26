@@ -8,6 +8,11 @@ class Invoice < ActiveRecord::Base
     :sales_tax, :tax_total, :subtotal, :inv_date, :transaction_id, :bank_account_id, :tmp_buyer_id, :ship_amt, :other_amt,
     :invoice_details_attributes, :invoice_details_count
 
+  # Prevent ActiveRecord from raising an error when overriding transaction method
+  def self.dangerous_attribute_method?(name)
+    super && name != :transaction
+  end
+
   belongs_to :seller, foreign_key: "seller_id", class_name: "User"
   belongs_to :buyer, foreign_key: "buyer_id", class_name: "User"
   belongs_to :transaction
@@ -19,15 +24,15 @@ class Invoice < ActiveRecord::Base
 
   validates :buyer_id, presence: true  
   validates :seller_id, presence: true  
-  validates :amount, presence: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
+  validates :amount, presence: true, format: { with: /\A\d+??(?:\.\d{0,2})?\z/ }, 
   		numericality: { greater_than: 0, less_than_or_equal_to: MAX_PIXI_AMT.to_f }  
-  validates :sales_tax, allow_blank: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
+  validates :sales_tax, allow_blank: true, format: { with: /\A\d+??(?:\.\d{0,2})?\z/ }, 
     		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_SALES_TAX.to_i }
-  validates :ship_amt, allow_blank: true, format: { with: /^\d+??(?:\.\d{0,2})?$/ }, 
+  validates :ship_amt, allow_blank: true, format: { with: /\A\d+??(?:\.\d{0,2})?\z/ }, 
     		numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_SHIP_AMT.to_i }
   validate :must_have_pixis
 
-  default_scope order: 'invoices.created_at DESC'
+  default_scope { order 'invoices.created_at DESC' }
 
   # set flds
   def set_flds

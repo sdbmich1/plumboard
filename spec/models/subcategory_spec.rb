@@ -8,64 +8,64 @@ describe Subcategory do
 
   subject { @subcategory }
 
-  it { should respond_to(:name) }
-  it { should respond_to(:status) }
-  it { should respond_to(:subcategory_type) }
-  it { should respond_to(:category) }
-  it { should respond_to(:pictures) }
+  it { is_expected.to respond_to(:name) }
+  it { is_expected.to respond_to(:status) }
+  it { is_expected.to respond_to(:subcategory_type) }
+  it { is_expected.to respond_to(:category) }
+  it { is_expected.to respond_to(:pictures) }
 
   describe "when category_id is empty" do
     before { @subcategory.category_id = "" }
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
   end
 
   describe "when name is empty" do
     before { @subcategory.name = "" }
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
   end
 
   describe "when name is entered" do
     before { @subcategory.name = "gigs" }
-    it { @subcategory.name.should == "gigs" }
+    it { expect(@subcategory.name).to eq("gigs") }
   end
 
   describe "when status is empty" do
     before { @subcategory.status = "" }
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
   end
 
   describe "when status is entered" do
     before { @subcategory.status = "active" }
-    it { @subcategory.status.should == "active" }
+    it { expect(@subcategory.status).to eq("active") }
   end
 
   describe "when subcategory_type is empty" do
     before { @subcategory.subcategory_type = "" }
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
   end
 
   describe "when subcategory_type is entered" do
     before { @subcategory.subcategory_type = "gigs" }
-    it { @subcategory.subcategory_type.should == "gigs" }
+    it { expect(@subcategory.subcategory_type).to eq("gigs") }
   end
 
   describe "active categories" do
     before { FactoryGirl.create(:subcategory) }
-    it { Subcategory.active.should_not be_nil } 
-    it { Subcategory.inactive.should be_empty } 
+    it { expect(Subcategory.active).not_to be_nil } 
+    it { expect(Subcategory.inactive).to be_empty } 
   end
 
   describe "inactive categories" do
     before { FactoryGirl.create(:subcategory, status: 'inactive') }
-    it { Subcategory.active.should be_empty } 
-    it { Subcategory.inactive.should_not be_empty } 
+    it { expect(Subcategory.active).to be_empty } 
+    it { expect(Subcategory.inactive).not_to be_empty } 
   end
 
   describe 'with_picture' do
     let(:subcategory) { FactoryGirl.build :subcategory }
 
     it "adds a picture" do
-      subcategory.with_picture.pictures.size.should == 1
+      expect(subcategory.with_picture.pictures.size).to eq(1)
     end
   end  
 
@@ -75,13 +75,13 @@ describe Subcategory do
     end
 
     it "has many pictures" do 
-      @subcategory.pictures.should include(@sr)
+      expect(@subcategory.pictures).to include(@sr)
     end
 
     it "should destroy associated pictures" do
       @subcategory.destroy
       [@sr].each do |s|
-         Picture.find_by_id(s.id).should be_nil
+         expect(Picture.find_by_id(s.id)).to be_nil
        end
     end 
   end  
@@ -89,14 +89,14 @@ describe Subcategory do
   describe "must have pictures" do
 
     it "does not save w/o at least one picture" do
-      @subcategory.should_not be_valid
+      expect(@subcategory).not_to be_valid
     end
 
     it "saves with at least one picture" do
       picture = @subcategory.pictures.build
       picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
       @subcategory.save
-      @subcategory.should be_valid
+      expect(@subcategory).to be_valid
     end
   end
 

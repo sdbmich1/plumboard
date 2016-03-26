@@ -18,7 +18,7 @@
   </div>
   <div class="span4 offset5 mtop">
     <div class='mleft15'>
-      <%= link_to 'Remove', card_account_path(uid: @usr, adminFlg: @adminFlg), method: :delete, confirm: 'Are you sure?', class: "btn btn-large", remote: true %>
+      <%= link_to 'Remove', card_account_path(uid: @usr, adminFlg: @adminFlg), method: :delete, class: "btn btn-large", remote: true, data: { confirm: 'Are you sure?' } %>
     </div>
   </div>
 </div>

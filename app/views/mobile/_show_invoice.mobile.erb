@@ -26,7 +26,7 @@
           <% if @invoice.owner?(@user) && @invoice.unpaid? %>
 	    <table><tr>
               <td><%= link_to 'Edit', edit_invoice_path(@invoice), 'data-role'=>'button', 'data-theme'=>'b' %></td>
-      	      <td><%= link_to 'Remove', @invoice, method: :delete, confirm: 'Delete this invoice?', 'data-role'=>'button', remote: true %></td>
+      	      <td><%= link_to 'Remove', @invoice, method: :delete, 'data-role'=>'button', remote: true, data: { confirm: 'Delete this invoice?' } %></td>
 	    <tr></table>
     	  <% else %>
             <%= render partial: 'mobile/pay_invoice', locals: { invoice: @invoice } if @invoice.unpaid? %>

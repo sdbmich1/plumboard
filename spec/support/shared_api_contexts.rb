@@ -2,8 +2,8 @@ require 'spec_helper'
 
 def set_data klass, method, rte, tname, xhr=false
   @listings = stub_model(klass.constantize)
-  klass.constantize.stub_chain(method.to_sym).and_return(@listings)
-  @listings.stub!(tname.to_sym).and_return( @listings ) if tname
+  allow(klass.constantize).to receive_message_chain(method.to_sym).and_return(@listings)
+  allow(@listings).to receive(tname.to_sym).and_return( @listings ) if tname
   xhr ? set_xhr_rte(tname, rte) : do_get_list(rte)
 end
 
@@ -30,15 +30,15 @@ shared_context "a load data request" do |klass, method, rte, tname, xhr, var|
     end
 
     it "loads the requested data" do
-      klass.constantize.stub!(method.to_sym).with('test').and_return(@listings)
+      allow(klass.constantize).to receive(method.to_sym).with('test').and_return(@listings)
     end
 
     it "should assign var" do
-      assigns(var.to_sym).should_not be_nil # == @listings
+      expect(assigns(var.to_sym)).not_to be_nil # == @listings
     end
 
     it "action should render get template" do
-      response.should render_template rte.to_sym if tname
+      expect(response).to render_template rte.to_sym if tname
     end
   end
 end

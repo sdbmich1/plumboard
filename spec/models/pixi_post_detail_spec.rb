@@ -14,20 +14,20 @@ describe PixiPostDetail do
 
   subject { @details }
 
-  it { should belong_to(:pixi_post) }
-  it { should belong_to(:listing).with_foreign_key('pixi_id') }
-  it { should validate_presence_of(:pixi_id) }
-  it { should respond_to(:pixi_post_id) }
-  it { should respond_to(:pixi_id) }
+  it { is_expected.to belong_to(:pixi_post) }
+  it { is_expected.to belong_to(:listing).with_foreign_key('pixi_id') }
+  it { is_expected.to validate_presence_of(:pixi_id) }
+  it { is_expected.to respond_to(:pixi_post_id) }
+  it { is_expected.to respond_to(:pixi_id) }
 
   describe 'pixi_title' do
     it "has a title", run: true do
-      @details.pixi_title.should_not be_empty  
+      expect(@details.pixi_title).not_to be_empty  
     end
 
     it "should not find correct pixi_title" do 
       @details.pixi_id = '100' 
-      @details.pixi_title.should be_nil 
+      expect(@details.pixi_title).to be_nil 
     end
   end
 end

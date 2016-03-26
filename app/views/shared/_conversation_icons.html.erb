@@ -1,6 +1,5 @@
 <%= check_due_icon conversation %>
 <%= check_bill_icon conversation %>
 <td align='right'>
-  <%= link_to image_tag('trash-icon.png'), remove_conversation_path(conversation, status: @status), :method => :put, 
-     confirm: 'Delete this conversation?', class: 'btn btn-small', id: 'conv-trash-btn', title: 'Delete' %>
+  <%= link_to image_tag('trash-icon.png'), remove_conversation_path(conversation, status: @status), :method => :put, class: 'btn btn-small', id: 'conv-trash-btn', title: 'Delete', data: { confirm: 'Delete this conversation?' } %>
 </td>
