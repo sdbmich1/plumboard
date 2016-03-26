@@ -171,7 +171,7 @@ class ListingDataProcessor < ListingQueryProcessor
 
   # set end date to x days after start to denote when listing is no longer displayed on network
   def set_end_date val
-    start = @listing.active? ? Date.today : @listing.start_date
+    start = Date.today
     @listing.end_date = @listing.event? ? @listing.event_end_date : start + val.days rescue nil
   end
 

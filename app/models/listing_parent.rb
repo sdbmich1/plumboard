@@ -2,7 +2,6 @@ require 'rinku'
 require 'digest/md5'
 class ListingParent < ActiveRecord::Base
   resourcify
-  # include Area, ResetDate, LocationManager, NameParse, ProcessMethod
   self.abstract_class = true
   # self.per_page = 20
 

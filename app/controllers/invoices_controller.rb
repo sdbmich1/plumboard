@@ -83,10 +83,14 @@ class InvoicesController < ApplicationController
   end
 
   def decline
-    if @invoice.decline params[:reason]
-      redirect_to received_invoices_path, notice: 'Invoice was declined successfully.'
-    else
-      render action: :show, error: "Invoice was not declined. Please try again."
+    respond_with(@invoice) do |format|
+      if @invoice.decline params[:reason]
+        format.json { render json: {invoice: @invoice} }
+        format.html { redirect_to received_invoices_path, notice: 'Invoice was declined successfully.' }
+      else
+        format.html { render action: :show, error: "Invoice was not declined. Please try again." }
+        format.json { render json: { errors: @invoice.errors.full_messages }, status: 422 }
+      end
     end
   end
 

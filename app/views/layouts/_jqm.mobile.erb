@@ -18,8 +18,6 @@
 <script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
 <%= javascript_include_tag 'application.mobile.js','jquery.placeholder.min.js', "autocomplete-rails.js", "jquery.ui.autocomplete.html.js",  
 	'iscroll-lite.js', 'payment.js', 'transaction.js', 'jquery.bxslider.min.js', 'bootstrap-datepicker.js', 'datepicker.js',
-        "https://js.stripe.com/v1/","http://maps.google.com/maps/api/js?sensor=true",'map.js', 'si.files.js',
-	"https://js.balancedpayments.com/v1/balanced.js" %>
+        "https://js.stripe.com/v1/","http://maps.google.com/maps/api/js?sensor=true",'map.js', 'si.files.js' %>
 <%= tag :meta, :name => "stripe-key", :content => STRIPE_PUBLIC_KEY %>
-<%= tag :meta, :name => "balanced-key", :content => BALANCED_URI %>
 <%= tag :meta, :name => "credit-card-api", :content => CREDIT_CARD_API %>

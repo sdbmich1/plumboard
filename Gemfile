@@ -66,6 +66,7 @@ gem 'rails3-jquery-autocomplete'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
+gem 'bcrypt-ruby', '3.1.5', :require => 'bcrypt'
 
 # To use Jbuilder templates for JSON
 # gem 'jbuilder'
@@ -125,7 +126,7 @@ gem 'country_select'
 gem "geocoder", "~> 1.1.8"
 
 # add images
-gem "rmagick", "~> 2.13.1"
+gem 'rmagick', '~> 2.15', '>= 2.15.4'
 
 # pagination
 gem 'will_paginate', '~> 3.0'
@@ -170,8 +171,8 @@ group :development do
 end
 
 group :development, :test, :demo do
-  gem 'wdm', '~> 0.1.0', :platforms => [:mswin, :mingw], :require => false
-  # gem 'wdm', :platforms => [:mswin, :mingw], :require => false
+  #gem 'wdm', '~> 0.1.0', :platforms => [:mswin, :mingw], :require => false
+  gem 'wdm', '~> 0.1.1', :platforms => [:mswin, :mingw], :require => false
   gem 'rspec-rails', '2.14.0'
   gem 'guard-rspec', '4.3.1'
   gem 'guard-spork', '2.0.2'
@@ -232,3 +233,4 @@ gem 'data-confirm-modal', github: 'ifad/data-confirm-modal', branch: 'bootstrap2
 
 gem 'eventmachine', '~> 1.0.3'
 gem 'nokogiri', '~> 1.5', '>= 1.5.11'
+gem 'net-ssh', '~> 2.9', '>= 2.9.3.beta1'

@@ -67,11 +67,9 @@ class TempListingsController < ApplicationController
     respond_with(@listing) do |format|
       if @listing.destroy  
         format.html { redirect_to get_root_path }
-        format.mobile { redirect_to get_root_path }
 	format.json { head :ok }
       else
         format.html { render action: :show, error: "Pixi was not removed. Please try again." }
-        format.mobile { render action: :show, error: "Pixi was not removed. Please try again." }
         format.json { render json: { errors: @listing.errors.full_messages }, status: 422 }
       end
     end

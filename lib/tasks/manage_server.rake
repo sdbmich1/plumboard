@@ -62,34 +62,6 @@ namespace :manage_server do
     end
   end	
 
-  # assign cards to customer
-  task :update_balanced_accts => :environment do 
-    include BalancedPayment
-    User.where(email: 'pixy@testuser.com').find_each do |usr|
-      uri = usr.acct_token
-      unless uri.blank? 
-	puts "Found token #{uri} for #{usr.name} ..."
-	
-	customer = Balanced::Customer.find uri rescue nil
-	unless customer
-	  puts "Adding customer account for #{usr.name} ..."
-	  customer = Balanced::Customer.new(name: usr.name, email: usr.email).save 
-
-	  # reset uri
-	  puts "Resetting uri for #{usr.name} ..."
-	  uri = usr.acct_token = customer.uri
-	  usr.save!
-	end
-
-        usr.card_accounts.find_each do |acct|
-	  puts "Assigning card for #{usr.name} ..."
-          result = Payment::assign_card uri, acct.token # rescue nil
-	  puts "Assigned card #{acct.token} to #{usr.name} token #{uri}" # unless result
-	end
-      end
-    end
-  end	
-
   task :send_invoiceless_pixi_notices => :environment do
     listings = Listing.invoiceless_pixis
     unless listings.blank?

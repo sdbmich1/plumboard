@@ -556,8 +556,8 @@ describe InvoicesController do
   describe "DELETE 'destroy'" do
 
     before (:each) do
-      Invoice.stub!(:includes) { Invoice }
-      Invoice.stub!(:find).and_return(@invoice)
+      Invoice.stub(:includes) { Invoice }
+      Invoice.stub(:find).and_return(@invoice)
     end
 
     def do_delete(status=nil)
@@ -567,19 +567,19 @@ describe InvoicesController do
     context 'success' do
 
       it "destroys the requested invoice" do
-        Invoice.stub!(:find).with("37") { mock_invoice }
+        Invoice.stub(:find).with("37") { mock_invoice }
         mock_invoice.should_receive(:destroy)
         do_delete
       end
 
       it "responds with @invoice if status is not cancel" do
-        Invoice.stub!(:find) { mock_invoice }
+        Invoice.stub(:find) { mock_invoice }
         do_delete
         response.should_not be_redirect
       end
 
       it "redirects to listing if status is cancel" do
-        Invoice.stub!(:find) { mock_invoice }
+        Invoice.stub(:find) { mock_invoice }
         mock_invoice.stub_chain(:listings, :first, :pixi_id).and_return('abc')
         mock_invoice.stub(:destroy).and_return(:true)
         do_delete('cancel')
