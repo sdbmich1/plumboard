@@ -2,7 +2,7 @@
 <html>
 <head>
   <%= render 'layouts/settings' %>
-  <%= javascript_include_tag "application", "http://maps.googleapis.com/maps/api/js?sensor=false" %>
+  <%= javascript_include_tag "application", "https://maps.googleapis.com/maps/api/js?key=#{API_KEYS['google']['api_key']}" %>
 </head>
 <body>
   <div id='wrap'>
