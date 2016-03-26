@@ -125,7 +125,7 @@ gem 'timezone', '~> 0.3.2'
 gem 'country_select'
 
 # add geocoder
-gem "geocoder", "~> 1.1.8"
+gem 'geocoder', '~> 1.3', '>= 1.3.1'
 
 # add images
 gem 'rmagick', '~> 2.15', '>= 2.15.4'
@@ -172,8 +172,9 @@ group :development do
   gem 'web-console'
 end
 
-group :development, :test, :demo do
+group :development, :test do
   gem 'wdm', '~> 0.1.1', :platforms => [:mswin, :mingw], :require => false
+  gem 'tzinfo-data', platforms: [:mingw, :mswin]
   gem 'rspec-rails', '3.4.2'
   gem 'rspec-its'
   gem 'rspec-activemodel-mocks'

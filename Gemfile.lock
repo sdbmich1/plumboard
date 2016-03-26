@@ -324,7 +324,7 @@ GEM
     fssm (0.2.10)
     gelf (1.4.0)
       json
-    geocoder (1.1.8)
+    geocoder (1.3.1)
     globalid (0.3.6)
       activesupport (>= 4.1.0)
     graylog2-resque (0.5.1)
@@ -651,6 +651,8 @@ GEM
     trollop (2.1.2)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
+    tzinfo-data (1.2016.3)
+      tzinfo (>= 1.0.0)
     uglifier (1.3.0)
       execjs (>= 0.3.0)
       multi_json (~> 1.0, >= 1.0.2)
@@ -731,7 +733,7 @@ DEPENDENCIES
   ffi
   fog (~> 1.37)
   gelf
-  geocoder (~> 1.1.8)
+  geocoder (~> 1.3, >= 1.3.1)
   graylog2-resque
   graylog2_exceptions!
   guard-rspec (= 4.3.1)
@@ -790,6 +792,7 @@ DEPENDENCIES
   thin
   thinking-sphinx (~> 3.1.4)
   timezone (~> 0.3.2)
+  tzinfo-data
   uglifier (= 1.3.0)
   unread (= 0.7.1)
   vcr (~> 2.5.0)
