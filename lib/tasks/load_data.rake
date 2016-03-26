@@ -107,6 +107,7 @@ end
 def update_pixis
   pixis = Listing.where(status: 'active').where(category_id: Category.where("category_type_code != 'event'")).update_all(status: 'active', end_date: Time.now+90.days)
   # pixis.map! {|p| p.end_date = Time.now+30.days unless p.event?; p.job_type_code = 'FT' if p.job?; p.save!}
+  User.find_each { |usr| User.reset_counters(usr.id, :active_listings) }
 end
 
 def updateCategoryType
