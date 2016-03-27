@@ -56,7 +56,7 @@ gem 'compass-rails', '2.0.0'
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 gem 'therubyracer', :platforms => :ruby
 
-gem 'uglifier', '1.3.0'
+gem 'uglifier', '>= 1.3.0'
 gem 'jquery-ui-rails', '~> 4.0', '>= 4.0.2'
 gem 'jquery-ui-themes'
 
