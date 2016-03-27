@@ -206,7 +206,7 @@ group :test do
 end
 
 # production gems
-group :production, :staging do
+group :production, :staging, :demo do
 
    # handle exceptions
    gem 'exception_notification', '~> 4.1', '>= 4.1.4'
