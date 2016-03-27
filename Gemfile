@@ -169,7 +169,7 @@ group :development do
 
   gem 'quiet_assets'
   gem 'bullet', '~> 5.0'
-  gem 'web-console'
+  # gem 'web-console'
 end
 
 group :development, :test do
