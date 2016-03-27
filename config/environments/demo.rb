@@ -1,3 +1,4 @@
+require 'exception_notifier'
 Plumboard::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
@@ -87,4 +88,9 @@ Plumboard::Application.configure do
 
   # facebook ssl setting
   FACEBOOK_SSL_OPTIONS = {:ca_file => '/etc/pki/tls/certs/ca-bundle.crt'}
+
+  config.middleware.use ExceptionNotifier,
+      :email_prefix => "Pixiboard: ",
+      :sender_address => %{"Pixiboard Admin" <webmaster@pixiboard.com>},
+      :exception_recipients => %w{techsupport@pixiboard.com} 
 end
