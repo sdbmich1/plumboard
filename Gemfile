@@ -209,7 +209,7 @@ end
 group :production, :staging do
 
    # handle exceptions
-   gem 'exception_notification', "~> 3.0.1", :require => 'exception_notifier'
+   gem 'exception_notification', '~> 4.1', '>= 4.1.4'
 end
 
 # production gems
