@@ -506,8 +506,8 @@ describe InvoicesController do
       allow(Invoice).to receive(:find).and_return( @invoice )
     end
 
-    def do_decline
-      put :decline, :id => "1"
+    def do_decline(reason=nil)
+      put :decline, :id => "1", reason: reason
     end
 
     context "with valid params" do
@@ -536,6 +536,15 @@ describe InvoicesController do
         do_decline
         expect(response).to be_redirect
       end
+
+      it "redirects to listing if cancelling Buy Now invoice" do
+        pixi_id = 'abc'
+        allow(Invoice).to receive(:find) { mock_invoice }
+        allow(mock_invoice).to receive(:decline).and_return(:true)
+        allow(mock_invoice).to receive_message_chain(:listings, :first, :pixi_id).and_return(pixi_id)
+        do_decline('Did Not Want (Buy Now)')
+        expect(response).to redirect_to(listing_path(pixi_id))
+      end
     end
 
     context "with invalid params" do
@@ -559,54 +568,26 @@ describe InvoicesController do
   describe "DELETE 'destroy'" do
 
     before (:each) do
-<<<<<<< HEAD
-      Invoice.stub(:includes) { Invoice }
-      Invoice.stub(:find).and_return(@invoice)
-=======
       allow(Invoice).to receive(:includes) { Invoice }
       allow(Invoice).to receive(:find).and_return(@invoice)
->>>>>>> fa62ffcbe8a86ff15ce4cb8bcb0fb241e861307d
     end
 
-    def do_delete(status=nil)
-      xhr :delete, :destroy, :id => "37", status: status
+    def do_delete
+      xhr :delete, :destroy, :id => "37"
     end
 
     context 'success' do
 
       it "destroys the requested invoice" do
-<<<<<<< HEAD
-        Invoice.stub(:find).with("37") { mock_invoice }
-        mock_invoice.should_receive(:destroy)
-=======
         allow(Invoice).to receive(:find).with("37") { mock_invoice }
         expect(mock_invoice).to receive(:destroy)
->>>>>>> fa62ffcbe8a86ff15ce4cb8bcb0fb241e861307d
         do_delete
       end
 
       it "responds with @invoice if status is not cancel" do
-<<<<<<< HEAD
-        Invoice.stub(:find) { mock_invoice }
-=======
         allow(Invoice).to receive(:find) { mock_invoice }
->>>>>>> fa62ffcbe8a86ff15ce4cb8bcb0fb241e861307d
         do_delete
         expect(response).not_to be_redirect
-      end
-
-      it "redirects to listing if status is cancel" do
-<<<<<<< HEAD
-        Invoice.stub(:find) { mock_invoice }
-        mock_invoice.stub_chain(:listings, :first, :pixi_id).and_return('abc')
-        mock_invoice.stub(:destroy).and_return(:true)
-=======
-        allow(Invoice).to receive(:find) { mock_invoice }
-        allow(mock_invoice).to receive_message_chain(:listings, :first, :pixi_id).and_return('abc')
-        allow(mock_invoice).to receive(:destroy).and_return(:true)
->>>>>>> fa62ffcbe8a86ff15ce4cb8bcb0fb241e861307d
-        do_delete('cancel')
-        expect(response).to be_redirect
       end
 
       it "should decrement the Invoice count" do

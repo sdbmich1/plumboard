@@ -233,11 +233,11 @@ feature "Transactions" do
       expect(page).to have_button('Done!')
     end
 
-    it "Reviews an invoice" do
+    it "Reviews an invoice", js: true do
       expect { 
-	click_link 'Cancel'
+        click_cancel_ok
       }.not_to change(Transaction, :count)
-      expect(page).to have_selector('title', text: 'Invoices')
+      expect(page).to have_title "Pixiboard | Invoices"
       expect(page).to have_content "INVOICE" 
     end
 
@@ -762,7 +762,7 @@ feature "Transactions" do
     end
     it 'Cancel deletes invoice', js: true do
       expect(page).to have_link('Cancel',
-        href: invoice_path(id: @invoice.id, status: 'cancel'), method: :delete)
+        href: decline_invoice_path(id: @invoice.id, reason: 'Did Not Want (Buy Now)'))
     end
   end
 end
