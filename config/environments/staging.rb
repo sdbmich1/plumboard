@@ -86,6 +86,8 @@ Plumboard::Application.configure do
 	  		       url: ":s3_domain_url",
 			       path: ":attachment/:id_partition/:style/:filename"}
 
+  config.paperclip_defaults = PAPERCLIP_STORAGE_OPTIONS 
+
   # facebook ssl setting
   FACEBOOK_SSL_OPTIONS = {:ca_file => '/etc/pki/tls/certs/ca-bundle.crt'}
 

@@ -5,7 +5,8 @@ class Picture < ActiveRecord::Base
   has_attached_file :photo, {
     styles: lambda { |attachment| attachment.instance.image_options[:styles] }, 
     convert_options: { :all => "-auto-orient -enhance" }
-  }.merge(PAPERCLIP_STORAGE_OPTIONS)
+  }
+  # .merge(PAPERCLIP_STORAGE_OPTIONS)
 
   belongs_to :imageable, :polymorphic => true
 
