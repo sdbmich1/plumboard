@@ -114,8 +114,8 @@ module TransactionsHelper
     inv_id = order[:invoice_id] || order['invoice_id']
     if txn.pixi?
       temp_listing_path(id: order['id1'])
-    elsif get_btn_method(order) == :delete
-      invoice_path(id: inv_id, status: 'cancel')
+    elsif get_btn_method(order) == :put
+      decline_invoice_path(id: inv_id, reason: 'Did Not Want (Buy Now)')
     else
       invoice_path(id: inv_id)
     end
@@ -175,6 +175,6 @@ module TransactionsHelper
 
   def get_btn_method order
     listing = Listing.find_by_pixi_id(order[:id1])
-    listing && listing.buy_now_flg ? :delete : :get
+    listing && listing.buy_now_flg ? :put : :get
   end
 end

@@ -1,4 +1,4 @@
-require 'will_paginate/array' 
+  require 'will_paginate/array' 
 class InvoicesController < ApplicationController
   load_and_authorize_resource
   before_filter :authenticate_user!
@@ -64,12 +64,8 @@ class InvoicesController < ApplicationController
   def destroy
     pixi_id = @invoice.listings.first.pixi_id if params[:status] == 'cancel'
     if @invoice.destroy
-      if params[:status] == 'cancel'
-        redirect_to listing_path(pixi_id)
-      else
-        @invoices = Invoice.get_invoices(@user).paginate(page: @page, per_page: 15)
-        respond_with(@invoice)
-      end
+      @invoices = Invoice.get_invoices(@user).paginate(page: @page, per_page: 15)
+      respond_with(@invoice)
     else
       respond_with(@invoice)
     end  
@@ -87,7 +83,11 @@ class InvoicesController < ApplicationController
     respond_with(@invoice) do |format|
       if @invoice.decline params[:reason]
         format.json { render json: {invoice: @invoice} }
-        format.html { redirect_to received_invoices_path, notice: 'Invoice was declined successfully.' }
+        if params[:reason] == 'Did Not Want (Buy Now)'
+          format.html { redirect_to listing_path(@invoice.listings.first.pixi_id) }
+        else
+          format.html { redirect_to received_invoices_path, notice: 'Invoice was declined successfully.' }
+        end
       else
         format.html { render action: :show, error: "Invoice was not declined. Please try again." }
         format.json { render json: { errors: @invoice.errors.full_messages }, status: 422 }
