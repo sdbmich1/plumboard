@@ -7,7 +7,6 @@ class Picture < ActiveRecord::Base
     convert_options: { :all => "-auto-orient -enhance" },
     escape_url: false
   }
-  # .merge(PAPERCLIP_STORAGE_OPTIONS)
 
   belongs_to :imageable, :polymorphic => true
 
