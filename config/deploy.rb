@@ -127,8 +127,8 @@ end
 
     desc 'Symlink Sphinx indexes from the shared folder to the latest release.'
     task :symlink_indexes, :roles => :app do
-      run "if [ -d #{release_path} ]; then chmod -R 777 #{release_path}/db/sphinx; else chmod -R 777 #{current_path}/db/sphinx; fi;"
       run "if [ -d #{release_path} ]; then ln -nfs #{shared_path}/db/sphinx #{release_path}/db/sphinx; else ln -nfs #{shared_path}/db/sphinx #{current_path}/db/sphinx; fi;"
+      run "if [ -d #{release_path} ]; then chmod -R 777 #{release_path}/db/sphinx; else chmod -R 777 #{current_path}/db/sphinx; fi;"
     end
    
     desc "Stop the sphinx server"
