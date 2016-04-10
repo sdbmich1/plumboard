@@ -41,7 +41,7 @@ function StripeCard() {
   $btnID.attr('disabled', true);
   
   if (token.length > 0)  {
-    console.log('StripeCard token = ' + token);
+    //console.log('StripeCard token = ' + token);
     $formID.trigger("submit.rails");    	  
   }
   else {
@@ -132,8 +132,9 @@ function printIt(printThis)
 
 // insert the token into the form so it gets submitted to the server
 function set_token(response) {
-  console.log('in set_token');
   $('#pay_token').val(response.id);
+  $('#exp_mo').val($('#card_month').val());
+  $('#exp_yr').val($('#card_year').val());
   $formID.trigger("submit.rails");
 }
 

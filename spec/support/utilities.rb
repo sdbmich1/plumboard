@@ -89,10 +89,13 @@
 
   def accept_btn
     click_button 'OK'
-    # page.driver.browser.switch_to.alert.accept
-    # wait = Selenium::WebDriver::Wait.new ignore: Selenium::WebDriver::Error::NoAlertPresentError
-    # alert = wait.until { page.driver.browser.switch_to.alert }
-    # alert.accept
+  end
+
+  def pg_accept_btn
+    page.driver.browser.switch_to.alert.accept
+    wait = Selenium::WebDriver::Wait.new ignore: Selenium::WebDriver::Error::NoAlertPresentError
+    alert = wait.until { page.driver.browser.switch_to.alert }
+    alert.accept
   end
 
   def click_ok
@@ -205,7 +208,7 @@
     select (Date.today.year+2).to_s, from: "card_year"
   end
 
-  def load_credit_card cid="4111111111111111", cvv="123", valid=true, flg=true
+  def load_credit_card cid="4111111111111111", cvv="123", valid=true, flg=true, default=true
     credit_card cid
     fill_in "card_code",  with: cvv
     valid ? valid_dates : invalid_card_dates

@@ -46,6 +46,11 @@ feature "CardAccounts" do
 
       # page.should have_content 'Home'
       expect(page).to have_content 'Card #'
+
+      visit new_card_account_path
+      expect {
+        load_credit_card "4242424242424242", "123", true, false; sleep 5
+      }.to change(CardAccount, :count).by(0)
     end
   end
 

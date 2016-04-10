@@ -14,6 +14,12 @@ class CardProcessor
   def save_card
     Rails.logger.info "PXB Save card: #{@acct.token} " 
     Rails.logger.info "PXB Save card: #{@acct.cust_token} " 
+    if CardAccount.find_by(user_id: @acct.user_id, 
+      card_no: @acct.card_number[@acct.card_number.length-4..@acct.card_number.length], zip: @acct.zip, 
+      expiration_month: @acct.expiration_month, expiration_year: @acct.expiration_year)
+      @acct.errors.add :base, "Card already exists. Please re-enter card."
+      return false
+    end
     card = Payment::create_card @acct
 
     # check for errors
