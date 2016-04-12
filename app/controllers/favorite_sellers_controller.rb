@@ -7,7 +7,7 @@ class FavoriteSellersController < ApplicationController
   layout :page_layout
 
   def create
-    @favorite = FavoriteSeller.find_or_create_by_user_id_and_seller_id(params[:uid], params[:seller_id], status: 'active')
+    @favorite = FavoriteSeller.find_or_create_by(user_id: params[:uid], seller_id: params[:seller_id], status: 'removed')
     @favorite.update_attribute(:status, 'active')
     respond_with(@favorite)
   end
@@ -17,7 +17,7 @@ class FavoriteSellersController < ApplicationController
   end
 
   def update
-    @favorite = FavoriteSeller.find_by_user_id_and_seller_id(params[:uid], params[:seller_id])
+    @favorite = FavoriteSeller.find_or_create_by(user_id: params[:uid], seller_id: params[:seller_id], status: 'active')
     @favorite.update_attribute(:status, 'removed')
     respond_with(@favorite)
   end

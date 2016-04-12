@@ -17,7 +17,7 @@ describe FavoriteSellersController do
 
   describe "POST seller", create: true do
     [true, false].each do |status|
-      it_behaves_like 'a model create assignment', 'FavoriteSeller', 'find_or_create_by_user_id_and_seller_id', 'create', 'create', status, 'favorite'
+      it_behaves_like 'a model create assignment', 'FavoriteSeller', 'find_or_create_by', 'create', 'create', status, 'favorite'
     end
   end
 
