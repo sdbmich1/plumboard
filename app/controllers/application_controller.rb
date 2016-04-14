@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
   include UrlHelper
-  protect_from_forgery with: :null_session, if: Proc.new {|c| c.request.format.json? }
+  protect_from_forgery # with: :null_session, if: Proc.new {|c| c.request.format.json? }
   before_filter :load_settings
   before_filter :prepare_for_mobile, if: :isDev?, except: [:destroy]
   # skip_before_filter :prepare_for_mobile
