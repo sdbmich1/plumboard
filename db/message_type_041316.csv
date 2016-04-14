@@ -1,0 +1,15 @@
+Code,Description,Recipient
+welcome,Welcome,buyer
+purchase,Purchase,buyer
+pickup,Pick Up Reminder,buyer
+chat,Pixichat Notice,buyer
+cart,Shopping Cart Notice,buyer
+promo,Promotion,buyer
+sls,SLS Notice,buyer
+store,New Store Notice,buyer
+return,Come back Notice,buyer
+favorite,Favorite Store Notice,buyer
+reward,Reward/Points Status,buyer
+invite,Invite Friends,buyer
+system,System Notice,buyer
+confirm,Confirmation Reminder,buyer
