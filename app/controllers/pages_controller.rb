@@ -1,8 +1,9 @@
 class PagesController < ApplicationController
-  respond_to :html, :json, :js, :mobile
+  before_filter :set_default_format, only: [:home]
   before_filter :load_data, only: [:home]
   layout :page_layout
   include LocationManager
+  respond_to :html, :json, :js, :mobile
   
   def help
     @faqs = Faq.active
