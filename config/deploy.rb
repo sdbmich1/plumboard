@@ -128,7 +128,6 @@ end
     desc 'Symlink Sphinx indexes from the shared folder to the latest release.'
     task :symlink_indexes, :roles => :app do
       run "if [ -d #{release_path} ]; then ln -nfs #{shared_path}/db/sphinx #{release_path}/db/sphinx; else ln -nfs #{shared_path}/db/sphinx #{current_path}/db/sphinx; fi;"
-      run "if [ -d #{current_path}/db/sphinx ]; then chmod -R 777 #{current_path}/db/sphinx; fi;"
     end
    
     desc "Stop the sphinx server"
@@ -157,6 +156,11 @@ end
     task :rebuild, :roles => :app do
       run "cd #{latest_release} && RAILS_ENV=#{rails_env} SPHINX_VERSION=2.0.8 bundle exec rake ts:rebuild"
     end    
+
+    desc "Remap the sphinx path"
+    task :remap, :roles => :app do
+      run "cd #{latest_release} && chmod -R 777 #{current_path}/db/sphinx"
+    end
   end
 
 namespace :deploy do
@@ -239,7 +243,7 @@ after 'bundle:install', 'deploy:enable_rubber'
 after 'deploy:update_code', 'deploy:enable_rubber'
 after 'deploy:update_code', 'deploy:symlink_shared', 'sphinx:stop'
 #after "deploy:migrations", "cleanup"
-after "deploy", "cleanup", "memcached:flush"
+after "deploy", "cleanup", "sphinx:remap", "memcached:flush"
 after "deploy:update", "deploy:migrations"
 
 task :cleanup, :except => { :no_release => true } do

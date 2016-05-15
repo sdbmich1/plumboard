@@ -152,8 +152,4 @@ class ApplicationController < ActionController::Base
   def set_session
     session[:back_to] = request.path unless signed_in?
   end
-
-  def set_default_format
-    params[:format] ||= "html"
-  end
 end
