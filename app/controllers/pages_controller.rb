@@ -1,5 +1,5 @@
 class PagesController < ApplicationController
-  before_filter :set_default_format, only: [:home]
+  # before_filter :set_default_format, only: [:home]
   before_filter :load_data, only: [:home]
   layout :page_layout
   include LocationManager
@@ -11,6 +11,9 @@ class PagesController < ApplicationController
 
   def home
     @listings = Listing.active.board_fields.paginate(page: @page, per_page: @per_page) 
+    respond_to do |format|
+      format.any { render 'home', :formats => [:html] }
+    end
   end
 
   def about
