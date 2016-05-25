@@ -150,6 +150,10 @@ Plumboard::Application.routes.draw do
     end
   end
 
+  namespace :stripe do
+    resources :webhooks, only: [:create]
+  end
+
   resources :pages, only: [:index] do
     get 'location_name', :on => :collection
   end

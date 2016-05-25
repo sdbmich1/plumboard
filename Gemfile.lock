@@ -626,6 +626,7 @@ GEM
     stripe (1.21.0)
       json (~> 1.8.1)
       rest-client (~> 1.4)
+    stripe_tester (0.5.0)
     test_after_commit (0.4.2)
       activerecord (>= 3.2)
     therubyracer (0.12.1)
@@ -784,6 +785,7 @@ DEPENDENCIES
   spork (~> 1.0rc)
   sprockets (~> 2.8)
   stripe (~> 1.21.0)
+  stripe_tester
   test_after_commit (~> 0.4.0)
   therubyracer
   thin

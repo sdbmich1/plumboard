@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head> 
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+</head>
+  <body>
+    <%= render :partial=>'shared/mail_header' %><br /><br />
+    Hi <%= @user.first_name %>,<br /><br />
+
+    <span style="height:30px;">
+        Thanks for your continued business.
+        <br /><br />
+        This is your receipt for your [PLAN LEVEL NAME].
+        <br /><br />
+        ======================================
+        <br />
+        Bill to:
+        <%= @user.name %>
+        <br />
+        [PLAN LEVEL NAME] – [START DATE] to [END DATE]
+        <br />
+        Total: $[SUBSCRIPTION AMOUNT]
+        <br /><br />
+        Your next billing date will be [NEXT BILLING DATE].
+        <br /><br />
+        If you have any questions, please reply to <%= mail_to 'support@pixiboard.com' %>.
+    </span><br /><br />
+
+    <span>The Pixiboard Team</span><br /><br />
+    <%= render :partial=>'shared/mail_footer' %>
+  </body>
+</html>
+

@@ -405,4 +405,193 @@ describe UserMailer do
       expect(multiple_listing_email.body.encoded).to match("multiple pixis")
     end
   end
+
+  describe "send_charge_failed" do
+    subject { UserMailer.send_charge_failed(user)}
+    let(:user) { create :pixi_user }
+
+    it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
+
+    describe '#to' do
+      subject { super().to }
+      it { is_expected.to eq([user.email]) }
+    end
+
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.to include "Charge Failed" }
+    end
+
+    it 'assigns user first name' do
+      expect(subject.body.encoded).to match(user.first_name)
+    end
+  end
+
+  describe "send_charge_dispute_created" do
+    subject { UserMailer.send_charge_dispute_created(user)}
+    let(:user) { create :pixi_user }
+
+    it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
+
+    describe '#to' do
+      subject { super().to }
+      it { is_expected.to eq([user.email, 'support@pixiboard.com']) }
+    end
+
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.to include "Charge Disputed" }
+    end
+
+    it 'assigns user first name' do
+      expect(subject.body.encoded).to match(user.first_name)
+    end
+  end
+
+  describe "send_charge_dispute_updated" do
+    subject { UserMailer.send_charge_dispute_updated(user)}
+    let(:user) { create :pixi_user }
+
+    it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
+
+    describe '#to' do
+      subject { super().to }
+      it { is_expected.to eq([user.email, 'support@pixiboard.com']) }
+    end
+
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.to include "Charge Disputed – Update" }
+    end
+
+    it 'assigns user first name' do
+      expect(subject.body.encoded).to match(user.first_name)
+    end
+  end
+
+  describe "send_charge_dispute_closed" do
+    subject { UserMailer.send_charge_dispute_closed(user)}
+    let(:user) { create :pixi_user }
+
+    it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
+
+    describe '#to' do
+      subject { super().to }
+      it { is_expected.to eq([user.email, 'support@pixiboard.com']) }
+    end
+
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.to include "Charge Dispute Closed" }
+    end
+
+    it 'assigns user first name' do
+      expect(subject.body.encoded).to match(user.first_name)
+    end
+  end
+
+  describe "send_customer_subscription_created" do
+    subject { UserMailer.send_customer_subscription_created(user)}
+    let(:user) { create :pixi_user }
+
+    it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
+
+    describe '#to' do
+      subject { super().to }
+      it { is_expected.to eq([user.email]) }
+    end
+
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.to include "First Payment Received – Thank You" }
+    end
+
+    it 'assigns user first name' do
+      expect(subject.body.encoded).to match(user.first_name)
+    end
+  end
+
+  describe "send_customer_subscription_trial_will_end" do
+    subject { UserMailer.send_customer_subscription_trial_will_end(user)}
+    let(:user) { create :pixi_user }
+
+    it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
+
+    describe '#to' do
+      subject { super().to }
+      it { is_expected.to eq([user.email]) }
+    end
+
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.to include "Your Subscription Trial Will End Soon" }
+    end
+
+    it 'assigns user first name' do
+      expect(subject.body.encoded).to match(user.first_name)
+    end
+  end
+
+  describe "send_customer_subscription_updated" do
+    subject { UserMailer.send_customer_subscription_updated(user)}
+    let(:user) { create :pixi_user }
+
+    it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
+
+    describe '#to' do
+      subject { super().to }
+      it { is_expected.to eq([user.email]) }
+    end
+
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.to include "Payment Received – Thank You" }
+    end
+
+    it 'assigns user first name' do
+      expect(subject.body.encoded).to match(user.first_name)
+    end
+  end
+
+  describe "send_customer_subscription_deleted" do
+    subject { UserMailer.send_customer_subscription_deleted(user)}
+    let(:user) { create :pixi_user }
+
+    it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
+
+    describe '#to' do
+      subject { super().to }
+      it { is_expected.to eq([user.email, 'support@pixiboard.com']) }
+    end
+
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.to include "Your Subscription Has Been Cancelled" }
+    end
+
+    it 'assigns user first name' do
+      expect(subject.body.encoded).to match(user.first_name)
+    end
+  end
+
+  describe "send_customer_updated" do
+    subject { UserMailer.send_customer_updated(user)}
+    let(:user) { create :pixi_user }
+
+    it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
+
+    describe '#to' do
+      subject { super().to }
+      it { is_expected.to eq([user.email]) }
+    end
+
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.to include "Your Payment Information Has Been Updated" }
+    end
+
+    it 'assigns user first name' do
+      expect(subject.body.encoded).to match(user.first_name)
+    end
+  end
 end

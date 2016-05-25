@@ -49,6 +49,12 @@ describe "Pages" do
       expect(page).not_to have_link 'Giveaway Rules', href: giveaway_path
       expect(page).to have_selector('#white-browse-home', href: local_listings_path(loc: @loc))
     end
+
+    it "should not break with HTTP_ACCEPT */*" do
+      page.driver.header "Content Type", "*/*"
+      visit root_path
+      expect(page).to have_content("Login")
+    end
   end
 
   describe "Signed In Users" do 
