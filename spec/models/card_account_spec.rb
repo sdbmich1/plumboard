@@ -25,6 +25,7 @@ describe CardAccount do
   it { is_expected.to respond_to(:set_flds) }
 
   it { is_expected.to belong_to(:user) }
+  it { is_expected.to have_many(:subscriptions) }
   it { is_expected.to validate_presence_of(:user_id) }
   it { is_expected.to validate_presence_of(:expiration_year) }
   it { is_expected.to validate_presence_of(:expiration_month) }

@@ -105,6 +105,7 @@ describe User do
     it { is_expected.to have_many(:sellers).conditions("favorite_sellers.status"=>"active") }
     it { is_expected.to have_many(:inverse_favorite_sellers).class_name('FavoriteSeller').with_foreign_key('seller_id') }
     it { is_expected.to have_many(:followers) }
+    it { is_expected.to have_many(:subscriptions) }
   end
 
   describe 'name' do

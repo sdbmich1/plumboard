@@ -8,6 +8,7 @@ class CardAccount < ActiveRecord::Base
     :card_number, :card_code, :zip, :default_flg, :card_token
 
   belongs_to :user, counter_cache: 'active_card_accounts_count'
+  has_many :subscriptions
 
   validate :must_have_token
   validates :user_id, presence: true

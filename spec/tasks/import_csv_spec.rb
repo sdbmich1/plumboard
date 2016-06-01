@@ -92,4 +92,10 @@ describe 'import_csv' do
     it_behaves_like('import_csv', 'load_stock_images', nil, StockImage,
       { title: 'Programmer / Analyst / Developer / Software / Computer', category_type_code: 'Employment', file_name: 'Computer.jpg' })
   end
+
+  describe 'load_plans' do
+    it_behaves_like('import_csv', 'load_plans', nil, Plan,
+      { name: %w(Starter Basic Pro Unlimited), interval: 'month',
+        price: [0, 19.95, 69.95, 149.95], trial_days: [0, 30] })
+  end
 end

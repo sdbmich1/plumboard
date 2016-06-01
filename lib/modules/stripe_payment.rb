@@ -260,4 +260,82 @@ module StripePayment
     rescue => ex
       process_error model, ex
   end
+
+  # add plan
+  def self.add_plan model
+    Stripe::Plan.create(amount: (model.price*100).to_i,
+      interval: model.interval, name: model.name, currency: 'usd',
+      statement_descriptor: "Pixiboard #{model.name}",
+      trial_period_days: model.trial_days, id: SecureRandom.uuid)
+
+    rescue => ex
+      process_error model, ex
+  end
+
+  # update plan
+  def self.update_plan model, name
+    plan = get_plan(model)
+    plan.name = name
+    plan.save
+    plan
+
+    rescue => ex
+      process_error model, ex
+  end
+
+  # get stripe plan
+  def self.get_plan model
+    Stripe::Plan.retrieve(model.stripe_id)
+
+    rescue => ex
+      process_error model, ex
+  end
+
+  # remove plan
+  def self.remove_plan model
+    plan = get_plan(model)
+    plan.delete
+
+    rescue => ex
+      process_error model, ex
+  end
+
+  # add subscription
+  def self.add_subscription model
+    acct = model.card_account
+    customer = get_customer(acct.cust_token, acct)
+    customer.subscriptions.create(plan: model.plan.stripe_id)
+
+    rescue => ex
+      process_error model, ex
+  end
+
+  # get subscription
+  def self.get_subscription model
+    acct = model.card_account
+    customer = get_customer(acct.cust_token, acct)
+    customer.subscriptions.retrieve(model.stripe_id)
+
+    rescue => ex
+      process_error model, ex
+  end
+
+  # cancel subscription
+  def self.cancel_subscription model
+    sub = get_subscription(model)
+    sub.delete
+
+    rescue => ex
+      process_error model, ex
+  end
+
+  # update subscription
+  def self.update_subscription model, plan_id
+    sub = get_subscription(model)
+    sub.plan = plan_id
+    sub.save
+
+    rescue => ex
+      process_error model, ex
+  end
 end

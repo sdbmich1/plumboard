@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160311211603) do
+ActiveRecord::Schema.define(version: 20160525064930) do
 
   create_table "admins", force: :cascade do |t|
     t.string   "email",                  limit: 255, default: "", null: false
@@ -219,6 +219,16 @@ ActiveRecord::Schema.define(version: 20160311211603) do
   end
 
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
+
+  create_table "devices", force: :cascade do |t|
+    t.integer  "user_id",    limit: 4
+    t.string   "token",      limit: 255
+    t.string   "platform",   limit: 255
+    t.string   "status",     limit: 255
+    t.boolean  "vibrate"
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
 
   create_table "event_types", force: :cascade do |t|
     t.string   "code",        limit: 255
@@ -471,6 +481,27 @@ ActiveRecord::Schema.define(version: 20160311211603) do
   add_index "listings_transactions", ["listing_id", "transaction_id"], name: "index_listings_transactions_on_listing_id_and_transaction_id", using: :btree
   add_index "listings_transactions", ["transaction_id"], name: "index_listings_transactions_on_transaction_id", using: :btree
 
+  create_table "message_types", force: :cascade do |t|
+    t.string   "code",        limit: 255
+    t.string   "description", limit: 255
+    t.string   "recipient",   limit: 255
+    t.string   "status",      limit: 255
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.integer  "user_id",           limit: 4
+    t.integer  "device_id",         limit: 4
+    t.string   "message_type_code", limit: 255
+    t.string   "content",           limit: 255
+    t.string   "priority",          limit: 255
+    t.text     "reg_id",            limit: 65535
+    t.string   "collapse_key",      limit: 255
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
+  end
+
   create_table "old_listings", force: :cascade do |t|
     t.string   "title",                 limit: 255
     t.integer  "user_id",               limit: 4
@@ -659,6 +690,19 @@ ActiveRecord::Schema.define(version: 20160311211603) do
   add_index "pixi_wants", ["fulfillment_type_code"], name: "index_pixi_wants_on_fulfillment_type_code", using: :btree
   add_index "pixi_wants", ["status"], name: "index_pixi_wants_on_status", using: :btree
   add_index "pixi_wants", ["user_id", "pixi_id"], name: "index_pixi_wants_on_user_id_and_pixi_id", using: :btree
+
+  create_table "plans", force: :cascade do |t|
+    t.string   "name",       limit: 255
+    t.string   "interval",   limit: 255
+    t.float    "price",      limit: 24
+    t.string   "status",     limit: 255
+    t.string   "stripe_id",  limit: 255
+    t.integer  "trial_days", limit: 4
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
+  add_index "plans", ["name"], name: "index_plans_on_name", using: :btree
 
   create_table "posts", force: :cascade do |t|
     t.integer  "user_id",          limit: 4
@@ -867,6 +911,16 @@ ActiveRecord::Schema.define(version: 20160311211603) do
 
   add_index "subcategories", ["category_id"], name: "index_subcategories_on_category_id", using: :btree
 
+  create_table "subscriptions", force: :cascade do |t|
+    t.integer  "plan_id",         limit: 4
+    t.integer  "user_id",         limit: 4
+    t.integer  "card_account_id", limit: 4
+    t.string   "stripe_id",       limit: 255
+    t.string   "status",          limit: 255
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+  end
+
   create_table "temp_listings", force: :cascade do |t|
     t.string   "title",                 limit: 255
     t.text     "description",           limit: 65535
@@ -1026,12 +1080,12 @@ ActiveRecord::Schema.define(version: 20160311211603) do
   create_table "users", force: :cascade do |t|
     t.string   "first_name",                 limit: 255
     t.string   "last_name",                  limit: 255
-    t.string   "email",                      limit: 255, default: "", null: false
-    t.string   "encrypted_password",         limit: 255, default: "", null: false
+    t.string   "email",                      limit: 255,   default: "", null: false
+    t.string   "encrypted_password",         limit: 255,   default: "", null: false
     t.string   "reset_password_token",       limit: 255
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",              limit: 4,   default: 0
+    t.integer  "sign_in_count",              limit: 4,     default: 0
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip",         limit: 255
@@ -1040,12 +1094,12 @@ ActiveRecord::Schema.define(version: 20160311211603) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string   "unconfirmed_email",          limit: 255
-    t.integer  "failed_attempts",            limit: 4,   default: 0
+    t.integer  "failed_attempts",            limit: 4,     default: 0
     t.string   "unlock_token",               limit: 255
     t.datetime "locked_at"
     t.string   "authentication_token",       limit: 255
-    t.datetime "created_at",                                          null: false
-    t.datetime "updated_at",                                          null: false
+    t.datetime "created_at",                                            null: false
+    t.datetime "updated_at",                                            null: false
     t.date     "birth_date"
     t.string   "gender",                     limit: 255
     t.boolean  "fb_user"
@@ -1059,11 +1113,12 @@ ActiveRecord::Schema.define(version: 20160311211603) do
     t.string   "url",                        limit: 255
     t.boolean  "guest"
     t.string   "description",                limit: 255
-    t.integer  "active_listings_count",      limit: 4,   default: 0
+    t.integer  "active_listings_count",      limit: 4,     default: 0
     t.string   "cust_token",                 limit: 255
     t.integer  "ein",                        limit: 4
     t.integer  "ssn_last4",                  limit: 4
     t.integer  "active_card_accounts_count", limit: 4
+    t.text     "tokens",                     limit: 65535
   end
 
   add_index "users", ["acct_token"], name: "index_users_on_acct_token", using: :btree

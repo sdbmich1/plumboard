@@ -492,4 +492,13 @@ FactoryGirl.define do
     file_name "Computer.jpg"
     category_type_code "employment"
   end
+
+  factory :plan do
+    name 'Starter'
+    price 0
+    interval 'month'
+    trial_days 30
+  end
+
+  factory :subscription
 end

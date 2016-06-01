@@ -110,4 +110,36 @@ module Payment
       StripePayment.credit_seller_account(model) rescue nil
     end
   end
+
+  def self.add_plan model
+    StripePayment.add_plan model
+  end
+
+  def self.update_plan model, name
+    StripePayment.update_plan model, name
+  end
+
+  def self.get_plan model
+    StripePayment.get_plan model
+  end
+
+  def self.remove_plan model
+    StripePayment.remove_plan model
+  end
+
+  def self.add_subscription model
+    StripePayment.add_subscription model
+  end
+
+  def self.get_subscription model, customer
+    StripePayment.get_subscription model, customer
+  end
+
+  def self.cancel_subscription model
+    StripePayment.cancel_subscription model
+  end
+
+  def self.update_subscription model, plan_id
+    StripePayment.update_subscription model, plan_id
+  end
 end

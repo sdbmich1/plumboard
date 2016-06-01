@@ -803,6 +803,17 @@ task :load_stock_images, [:file_name] => [:environment] do |t, args|
   end
 end
 
+task :load_plans => :environment do
+  Plan.delete_all
+  CSV.foreach(Rails.root.join('db', 'add_plan_052116.csv'), :headers => true) do |row|
+    if Plan.add_plan(row[0], row[2], row[1], row[3])
+      puts "Plan #{row[0]} added successfully"
+    else
+      puts "Error adding #{row[0]} plan"
+    end
+  end
+end
+
 #to run all tasks at once
 task :run_all_tasks => :environment do
 
@@ -831,6 +842,7 @@ task :run_all_tasks => :environment do
   Rake::Task[:load_feeds].execute
   Rake::Task[:load_currency_types].execute 
   Rake::Task[:load_stock_images].execute
+  Rake::Task[:load_plans].execute
   Rake::Task[:import_other_sites].execute :file_name => "state_site_data_012815.csv", :site_type_code => "state"
   Rake::Task[:import_other_sites].execute :file_name => "country_site_data_012815.csv", :site_type_code => "country"
   Rake::Task[:update_site_images].execute :file_name => "region_image_data_051415.csv"
