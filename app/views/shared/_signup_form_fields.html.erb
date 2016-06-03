@@ -6,6 +6,6 @@
     <%= render partial: 'shared/user_info', locals: { f: f, user: @user } %>
     <%= show_password f, @user %>
     <%= show_signup_partial f, src, fid, '==' %>
+    <%= show_signup_partial f, src, fid, '!=' %>
   </div>
-  <%= show_signup_partial f, src, fid, '!=' %>
 </div>
