@@ -1,0 +1,24 @@
+Authenticated as pixiboard
+Authenticated as pixiboard
+Authenticated as pixiboard
+/home/brad/.rvm/rubies/ruby-2.2.4/lib/ruby/site_ruby/2.2.0/rubygems/requirement.rb:55:in `create': Interrupt
+	from /home/brad/.rvm/rubies/ruby-2.2.4/lib/ruby/site_ruby/2.2.0/rubygems/dependency.rb:58:in `initialize'
+	from /home/brad/.rvm/rubies/ruby-2.2.4/lib/ruby/site_ruby/2.2.0/rubygems/specification.rb:1354:in `new'
+	from /home/brad/.rvm/rubies/ruby-2.2.4/lib/ruby/site_ruby/2.2.0/rubygems/specification.rb:1354:in `add_dependency_with_type'
+	from /home/brad/.rvm/rubies/ruby-2.2.4/lib/ruby/site_ruby/2.2.0/rubygems/specification.rb:461:in `add_development_dependency'
+	from /home/brad/.rvm/gems/ruby-2.2.4/specifications/test-unit-3.1.7.gemspec:30:in `block in load'
+	from /home/brad/.rvm/rubies/ruby-2.2.4/lib/ruby/site_ruby/2.2.0/rubygems/specification.rb:1859:in `initialize'
+	from /home/brad/.rvm/gems/ruby-2.2.4/specifications/test-unit-3.1.7.gemspec:4:in `new'
+	from /home/brad/.rvm/gems/ruby-2.2.4/specifications/test-unit-3.1.7.gemspec:4:in `load'
+	from /home/brad/.rvm/rubies/ruby-2.2.4/lib/ruby/site_ruby/2.2.0/rubygems/specification.rb:1043:in `eval'
+	from /home/brad/.rvm/rubies/ruby-2.2.4/lib/ruby/site_ruby/2.2.0/rubygems/specification.rb:1043:in `load'
+	from /home/brad/.rvm/rubies/ruby-2.2.4/lib/ruby/site_ruby/2.2.0/rubygems/stub_specification.rb:167:in `to_spec'
+	from /home/brad/.rvm/rubies/ruby-2.2.4/lib/ruby/site_ruby/2.2.0/rubygems/specification.rb:705:in `map'
+	from /home/brad/.rvm/rubies/ruby-2.2.4/lib/ruby/site_ruby/2.2.0/rubygems/specification.rb:705:in `_all'
+	from /home/brad/.rvm/rubies/ruby-2.2.4/lib/ruby/site_ruby/2.2.0/rubygems/specification.rb:894:in `each'
+	from /home/brad/.rvm/rubies/ruby-2.2.4/lib/ruby/site_ruby/2.2.0/rubygems/specification.rb:1010:in `reverse_each'
+	from /home/brad/.rvm/rubies/ruby-2.2.4/lib/ruby/site_ruby/2.2.0/rubygems/specification.rb:1010:in `latest_specs'
+	from /home/brad/.rvm/rubies/ruby-2.2.4/lib/ruby/site_ruby/2.2.0/rubygems.rb:470:in `find_latest_files'
+	from /home/brad/.rvm/gems/ruby-2.2.4@global/gems/executable-hooks-1.3.2/lib/executable-hooks/hooks.rb:19:in `load_executable_plugins'
+	from /home/brad/.rvm/gems/ruby-2.2.4@global/gems/executable-hooks-1.3.2/lib/executable-hooks/hooks.rb:48:in `run'
+	from /home/brad/.rvm/gems/ruby-2.2.4/bin/ruby_executable_hooks:10:in `<main>'

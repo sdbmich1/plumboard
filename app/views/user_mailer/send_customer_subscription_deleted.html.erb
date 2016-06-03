@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head> 
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+</head>
+  <body>
+    <%= render :partial=>'shared/mail_header' %><br /><br />
+    Hi <%= @user.first_name %>,<br /><br />
+
+    <span style="height:30px;">
+        Your subscription was recently cancelled.
+
+        Thanks for using our service. We’re sorry to see you go. If this was a mistake, or you just need to update your credit card info, please login <%= link_to('here', card_accounts_url(adminFlg: false), html_options = {}) %> and reactivate your account.
+
+        If you have any questions, please reply to <%= mail_to 'support@pixiboard.com' %>.
+    </span><br /><br />
+
+    <span>The Pixiboard Team</span><br /><br />
+    <%= render :partial=>'shared/mail_footer' %>
+  </body>
+</html>
+

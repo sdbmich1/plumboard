@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head> 
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+</head>
+  <body>
+    <%= render :partial=>'shared/mail_header' %><br /><br />
+    Hi <%= @user.first_name %>,<br /><br />
+
+    <span style="height:30px;">
+        A recent payment from your account has been disputed. We will be in touch with updates. In the meantime, you can verify that your <%= link_to('credit card information', card_accounts_url(adminFlg: false), html_options = {}) %> is correct.
+    </span><br /><br />
+
+    <span>The Pixiboard Team</span><br /><br />     
+    <%= render :partial=>'shared/mail_footer' %>
+  </body>
+</html>
+

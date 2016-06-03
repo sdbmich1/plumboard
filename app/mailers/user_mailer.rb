@@ -256,4 +256,103 @@ class UserMailer < ActionMailer::Base
     # set message details
     mail(:to => "#{@invoice.buyer_email}", :subject => env_check + ' ' + "PixiPay Invoice ##{@invoice.id} from #{@invoice.seller_name}")
   end
+
+  # send charge failed notice
+  def send_charge_failed user
+    @user = user
+
+    # set logo
+    attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
+    # set message details
+    mail(:to => "#{user.email}", :subject => env_check + " Charge Failed")
+  end
+
+  # send charge dispute notice
+  def send_charge_dispute_created user
+    @user = user
+
+    # set logo
+    attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
+    # set message details
+    mail(:to => ["#{user.email}", "support@pixiboard.com"], :subject => env_check + " Charge Disputed")
+  end
+
+  # send charge dispute update
+  def send_charge_dispute_updated user
+    @user = user
+
+    # set logo
+    attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
+    # set message details
+    mail(:to => ["#{user.email}", "support@pixiboard.com"], :subject => env_check + " Charge Disputed – Update")
+  end
+
+  # send charge dispute closed notice
+  def send_charge_dispute_closed user
+    @user = user
+
+    # set logo
+    attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
+    # set message details
+    mail(:to => ["#{user.email}", "support@pixiboard.com"], :subject => env_check + " Charge Dispute Closed")
+  end
+
+  # send subscription notice
+  def send_customer_subscription_created user
+    @user = user
+
+    # set logo
+    attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
+    # set message details
+    mail(:to => "#{user.email}", :subject => env_check + " First Payment Received – Thank You")
+  end
+
+  # send subscription trial notice
+  def send_customer_subscription_trial_will_end user
+    @user = user
+
+    # set logo
+    attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
+    # set message details
+    mail(:to => "#{user.email}", :subject => env_check + " Your Subscription Trial Will End Soon")
+  end
+
+  # send subscription charge notice
+  def send_customer_subscription_updated user
+    @user = user
+
+    # set logo
+    attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
+    # set message details
+    mail(:to => "#{user.email}", :subject =>  env_check + " Payment Received – Thank You")
+  end
+
+  # send subscription cancellation notice
+  def send_customer_subscription_deleted user
+    @user = user
+
+    # set logo
+    attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
+    # set message details
+    mail(:to => ["#{user.email}", "support@pixiboard.com"], :subject => env_check + " Your Subscription Has Been Cancelled")
+  end
+
+  # send Stripe account update notice
+  def send_customer_updated user
+    @user = user
+
+    # set logo
+    attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
+
+    # set message details
+    mail(:to => "#{user.email}", :subject => env_check + " Your Payment Information Has Been Updated")
+  end
 end
