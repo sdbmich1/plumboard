@@ -8,7 +8,7 @@
     Hi <%= @user.first_name %>,<br /><br />
 
     <span style="height:30px;">
-        Your subscription trial will end on [DATE]. Please log on to <%= link_to('Pixiboard', root_url,  html_options = {}) %> if you wish to renew your subscription.
+        Your subscription trial will end on <%= @sub.created_at + @plan.trial_days.days %>. Please log on to <%= link_to('Pixiboard', root_url,  html_options = {}) %> if you wish to renew your subscription.
     </span><br /><br />
 
     <span>The Pixiboard Team</span><br /><br />

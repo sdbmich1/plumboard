@@ -185,7 +185,7 @@ group :development, :test do
   gem "vcr", "~> 2.5.0"
   gem 'rack_session_access'
   gem 'minitest', '~> 5.1'
-  gem 'stripe_tester'
+  gem 'stripe-ruby-mock'
 end
 
 # test gems

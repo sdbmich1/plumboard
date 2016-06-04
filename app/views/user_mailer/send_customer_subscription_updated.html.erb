@@ -10,18 +10,18 @@
     <span style="height:30px;">
         Thanks for your continued business.
         <br /><br />
-        This is your receipt for your [PLAN LEVEL NAME].
+        This is your receipt for your <%= @plan.name %> plan.
         <br /><br />
         ======================================
         <br />
         Bill to:
         <%= @user.name %>
         <br />
-        [PLAN LEVEL NAME] – [START DATE] to [END DATE]
+        <%= "Pixiboard #{@plan.name} Plan" %> - <%= Date.today.at_beginning_of_month %>
         <br />
-        Total: $[SUBSCRIPTION AMOUNT]
+        Total: $<%= @plan.price %>
         <br /><br />
-        Your next billing date will be [NEXT BILLING DATE].
+        Your next billing date will be <%= Date.today.at_beginning_of_month.next_month %>.
         <br /><br />
         If you have any questions, please reply to <%= mail_to 'support@pixiboard.com' %>.
     </span><br /><br />

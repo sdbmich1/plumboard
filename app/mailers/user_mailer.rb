@@ -302,8 +302,8 @@ class UserMailer < ActionMailer::Base
   end
 
   # send subscription notice
-  def send_customer_subscription_created user
-    @user = user
+  def send_customer_subscription_created user, sub
+    @user, @sub, @plan = user, sub, sub.plan
 
     # set logo
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
@@ -313,8 +313,8 @@ class UserMailer < ActionMailer::Base
   end
 
   # send subscription trial notice
-  def send_customer_subscription_trial_will_end user
-    @user = user
+  def send_customer_subscription_trial_will_end user, sub
+    @user, @sub, @plan = user, sub, sub.plan
 
     # set logo
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
@@ -324,8 +324,8 @@ class UserMailer < ActionMailer::Base
   end
 
   # send subscription charge notice
-  def send_customer_subscription_updated user
-    @user = user
+  def send_customer_subscription_updated user, sub
+    @user, @sub, @plan = user, sub, sub.plan
 
     # set logo
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
@@ -335,8 +335,8 @@ class UserMailer < ActionMailer::Base
   end
 
   # send subscription cancellation notice
-  def send_customer_subscription_deleted user
-    @user = user
+  def send_customer_subscription_deleted user, sub
+    @user, @sub, @plan = user, sub, sub.plan
 
     # set logo
     attachments.inline['rsz_px_word_logo.png'] = File.read( Rails.root.join("app/assets/images/","rsz_px_word_logo.png") )
