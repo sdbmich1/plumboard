@@ -17,11 +17,11 @@
         Bill to:
         <%= @user.name %>
         <br />
-        <%= "Pixiboard #{@plan.name} Plan" %> - <%= Date.today.at_beginning_of_month %>
+        <%= "Pixiboard #{@plan.name} Plan" %> - <%= Date.today %>
         <br />
         Total: $<%= @plan.price %>
         <br /><br />
-        Your next billing date will be <%= Date.today.at_beginning_of_month.next_month %>.
+        Your next billing date will be <%= Date.today + 1.months %>.
         <br /><br />
         If you have any questions, please reply to <%= mail_to 'support@pixiboard.com' %>.
     </span><br /><br />

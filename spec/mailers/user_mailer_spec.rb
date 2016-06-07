@@ -449,7 +449,7 @@ describe UserMailer do
   end
 
   describe "send_charge_dispute_updated" do
-    subject { UserMailer.send_charge_dispute_updated(user)}
+    subject { UserMailer.send_charge_dispute_updated(user, 'evidence')}
     let(:user) { create :pixi_user }
 
     it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
@@ -466,6 +466,10 @@ describe UserMailer do
 
     it 'assigns user first name' do
       expect(subject.body.encoded).to match(user.first_name)
+    end
+
+    it 'assigns evidence' do
+      expect(subject.body.encoded).to match('evidence')
     end
   end
 
@@ -491,8 +495,10 @@ describe UserMailer do
   end
 
   describe "send_customer_subscription_created" do
-    subject { UserMailer.send_customer_subscription_created(user)}
+    subject { UserMailer.send_customer_subscription_created(user, sub)}
     let(:user) { create :pixi_user }
+    let(:plan) { create :plan }
+    let(:sub) { user.subscriptions.create(plan_id: plan.id) }
 
     it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
 
@@ -509,11 +515,21 @@ describe UserMailer do
     it 'assigns user first name' do
       expect(subject.body.encoded).to match(user.first_name)
     end
+
+    it 'assigns plan name' do
+      expect(subject.body.encoded).to match(plan.name)
+    end
+
+    it 'assigns plan price' do
+      expect(subject.body.encoded).to match(plan.price.to_s)
+    end
   end
 
   describe "send_customer_subscription_trial_will_end" do
-    subject { UserMailer.send_customer_subscription_trial_will_end(user)}
+    subject { UserMailer.send_customer_subscription_trial_will_end(user, sub) }
     let(:user) { create :pixi_user }
+    let(:plan) { create :plan }
+    let(:sub) { user.subscriptions.create(plan_id: plan.id) }
 
     it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
 
@@ -530,11 +546,17 @@ describe UserMailer do
     it 'assigns user first name' do
       expect(subject.body.encoded).to match(user.first_name)
     end
+
+    it 'assigns subscription end date' do
+      expect(subject.body.encoded).to match((sub.created_at.to_date + plan.trial_days.days).to_s)
+    end
   end
 
   describe "send_customer_subscription_updated" do
-    subject { UserMailer.send_customer_subscription_updated(user)}
+    subject { UserMailer.send_customer_subscription_updated(user, sub)}
     let(:user) { create :pixi_user }
+    let(:plan) { create :plan }
+    let(:sub) { user.subscriptions.create(plan_id: plan.id) }
 
     it { expect{subject.deliver_now}.to change{ActionMailer::Base.deliveries.length} }
 
@@ -550,6 +572,14 @@ describe UserMailer do
 
     it 'assigns user first name' do
       expect(subject.body.encoded).to match(user.first_name)
+    end
+
+    it 'assigns plan name' do
+      expect(subject.body.encoded).to match(plan.name)
+    end
+
+    it 'assigns plan price' do
+      expect(subject.body.encoded).to match(plan.price.to_s)
     end
   end
 

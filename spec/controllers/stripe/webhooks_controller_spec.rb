@@ -26,12 +26,12 @@ describe Stripe::WebhooksController do
     it 'calls UserMailer method' do
       test_webhook('charge.failed', :send_charge_failed, [@user])
       test_webhook('charge.dispute.created', :send_charge_dispute_created, [@user])
-      test_webhook('charge.dispute.updated', :send_charge_dispute_updated, [@user])
+      test_webhook('charge.dispute.updated', :send_charge_dispute_updated, [@user, 'Here is some evidence'])
       test_webhook('charge.dispute.closed', :send_charge_dispute_closed, [@user])
       test_webhook('customer.subscription.created', :send_customer_subscription_created, [@user, @sub])
       test_webhook('customer.subscription.trial_will_end', :send_customer_subscription_trial_will_end, [@user, @sub])
       test_webhook('customer.subscription.updated', :send_customer_subscription_updated, [@user, @sub])
-      test_webhook('customer.subscription.deleted', :send_customer_subscription_deleted, [@user, @sub])
+      test_webhook('customer.subscription.deleted', :send_customer_subscription_deleted, [@user])
       test_webhook('customer.updated', :send_customer_updated, [@user])
     end
 

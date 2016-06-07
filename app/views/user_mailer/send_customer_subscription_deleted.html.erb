@@ -10,7 +10,9 @@
     <span style="height:30px;">
         Your subscription was recently cancelled.
 
-        Thanks for using our service. We’re sorry to see you go. If this was a mistake, or you just need to update your credit card info, please login <%= link_to('here', card_accounts_url(adminFlg: false), html_options = {}) %> and reactivate your account.
+        Thanks for using our service. We’re sorry to see you go.<br /><br />
+
+        If this was a mistake, or you just need to update your credit card info, please login <%= link_to('here', card_accounts_url(adminFlg: false), html_options = {}) %> and reactivate your account.<br /><br />
 
         If you have any questions, please reply to <%= mail_to 'support@pixiboard.com' %>.
     </span><br /><br />
