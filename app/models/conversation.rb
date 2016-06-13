@@ -110,7 +110,7 @@ class Conversation < ActiveRecord::Base
 
   # set list of included assns for eager loading
   def self.inc_list
-    includes(:posts, :recipient => :pictures, :user => :pictures, :listing => [:site, :user, {:invoices => [:invoice_details, :buyer, :seller]}])
+    includes(:posts => [:listing], :recipient => :pictures, :user => :pictures, :listing => [:site, :user, {:invoices => [:invoice_details, :buyer, :seller]}])
   end
 
   # set list of included assns for eager loading
