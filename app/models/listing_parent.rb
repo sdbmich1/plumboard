@@ -176,54 +176,9 @@ class ListingParent < ActiveRecord::Base
     !transaction_id.blank?
   end
 
-  # verify if listing is active
-  def active?
-    status == 'active'
-  end
-
-  # verify if listing is pending
-  def pending?
-    status == 'pending'
-  end
-
-  # check if listing is denied
-  def denied?
-    status == 'denied'
-  end
-
-  # verify if listing is edit
-  def edit?
-    status == 'edit'
-  end
-
-  # verify if listing is sold
-  def sold?
-    status == 'sold'
-  end
-
   # verify if any sold
   def any_sold?
     self.is_a?(Listing) && invoices.exists?(status: 'paid')
-  end
-
-  # verify if listing is inactive
-  def inactive?
-    status == 'inactive'
-  end
-
-  # verify if listing is closed
-  def closed?
-    status == 'closed'
-  end
-
-  # verify if listing is removed
-  def removed?
-    status == 'removed'
-  end
-
-  # verify if listing is removed
-  def expired?
-    status == 'expired'
   end
 
   # verify if alias is used
@@ -234,6 +189,11 @@ class ListingParent < ActiveRecord::Base
   # check if listing is new
   def new_status?
     status == 'new'
+  end
+  
+  # dynamically created status check methods
+  %w(active removed sold inactive new expired closed edit denied pending).each do |item|
+    define_method("#{item}?") { status == item }
   end
 
   # verify if current user is listing seller

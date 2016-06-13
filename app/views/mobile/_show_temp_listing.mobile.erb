@@ -1,6 +1,6 @@
 <div class="mtop center-wrapper">
   <%= render partial: 'mobile/review_nav', locals: { listing: listing } %>
-  <% if listing.new_status? %>
+  <% if listing.new? %>
     <% unless listing.free? %>
       <%= render :partial => 'mobile/item_purchase', locals: {:listing=>listing} if listing.seller?(@user) %>
     <% end %>

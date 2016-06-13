@@ -119,7 +119,7 @@ describe Listing do
     it { is_expected.not_to allow_value("").for(:description) }
 
     context 'status' do
-      %w(active edit pending denied expired sold closed inactive removed).each do |fld|
+      %w(new active edit pending denied expired sold closed inactive removed).each do |fld|
         it_behaves_like 'a status field', :listing, fld
       end
     end

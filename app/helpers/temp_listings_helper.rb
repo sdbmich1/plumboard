@@ -17,7 +17,7 @@ module TempListingsHelper
 
   # return # of steps to submit new pixi
   def step_count listing
-    listing.free? ? 2 : !listing.new_status? ? 2 : 3 rescue 2
+    listing.free? ? 2 : !listing.new? ? 2 : 3 rescue 2
   end
   
   # build array for year selection dropdown
@@ -83,7 +83,7 @@ module TempListingsHelper
 
   # check if pixi is chargeable
   def chargeable? listing
-    listing.seller?(@user) && listing.new_status? 
+    listing.seller?(@user) && listing.new? 
   end
 
   # toggle element on image slider
