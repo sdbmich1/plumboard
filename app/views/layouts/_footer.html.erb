@@ -1,3 +1,8 @@
 <% cache cache_key_for_fragment('footer') do %>
   <%= toggle_footer %>
 <% end %>
+
+<link href="/assets/images/favicon.ico" rel="shortcut icon" />
+<%= stylesheet_link_tag "application", :media => "all" %>
+<%= csrf_meta_tags %>
+<%= render 'layouts/shim' %>
