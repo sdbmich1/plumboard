@@ -239,3 +239,7 @@ gem 'nokogiri', '~> 1.6.0'
 gem 'net-ssh', '~> 2.9', '>= 2.9.3.beta1'
 gem 'rack-cors'
 gem 'execjs', '~> 2.6'
+
+gem 'pushwoosh'
+gem 'resque'
+gem 'redis'

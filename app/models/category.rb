@@ -90,7 +90,9 @@ class Category < ActiveRecord::Base
 
   # set json string
   def as_json(options={})
-    super(only: [:id, :name], methods: [:name_title])
+    output = super(only: [:id, :name], methods: [:name_title])
+    output['pictures'] = [{ 'photo_url' => self.pictures.first.photo.url(:thumb) }]
+    output
   end
 
   def self.get_ids listings
