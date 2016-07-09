@@ -82,6 +82,11 @@ describe 'import_csv' do
     { code: %w(AED), description: ['United Arab Emirates Dirham'], status: %w(inactive), hide: %w(yes)})
   end
 
+  describe 'load_currency_types' do
+    it_behaves_like("import_csv", "load_message_types", nil, MessageType,
+      { code: 'welcome', description: 'Welcome', recipient: 'buyer' })
+  end
+
   describe 'load_stock_images' do
     before do
       # Need categories in order to assign category_type_code

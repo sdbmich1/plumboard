@@ -147,6 +147,7 @@ Plumboard::Application.routes.draw do
     namespace :v1  do
       resources :sessions, only: [:create, :destroy]
       resources :registrations, only: [:create]
+      resources :devices, only: [:create]
     end
   end
 

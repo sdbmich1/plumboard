@@ -88,6 +88,8 @@ class User < ActiveRecord::Base
   has_many :preferences, :dependent => :destroy
   accepts_nested_attributes_for :preferences, :allow_destroy => true, :reject_if => :all_blank
 
+  has_many :devices
+
   # name format validators
   name_regex = 	/\A[A-Z]'?['-., a-zA-Z]+\z/i
 
