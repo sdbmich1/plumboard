@@ -814,6 +814,26 @@ task :load_plans => :environment do
   end
 end
 
+task :load_message_types => :environment do
+  MessageType.delete_all
+  CSV.foreach(Rails.root.join('db', 'message_type_041316.csv'), :headers => true) do |row|
+    attrs = {
+      :code => row[0],
+      :description => row[1],
+      :recipient => row[2],
+      :status => 'active'
+    }
+
+    message_type = MessageType.new(attrs)
+
+    if message_type.save
+      puts "Saved message_type #{attrs.inspect}"
+    else
+      puts message_type.errors
+    end
+  end
+end
+
 #to run all tasks at once
 task :run_all_tasks => :environment do
 
@@ -841,6 +861,7 @@ task :run_all_tasks => :environment do
   Rake::Task[:import_travel_modes].execute
   Rake::Task[:load_feeds].execute
   Rake::Task[:load_currency_types].execute 
+  Rake::Task[:load_message_types].execute
   Rake::Task[:load_stock_images].execute
   Rake::Task[:load_plans].execute
   Rake::Task[:import_other_sites].execute :file_name => "state_site_data_012815.csv", :site_type_code => "state"

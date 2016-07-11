@@ -501,4 +501,16 @@ FactoryGirl.define do
   end
 
   factory :subscription
+
+  factory :device do
+    token { (Time.now.hash).abs.to_s }
+    status 'active'
+  end
+
+  factory :message_type do
+    status 'active'
+  end
+
+  factory :message do
+  end
 end

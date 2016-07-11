@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <%= render 'layouts/settings' %>
-  <%= javascript_include_tag "application" %>
+  <%= render 'layouts/title' %>
 </head>
 <body>
   <div class="container">
@@ -14,6 +13,7 @@
       <div id="spinner" class="round" style="display:none"></div>
       <%= yield :content %>
       <%= render 'layouts/footer' %>
+      <%= javascript_include_tag "application" %>
     </div>
   </div>
 </body>
