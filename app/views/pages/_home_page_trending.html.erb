@@ -7,7 +7,7 @@
     <% end %>
   </div>
   <div id='trend-pixi' class='mtop mbot row offset1 span10'>
-    <%= render partial: 'shared/listing', collection: @listings, as: :listing, locals: {px_size: 'large', ftrFlg: true} %>
+    <%= render partial: 'shared/listing', collection: @home.listings, as: :listing, locals: {px_size: 'large', ftrFlg: true} %>
   </div>
   <div class='row'>
     <div class='center-wrapper'>

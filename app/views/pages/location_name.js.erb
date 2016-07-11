@@ -1,2 +1,2 @@
-<%= render partial: 'shared/refresh_menu', locals: { rFlg: false, btype: 'none', loc_name: @loc_name, model: @listings } %>
+<%= render partial: 'shared/refresh_menu', locals: {rFlg: false, btype: 'none', loc_name: @home.loc_name, model: @home.listings} %>
 $("#home-pg-hdr").html("<%= escape_javascript( raw render(partial: 'shared/home_page_header_row') ) %>");

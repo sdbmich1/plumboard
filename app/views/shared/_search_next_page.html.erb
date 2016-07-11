@@ -1,1 +1,1 @@
-<%= check_next_page @listings, searches_path(page: nextPage(@listings), search: params[:search], cid: params[:cid], loc: params[:loc]) %>
+<%= check_next_page @listing.listings, searches_path(page: nextPage(@listing.listings), search: params[:search], cid: params[:cid], loc: params[:loc]) %>

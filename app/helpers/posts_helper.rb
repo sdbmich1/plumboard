@@ -76,9 +76,9 @@ module PostsHelper
     end
   end
   
-  def render_messages model, pname, sentFlg, msg
+  def render_messages model, pname, sentFlg, msg, status
     unless model.blank? 
-      content_tag(:ol, render(partial: pname, collection: model, locals: { sentFlg: sentFlg }), class: 'posts')
+      content_tag(:ol, render(partial: pname, collection: model, locals: { status: status, sentFlg: sentFlg }), class: 'posts')
     else 
       content_tag(:div, content_tag(:div, msg, class:'center-wrapper'), class:'span12 sm-top')
     end 

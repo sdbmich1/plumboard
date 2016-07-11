@@ -9,71 +9,34 @@ describe ListingsController do
     @listing = stub_model(Listing, :id=>1, pixi_id: '1', site_id: 1, seller_id: 1, title: "Guitar", description: "Guitar for Sale")
   end
 
-  def set_status
-    allow_message_expectations_on_nil
-    controller.instance_variable_set(:@status, 'active')
-    allow(@status).to receive(:to_sym).and_return(:active)
-  end
-
-  def set_index_data
-    set_status
-    allow_any_instance_of(Listing).to receive(:geocode) { [1,1] }
-    allow_any_instance_of(Listing).to receive(:created_date).and_return(DateTime.current)
-    allow(controller).to receive(:get_location).and_return(:success)
-  end
-
-  def get_board_data
-    @sellers = stub_model(User)
-    allow(User).to receive(:get_sellers).and_return(@sellers)
-    allow(controller).to receive(:load_data).and_return(:success)
-  end
-
-  def load_comments
-    @comments = stub_model(Comment)
-    allow(@comments).to receive(:paginate).and_return(@comments)
-    allow(controller).to receive(:add_points).and_return(:success)
-  end
-
-  describe 'GET index', index: true do
-    before(:each) do
-      set_index_data
-    end
-    context 'load board' do
-      [true, false].each do |xhr|
-        it_behaves_like "a load data request", 'Listing', 'check_category_and_location', 'index', 'paginate', xhr, 'listings'
-      end
-    end
+  def load_data method
+    @listing = double("ListingFacade", params: {loc: 1, url: 'test'}, method.to_sym=> nil, add_points: nil, comments: nil)
+    allow(ListingFacade).to receive(:set_geo_data).and_return(@listing)
   end
 
   describe 'GET board data', local: true do
-    before(:each) do
-      get_board_data
-    end
     context 'load board' do
       ['local', 'category'].each do |rte|
-        it_behaves_like "a load data request", 'Listing', 'load_board', rte, 'set_page', false, 'listings'
+        it 'checks this' do
+          load_data 'board_listings'
+          get rte.to_sym, loc: 1
+        end
       end
     end
     context 'load by url' do
-      ['biz', 'mbr', 'pub', 'edu', 'career', 'loc'].each do |loop| 
-        it_behaves_like "a load data request", 'Listing', 'get_by_url', loop, 'set_page', false, 'listings'
+      ['biz', 'mbr', 'pub', 'edu', 'career', 'loc'].each do |rte| 
+        it 'checks this' do
+          load_data 'url_listings'
+          get rte.to_sym, url: 'test'
+        end
       end
     end
   end
 
-  describe 'GET seller', seller: true do
-    before :each do
-      set_status
-    end
-    it_behaves_like "a load data request", 'Listing', 'get_by_status_and_seller', 'seller', 'paginate', true, 'listings'
-  end
-
   describe 'GET show/:id', show: true do
-    before :each do
-      load_comments
-    end
-    [true, false].each do |status|
-      it_behaves_like "a show method", 'Listing', 'find_pixi', 'show', status, true, 'listing'
+    it 'checks this' do
+      load_data 'listing'
+      get :show, id: 1
     end
   end
 
@@ -97,10 +60,13 @@ describe ListingsController do
     end
   end
 
-  describe 'GET seller_wanted', manage: true do
+  describe 'GET lists', manage: true do
     context 'load list' do
-      [['wanted_list', 'wanted'], ['wanted_list','seller_wanted'], ['invoiced', 'invoiced'], ['purchased', 'purchased']].each do |rte|
-        it_behaves_like "a load data request", 'Listing', rte[0], rte[1], 'paginate', true, 'listings'
+      ['index', 'wanted', 'seller_wanted', 'invoiced', 'purchased', 'seller'].each do |rte|
+        it 'checks this' do
+          load_data "#{rte+'_listings'}"
+          get rte.to_sym, loc: 1
+        end
       end
     end
   end

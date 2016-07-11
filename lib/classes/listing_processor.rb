@@ -212,4 +212,9 @@ class ListingProcessor < ListingDataProcessor
   def set_delivery_prefs uid, ftype, sls_tax, ship_amt
     User.find(uid).listings.update_all({fulfillment_type_code: ftype, sales_tax: sls_tax, est_ship_cost: ship_amt})
   end
+
+  # get wanted list by user
+  def wanted_list usr, cid=nil, loc=nil, adminFlg=true
+    ListingDataProcessor.new(@listing).wanted_list(usr, cid, loc, adminFlg)
+  end
 end

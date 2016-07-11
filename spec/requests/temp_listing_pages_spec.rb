@@ -57,6 +57,7 @@ feature "TempListings" do
   end
 
   def add_photo val, prcFlg=true, imgFlg=false, descr="Guitar for Sale", sFlg=true
+    show_photo_fld
     page.attach_file('photo', "#{Rails.root}/spec/fixtures/photo.jpg")
     add_data val, prcFlg, imgFlg, descr, sFlg
   end
@@ -94,7 +95,7 @@ feature "TempListings" do
     create :category, name: 'Books', category_type_code: 'sales'
     @cat2 = create :category, name: 'Apparel', category_type_code: 'product'
     @cat5 = create :category, name: 'Jobs', category_type_code: 'employment'
-    create :category, name: 'Foo Bar', category_type_code: 'foobar'
+    # create :category, name: 'Foo Bar', category_type_code: 'foobar'
   end
 
   def set_event_type val
@@ -426,7 +427,7 @@ feature "TempListings" do
     end
   end
 
-  describe "Edit Temp Pixi" do 
+  describe "Edit Temp Pixi", edit: true do 
     let(:temp_listing) { create(:temp_listing_with_pictures, condition_type_code: 'U', quantity: 3) }
     before do
       init_setup user
@@ -779,7 +780,7 @@ feature "TempListings" do
   describe "Edit Business Posted Pixis" do
     before :each do
       attr = {"seller_id"=>"#{user.id}", "title"=>"Dilworth Leather Loveseat", "category_id"=>"31", "condition_type_code"=>"ULN", 
-      "job_type_code"=>"", "event_type_code"=>"", "site_id"=>"9904", "price"=>"300", "quantity"=>"1", "year_built"=>"", "compensation"=>"", 
+      "job_type_code"=>"", "event_type_code"=>"", "site_id"=>"1", "price"=>"300", "quantity"=>"1", "year_built"=>"", "compensation"=>"", 
       "event_start_date"=>"", "event_end_date"=>"", "car_id"=>"", "car_color"=>"","mileage"=>"", "item_color"=>"", "product_size"=>"", "item_id"=>"", 
       "description"=>"great condition", "start_date"=>"2015-04-13 19:58:11 -0700", "status"=>"new", "post_ip"=>"127.0.0.1",
       "pictures_attributes"=>{"0"=>{"direct_upload_url"=>"Dilworth-loveseat-Leather-22.jpg","photo_file_name"=>"Dilworth-loveseat-Leather-22.jpg", 

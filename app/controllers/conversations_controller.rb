@@ -10,14 +10,13 @@ class ConversationsController < ApplicationController
   layout :page_layout
 
   def index
-    respond_with(@conversations = Conversation.get_specific_conversations(@user, @status).paginate(page: @page, per_page: @per_page))
+    respond_with(@conversation.conversations)
   end
 
   def create
     @conversation = Conversation.new params[:conversation]
     respond_with(@conversation) do |format|
       if @conversation.save
-        reload_data params[:conversation][:pixi_id]
         format.json { render json: {conversation: @conversation} }
       else
         format.json { render json: { errors: @conversation.errors.full_messages }, status: 422 }
@@ -29,7 +28,6 @@ class ConversationsController < ApplicationController
     @conversation = Conversation.find(params[:id])
     respond_with(@conversation) do |format|
       if @conversation.update_attributes(params[:conversation])
-        reload_data params[:conversation][:pixi_id]
         format.json { render json: {conversation: @conversation} }
       else
         format.json { render json: { errors: @conversation.errors.full_messages }, status: 422 }
@@ -81,20 +79,16 @@ class ConversationsController < ApplicationController
   end
 
   def load_data
-    @page, @per_page, @status = params[:page] || 1, params[:per_page] || 10, params[:status] || 'received'
+    @conversation = ConversationFacade.new(params)
+    # @page, @per_page, @status = params[:page] || 1, params[:per_page] || 10, params[:status] || 'received'
   end
 
   def load_convo
     @conversation = Conversation.find(params[:id])
   end
 
-  def reload_data pid
-    @listing = Listing.find_pixi pid
-    @comments = @listing.comments.paginate page: @page, per_page: PIXI_COMMENTS if @listing
-  end
-
   def ajax?
-    @xhr_flag = request.xhr?
+    request.xhr?
   end
 
   def mark_message

@@ -176,8 +176,8 @@ class Transaction < ActiveRecord::Base
       "Seller Total" => get_invoice.amount - get_invoice.get_fee(true) }
   end
 
-  def self.filename
-    'Transactions_' + ResetDate::display_date_by_loc(Time.now, Geocoder.coordinates("San Francisco, CA"), false).strftime("%Y_%m_%d")
+  def self.filename fname='Transactions'
+    fname + '_' + ResetDate::display_date_by_loc(Time.now, Geocoder.coordinates("San Francisco, CA"), false).strftime("%Y_%m_%d") rescue fname
   end
 
   def has_ship_address?

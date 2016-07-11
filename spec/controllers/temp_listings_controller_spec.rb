@@ -15,8 +15,15 @@ describe TempListingsController do
     end
   end
 
+  def load_data method
+    @listing = double("TempListingFacade", params: {loc: 1, url: 'test'}, method.to_sym=> nil, add_points: nil, home_zip: '94108',
+  errors: {full_messages: 'bad input'})
+    allow(TempListingFacade).to receive(:set_geo_data).and_return(@listing)
+  end
+
   before(:each) do
     log_in_test_user
+    allow_message_expectations_on_nil
     @listing = stub_model(TempListing, :id=>1, site_id: 1, seller_id: 1, pixi_id: '1', title: "Guitar for Sale", description: "Guitar for Sale")
   end
 
@@ -79,16 +86,17 @@ describe TempListingsController do
 
   describe "POST create" do
     before do
-      allow(TempListing).to receive(:add_listing).and_return( @listing )
-      allow(@listing).to receive_message_chain(:user, :guest?).and_return( session )
       allow(controller).to receive(:current_user).and_return(@user)
-      allow(controller).to receive_message_chain(:set_params, :set_uid).and_return(:success)
+      allow(controller).to receive(:set_uid).and_return(:success)
+      allow(controller).to receive(:set_params).and_return(:success)
+      allow(@user).to receive_message_chain(:home_zip, :to_region).and_return( :success )
+      allow(TempListing).to receive(:add_listing).and_return( @listing )
     end
     
     context 'failure' do
       
       before :each do
-        allow(TempListing).to receive(:save).and_return(false)
+        allow(@listing).to receive(:save).and_return(false)
       end
 
       def do_create
@@ -114,7 +122,7 @@ describe TempListingsController do
     context 'success' do
 
       before :each do
-        allow(TempListing).to receive(:save).and_return(true)
+        allow(@listing).to receive(:save).and_return(true)
       end
 
       def do_create
@@ -358,63 +366,14 @@ describe TempListingsController do
     end
   end
 
-  describe "xhr GET /unposted" do
-    before :each do
-      @listings = stub_model(TempListing)
-      allow(TempListing).to receive_message_chain(:draft, :get_by_seller).and_return( @listings )
-      allow(@listings).to receive(:paginate).and_return( @listings )
-      do_get
-    end
-
-    def do_get
-      xhr :get, :unposted, page: '1'
-    end
-
-    it "renders the :unposted view" do
-      expect(response).to render_template :unposted
-    end
-
-    it "assigns @listings" do
-      expect(assigns(:listings)).not_to be_nil
-    end
-
-    it "shows the requested listings" do
-      expect(response).to be_success
-    end
-
-    it "responds to JSON" do
-      get :unposted, format: :json
-      expect(response).to be_success
-    end
-  end
-
-  describe "xhr GET /pending" do
-    before :each do
-      @listings = stub_model(TempListing)
-      allow(TempListing).to receive_message_chain(:get_by_status, :get_by_seller).and_return( @listings )
-      allow(@listings).to receive(:paginate).and_return( @listings )
-      do_get
-    end
-
-    def do_get
-      xhr :get, :pending, page: '1'
-    end
-
-    it "renders the :pending view" do
-      expect(response).to render_template :pending
-    end
-
-    it "assigns @listings" do
-      expect(assigns(:listings)).not_to be_nil
-    end
-
-    it "shows the requested listings" do
-      expect(response).to be_success
-    end
-
-    it "responds to JSON" do
-      get :pending, format: :json
-      expect(response).to be_success
+  describe 'GET lists', manage: true do
+    context 'load list' do
+      ['index', 'pending', 'unposted'].each do |rte|
+        it 'checks this' do
+          load_data "#{rte+'_listings'}"
+          get rte.to_sym, loc: 1
+        end
+      end
     end
   end
 end

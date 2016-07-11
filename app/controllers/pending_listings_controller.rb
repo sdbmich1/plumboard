@@ -6,8 +6,7 @@ class PendingListingsController < ApplicationController
   respond_to :html, :json, :js, :csv
 
   def index
-    @unpaginated_listings = TempListing.check_category_and_location(@status, @cat, @loc, false)
-    respond_with(@listings = @unpaginated_listings.paginate(page: @page, per_page: 15)) { |format| render_csv format }
+    render_items 'TempListing', @listing, @listing.index_listings
   end
 
   def show
@@ -33,10 +32,8 @@ class PendingListingsController < ApplicationController
   protected
 
   def load_data
-    @page, @cat, @loc, @loc_name = params[:page] || 1, params[:cid], params[:loc], params[:loc_name]
-    @status = NameParse::transliterate params[:status] if params[:status]
-    @loc_name ||= LocationManager::get_loc_name(request.remote_ip, @loc || @region, @user.home_zip)
-    @loc ||= LocationManager::get_loc_id(@loc_name, @user.home_zip)
+    @listing = TempListingFacade.new(params)
+    @listing.set_geo_data request, action_name, session[:home_id], @user
   end
 
   def load_pixi
@@ -49,9 +46,5 @@ class PendingListingsController < ApplicationController
 
   def check_access
     authorize! [:read, :update], @listing 
-  end
-
-  def render_csv format
-    format.csv { send_data(render_to_string(csv: @unpaginated_listings, style: @status), disposition: "attachment; filename=#{Listing.filename @status}.csv") }
   end
 end

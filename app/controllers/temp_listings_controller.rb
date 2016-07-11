@@ -2,24 +2,23 @@ require 'will_paginate/array'
 class TempListingsController < ApplicationController
   before_filter :authenticate_user!, except: [:new, :create, :autocomplete_site_name]
   before_filter :check_permissions, only: [:show, :edit, :update, :delete]
-  before_filter :load_data, only: [:index, :unposted, :pending]
+  before_filter :load_data, only: [:new, :edit, :index, :create, :unposted, :pending]
   before_filter :set_params, only: [:create, :update]
-  before_filter :load_pixi, only: [:edit, :show, :update, :destroy, :submit]
-  before_filter :load_post_type, only: [:new, :edit]
+  before_filter :load_pixi, only: [:show, :update, :destroy, :submit]
   after_filter :set_uid, only: [:create]
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name
   autocomplete :user, :business_name, :extra_data => [:business_name], :display_value => :pic_with_business_name
   autocomplete :site, :name, :full => true, :limit => 20
-  include ResetDate
+  include ResetDate, ControllerManager
   respond_to :html, :json, :js, :mobile, :csv
   layout :page_layout
 
   def index
-    respond_with(@listings = TempListing.check_category_and_location(@status, @cat, @loc, false).paginate(page: @page, per_page: 15))
+    @listing.index_listings
   end
 
   def new
-    respond_with(@listing = TempListing.new(site_id: params[:loc], pixan_id: params[:pixan_id]))
+    respond_with(@listing.new_listing)
   end
 
   def show
@@ -27,7 +26,7 @@ class TempListingsController < ApplicationController
   end
 
   def edit
-    respond_with(@listing ||= Listing.find_by_pixi_id(params[:id]).dup_pixi(false))
+    respond_with(@listing.edit_listing)
   end
 
   def update
@@ -76,11 +75,11 @@ class TempListingsController < ApplicationController
   end
 
   def unposted
-    respond_with(@listings = TempListing.draft.get_by_seller(@user, 'new|edit', @adminFlg).paginate(page: @page, per_page: 15))
+    render_items 'TempListing', @listing, @listing.unposted_listings(@user)
   end
 
   def pending
-    respond_with(@listings = TempListing.get_by_status('pending').get_by_seller(@user, 'pending', @adminFlg).paginate(page: @page, per_page: 15))
+    render_items 'TempListing', @listing, @listing.pending_listings(@user)
   end
   
   protected
@@ -95,10 +94,8 @@ class TempListingsController < ApplicationController
   end  
 
   def load_data
-    @page, @cat, @loc, @loc_name = params[:page] || 1, params[:cid], params[:loc], params[:loc_name] 
-    @adminFlg = params[:adminFlg].to_bool rescue false
-    @status = NameParse::transliterate params[:status] if params[:status]
-    @loc, @loc_name = LocationManager::setup request.remote_ip, @loc || @region, @loc_name, @user.home_zip
+    @listing = TempListingFacade.new(params)
+    @listing.set_geo_data request, action_name, session[:home_id], @user
   end
 
   # parse fields to adjust formatting
@@ -122,10 +119,6 @@ class TempListingsController < ApplicationController
 
   def load_pixi
     @listing = TempListing.find_by_pixi_id(params[:id])
-  end
-
-  def load_post_type
-    @ptype = params[:ptype]
   end
 
   def check_permissions

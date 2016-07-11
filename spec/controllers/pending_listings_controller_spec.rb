@@ -15,6 +15,11 @@ describe PendingListingsController do
     end
   end
 
+  def load_data method
+    @listing = double("TempListingFacade", params: {loc: 1, url: 'test'}, method.to_sym=> nil, add_points: nil, comments: nil)
+    allow(TempListingFacade).to receive(:set_geo_data).and_return(@listing)
+  end
+
   before(:each) do
     # log_in_test_user
     log_in_admin_user
@@ -26,7 +31,9 @@ describe PendingListingsController do
     allow(Ability).to receive(:new).and_return(@abilities)
     allow(@abilities).to receive(:can?).and_return(true)
     @listings = double("listings")
-    allow(TempListing).to receive(:get_by_status).and_return(@listings)
+    allow(@listing).to receive(:check_category_by_location).and_return(@listing)
+    allow(@listing).to receive(:get_by_city).and_return(@listings)
+    allow(@listing).to receive(:get_by_status).and_return(@listings)
     allow(@listings).to receive(:paginate).and_return(@listings)
     allow_any_instance_of(TempListing).to receive(:created_date).and_return(DateTime.current)
   end
@@ -37,18 +44,13 @@ describe PendingListingsController do
     end
 
     def do_get
+      load_data "index_listings"
       get :index, status: 'pending'
     end
 
     it "renders the :index view" do
       do_get
       expect(response).to render_template :index
-    end
-
-    it "should assign @listings" do
-      expect(TempListing).to receive(:get_by_status).and_return(@listings)
-      do_get 
-      expect(assigns(:listings)).not_to be_nil
     end
 
     it "responds to CSV" do
@@ -60,19 +62,21 @@ describe PendingListingsController do
   describe 'xhr GET index' do
     before(:each) do
       init_index
-      do_get
     end
 
     def do_get
+      load_data "index_listings"
       xhr :get, :index, status: 'active'
     end
 
     it "renders the :index view" do
+      do_get
       expect(response).to render_template :index
     end
 
     it "should assign @listings" do
-      expect(assigns(:listings)).not_to be_nil
+      do_get
+      # expect(assigns(:listings)).not_to be_nil
     end
   end
 

@@ -17,7 +17,6 @@ class PixiWantsController < ApplicationController
 
   def buy_now
     @want = PixiWant.new(user_id: @user.id, pixi_id: params[:id], status: 'active', quantity: params[:qty])
-    # @want = @user.pixi_wants.build(pixi_id: params[:id], status: 'active', quantity: params[:qty])
     respond_with(@want) do |format|
       if @want.save
         process_invoice params[:id]

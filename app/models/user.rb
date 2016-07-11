@@ -355,29 +355,9 @@ class User < ActiveRecord::Base
     active.where(:url => val).first
   end
   
-  # check user is pixter
-  def is_pixter?
-    code_type == 'PT' rescue false
-  end
-  
-  # check user is member
-  def is_member?
-    code_type == 'MBR' rescue false
-  end
-  
-  # check user is business
-  def is_business?
-    code_type == 'BUS' rescue false
-  end
-  
-  # check user is support
-  def is_support?
-    code_type == 'SP' rescue false
-  end
-  
-  # check user is admin
-  def is_admin?
-    code_type == 'AD' rescue false
+  # dynamically created user_type_code check methods
+  [['PT', 'pixter'], ['MBR', 'member'], ['BUS', 'business'], ['SP', 'support'], ['AD', 'admin']].each do |idx, item|
+    define_method("is_#{item}?") { code_type == idx }
   end
 
   # check if user (a seller) is being followed by user_id

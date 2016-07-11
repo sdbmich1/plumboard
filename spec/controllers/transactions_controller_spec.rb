@@ -39,10 +39,14 @@ describe TransactionsController do
       @transactions = stub_model(Transaction)
       @transactions.updated_at = DateTime.current
       @invoice = stub_model(Invoice)
+      @seller = stub_model(User)
       @invoice.amount = 0
       @transactions.invoices.push(@invoice)
-      allow(Transaction).to receive_message_chain(:get_by_date).and_return(@transactions)
+      allow(Transaction).to receive(:get_by_date).and_return(@transactions)
       allow(@transactions).to receive(:paginate).and_return(@transactions)
+      allow(@transactions).to receive(:first).and_return(@transactions)
+      allow(@transactions).to receive(:filename).and_return(@transactions)
+      allow(@invoice).to receive(:seller).and_return(@seller)
       allow(controller).to receive_message_chain(:load_date_range, :load_page).and_return(:success)
       do_get
     end
@@ -75,6 +79,7 @@ describe TransactionsController do
       @transactions = stub_model(Transaction)
       allow(Transaction).to receive(:get_by_date).and_return(@transactions)
       allow(@transactions).to receive(:paginate).and_return(@transactions)
+      allow(@transactions).to receive(:first).and_return(@transactions)
     end
 
     def do_get

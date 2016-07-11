@@ -42,8 +42,8 @@ module TempListingsHelper
   end
 
   # check if post is by seller 
-  def seller_post? listing
-    !@user.is_support? && @ptype.blank? && listing.new_record?
+  def seller_post? listing, user, ptype
+    !user.is_support? && ptype.blank? && listing.new_record?
   end
 
   # check if new pixi post
@@ -98,7 +98,11 @@ module TempListingsHelper
 
   # check for admin editor
   def check_edit_status listing
-    listing.seller_id != @user.id ? can?(:manage_pixi_posts, @user) && listing.user.is_business? ? 'bus' : 'mbr' : ''
+    can_edit?(listing) && listing.user.is_business? ? 'BUS' : ''
+  end
+
+  def can_edit? listing
+    listing.seller_id == @user.id || can?(:manage_pixi_posts, @user) 
   end
 
   # show edit button
@@ -120,8 +124,8 @@ module TempListingsHelper
   end
 
   # check for pixi post
-  def show_seller_fields f, listing
-    render partial: 'shared/listing_seller_fields', locals: { f: f, listing: listing } if new_pixi_post?(listing)
+  def show_seller_fields f, listing, ptype
+    render partial: 'shared/listing_seller_fields', locals: { f: f, listing: listing, ptype: ptype } if new_pixi_post?(listing)
   end
 
   # set autocomplete path based on user type
@@ -172,7 +176,7 @@ module TempListingsHelper
   end
 
   def bus_pixi?
-    !(@user.is_business? || (@ptype && @ptype.upcase == 'BUS'))
+    !(@user.is_business? || (@listing.ptype && @listing.ptype.upcase == 'BUS'))
   end
 
   def show_buy_now?
@@ -187,12 +191,16 @@ module TempListingsHelper
     end
   end
 
+  def seller_prefs? seller
+    seller.preferences.first && !@listing.ptype.blank? 
+  end
+
   def set_ftc seller
-    seller.preferences.first && !@ptype ? seller.preferences.first.fulfillment_type_code : nil
+    seller_prefs?(seller) ? seller.preferences.first.fulfillment_type_code : nil
   end
 
   def set_sales_tax seller
-    seller.preferences.first && !@ptype ? seller.preferences.first.sales_tax : nil
+    seller_prefs?(seller) ? seller.preferences.first.sales_tax : nil
   end
 
   def toggle_buy_now f, seller, str=[]
@@ -201,5 +209,17 @@ module TempListingsHelper
       str << f.check_box(:buy_now_flg, { checked: !bus_pixi? })
     end
     content_tag(:div, str.join('').html_safe)
+  end
+
+  def show_poster f, listing, user, ptype
+    f.hidden_field set_poster_id(listing), value: user.id if seller_post?(listing, user, ptype)
+  end
+
+  def get_ptype listing
+    listing.user.is_business?
+  end
+
+  def temp_listing_nav listing, edit_mode
+    render(partial: 'shared/show_temp_listing', locals: {listing: listing}) if signed_in? && edit_mode && !pending_listings?
   end
 end

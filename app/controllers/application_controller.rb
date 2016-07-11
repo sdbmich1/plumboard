@@ -66,8 +66,9 @@ class ApplicationController < ActionController::Base
   # set user if signed in 
   def load_settings
     @user = signed_in? ? current_user : User.new
-    @region = session[:home_id] || LocationManager::retrieve_loc(action_name, request)
-    session[:home_id] ||= @region
+    # @region = session[:home_id] || LocationManager::retrieve_loc(action_name, request)
+    # session[:home_id] ||= @region
+    session[:home_id] ||= AppFacade.new(params).set_region action_name, request, session[:home_id]
   end
 
   # set store path
@@ -136,7 +137,7 @@ class ApplicationController < ActionController::Base
 
   # set root path based on pixi count
   def get_root_path
-    ControllerManager::set_root_path @cat, @region
+    ControllerManager::set_root_path @cat, session[:home_id]
   end
 
   # check if mobile device based on user_agent 
@@ -151,5 +152,15 @@ class ApplicationController < ActionController::Base
 
   def set_session
     session[:back_to] = request.path unless signed_in?
+  end
+
+  def render_csv klass, items, format, status=nil
+    format.csv { send_data(render_to_string(csv: items, style: status), disposition: 
+      "attachment; filename=#{klass.constantize.filename status}.csv") }
+  end
+
+  def render_items klass, model, items, method='status'
+    result = model.send(method) rescue klass
+    respond_with(model) { |format| render_csv klass, items, format, result }
   end
 end

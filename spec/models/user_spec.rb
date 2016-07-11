@@ -512,7 +512,7 @@ describe User do
     end
   end
 
-  describe 'is_pixter?' do
+  describe 'is_pixter?', code: true do
     it { expect(@user.is_pixter?).to be_falsey }
 
     it 'is true' do
@@ -521,7 +521,7 @@ describe User do
     end
   end
 
-  describe 'is_member?' do
+  describe 'is_member?', code: true  do
     it { expect(@user.is_member?).to be_truthy }
 
     it 'is false' do
@@ -530,16 +530,16 @@ describe User do
     end
   end
 
-  describe 'is_business?' do
+  describe 'is_business?', code: true  do
     it { expect(@user.is_business?).not_to be_truthy }
 
     it 'is a business' do
-      @company = FactoryGirl.build(:pixi_user, user_type_code: 'BUS') 
+      @company = create(:business_user) 
       expect(@company.is_business?).to be_truthy
     end
   end
 
-  describe 'is_support?' do
+  describe 'is_support?', code: true  do
     it { expect(@user.is_support?).to be_falsey }
 
     it 'is true' do
@@ -548,7 +548,7 @@ describe User do
     end
   end
 
-  describe 'is_admin?' do
+  describe 'is_admin?', code: true  do
     it { expect(@user.is_admin?).to be_falsey }
 
     it 'is true' do

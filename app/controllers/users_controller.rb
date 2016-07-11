@@ -7,8 +7,8 @@ class UsersController < ApplicationController
   respond_to :html, :js, :json, :mobile, :csv
 
   def index
-    @unpaginated_users = User.include_list.get_by_type(@utype)
-    respond_with(@users = @unpaginated_users.paginate(page: @page, per_page: 15)) { |format| render_csv format }
+    @users = User.include_list.get_by_type(@utype).paginate(page: @page, per_page: 15)
+    render_items 'User', @users.first, @users, 'user_type_code'
   end
 
   def show
@@ -86,9 +86,5 @@ class UsersController < ApplicationController
 
   def check_update_permissions
     authorize! :update, User
-  end
-
-  def render_csv format
-    format.csv { send_data(render_to_string(csv: @unpaginated_users), disposition: "attachment; filename=#{User.filename @utype}.csv") }
   end
 end

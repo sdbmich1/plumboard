@@ -1,6 +1,6 @@
 <table class='mtop'>
   <tbody>
-    <%= render partial: 'shared/faq_row', collection: @faqs, as: :faq %>
+    <%= render partial: 'shared/faq_row', collection: @home.faqs, as: :faq %>
   </tbody>
 </table>
-<%= paginate_list 'faq-list', @faqs %>
+<%= paginate_list 'faq-list', @home.faqs %>

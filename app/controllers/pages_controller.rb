@@ -1,15 +1,12 @@
 class PagesController < ApplicationController
-  before_filter :load_data, only: [:home]
+  before_filter :load_data, only: [:help, :home, :location_name]
   layout :page_layout
-  include LocationManager
   respond_to :html, :json, :js, :mobile
   
   def help
-    respond_with(@faqs = Faq.active)
   end
 
   def home
-    @listings = Listing.active.board_fields.paginate(page: @page, per_page: @per_page) 
     respond_to do |format|
       format.any { render 'home', :formats => [:html] }
     end
@@ -31,9 +28,7 @@ class PagesController < ApplicationController
   end
 
   def location_name
-    site = LocationManager::get_region params[:loc_name]
-    @region, @loc_name = [site.id, site.name]
-    respond_with(site)
+    respond_with(@home.site)
   end
 
   protected
@@ -43,6 +38,6 @@ class PagesController < ApplicationController
   end
 
   def load_data
-    @page, @per_page = params[:page] || 1, params[:per_page] || PIXI_DISPLAY_AMT
+    @home = PageFacade.new(1, PIXI_DISPLAY_AMT)
   end
 end

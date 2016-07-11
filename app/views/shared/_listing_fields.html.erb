@@ -1,6 +1,6 @@
 <%= show_edit_photo f, listing %>
 <%= render partial: 'shared/display_photo_form', locals: { s3Flg: s3Flg } %>
-<%= show_seller_fields f, listing %>
+<%= show_seller_fields f, listing, ptype %>
 <%= render partial: 'shared/listing_fields_top', locals: { f: f, listing: listing } %>
 <%= render partial: 'shared/listing_fields_main', locals: { f: f, listing: listing } %>
 <%= render partial: 'shared/listing_biz_fields', locals: { f: f } %>

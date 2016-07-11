@@ -42,6 +42,7 @@ Spork.prefork do
     config.mock_with :rspec
     config.include Paperclip::Shoulda::Matchers
     config.include PaperclipStub
+    config.include RSpec::Matchers
     config.include Capybara::RSpecMatchers
     config.include Capybara::DSL, :type => :request
     config.include FactoryGirl::Syntax::Methods

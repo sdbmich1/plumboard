@@ -3,7 +3,8 @@
   $("#form_errors").html("<%= escape_javascript( render(partial: 'shared/error_messages', locals: {target: @listing})) %>");
 <% else %>
   postFlashMsg('#flash_notice','success', 'Successfully removed image.');
-  $("#listing_form").html("<%= escape_javascript( raw render(partial: 'shared/pixi_form', locals: {listing: @listing, s3Flg: use_remote_pix?})) %>");
+  $("#listing_form").html("<%= escape_javascript( raw render(partial: 'shared/pixi_form', locals: {listing: @listing, 
+    s3Flg: use_remote_pix?, action_type: 'Save', ptype: get_ptype(@listing) })) %>");
 <% end %>
 
 $('#spinner').hide(300);

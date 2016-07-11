@@ -1,7 +1,5 @@
-<% if CalcTotal::discount? %>
   <tr>
     <td>Discount Code: <%= txn.promo_code %></td>
     <td></td>
     <td class="price"><%= number_to_currency(CalcTotal::calc_discount) %></td>	
   </tr>
-<% end %>

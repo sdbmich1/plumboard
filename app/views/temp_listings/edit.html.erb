@@ -1,6 +1,7 @@
 <%= content_for :subhead do %>
-  <%= render partial: 'shared/listing_header', :locals => { listing: @listing, step_no: 1, step_name: 'Build Your Pixi' } %>
+  <%= render partial: 'shared/listing_header', :locals => { listing: @listing.listing, step_no: 1, step_name: 'Build Your Pixi' } %>
 <% end %>
 <%= content_for :content do %>
-  <%= render partial: 'shared/listing_form', locals: { listing: @listing, step_name: 'Build Your Pixi', action_type: 'Save' } %>
+  <%= render partial: 'shared/listing_form', locals: { listing: @listing.listing, step_name: 'Build Your Pixi', action_type: 'Save',
+    ptype: @listing.ptype } %>
 <% end %>

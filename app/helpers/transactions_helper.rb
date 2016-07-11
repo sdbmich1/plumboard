@@ -177,4 +177,28 @@ module TransactionsHelper
     listing = Listing.find_by_pixi_id(order[:id1])
     listing && listing.buy_now_flg ? :put : :get
   end
+
+  def show_credit_card f, txn
+    render partial: 'shared/credit_card_info', locals: { f: f } if txn.amt > 0.0
+  end
+
+  def process_order_row i, order
+    render partial: 'shared/order_row', locals: {i: i, order: order} if order['quantity'+i.to_s].to_i > 0
+  end
+
+  def render_order_summary txn, order, paid
+    render partial: 'shared/order_summary', locals: {txn: txn, order: order, paid: paid} if txn 
+  end
+
+  def render_order_tax model
+    render partial: 'shared/order_tax', locals: {model: model} if model && model.tax_total.to_f > 0.0
+  end
+
+  def render_order_shipping model
+    render partial: 'shared/order_shipping', locals: {model: model} if model && model.ship_amt.to_f > 0.0
+  end
+
+  def show_discount txn
+    render partial: 'shared/show_discount', locals: {txn: txn} if CalcTotal.discount?
+  end
 end

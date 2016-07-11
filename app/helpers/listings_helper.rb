@@ -212,7 +212,7 @@ module ListingsHelper
   def get_current_region listing
     if listing
       site = LocationManager::get_region listing.latlng 
-      loc, loc_name = !site.blank? ? [site.id, site.name] : [@loc, @loc_name]
+      loc, loc_name = !site.blank? ? [site.id, site.name] : [@listing.loc, @listing.loc_name]
       link_to loc_name, category_listings_path(cid: listing.category_id, loc: loc)
     end
   end
@@ -320,7 +320,7 @@ module ListingsHelper
   end
   
   def get_by_url klass='User'
-    klass.constantize.find_by_url @url rescue nil
+    klass.constantize.find_by_url @listing.url rescue nil
   end
 
   def get_seller_name btype
@@ -337,7 +337,7 @@ module ListingsHelper
   end
 
   def set_loc_banner
-    site = @url.blank? ? Site.find(@loc) : get_by_url('Site') rescue nil
+    site = @listing.url.blank? ? Site.find(@listing.loc) : get_by_url('Site') rescue nil
     if site && site.is_pub?
       set_biz_banner 'Site', 'group_band', site
     else
@@ -347,7 +347,7 @@ module ListingsHelper
 
   # show menu if location page
   def set_pixi_menu btype, menu_name, loc_name
-    render partial: 'shared/navbar', locals: { menu_name: menu_name, loc_name: @loc_name } if btype == 'loc' 
+    render partial: 'shared/navbar', locals: { menu_name: menu_name, loc_name: loc_name } if btype == 'loc' 
   end
 
   # set status type
@@ -375,7 +375,7 @@ module ListingsHelper
       when 'biz'
         render_featured_banner('Featured Pixis', featured_pixis(model), 'listing', 'shared/listing', 'large') if has_featured_items?(model)
       when 'loc', 'pub', 'edu'
-        render_featured_banner('Featured Sellers', featured_sellers(@sellers), 'user', 'shared/seller', 'medium') if has_featured_items?(@sellers)
+        render_featured_banner('Featured Sellers', featured_sellers(@listing.sellers), 'user', 'shared/seller', 'medium') if has_featured_items?(@listing.sellers)
     end
   end
 
@@ -622,10 +622,6 @@ module ListingsHelper
     render(partial: 'shared/review_nav', locals: { listing: listing }) if signed_in? && listing.editable?(@user) && !pending_listings?
   end
 
-  def temp_listing_nav listing, edit_mode
-    render(partial: 'shared/show_temp_listing', locals: {listing: listing}) if signed_in? && edit_mode && !pending_listings?
-  end
-
   def show_listing_title listing, flg
     listing.nice_title flg if listing
   end
@@ -809,10 +805,18 @@ module ListingsHelper
   end
 
   def pxs_cls val
-    action_name == 'seller' && @status == val ? 'active' : ''
+    action_name == 'seller' && @listing.status == val ? 'active' : ''
   end
 
   def toggle_pixi_list
-    @adminFlg ? 'shared/manage_pixis' : 'shared/mypixis_list'
+    @listing.adminFlg ? 'shared/manage_pixis' : 'shared/mypixis_list'
+  end
+
+  def check_var method
+    @listing.blank? ? nil : @listing.send(method)
+  end
+
+  def rFlg? rFlg, method
+    rFlg && check_var(method).blank?
   end
 end

@@ -6,7 +6,8 @@ $(":input:not(input[type=submit])").val("");
 
 formTxtForm.attr("disabled", true);	
 formError.hide(300);
-formTxtForm.html("<%= escape_javascript( render(partial: "shared/listing_form", locals: {listing: @listing, step_name: 'Build Your Pixi', action_type: 'Save'}) ).html_safe %>");
+formTxtForm.html("<%= escape_javascript( render(partial: "shared/listing_form", locals: {listing: @listing.listing, 
+  step_name: 'Build Your Pixi', action_type: 'Save', ptype: @listing.ptype }) ).html_safe %>");
 formTxtForm.attr("disabled", false);	
 
 // set page title

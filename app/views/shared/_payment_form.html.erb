@@ -5,7 +5,7 @@
     <%= render partial: 'shared/purchase_summary', locals: { txn: txn, order: order } %>
     <%= render partial: 'shared/buyer_info', locals: { f: f, txn: txn } %>
     <%= show_ship_address(f, order, txn) %>
-    <%= render partial: 'shared/credit_card_info', locals: { f: f } if txn.amt > 0.0 %>
+    <%= show_credit_card(f, txn) %>
     <%= f.hidden_field :token, id: 'pay_token', value: get_token('token') %>
     <%= f.hidden_field :payment_type, id: 'pay_type' %>
     <%= f.hidden_field :exp_month, id: 'exp_month' %>

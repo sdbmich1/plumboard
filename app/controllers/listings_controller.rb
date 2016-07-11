@@ -1,29 +1,22 @@
 require 'will_paginate/array' 
 class ListingsController < ApplicationController
-  include PointManager, NameParse, ResetDate, LocationManager, ControllerManager
   before_filter :authenticate_user!, except: [:local, :category, :show, :biz, :mbr, :career, :pub, :edu, :loc]
-  before_filter :get_page_size
-  before_filter :load_data, except: [:pixi_price, :repost, :update, :biz, :mbr, :pub, :edu, :loc]
-  before_filter :load_pixi, only: [:show, :pixi_price, :repost, :update]
-  before_filter :load_job, only: [:career]
-  before_filter :pxb_url, only: [:biz, :mbr, :pub, :edu, :loc] 
+  before_filter :load_data, except: [:pixi_price, :repost, :update]
+  before_filter :load_pixi, only: [:pixi_price, :repost, :update]
   before_filter :load_city, only: [:local, :category]
   before_filter :load_url_data, only: [:biz, :mbr, :career, :pub, :edu, :loc]
-  after_filter :set_session, only: [:show]
   after_filter :set_location, only: [:biz, :mbr, :pub, :edu, :loc]
   after_filter :add_points, only: [:show, :biz, :mbr, :pub, :edu, :loc]
   respond_to :html, :json, :js, :mobile, :csv
   layout :page_layout
 
   def index
-    @unpaginated_listings = Listing.check_category_and_location(@status, @cat, @loc, is_active?)
-    respond_with(@listings = @unpaginated_listings.paginate(page: params[:page], per_page: 15), style: status) { |format| render_csv format }
+    render_items 'Listing', @listing, @listing.index_listings
   end
 
   def show
-    @comments = @listing.comments.paginate(page: params[:page], per_page: PIXI_COMMENTS) rescue nil
     respond_with(@listing) do |format|
-      format.json { render json: {listing: @listing, comments: @comments} }
+      format.json { render json: {listing: @listing.listing, comments: @listing.comments} }
     end
   end
 
@@ -36,32 +29,27 @@ class ListingsController < ApplicationController
   end
 
   def seller
-    respond_with(@listings = Listing.get_by_status_and_seller(@status, @user, @adminFlg).paginate(page: params[:page], per_page: 15))
+    @listing.seller_listings(@user)
   end
 
   def seller_wanted
-    respond_with(@listings = Listing.wanted_list(@user, nil, nil, false).paginate(page: params[:page], per_page: 15))
+    @listing.seller_wanted_listings(@user)
   end
 
   def wanted
-    @unpaginated_listings = Listing.wanted_list(@user, @cat, @loc)
-    respond_with(@listings = @unpaginated_listings.paginate(page: params[:page], per_page: 15)) { |format| render_csv format }
+    render_items 'Listing', @listing, @listing.wanted_listings
   end
 
   def purchased
-    respond_with(@listings = Listing.purchased(@user).paginate(page: params[:page], per_page: 15))
+    @listing.purchased_listings @user
   end
 
   def category
-    respond_with(@listings) do |format|
-      format.json { render json: {listings: @listings, sellers: @sellers} }
-    end
+    render_json
   end
 
   def local
-    respond_with(@listings) do |format|
-      format.json { render json: {listings: @listings, sellers: @sellers, categories: @categories} }
-    end
+    render_json
   end
 
   def pixi_price
@@ -69,8 +57,7 @@ class ListingsController < ApplicationController
   end
 
   def invoiced
-    @unpaginated_listings = Listing.check_invoiced_category_and_location(@cat, @loc)
-    respond_with(@listings = @unpaginated_listings.paginate(page: params[:page], per_page: 15)) { |format| render_csv format }
+    render_items 'Listing', @listing, @listing.invoiced_listings
   end
 
   def repost
@@ -82,54 +69,42 @@ class ListingsController < ApplicationController
   end
 
   def career
-    respond_with(@listings)
+    respond_with(@listing)
   end
 
   def biz
-    respond_with(@listings) do |format|
-      format.json { render json: {listings: @listings, sellers: @sellers, categories: @categories, user: @user} }
-    end
+    render_json
   end
 
   def mbr
-    respond_with(@listings) do |format|
-      format.json { render json: {listings: @listings, sellers: @sellers} }
-    end
+    render_json
   end
 
   def pub
-    respond_with(@listings) do |format|
-      format.json { render json: {listings: @listings, sellers: @sellers} }
-    end
+    render_json
   end
 
   def edu
-    respond_with(@listings) do |format|
-      format.json { render json: {listings: @listings, sellers: @sellers} }
-    end
+    render_json
   end
 
   def loc
-    respond_with(@listings) do |format|
-      format.json { render json: {listings: @listings, sellers: @sellers} }
-    end
+    render_json
   end
 
   protected
 
   def load_data
-    @cat, @loc, @loc_name = params[:cid], params[:loc], params[:loc_name]
-    @adminFlg = params[:adminFlg].to_bool rescue false
-    @status = NameParse::transliterate params[:status] if params[:status]
-    @loc, @loc_name = LocationManager::setup request.remote_ip, @loc || @region, @loc_name, @user.home_zip
+    @listing = ListingFacade.new(params)
+    @listing.set_geo_data request, action_name, session[:home_id], @user
   end
 
   def page_layout
-    ControllerManager.render_board?(action_name) ? 'listings' : mobile_device? ? 'form' : action_name == 'show' ? 'pixi' : 'application'
+    @listing.page_layout
   end
 
   def add_points
-    PointManager::add_points @user, 'vpx' if signed_in?
+    @listing.add_points(@user) if signed_in?
   end
 
   def load_pixi
@@ -137,53 +112,20 @@ class ListingsController < ApplicationController
   end
 
   def load_city
-    items = Listing.load_board(@cat, @loc)
-    load_sellers items
-  end
-
-  def load_job
-    params[:url] = 'Pixiboard'
-    @cat = Category.get_by_name('Jobs') 
-  end
-
-  def pxb_url
-    @url = ControllerManager::parse_url request
+    @listing.board_listings
   end
 
   def load_url_data
-    cid = params[:cid] || ''
-    items = Listing.get_by_url(@url, action_name, cid)
-    load_sellers items
-  end
-
-  def load_sellers items
-    @sellers = User.get_sellers(items) 
-    @categories = Category.get_categories(items) unless action_name == 'category'
-    @listings = items.set_page(params[:page], @sz) rescue nil
-  end
-
-  def get_page_size
-    respond_to do |format|
-      format.html { @sz = MIN_BOARD_AMT }
-      format.js { @sz = MIN_BOARD_AMT }
-      format.json { @sz = MIN_BOARD_AMT/2 }
-    end
+    @listing.url_listings request, action_name, session[:home_id], @user
   end
 
   def set_location
     session[:back_to] = request.fullpath.split('?')[0] rescue nil
   end
 
-  def status
-    @status.to_sym rescue :active
-  end
-
-  def is_active?
-    @status == 'active'
-  end
-
-  def render_csv format
-    format.csv { send_data(render_to_string(csv: @unpaginated_listings, style: @status), disposition: 
-      "attachment; filename=#{Listing.filename @status}.csv") }
+  def render_json
+    respond_with(@listing) do |format|
+      format.json { render json: {listings: @listing.listings, sellers: @listing.sellers, categories: @listing.categories} }
+    end
   end
 end

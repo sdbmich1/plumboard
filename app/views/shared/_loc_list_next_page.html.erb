@@ -1,1 +1,1 @@
-<%= check_next_page @listings, local_listings_path(page: nextPage(@listings), loc: params[:loc]) %>
+<%= check_next_page @listing.listings, local_listings_path(page: nextPage(@listing.listings), loc: @listing.loc) %>

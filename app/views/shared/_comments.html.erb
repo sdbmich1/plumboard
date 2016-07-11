@@ -3,5 +3,5 @@
 </div> 
 <div class='clear-all'></div>
 <div id='comment-item' class="black-txt <%= set_comment_list_top(listing) %>">
-  <%= render_list @comments, 'shared/comment_list', 'No comments found.' %>
+  <%= render_list listing.comments, 'shared/comment_list', 'No comments found.' %>
 </div> 
