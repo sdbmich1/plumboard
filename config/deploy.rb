@@ -78,8 +78,8 @@ set :whenever_roles, :app
 set :delayed_job_args, "-n 2"
 
 # set resque settings
-role :resque_worker, :app
-role :resque_scheduler, :app
+# role :resque_worker, :app
+# role :resque_scheduler, :app
 
 # Allow us to do N hosts at a time for all tasks - useful when trying
 # to figure out which host in a large set is down:
