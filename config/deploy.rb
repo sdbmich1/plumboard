@@ -191,6 +191,8 @@ namespace :files do
     upload("#{rails_root}/config/thinking_sphinx.yml", "#{release_path}/config/thinking_sphinx.yml")
     upload("#{rails_root}/config/database.yml", "#{release_path}/config/database.yml")
     upload("#{rails_root}/config/sls.yml", "#{release_path}/config/sls.yml")
+    upload("#{rails_root}/config/resque.yml", "#{release_path}/config/resque.yml")
+    upload("#{rails_root}/config/resque-pool.yml", "#{release_path}/config/resque-pool.yml")
   end
 
   task :upload_certs do
