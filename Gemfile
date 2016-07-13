@@ -163,6 +163,7 @@ group :development do
   # Deploy with Capistrano
   gem 'capistrano'
   gem 'capistrano-maintenance'
+  gem "capistrano-resque", "~> 0.2.2", require: false
 
   # Capistrano RVM integration
   gem 'rvm-capistrano', :require => false
@@ -186,6 +187,9 @@ group :development, :test do
   gem 'rack_session_access'
   gem 'minitest', '~> 5.1'
   gem 'stripe-ruby-mock'
+
+  # use sqlite3 as test db
+  gem 'sqlite3'
 end
 
 # test gems
@@ -241,5 +245,7 @@ gem 'rack-cors'
 gem 'execjs', '~> 2.6'
 
 gem 'pushwoosh'
-gem 'resque'
 gem 'redis'
+gem 'resque', :require => 'resque/server'
+gem 'resque-pool'
+gem 'puma'

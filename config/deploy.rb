@@ -6,6 +6,7 @@ require 'rvm/capistrano'
 require 'delayed/recipes'
 # require 'capistrano/ext/multistage'
 require 'capistrano/maintenance'
+require "capistrano-resque"
 
 # Automatically precompile assets
 set :assets_role, [:app, :worker]
@@ -75,6 +76,10 @@ set :whenever_roles, :app
 # set delayed job settings
 # set :delayed_job_server_role, :worker
 set :delayed_job_args, "-n 2"
+
+# set resque settings
+role :resque_worker, :app
+role :resque_scheduler, :app
 
 # Allow us to do N hosts at a time for all tasks - useful when trying
 # to figure out which host in a large set is down:
@@ -271,4 +276,4 @@ end
 # Delayed Job  
 after "deploy:stop",    "delayed_job:stop"  
 after "deploy:start",   "delayed_job:start"  
-after "deploy:restart", "sphinx:symlink_indexes", "delayed_job:start", "sphinx:configure", "sphinx:rebuild", "whenever:update_crontab"
+after "deploy:restart", "sphinx:symlink_indexes", "delayed_job:start", "sphinx:configure", "sphinx:rebuild", "whenever:update_crontab", "resque:restart"

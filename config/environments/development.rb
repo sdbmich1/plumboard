@@ -42,6 +42,9 @@ Plumboard::Application.configure do
   # facebook ssl setting
   FACEBOOK_SSL_OPTIONS = {:ca_path => "/etc/ssl/certs"}
 
+  # default path
+  Paperclip.options[:command_path] = "/usr/local/bin/"
+
   # add bullet for performance monitoring (eager loading)
   config.after_initialize do
     Bullet.enable = true
