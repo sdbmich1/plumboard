@@ -1,0 +1,8 @@
+<%= show_card_details('') %>
+<%= f.hidden_field :card_account_id, value: get_card_data('id') %>
+<%= f.fields_for :card_account, CardAccount.new do |card_form| %>
+  <%= card_form.hidden_field :token, id: 'pay_token' %>
+  <div class='card-tbl' style='display:none'>
+    <%= render partial: 'shared/credit_card_info_table', locals: { f: card_form } %>
+  </div>
+<% end %>

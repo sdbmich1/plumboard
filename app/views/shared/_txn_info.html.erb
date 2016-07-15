@@ -1,11 +1,11 @@
   <div class="<%= cls %>" style="<%= set_style(flg) %>">
-    <h5 class="grp-hdr"><%= "#{title} Information" %></h5>
+    <h5 class="grp-hdr"><%= "#{title}" %></h5>
     <table>
-      <tr><td class='span3'><%= model.send(fld[0]) %><br>
+      <tr><td class='span3'><%= toggle_first_fld(model, fld) %>
         <%= model.send(fld[1]) %><br>
         <%= "#{model.send(fld[2])}, #{model.send(fld[3])} #{model.send(fld[4])}" %><br>
         <%= model.send(fld[5]) %></td>
-        <td class='v-middle price'><%= change_btn(id) %></td>
+        <td class='v-middle price'><%= change_addr_btn(id) %></td>
       </tr>
     </table>
   </div>

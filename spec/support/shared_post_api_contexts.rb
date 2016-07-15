@@ -27,7 +27,7 @@ shared_context "a model create assignment" do |klass, method, rte, tname, status
     end
 
     it "should load the requested listing" do
-      allow(klass.constantize).to receive(:method) { @listing }
+      allow(klass.constantize).to receive(method.to_sym) { @listing }
       do_post_url(rte, status)
     end
 

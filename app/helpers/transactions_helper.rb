@@ -45,7 +45,8 @@ module TransactionsHelper
   
   # set confirmation message based on txn amount
   def confirm_msg
-    msg = CalcTotal::get_amt > 0 ? "Your credit card " : "Your order "
+    amt = CalcTotal::get_amt
+    msg = amt && amt > 0 ? "Your credit card " : "Your order "
     msg += "will be processed.  Would you like to proceed?"
   end
 
@@ -141,8 +142,8 @@ module TransactionsHelper
     txn.get_invoice.amount - txn.get_invoice.get_fee(true) rescue 0
   end
 
-  def show_card_details
-    render partial: 'shared/credit_card_details' if get_card
+  def show_card_details cls='offset3'
+    render partial: 'shared/credit_card_details', cls: cls if get_card
   end
 
   def show_card_image cls
@@ -165,8 +166,21 @@ module TransactionsHelper
     render partial: 'shared/buyer_ship_info', locals: {f: f, txn: txn} if shipping?(OpenStruct.new(order))
   end
 
-  def change_btn id
-    link_to 'Change', '#', id: id, class: 'offset2 btn' if controller_name == 'transactions'
+  def change_addr_btn id
+    if controller_name == 'transactions' || controller_name == 'subscriptions'
+      link_to 'Change', '#', id: id, class: 'offset2 btn'
+    end
+  end
+
+  def change_card_btn mobile_flg=false
+    unless controller_name == 'subscriptions' && action_name == 'edit'
+      if mobile_flg
+        link_to 'Change', id: 'edit-card-btn', 'data-role'=>'button',
+          'data-mini'=>'true', 'data-theme'=>'b', 'data-inline'=>'true'
+      else
+        link_to 'Change', '#', id: 'edit-card-btn', class: 'offset2 btn'
+      end
+    end
   end
 
   def show_rating model
@@ -176,5 +190,9 @@ module TransactionsHelper
   def get_btn_method order
     listing = Listing.find_by_pixi_id(order[:id1])
     listing && listing.buy_now_flg ? :put : :get
+  end
+
+  def toggle_first_fld model, fld
+    content_tag(:div, "#{model.send(fld[0])}<br />".html_safe) if fld[0]
   end
 end

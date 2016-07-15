@@ -1,0 +1,12 @@
+<div id="subForm">
+  <%= form_for sub, html: { id: 'payment_form' } do |f| %>
+    <div id="data_error" style="display:none" class="error"></div>
+    <%= render partial: 'shared/error_messages', locals: { target: sub } %>
+    <%= render partial: 'shared/show_sub_details', locals: { f: f, sub: sub, user: user } %>
+    <br>
+    <div class="nav pull-right">
+      <%= link_to 'Cancel', :back, method: :get, class: 'btn btn-large', data: { confirm: cancel_msg } %>
+      <%= f.submit "Done!", confirm: confirm_msg, class: "btn btn-large btn-primary submit-btn" %>
+    </div>
+  <% end %>
+</div>

@@ -28,7 +28,7 @@ shared_context "a model update assignment" do |klass, method, rte, tname, status
     end
 
     it "should update the requested listing" do
-      allow(klass.constantize).to receive(method.to_sym).with("1") { mock_klass(klass) }
+      allow(klass.constantize).to receive(method.to_sym).with("1").and_return(mock_klass(klass))
       expect(mock_klass(klass)).to receive(tname.to_sym).and_return(:success)
       do_put_url(rte)
     end

@@ -3,9 +3,9 @@ class CardAccount < ActiveRecord::Base
   after_commit :update_counter_cache, :on => :update
   after_commit :toggle_default_flg
 
-  attr_accessor :card_number, :card_code
+  attr_accessor :card_number, :card_code, :cvv
   attr_accessible :card_no, :card_type, :description, :expiration_month, :expiration_year, :status, :token, :user_id,
-    :card_number, :card_code, :zip, :default_flg, :card_token
+    :card_number, :card_code, :zip, :default_flg, :card_token, :cvv
 
   belongs_to :user, counter_cache: 'active_card_accounts_count'
   has_many :subscriptions

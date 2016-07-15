@@ -101,7 +101,7 @@ end
 Capybara.register_driver :selenium_with_long_timeout do |app|
   client = Selenium::WebDriver::Remote::Http::Default.new
   client.timeout = 180
-  driver = Capybara::Selenium::Driver.new(app, :browser => :firefox, :http_client => client)
+  driver = Capybara::Selenium::Driver.new(app, :browser => :chrome, :http_client => client)
   driver.browser.manage.window.maximize
   driver
 end

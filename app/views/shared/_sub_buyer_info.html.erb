@@ -1,0 +1,8 @@
+<div class="addr-tbl">
+  <%= render partial: 'shared/txn_info', locals: { flg: false, title: 'Billing Address', id: 'edit-txn-addr', model: sub.contact, fld: [nil, 'address', 'city', 'state', 'zip', 'country'], cls: 'addr-tbl' } %>
+</div>
+<div class="usr-tbl" style="display:none">
+  <%= f.fields_for :contact do |contact_form| %>
+    <%= render partial: 'shared/user_address', locals: { form: contact_form, toggle: false } %>
+  <% end %>
+</div>
