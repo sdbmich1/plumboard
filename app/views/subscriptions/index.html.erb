@@ -1,0 +1,9 @@
+<% provide(:title, 'Accounts') %>
+<%= content_for :subhead do %>
+  <%= render partial: 'shared/navbar', locals: { menu_name: toggle_card_list_title, active: get_acct_type } %>
+<% end %>
+<%= content_for :content do %>
+  <div id='inv_form'>
+    <%= render partial: 'shared/sub_list_details', locals: { model: @subs } %>
+  </div>
+<% end %>

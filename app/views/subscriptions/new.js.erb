@@ -1,0 +1,2 @@
+$("#inv_form").html("<%= escape_javascript( raw render :partial => 'shared/sub_form', locals: { sub: @sub, user: @user } ) %>");
+$("#spinner").hide('fast'); 

@@ -1,0 +1,7 @@
+<div id='bank_list'>
+  <div id="top-header" class='sm-top nav pull-right'>
+    <%= link_to 'Add Subscription', new_subscription_path, remote: true, class: 'btn btn-small' %>
+  </div>
+  <div class='clear-all'></div>
+  <%= render partial: 'shared/list', locals: { hname: 'shared/sub_list_top', pname: 'shared/sub_list_row', model: model, item: 'sub', tag: 'subscriptions' } %>
+</div> 

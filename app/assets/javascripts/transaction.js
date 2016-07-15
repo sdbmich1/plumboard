@@ -4,6 +4,7 @@ var $formID, $btnID, formError, formTxtForm, pmtForm, payForm, api_type;
 // toggle credit card edit view
 $(document).on('click', '#edit-card-btn', function(e) {
   $('#pay_token').val('');
+  $('#subscription_card_account_id').val('');
   $('.card-tbl, .card-dpl').toggle();
 });
  

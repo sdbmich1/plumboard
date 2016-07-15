@@ -67,6 +67,17 @@ describe Plan do
     end
   end
 
+  describe 'active' do
+    it 'returns plans with "active" status' do
+      expect(Plan.active).to include(@plan)
+    end
+
+    it 'does not return plans without "active" status' do
+      @plan.update_attribute(:status, 'inactive')
+      expect(Plan.active).not_to include(@plan)
+    end
+  end
+
   describe 'process_error' do
     it 'adds error' do
       expect {

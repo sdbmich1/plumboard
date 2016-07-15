@@ -1,26 +1,6 @@
 <div class="div-border">
   <%= show_card_details %>
   <div class='sm-top center-wrapper card-tbl' style="<%= set_style(get_card) %>">
-    <table>
-      <th class='tbl-hdr'>Credit Card #* </th><th></th>
-      <th class='tbl-hdr'>Code (CVV)*</th><th></th>
-      <th class='tbl-hdr'>Exp Month*</th><th></th>
-      <th class='tbl-hdr'>Exp Year*</th>
-      <tr>
-        <td class="width240"><%= f.text_field :card_number, id: 'card_number', maxlength: 16, size: 16 %></td><td class="width30"></td>
-        <td class="width120"><%= f.text_field :cvv, id: 'card_code', maxlength: 4, size: 4 %></td> <td class="width30"></td>
-        <td class="width180">
-          <%= select_month Date.today, {add_month_numbers_true: true}, {name: 'card_month', id: "card_month", class: "neg-top pixi-select" } %>
-        </td><td class="width30"></td>
-        <td class="width120">
-          <%= select_year nil, {start_year: Date.today.year+1, end_year: Date.today.year+15}, {name: 'card_year', id: "card_year", 
-	    class: "neg-top pixi-select"} %>
-        </td>
-      </tr>
-      <tr>
-        <td><%= show_card_image('cc-logo') %></td><td></td>
-        <td><%= image_tag('cvv.png', :class=>'cvv-logo') %></td>
-      </tr>
-    </table>
+    <%= render partial: 'shared/credit_card_info_table', locals: { f: f } %>
   </div>
 </div>

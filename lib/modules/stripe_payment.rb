@@ -330,9 +330,9 @@ module StripePayment
   end
 
   # update subscription
-  def self.update_subscription model, plan_id
+  def self.update_subscription model, plan_stripe_id
     sub = get_subscription(model)
-    sub.plan = plan_id
+    sub.plan = Stripe::Plan.retrieve(plan_stripe_id)
     sub.save
 
     rescue => ex

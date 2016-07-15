@@ -1,0 +1,21 @@
+<div class='center'>
+  <h2>Your Subscription</h2>
+</div>
+<div class="row">
+  <div id="notice"><%= render 'layouts/flash_messages', flash: flash %></div>
+  <div id="data_error" style="display:none" class="error"></div>
+
+  <div class="sm-top span6 offset4">
+    <div class='mleft15'>
+      <table>
+        <tr><td>Subscriber Name: </td><td class='width30'></td><td>
+          <%= autocomplete_field_tag 'slr_name', user.business_name, autocomplete_user_business_name_temp_listings_path, update_elements: { id: '#user_id' }, placeholder: 'Subscriber Name', id: 'slr_name' %>
+          <%= f.hidden_field :user_id, id: 'user_id', value: user.id %>
+        </td></tr>
+        <tr><td>Plan Type: </td><td class='width30'></td><td><%= f.collection_select :plan_id, Plan.active, :id, :name, {}, { class: 'mtop' } %></td></tr> 
+      </table>
+      <%= render partial: 'shared/sub_buyer_info', locals: { f: f, sub: sub } %>
+      <%= render partial: 'shared/sub_card_info', locals: { f: f } %>
+    </div>
+  </div>
+</div>

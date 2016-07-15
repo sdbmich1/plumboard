@@ -4,7 +4,7 @@
       <br><%= "************#{@user.card_account.first.card_no}" %>
       <br><%= "Exp: #{@user.card_account.first.expiration_month}/#{@user.card_account.first.expiration_year}" %></td>
       <td class='v-align price'>
-        <%= link_to 'Change', id: 'edit-card-btn', 'data-role'=>'button', 'data-mini'=>'true', 'data-theme'=>'b', 'data-inline'=>'true' %></td>
+        <%= change_card_btn(true) %></td>
     </tr>
   <% end %>
 </table>

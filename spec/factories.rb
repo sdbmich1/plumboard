@@ -498,6 +498,7 @@ FactoryGirl.define do
     price 0
     interval 'month'
     trial_days 30
+    status 'active'
   end
 
   factory :subscription

@@ -1,10 +1,3 @@
-<div class='sm-top'>
-  <table class="table table-hover table-condensed table-bordered">
-    <%= render partial: hname %>
-    <tbody>
-      <%= render partial: pname, collection: model, as: item.to_sym %>
-    </tbody>
-  </table>
-</div> 
+<%= toggle_list_table model, hname, pname, item %>
 <%= show_entries model, tag %>
 <%= paginate_list 'user-list', model %>

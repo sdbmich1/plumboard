@@ -1,0 +1,7 @@
+<tr>
+  <td class=''><%= sub.user.business_name %></td>
+  <td class=''><%= sub.plan_name %></td>
+  <td class=''><%= "**** **** **** #{sub.card_account.try(:card_no)}" %></td>
+  <td class=''><%= ResetDate.display_date_by_loc(sub.created_at, nil, true) %></td>
+  <td class='center-wrapper'><%= link_to 'Details', subscription_path(sub.id), remote: true, class: 'btn btn-small' %></td>
+</tr>
