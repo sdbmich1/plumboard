@@ -26,6 +26,10 @@ class Plan < ActiveRecord::Base
     self.save
   end
 
+  def self.active
+    where(status: 'active')
+  end
+
   def process_error e
     self.errors.add :base, 'Plan data error. Please resubmit.'
     Rails.logger.info("PXB Plan Failed: #{e.message}")

@@ -1,11 +1,11 @@
-  <div class='offset3 card-dpl'>
+  <div class="#{cls} card-dpl">
     <h5 class="grp-hdr">Payment Information</h5>
     <table>
       <tr>
         <td class='span3 mbot'><%= get_card_data('card_type') %>
           <br><%= "************#{get_card_data('card_no')}" %>
           <br><%= "Exp: #{get_card_data('expiration_month')}/#{get_card_data('expiration_year')}" %></td>
-        <td class='v-middle price'><%= link_to 'Change', '#', id: 'edit-card-btn', class: 'offset2 btn' %></td>
+        <td class='v-middle price'><%= change_card_btn %></td>
       </tr>
     </table>
   </div>

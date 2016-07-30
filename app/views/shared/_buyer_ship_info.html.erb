@@ -1,6 +1,6 @@
 <div class="div-border">
   <%= render partial: 'shared/txn_info', locals: { flg: !txn.has_ship_address?,
-      title: 'Shipping', id: 'edit-ship-addr', cls: 'offset3 ship-addr-tbl', model: txn, fld:
+      title: 'Shipping Information', id: 'edit-ship-addr', cls: 'offset3 ship-addr-tbl', model: txn, fld:
       ['recipient_name', 'ship_address', 'ship_city', 'ship_state', 'ship_zip', 'ship_country'] } %>
   <%= render partial: 'shared/txn_fld_info', locals: { f: f,
       flg: txn.has_ship_address?, pname: 'shared/buyer_ship_address',

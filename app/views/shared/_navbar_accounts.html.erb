@@ -3,4 +3,5 @@
     <%= link_to "Bank", get_account_path, class: 'submenu', remote: true %></li>
   <li class="<%= controller_name == 'card_accounts' ? 'active' : '' %>">
     <%= link_to "Card", get_card_path, class: 'submenu', remote: true %></li>
+  <%= show_sub_menu %>
 </ul>

@@ -118,13 +118,13 @@ class UserProcessor
   # display image with name for autocomplete
   def pic_with_name
     pic = @user.photo rescue nil
-    pic ? "<img src='#{pic}' class='inv-pic' /> #{@user.name}" : nil
+    pic ? "<img src='#{pic}' class='thumb-size pic-item' /> #{@user.name}" : nil
   end
 
   # display image with name for autocomplete
   def pic_with_business_name
     pic = @user.photo rescue nil
-    pic ? "<img src='#{pic}' class='inv-pic' /> #{@user.business_name}" : nil
+    pic ? "<img src='#{pic}' class='thumb-size pic-item' /> #{@user.business_name}" : nil
   end
 
   # set csv filename

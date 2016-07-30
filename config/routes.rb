@@ -1,5 +1,4 @@
 Plumboard::Application.routes.draw do
-
   devise_for :users, :controllers => { registrations: "registrations", sessions: "sessions", omniauth_callbacks: "users/omniauth_callbacks",
       confirmations: "confirmations" } 
   
@@ -166,6 +165,8 @@ Plumboard::Application.routes.draw do
   resources :pixi_wants, only: [:create] do
     post 'buy_now', :on => :collection
   end
+
+  resources :subscriptions
 
   # custom routes
   get "/about", to: "pages#about" 

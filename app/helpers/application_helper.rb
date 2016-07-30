@@ -212,7 +212,13 @@ module ApplicationHelper
 
   # get acct type for account menu
   def get_acct_type
-    controller_name == 'bank_accounts' ? 'bank' : 'card'
+    if controller_name == 'bank_accounts'
+      'bank'
+    elsif controller_name == 'card_accounts'
+      'card'
+    else
+      'sub'
+    end
   end
 
   # check pending status
@@ -399,7 +405,8 @@ module ApplicationHelper
   end
 
   def show_entries model, tag
-    content_tag(:div, (page_entries_info model, :model => tag), class: 'pg-entry left-form', id: 'entry-top')
+    content_tag(:div, (page_entries_info model, :model => tag),
+      class: 'pg-entry ' + (model.count == 0 ? 'center-wrapper' : 'left-form'), id: 'entry-top')
   end
 
   # get address for map
@@ -522,5 +529,11 @@ module ApplicationHelper
 
   def get_main_menu_status val
     !controller_name.match(/users|settings/).nil? && action_name == val ? 'active' : ''
+  end
+
+  def toggle_list_table model, hname, pname, item
+    if model.count > 0
+      render partial: 'shared/list_table', locals: { hname: hname, pname: pname, model: model, item: item }
+    end
   end
 end

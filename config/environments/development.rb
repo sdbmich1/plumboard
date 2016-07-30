@@ -15,7 +15,7 @@ Plumboard::Application.configure do
   #    { :namespace => 'Plumboard', :expires_in => 1.hour, :compress => true }
 
   # paperclip setting
-  Paperclip.options[:command_path] = "/c/Windows/system32/convert"
+  # Paperclip.options[:command_path] = "/usr/local/bin/convert"  #"/c/Windows/system32/convert"
 
   # Don't care if the mailer can't send
   config.action_mailer.raise_delivery_errors = false
