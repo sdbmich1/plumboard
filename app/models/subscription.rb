@@ -14,11 +14,11 @@ class Subscription < ActiveRecord::Base
   accepts_nested_attributes_for :contact, allow_destroy: true
   accepts_nested_attributes_for :card_account, allow_destroy: true
 
-  def add_subscription
-    sub = Payment.add_subscription(self)
+  def add_subscription params
+    sub = Payment.add_subscription(add_card_account(params))
     return false if self.errors.any?
-    self.stripe_id = sub.id
-    self.save
+    stripe_id = sub.id rescue nil
+    save
   end
 
   def cancel_subscription

@@ -6,9 +6,9 @@ class SubscriptionsController < ApplicationController
   layout :page_layout
 
   def create
-    @sub = Subscription.new(params[:subscription]).add_card_account(params)
+    @sub = Subscription.new(params[:subscription])
     respond_with(@sub) do |format|
-      if @sub.save && @sub.add_subscription
+      if @sub.add_subscription(params)
         format.html { redirect_to subscriptions_path }
         format.json { render json: { sub: @sub } }
       else

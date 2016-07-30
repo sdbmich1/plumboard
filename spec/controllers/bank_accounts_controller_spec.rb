@@ -52,7 +52,6 @@ describe BankAccountsController do
     [true, false].each do |status|
       it_behaves_like 'a model delete assignment', 'BankAccount', 'find', 'destroy', 'delete_account', status, 'account'
     end
-    # it_behaves_like 'a delete redirected page', 'BankAccount', 'find', 'destroy', 'show', true
   end
 
 end

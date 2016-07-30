@@ -15,6 +15,25 @@ describe Subscription do
     @contact.save
   end
 
+  def get_params
+    params = {
+      subscription: {
+          user_id: @user.id,
+          plan_id: @plan.id,
+          contact_attributes: { zip: 94720 },
+          card_account_id: '',
+          card_account_attributes: {
+            card_number: '4242424242424242',
+            cvv: '123'
+          }
+        },
+        card_month: 12,
+        card_year: 2017,
+	card_type: 'visa',
+	zip: 94720
+      }
+  end
+
   subject { @sub }
   describe 'attributes' do
     it { is_expected.to respond_to(:user_id) }
@@ -36,15 +55,15 @@ describe Subscription do
       allow(StripePayment).to receive(:get_customer).and_return(customer)
       allow(customer).to receive_message_chain(:subscriptions, create: sub)
       allow(sub).to receive(:id).and_return(1)
+      expect_any_instance_of(CardAccount).to receive(:save_account)
     end
 
     it 'creates subscription' do
       stub_stripe
+      sleep 2
       sub = Subscription.new(plan_id: @plan.id, user_id: @user.id,
         card_account_id: @card_account.id)
-      expect {
-        sub.add_subscription
-      }.to change { Subscription.count }.by(1)
+      expect(sub.add_subscription(get_params)).to be true
     end
   end
 
@@ -154,22 +173,8 @@ describe Subscription do
     end
 
     it 'creates card otherwise' do
-      params = {
-        subscription: {
-          user_id: @user.id,
-          plan_id: @plan.id,
-          contact_attributes: { zip: 94720 },
-          card_account_id: '',
-          card_account_attributes: {
-            card_number: '4242424242424242',
-            cvv: '123'
-          }
-        },
-        card_month: 12,
-        card_year: 2017
-      }
       expect_any_instance_of(CardAccount).to receive(:save_account)
-      @sub.add_card_account(params)
+      @sub.add_card_account(get_params)
     end
   end
 

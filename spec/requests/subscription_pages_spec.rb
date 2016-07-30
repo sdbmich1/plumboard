@@ -19,6 +19,12 @@ feature 'Subscriptions' do
     expect(page).not_to have_content 'No subscriptions found'
   end
 
+  def stub_stripe method='get', method2='delete'
+    stripe_sub = double(Stripe::Subscription, id: '123')
+    allow(StripePayment).to receive("#{method}_subscription".to_sym).and_return(stripe_sub)
+    allow(stripe_sub).to receive(method2.to_sym).and_return(true)
+  end
+
   describe 'index' do
     context 'without subscription data' do
       before :each do
@@ -81,6 +87,7 @@ feature 'Subscriptions' do
       state
       user.contacts.first.update_attribute(:state, 'CA')
       init_setup user
+      stub_stripe 'add', 'create'
       visit new_subscription_path
     end
 
@@ -145,6 +152,7 @@ feature 'Subscriptions' do
       select('Minnesota', from: 'subscription_contact_attributes_state')
       fill_in('postal_code', with: attrs[:zip])
       click_button('Done!')
+      sleep 2
       expect(Contact.exists?(attrs)).to be true
     end
 
@@ -181,12 +189,6 @@ feature 'Subscriptions' do
       expect(page).to have_content('Card #:')
       expect(page).to have_content(subscription.card_account.card_no)
       expect(page).not_to have_content('Subscription not found.')
-    end
-
-    def stub_stripe
-      stripe_sub = double(Stripe::Subscription)
-      allow(StripePayment).to receive(:get_subscription).and_return(stripe_sub)
-      allow(stripe_sub).to receive(:delete).and_return(true)
     end
 
     it '"Remove" button should delete subscription', js: true do
