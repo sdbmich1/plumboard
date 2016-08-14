@@ -92,6 +92,8 @@ feature "Conversations" do
     end
 
     it "marks all posts read", js: true do
+      sleep 3
+      expect(page).to have_link('Mark All Read', href: mark_posts_path)
       click_on 'Mark All Read'
       expect(page).to have_css('li.active a') 
     end

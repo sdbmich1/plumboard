@@ -101,4 +101,9 @@ class ConversationProcessor
       end
     end
   end
+
+  def invoice_id
+    inv = Invoice.get_by_status_and_pixi('unpaid', @conv.user.id, @conv.pixi_id).first if @conv.user
+    inv.id if inv
+  end
 end

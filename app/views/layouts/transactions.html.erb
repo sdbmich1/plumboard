@@ -4,6 +4,7 @@
   <%= render 'layouts/title' %>
   <%= tag :meta, :name => "stripe-key", :content => STRIPE_PUBLIC_KEY %>
   <%= tag :meta, :name => "credit-card-api", :content => CREDIT_CARD_API %>
+  <%= javascript_include_tag "application", "https://js.stripe.com/v2/" %>
 </head>
 <body>
   <div id='wrap'>
@@ -19,7 +20,6 @@
     <div class="container">
       <div id="push"></div>
       <%= render 'layouts/footer' %>
-      <%= javascript_include_tag "application", "https://js.stripe.com/v2/" %>
     </div>
   </div>
 </body>

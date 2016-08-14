@@ -165,8 +165,7 @@ class Conversation < ActiveRecord::Base
   end
 
   def invoice_id
-    inv = Invoice.get_by_status_and_pixi('unpaid', user.id, pixi_id).first
-    inv.id if inv
+    ConversationProcessor.new(self).invoice_id
   end
 
   # get posts

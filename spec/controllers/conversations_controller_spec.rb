@@ -103,12 +103,21 @@ describe ConversationsController do
     end
   end
 
+  def conv_index
+    @conversation = double("ConversationFacade", params: {status: 'test'}, conversations: nil)
+    @posts = double("Post", active_status: nil)
+    allow(ConversationFacade).to receive(:conversations).and_return(@conversation)
+    @conversations = stub_model(Conversation)
+    allow(Conversation).to receive(:get_specific_conversations).and_return( @conversations )
+    #allow(@conversations).to receive(:get_posts).and_return( @conversations )
+    allow_any_instance_of(Conversation).to receive(:get_posts).and_return(@posts)
+    allow(@conversations).to receive(:paginate).and_return( @conversations )
+  end
+
   describe 'xhr GET index' do
 
     before :each do
-      @conversations = stub_model(Conversation)
-      allow(Conversation).to receive(:get_specific_conversations).and_return( @conversations )
-      allow(@conversations).to receive(:paginate).and_return( @conversations )
+      conv_index
     end
 
     def do_get
@@ -135,9 +144,7 @@ describe ConversationsController do
   describe 'GET index' do
 
     before :each do
-      @conversations = stub_model(Conversation)
-      allow(Conversation).to receive(:get_specific_conversations).and_return( @conversations )
-      allow(@conversations).to receive(:paginate).and_return( @conversations )
+      conv_index
     end
 
     def do_get

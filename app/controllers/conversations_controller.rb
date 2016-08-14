@@ -79,7 +79,7 @@ class ConversationsController < ApplicationController
   end
 
   def load_data
-    @conversation = ConversationFacade.new(params)
+    @conversation = ConversationFacade.new(params, @user)
     # @page, @per_page, @status = params[:page] || 1, params[:per_page] || 10, params[:status] || 'received'
   end
 

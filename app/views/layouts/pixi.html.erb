@@ -2,6 +2,7 @@
 <html>
 <head>
   <%= render 'layouts/title' %>
+  <%= javascript_include_tag "application", "https://maps.googleapis.com/maps/api/js?key=#{API_KEYS['google']['api_key']}" %>
 </head>
 <body>
   <div id='wrap'>
@@ -12,7 +13,6 @@
       <%= render 'layouts/flash_messages', flash: flash %>
       <%= yield :content %>
       <%= render 'layouts/footer' %>
-      <%= javascript_include_tag "application", "https://maps.googleapis.com/maps/api/js?key=#{API_KEYS['google']['api_key']}" %>
     </div>
   </div>
   <script>

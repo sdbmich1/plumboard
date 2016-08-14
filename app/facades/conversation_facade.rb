@@ -1,7 +1,12 @@
 class ConversationFacade < AppFacade
-  attr_reader :conversation
+  attr_reader :conversation, :user
 
-  def conversations user
+  def initialize params, user
+    @user = user
+    super(params)
+  end
+
+  def conversations
     @conversations = Conversation.get_specific_conversations(user, status).paginate(page: params[:page], per_page: per_page)
   end
 
