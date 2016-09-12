@@ -1,6 +1,7 @@
 require 'will_paginate/array'
 class FavoriteSellersController < ApplicationController
   # load_and_authorize_resource
+  skip_before_action :verify_authenticity_token, only: :create, if: Proc.new {|c| c.request.format.json? }
   before_filter :authenticate_user!
   before_filter :load_data, only: :index
   respond_to :html, :js, :json, :mobile
