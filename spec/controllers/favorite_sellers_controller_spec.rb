@@ -17,7 +17,7 @@ describe FavoriteSellersController do
 
   describe "POST seller", create: true do
     [true, false].each do |status|
-      it_behaves_like 'a model create assignment', 'FavoriteSeller', 'find_or_create_by', 'create', 'create', status, 'favorite'
+      it_behaves_like 'a model create assignment', 'FavoriteSeller', 'save', 'create', 'create', status, 'favorite'
     end
   end
 
@@ -29,8 +29,7 @@ describe FavoriteSellersController do
 
   describe "PUT /:seller_id", seller: true do
     def setup success
-      allow(FavoriteSeller).to receive(:find_by_user_id_and_seller_id).and_return(@favorite)
-      allow(@favorite).to receive(:update_attribute).and_return(success)
+      allow(FavoriteSeller).to receive(:save).and_return(@favorite)
     end
 
     def do_update success

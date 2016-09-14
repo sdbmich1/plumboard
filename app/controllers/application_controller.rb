@@ -163,4 +163,8 @@ class ApplicationController < ActionController::Base
     result = model.send(method) rescue klass
     respond_with(model) { |format| render_csv klass, items, format, result }
   end
+
+  def num_rows
+    request.format.json? ? MIN_BOARD_AMT/2 : MIN_BOARD_AMT
+  end
 end

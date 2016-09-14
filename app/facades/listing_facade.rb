@@ -1,6 +1,11 @@
 class ListingFacade < AppFacade
   include ControllerManager, PointManager
-  attr_reader :listing
+  attr_reader :listing, :rows
+
+  def initialize params, rows
+    @user, @rows = user, rows
+    super(params)
+  end
 
   def listing
     @listing = Listing.find_pixi params[:id]

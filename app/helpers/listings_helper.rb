@@ -375,7 +375,8 @@ module ListingsHelper
       when 'biz'
         render_featured_banner('Featured Pixis', featured_pixis(model), 'listing', 'shared/listing', 'large') if has_featured_items?(model)
       when 'loc', 'pub', 'edu'
-        render_featured_banner('Featured Sellers', featured_sellers(@listing.sellers), 'user', 'shared/seller', 'medium') if has_featured_items?(@listing.sellers)
+        sellers = @listing.blank? ? @sellers : @listing.sellers
+        render_featured_banner('Featured Sellers', featured_sellers(sellers), 'user', 'shared/seller', 'medium') if has_featured_items?(sellers)
     end
   end
 

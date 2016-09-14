@@ -11,4 +11,14 @@ class FavoriteSeller < ActiveRecord::Base
   def self.get_by_status val
     where(:status => val)
   end
+
+  def self.save uid, sid, status
+    fav = FavoriteSeller.find_by(user_id: uid, seller_id: sid)
+    if fav.blank?
+      fav = FavoriteSeller.create(user_id: uid, seller_id: sid, status: status)
+    else
+      fav.update_attribute(:status, status) unless fav.status == status
+    end
+    fav
+  end
 end

@@ -95,7 +95,7 @@ class ListingsController < ApplicationController
   protected
 
   def load_data
-    @listing = ListingFacade.new(params)
+    @listing = ListingFacade.new(params, num_rows)
     @listing.set_geo_data request, action_name, session[:home_id], @user
   end
 
