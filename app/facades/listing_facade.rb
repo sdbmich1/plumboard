@@ -3,7 +3,7 @@ class ListingFacade < AppFacade
   attr_reader :listing, :rows
 
   def initialize params, rows
-    @user, @rows = user, rows
+    @rows = rows
     super(params)
   end
 
