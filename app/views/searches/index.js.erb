@@ -1,4 +1,3 @@
-<%= render partial: 'shared/refresh_menu', locals: { rFlg: true, btype: 'loc', loc_name: @loc_name, model: @listings } %>
-<%= render partial: 'shared/reload_board', locals: {model: @listings} %>
+<%= render partial: 'listings/refresh_page', locals: {model: @listings, loc_name: @loc_name, rFlg: true, btype: 'loc'} %>
 $("#submit-btn").prop('disabled', false);
 $('#pg-title').html('Pixiboard | Pixis');
