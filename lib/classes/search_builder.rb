@@ -18,14 +18,14 @@ class SearchBuilder
   # build standard search options
   def build_search_options sid
     unless @loc.blank?
-      @cat.blank? ? {sql: {select: @sql, include: @models},  with: {site_id: sid}, star: true, page: @page} : 
-        {sql: {select: @sql, :include => @models}, with: {category_id: @cat, site_id: sid}, star: true, page: @page}
+      @cat.blank? ? {sql: {select: @sql, include: @models},  with: {site_id: sid}, star: true, page: @page, per_page: @sz} : 
+        {sql: {select: @sql, :include => @models}, with: {category_id: @cat, site_id: sid}, star: true, page: @page, per_page: @sz}
     else
       unless @cat.blank?
         {sql: {select: @sql, include: @models}, with: {category_id: @cat}, geo: [@lat, @lng], order: "geodist ASC, @weight DESC", 
-	  star: true, page: @page}
+	  star: true, page: @page, per_page: @sz}
       else
-        {sql: {select: @sql, include: @models}, star: true, page: @page} #, geo: [@lat, @lng], order: "geodist ASC, @weight DESC"
+        {sql: {select: @sql, include: @models}, star: true, page: @page, per_page: @sz} #, geo: [@lat, @lng], order: "geodist ASC, @weight DESC"
       end
     end
   end
@@ -33,14 +33,14 @@ class SearchBuilder
   # build search w/ url
   def build_url_options url, sid
     unless @loc.blank?
-      @cat.blank? ? {sql: {select: @sql, include: @models}, with: {site_id: sid}, conditions: {url: url}, star: true, page: @page} : 
-        {sql: {select: @sql, include: @models}, with: {category_id: @cat, site_id: sid}, conditions: {url: url}, star: true, page: @page}
+      @cat.blank? ? {sql: {select: @sql, include: @models}, with: {site_id: sid}, conditions: {url: url}, star: true, page: @page, per_page: @sz} : 
+        {sql: {select: @sql, include: @models}, with: {category_id: @cat, site_id: sid}, conditions: {url: url}, star: true, page: @page, per_page: @sz}
     else
       unless @cat.blank?
         {sql: {select: @sql, include: @models}, with: {category_id: @cat}, conditions: {url: url}, geo: [@lat, @lng], 
-	  order: "geodist ASC, @weight DESC", star: true, page: @page}
+	  order: "geodist ASC, @weight DESC", star: true, page: @page, per_page: @sz}
       else
-        {sql: {select: @sql, include: @models}, conditions: {url: url}, star: true, page: @page}  
+        {sql: {select: @sql, include: @models}, conditions: {url: url}, star: true, page: @page, per_page: @sz}  
       end
     end
   end

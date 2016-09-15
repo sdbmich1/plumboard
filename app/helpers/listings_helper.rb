@@ -337,7 +337,8 @@ module ListingsHelper
   end
 
   def set_loc_banner
-    site = @listing.url.blank? ? Site.find(@listing.loc) : get_by_url('Site') rescue nil
+    loc = @listing.blank? ? @loc : @listing.loc
+    site = @listing.blank? || @listing.url.blank? ? Site.find(loc) : get_by_url('Site') rescue nil
     if site && site.is_pub?
       set_biz_banner 'Site', 'group_band', site
     else
