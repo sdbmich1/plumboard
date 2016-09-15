@@ -53,7 +53,7 @@ class SearchesController < ApplicationController
   end
  
   def load_data
-    @cat, @loc, @page, @search, @sz = params[:cid], params[:loc], params[:page] || 1, params[:search], num_rows
+    @cat, @loc, @page, @search, @sz, @loc_name = params[:cid], params[:loc], params[:page] || 1, params[:search], num_rows, params[:loc_name]
   end
 
   # dynamically define search options based on selections

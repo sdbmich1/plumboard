@@ -1,6 +1,6 @@
 <% provide(:title, page_title) %>
 <%= content_for :subhead do %>
-  <%= set_index_menu btype, menu_name, @listing.loc_name %>
+  <%= set_index_menu btype, menu_name, @loc_name || @listing.loc_name %>
 <% end %>
 <%= content_for :top_banner do %>
   <div id='tbanner'><%= set_banner(btype) %></div>

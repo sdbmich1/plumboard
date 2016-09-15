@@ -1,6 +1,7 @@
   <%= form_tag get_search_path, :method => :get, :remote=>true, id: 'search_btn', class: 'navbar-search' do %>
     <%= hidden_field_tag 'cid', check_var('cat') %>
     <%= hidden_field_tag 'loc', check_var('loc') %>
+    <%= hidden_field_tag 'loc_name', check_var('loc_name') %>
     <%= hidden_field_tag 'url', check_var('url') %>
     <div class="controls">
       <div class="input-append">
