@@ -27,7 +27,7 @@ class ListingFacade < AppFacade
   def load_sellers items
     @sellers = User.get_sellers(items)
     @categories = Category.get_categories(items) # unless action_name == 'category'
-    @listings = items.set_page(params[:page], MIN_BOARD_AMT) rescue nil
+    @listings = items.set_page(params[:page], params[:per_page] || MIN_BOARD_AMT) rescue nil
   end
 
   def url_listings request, aname, homeID, user

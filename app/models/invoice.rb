@@ -78,7 +78,7 @@ class Invoice < ActiveRecord::Base
 
   # get invoices for given buyer
   def self.get_buyer_invoices usr
-    inc_list.where("invoices.buyer_id = ? AND invoices.status NOT IN ('closed','removed')", usr.id)
+    inc_list.where("invoices.buyer_id = ? AND invoices.status NOT IN ('closed','removed', 'declined')", usr.id)
   end
 
   # check if invoice owner

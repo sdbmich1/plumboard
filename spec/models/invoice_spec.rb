@@ -77,6 +77,11 @@ describe Invoice do
       it 'lists invoice', run: true do
         expect(Invoice.get_buyer_invoices(@buyer)).not_to be_empty 
       end
+      it 'does not list declined invoice' do
+        @invoice.status = 'declined'
+	@invoice.save!
+        expect(Invoice.get_buyer_invoices(@buyer)).to be_empty 
+      end
       it 'does not list invoice', run: true do
         @listing.status = 'removed'
         @listing.save!
