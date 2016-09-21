@@ -29,11 +29,11 @@ class ListingsController < ApplicationController
   end
 
   def seller
-    @listing.seller_listings(@user)
+    respond_with(@listing.seller_listings(@user))
   end
 
   def seller_wanted
-    @listing.seller_wanted_listings(@user)
+    respond_with(@listing.seller_wanted_listings(@user))
   end
 
   def wanted
@@ -41,7 +41,7 @@ class ListingsController < ApplicationController
   end
 
   def purchased
-    @listing.purchased_listings @user
+    respond_with(@listing.purchased_listings(@user))
   end
 
   def category
