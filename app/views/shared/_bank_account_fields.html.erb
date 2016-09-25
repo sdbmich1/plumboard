@@ -2,14 +2,14 @@
   <%= show_acct_holder f, 'bank' %>
   <label class="control-label">Routing #</label>
   <div class='controls'>
-    <%= f.text_field :routing_number, :size => 16, placeholder: 'Routing Number', id: 'routing_number', required: true %></div>
+    <%= f.text_field :routing_number, :size => 16, placeholder: 'Routing Number', id: 'routing_number', required: true %></div><div class='clear-all'></div>
   <label class="control-label">Account #</label>
   <div class='controls'>
-    <%= f.text_field :acct_number, :size => 16, placeholder: 'Account Number', id: 'acct_number', required: true %></div>
+    <%= f.text_field :acct_number, :size => 16, placeholder: 'Account Number', id: 'acct_number', required: true %></div><div class='clear-all'></div>
   <label class="control-label">Account Name</label>
-  <div class='controls'><%= f.text_field :acct_name, :size => 30, placeholder: 'Account Name', required: true %></div>
+  <div class='controls'><%= f.text_field :acct_name, :size => 30, placeholder: 'Account Name', required: true %></div><div class='clear-all'></div>
   <label class="control-label">Description</label>
-  <div class='controls'><%= f.text_field :description, :size => 60, placeholder: 'Description', required: true %></div>
+  <div class='controls'><%= f.text_field :description, :size => 60, placeholder: 'Description', required: true %></div><div class='clear-all'></div>
   <label class="control-label">Account Type</label>
   <div class='controls'><%= f.select :acct_type, options_for_select(['checking', 'savings'], selected: account.acct_type ), {},
       		{placeholder: 'Account Type'} %></div>

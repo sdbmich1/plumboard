@@ -200,8 +200,8 @@ module TransactionsHelper
     render partial: 'shared/order_row', locals: {i: i, order: order} if order['quantity'+i.to_s].to_i > 0
   end
 
-  def render_order_summary txn, order, paid
-    render partial: 'shared/order_summary', locals: {txn: txn, order: order, paid: paid} if txn 
+  def render_order_summary txn, paid
+    render partial: 'shared/order_summary', locals: {txn: txn, paid: paid} if txn 
   end
 
   def render_order_tax model
