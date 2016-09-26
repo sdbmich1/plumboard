@@ -12,7 +12,7 @@
   </div>
   <label class="control-label sm-top">Postal Code</label>
   <div class='controls'><%= f.text_field :zip, size: 5, placeholder: 'Postal Code', id: 'card_zip', class: 'med-top width140', required: true %>
-  </div>
+  </div><div class='clear-all'></div>
   <%= f.hidden_field :expiration_month, id: 'exp_mo', value: Date.today.month %>
   <%= f.hidden_field :expiration_year, id: 'exp_yr', value: Date.today.year+1 %>
   <label class='control-label sm-top'>Default</label>

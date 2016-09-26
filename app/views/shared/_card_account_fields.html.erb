@@ -1,13 +1,13 @@
 <div class="control-group">
-  <%= show_acct_holder f %>
+  <%= show_acct_holder f %><div class='clear-all'></div>
   <label class="control-label">Card #</label>
   <div class='controls'><%= f.text_field :card_number, maxlength: 16, size: 16, placeholder: 'Card Number', id: 'card_number', required: true %>
-    <%= show_card_image('cc-logo neg-top neg-left10 mbot') %>
+    <%= show_card_image('cc-logo neg-left10 mbot') %>
   </div>
   <label class="control-label">Card Code</label>
   <div class='controls'>
     <%= f.text_field :card_code, maxlength: 4, size: 4, placeholder: 'Card Code', id: 'card_code', class: 'width140', required: true %><br />
-    <%= image_tag('cvv.png', :class=>'cvv-logo neg-top mbot') %>
+    <%= image_tag('cvv.png', :class=>'cvv-logo mbot') %>
   </div>
   <%= render partial: 'shared/card_account_date_fields', locals: {f: f} %>
 </div>

@@ -39,7 +39,16 @@ class CategoriesController < ApplicationController
     end
   end
 
+  def index
+    respond_to do |format|
+      format.html { @categories.paginate(page: @page, per_page: 20) }
+      format.js { @categories.paginate(page: @page, per_page: 20) }
+      format.json { render json: {categories: @categories } } 
+    end
+  end
+
   def manage
+    respond_with(@categories.paginate(page: @page, per_page: 20))
   end
 
   def inactive
@@ -82,7 +91,7 @@ class CategoriesController < ApplicationController
 
   # load categories
   def load_page
-    @categories = Category.active(true).paginate(page: @page, per_page: 20)
+    @categories = Category.active(true)
   end
 
   # load category

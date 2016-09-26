@@ -309,6 +309,7 @@ describe CategoriesController do
     before :each do
       @category = stub_model(Category)
       allow(Category).to receive_message_chain(:find).and_return( @category )
+      allow(@category).to receive_message_chain(:pictures, :first, :photo).and_return( :success )
       do_get
     end
 
