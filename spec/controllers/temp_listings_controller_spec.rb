@@ -110,6 +110,7 @@ describe TempListingsController do
 
       it "should render the new template" do
         do_create
+	load_data 'new_listing'
         expect(response).to render_template(:new)
       end
 

@@ -30,6 +30,7 @@ class TempListingsController < ApplicationController
   end
 
   def update
+    @listing.pictures.build.photo = File.new params[:file].tempfile if params[:file]
     respond_with(@listing) do |format|
       if @listing.update_attributes(params[:temp_listing])
         format.json { render json: {listing: @listing} }
@@ -41,11 +42,13 @@ class TempListingsController < ApplicationController
 
   def create
     @listing = TempListing.add_listing params[:temp_listing], @user
+    @listing.pictures.build.photo = File.new params[:file].tempfile if params[:file]
     respond_with(@listing) do |format|
       if @listing.save
         flash[:notice] = 'Your pixi has been saved as a draft'
         format.json { render json: {listing: @listing} }
       else
+        format.html { render :new }
         format.json { render json: { errors: @listing.errors.full_messages }, status: 422 }
       end
     end
@@ -100,7 +103,6 @@ class TempListingsController < ApplicationController
 
   # parse fields to adjust formatting
   def set_params
-    @listing.pictures.build.photo = File.new params[:file].tempfile if params[:file]
     respond_to do |format|
       format.html { params[:temp_listing] = ResetDate::reset_dates(params[:temp_listing]) }
       format.json { params[:temp_listing] = JSON.parse(params[:temp_listing]) }
