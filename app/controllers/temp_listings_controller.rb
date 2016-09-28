@@ -22,11 +22,15 @@ class TempListingsController < ApplicationController
   end
 
   def show
-    respond_with(@listing)
+    respond_with(@listing) do |format|
+      format.json { render json: {listing: @listing} }
+    end
   end
 
   def edit
-    respond_with(@listing.edit_listing)
+    respond_with(@listing) do |format|
+      format.json { render json: {listing: @listing.edit_listing} }
+    end
   end
 
   def update
