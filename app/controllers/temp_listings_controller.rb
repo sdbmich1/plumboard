@@ -28,7 +28,7 @@ class TempListingsController < ApplicationController
   end
 
   def edit
-    respond_with(@listing) do |format|
+    respond_with(@listing.edit_listing) do |format|
       format.json { render json: {listing: @listing.edit_listing} }
     end
   end

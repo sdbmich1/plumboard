@@ -18,7 +18,7 @@ class TempListingFacade < AppFacade
   end
 
   def edit_listing
-    @listing = TempListing.find_by_pixi_id(params[:id]) || Listing.find_by_pixi_id(params[:id]).dup_pixi(false)
+    @listing = TempListing.find_pixi(params[:id]) || Listing.find_pixi(params[:id]).dup_pixi(false)
   end
 
   def new_listing
