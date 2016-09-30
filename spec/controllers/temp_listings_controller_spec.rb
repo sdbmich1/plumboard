@@ -29,7 +29,7 @@ describe TempListingsController do
 
   describe 'GET show/:id' do
     before :each do
-      allow(TempListing).to receive(:find_by_pixi_id).and_return( @listing )
+      allow(TempListing).to receive(:find_pixi).and_return( @listing )
     end
 
     def do_get
@@ -42,7 +42,7 @@ describe TempListingsController do
     end
 
     it "should load the requested listing" do
-      allow(TempListing).to receive(:find_by_pixi_id).with('1').and_return(@listing)
+      allow(TempListing).to receive(:find_pixi).with('1').and_return(@listing)
       do_get
     end
 
@@ -163,10 +163,9 @@ describe TempListingsController do
   describe "GET 'edit/:id'" do
 
     before :each do
-      @listing = stub_model(TempListing)
       @pixi = stub_model(Listing)
-      allow(TempListing).to receive(:find_by_pixi_id).and_return( @listing )
-      allow(Listing).to receive(:find_by_pixi_id).and_return( @pixi )
+      allow(TempListing).to receive(:find_pixi).and_return( @listing )
+      allow(Listing).to receive(:find_pixi).and_return( @pixi )
       allow(@pixi).to receive(:dup_pixi).and_return( @listing )
     end
 
@@ -175,7 +174,7 @@ describe TempListingsController do
     end
 
     it "loads the requested listing" do
-      expect(TempListing).to receive(:find_by_pixi_id).with('1').and_return(@listing)
+      allow(TempListing).to receive(:find_pixi).with('1').and_return(@listing)
       do_get
     end
 
@@ -192,7 +191,7 @@ describe TempListingsController do
 
   describe "PUT /:id" do
     before (:each) do
-      allow(TempListing).to receive(:find_by_pixi_id).and_return( @listing )
+      allow(TempListing).to receive(:find_pixi).and_return( @listing )
       allow(controller).to receive(:set_params).and_return(:success)
     end
 
@@ -206,18 +205,18 @@ describe TempListingsController do
       end
 
       it "should load the requested listing" do
-        allow(TempListing).to receive(:find_by_pixi_id) { @listing }
+        allow(TempListing).to receive(:find_pixi) { @listing }
         do_update
       end
 
       it "should update the requested listing" do
-        allow(TempListing).to receive(:find_by_pixi_id).with("1") { mock_listing }
+        allow(TempListing).to receive(:find_pixi).with("1") { mock_listing }
 	expect(mock_listing).to receive(:update_attributes).with({'title' => 'test', 'description' => 'test'})
         do_update
       end
 
       it "should assign @listing" do
-        allow(TempListing).to receive(:find_by_pixi_id) { mock_listing(:update_attributes => true) }
+        allow(TempListing).to receive(:find_pixi) { mock_listing(:update_attributes => true) }
         do_update
         expect(assigns(:listing)).not_to be_nil 
       end
@@ -241,18 +240,18 @@ describe TempListingsController do
       end
 
       it "should load the requested listing" do
-        allow(TempListing).to receive(:find_by_pixi_id) { @listing }
+        allow(TempListing).to receive(:find_pixi) { @listing }
         do_update
       end
 
       it "should assign @listing" do
-        allow(TempListing).to receive(:find_by_pixi_id) { mock_listing(:update_attributes => false) }
+        allow(TempListing).to receive(:find_pixi) { mock_listing(:update_attributes => false) }
         do_update
         expect(assigns(:listing)).not_to be_nil 
       end
 
       it "renders the edit form" do 
-        allow(TempListing).to receive(:find_by_pixi_id) { mock_listing(:update_attributes => false) }
+        allow(TempListing).to receive(:find_pixi) { mock_listing(:update_attributes => false) }
         do_update
 	expect(response).to render_template(:edit)
       end
@@ -267,7 +266,7 @@ describe TempListingsController do
   describe "DELETE 'destroy'" do
 
     before (:each) do
-      allow(TempListing).to receive(:find_by_pixi_id).and_return(@listing)
+      allow(TempListing).to receive(:find_pixi).and_return(@listing)
     end
 
     def do_delete
@@ -277,17 +276,17 @@ describe TempListingsController do
     context 'success' do
 
       it "should load the requested listing" do
-        allow(TempListing).to receive(:find_by_pixi_id).with("37").and_return(@listing)
+        allow(TempListing).to receive(:find_pixi).with("37").and_return(@listing)
       end
 
       it "destroys the requested listing" do
-        allow(TempListing).to receive(:find_by_pixi_id).with("37") { mock_listing }
+        allow(TempListing).to receive(:find_pixi).with("37") { mock_listing }
         expect(mock_listing).to receive(:destroy)
         do_delete
       end
 
       it "redirects to the listings list" do
-        allow(TempListing).to receive(:find_by_pixi_id) { mock_listing }
+        allow(TempListing).to receive(:find_pixi) { mock_listing }
         allow(mock_listing).to receive(:destroy).and_return(true)
         do_delete
         expect(response).to be_redirect
@@ -304,7 +303,7 @@ describe TempListingsController do
 
   describe "PUT /submit/:id" do
     before (:each) do
-      allow(TempListing).to receive(:find_by_pixi_id).and_return( @listing )
+      allow(TempListing).to receive(:find_pixi).and_return( @listing )
     end
 
     def do_submit
@@ -317,18 +316,18 @@ describe TempListingsController do
       end
 
       it "should load the requested listing" do
-        allow(TempListing).to receive(:find_by_pixi_id) { @listing }
+        allow(TempListing).to receive(:find_pixi) { @listing }
         do_submit
       end
 
       it "should update the requested listing" do
-        allow(TempListing).to receive(:find_by_pixi_id).with("1") { mock_listing }
+        allow(TempListing).to receive(:find_pixi).with("1") { mock_listing }
 	expect(mock_listing).to receive(:resubmit_order).and_return(:success)
         do_submit
       end
 
       it "should assign @listing" do
-        allow(TempListing).to receive(:find_by_pixi_id) { mock_listing(:resubmit_order => true) }
+        allow(TempListing).to receive(:find_pixi) { mock_listing(:resubmit_order => true) }
         do_submit
         expect(assigns(:listing)).not_to be_nil 
       end

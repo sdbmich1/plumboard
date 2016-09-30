@@ -124,7 +124,7 @@ class TempListingsController < ApplicationController
   end
 
   def load_pixi
-    @listing = TempListing.find_by_pixi_id(params[:id])
+    @listing = TempListing.find_pixi params[:id]
   end
 
   def check_permissions
