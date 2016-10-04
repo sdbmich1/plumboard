@@ -3,8 +3,8 @@ class TempListingsController < ApplicationController
   before_filter :authenticate_user!, except: [:new, :create, :autocomplete_site_name]
   before_filter :check_permissions, only: [:show, :edit, :update, :delete]
   before_filter :load_data, only: [:new, :edit, :index, :create, :unposted, :pending]
-  before_filter :set_params, only: [:create]
-  before_filter :set_params, only: [:update], unless: Proc.new {|c| c.request.format.json? }
+  before_filter :set_params, only: [:create, :update]
+#  before_filter :set_params, only: [:update], unless: Proc.new {|c| c.request.format.json? }
   before_filter :load_pixi, only: [:show, :update, :destroy, :submit]
   after_filter :set_uid, only: [:create]
   autocomplete :user, :first_name, :extra_data => [:first_name, :last_name], :display_value => :pic_with_name
