@@ -17,7 +17,7 @@
   <div id='ship_cost' class='span2'>
     <%= f.label :est_ship_cost, 'Est Ship Amt' %>
     <%= f.text_field :est_ship_cost, in: 0..MAX_SHIP_AMT, step: 0.01,
-        value: set_ship_amt(@user), id: 'ship_cost_box', class: 'price', required: bus_pixi? %>
+        value: set_ship_amt(@user), id: 'ship_cost_box', class: 'price', required: !bus_pixi? %>
   </div>
   <div class='span1'>
     <%= toggle_buy_now(f, @user) %>
