@@ -374,7 +374,7 @@ class ListingParent < ActiveRecord::Base
   def as_json(options={})
     super(except: [:parent_pixi_id, :buyer_id, :transaction_id, :show_alias_flg, :show_phone_flg, :alias_name, :post_ip],
       methods: [:seller_name, :seller_photo, :summary, :short_title, :nice_title, :condition, :seller_pixi_count, :event_type_descr,
-        :category_name, :site_name, :start_dt, :seller_first_name, :med_title, :amt_left, :delivery_type], 
+        :category_name, :site_name, :start_dt, :seller_first_name, :med_title, :amt_left, :delivery_type, :sold_by_business?], 
       include: {user: { only: [:url], methods: [:rating] }, pictures: { only: [:photo_file_name], methods: [:photo_url] }})
   end
 
