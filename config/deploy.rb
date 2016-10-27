@@ -102,6 +102,12 @@ namespace :deploy do
     end
   end
   
+  desc "Check for release folder"
+  task :check_folder do
+    puts "\n\n=== Checking release folder! ===\n\n"
+    run "if [ -d #{release_path} ]; then mkdir -p #{release_path}; fi;"
+  end
+  
   desc "Enable rubber scripts"
   task :enable_rubber do
     puts "\n\n=== Enabling rubber scripts! ===\n\n"
@@ -244,6 +250,7 @@ end
 # capistrano's deploy:cleanup doesn't play well with FILTER
 #before 'deploy:setup', 'rvm:install_rvm'  # install/update RVM
 #before 'deploy:setup', 'rvm:install_ruby' # install Ruby and create gemset
+before "deploy:update", "deploy:check_folder"
 before 'deploy:setup', 'sphinx:create_sphinx_dir'
 before 'rubber:config', 'deploy:enable_rubber', 'deploy:enable_rubber_current'
 after 'bundle:install', 'deploy:enable_rubber'
