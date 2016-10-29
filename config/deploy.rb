@@ -207,6 +207,10 @@ namespace :files do
     upload("#{rails_root}/config/certs/gd_bundle.crt", "#{release_path}/config/gd_bundle.crt")
     run "touch #{current_path}/public/httpchk.txt"
   end
+
+  task :copy_db_yml, :roles => [:app, :db] do
+    run "cp #{shared_path}/config/database.yml #{release_path}/config/database.yml"
+  end
 end
 
 namespace :memcached do
@@ -278,7 +282,7 @@ if Rubber::Util.has_asset_pipeline?
 
   callbacks[:after].delete_if {|c| c.source == "deploy:assets:precompile"}
   callbacks[:before].delete_if {|c| c.source == "deploy:assets:symlink"}
-  before "deploy:assets:precompile", "deploy:assets:symlink", "files:upload_secret", "files:upload_certs"
+  before "deploy:assets:precompile", "deploy:assets:symlink", "files:upload_secret", "files:upload_certs", "files:copy_db_yml"
   after "rubber:config", "deploy:assets:precompile"
 end
 
