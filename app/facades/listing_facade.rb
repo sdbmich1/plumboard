@@ -40,6 +40,10 @@ class ListingFacade < AppFacade
     @url = aname == 'career' ? 'Pixiboard' : ControllerManager::parse_url(request)
   end
 
+  def nearby_listings utype='BUS'
+    @listings = Listing.load_segment cat, loc, utype
+  end
+
   def sellers
     @sellers
   end

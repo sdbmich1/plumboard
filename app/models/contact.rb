@@ -33,9 +33,9 @@ class Contact < ActiveRecord::Base
   end
 
   # get proximity
-  def self.proximity ip, range=25, pos=nil, geoFlg=false
+  def self.proximity ip, range=25, pos=nil, geoFlg=false, ctype='Site'
     val = geoFlg && pos ? pos : ip
-    near(val, range).get_by_type('Site').map(&:contactable_id).uniq rescue nil
+    near(val, range).get_by_type(ctype).map(&:contactable_id).uniq rescue nil
   end
 
   # set json string

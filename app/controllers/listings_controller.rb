@@ -3,7 +3,8 @@ class ListingsController < ApplicationController
   before_filter :authenticate_user!, except: [:local, :category, :show, :biz, :mbr, :career, :pub, :edu, :loc]
   before_filter :load_data, except: [:pixi_price, :repost, :update]
   before_filter :load_pixi, only: [:pixi_price, :repost, :update]
-  before_filter :load_city, only: [:local, :category]
+  before_filter :load_segment, only: [:local, :category], if: Proc.new {|c| c.request.format.json? }
+  before_filter :load_city, only: [:local, :category], unless: Proc.new {|c| c.request.format.json? }
   before_filter :load_url_data, only: [:biz, :mbr, :career, :pub, :edu, :loc]
   after_filter :set_location, only: [:biz, :mbr, :pub, :edu, :loc]
   after_filter :add_points, only: [:show, :biz, :mbr, :pub, :edu, :loc]
@@ -113,6 +114,10 @@ class ListingsController < ApplicationController
 
   def load_city
     @listing.board_listings
+  end
+
+  def load_segment
+    @listing.nearby_listings params[:utype]
   end
 
   def load_url_data

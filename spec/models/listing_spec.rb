@@ -1820,4 +1820,25 @@ describe Listing do
       expect(@listing.delivery_type).to be_nil
     end
   end
+
+  describe 'load_board' do
+    it {expect(Listing.load_board(@listing.category_id, @listing.site_id)).not_to include @listing}
+    it 'does not show on board' do
+      @listing.save!
+      expect(Listing.load_board(@listing.category_id, @listing.site_id)).to include @listing
+    end
+  end
+
+  describe 'load_segment' do
+    it {expect(Listing.load_segment(@listing.category_id, @listing.site_id)).not_to include @listing}
+    it 'has business pixis' do
+      seller = create :business_user
+      listing = create :listing, seller_id: seller.id
+      expect(Listing.load_segment(listing.category_id, listing.site_id)).to include listing
+    end
+    it 'has owner pixis' do
+      @listing.save!
+      expect(Listing.load_segment(@listing.category_id, @listing.site_id, 'MBR')).to include @listing
+    end
+  end
 end

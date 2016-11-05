@@ -192,10 +192,13 @@ describe Site do
     before(:each, :run => true) do
       @site1 = create :site, name: 'Ann Arbor', site_type_code: 'city'
       @site1.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro',
-        city: 'Ann Arbor', state: 'MI', zip: '48103', lat: 42.22, lng: -83.75
+        city: 'Ann Arbor', state: 'MI', zip: '48103', lat: 42.22, lng: 83.75
       @site2 = create :site, name: 'Metro Detroit', site_type_code: 'region'
       @site2.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro',
-        city: 'Detroit', state: 'MI', zip: '48238', lat: 42.23, lng: -83.33
+        city: 'Detroit', state: 'MI', zip: '48238', lat: 42.23, lng: 83.33
+      @site3 = create :site, name: 'Detroit - Palmer Woods', site_type_code: 'area'
+      @site3.contacts.create FactoryGirl.attributes_for :contact, address: '19415 Argyle Cres',
+        city: 'Detroit', state: 'MI', zip: '48203', lat: 42.43, lng: 83.12
     end
 
     it "finds nearest region", :run => true do
@@ -208,6 +211,10 @@ describe Site do
         city: 'San Francisco', state: 'CA', zip: '94101', lat: 37.77, lng: -122.43
       expect(Site.get_nearest_region([nil, nil])).to eq 'SF Bay Area'
       expect(Site.get_nearest_region('').name).to eq 'SF Bay Area'
+    end
+
+    it "finds nearest area", :run => true do
+      expect(Site.get_nearest_area([@site3.contacts.first.lat, @site3.contacts.first.lng]).name).to eq 'Detroit - Palmer Woods'
     end
   end
 

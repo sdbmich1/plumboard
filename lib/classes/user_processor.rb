@@ -234,4 +234,9 @@ class UserProcessor
   def get_rating
     RatingManager.avg_rating @user
   end
+
+  # get nearest stores by zip
+  def get_nearest_stores zip, miles, ctype
+    User.where(user_type_code: 'BUS', id: Contact.near(zip, miles).where(contactable_type: ctype).map(&:contactable_id))
+  end
 end

@@ -20,9 +20,10 @@ describe UsersController do
       @user = stub_model(User)
       @user.birth_date = DateTime.current
       allow(User).to receive(:get_by_type).and_return(@user)
+      allow(User).to receive(:get_nearest_stores).and_return(@user)
       allow(@user).to receive(:first).and_return(@user)
       allow(@user).to receive(:paginate).and_return(@user)
-      allow(controller).to receive_message_chain(:load_data, :check_permissions).and_return(:success)
+      allow(controller).to receive_message_chain(:set_params, :load_data, :check_permissions).and_return(:success)
     end
 
     def do_get

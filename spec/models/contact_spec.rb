@@ -78,14 +78,21 @@ describe Contact do
   end
 
   describe 'proximity' do
-    it 'locates sites' do
+    before :each, run: true do
       @site = create :site, name: 'Oakland', site_type_code: 'city'
       @site1 = create :site, name: 'Oakland City College', site_type_code: 'school'
       @site2 = create :site, name: 'Lake Merritt', site_type_code: 'area'
       @site.contacts.create FactoryGirl.attributes_for :contact, address: 'Metro', city: 'Oakland', state: 'CA'
       @site1.contacts.create FactoryGirl.attributes_for :contact, address: '1000 Grant Ave', city: 'Oakland', state: 'CA'
       @site2.contacts.create FactoryGirl.attributes_for :contact, address: '100 Webster', city: 'Oakland', state: 'CA', zip: '94601'
+    end
+
+    it 'locates sites', run: true do
       expect(Contact.proximity(nil, 25, [1, 1], true).count).to eq(0)
+    end
+
+    it 'does not locate users', run: true do
+      expect(Contact.proximity(nil, 25, [1, 1], true, 'User').count).to eq(0)
     end
 
     it 'does not locate sites' do

@@ -1124,4 +1124,16 @@ describe User do
       expect(@user.reload.active_card_accounts_count).to eq 0
     end
   end
+
+  describe 'nearest stores' do
+    before :each do
+      allow_any_instance_of(Contact).to receive(:near).and_return([1,1])
+      allow_any_instance_of(User).to receive(:get_nearest_stores).and_return(@usr)
+    end
+    it 'has a nearest store' do
+      @usr = create :business_user
+      expect(User.get_nearest_stores('90201').count).to be < 2
+    end
+    it { expect(User.get_nearest_stores('94107')).not_to include @user }
+  end
 end

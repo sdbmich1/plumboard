@@ -48,8 +48,8 @@ class ListingQueryProcessor
   end
 
   # paginate
-  def active_page ip, pg, range
-    Rails.env.development? ? Listing.active.set_page(pg) : Listing.active.where(site_id: prox(ip, range, nil, false)).set_page(pg)
+  def active_page ip, pg, range, pos=nil
+    Rails.env.development? ? Listing.active.set_page(pg) : Listing.active.where(site_id: prox(ip, range, pos, !pos.nil?)).set_page(pg)
   end
 
   # get active pixis by region

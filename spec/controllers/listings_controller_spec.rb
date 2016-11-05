@@ -17,9 +17,11 @@ describe ListingsController do
   describe 'GET board data', local: true do
     context 'load board' do
       ['local', 'category'].each do |rte|
-        it 'checks this' do
-          load_data 'board_listings'
-          get rte.to_sym, loc: 1
+        ['board', 'nearby'].each do |method|
+          it 'checks this' do
+            load_data "#{method}_listings"
+            get rte.to_sym, loc: 1
+          end
         end
       end
     end

@@ -487,6 +487,10 @@ class User < ActiveRecord::Base
     ship_addresses.size > 0
   end
 
+  def self.get_nearest_stores zip, miles=1, ctype='User'
+    UserProcessor.new(self).get_nearest_stores zip, miles, ctype
+  end
+
   # set sphinx scopes
    sphinx_scope(:first_name) { 
      {:order => 'first_name, last_name ASC'}

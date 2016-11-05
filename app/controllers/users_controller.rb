@@ -1,13 +1,14 @@
 require 'will_paginate/array' 
 class UsersController < ApplicationController
   before_filter :authenticate_user!
-  before_filter :load_data, :check_permissions, only: [:index]
+  before_filter :check_permissions, only: [:index], unless: Proc.new {|c| c.request.format.json? }
+  before_filter :set_params, only: [:index]
+  before_filter :load_data, only: [:index]
   before_filter :load_target, :check_update_permissions, only: [:update]
   before_filter :get_user, only: [:show, :edit, :update]
   respond_to :html, :js, :json, :mobile, :csv
 
   def index
-    @users = User.include_list.get_by_type(@utype).paginate(page: @page, per_page: 15)
     render_items 'User', @users.first, @users, 'user_type_code'
   end
 
@@ -59,8 +60,13 @@ class UsersController < ApplicationController
     @query = Riddle::Query.escape params[:search]
   end 
 
-  def load_data
+  def set_params
     @utype, @page = params[:utype], params[:page] || 1
+  end 
+
+  def load_data
+    list = params[:zip] ? User.get_nearest_stores(params[:zip]) : User.include_list.get_by_type(@utype)
+    @users = list.paginate(page: @page, per_page: 15)
   end 
 
   def get_user

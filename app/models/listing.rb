@@ -45,8 +45,8 @@ class Listing < ListingParent
   end
 
   # paginate
-  def self.active_page ip="127.0.0.1", pg=1, range=25
-    ListingQueryProcessor.new(self).active_page ip, pg, range
+  def self.active_page ip="127.0.0.1", pg=1, range=25, pos=nil
+    ListingQueryProcessor.new(self).active_page ip, pg, range, pos
   end
 
   # get pixis by category id
@@ -257,6 +257,10 @@ class Listing < ListingParent
 
   def self.load_board cid, sid
     inc_types.get_by_city(cid, sid).board_fields
+  end
+
+  def self.load_segment cid, sid, utype='BUS'
+    inc_types.joins(:user).get_by_city(cid, sid).where('users.user_type_code = ?', utype).board_fields
   end
 
   # set promo code for free order if appropriate

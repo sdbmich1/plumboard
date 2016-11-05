@@ -63,24 +63,10 @@ class Site < ActiveRecord::Base
     get_by_type 'city'
   end
 
-  # check if site is city
-  def is_city?
-    site_type_code == 'city'
-  end
-
-  # check if site is school
-  def is_school?
-    site_type_code == 'school'
-  end
-
-  # check if site is region
-  def is_region?
-    site_type_code == 'region'
-  end
-
-  # check if site is pub
-  def is_pub?
-    site_type_code == 'pub'
+  
+  # dynamically created status check methods
+  %w(city school region pub).each do |item|
+    define_method("is_#{item}?") { site_type_code == item }
   end
 
   # check site type by id
@@ -101,6 +87,11 @@ class Site < ActiveRecord::Base
   # get nearest region
   def self.get_nearest_region loc
     SiteProcessor.new(self).get_nearest_region loc
+  end
+
+  # get nearest area
+  def self.get_nearest_area loc, miles=1
+    SiteProcessor.new(self).get_nearest_area loc, miles
   end
 
   # select by name
