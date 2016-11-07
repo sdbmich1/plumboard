@@ -34,7 +34,7 @@ end
 # You probably want to use your own repository for a real app
 set :repository, "git@github.com:sdbmich1/plumboard.git"
 set :scm, :git
-set :branch, "master"
+set :branch, ENV['BRANCH'] || :master
 set :deploy_via, :copy
 
 # System-wide RVM installation
