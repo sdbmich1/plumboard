@@ -25,7 +25,7 @@ class AppFacade
     @loc, @loc_name = LocationManager::setup request.remote_ip, loc || region, loc_name, user.home_zip
   end
 
-  def set_region action_name, request, homeID, zip
+  def set_region action_name, request, homeID, zip=nil
     @region = homeID || LocationManager::retrieve_loc(action_name, request, zip)
   end
 

@@ -1,31 +1,32 @@
 <%= f.fields_for :contacts do |form| %>
   <div class="control-group">
-    <div class='controls'>
       <label class="control-label">Home Phone</label>
-      <%= form.text_field :home_phone, placeholder: "Home Phone", id: 'home_phone', size: 10 %>
+    <div class='controls sm-top'>
+      <%= form.text_field :home_phone, placeholder: "Home Phone", id: 'home_phone', size: 10 %></div><br>
       <label class="control-label">Work Phone</label>
-      <%= form.text_field :work_phone, placeholder: "Work Phone", id: 'work_phone', size: 10 %></div>
-    <div class='controls'>
+    <div class='controls sm-top'>
+      <%= form.text_field :work_phone, placeholder: "Work Phone", id: 'work_phone', size: 10 %></div><br>
       <label class="control-label">Mobile Phone</label>
-      <%= form.text_field :mobile_phone, placeholder: "Mobile Phone", id: 'mobile_phone', size: 10 %></div>
-    <div class='controls'>
+    <div class='controls sm-top'>
+      <%= form.text_field :mobile_phone, placeholder: "Mobile Phone", id: 'mobile_phone', size: 10 %></div><br>
       <label class="control-label">Address</label>
-      <%= form.text_field :address, placeholder: "Address"  %></div>
-    <div class='controls'>
+    <div class='controls sm-top'>
+      <%= form.text_field :address, placeholder: "Address"  %></div><br>
       <label class="control-label">Address2</label>
-      <%= form.text_field :address2, placeholder: "Address2"  %></div>
-    <div class='controls'>
+    <div class='controls sm-top'>
+      <%= form.text_field :address2, placeholder: "Address2"  %></div><br>
       <label class="control-label">City</label>
-      <%= form.text_field :city, placeholder: "City"  %></div>
-    <div class='controls mbot'>
+    <div class='controls sm-top'>
+      <%= form.text_field :city, placeholder: "City"  %></div><br>
       <label class="control-label">State</label>
-      <%= form.collection_select :state, State.all, :code, :state_name, {:prompt => 'Select State'} %></div>
-    <div class='controls'>
+    <div class='controls sm-top'>
+      <%= form.collection_select :state, State.all, :code, :state_name, {:prompt => 'Select State'} %></div><br>
       <label class="control-label">Zip</label>
-      <%= form.text_field :zip, placeholder: "Zip" , size: 5 %></div>
-    <div class='controls'>
+    <div class='controls sm-top'>
+      <%= form.text_field :zip, placeholder: "Zip" , size: 5 %></div><br>
       <label class="control-label">Country</label>
-      <%= country_select "contact", "country", ["United States"], :class => 'country' %></div>
+    <div class='controls sm-top'>
+      <%= country_select "contact", "country", ["United States"], :class => 'country' %></div><br>
   </div>
 <% end %>
 
