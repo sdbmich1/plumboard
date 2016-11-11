@@ -107,11 +107,11 @@ module LocationManager
   end
 
   # get loc id based on region name or url
-  def self.retrieve_loc action_name, request
+  def self.retrieve_loc action_name, request, zip=nil
     if ControllerManager::public_url?(action_name) 
       get_loc_by_url(ControllerManager::parse_url request) rescue get_loc_id(PIXI_LOCALE)
     else
-      get_loc_id(PIXI_LOCALE)
+      get_loc_id(PIXI_LOCALE, zip)
     end
   end
 

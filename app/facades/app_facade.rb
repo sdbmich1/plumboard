@@ -25,8 +25,8 @@ class AppFacade
     @loc, @loc_name = LocationManager::setup request.remote_ip, loc || region, loc_name, user.home_zip
   end
 
-  def set_region action_name, request, homeID
-    @region = homeID || LocationManager::retrieve_loc(action_name, request)
+  def set_region action_name, request, homeID, zip
+    @region = homeID || LocationManager::retrieve_loc(action_name, request, zip)
   end
 
   def region
@@ -39,7 +39,7 @@ class AppFacade
 
   def set_geo_data request, aname, homeID, user
     @action_name = aname
-    set_region aname, request, homeID
+    set_region aname, request, homeID, user.home_zip
     set_location request, user
   end
 

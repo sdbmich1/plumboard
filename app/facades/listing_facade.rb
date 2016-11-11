@@ -41,7 +41,7 @@ class ListingFacade < AppFacade
   end
 
   def nearby_listings utype='BUS'
-    @listings = Listing.load_segment cat, loc, utype
+    @listings = Listing.load_segment(cat, loc, utype).set_page(params[:page], params[:per_page] || MIN_BOARD_AMT) rescue nil
   end
 
   def sellers
