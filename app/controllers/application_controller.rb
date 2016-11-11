@@ -68,7 +68,7 @@ class ApplicationController < ActionController::Base
     @user = signed_in? ? current_user : User.new
     # @region = session[:home_id] || LocationManager::retrieve_loc(action_name, request)
     # session[:home_id] ||= @region
-    session[:home_id] ||= AppFacade.new(params).set_region action_name, request, session[:home_id]
+    session[:home_id] ||= AppFacade.new(params).set_region action_name, request, session[:home_id], @user.home_zip
   end
 
   # set store path
