@@ -155,7 +155,7 @@ Plumboard::Application.routes.draw do
   end
 
   resources :pages, only: [:index] do
-    get 'location_name', :on => :collection
+    get 'location_name', 'location_id', :on => :collection
   end
 
   resources :pixi_likes, only: [:create, :destroy]

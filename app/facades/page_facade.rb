@@ -4,7 +4,7 @@ class PageFacade
 
   def initialize *args
     @site = LocationManager::get_region args[0]
-    @region, @loc_name = [site.id, site.name]
+    @region, @loc_name = [@site.id, @site.name]
   end
 
   def listings
@@ -21,6 +21,10 @@ class PageFacade
 
   def loc_name
     @loc_name
+  end
+
+  def loc_id zip=nil
+    @loc_id, @loc_name = LocationManager.get_area zip
   end
 
   def site

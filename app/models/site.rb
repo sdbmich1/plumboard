@@ -63,10 +63,14 @@ class Site < ActiveRecord::Base
     get_by_type 'city'
   end
 
-  
   # dynamically created status check methods
   %w(city school region pub).each do |item|
     define_method("is_#{item}?") { site_type_code == item }
+  end
+
+  # dynamically created location methods
+  %w(address city state zip).each do |item|
+    define_method("#{item}") { contacts[0].send(item) rescue nil }
   end
 
   # check site type by id
@@ -85,13 +89,13 @@ class Site < ActiveRecord::Base
   end
 
   # get nearest region
-  def self.get_nearest_region loc
-    SiteProcessor.new(self).get_nearest_region loc
+  def self.get_nearest_region loc, val='region'
+    SiteProcessor.new(self).get_nearest_region loc, val
   end
 
   # get nearest area
-  def self.get_nearest_area loc, miles=1
-    SiteProcessor.new(self).get_nearest_area loc, miles
+  def self.get_nearest_area loc, stype='area', miles=1
+    SiteProcessor.new(self).get_nearest_area loc, stype, miles
   end
 
   # select by name
@@ -146,7 +150,7 @@ class Site < ActiveRecord::Base
   # set json string
   def as_json(options={})
     super(only: [:id, :name],
-      methods: [:photo_url],
+      methods: [:city, :photo_url],
       include: {pictures: { only: [:photo_file_name], methods: [:photo] }, 
         contacts: { except: [:contactable_id, :contactable_type, :created_at, :updated_at, :website, :home_phone, :mobile_phone] }})
   end

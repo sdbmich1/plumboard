@@ -118,4 +118,9 @@ module LocationManager
   def self.is_pub? sid
     Site.find(sid).is_pub? rescue nil
   end
+
+  # get area
+  def self.get_area loc, stype='area'
+    Site.get_nearest_area(loc, stype).first
+  end
 end

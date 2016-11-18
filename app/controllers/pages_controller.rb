@@ -1,5 +1,5 @@
 class PagesController < ApplicationController
-  before_filter :load_data, only: [:help, :home, :location_name]
+  before_filter :load_data, only: [:help, :home, :location_name, :location_id]
   layout :page_layout
   respond_to :html, :json, :js, :mobile
   
@@ -29,6 +29,10 @@ class PagesController < ApplicationController
 
   def location_name
     respond_with(@home.site)
+  end
+
+  def location_id
+    respond_with(@home.loc_id(params[:zip]))
   end
 
   protected

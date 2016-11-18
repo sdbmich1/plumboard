@@ -375,4 +375,21 @@ describe Site do
   describe "get by url", url: true do
     it_behaves_like 'a url', 'Site', :site, false
   end
+
+  describe 'contact attributes' do
+    context 'has contact' do
+      before :each do
+        @sr = @site.contacts.create FactoryGirl.attributes_for(:contact) 
+      end
+      %w(address city state zip).each do |item|
+        it { expect(@site.send(item)).not_to be_nil }
+      end
+    end
+
+    context 'has no contact' do
+      %w(address city state zip).each do |item|
+        it { expect(@site.send(item)).to be_nil }
+      end
+    end
+  end
 end
