@@ -48,7 +48,7 @@ class SiteProcessor
 
   # get nearest area by zip
   def get_nearest_area zip, stype='area', miles=1, ctype='Site'
-    Site.where(site_type_code: stype, id: Contact.near(zip, miles).where(contactable_type: ctype).map(&:contactable_id))
+    Site.where(site_type_code: stype, name: Contact.near(zip, miles).where(contactable_type: ctype).map(&:city).uniq)
   end
 
   # select active sites w/ pixis

@@ -23,8 +23,8 @@ class PageFacade
     @loc_name
   end
 
-  def loc_id zip=nil
-    @loc_id, @loc_name = LocationManager.get_area zip
+  def loc_id zip=nil, stype='city'
+    @site = LocationManager.get_area zip, stype
   end
 
   def site
