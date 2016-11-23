@@ -180,4 +180,30 @@ describe Category do
       expect(Category.get_categories(Listing.where(category_id: @cat.id)).count).to eq 1
     end
   end
+
+  describe 'with_items' do
+    before :each do
+      picture = @category.pictures.build
+      picture.photo = File.new Rails.root.join("spec", "fixtures", "photo.jpg")
+      @category.save!
+      @user = create :contact_user
+      @cat = FactoryGirl.create(:category, name: 'Test Type', category_type_code: 'sales')
+      @cat2 = FactoryGirl.create(:category, name: 'Test Cat', category_type_code: 'sales')
+      @listing = create :listing, seller_id: @user.id, category_id: @cat.id
+      @listing4 = create :listing, seller_id: @user.id, category_id: @cat.id, site_id: 100
+      @seller = create :business_user
+      @listing2 = create :listing, seller_id: @seller.id, category_id: @category.id
+      @listing3 = create :listing, seller_id: @seller.id, category_id: @cat2.id, site_id: 100
+    end
+    context 'has business items' do
+      it { expect(Category.with_items(@listing.site_id)).not_to include @cat }
+      it { expect(Category.with_items(@listing.site_id)).not_to include @cat2 }
+      it { expect(Category.with_items(@listing.site_id)).not_to be_nil }
+      it { expect(Category.with_items(100)).to include @cat2 }
+    end
+    context 'has member items' do
+      it { expect(Category.with_items(@listing.site_id, 'MBR')).to include @cat }
+      it { expect(Category.with_items(@listing.site_id, 'MBR')).not_to include @category }
+    end
+  end
 end

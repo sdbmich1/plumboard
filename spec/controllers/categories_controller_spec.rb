@@ -34,7 +34,7 @@ describe CategoriesController do
     allow(@categories).to receive(:paginate).and_return(@categories)
     allow(controller).to receive(:current_user).and_return(@user)
     allow(@user).to receive(:home_zip).and_return('94108')
-    allow(controller).to receive_message_chain(:get_page, :load_data, :check_signin_status).and_return(:success)
+    allow(controller).to receive_message_chain(:get_page, :load_data, :load_list).and_return(:success)
     do_get
   end
 
@@ -309,7 +309,7 @@ describe CategoriesController do
     before :each do
       @category = stub_model(Category)
       allow(Category).to receive_message_chain(:find).and_return( @category )
-      allow(@category).to receive_message_chain(:pictures, :first, :photo).and_return( :success )
+      allow(@category).to receive_message_chain(:pictures, :first, :photo, :url).and_return( :success )
       do_get
     end
 

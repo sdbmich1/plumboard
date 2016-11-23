@@ -103,4 +103,8 @@ class Category < ActiveRecord::Base
   def self.get_categories listings
     Category.includes(:pictures).where(id: get_ids(listings))
   end
+
+  def self.with_items sid, utype='BUS'
+    Category.active.where(id: (Listing.load_segment(nil, sid, utype).map(&:category_id).uniq))
+  end
 end

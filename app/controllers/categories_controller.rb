@@ -5,8 +5,8 @@ class CategoriesController < ApplicationController
   before_filter :authenticate_user!, except: [:index, :autocomplete_site_name, :location, :category_type]
   before_filter :get_page, only: [:index, :inactive, :manage, :create, :update, :location]
   before_filter :set_status, only: [:manage, :inactive, :new]
-  before_filter :load_data, only: [:index, :location]
-  before_filter :check_signin_status, only: [:index]
+  before_filter :load_data, only: [:index, :location], unless: Proc.new {|c| c.request.format.json? }
+  before_filter :load_list, only: [:index], if: Proc.new {|c| c.request.format.json? }
   before_filter :load_page, only: [:index, :location, :manage]
   before_filter :load_category, only: [:edit, :show, :category_type, :update]
   autocomplete :site, :name, :extra_data => [:site_type_code, :url], :full => true, :limit => 20
@@ -78,12 +78,6 @@ class CategoriesController < ApplicationController
     @loc, @loc_name = LocationManager::setup request.remote_ip, params[:loc], params[:loc_name], @user.home_zip
   end
 
-  # check user signin status
-  def check_signin_status
-    @newFlg = params[:newFlg].to_bool rescue nil
-    flash.now[:success] = FB_WELCOME_MSG if @newFlg && @user.fb_user && @user.new_user? 
-  end
-
   # parse results for active items only
   def get_autocomplete_items(parameters)
     super(parameters).active rescue nil
@@ -97,5 +91,10 @@ class CategoriesController < ApplicationController
   # load category
   def load_category
     @category = Category.find params[:id] rescue nil
+  end
+
+  # load categories
+  def load_list
+    @categories = Category.with_items(params[:loc], params[:utype])
   end
 end
