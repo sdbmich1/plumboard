@@ -167,6 +167,7 @@ Plumboard::Application.routes.draw do
   end
 
   resources :subscriptions
+  resources :promo_codes
 
   # custom routes
   get "/about", to: "pages#about" 

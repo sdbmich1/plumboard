@@ -18,10 +18,13 @@ describe PromoCode do
   it { is_expected.to respond_to(:currency) }
   it { is_expected.to respond_to(:promo_type) }
   it { is_expected.to respond_to(:site_id) }
+  it { is_expected.to respond_to(:owner_id) }
   it { is_expected.to respond_to(:amountOff) }
   it { is_expected.to respond_to(:percentOff) }
   it { is_expected.to respond_to(:max_redemptions) }
   it { is_expected.to respond_to(:site) }
+  it { is_expected.to respond_to(:pictures) }
+  it { is_expected.to respond_to(:user) }
 
   describe "when code is empty" do
     before { @promo_code.code = "" }
@@ -177,13 +180,36 @@ describe PromoCode do
     it { expect(@promo_code.has_start_time?).not_to be_truthy }
   end
 
-  it "get code should return promo" do
-    promo_code = FactoryGirl.create :promo_code, code: 'test', start_date: '2013-01-01'.to_date, end_date: Date.today
-    expect(PromoCode.get_code(promo_code.code, Date.today)).not_to be_nil
+  describe 'check promos' do
+    it "get code should return promo" do
+      promo_code = FactoryGirl.create :promo_code, code: 'test', start_date: '2013-01-01'.to_date, end_date: Date.today
+      expect(PromoCode.get_code(promo_code.code, Date.today)).not_to be_nil
+    end
+
+    it "get code should not return promo" do
+      promo_code = FactoryGirl.create :promo_code, start_date: '2013-01-01'.to_date, end_date: '2013-03-28'.to_date
+      expect(PromoCode.get_code('Test', Date.today)).to be_nil
+    end
   end
 
-  it "get code should not return promo" do
-    promo_code = FactoryGirl.create :promo_code, start_date: '2013-01-01'.to_date, end_date: '2013-03-28'.to_date
-    expect(PromoCode.get_code('Test', Date.today)).to be_nil
+  describe 'local promos' do
+    before :each do
+      @user = create(:business_user, status: 'active')
+      @code = @user.promo_codes.create attributes_for(:promo_code)
+    end
+    it { expect(PromoCode.get_local_promos('90201')).not_to be_nil } 
+    it { expect(PromoCode.get_local_promos('90202')).not_to include @code } 
+  end
+
+  describe 'user promos' do
+    before :each do
+      @user = create(:business_user, status: 'active')
+      @code = @user.promo_codes.create attributes_for(:promo_code)
+      @user2 = create(:business_user, first_name: 'Jak', last_name: 'Test', business_name: 'The Hive', status: 'active')
+      @code2 = @user2.promo_codes.create attributes_for(:promo_code)
+    end
+    it { expect(PromoCode.get_user_promos(@user)).not_to be_nil } 
+    it { expect(PromoCode.get_user_promos(@user2)).not_to include @code } 
+    it { expect(PromoCode.get_user_promos(@user2, true).count).not_to eq 1 } 
   end
 end

@@ -128,14 +128,13 @@ module ApplicationHelper
       when 'Pending Orders'; render 'shared/navbar_pending'
       when 'Messages'; render 'shared/navbar_conversations'
       when 'Home'; render 'shared/navbar_home', locals: { loc_name: @loc_name }
-      when 'PixiPosts'; render 'shared/navbar_pixi_post'
-      when 'My PixiPosts'; render 'shared/navbar_pixi_post'
+      when 'PixiPosts','My PixiPosts'; render 'shared/navbar_pixi_post'
       when 'Inquiries'; render 'shared/navbar_inquiry'
       when 'Users'; render 'shared/navbar_users'
-      when 'Sites'; render 'shared/navbar_sites'
+      when 'Sites', 'Manage Sites'; render 'shared/navbar_sites'
+      when 'Promos', 'Manage Promos'; render 'shared/navbar_promos'
       when 'Manage Pixis'; render 'shared/navbar_manage_pixis'
       when 'My Sellers', 'Manage Followers', 'My Followers'; render 'shared/navbar_sellers'
-      when 'Manage Sites'; render 'shared/navbar_sites'
       else render 'shared/navbar_main'
     end
   end

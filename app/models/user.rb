@@ -90,6 +90,8 @@ class User < ActiveRecord::Base
 
   has_many :subscriptions
   has_many :devices
+  has_many :promo_codes, foreign_key: :owner_id, dependent: :destroy
+  has_many :promo_code_users, dependent: :destroy
 
   # name format validators
   name_regex = 	/\A[A-Z]'?['-., a-zA-Z]+\z/i

@@ -130,7 +130,7 @@ class ListingsController < ApplicationController
 
   def render_json
     respond_with(@listing) do |format|
-      format.json { render json: {listings: @listing.listings, categories: @listing.categories} }
+      format.json { render json: {listings: @listing.listings, categories: @listing.categories, sellers: @listing.sellers } }
     end
   end
 end

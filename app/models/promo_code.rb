@@ -1,8 +1,13 @@
 class PromoCode < ActiveRecord::Base
   attr_accessible :amountOff, :code, :currency, :description, :end_date, :end_time, :max_redemptions, :percentOff, :promo_name, 
-  	:start_date, :start_time, :status, :promo_type, :site_id
+  	:start_date, :start_time, :status, :promo_type, :site_id, :owner_id, :pictures_attributes
 
   belongs_to :site
+  belongs_to :user, foreign_key: :owner_id
+  has_many :promo_code_users, dependent: :destroy
+
+  has_many :pictures, :as => :imageable, :dependent => :destroy
+  accepts_nested_attributes_for :pictures, :allow_destroy => true
   
   validates :code, presence: true
   validates :status, presence: true
@@ -43,7 +48,19 @@ class PromoCode < ActiveRecord::Base
 
   # find valid code based on given code and date
   def self.get_code cd, dt
-    result = active.find_by_code cd
+    result = active.find_by code: cd
     get_valid_code result, dt if result
+  end
+ 
+  def self.get_local_promos zip
+    active.where(owner_id: User.get_nearest_stores(zip) )
+  end
+ 
+  def self.get_user_promos uid, aflg=false
+    if aflg
+      User.joins(:promo_codes).include_list.where('promo_codes.status = ?', 'active').uniq.reorder('first_name ASC')  
+    else
+      active.where(owner_id: uid)
+    end
   end
 end

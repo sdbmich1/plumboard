@@ -106,6 +106,7 @@ FactoryGirl.define do
   end
 
   factory :promo_code do
+    owner_id 1
     code  "2013LAUNCH"
     promo_name "2013LAUNCH"
     description "2013LAUNCH"
@@ -513,5 +514,11 @@ FactoryGirl.define do
   end
 
   factory :message do
+  end
+
+  factory :promo_code_user do
+    user_id 1
+    promo_code_id 1
+    status 'active'
   end
 end

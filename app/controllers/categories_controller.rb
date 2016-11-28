@@ -5,9 +5,9 @@ class CategoriesController < ApplicationController
   before_filter :authenticate_user!, except: [:index, :autocomplete_site_name, :location, :category_type]
   before_filter :get_page, only: [:index, :inactive, :manage, :create, :update, :location]
   before_filter :set_status, only: [:manage, :inactive, :new]
-  before_filter :load_data, only: [:index, :location], unless: Proc.new {|c| c.request.format.json? }
   before_filter :load_list, only: [:index], if: Proc.new {|c| c.request.format.json? }
-  before_filter :load_page, only: [:index, :location, :manage]
+  before_filter :load_data, only: [:index, :location], unless: Proc.new {|c| c.request.format.json? }
+  before_filter :load_page, only: [:index, :location, :manage], unless: Proc.new {|c| c.request.format.json? }
   before_filter :load_category, only: [:edit, :show, :category_type, :update]
   autocomplete :site, :name, :extra_data => [:site_type_code, :url], :full => true, :limit => 20
   include LocationManager
