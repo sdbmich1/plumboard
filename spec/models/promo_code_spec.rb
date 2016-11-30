@@ -26,11 +26,6 @@ describe PromoCode do
   it { is_expected.to respond_to(:pictures) }
   it { is_expected.to respond_to(:user) }
 
-  describe "when code is empty" do
-    before { @promo_code.code = "" }
-    it { is_expected.not_to be_valid }
-  end
-
   describe "when code is entered" do
     before { @promo_code.code = "chair" }
     it { expect(@promo_code.code).to eq("chair") }

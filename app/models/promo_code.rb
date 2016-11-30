@@ -9,7 +9,7 @@ class PromoCode < ActiveRecord::Base
   has_many :pictures, :as => :imageable, :dependent => :destroy
   accepts_nested_attributes_for :pictures, :allow_destroy => true
   
-  validates :code, presence: true
+  # validates :code, presence: true
   validates :status, presence: true
   validates :promo_name, presence: true
   validates :amountOff, presence: true, if: "percentOff.blank?"
@@ -62,5 +62,22 @@ class PromoCode < ActiveRecord::Base
     else
       active.where(owner_id: uid)
     end
+  end
+
+  # seller pic
+  def seller_photo
+    user.photo 0, 'small' rescue nil
+  end
+
+  # get seller name for a listing
+  def seller_name
+    user.business_name rescue nil
+  end
+
+  # set json string
+  def as_json(options={})
+    output = super(except: [:created_at, :updated_at], methods: [:seller_name, :seller_photo])
+    output['pictures'] = [{ 'photo_url' => self.pictures.first.photo.url(:large) }] if self.pictures[0]
+    output
   end
 end
