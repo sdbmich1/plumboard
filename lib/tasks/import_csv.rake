@@ -834,6 +834,40 @@ task :load_message_types => :environment do
   end
 end
 
+task :load_promo_codes => :environment do
+  CSV.foreach(Rails.root.join('db', 'promo_data_120116.csv'), :headers => true) do |row|
+
+    if usr = User.where("business_name like ?", "#{row[9]}%").first
+      loc = LocationManager.get_area usr.home_zip, 'city'
+      end_time =  row[8].to_datetime if row[8]
+      start_time =  row[7].to_datetime if row[7]
+      attrs = {
+        :code   => row[0],
+        :promo_name => row[1],
+        :description => row[2],
+        :percentOff => row[3],
+        :amountOff => row[4],
+        :start_date => ResetDate.parse_date(row[5]),
+        :end_date => ResetDate.parse_date(row[6]),
+        :start_time => start_time,
+        :end_time => end_time,
+        :status   => 'active',
+        :site_id => loc
+      }
+
+      promo = usr.promo_codes.build(attrs)
+      if promo.save
+        puts "Saved promo #{attrs.inspect}"
+      else
+        puts promo.errors.first
+      end
+    else
+      puts "Promo Owner #{row[9]} not found."
+    end
+  end
+end
+
+
 #to run all tasks at once
 task :run_all_tasks => :environment do
 

@@ -66,9 +66,7 @@ class ApplicationController < ActionController::Base
   # set user if signed in 
   def load_settings
     @user = signed_in? ? current_user : User.new
-    # @region = session[:home_id] || LocationManager::retrieve_loc(action_name, request)
-    # session[:home_id] ||= @region
-    session[:home_id] ||= AppFacade.new(params).set_region action_name, request, session[:home_id], @user.home_zip
+    session[:home_id] ||= AppFacade.new(params).set_region action_name, request, session[:home_id], get_zip
   end
 
   # set store path
@@ -166,5 +164,9 @@ class ApplicationController < ActionController::Base
 
   def num_rows
     request.format.json? ? MIN_BOARD_AMT/2 : MIN_BOARD_AMT
+  end
+
+  def get_zip
+    @user.nil? ? nil : @user.home_zip
   end
 end

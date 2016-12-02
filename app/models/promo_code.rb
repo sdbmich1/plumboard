@@ -52,8 +52,8 @@ class PromoCode < ActiveRecord::Base
     get_valid_code result, dt if result
   end
  
-  def self.get_local_promos zip
-    active.where(owner_id: User.get_nearest_stores(zip) )
+  def self.get_local_promos zip, miles=1
+    active.where(owner_id: User.get_nearest_stores(zip, miles) )
   end
  
   def self.get_user_promos uid, aflg=false

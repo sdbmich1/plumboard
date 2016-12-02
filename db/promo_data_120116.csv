@@ -1,0 +1,6 @@
+code,name,description,percentOff,amountOff,start_date,end_date,start_time,end_time,owner_name
+NOSLSTAX,No Sales Tax,We will pay the sales tax on all cash purchases.,8.75,,12/1/2016,12/31/2016,,,Franny
+,Added Value Gift Card,"You pay $100, receive $125; You pay $200, receive $250; You pay $500, receive $625; You pay $1000, receive $1250 gift card value.",25,,12/1/2016,12/31/2016,,,Amy's
+,25% Off Wellness Department,"25% off our entire Wellness Department including supplements, bodycare, and lifestyle products. Limited to stock on hand. Demo samples of food throughout the store and a 50% off sale on some vitamins.",25%,,12/1/2016,12/31/2016,,,Real Food
+,Happy Hour Special,Happy hour 5:00-7:00pm: free half glass pour.,,0,12/1/2016,12/5/2016,5:00p,7:00p,Robber Baron
+,Sidewalk Sale,"Hosting their famous fabulous sidewalk sale from 10:00 am - 5:00 pm. Great vintage finds and keepsakes. Carole's custom pillows at half price, fabric remnants, a smattering of jewelry and maybe a few surprises.",,0,12/1/2016,12/15/2016,10:00a,5:00p,Carole's Vintage
