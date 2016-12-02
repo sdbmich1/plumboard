@@ -11,7 +11,11 @@
   }
   else {
     postFlashMsg('#flash_notice','success', 'Successfully saved changes.');
-    $("#user_form").html("<%= escape_javascript( raw render(partial: @target, locals: {user: @usr})) %>");
+    <% if @usr.is_business? && !@usr.has_address? %>
+      $("#user_form").html("<%= escape_javascript( raw render(partial: "shared/user_contact") ) %>");
+    <% else %>
+      $("#user_form").html("<%= escape_javascript( raw render(partial: @target, locals: {user: @usr})) %>");
+    <% end %>
 
     <% if @user == @usr %>
       $("#usr_fname").html("<%= escape_javascript( raw render(partial: 'shared/menu_user_name', locals: {user: @usr})) %>");

@@ -66,7 +66,7 @@ class PromoCodesController < ApplicationController
   end
 
   def load_promos
-    items = params[:zip].nil? ? PromoCode.get_user_promos(@usr.id) : PromoCode.get_local_promos(params[:zip], params[:miles])
+    items = params['zip'].nil? ? PromoCode.get_user_promos(@usr.id) : PromoCode.get_local_promos(params['zip'], params['miles'])
     @promos = items.paginate(page: params[:page], per_page: 15)
   end
 end

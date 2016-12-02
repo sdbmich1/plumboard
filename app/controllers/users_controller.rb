@@ -73,7 +73,7 @@ class UsersController < ApplicationController
   end 
 
   def load_data
-    list = params[:zip] ? User.get_nearest_stores(params[:zip], params[:miles]) : User.include_list.get_by_type(@utype)
+    list = params['zip'].nil? ? User.include_list.get_by_type(@utype) : User.get_nearest_stores(params['zip'], params['miles']) 
     @users = list.paginate(page: @page, per_page: 15)
   end 
 
