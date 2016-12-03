@@ -76,7 +76,8 @@ class PromoCode < ActiveRecord::Base
 
   # set json string
   def as_json(options={})
-    output = super(except: [:created_at, :updated_at], methods: [:seller_name, :seller_photo])
+    output = super(except: [:created_at, :updated_at], methods: [:seller_name, :seller_photo],
+      include: {user: { only: [:url], methods: [:rating, :pixi_count] }})
     output['pictures'] = [{ 'photo_url' => self.pictures.first.photo.url(:large) }] if self.pictures[0]
     output
   end

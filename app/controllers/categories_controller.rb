@@ -95,6 +95,7 @@ class CategoriesController < ApplicationController
 
   # load categories
   def load_list
-    @categories = Category.with_items(params[:loc], params[:utype])
+    uid = params['uid'] 
+    @categories = uid.nil? ? Category.with_items(params[:loc], params[:utype]) : Category.user_with_items(User.find(uid))
   end
 end

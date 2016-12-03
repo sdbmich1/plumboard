@@ -205,5 +205,9 @@ describe Category do
       it { expect(Category.with_items(@listing.site_id, 'MBR')).to include @cat }
       it { expect(Category.with_items(@listing.site_id, 'MBR')).not_to include @category }
     end
+    context 'user has items' do
+      it { expect(Category.user_with_items(@seller)).to include @cat2 }
+      it { expect(Category.user_with_items(@seller)).not_to include @cat }
+    end
   end
 end

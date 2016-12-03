@@ -107,4 +107,8 @@ class Category < ActiveRecord::Base
   def self.with_items sid, utype='BUS'
     Category.active.where(id: (Listing.load_segment(nil, sid, utype).map(&:category_id).uniq))
   end
+
+  def self.user_with_items usr, status='active'
+    Category.active.where(id: (Listing.get_by_status_and_seller(status, usr, false).map(&:category_id).uniq))
+  end
 end
