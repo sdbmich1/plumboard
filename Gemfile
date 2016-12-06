@@ -21,7 +21,7 @@ gem 'delayed_job_active_record', '4.1.0'
 gem "daemons"
 
 # process devise mails in background
-gem 'devise-async'
+# gem 'devise-async'
 
 # use mysql as db
 gem "mysql2", "~> 0.3.20"
