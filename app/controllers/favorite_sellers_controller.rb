@@ -7,8 +7,7 @@ class FavoriteSellersController < ApplicationController
   layout :page_layout
 
   def create
-    @favorite = FavoriteSeller.save(params[:uid], params[:seller_id], 'active')
-    respond_with(@favorite)
+    respond_with(@favorite = FavoriteSeller.save(params[:uid], params[:seller_id], 'active'))
   end
 
   def index
@@ -16,8 +15,7 @@ class FavoriteSellersController < ApplicationController
   end
 
   def update
-    @favorite = FavoriteSeller.save(params[:uid], params[:seller_id], 'removed')
-    respond_with(@favorite)
+    respond_with(@favorite = FavoriteSeller.save(params[:uid], params[:seller_id], 'removed'))
   end
 
   private

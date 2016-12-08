@@ -378,6 +378,23 @@ describe TempListing do
       temp_listing = FactoryGirl.create :temp_listing, transaction_id: nil, category_id: @cat.id
       expect(temp_listing.resubmit_order).not_to be_truthy
     end
+
+    context 'business pixis' do
+      before :each do
+        @biz = create :business_user
+        @temp = create :temp_listing_with_transaction, seller_id: @biz.id 
+      end
+
+      it 'approves business pixi' do
+        @temp.submit_order transaction.id
+        expect(@temp.status).to eq 'approved'
+      end
+
+      it 'not approves business pixi' do
+        @temp.submit_order nil
+        expect(@temp.status).to eq 'approved'
+      end
+    end
   end
 
   describe "approved order", base: true  do

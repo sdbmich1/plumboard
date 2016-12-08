@@ -1,4 +1,5 @@
 Plumboard::Application.routes.draw do
+
   devise_for :users, :controllers => { registrations: "registrations", sessions: "sessions", omniauth_callbacks: "users/omniauth_callbacks",
       confirmations: "confirmations" } 
   
@@ -109,6 +110,7 @@ Plumboard::Application.routes.draw do
   end
 
   resources :promo_code_searches, only: [:index]
+  resources :promo_code_users, only: [:create, :index, :update]
   resources :comments, only: [:index, :new, :create]
   resources :ratings, only: [:index, :new, :create]
 

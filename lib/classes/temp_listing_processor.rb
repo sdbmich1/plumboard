@@ -41,6 +41,10 @@ class TempListingProcessor < ListingDataProcessor
 
   # submit order request for review
   def submit_order val
+    @listing.sold_by_business? ? @listing.approve_order(@listing.user) : process_submit(val)
+  end
+
+  def process_submit val
     if !val.blank? || @listing.free?
       @listing.transaction_id = val if val
       @listing.status = 'pending' 
