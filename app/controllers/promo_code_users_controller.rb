@@ -3,7 +3,7 @@ class PromoCodeUsersController < ApplicationController
   respond_to :html, :js, :json, :mobile
 
   def create
-    respond_with(@promo = PromoCodeUser.save(params[:id], params[:uid], 'active'))
+    respond_with(@promo = PromoCodeUser.save(params[:uid], params[:id], 'active'))
   end
 
   def index
@@ -11,7 +11,7 @@ class PromoCodeUsersController < ApplicationController
   end
 
   def update
-    @promo = PromoCodeUser.save(params[:id], params[:uid], 'removed')
+    @promo = PromoCodeUser.save(params[:uid], params[:id], 'removed')
     respond_with(@promo, location: "nil")
   end
 

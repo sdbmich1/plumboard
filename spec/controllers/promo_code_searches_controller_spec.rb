@@ -5,22 +5,36 @@ describe PromoCodeSearchesController do
 
   before(:each) do
     log_in_test_user
+    allow_message_expectations_on_nil
   end
 
-  def load_data 
-    @user = double("User", params: {loc: 1, zip: '94111'}, home_zip: true, add_points: nil, comments: nil)
-    allow(AppFacade).to receive_message_chain(:set_region, :home_zip).and_return(@user)
-    allow(controller).to receive(:current_user).and_return(@user)
-    allow(controller).to receive(:get_zip).and_return(:success)
-    allow(@user).to receive_message_chain(:home_zip, :to_region).and_return( :success )
-  end
-
-  describe 'GET /index' do
+  describe 'GET /index', index: true do
     before :each do
-      load_data
+      @promos = stub_model(PromoCode)
+      allow(PromoCode).to receive(:search).and_return( @promos )
+      allow(@promos).to receive(:populate).and_return(@promos)
+      allow(controller).to receive_message_chain(:query, :page, :site, :load_search, :search_options).and_return(:success)
     end
-    context 'load promos' do
-      it_behaves_like 'searches controller index', 'PromoCode', 'promos'
+
+    def do_action rte, method
+      xhr rte.to_sym, method.to_sym, locate: {loc: 1, url: '', search_txt: 'test'}
+    end
+
+    [['get', 'index'], ['post', 'locate']].each do |rte, method|
+      it "should load the requested promo" do
+        allow(PromoCode).to receive(:search).with('test').and_return(@promos)
+        do_action rte, method
+      end
+
+      it "should assign @promos" do
+        do_action rte, method
+        expect(assigns(:promos)).to eq(@promos)
+      end
+
+      it "index action should render nothing" do
+        do_action rte, method
+        allow(controller).to receive(:render)
+      end
     end
   end
 end

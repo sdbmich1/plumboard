@@ -109,7 +109,12 @@ Plumboard::Application.routes.draw do
     end
   end
 
-  resources :promo_code_searches, only: [:index]
+  resources :promo_code_searches, only: [:index] do
+    collection do
+      post :locate
+    end
+  end
+
   resources :promo_code_users, only: [:create, :index, :update]
   resources :comments, only: [:index, :new, :create]
   resources :ratings, only: [:index, :new, :create]

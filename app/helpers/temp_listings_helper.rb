@@ -222,4 +222,9 @@ module TempListingsHelper
   def temp_listing_nav listing, edit_mode
     render(partial: 'shared/show_temp_listing', locals: {listing: listing}) if signed_in? && edit_mode && !pending_listings?
   end
+
+  def get_site_id sid
+    zip = sid.nil? ? @user.home_zip : User.find(sid).home_zip
+    LocationManager.get_area zip, 'User'
+  end
 end

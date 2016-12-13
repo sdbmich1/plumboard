@@ -2,7 +2,8 @@
   <div class='span7'>
     <%= f.label :site_id, 'Location' %>
     <%= autocomplete_field_tag 'site_name', listing.site_name, autocomplete_site_name_temp_listings_path,
-	        :update_elements => { :id => '#site_id' }, :placeholder => 'Enter School, City or Neighborhood', required: true %> 
+	        :update_elements => { :id => '#site_id' }, :placeholder => 'Enter School, City or Neighborhood', 
+		value: get_site_id(f.object.seller_id),  required: true %> 
     <%= f.hidden_field :site_id, id: 'site_id', required: true %>
   </div>
   <div class='span2' id='price-fld' style="<%= set_style(listing.job?) %>"><%= f.label :price, 'Price $' %>

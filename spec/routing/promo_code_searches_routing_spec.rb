@@ -8,4 +8,8 @@ require "spec_helper"
     it_should_behave_like 'a put route', false, 'update', 'promo_code_searches'
     it_should_behave_like 'a post route', false, 'create', 'promo_code_searches'
     it_should_behave_like 'a delete route', false, 'destroy', 'promo_code_searches'
+
+    it 'routes to #locate' do
+      expect(post('/promo_code_searches/locate')).to route_to('promo_code_searches#locate')
+    end
   end
