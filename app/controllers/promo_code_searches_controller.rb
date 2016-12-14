@@ -20,7 +20,7 @@ class PromoCodeSearchesController < ApplicationController
 
   # wrap query text for special characters
   def query
-    @query = Riddle::Query.escape params[:search_txt]
+    @query = Riddle::Query.escape params[:search]
   end  
  
   def load_data
@@ -33,7 +33,7 @@ class PromoCodeSearchesController < ApplicationController
 
   # dynamically define search options based on selections
   def search_options
-    if @url.nil?
+    if @url.blank?
       ModelSearchBuilder.new([:pictures, :user, :site], @page).search_options('site_id', site)
     else
       ModelSearchBuilder.new([:pictures, :user, :site], @page).search_options('url', @url)
@@ -42,7 +42,7 @@ class PromoCodeSearchesController < ApplicationController
 
   def send_result
     respond_with(@promos) do |format|
-      format.json { render json: {promos: @promos} }
+      format.json { render json: @promos }
     end
   end
 end
