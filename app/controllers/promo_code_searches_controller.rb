@@ -5,11 +5,11 @@ class PromoCodeSearchesController < ApplicationController
   respond_to :html, :js, :mobile, :json
 
   def index
-    respond_with @promos
+    send_result
   end
 
   def locate
-    respond_with @promos
+    send_result
   end
 
   protected
@@ -37,6 +37,12 @@ class PromoCodeSearchesController < ApplicationController
       ModelSearchBuilder.new([:pictures, :user, :site], @page).search_options('site_id', site)
     else
       ModelSearchBuilder.new([:pictures, :user, :site], @page).search_options('url', @url)
+    end
+  end
+
+  def send_result
+    respond_with(@promos) do |format|
+      format.json { render json: {promos: @promos} }
     end
   end
 end
