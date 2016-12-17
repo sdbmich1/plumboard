@@ -938,6 +938,11 @@ describe User do
       @user.reload
       expect(User.get_sellers(Listing.all)).not_to be_empty
     end
+    it 'has user w sufficient pixis', run: true do
+      listing = create :listing, seller_id: @user.id, title: 'Leather Coat', site_id: @site.id, category_id: @listing.category_id
+      listing = create :listing, seller_id: @user.id, title: 'Fur Coat', site_id: @site.id, category_id: @listing.category_id
+      expect(User.get_sellers(Listing.all, 'MBR')).not_to be_empty
+    end
   end
 
   describe "is_followed?" do

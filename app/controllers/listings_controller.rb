@@ -117,7 +117,7 @@ class ListingsController < ApplicationController
   end
 
   def load_segment
-    @listing.nearby_listings params[:utype]
+    @listing.nearby_listings 
   end
 
   def load_url_data

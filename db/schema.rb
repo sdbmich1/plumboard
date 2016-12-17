@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161124215121) do
+ActiveRecord::Schema.define(version: 20161217040939) do
 
   create_table "admins", force: :cascade do |t|
     t.string   "email",                  limit: 255, default: "", null: false
@@ -768,12 +768,16 @@ ActiveRecord::Schema.define(version: 20161124215121) do
     t.string   "promo_type",      limit: 255
     t.integer  "site_id",         limit: 4
     t.integer  "owner_id",        limit: 4
+    t.integer  "category_id",     limit: 4
+    t.integer  "subcategory_id",  limit: 4
   end
 
+  add_index "promo_codes", ["category_id"], name: "index_promo_codes_on_category_id", using: :btree
   add_index "promo_codes", ["code", "status"], name: "index_promo_codes_on_code_and_status", using: :btree
   add_index "promo_codes", ["end_date", "start_date"], name: "index_promo_codes_on_end_date_and_start_date", using: :btree
   add_index "promo_codes", ["owner_id"], name: "index_promo_codes_on_owner_id", using: :btree
   add_index "promo_codes", ["site_id"], name: "index_promo_codes_on_site_id", using: :btree
+  add_index "promo_codes", ["subcategory_id"], name: "index_promo_codes_on_subcategory_id", using: :btree
 
   create_table "ratings", force: :cascade do |t|
     t.integer  "seller_id",  limit: 4

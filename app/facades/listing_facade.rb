@@ -25,7 +25,7 @@ class ListingFacade < AppFacade
   end
 
   def load_sellers items
-    @sellers = User.get_sellers(items)
+    @sellers = User.get_sellers(items, params[:utype])
     @categories = Category.get_categories(items) # unless action_name == 'category'
     @listings = items.set_page(params[:page], params[:per_page] || MIN_BOARD_AMT) rescue nil
   end
@@ -40,7 +40,8 @@ class ListingFacade < AppFacade
     @url = aname == 'career' ? 'Pixiboard' : ControllerManager::parse_url(request)
   end
 
-  def nearby_listings utype='BUS'
+  def nearby_listings 
+    utype = params[:utype] || 'BUS'
     @listings = Listing.load_segment(cat, loc, utype).set_page(params[:page], params[:per_page] || MIN_BOARD_AMT) rescue nil
   end
 

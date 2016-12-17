@@ -469,8 +469,8 @@ class User < ActiveRecord::Base
   end
 
   # get active sellers
-  def self.get_sellers listings
-    UserProcessor.new(self).get_sellers listings
+  def self.get_sellers listings, utype='BUS'
+    UserProcessor.new(self).get_sellers listings, utype
   end
 
   def as_csv(options={})

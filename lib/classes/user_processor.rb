@@ -183,8 +183,8 @@ class UserProcessor
   end
 
   # get seller list based on current pixis
-  def get_sellers listings
-    User.includes(:pictures, :preferences).get_by_type('BUS').board_fields
+  def get_sellers listings, val='BUS'
+    User.includes(:pictures, :preferences).get_by_type(val).board_fields
       .where(id: get_ids(listings)).select {|usr| usr.reload.pixi_count >= min_count}
   end
 

@@ -1,7 +1,9 @@
 require 'will_paginate/array' 
 class PromoCodeSearchesController < ApplicationController
   before_filter :authenticate_user!
-  before_filter :load_data, :load_search
+  before_filter :load_data, only: [:index]
+  before_filter :set_params, only: [:locate]
+  before_filter :load_search
   respond_to :html, :js, :mobile, :json
 
   def index
@@ -20,15 +22,21 @@ class PromoCodeSearchesController < ApplicationController
 
   # wrap query text for special characters
   def query
-    @query = Riddle::Query.escape params[:search]
+    @query = Riddle::Query.escape @search
   end  
  
   def load_data
-    @loc, @page, @url = params[:loc], params[:page] || 1, params[:url]
+    @loc, @page, @url, @search = params[:loc], params[:page] || 1, params[:url], params[:search]
   end
 
   def site
     @site = LocationManager::get_site_list(@loc)
+  end
+
+  # parse fields to adjust formatting
+  def set_params
+    items = RecursiveOpenStruct.new(params[:locate])
+    @search, @loc, @url, @sz = items.search, items.loc, items.url, num_rows
   end
 
   # dynamically define search options based on selections

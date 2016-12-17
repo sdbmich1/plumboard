@@ -1,8 +1,9 @@
 class PromoCode < ActiveRecord::Base
   attr_accessible :amountOff, :code, :currency, :description, :end_date, :end_time, :max_redemptions, :percentOff, :promo_name, 
-  	:start_date, :start_time, :status, :promo_type, :site_id, :owner_id, :pictures_attributes
+  	:start_date, :start_time, :status, :promo_type, :site_id, :owner_id, :pictures_attributes, :category_id, :subcategory_id
 
   belongs_to :site
+  belongs_to :category
   belongs_to :user, foreign_key: :owner_id
   has_many :promo_code_users, dependent: :destroy
 
