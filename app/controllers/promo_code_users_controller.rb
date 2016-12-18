@@ -7,7 +7,7 @@ class PromoCodeUsersController < ApplicationController
   end
 
   def index
-    respond_with(@promo = PromoCodeUser.get_by_user(params[:uid], params[:status]).paginate(params[:page], params[:per_page]))
+    respond_with(@promo = PromoCodeUser.get_by_user(params[:uid], params[:status]).paginate(page: params[:page], per_page: params[:per_page]))
   end
 
   def update
