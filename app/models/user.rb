@@ -92,7 +92,7 @@ class User < ActiveRecord::Base
   has_many :devices
   has_many :promo_codes, foreign_key: :owner_id, dependent: :destroy
   has_many :promo_code_users, dependent: :destroy
-  has_many :active_promo_codes, -> { where status: 'active' }, class_name: 'PromoCode'
+  has_many :active_promo_codes, -> { where status: 'active' }, foreign_key: :owner_id, class_name: 'PromoCode'
 
   # name format validators
   name_regex = 	/\A[A-Z]'?['-., a-zA-Z]+\z/i
