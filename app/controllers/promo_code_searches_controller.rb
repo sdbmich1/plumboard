@@ -17,7 +17,7 @@ class PromoCodeSearchesController < ApplicationController
   protected
 
   def load_search
-    @promos = PromoCode.search(query, search_options).populate rescue nil 
+    @promos = PromoCode.search(query, search_options) # rescue nil 
   end
 
   # wrap query text for special characters

@@ -30,4 +30,12 @@ class PromoCodeUser < ActiveRecord::Base
   def self.get_by_user uid, status='active'
     where("user_id = ? AND status = ?", uid, status)
   end
+
+  # set json string
+  def as_json(options={})
+    output = super(except: [:created_at, :updated_at], 
+      include: {user: { only: [:url], methods: [:rating, :pixi_count] },
+        promo_code: { except: [:created_at, :updated_at], methods: [:seller_name, :seller_photo] }})
+    output
+  end
 end

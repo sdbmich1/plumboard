@@ -92,6 +92,7 @@ class User < ActiveRecord::Base
   has_many :devices
   has_many :promo_codes, foreign_key: :owner_id, dependent: :destroy
   has_many :promo_code_users, dependent: :destroy
+  has_many :active_promo_codes, -> { where status: 'active' }, class_name: 'PromoCode'
 
   # name format validators
   name_regex = 	/\A[A-Z]'?['-., a-zA-Z]+\z/i
@@ -429,6 +430,7 @@ class User < ActiveRecord::Base
         :cover_photo, :rating], 
       include: {unpaid_received_invoices: {except: [:created_at, :updated_at]}, contacts: {except: [:created_at, :updated_at]}, 
         active_bank_accounts: {except: [:created_at, :updated_at]}, active_card_accounts: {except: [:created_at, :updated_at]}, 
+	active_promo_codes: {except: [:created_at, :updated_at]}, 
         sellers: {only: [:id, :business_name]}, ship_addresses: { except: [:created_at, :updated_at], methods: [:recipient_name], 
 	  include: {contacts: {except: [:created_at, :updated_at]}}}})
   end
