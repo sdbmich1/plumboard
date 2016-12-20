@@ -7,7 +7,10 @@ class PromoCodeUsersController < ApplicationController
   end
 
   def index
-    respond_with(@promo = PromoCodeUser.get_by_user(params[:uid], params[:status]).paginate(page: params[:page], per_page: params[:per_page]))
+    @promo = PromoCodeUser.get_by_user(params[:uid], params[:status]).paginate(page: params[:page], per_page: params[:per_page])
+    respond_with(@promo) do |format|
+      format.json { render json: {promo: @promo} }
+    end
   end
 
   def update

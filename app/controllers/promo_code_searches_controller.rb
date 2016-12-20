@@ -3,7 +3,7 @@ class PromoCodeSearchesController < ApplicationController
   before_filter :authenticate_user!
   before_filter :load_data, only: [:index]
   before_filter :set_params, only: [:locate]
-  before_filter :load_search
+  before_filter :load_search, only: [:index, :locate]
   respond_to :html, :js, :mobile, :json
 
   def index
