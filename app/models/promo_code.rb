@@ -1,4 +1,5 @@
 class PromoCode < ActiveRecord::Base
+  include ThinkingSphinx::Scopes
   attr_accessible :amountOff, :code, :currency, :description, :end_date, :end_time, :max_redemptions, :percentOff, :promo_name, 
   	:start_date, :start_time, :status, :promo_type, :site_id, :owner_id, :pictures_attributes, :category_id, :subcategory_id
 
