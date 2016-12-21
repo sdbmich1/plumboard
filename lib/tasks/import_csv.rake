@@ -839,8 +839,8 @@ task :load_promo_codes => :environment do
 
     if usr = User.where("business_name like ?", "#{row[9]}%").first
       loc = LocationManager.get_area usr.home_zip, 'city'
-      end_time =  row[8].to_datetime if row[8]
-      start_time =  row[7].to_datetime if row[7]
+      end_time =  Time.parse(row[8]) if row[8]
+      start_time =  Time.parse(row[7]) if row[7]
       attrs = {
         :code   => row[0],
         :promo_name => row[1],

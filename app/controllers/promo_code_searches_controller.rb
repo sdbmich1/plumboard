@@ -36,7 +36,7 @@ class PromoCodeSearchesController < ApplicationController
   # parse fields to adjust formatting
   def set_params
     items = RecursiveOpenStruct.new(params[:locate])
-    @search, @loc, @url, @sz = items.search, items.loc, items.url, num_rows
+    @search, @loc, @url, @sz, @page = items.search, items.loc, items.url, num_rows, params[:page] || 1
   end
 
   # dynamically define search options based on selections

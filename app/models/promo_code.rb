@@ -82,4 +82,13 @@ class PromoCode < ActiveRecord::Base
     output['pictures'] = [{ 'photo_url' => self.pictures.first.photo.url(:large) }] if self.pictures[0]
     output
   end
+
+  # set sphinx scopes
+   sphinx_scope(:promo_name) { 
+     {:order => 'promo_name ASC'}
+  }  
+
+  sphinx_scope(:by_description) { |description|
+    {:conditions => {:description => description}}
+  }
 end
