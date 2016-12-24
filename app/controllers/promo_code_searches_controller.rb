@@ -42,9 +42,9 @@ class PromoCodeSearchesController < ApplicationController
   # dynamically define search options based on selections
   def search_options
     if @url.blank?
-      ModelSearchBuilder.new([:pictures, :user, :site], @page).search_options('site_id', site)
+      ModelSearchBuilder.new([:user, :site], @page).search_options('site_id', site)
     else
-      ModelSearchBuilder.new([:pictures, :user, :site], @page).search_options('url', @url)
+      ModelSearchBuilder.new([:user, :site], @page).search_options('url', @url)
     end
   end
 

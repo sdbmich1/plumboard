@@ -835,6 +835,7 @@ task :load_message_types => :environment do
 end
 
 task :load_promo_codes => :environment do
+  PromoCode.destroy_all
   CSV.foreach(Rails.root.join('db', 'promo_data_120116.csv'), :headers => true) do |row|
 
     if usr = User.where("business_name like ?", "#{row[9]}%").first
@@ -852,7 +853,7 @@ task :load_promo_codes => :environment do
         :start_time => start_time,
         :end_time => end_time,
         :status   => 'active',
-        :site_id => loc
+        :site_id => loc.id
       }
 
       promo = usr.promo_codes.build(attrs)

@@ -8,9 +8,14 @@ class ModelSearchBuilder
   # dynamically define search options based on selections
   def search_options col, val, status='active'
     if val
-      {:sql => {:include => model}, :conditions => {col.to_sym => val, :status => status}, star: true, page: page}  
+      x = val.is_a?(Array) ? set_str(val) : val
+      {:sql => {:include => model}, :conditions => {col.to_sym => x, :status => status}, star: true, page: page}  
     else
       {sql: {include: model}, conditions: {status: status}, star: true, page: page}  
     end
+  end
+
+  def set_str arr
+    arr.inject(''){|sum, a| sum << "|" unless sum.empty?; sum << a.to_s}
   end
 end
