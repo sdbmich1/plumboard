@@ -13,9 +13,9 @@ class FavoriteSeller < ActiveRecord::Base
   end
 
   def self.save uid, sid, status
-    fav = FavoriteSeller.find_by(user_id: uid, seller_id: sid)
+    fav = find_by(user_id: uid, seller_id: sid)
     if fav.blank?
-      fav = FavoriteSeller.create(user_id: uid, seller_id: sid, status: status)
+      fav = create(user_id: uid, seller_id: sid, status: status)
     else
       fav.update_attribute(:status, status) unless fav.status == status
     end

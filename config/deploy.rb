@@ -170,7 +170,7 @@ end
 
     desc "Remap the sphinx path"
     task :remap, :roles => :app do
-      run "cd #{latest_release} && chmod -R 777 #{current_path}/db/sphinx"
+      run "cd #{latest_release} && chown -R deploy:deploy #{current_path}/db/sphinx && chmod -R 777 #{current_path}/db/sphinx"
     end
   end
 

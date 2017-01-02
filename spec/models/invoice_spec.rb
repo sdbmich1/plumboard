@@ -87,6 +87,17 @@ describe Invoice do
         @listing.save!
         expect(Invoice.get_buyer_invoices(@buyer)).to be_empty 
       end
+      it 'does not return business invoices' do
+        expect(Invoice.get_buyer_invoices(@buyer, 'BUS')).to be_empty 
+      end
+      it 'returns business invoices' do
+        @seller = create :business_user
+        @listing2 = create(:listing, seller_id: @seller.id)
+        @invoice2 = @seller.invoices.build attributes_for(:invoice, buyer_id: @buyer.id)
+        @details2 = @invoice2.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing2.pixi_id 
+        @invoice2.save!
+        expect(Invoice.get_buyer_invoices(@buyer, 'BUS')).to include @invoice2 
+      end
     end
   end
 
@@ -101,25 +112,17 @@ describe Invoice do
     it { expect(Invoice.find_invoice(order2)).to be_nil }
   end
 
-  describe "paid" do 
-    it "should not verify invoice is paid" do 
-      expect(@invoice.paid?).not_to be_truthy 
-    end
+  describe "paid/unpaid/declined" do 
+    %w(paid unpaid declined).each do |item|
+      it "should not verify invoice is #{item}" do 
+        @invoice.update_attribute(:status, 'sold')
+        expect(@invoice.send("#{item}?")).not_to be_truthy 
+      end
 
-    it "should verify invoice is paid" do 
-      @invoice.status = 'paid'
-      expect(@invoice.paid?).to be_truthy 
-    end
-  end
-
-  describe "unpaid?" do 
-    it "should verify invoice is unpaid" do 
-      expect(@invoice.unpaid?).to be_truthy 
-    end
-
-    it "should not verify invoice is unpaid" do 
-      @invoice.status = 'paid'
-      expect(@invoice.unpaid?).not_to be_truthy 
+      it "should verify invoice is #{item}" do 
+        @invoice.status = "#{item}"
+        expect(@invoice.send("#{item}?")).to be_truthy 
+      end
     end
   end
 
@@ -632,6 +635,36 @@ describe Invoice do
       }.not_to change {
         Delayed::Job.count
       }
+    end
+
+    it 'adds new invoice' do
+      order = Invoice.process_invoice(@listing, @buyer.id, 'P')
+      expect(Invoice.count).to eq 1
+    end
+
+    context 'existing invoice' do
+      before :each do
+        @seller = create :business_user
+        @listing2 = create(:listing, seller_id: @seller.id)
+        @invoice2 = @seller.invoices.build attributes_for(:invoice, buyer_id: @buyer.id)
+        @details2 = @invoice2.invoice_details.build attributes_for :invoice_detail, pixi_id: @listing2.pixi_id 
+        @invoice2.save!
+        @buyer.pixi_wants.create attributes_for :pixi_want, pixi_id: @listing2.pixi_id
+      end
+
+      it 'does not create new invoice' do
+        sleep 2
+        order = Invoice.process_invoice(@listing2, @buyer.id, 'P')
+        expect(order['invoice_id']).to eq @invoice2.id
+      end
+
+      it 'creates new invoice' do
+        sleep 2
+        @invoice2.update_attribute(:status, 'paid')
+        order = Invoice.process_invoice(@listing2, @buyer.id, 'P')
+        expect(order['invoice_id']).not_to eq @invoice2.id
+        expect(Invoice.count).to eq 2
+      end
     end
   end
 end

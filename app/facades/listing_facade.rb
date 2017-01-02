@@ -25,7 +25,7 @@ class ListingFacade < AppFacade
   end
 
   def load_sellers items
-    @sellers = User.get_sellers(items, params[:utype])
+    @sellers = User.get_sellers(items, params[:utype] || 'BUS')
     @categories = Category.get_categories(items) # unless action_name == 'category'
     @listings = items.set_page(params[:page], params[:per_page] || MIN_BOARD_AMT) rescue nil
   end
@@ -74,7 +74,7 @@ class ListingFacade < AppFacade
   end
 
   def wanted_listings user
-    @listings = Listing.wanted_list(user, cat, loc)
+    @listings = Listing.wanted_list(user, cat, loc, false, params[:utype])
   end
 
   def seller_listings user

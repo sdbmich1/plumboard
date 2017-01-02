@@ -150,8 +150,12 @@ class ListingDataProcessor < ListingQueryProcessor
   end
 
   # get wanted list by user
-  def wanted_list usr, cid, loc, adminFlg
-    result = select_fields('pixi_wants.updated_at').active.joins(:pixi_wants)
+  def wanted_list usr, cid, loc, adminFlg, utype
+    if utype.blank?
+      result = select_fields('pixi_wants.updated_at').active.joins(:pixi_wants)
+    else
+      result = select_fields('pixi_wants.updated_at').active.joins(:pixi_wants, :user).where("users.user_type_code = ?", utype)
+    end
     if adminFlg
       result.where("pixi_wants.user_id is not null AND pixi_wants.status = ?", 'active').get_by_city(cid, loc, true)
     else

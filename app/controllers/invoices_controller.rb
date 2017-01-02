@@ -1,4 +1,4 @@
-  require 'will_paginate/array' 
+require 'will_paginate/array' 
 class InvoicesController < ApplicationController
   load_and_authorize_resource
   before_filter :authenticate_user!
@@ -27,7 +27,7 @@ class InvoicesController < ApplicationController
   end
    
   def received
-    respond_with(@invoices = Invoice.get_buyer_invoices(@user).paginate(page: @page, per_page: 15))
+    respond_with(@invoices = Invoice.get_buyer_invoices(@user, params[:utype]).paginate(page: @page, per_page: 15))
   end
 
   def show

@@ -96,7 +96,7 @@ module LocationManager
 
   def self.parse_lat_lng str
     if str
-      [str["results"][0]["geometry"]["location"]["lat"], str["results"][0]["geometry"]["location"]["lng"]]  
+      [str["results"][0]["geometry"]["location"]["lat"], str["results"][0]["geometry"]["location"]["lng"]] rescue nil 
     else
       nil
     end

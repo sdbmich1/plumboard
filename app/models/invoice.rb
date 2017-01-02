@@ -34,21 +34,6 @@ class Invoice < ActiveRecord::Base
 
   default_scope { order 'invoices.created_at DESC' }
 
-  # set flds
-  def set_flds
-    InvoiceProcessor.new(self).set_flds
-  end
-
-  # validate picture exists
-  def must_have_pixis
-    InvoiceProcessor.new(self).must_have_pixis
-  end
-
-  # check for a pixi
-  def any_pixi?
-    InvoiceProcessor.new(self).must_have_pixis
-  end
-
   # get by status
   def self.get_by_status val
     where(:status=>val)
@@ -77,8 +62,13 @@ class Invoice < ActiveRecord::Base
   end
 
   # get invoices for given buyer
-  def self.get_buyer_invoices usr
-    inc_list.where("invoices.buyer_id = ? AND invoices.status NOT IN ('closed','removed', 'declined')", usr.id)
+  def self.get_buyer_invoices usr, utype=''
+    if utype.blank?
+      inc_list.where("invoices.buyer_id = ? AND invoices.status NOT IN ('closed','removed', 'declined')", usr.id)
+    else
+      inc_list.joins(:seller).where("user_type_code = ? AND invoices.buyer_id = ? AND invoices.status NOT IN ('closed','removed','paid',
+        'declined')", utype, usr.id)
+    end
   end
 
   # check if invoice owner
@@ -86,19 +76,9 @@ class Invoice < ActiveRecord::Base
     seller_id == usr.id rescue false
   end
 
-  # check if invoice is paid
-  def paid?
-    status == 'paid' rescue false
-  end
-
-  # check if invoice is unpaid
-  def unpaid?
-    status == 'unpaid' rescue false
-  end
-
-  # check if invoice is declined
-  def declined?
-    status == 'declined' rescue false
+  # check status
+  %w(paid unpaid declined).each do |item|
+    define_method("#{item}?") {status == item rescue false}
   end
 
   # check if invoice has shipping
@@ -116,11 +96,6 @@ class Invoice < ActiveRecord::Base
     InvoiceProcessor.new(self).submit_payment val
   end
 
-  # credit account & process payment
-  def credit_account
-    InvoiceProcessor.new(self).credit_account
-  end
-
   # get convenience fee based on user
   def get_conv_fee usr
     owner?(usr) ? get_fee(true) : get_fee rescue 0
@@ -131,54 +106,19 @@ class Invoice < ActiveRecord::Base
     InvoiceProcessor.new(self).get_fee sellerFlg, fee
   end
 
-  # get txn processing fee
-  def get_processing_fee
-    InvoiceProcessor.new(self).get_processing_fee
+  # buyer flds
+  %w(name first_name email).each do |item|
+    define_method("buyer_#{item}") {buyer.send(item) rescue nil}
   end
 
-  # get txn convenience fee
-  def get_convenience_fee
-    InvoiceProcessor.new(self).get_convenience_fee
-  end
-
-  # get buyer name
-  def buyer_name
-    buyer.name rescue nil
-  end
-
-  # get buyer first name
-  def buyer_first_name
-    buyer.first_name rescue nil
-  end
-
-  # get buyer email
-  def buyer_email
-    buyer.email rescue nil
-  end
-
-  # get seller name
-  def seller_name
-    seller.name rescue nil
-  end
-
-  # get seller first name
-  def seller_first_name
-    seller.first_name rescue nil
-  end
-
-  # get seller email
-  def seller_email
-    seller.email rescue nil
+  # seller flds
+  %w(name first_name email).each do |item|
+    define_method("seller_#{item}") {seller.send(item) rescue nil}
   end
 
   # get seller token
   def seller_token
     seller.cust_token rescue nil
-  end
-
-  # get pixan id
-  def pixan_id
-    InvoiceProcessor.new(self).pixan_id
   end
 
   # get title
@@ -211,14 +151,10 @@ class Invoice < ActiveRecord::Base
     listings.first.display_date dt, true
   end
 
-  # load assn details
-  def self.load_details
-    InvoiceProcessor.new(self).load_details
-  end
-
-  # marked as closed any other invoice associated with this pixi
-  def mark_as_closed 
-    InvoiceProcessor.new(self).mark_as_closed
+  # call processor methods
+  %w(set_flds must_have_pixis pixan_id credit_account get_processing_fee get_convenience_fee load_details seller_amount mark_as_closed 
+    decline_msg any_pixi?).each do |item|
+    define_method("#{item}") {InvoiceProcessor.new(self).send("#{item}")}
   end
 
   # return all unpaid invoices that are more than number_of_days old
@@ -229,10 +165,6 @@ class Invoice < ActiveRecord::Base
   # decline options
   def decline_item_list
     ['No Longer Interested', 'Incorrect Pixi', 'Incorrect Price', 'Did Not Want']
-  end
-
-  def decline_msg
-    InvoiceProcessor.new(self).decline_msg
   end
 
   def decline reason
@@ -253,11 +185,6 @@ class Invoice < ActiveRecord::Base
   # get amount
   def get_pixi_amt_left pid
     listings.where(pixi_id: pid).first.amt_left rescue 1
-  end
-
-  # get seller amount minus fees
-  def seller_amount
-    InvoiceProcessor.new(self).seller_amount
   end
 
   # get description for completed txn

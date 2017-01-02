@@ -29,11 +29,14 @@ class InvoiceProcessor
 
   # load new invoice with most recent pixi data
   def load_new usr, buyer_id, pixi_id, fulfillment_type_code=nil
-    if usr && usr.has_pixis?
+    old_inv = check_invoice buyer_id, usr.id, pixi_id
+    if usr && usr.has_pixis? && !old_inv
       pixi = usr.active_listings.first if usr.active_listings.size == 1
       inv = usr.invoices.build buyer_id: buyer_id
       load_inv_details inv, pixi, buyer_id, pixi_id, fulfillment_type_code
       inv
+    else
+      old_inv
     end
   end
 
@@ -175,5 +178,16 @@ class InvoiceProcessor
         item.update_attribute(:fulfillment_type_code, 'SHP') if item.fulfillment_type_code.blank?
       end
     end
+  end
+
+  # check invoice status for buyer or seller
+  def check_invoice uid, sid, pid
+    list = Invoice.where("buyer_id = ? AND seller_id = ? AND status = 'unpaid'", uid, sid)
+    list.find_each do |invoice|
+      invoice.invoice_details.find_each do |item|
+	return invoice if item.pixi_id == pid
+      end
+    end
+    false
   end
 end

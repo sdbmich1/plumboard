@@ -229,8 +229,8 @@ class Listing < ListingParent
   end
 
   # get wanted list by user
-  def self.wanted_list usr, cid=nil, loc=nil, adminFlg=true
-    ListingProcessor.new(self).wanted_list(usr, cid, loc, adminFlg)
+  def self.wanted_list usr, cid=nil, loc=nil, adminFlg=true, utype=''
+    ListingProcessor.new(self).wanted_list(usr, cid, loc, adminFlg, utype)
   end
 
   # toggle get_by_seller call based on status

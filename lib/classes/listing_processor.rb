@@ -214,7 +214,7 @@ class ListingProcessor < ListingDataProcessor
   end
 
   # get wanted list by user
-  def wanted_list usr, cid=nil, loc=nil, adminFlg=true
-    ListingDataProcessor.new(@listing).wanted_list(usr, cid, loc, adminFlg)
+  def wanted_list usr, cid=nil, loc=nil, adminFlg=true, utype
+    ListingDataProcessor.new(@listing).wanted_list(usr, cid, loc, adminFlg, utype)
   end
 end

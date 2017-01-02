@@ -914,15 +914,26 @@ describe Listing do
       @buyer = create :pixi_user
       @listing.save!
       @pixi_want = @usr.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id, status: 'sold'
-      @pixi_want = @buyer.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
+      @pixi_want2 = @buyer.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing.pixi_id
     end
 
     it { expect(Listing.wanted_list(@user, nil, nil, false)).not_to include @listing } 
     it { expect(Listing.wanted_list(@usr, nil, nil, false)).not_to include @listing } 
     it { expect(Listing.wanted_list(@buyer, nil, nil, false).count(:all)).not_to eq 0 }
+    it { expect(Listing.wanted_list(@buyer, nil, nil, false).first.created_date.to_s).to eq(@pixi_want.updated_at.to_s) }
     it { expect(@listing.wanted_count).to eq(1) }
     it { expect(@listing.is_wanted?).to eq(true) }
-    it { expect(Listing.wanted_list(@buyer, nil, nil, false).first.created_date.to_s).to eq(@pixi_want.updated_at.to_s) }
+
+    context 'want biz pixi' do
+      before :each do
+        @seller = create :business_user
+	@listing2 = create(:listing, seller_id: @seller.id, title: 'Hair brush')
+	@want = @user.pixi_wants.create FactoryGirl.attributes_for :pixi_want, pixi_id: @listing2.pixi_id
+      end
+      it { expect(Listing.wanted_list(@user, nil, nil, false, 'BUS').count(:all)).not_to eq 0 } 
+      it { expect(Listing.wanted_list(@user, nil, nil, false, 'BUS')).not_to include @listing } 
+      it { expect(Listing.wanted_list(@user, nil, nil, false, 'MBR')).not_to include @listing2 } 
+    end
 
     context 'seller wanted' do
       before :each do
