@@ -176,7 +176,7 @@ module TempListingsHelper
   end
 
   def bus_pixi?
-    !(@user.is_business? || (@listing.ptype && @listing.ptype.upcase == 'BUS'))
+    !(@user.is_business? || (!@listing.blank? && @listing.ptype && @listing.ptype.upcase == 'BUS'))
   end
 
   def show_buy_now?

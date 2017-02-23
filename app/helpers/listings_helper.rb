@@ -821,4 +821,8 @@ module ListingsHelper
   def rFlg? rFlg, method
     rFlg && check_var(method).blank?
   end
+
+  def get_loc_name
+    @listing.blank? ? @loc_name : @listing.loc_name
+  end
 end
